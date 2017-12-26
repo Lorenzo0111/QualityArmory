@@ -5,6 +5,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import me.zombie_striker.qg.ItemFact;
+
 public class AmmoUtil {
 
 	public static int getAmmoAmount(Player player, Ammo a) {
@@ -40,17 +42,9 @@ public class AmmoUtil {
 		}
 		if (remaining > 0) {
 			if (player.getInventory().firstEmpty() >= 0) {
-				ItemStack is = new ItemStack(a.getItemData().getMat(), remaining,
-						(short) a.getItemData().getData());
-				ItemMeta un = is.getItemMeta();
-				try {
-					un.setUnbreakable(true);
-					un.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_UNBREAKABLE);
-				} catch (Error e) {
-				}
-				is.setItemMeta(un);
+				ItemStack is = ItemFact.getAmmo(a);
+				is.setAmount(remaining);
 				player.getInventory().addItem(is);
-
 				remaining = 0;
 			}
 		}

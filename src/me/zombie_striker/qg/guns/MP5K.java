@@ -16,13 +16,16 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 public class MP5K extends DefaultGun {
 
-	List<UUID> time = new ArrayList<>();
+	//List<UUID> time = new ArrayList<>();
 
 	@SuppressWarnings("deprecation")
 	@Override
 	public void shoot(final Player player) {
 		final boolean offhand = player.getInventory().getItemInHand().getDurability()==IronSightsToggleItem.getData();
 		if ((!offhand&&player.getInventory().getItemInHand().getAmount()>3)||(offhand&&Update19OffhandChecker.hasAmountOFfhandGreaterthan(player,3))) {
+			final Gun g = this;
+			GunUtil.basicShoot(offhand,g, player, getSway());
+			/**
 			if (time.contains(player.getUniqueId()))
 				return;
 			
@@ -46,10 +49,10 @@ public class MP5K extends DefaultGun {
 				public void run() {
 					time.remove(player.getUniqueId());
 				}
-			}.runTaskLater(Main.getInstance(), 5);
+			}.runTaskLater(Main.getInstance(), 5);*/
 		}
 	}
 	public MP5K(int d,ItemStack[] ing, float damage) {
-		super("MP5K", MaterialStorage.getMS(Main.guntype,4), GunType.SMG,false, AmmoType.Ammo9mm,  0.3,2, 34, damage,d,ing);
+		super("MP5K", MaterialStorage.getMS(Main.guntype,4), WeaponType.SMG,false, AmmoType.Ammo9mm,  0.3,2, 34, damage,true,d,WeaponSounds.GUN_SMALL,ing);
 	}
 }

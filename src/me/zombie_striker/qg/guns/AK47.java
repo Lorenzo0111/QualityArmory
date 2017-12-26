@@ -9,6 +9,6 @@ import org.bukkit.inventory.ItemStack;
 public class AK47 extends DefaultGun {
 
 	public AK47(int d,ItemStack[] ing, float damage) {
-		super("AK-47", MaterialStorage.getMS(Main.guntype, 5), GunType.RIFLE,false, AmmoType.Ammo556, 0.2,2, 51, damage,d,ing);
+		super("AK-47", MaterialStorage.getMS(Main.guntype, 5), WeaponType.RIFLE,false, AmmoType.Ammo556, 0.2,2, 51, damage,true,d,WeaponSounds.GUN_MEDIUM,ing);
 	}
 }

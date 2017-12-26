@@ -15,19 +15,31 @@ public class ItemFact {
 
 	public static List<String> getGunLore(Gun g, ItemStack current, int amount) {
 		List<String> lore = new ArrayList<>();
-		lore.add(ChatColor.GREEN + Main.S_ITEM_BULLETS + ": " + (amount - 1)
-				+ "/" + (g.getMaxBullets() - 1));
+		if (g.getCustomLore() != null)
+			lore.addAll(g.getCustomLore());
+		lore.add(ChatColor.GREEN + Main.S_ITEM_BULLETS + ": " + (amount - 1) + "/" + (g.getMaxBullets() - 1));
 		lore.add(ChatColor.GREEN + Main.S_ITEM_DAMAGE + ": " + g.getDamage());
 		if (Main.enableDurability)
 			if (current == null) {
-				lore.add(ChatColor.DARK_GREEN + Main.S_ITEM_DURIB + ":"
-						+ g.getDurability() + "/" + g.getDurability());
+				lore.add(ChatColor.DARK_GREEN + Main.S_ITEM_DURIB + ":" + g.getDurability() + "/" + g.getDurability());
 			} else {
 				lore = setDamage(g, lore, getDamage(current));
 			}
 
-		lore.add(ChatColor.GRAY + Main.S_ITEM_AMMO + ": "
-				+ g.getAmmoType().getName());
+		lore.add(ChatColor.GRAY + Main.S_ITEM_AMMO + ": " + g.getAmmoType().getName());
+
+		if (g.isAutomatic()) {
+			lore.add(ChatColor.DARK_GRAY + "[LMB] to use Single-fire");
+			lore.add(ChatColor.DARK_GRAY + "[RMB] to reload");
+			lore.add(ChatColor.DARK_GRAY + "[Sneak]+[RMB] to use Automatic-firing");
+		} else {
+			lore.add(ChatColor.DARK_GRAY + "[LMB] to use Single-fire");
+			lore.add(ChatColor.DARK_GRAY + (Main.enableIronSightsON_RIGHT_CLICK ? "[DropItem]" : "[RMB]")
+					+ " to reload");
+			if (g.hasIronSights())
+				lore.add(ChatColor.DARK_GRAY + (Main.enableIronSightsON_RIGHT_CLICK ? "[RMB]" : "[Sneak]")
+						+ " to open ironsights");
+		}
 
 		if (current != null && current.getItemMeta().hasLore())
 			for (String s : current.getItemMeta().getLore()) {
@@ -50,8 +62,7 @@ public class ItemFact {
 		lore.add(ChatColor.RED + Main.S_ITEM_ING + ": ");
 		for (ItemStack is : a.getIngredients()) {
 			StringBuilder sb = new StringBuilder();
-			sb.append(ChatColor.RED + "-" + is.getAmount() + " "
-					+ is.getType().name());
+			sb.append(ChatColor.RED + "-" + is.getAmount() + " " + is.getType().name());
 			if (is.getDurability() != 0)
 				sb.append(":" + is.getDurability());
 			lore.add(sb.toString());
@@ -63,8 +74,7 @@ public class ItemFact {
 	}
 
 	public static ItemStack getGun(int durib) {
-		Gun g = Main.gunRegister
-				.get(MaterialStorage.getMS(Main.guntype, durib));
+		Gun g = Main.gunRegister.get(MaterialStorage.getMS(Main.guntype, durib));
 		return getGun(g);
 	}
 
@@ -74,10 +84,9 @@ public class ItemFact {
 	}
 
 	public static ItemStack getGun(Gun g) {
-		ItemStack is = new ItemStack(g.getItemData().getMat(), 0, (short) g
-				.getItemData().getData());
+		ItemStack is = new ItemStack(g.getItemData().getMat(), 0, (short) g.getItemData().getData());
 		ItemMeta im = is.getItemMeta();
-		im.setDisplayName(getGunName(g));
+		im.setDisplayName(g.getDisplayName());
 		List<String> lore = getGunLore(g, null, g.getMaxBullets());
 		im.setLore(lore);
 		try {
@@ -95,16 +104,14 @@ public class ItemFact {
 
 	public static ItemStack getAmmo(Material m, int data) {
 		if (Main.ammoRegister.containsKey(MaterialStorage.getMS(m, data)))
-			return getAmmo(Main.ammoRegister
-					.get(MaterialStorage.getMS(m, data)));
+			return getAmmo(Main.ammoRegister.get(MaterialStorage.getMS(m, data)));
 		return null;
 	}
 
 	public static ItemStack getAmmo(Ammo a) {
-		ItemStack is = new ItemStack(a.getItemData().getMat(), 0, (short) a
-				.getItemData().getData());
+		ItemStack is = new ItemStack(a.getItemData().getMat(), 0, (short) a.getItemData().getData());
 		ItemMeta im = is.getItemMeta();
-		im.setDisplayName(getAmmoName(a));
+		im.setDisplayName(a.getDisplayName());
 		try {
 			im.setUnbreakable(true);
 			im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_UNBREAKABLE);
@@ -117,12 +124,21 @@ public class ItemFact {
 		return is;
 	}
 
-	public static String getGunName(Gun g) {
-		return ChatColor.GOLD + g.getName();
-	}
+	public static ItemStack getObject(ArmoryBaseObject a) {
+		ItemStack is = new ItemStack(a.getItemData().getMat(), 0, (short) a.getItemData().getData());
+		ItemMeta im = is.getItemMeta();
+		im.setDisplayName(a.getDisplayName());
+		try {
+			im.setUnbreakable(true);
+			im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_UNBREAKABLE);
+		} catch (Error e) {
+		}
+		im.setLore(a.getCustomLore());
 
-	public static String getAmmoName(Ammo a) {
-		return ChatColor.GOLD + a.getName();
+		is.setItemMeta(im);
+		is.setAmount(a.getCraftingReturn());
+
+		return is;
 	}
 
 	public static int getDamage(ItemStack is) {
@@ -149,21 +165,16 @@ public class ItemFact {
 	public static List<String> setDamage(Gun g, List<String> lore, int damage) {
 		boolean foundLine = false;
 		double k = ((double) damage) / g.getDurability();
-		ChatColor c = k > 0.5 ? ChatColor.DARK_GREEN
-				: k > 0.25 ? ChatColor.GOLD : ChatColor.DARK_RED;
+		ChatColor c = k > 0.5 ? ChatColor.DARK_GREEN : k > 0.25 ? ChatColor.GOLD : ChatColor.DARK_RED;
 		for (int j = 0; j < lore.size(); j++) {
 			if (ChatColor.stripColor(lore.get(j)).startsWith(Main.S_ITEM_DURIB)) {
-				lore.set(
-						j,
-						c + Main.S_ITEM_DURIB + ":" + damage + "/"
-								+ g.getDurability());
+				lore.set(j, c + Main.S_ITEM_DURIB + ":" + damage + "/" + g.getDurability());
 				foundLine = true;
 				break;
 			}
 		}
 		if (!foundLine) {
-			lore.add(c + Main.S_ITEM_DURIB + ":" + damage + "/"
-					+ g.getDurability());
+			lore.add(c + Main.S_ITEM_DURIB + ":" + damage + "/" + g.getDurability());
 		}
 		return lore;
 	}
@@ -174,8 +185,7 @@ public class ItemFact {
 			im.setLocalizedName("" + UUID.randomUUID());
 		} catch (Exception | Error e) {
 			List<String> lore = im.getLore();
-			lore.add(ChatColor.DARK_GRAY + "UUID"
-					+ UUID.randomUUID().toString());
+			lore.add(ChatColor.DARK_GRAY + "UUID" + UUID.randomUUID().toString());
 			im.setLore(lore);
 		}
 		base.setItemMeta(im);
@@ -186,8 +196,7 @@ public class ItemFact {
 		try {
 			if (is1.hasItemMeta() && is1.getItemMeta().hasLocalizedName())
 				if (is2.hasItemMeta() && is2.getItemMeta().hasLocalizedName())
-					return is1.getItemMeta().getLocalizedName()
-							.equals(is2.getItemMeta().getLocalizedName());
+					return is1.getItemMeta().getLocalizedName().equals(is2.getItemMeta().getLocalizedName());
 		} catch (Exception | Error e1) {
 			if (is1.hasItemMeta() && is1.getItemMeta().hasLore())
 				if (is2.hasItemMeta() && is2.getItemMeta().hasLore())
@@ -205,9 +214,7 @@ public class ItemFact {
 			} else {
 				for (String lore : is.getItemMeta().getLore()) {
 					if (lore.contains(Main.S_ITEM_BULLETS)) {
-						return Integer
-								.parseInt(lore.split(":")[1].split("/")[0]
-										.trim());
+						return Integer.parseInt(lore.split(":")[1].split("/")[0].trim());
 					}
 				}
 				return 0;

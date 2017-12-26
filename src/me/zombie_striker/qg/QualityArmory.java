@@ -56,11 +56,33 @@ public class QualityArmory {
 	 * @return The instance of the gun you created
 	 */
 	public static Gun createSimpleGun(String name, Material mat, int data,
-			GunType type, boolean hasIronSights, AmmoType ammotype, double acc,
+			WeaponType type, boolean hasIronSights, AmmoType ammotype, double acc,
 			int swayMultiplier, int maxBullets, float damage, int gunDurability) {
+	return createSimpleGun(name, mat, data, type, hasIronSights, ammotype, acc, swayMultiplier, maxBullets, damage,false, gunDurability,WeaponSounds.GUN_MEDIUM);
+	}
+
+	/**
+	 * Creates and registers a new gun.
+	 * @param name of gun
+	 * @param m Material type
+	 * @param data durability int
+	 * @param type gun type
+	 * @param hasIronSights if the gun has ironsights
+	 * @param ammotype ammo type
+	 * @param acc default accuracy (normally 0.2)
+	 * @param swayMultiplier (normally 1)
+	 * @param maxBullets Maximum amount of bullets per reload
+	 * @param damage damage per bullet
+	 * @param isAutomatic if the gun is automatic
+	 * @param gunDurability durability of gun (does not matter unless you have durability enabled)
+	 * @return The instance of the gun you created
+	 */
+	public static Gun createSimpleGun(String name, Material mat, int data,
+			WeaponType type, boolean hasIronSights, AmmoType ammotype, double acc,
+			int swayMultiplier, int maxBullets, float damage,boolean isAutomatic, int gunDurability, WeaponSounds sound) {
 		MaterialStorage mm = MaterialStorage.getMS(mat, data);
 		Gun g = new DefaultGun(name, mm, type, hasIronSights, ammotype, acc,
-				swayMultiplier, maxBullets, damage, gunDurability);
+				swayMultiplier, maxBullets, damage,isAutomatic, gunDurability,sound);
 		Main.gunRegister.put(mm, g);
 		return g;
 	}

@@ -17,4 +17,8 @@ public interface Gun extends ArmoryBaseObject{
 	public boolean hasUnlimitedAmmo();
 	public double getSway();
 	public double getMovementMultiplier();
+	public boolean isAutomatic();
+	
+
+	public WeaponSounds getWeaponSound();
 }

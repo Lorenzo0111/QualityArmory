@@ -82,7 +82,7 @@ public class M40 extends DefaultGun implements Listener {
 	}
 
 	public M40(int d,ItemStack[] ing, float damage) {
-		super("M40", MaterialStorage.getMS(Main.guntype,13), GunType.SNIPER, true, AmmoType.Ammo556,  0.1,4, 8, damage,d,ing);
+		super("M40", MaterialStorage.getMS(Main.guntype,13), WeaponType.SNIPER, true, AmmoType.Ammo556,  0.1,4, 8, damage,false,d,WeaponSounds.GUN_BIG,ing);
 		Bukkit.getPluginManager().registerEvents(this, Main.getInstance());
 	}
 }

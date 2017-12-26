@@ -38,10 +38,13 @@ public class Remmington extends DefaultGun {
 				@Override
 				public void run() {
 					try{
+						/*
 					player.getWorld().playSound(player.getLocation(),
 							Sound.BLOCK_LEVER_CLICK, 8, 1.4f);
 					player.getWorld().playSound(player.getLocation(),
-							Sound.BLOCK_SAND_BREAK, 8, 1.4f);
+							Sound.BLOCK_SAND_BREAK, 8, 1.4f);*/
+						player.getWorld().playSound(player.getLocation(),
+								WeaponSounds.RELOAD_BULLET.getName(), 1, 1f);
 					}catch(Error e){
 
 						player.getWorld().playSound(player.getLocation(),
@@ -55,10 +58,12 @@ public class Remmington extends DefaultGun {
 				@Override
 				public void run() {
 					try{
+						player.getWorld().playSound(player.getLocation(),
+								WeaponSounds.RELOAD_BOLT.getName(), 1, 1f);/*
 					player.getWorld().playSound(player.getLocation(),
 							Sound.BLOCK_SAND_BREAK, 8, 1.4f);
 					player.getWorld().playSound(player.getLocation(),
-							Sound.BLOCK_LEVER_CLICK, 8, 1);
+							Sound.BLOCK_LEVER_CLICK, 8, 1);*/
 					}catch(Error e){
 						player.getWorld().playSound(player.getLocation(),
 								Sound.valueOf("DIG_SAND"), 8, 1.4f);
@@ -79,7 +84,7 @@ public class Remmington extends DefaultGun {
 			double amountReload = (7.0-amount)/7.0;
 			
 			double time = (2.5*(amountReload));
-			GunUtil.basicReload(this, player,GunType.isUnlimited(GunType.SHOTGUN),time);
+			GunUtil.basicReload(this, player,WeaponType.isUnlimited(WeaponType.SHOTGUN),time);
 			for (int i = 0; i < 7-(amount); i++) {
 				final boolean k = i==7;
 				new BukkitRunnable() {
@@ -112,6 +117,6 @@ public class Remmington extends DefaultGun {
 	}
 
 	public Remmington(int d,ItemStack[] ing, float damage) {
-		super("Remmington", MaterialStorage.getMS(Main.guntype,8), GunType.SHOTGUN, false, AmmoType.AmmoBuckshot,  0.2,2.6, 8, damage,d,ing);
+		super("Remmington", MaterialStorage.getMS(Main.guntype,8), WeaponType.SHOTGUN, false, AmmoType.AmmoBuckshot,  0.2,2.6, 8, damage,false,d,WeaponSounds.GUN_BIG,ing);
 	}
 }

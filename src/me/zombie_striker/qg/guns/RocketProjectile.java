@@ -64,7 +64,7 @@ public class RocketProjectile {
 								7)) {
 							if (e instanceof LivingEntity) {
 								((LivingEntity) e).damage((20 * 4 / e
-										.getLocation().distance(s)));
+										.getLocation().distance(s)),player);
 							}
 						}
 					} catch (Error e) {

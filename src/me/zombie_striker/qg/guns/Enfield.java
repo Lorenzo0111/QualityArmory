@@ -20,16 +20,19 @@ public class Enfield extends DefaultGun {
 
 			double time = (5 * (amountReload));
 			GunUtil.basicReload(this, player,
-					GunType.isUnlimited(GunType.PISTOL), time);
+					WeaponType.isUnlimited(WeaponType.PISTOL), time);
 			for (int i = 0; i < 7 - (amount) + 1; i++) {
 				new BukkitRunnable() {
 					@Override
 					public void run() {
-						try{
+						try{/*
 						player.getWorld().playSound(player.getLocation(),
 								Sound.BLOCK_PISTON_EXTEND, 5, 4f);
 						player.getWorld().playSound(player.getLocation(),
-								Sound.BLOCK_SAND_BREAK, 8, 1.4f);
+								Sound.BLOCK_SAND_BREAK, 8, 1.4f);*/
+
+							player.getWorld().playSound(player.getLocation(),
+									WeaponSounds.RELOAD_BULLET.getName(), 1, 1f);
 						}catch(Error e){
 							player.getWorld().playSound(player.getLocation(),
 									Sound.valueOf("PISTON_EXTEND"), 5, 4f);
@@ -45,6 +48,6 @@ public class Enfield extends DefaultGun {
 
 
 	public Enfield(int d,ItemStack[] ing, float damage) {
-		super("Enfield-1853", MaterialStorage.getMS(Main.guntype,18), GunType.PISTOL, true, AmmoType.Ammo9mm,  0.2,2, 7, damage,d,ing);
+		super("Enfield-1853", MaterialStorage.getMS(Main.guntype,18), WeaponType.PISTOL, true, AmmoType.Ammo9mm,  0.2,2, 7, damage,false,d,WeaponSounds.GUN_SMALL,ing);
 	}
 }
