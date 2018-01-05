@@ -24,6 +24,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -52,7 +53,6 @@ public class Main extends JavaPlugin implements Listener {
 
 	public static HashMap<MaterialStorage, Gun> gunRegister = new HashMap<>();
 	public static HashMap<MaterialStorage, Ammo> ammoRegister = new HashMap<>();
-
 	public static HashMap<MaterialStorage, ArmoryBaseObject> miscRegister = new HashMap<>();
 
 	public static HashMap<UUID, List<BukkitTask>> reloadingTasks = new HashMap<UUID, List<BukkitTask>>();
@@ -66,6 +66,8 @@ public class Main extends JavaPlugin implements Listener {
 	public static Main getInstance() {
 		return main;
 	}
+
+	public static Object bulletTrail;
 
 	private boolean shouldSend = true;
 	public static boolean sendOnJoin = false;
@@ -104,7 +106,7 @@ public class Main extends JavaPlugin implements Listener {
 	public static String S_ITEM_DAMAGE = "Damage";
 	public static String S_ITEM_AMMO = "Ammo";
 	public static String S_ITEM_ING = "Ingredients";
-	
+
 	public static double smokeSpacing = 0.5;
 
 	public static String prefix = ChatColor.GRAY + "[" + ChatColor.DARK_GREEN + "QualityArmory" + ChatColor.GRAY + "]"
@@ -138,6 +140,52 @@ public class Main extends JavaPlugin implements Listener {
 	public void onEnable() {
 		main = this;
 		supportWorldGuard = Bukkit.getPluginManager().isPluginEnabled("WorldGuard");
+		reloadVals();
+		new BukkitRunnable() {
+			@Override
+			public void run() {
+				for (Player player : Bukkit.getOnlinePlayers())
+					resourcepackReq.add(player.getUniqueId());
+			}
+		}.runTaskLater(this, 1);
+		if (Bukkit.getPluginManager().getPlugin("PluginConstructorAPI") == null)
+			new DependencyDownloader(this, 276723);
+		Bukkit.getPluginManager().registerEvents(this, this);
+		Bukkit.getPluginManager().registerEvents(new AimManager(), this);
+
+		try {
+			Bukkit.getPluginManager().registerEvents(new Update19Events(), this);
+		} catch (Exception | Error e) {
+		}
+
+		try {
+			/* final Updater updater = */new Updater(this, 278412, true);
+			/*
+			 * new BukkitRunnable() { public void run() { // TODO: Works well. Make changes
+			 * for the updaters of // PixelPrinter and Music later. if
+			 * (updater.updaterActive) updater.download(false); }
+			 * }.runTaskTimerAsynchronously(this, 20 /* * 60 *, 20 * 60 * 5);
+			 */
+		} catch (Exception e) {
+		}
+
+		Metrics metrics = new Metrics(this);
+
+		// Optional: Add custom charts
+		metrics.addCustomChart(new Metrics.SimplePie("GunCount", new java.util.concurrent.Callable<String>() {
+			@Override
+			public String call() throws Exception {
+				return gunRegister.size() + "";
+			}
+		}));
+	}
+
+	public void reloadVals() {
+		
+		this.gunRegister.clear();
+		this.ammoRegister.clear();
+		this.miscRegister.clear();
+		interactableBlocks.clear();
 
 		m = new CustomYml(new File(getDataFolder(), "messages.yml"));
 		S_ANVIL = (String) m.a("NoPermAnvilMessage", S_ANVIL);
@@ -152,17 +200,8 @@ public class Main extends JavaPlugin implements Listener {
 		S_ITEM_DURIB = (String) m.a("Lore_Durib", S_ITEM_DURIB);
 		S_ITEM_ING = (String) m.a("Lore_ingredients", S_ITEM_ING);
 
-		new BukkitRunnable() {
-			@Override
-			public void run() {
-				for (Player player : Bukkit.getOnlinePlayers())
-					resourcepackReq.add(player.getUniqueId());
-			}
-		}.runTaskLater(this, 1);
-		if (Bukkit.getPluginManager().getPlugin("PluginConstructorAPI") == null)
-			new DependencyDownloader(this, 276723);
-		Bukkit.getPluginManager().registerEvents(this, this);
-		Bukkit.getPluginManager().registerEvents(new AimManager(), this);
+		if (!new File(getDataFolder(), "config.yml").exists())
+			saveDefaultConfig();
 
 		shouldSend = (boolean) a("useDefaultResourcepack", true);
 		UnlimitedAmmoPistol = (boolean) a("UnlimitedPistolAmmo", false);
@@ -173,7 +212,7 @@ public class Main extends JavaPlugin implements Listener {
 		UnlimitedAmmoRPG = (boolean) a("UnlimitedRocketAmmo", false);
 		enableDurability = (boolean) a("EnableWeaponDurability", false);
 
-		bulletStep = (double) a("BulletDetection.step", 0.25);
+		bulletStep = (double) a("BulletDetection.step", 0.10);
 
 		blockbullet_door = (boolean) a("BlockBullets.door", false);
 		blockbullet_halfslabs = (boolean) a("BlockBullets.halfslabs", false);
@@ -185,10 +224,16 @@ public class Main extends JavaPlugin implements Listener {
 		sendOnJoin = (boolean) a("sendOnJoin", false);
 
 		enableBulletTrails = (boolean) a("enableBulletTrails", true);
-	smokeSpacing = (double) a("BulletTrailsSpacing", 0.5);
+		smokeSpacing = (double) a("BulletTrailsSpacing", 0.5);
 
 		enableVisibleAmounts = (boolean) a("enableVisableBulletCounts", true);
 		reloadOnF = (boolean) a("enableReloadingWhenSwapToOffhand", true);
+
+		try {
+			bulletTrail = Particle.valueOf((String) a("Bullet-Particle-Type", "CLOUD"));
+			a("ACCEPTED-BULLET-PARTICLE-VALUES", "https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Particle.html");
+		} catch (Exception | Error e) {
+		}
 
 		try {
 			guntype = Material.matchMaterial((String) a("gunMaterialType", guntype.toString()));
@@ -254,6 +299,8 @@ public class Main extends JavaPlugin implements Listener {
 				(int) a("Weapon.M16.Damage", 3)));
 		gunRegister.put(m(8), new Remmington((int) a("Weapon.Remmington.Durability", 500),
 				getIngredients("Remmington", stringsMetalRif), (int) a("Weapon.Remmington.Damage", 1)));
+		gunRegister.put(m(9), new FNFal((int) a("Weapon.FNFal.Durability", 1000),
+				getIngredients("FNFal", stringsMetalRif), (int) a("Weapon.FNFal.Damage", 1)));
 		gunRegister.put(m(10), new RPG((int) a("Weapon.RPG.Durability", 100), getIngredients("RPG", stringsRPG)));
 		gunRegister.put(m(11), new UMP((int) a("Weapon.UMP.Durability", 1000), getIngredients("UMP", stringsPistol),
 				(int) a("Weapon.UMP.Damage", 2)));
@@ -274,7 +321,7 @@ public class Main extends JavaPlugin implements Listener {
 		if (saveTheConfig)
 			saveConfig();
 
-		if (!new File(getDataFolder(), "newGuns/examplegun.yml").exists()) {
+		if (!new File(getDataFolder(), "newGuns/examplegun.yml").exists()){
 			if (!new File(getDataFolder(), "newGuns").exists()) {
 				new File(getDataFolder(), "newGuns").mkdirs();
 			}
@@ -458,31 +505,6 @@ public class Main extends JavaPlugin implements Listener {
 				e.printStackTrace();
 			}
 		}
-		try {
-			Bukkit.getPluginManager().registerEvents(new Update19Events(), this);
-		} catch (Exception | Error e) {
-		}
-
-		try {
-			/* final Updater updater = */new Updater(this, 278412, true);
-			/*
-			 * new BukkitRunnable() { public void run() { // TODO: Works well. Make changes
-			 * for the updaters of // PixelPrinter and Music later. if
-			 * (updater.updaterActive) updater.download(false); }
-			 * }.runTaskTimerAsynchronously(this, 20 /* * 60 *, 20 * 60 * 5);
-			 */
-		} catch (Exception e) {
-		}
-
-		Metrics metrics = new Metrics(this);
-
-		// Optional: Add custom charts
-		metrics.addCustomChart(new Metrics.SimplePie("GunCount", new java.util.concurrent.Callable<String>() {
-			@Override
-			public String call() throws Exception {
-				return gunRegister.size() + "";
-			}
-		}));
 	}
 
 	@EventHandler
@@ -617,6 +639,12 @@ public class Main extends JavaPlugin implements Listener {
 				s.add("giveGun");
 			if (b("giveammo", args[0]))
 				s.add("giveAmmo");
+			if (b("craft", args[0]))
+				s.add("craft");
+			if (b("getOpenGunSlot", args[0]))
+				s.add("getOpenGunSlot");
+			if (b("reload", args[0]))
+				s.add("reload");
 
 			return s;
 		}
@@ -644,8 +672,37 @@ public class Main extends JavaPlugin implements Listener {
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 		if (command.getName().equalsIgnoreCase("QualityArmory")) {
-
 			if (args.length > 0) {
+				if (args[0].equalsIgnoreCase("getOpenGunSlot")) {
+					if (sender.hasPermission("qualityarmory.getopengunslot")) {
+						List<MaterialStorage> getAllKeys = new ArrayList<>();
+						getAllKeys.addAll(gunRegister.keySet());
+						getAllKeys.addAll(ammoRegister.keySet());
+						getAllKeys.addAll(miscRegister.keySet());
+						int openID = 1;
+						for (MaterialStorage i : getAllKeys) {
+							if (i.getMat() == guntype)
+								if (i.getData() > openID)
+									openID = i.getData();
+						}
+						sender.sendMessage(prefix + " The next open slot for \"" + guntype.name() + "\"-base-guns is "
+								+ (openID + 1));
+						return true;
+					} else {
+						sender.sendMessage(prefix + ChatColor.RED + S_NOPERM);
+						return true;
+					}
+				}
+				if (args[0].equalsIgnoreCase("reload")) {
+					if (sender.hasPermission("qualityarmory.reload")) {
+						reloadVals();
+						sender.sendMessage(prefix + " Guns and configs have been reloaded.");
+						return true;
+					} else {
+						sender.sendMessage(prefix + ChatColor.RED + S_NOPERM);
+						return true;
+					}
+				}
 				if (args[0].equalsIgnoreCase("giveGun")) {
 					if (!sender.hasPermission("qualityarmory.give")) {
 						sender.sendMessage(prefix + ChatColor.RED + S_NOPERM);
@@ -797,8 +854,7 @@ public class Main extends JavaPlugin implements Listener {
 		if (e.getClickedInventory() != null && e.getClickedInventory().getTitle().equals(S_craftingBenchName)) {
 			e.setCancelled(true);
 			if (e.getCurrentItem() != null) {
-	
-				
+
 				if (isGun(e.getCurrentItem())) {
 					Gun g = getGun(e.getCurrentItem());
 					if (lookForIngre((Player) e.getWhoClicked(), g)
@@ -849,7 +905,7 @@ public class Main extends JavaPlugin implements Listener {
 									Sound.valueOf("ANVIL_BREAK"), 1, 1);
 						}
 					}
-				}else if (isMisc(e.getCurrentItem())) {
+				} else if (isMisc(e.getCurrentItem())) {
 					ArmoryBaseObject g = getMisc(e.getCurrentItem());
 					if (lookForIngre((Player) e.getWhoClicked(), g)
 							|| e.getWhoClicked().getGameMode() == GameMode.CREATIVE) {
@@ -876,9 +932,7 @@ public class Main extends JavaPlugin implements Listener {
 						}
 					}
 				}
-				
-				
-				
+
 			}
 			return;
 		}
@@ -1037,7 +1091,7 @@ public class Main extends JavaPlugin implements Listener {
 
 		if (e.getItem() != null) {
 			// Quick bugfix for specifically this item.
-			if ((!isGun(e.getItem())) && !isAmmo(e.getItem())&&!isMisc(e.getItem()) && (!isIS(e.getItem()))) {
+			if ((!isGun(e.getItem())) && !isAmmo(e.getItem()) && !isMisc(e.getItem()) && (!isIS(e.getItem()))) {
 				if ((gunRegister.containsKey(
 						MaterialStorage.getMS(e.getItem().getType(), (int) e.getItem().getDurability() + 1))
 						|| ammoRegister.containsKey(
@@ -1187,6 +1241,9 @@ public class Main extends JavaPlugin implements Listener {
 								// be checked later.
 							}
 						}
+						try {
+							me.zombie_striker.pluginconstructor.HotbarMessager.sendHotBarMessage(e.getPlayer(), ChatColor.GOLD+" "+g.getDisplayName()+" : "+ItemFact.getAmount(usedItem)+"/"+g.getMaxBullets());
+						}catch(Error|Exception e2) {}
 					}
 				} else {
 					if (e.getClickedBlock() != null && interactableBlocks.contains(e.getClickedBlock().getType())) {
@@ -1223,6 +1280,10 @@ public class Main extends JavaPlugin implements Listener {
 									g.reload(e.getPlayer());
 								}
 							}
+
+							try {
+								me.zombie_striker.pluginconstructor.HotbarMessager.sendHotBarMessage(e.getPlayer(), ChatColor.GOLD+" "+g.getDisplayName()+" : "+ItemFact.getAmount(usedItem)+"/"+g.getMaxBullets());
+							}catch(Error|Exception e2) {}
 						}
 					}
 				}

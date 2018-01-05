@@ -103,7 +103,7 @@ public class GunUtil {
 					if (Main.enableBulletTrails)
 						if (smokeDistance >= Main.smokeSpacing) {
 							try {
-								start.getWorld().spawnParticle(org.bukkit.Particle.CLOUD, start, 0);
+								start.getWorld().spawnParticle((Particle) Main.bulletTrail, start, 0);
 							} catch (Error e2) {
 							}
 							smokeDistance = 0;

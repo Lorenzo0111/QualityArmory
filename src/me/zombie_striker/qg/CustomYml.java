@@ -29,4 +29,8 @@ public class CustomYml {
 			e.printStackTrace();
 		}
 	}
+	
+	public FileConfiguration getConfig() {
+		return c;
+	}
 }
