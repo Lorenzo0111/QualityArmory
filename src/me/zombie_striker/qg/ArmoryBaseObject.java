@@ -13,4 +13,6 @@ public interface ArmoryBaseObject {
 	
 	public List<String> getCustomLore();
 	public String getDisplayName();
+	
+	public double cost();
 }

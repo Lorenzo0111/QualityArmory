@@ -38,6 +38,8 @@ public class AimManager implements Listener {
 					if (lasLocCheck.containsKey(p.getUniqueId())) {
 						long s = System.currentTimeMillis()
 								- lasLocCheck.get(p.getUniqueId());
+						if(s<=0)
+							s=1;
 						if (s < 800) {
 							// less than 1.5 sec
 							sway *= Math.min(1.3, 800 / s);

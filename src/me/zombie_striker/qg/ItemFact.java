@@ -31,7 +31,6 @@ public class ItemFact {
 		if (g.isAutomatic()) {
 			lore.add(ChatColor.DARK_GRAY + "[LMB] to use Single-fire");
 			lore.add(ChatColor.DARK_GRAY + "[RMB] to reload");
-			lore.add(ChatColor.DARK_GRAY + "[Sneak]+[RMB] to use Automatic-firing");
 		} else {
 			lore.add(ChatColor.DARK_GRAY + "[LMB] to use Single-fire");
 			lore.add(ChatColor.DARK_GRAY + (Main.enableIronSightsON_RIGHT_CLICK ? "[DropItem]" : "[RMB]")
@@ -41,7 +40,7 @@ public class ItemFact {
 						+ " to open ironsights");
 		}
 
-		if (current != null && current.getItemMeta().hasLore())
+		if (current != null && current.hasItemMeta() && current.getItemMeta().hasLore())
 			for (String s : current.getItemMeta().getLore()) {
 				if (ChatColor.stripColor(s).contains("UUID")) {
 					lore.add(s);
@@ -49,6 +48,16 @@ public class ItemFact {
 				}
 			}
 		return lore;
+	}
+
+	public static ItemStack addShopLore(ArmoryBaseObject obj, ItemStack current) {
+		ItemMeta meta = current.getItemMeta();
+		List<String> lore = meta.getLore();
+		lore.add(ChatColor.GOLD+"Price: " + obj.cost());
+		meta.setLore(lore);
+		ItemStack is = current;
+		is.setItemMeta(meta);
+		return is;
 	}
 
 	public static List<String> getCraftingGunLore(Gun g) {

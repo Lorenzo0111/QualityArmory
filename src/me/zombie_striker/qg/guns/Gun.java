@@ -2,11 +2,12 @@ package me.zombie_striker.qg.guns;
 
 import me.zombie_striker.qg.ArmoryBaseObject;
 import me.zombie_striker.qg.ammo.Ammo;
+import me.zombie_striker.qg.guns.utils.WeaponSounds;
 
 import org.bukkit.entity.Player;
 
 public interface Gun extends ArmoryBaseObject{
-	public void shoot(Player player);
+	public boolean shoot(Player player);
 	public int getMaxBullets();
 	public boolean playerHasAmmo(Player player);
 	public void reload(Player player);	
@@ -21,4 +22,5 @@ public interface Gun extends ArmoryBaseObject{
 	
 
 	public WeaponSounds getWeaponSound();
+	
 }

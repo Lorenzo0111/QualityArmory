@@ -20,7 +20,8 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import me.zombie_striker.qg.Main;
 import me.zombie_striker.qg.MaterialStorage;
-import me.zombie_striker.qg.guns.WeaponSounds;
+import me.zombie_striker.qg.guns.utils.WeaponSounds;
+import me.zombie_striker.qg.handlers.ExplosionHandler;
 
 public class Grenades implements ThrowableItems {
 
@@ -28,8 +29,14 @@ public class Grenades implements ThrowableItems {
 
 	public HashMap<Entity, ThrowableHolder> grenadeHolder = new HashMap<>();
 
-	public Grenades(ItemStack[] ingg) {
+	double cost;
+	
+	public Grenades(ItemStack[] ingg, double cost) {
 		this.ing = ingg;
+		this.cost = cost;
+	}@Override
+	public double cost() {
+		return cost;
 	}
 
 	@Override
@@ -73,27 +80,27 @@ public class Grenades implements ThrowableItems {
 		if (grenadeHolder.containsKey(thrower)) {
 			ThrowableHolder holder = grenadeHolder.get(thrower);
 			ItemStack g = thrower.getItemInHand();
-			if(thrower.getGameMode()!=GameMode.CREATIVE) {
+			if (thrower.getGameMode() != GameMode.CREATIVE) {
 				thrower.setItemInHand(null);
 			}
 			g.setAmount(1);
-			Item grenade = holder.getHolder().getWorld().dropItem(holder.getHolder().getLocation().add(0,1.5,0),g);
+			Item grenade = holder.getHolder().getWorld().dropItem(holder.getHolder().getLocation().add(0, 1.5, 0), g);
 			grenade.setPickupDelay(Integer.MAX_VALUE);
 			grenade.setVelocity(thrower.getLocation().getDirection().normalize().multiply(1.2));
 			holder.setHolder(grenade);
 			thrower.getWorld().playSound(thrower.getLocation(), Sound.ENTITY_ARROW_SHOOT, 1, 1.5f);
-			
+
 			grenadeHolder.put(grenade, holder);
 			grenadeHolder.remove(thrower);
-		}else {
-			thrower.sendMessage(Main.prefix+" Pull the pin first...");
+		} else {
+			thrower.sendMessage(Main.prefix + " Pull the pin first...");
 		}
 	}
 
 	@Override
 	public void onLeftClick(Player thrower) {
 		if (grenadeHolder.containsKey(thrower)) {
-			thrower.sendMessage(Main.prefix+"You already pulled the pin!");
+			thrower.sendMessage(Main.prefix + "You already pulled the pin!");
 			thrower.playSound(thrower.getLocation(), WeaponSounds.RELOAD_BULLET.getName(), 1, 1);
 			return;
 		}
@@ -108,7 +115,9 @@ public class Grenades implements ThrowableItems {
 				if (h.getHolder() instanceof Item) {
 					h.getHolder().remove();
 				}
-
+				if (Main.enableExplosionDamage) {
+					ExplosionHandler.handleExplosion(h.getHolder().getLocation(), 3, 1);
+				}
 				try {
 					h.getHolder().getWorld().spawnParticle(org.bukkit.Particle.EXPLOSION_HUGE,
 							h.getHolder().getLocation(), 0);
@@ -136,7 +145,7 @@ public class Grenades implements ThrowableItems {
 				grenadeHolder.remove(h.getHolder());
 			}
 		}.runTaskLater(Main.getInstance(), 5 * 20));
-		grenadeHolder.put(thrower,h);
+		grenadeHolder.put(thrower, h);
 
 	}
 

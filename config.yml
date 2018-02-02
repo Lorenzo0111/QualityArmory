@@ -1,0 +1,128 @@
+# Controls whether resoucepacks are sent to users. If you do not want any custom textures, set this to false
+useDefaultResourcepack: true
+
+#Controls whether a gun will have unlimited ammo
+UnlimitedPistolAmmo: false
+UnlimitedShotgunAmmo: false
+UnlimitedRifleAmmo: false
+UnlimitedSMGAmmo: false
+UnlimitedSniperAmmo: false
+UnlimitedRocketAmmo: false
+#Detmines if guns should degrade after every shot. Once durability is 0, the gun will no longer fire
+EnableWeaponDurability: false
+
+#Bullet detection step. Usefull for checking if a bullet hit a corner of a block.
+BulletDetection:
+  step: 0.10
+# In case you do not want bullets firing through leaves, water, halfslabs or other blocks, you can disable it here.
+BlockBullets:
+  door: false
+  halfslabs: false
+  leaves: false
+  water: false
+#Controls the spacing between bullet particles
+BulletTrailsSpacing: 0.5
+#In case you do not want to let anvils control the gun crafting GUI
+overrideAnvil: false
+#Controls is resoucepacks are sent right when they join
+sendOnJoin: false
+#Determines if bullet trains should be allowed
+enableBulletTrails: true
+#Determines if item amounts are displayed on the itemstack
+enableVisableBulletCounts: true
+#Determines if a gun should be reloaded when the player swaps hands
+enableReloadingWhenSwapToOffhand: true
+#The default gun type. DIAMOND_HOE is recommended
+gunMaterialType: DIAMOND_HOE
+#Determines the resoucepack that should be used. If you want to use your own resoucepack, set the override to true
+DefaultResoucepackOverride: false
+DefaultResoucepack: https://www.dropbox.com/s/uztx0depegg2hat/QualityArmory%201.5.zip?dl=1
+#Determines if rightclicking should enable ironsights.
+IronSightsOnRightCLick: false
+#Determines if RPGS or grenades can damage terrain
+enableExplosionDamage: false
+#Determines the crafting recipe for guns
+Crafting:
+  Ammo556: &id001
+  - IRON_INGOT,0,1
+  - SULPHUR,0,1
+  - REDSTONE,0,1
+  Ammo9mm: *id001
+  AmmoBuckshot: *id001
+  AmmoRPG:
+  - IRON_INGOT,0,4
+  - SULPHUR,0,6
+  - REDSTONE,0,1
+  p30: &id002
+  - IRON_INGOT,0,5
+  - REDSTONE,0,2
+  MP5K: *id002
+  AK47: &id004
+  - IRON_INGOT,0,12
+  - WOOD,0,2
+  - REDSTONE,0,5
+  M16: &id003
+  - IRON_INGOT,0,15
+  - REDSTONE,0,5
+  Remmington: *id003
+  RPG:
+  - IRON_INGOT,0,32
+  - REDSTONE,0,10
+  SW1911: *id002
+  M40: *id004
+  Enfield: &id005
+  - IRON_INGOT,0,12
+  - GOLD_INGOT,0,2
+  - REDSTONE,0,5
+  Henry: *id005
+  MouserC96: *id002
+  UMP:
+  - IRON_INGOT,0,5
+  - REDSTONE,0,2
+  Grenades:
+  - IRON_INGOT,0,6
+  - SULPHUR,0,10
+  P30: &id006
+  - IRON_INGOT,0,5
+  - REDSTONE,0,2
+  PKP: *id006
+#Some default values for guns. In case you want to change the balance of the guns
+Weapon:
+  P30:
+    Durability: 500
+    Damage: 3
+  MP5K:
+    Durability: 1000
+    Damage: 1
+  AK47:
+    Durability: 1000
+    Damage: 3
+  M16:
+    Durability: 1000
+    Damage: 3
+  Remmington:
+    Durability: 500
+    Damage: 1
+  RPG:
+    Durability: 100
+  SW1911:
+    Durability: 500
+    Damage: 2
+  M40:
+    Durability: 500
+    Damage: 5
+  Enfield:
+    Durability: 500
+    Damage: 2
+  Henry:
+    Durability: 500
+    Damage: 3
+  MouserC96:
+    Durability: 500
+    Damage: 2
+  UMP:
+    Durability: 1000
+    Damage: 2
+  PKP:
+    Durability: 500
+    Damage: 3

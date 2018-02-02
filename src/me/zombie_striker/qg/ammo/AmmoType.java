@@ -1,24 +1,19 @@
 package me.zombie_striker.qg.ammo;
 
-import me.zombie_striker.qg.Main;
+import java.util.HashMap;
+import java.util.Set;
 
-public enum AmmoType {
-	Ammo556(Ammo556.class),Ammo9mm(Ammo9mm.class),AmmoRPG(AmmoRPG.class),AmmoBuckshot(AmmoShotGun.class);
+public class AmmoType {
+
+	private static HashMap<String, Ammo> ammoHolder = new HashMap<>();
 	
-	public Ammo type;
-	
-	private AmmoType(Class<? extends Ammo> k) {
-		type = getAmmoInstance(k);
+	public static void addAmmo(Ammo ammo, String key) {
+		ammoHolder.put(key, ammo);
 	}
-	public Ammo getType(){
-		return type;
+	public static Ammo getAmmo(String key) {
+		return ammoHolder.get(key);
 	}
-	
-	private static Ammo getAmmoInstance(Class<? extends Ammo> clas){
-		for(Ammo a : Main.ammoRegister.values()){
-			if(a.getClass().equals(clas))
-				return a;
-		}
-		return null;
+	public static Set<String> getKeys(){
+		return ammoHolder.keySet();
 	}
 }

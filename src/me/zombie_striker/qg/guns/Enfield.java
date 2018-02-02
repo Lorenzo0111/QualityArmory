@@ -3,6 +3,9 @@ package me.zombie_striker.qg.guns;
 import me.zombie_striker.qg.Main;
 import me.zombie_striker.qg.MaterialStorage;
 import me.zombie_striker.qg.ammo.AmmoType;
+import me.zombie_striker.qg.guns.utils.GunUtil;
+import me.zombie_striker.qg.guns.utils.WeaponSounds;
+import me.zombie_striker.qg.guns.utils.WeaponType;
 
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -47,7 +50,7 @@ public class Enfield extends DefaultGun {
 	}
 
 
-	public Enfield(int d,ItemStack[] ing, float damage) {
-		super("Enfield-1853", MaterialStorage.getMS(Main.guntype,18), WeaponType.PISTOL, true, AmmoType.Ammo9mm,  0.2,2, 7, damage,false,d,WeaponSounds.GUN_SMALL,ing);
+	public Enfield(int d,ItemStack[] ing, float damage, double cost) {
+		super("Enfield-1853", MaterialStorage.getMS(Main.guntype,18), WeaponType.PISTOL, true, AmmoType.getAmmo("9mm"),  0.2,2, 7, damage,false,d,WeaponSounds.GUN_SMALL,cost,ing);
 	}
 }

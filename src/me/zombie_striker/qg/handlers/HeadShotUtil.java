@@ -18,20 +18,17 @@ public class HeadShotUtil {
 		case "SQUID":
 		case "SPIDER":
 		case "CAVE_SPIDER":
-			return e.getLocation().distance(shot) < e.getLocation().clone()
-					.add(0, 1, 0).distance(shot);
+			return Math.abs(e.getLocation().getY()-shot.getY())<1;
 		case "ENDERMAN":
 		case "IRON_GOLEM":
-			return e.getLocation().distance(shot) < e.getLocation().clone()
-					.add(0, 4, 0).distance(shot);
+			return Math.abs(e.getLocation().getY()-shot.getY()+2.9)<1;
 		case "MAGMA_CUBE":
 		case "SLIME":
 		case "GUARDIAN":
 		case "GHAST":
 			return true;
 		}
-		return e.getLocation().distance(shot) < e.getLocation().clone()
-				.add(0, 2, 0).distance(shot);
+		return Math.abs(e.getLocation().getY()-shot.getY()+1.9)<1;
 	}
 
 	public static boolean nearestDistance(Entity e, Location closest) {

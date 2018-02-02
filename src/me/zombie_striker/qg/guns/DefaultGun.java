@@ -1,3 +1,4 @@
+
 package me.zombie_striker.qg.guns;
 
 import me.zombie_striker.qg.ItemFact;
@@ -5,6 +6,9 @@ import me.zombie_striker.qg.Main;
 import me.zombie_striker.qg.MaterialStorage;
 import me.zombie_striker.qg.ammo.Ammo;
 import me.zombie_striker.qg.ammo.AmmoType;
+import me.zombie_striker.qg.guns.utils.GunUtil;
+import me.zombie_striker.qg.guns.utils.WeaponSounds;
+import me.zombie_striker.qg.guns.utils.WeaponType;
 import me.zombie_striker.qg.handlers.IronSightsToggleItem;
 import me.zombie_striker.qg.handlers.Update19OffhandChecker;
 
@@ -21,7 +25,7 @@ public class DefaultGun implements Gun {
 	private ItemStack[] ing;
 	private WeaponType type;
 	private boolean hasIronSights;
-	private AmmoType ammotype;
+	private Ammo ammotype;
 	private double acc;
 	private double swaymultiplier;
 	private int maxbull;
@@ -33,9 +37,11 @@ public class DefaultGun implements Gun {
 	private String displayname=null;
 	
 	private WeaponSounds weaponSounds;
+	
+	double cost = 100;
 
-	public DefaultGun(String name, MaterialStorage id, WeaponType type, boolean h, AmmoType am, double acc,
-			double swaymult, int maxBullets, float damage, boolean isAutomatic, int durib, WeaponSounds ws) {
+	public DefaultGun(String name, MaterialStorage id, WeaponType type, boolean h, Ammo am, double acc,
+			double swaymult, int maxBullets, float damage, boolean isAutomatic, int durib, WeaponSounds ws, double cost) {
 		this.name = name;
 		this.id = id;
 		this.type = type;
@@ -49,12 +55,14 @@ public class DefaultGun implements Gun {
 		this.swaymultiplier = swaymult;
 		this.isAutomatic = isAutomatic;
 		this.weaponSounds = ws;
+
+		this.cost = cost;
 		
 		this.displayname = ChatColor.GOLD + name;
 	}
 
-	public DefaultGun(String name, MaterialStorage id, WeaponType type, boolean h, AmmoType am, double acc,
-			double swaymult, int maxBullets, float damage, boolean isAutomatic, int durib, WeaponSounds ws,  ItemStack[] ing) {
+	public DefaultGun(String name, MaterialStorage id, WeaponType type, boolean h, Ammo am, double acc,
+			double swaymult, int maxBullets, float damage, boolean isAutomatic, int durib, WeaponSounds ws, double cost,  ItemStack[] ing) {
 		this.name = name;
 		this.id = id;
 		this.type = type;
@@ -69,12 +77,14 @@ public class DefaultGun implements Gun {
 		this.isAutomatic = isAutomatic;
 		this.weaponSounds = ws;
 		
+
+		this.cost = cost;
 		
 		this.displayname = ChatColor.GOLD + name;
 	}
 
-	public DefaultGun(String name, MaterialStorage id, WeaponType type, boolean h, AmmoType am, double acc,
-			double swaymult, int maxBullets, float damage, boolean isAutomatic, int durib, WeaponSounds ws,List<String> extralore,String displayname, ItemStack[] ing) {
+	public DefaultGun(String name, MaterialStorage id, WeaponType type, boolean h, Ammo am, double acc,
+			double swaymult, int maxBullets, float damage, boolean isAutomatic, int durib, WeaponSounds ws,List<String> extralore,String displayname, double cost, ItemStack[] ing) {
 		this.name = name;
 		this.id = id;
 		this.type = type;
@@ -88,11 +98,16 @@ public class DefaultGun implements Gun {
 		this.swaymultiplier = swaymult;
 		this.isAutomatic = isAutomatic;
 		this.weaponSounds = ws;
+		
+		this.cost = cost;
 		
 		this.extralore = extralore;
 		this.displayname = ChatColor.translateAlternateColorCodes('&',displayname);
 	}
-
+@Override
+public double cost() {
+	return cost;
+}
 	public boolean isAutomatic() {
 		return isAutomatic;
 	}
@@ -112,14 +127,20 @@ public class DefaultGun implements Gun {
 		return 1;
 	}
 
-	@SuppressWarnings("deprecation")
 	@Override
-	public void shoot(Player player) {
+	public boolean shoot(Player player) {
+		return DefaultGun.USE_THIS_INSTEAD_OF_INDEVIDUAL_SHOOT_METHODS(this , player, getSway());
+	}
+	
+	@SuppressWarnings("deprecation")
+	public static boolean USE_THIS_INSTEAD_OF_INDEVIDUAL_SHOOT_METHODS(Gun g,Player player, double acc) {
 		boolean offhand = player.getInventory().getItemInHand().getDurability() == IronSightsToggleItem.getData();
 		if ((!offhand && ItemFact.getAmount(player.getInventory().getItemInHand()) > 0)
 				|| (offhand && Update19OffhandChecker.hasAmountOFfhandGreaterthan(player, 0))) {
-			GunUtil.basicShoot(offhand, this, player, acc);
-		}
+			GunUtil.basicShoot(offhand, g, player, acc);
+			return true;
+		}		
+		return false;
 	}
 
 	@Override
@@ -151,7 +172,7 @@ public class DefaultGun implements Gun {
 
 	@Override
 	public Ammo getAmmoType() {
-		return ammotype.getType();
+		return ammotype;
 	}
 
 	@Override

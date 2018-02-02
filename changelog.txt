@@ -1,0 +1,229 @@
+1.1.41
+	Added shop when using /QA shop
+	Added prices to guns
+	Added optional explosion block-damage.
+	Added /qa listItemIds
+
+1.1.40
+	Fixed NPE if gun was not registered
+
+1.1.39
+	Replaced the sub-Commands giveAmmo and giveGun to include all items under the new subcommand "give"
+	Added system to now include new ammo types.
+	Added ability to add new ammo to the game
+	Added ability to change a gun's ammo type to the custom ammo	
+
+1.1.38
+	Fixed problem where good hoes turn into guns.
+
+1.1.37
+	Added github updaters
+	Fixed NPE if gun does not have displayname.
+	Fixed HeadshotUtil
+	Added ping if player got headshot. Should make it easier to detect if double damage occured.
+
+1.1.36
+	Fixed ammo for RPGS
+	Re-Added hotbar messages.
+
+1.1.35
+	Fixed error regarding ammo
+
+1.1.34
+	Swapped system to support no visible item amounts by default. Should fix a lot of problems in the future.
+	Fixed problems relating to no-visible item amounts system.
+
+1.1.33
+	Removed hotbar messages until I can fix the hoybar error
+
+1.1.32
+	Added hotbar messages for bullet count.
+
+1.1.31
+	Added FNFal
+
+1.1.30
+	Added customizable particle effects
+
+1.1.29
+	Fixed the config. Added more commetns
+
+1.1.28
+	Added Grenades
+	Added UMP
+	Added PKP
+	Added BulletTrailSpacing to configure the space between particles
+
+1.1.27
+	Fixed ammo craft-no-name bug
+	Fixed no-open-door-with-ammo bug
+	Added feature to prevent hoppers from creating duplicate guns
+
+1.1.26
+	Added fix for displaynames not showing for custom guns
+	Added fix for dropping items creates more ammo bug.
+	Added Fix for Data-specific materials for ingredients: if the data for ingredient is 0, accept all data types.
+	Added ability to open doors and trapdoors, and activate buttons and levers even if the player is holding a gun
+
+1.1.25
+	Added ability to add non-guns to crafting bench
+	Added more accurate gun sounds for firing and reloading
+	Added ability to create custom non-gun weapons
+	Added ability to change displaynames and lore.
+	Updated resoucepacks
+	Removed message if user is running a  1.8 server. Although the clients may crash, if the user is only on 1.8 for paperspigot, the rest of the plugin should still work on the most part.
+
+1.1.24
+	Added helpful-hints for how to use guns.
+	Shift-RightClick can now active automatic firing.
+	Added ability to add automatic weapons through custom guns. Add the "isAutomatic: true" line to the gun file to make it automatic.
+	Fixed bug where rightclicking when shifting snaps gun back to main hand
+
+1.1.23
+	consoles can now issue commands
+
+1.1.22
+	Fixed giveammo issue
+	Fixed shotgun spread.
+
+1.1.21
+	Fixed itemfact issue.
+
+1.1.20
+	Added support for pre1.11 servers by removing localisednames.
+	Add3d messages.yml
+	Added last argument for giveGun/Ammo. Now you can give it to other players.
+
+1.1.19
+	Added F to reload
+	Fixed RPGs
+
+1.1.18
+	Added ability to remove  visible bullet counts
+	Fixed resoucepack issue (Hopefully)
+	Updated API
+	Fixed ammo counts
+	
+
+1.1.17
+	Fixed item duplication.
+	Added /qa override in case the resoucepacks are not working
+	Fixed shotgun reloading.
+	Fixed item durability.
+	Reduced lag caused from bullets.
+
+1.1.16
+	Added more to QualityArmory api class.
+	Added bStats
+	Fixed problem where rightclick was disabled
+
+1.1.5
+	Fixed rightclick ammo error:
+	Added matertial variable to new items: Now you can modify the material for each gun.
+	Added failsafes in case a custom gun cannot be loaded.
+	Added material id systems to support guns with different materials.
+	A lot of code cleanup.
+	
+
+1.1.14
+	Fixed aiming
+	Added the ability to create custom gun!
+	Added example of custom gun.
+	Fixed aiming util.
+
+1.1.13
+	Added semi- 1.8 and 1.9 support.
+	Fixed particles for older updates.
+	Fixed offhand item removal.
+	Added weapon UUIDs. This should remove the remainder or item duplication bugs.
+
+1.1.12
+	Ironsights will now be always enabled.
+	IronSights have been changed to onShift by default. To use the old rightclick system, change the IronSightsOnRightCLick value in the config,
+	Fixed duplication glitch, hopefully for the last time. (Minecraft, it really would be useful if you always send packets!)
+	Added ability to disable particles for bullets
+
+1.1.11
+	Fixed issue with duplicating items when single-placed.
+	Fixed issue with ammotypes breaking the plugin.
+
+1.1.10
+	-Massive Update
+	Added ironsights to most guns. By default, you can right click any semi-automatic weapon to view ironsights. This can be disabled in the config.
+	Added custom material type support.
+	Fixed problems where guns could be duplicated though dropping, shiftclicking, right clicking, dragging, dieing, swapping items, or off-hand-toggling when reloading.
+	Fixed issue with duplicating ammo. Some ammo, however, may disappear if you trry to merge two large stacks. This does not have anything to do with the plugin, but the way bukkit/spigot handles 'merging' tools.
+	Fixed textures and models for the Enfield, Henry Rifle, and MouserC96.
+	Recreated the M40 rifle. With the addition of ironsights, the model of the scope needed to change, as the old model only had a flat texture for the lense.
+	Removed the ability to swap guns to the offhand (due to duplication glitches posted above).
+	Changed the reload key to Q [Drop] if ironsights are enabled.
+	Automatic fire has been added for weapons that do not have iron sights. Must have iron sights enabled to enable this feature. Currently, this is just the MP5K and the AK47.
+	Added sounds to bullet fire. Now you should be able to hear where the bullet went instead of having to look at the particle trail.
+	Added checks so you can't shoot the entity you are riding.
+	*Added semi-support for NewItems. In the resoucepack, have added a gold_hoe_EXAMPLE.jspon file. This will add all the textures to the golden hoe, so you can merge the two resoucepacks without conflicts. 
+	Implemented a system to disable reloading if a user dies. 
+	Implemented system to 'break' reloading guns if they are glitched. Even if a new update will change something so guns can be duplicated, the guns should no longer work.
+	Fixed gun lists for commands. They now support guns with spaces in their names.
+	Reduced gun class sizes.
+	*Added framework for new gun additions. New gun or more gun customization to come in the next update. 
+
+1.0.9
+	Added Henry Rifle
+	Added Mouser-C96
+	Added Enfield-1853
+	Fixed shotgun reloading
+
+1.0.8
+	Actually Fixed issue with WG.
+	Fixed issue with resoucepacks
+	Added crafting sounds
+	Fixed ammo crafting glitch
+	Added fix for sounds: The console wont print out an error if you're on 1.8 or lower
+
+1.0.7
+	Made mistake with WG. Fixed in this update.
+
+1.0.6
+	Added worldguard support
+
+1.0.5
+	Added warnings if users are on 1.7 or 1.8.
+	Disables textures if the users are on 1.7 or 1.8
+	Added sending resoucepack on item given to users. Only sends resoucepack to users onJoin if they have a gun in their inventory. Reduces the amount of users who may recieve an annoying message on joining (expecially if they don't even have access to those guns.)
+	Custom resoucepack support.
+
+1.0.4
+	Added crafting
+	Added /qa craft
+	Fixed unlimitedAmmo system.
+	Added pickup glitch
+	Added ability to combine ammo
+	
+
+1.0.3
+	Quick fix to remove resoucepack message on join.
+	Added help message if the user sent an invalid command.
+
+1.0.2
+	Added Ammo
+	Fixed bullet path detection
+	Fixed headshot detection
+	Fixed texturepack, removed damage bar from items
+	Added QualityArmory class so other plugins can access ItemStacks
+	Added ability to toggle whether leaves, doors, water, or halfslabs block bullets
+	Added slab detection. No longer will half slabs block bullets if the bullet is above the bounding box.
+	[OPTIONAL]Added gun degradation.
+	Added customizable durability for specific guns
+	[OPTIONAL]Added ability to toggle if guns have unlimited ammo
+	Added ability to log the shooter when entity is damaged
+
+1.0.1
+	Added RPG
+	Added M40
+	Added Rockets
+	Fixed Texture link
+	Fixed resoucepack to accept users that are already online, remove players when they quit, and send the request two seconds ever joining the server
+
+1.0.0
+	init post
+

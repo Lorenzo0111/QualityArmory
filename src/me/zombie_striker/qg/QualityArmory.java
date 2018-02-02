@@ -1,7 +1,10 @@
 package me.zombie_striker.qg;
 
+import me.zombie_striker.qg.ammo.Ammo;
 import me.zombie_striker.qg.ammo.AmmoType;
 import me.zombie_striker.qg.guns.*;
+import me.zombie_striker.qg.guns.utils.WeaponSounds;
+import me.zombie_striker.qg.guns.utils.WeaponType;
 
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -36,8 +39,8 @@ public class QualityArmory {
 		return null;
 	}
 
-	public static ItemStack getAmmoItemStack(AmmoType type) {
-		return ItemFact.getAmmo(type.type);
+	public static ItemStack getAmmoItemStack(String name) {
+		return ItemFact.getAmmo(AmmoType.getAmmo(name));
 	}
 
 	/**
@@ -56,9 +59,9 @@ public class QualityArmory {
 	 * @return The instance of the gun you created
 	 */
 	public static Gun createSimpleGun(String name, Material mat, int data,
-			WeaponType type, boolean hasIronSights, AmmoType ammotype, double acc,
-			int swayMultiplier, int maxBullets, float damage, int gunDurability) {
-	return createSimpleGun(name, mat, data, type, hasIronSights, ammotype, acc, swayMultiplier, maxBullets, damage,false, gunDurability,WeaponSounds.GUN_MEDIUM);
+			WeaponType type, boolean hasIronSights, Ammo ammotype, double acc,
+			int swayMultiplier, int maxBullets, float damage, int gunDurability,double cost) {
+	return createSimpleGun(name, mat, data, type, hasIronSights, ammotype, acc, swayMultiplier, maxBullets, damage,false, gunDurability,cost,WeaponSounds.GUN_MEDIUM);
 	}
 
 	/**
@@ -78,11 +81,11 @@ public class QualityArmory {
 	 * @return The instance of the gun you created
 	 */
 	public static Gun createSimpleGun(String name, Material mat, int data,
-			WeaponType type, boolean hasIronSights, AmmoType ammotype, double acc,
-			int swayMultiplier, int maxBullets, float damage,boolean isAutomatic, int gunDurability, WeaponSounds sound) {
+			WeaponType type, boolean hasIronSights, Ammo ammotype, double acc,
+			int swayMultiplier, int maxBullets, float damage,boolean isAutomatic, int gunDurability, double cost, WeaponSounds sound) {
 		MaterialStorage mm = MaterialStorage.getMS(mat, data);
 		Gun g = new DefaultGun(name, mm, type, hasIronSights, ammotype, acc,
-				swayMultiplier, maxBullets, damage,isAutomatic, gunDurability,sound);
+				swayMultiplier, maxBullets, damage,isAutomatic, gunDurability,sound,cost);
 		Main.gunRegister.put(mm, g);
 		return g;
 	}

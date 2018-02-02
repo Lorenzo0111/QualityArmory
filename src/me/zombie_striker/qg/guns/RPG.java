@@ -1,6 +1,5 @@
 package me.zombie_striker.qg.guns;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import me.zombie_striker.qg.ItemFact;
@@ -8,6 +7,12 @@ import me.zombie_striker.qg.Main;
 import me.zombie_striker.qg.MaterialStorage;
 import me.zombie_striker.qg.ammo.Ammo;
 import me.zombie_striker.qg.ammo.AmmoType;
+import me.zombie_striker.qg.guns.utils.GunUtil;
+import me.zombie_striker.qg.guns.utils.RocketProjectile;
+import me.zombie_striker.qg.guns.utils.WeaponSounds;
+import me.zombie_striker.qg.guns.utils.WeaponType;
+import me.zombie_striker.qg.handlers.IronSightsToggleItem;
+import me.zombie_striker.qg.handlers.Update19OffhandChecker;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -19,12 +24,15 @@ import org.bukkit.util.Vector;
 
 public class RPG implements Gun {
 
+	
+	private double cost;
+	
 	@SuppressWarnings("deprecation")
 	@Override
-	public void shoot(Player player) {
-		final ItemStack temp = player.getInventory().getItemInHand();
-		ItemMeta im = temp.getItemMeta();
-		if (ItemFact.getAmount(temp) > 0) {
+	public boolean shoot(Player player) {
+		boolean offhand = player.getInventory().getItemInHand().getDurability() == IronSightsToggleItem.getData();
+		if ((!offhand && ItemFact.getAmount(player.getInventory().getItemInHand()) > 0)
+				|| (offhand && Update19OffhandChecker.hasAmountOFfhandGreaterthan(player, 0))) {
 			double sway = getSway();
 			Location start = player.getLocation().clone().add(0, 1.5, 0);
 			Vector go = player.getLocation().getDirection().normalize();
@@ -34,11 +42,42 @@ public class RPG implements Gun {
 
 			new RocketProjectile(start, player, two);
 
-			temp.setAmount(temp.getAmount() - 1);
-			int slot = player.getInventory().getHeldItemSlot();
-			im.setLore(ItemFact.getGunLore(this, temp, 0));
+			
+			
+			ItemStack temp = null;
+			if (offhand)
+				try {
+					temp = player.getInventory().getItemInOffHand();
+				} catch (Error | Exception ff) {
+				}
+			else
+				temp = player.getItemInHand();
+
+			ItemMeta im = temp.getItemMeta();
+
+			if (Main.enableVisibleAmounts)
+				temp.setAmount(temp.getAmount() - 1);
+			int slot;
+			if (offhand) {
+				slot = -1;
+			} else {
+				slot = player.getInventory().getHeldItemSlot();
+			}
+			im.setLore(ItemFact.getGunLore(this, temp, ItemFact.getAmount(temp)));
 			temp.setItemMeta(im);
-			player.getInventory().setItem(slot, temp);
+			if (slot == -1) {
+				try {
+					player.getInventory().setItemInOffHand(temp);
+				} catch (Error e) {
+				}
+			} else {
+				player.getInventory().setItem(slot, temp);
+			}
+			
+			
+			
+			
+
 			try {
 				player.getWorld().playSound(player.getLocation(), Sound.BLOCK_LEVER_CLICK, 5, 1);
 				player.getWorld().playSound(player.getLocation(), Sound.ENTITY_WITHER_SHOOT, 8, 2);
@@ -48,8 +87,13 @@ public class RPG implements Gun {
 				player.getWorld().playSound(player.getLocation(), Sound.valueOf("WITHER_SHOOT"), 8, 2);
 				player.getWorld().playSound(player.getLocation(), Sound.valueOf("EXPLODE"), 8, 0.7f);
 			}
+			return true;
 		}
-
+		return false;
+	}
+	@Override
+	public double cost() {
+		return cost;
 	}
 
 	@Override
@@ -79,9 +123,10 @@ public class RPG implements Gun {
 		return 100;
 	}
 
-	public RPG(int d, ItemStack[] ing) {
+	public RPG(int d, ItemStack[] ing, double cost) {
 		durability = d;
 		this.ing = ing;
+		this.cost = cost;
 	}
 
 	ItemStack[] ing;
@@ -100,7 +145,7 @@ public class RPG implements Gun {
 
 	@Override
 	public Ammo getAmmoType() {
-		return AmmoType.AmmoRPG.getType();
+		return AmmoType.getAmmo("rocket");
 	}
 
 	@Override

@@ -3,6 +3,9 @@ package me.zombie_striker.qg.guns;
 import me.zombie_striker.qg.Main;
 import me.zombie_striker.qg.MaterialStorage;
 import me.zombie_striker.qg.ammo.AmmoType;
+import me.zombie_striker.qg.guns.utils.GunUtil;
+import me.zombie_striker.qg.guns.utils.WeaponSounds;
+import me.zombie_striker.qg.guns.utils.WeaponType;
 
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -44,7 +47,7 @@ public class HenryRifle extends DefaultGun {
 		}
 	}
 	
-	public HenryRifle(int d,ItemStack[] ing, float damage) {
-		super("HenryRifle", MaterialStorage.getMS(Main.guntype,19), WeaponType.RIFLE, true, AmmoType.Ammo556,  0.2,2, 9, damage,false,d,WeaponSounds.GUN_MEDIUM,ing);
+	public HenryRifle(int d,ItemStack[] ing, float damage, double cost) {
+		super("HenryRifle", MaterialStorage.getMS(Main.guntype,19), WeaponType.RIFLE, true,AmmoType.getAmmo("556"),  0.2,2, 9, damage,false,d,WeaponSounds.GUN_MEDIUM,cost,ing);
 	}
 }
