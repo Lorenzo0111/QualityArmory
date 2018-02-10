@@ -104,6 +104,10 @@ public class DefaultGun implements Gun {
 		this.extralore = extralore;
 		this.displayname = ChatColor.translateAlternateColorCodes('&',displayname);
 	}
+	@Override
+	public WeaponType getWeaponType() {
+		return type;
+	}
 @Override
 public double cost() {
 	return cost;

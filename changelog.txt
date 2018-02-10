@@ -1,3 +1,24 @@
+1.1.45
+	Bugfix: Fixed NPEs
+
+1.1.44
+	Fixed explosion radius
+	Fixed valid ammo types
+	Fix ammo desc
+	Added Zoom-scope to all guns that is a SNIPER weapontype
+	Fixed inventory size to match amount of items
+	Fixed bullets moving forever after going throigh stairs
+	Added customizable grenade damage in config
+
+1.1.43
+	Added correct returns for /give
+	Fixed ammo bug for /give
+	Fixed gun lore for shops
+	Fixed ingreedient requirement
+
+1.1.42
+	Fixed console error
+
 1.1.41
 	Added shop when using /QA shop
 	Added prices to guns

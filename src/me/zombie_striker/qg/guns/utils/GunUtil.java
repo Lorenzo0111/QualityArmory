@@ -45,9 +45,9 @@ public class GunUtil {
 			boolean headShot = false;
 
 			int maxDistance = range;
-			Block b = p.getTargetBlock(null, range + 2);
+			Block b = p.getTargetBlock(null, range);
 			if (isSolid(b, b.getLocation())) {
-				maxDistance = (int) Math.min(range, p.getTargetBlock(null, range).getLocation().distance(start));
+				maxDistance = (int) Math.min(range, b.getLocation().distance(start));
 			}
 
 			for (Entity e : p.getNearbyEntities(maxDistance, maxDistance, maxDistance)) {
@@ -62,17 +62,19 @@ public class GunUtil {
 								// If the entity is close to the line of fire.
 								if (e instanceof Damageable) {
 									boolean occulde = false;
+									double lastingDist = dis;
 									for (int dist = 0; dist < dis / Main.bulletStep; dist++) {
 										test.add(step);
 										if (isSolid(test.getBlock(), test)) {
 											if (HeadShotUtil.nearestDistance(e, test)) {
 												occulde = true;
+												lastingDist = dist;
 												break;
 											}
 										}
 									}
 									if (!occulde) {
-										dis2 = dis;
+										dis2 = lastingDist;
 										overrideocculde = true;
 										hitTarget = e;
 										headShot = HeadShotUtil.isHeadShot(e, test);

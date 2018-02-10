@@ -26,7 +26,7 @@ public class ItemFact {
 				lore = setDamage(g, lore, getDamage(current));
 			}
 
-		lore.add(ChatColor.GRAY + Main.S_ITEM_AMMO + ": " + g.getAmmoType().getName());
+		lore.add(ChatColor.GRAY + Main.S_ITEM_AMMO + ": " + g.getAmmoType().getDisplayName());
 
 		if (g.isAutomatic()) {
 			lore.add(ChatColor.DARK_GRAY + "[LMB] to use Single-fire");
@@ -53,7 +53,14 @@ public class ItemFact {
 	public static ItemStack addShopLore(ArmoryBaseObject obj, ItemStack current) {
 		ItemMeta meta = current.getItemMeta();
 		List<String> lore = meta.getLore();
-		lore.add(ChatColor.GOLD+"Price: " + obj.cost());
+		for(String loreS : new ArrayList<>(lore)) {
+			if(loreS.startsWith(ChatColor.DARK_RED+"Crafts")||loreS.startsWith(ChatColor.RED + Main.S_ITEM_ING)||loreS.startsWith(ChatColor.RED + "-" )) 
+				lore.remove(loreS);
+			
+		}
+		if(obj.getCraftingReturn()>1)
+			lore.add(ChatColor.DARK_RED+"Returns: "+obj.getCraftingReturn());
+		lore.add(ChatColor.GOLD + "Price: " + obj.cost());
 		meta.setLore(lore);
 		ItemStack is = current;
 		is.setItemMeta(meta);
@@ -105,7 +112,10 @@ public class ItemFact {
 		}
 
 		is.setItemMeta(im);
-		is.setAmount(g.getMaxBullets());
+		if (Main.enableVisibleAmounts)
+			is.setAmount(g.getMaxBullets());
+		else
+			is.setAmount(1);
 
 		is = addGunRegister(is);
 		return is;

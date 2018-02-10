@@ -47,6 +47,8 @@ public class DefaultAmmo implements Ammo{
 		this.returnAmount = returnamount;
 		this.lore = lore;
 		
+		this.cost = cost;
+		
 		AmmoType.addAmmo(this, name);
 	}
 	

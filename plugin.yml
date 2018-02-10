@@ -1,5 +1,5 @@
 main: me.zombie_striker.qg.Main
-version: 1.1.41
+version: 1.1.45
 name: QualityArmory
 commands:
   QualityArmory:
@@ -16,7 +16,7 @@ permissions:
        qualityarmory.give: true
        qualityarmory.create: true
        qualityarmory.reload: true
-       qualityarmory.getopengunslot: 
+       qualityarmory.getopengunslot: true
        qualityarmory.getmaterialsused: true
        qualityarmory.default: true
    qualityarmory.default:

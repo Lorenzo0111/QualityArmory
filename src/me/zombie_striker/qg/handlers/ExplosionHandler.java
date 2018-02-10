@@ -13,9 +13,9 @@ public class ExplosionHandler {
 			Material.COMMAND, Material.COMMAND_CHAIN, Material.COMMAND_MINECART, Material.COMMAND_REPEATING);
 
 	public static void handleExplosion(Location origin, int radius, int power) {
-		for (int x = origin.getBlockX() - radius; x < origin.getBlockX(); x++) {
-			for (int y = origin.getBlockY() - radius; y < origin.getBlockY(); y++) {
-				for (int z = origin.getBlockZ() - radius; z < origin.getBlockZ(); z++) {
+		for (int x = origin.getBlockX() - radius; x < origin.getBlockX()+radius; x++) {
+			for (int y = origin.getBlockY() - radius; y < origin.getBlockY()+radius; y++) {
+				for (int z = origin.getBlockZ() - radius; z < origin.getBlockZ()+radius; z++) {
 					Location temp = new Location(origin.getWorld(), x, y, z);
 					if (temp.distance(origin) <= radius)
 						if (!indestruct.contains(temp.getBlock().getType()))

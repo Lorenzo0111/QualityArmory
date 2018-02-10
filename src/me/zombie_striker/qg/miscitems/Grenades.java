@@ -27,14 +27,21 @@ public class Grenades implements ThrowableItems {
 
 	private ItemStack[] ing = null;
 
+	double dmageLevel = 10;
+	double radius = 5;
+
 	public HashMap<Entity, ThrowableHolder> grenadeHolder = new HashMap<>();
 
 	double cost;
-	
-	public Grenades(ItemStack[] ingg, double cost) {
+
+	public Grenades(ItemStack[] ingg, double cost, double damage, double explosionreadius) {
 		this.ing = ingg;
 		this.cost = cost;
-	}@Override
+		this.radius = explosionreadius;
+		this.dmageLevel = damage;
+	}
+
+	@Override
 	public double cost() {
 		return cost;
 	}
@@ -129,14 +136,15 @@ public class Grenades implements ThrowableItems {
 				}
 				Player thro = Bukkit.getPlayer(h.getOwner());
 				try {
-					for (Entity e : h.getHolder().getNearbyEntities(7, 7, 7)) {
+					for (Entity e : h.getHolder().getNearbyEntities(radius * 2, radius * 2, radius * 2)) {
 						if (e instanceof LivingEntity) {
 							if (thro == null)
-								((LivingEntity) e)
-										.damage((20 * 4 / e.getLocation().distance(h.getHolder().getLocation())));
+								((LivingEntity) e).damage(
+										(dmageLevel * radius / e.getLocation().distance(h.getHolder().getLocation())));
 							else
-								((LivingEntity) e)
-										.damage((20 * 4 / e.getLocation().distance(h.getHolder().getLocation())), thro);
+								((LivingEntity) e).damage(
+										(dmageLevel * radius / e.getLocation().distance(h.getHolder().getLocation())),
+										thro);
 						}
 					}
 				} catch (Error e) {

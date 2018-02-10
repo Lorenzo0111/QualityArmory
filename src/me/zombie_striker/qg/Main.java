@@ -30,6 +30,8 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.*;
 
 public class Main extends JavaPlugin implements Listener {
@@ -187,6 +189,27 @@ public class Main extends JavaPlugin implements Listener {
 		}));
 	}
 
+	@EventHandler
+	public void roggleshift(PlayerToggleSneakEvent e) {
+		ItemStack item = e.getPlayer().getInventory().getItemInOffHand();
+		try {
+			if (item != null
+					&& isGun(item)) {
+				
+				Gun gun = getGun(item);
+				if(gun.getWeaponType() != WeaponType.SNIPER)
+					return;
+				
+				if (e.isSneaking())
+					e.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 12000, 4));
+			}
+			if (!e.isSneaking())
+				e.getPlayer().removePotionEffect(PotionEffectType.SLOW);
+		} catch (Error e2) {
+		}
+
+	}
+
 	public void reloadVals() {
 
 		gunRegister.clear();
@@ -297,7 +320,7 @@ public class Main extends JavaPlugin implements Listener {
 
 		Ammo a1 = new Ammo556(getIngredients("Ammo556", stringsAmmo), 4,(double) a("Ammo.556.Price", 5.0));
 		Ammo a2 = new Ammo9mm(getIngredients("Ammo9mm", stringsAmmo), 4,(double) a("Ammo.9mm.Price", 2.0));
-		Ammo a3 = new AmmoShotGun(getIngredients("AmmoBuckshot", stringsAmmo), 2,(double) a("Ammo.Buckshot.Price", 50.0));
+		Ammo a3 = new AmmoShotGun(getIngredients("AmmoBuckshot", stringsAmmo), 2,(double) a("Ammo.Buckshot.Price", 5.0));
 		Ammo a4 = new AmmoRPG(getIngredients("AmmoRPG", stringsAmmoRPG), 1,(double) a("Ammo.RPG.Price", 100.0));
 
 		ammoRegister.put(m(14), a1);
@@ -334,7 +357,7 @@ public class Main extends JavaPlugin implements Listener {
 		gunRegister.put(m(20), new MouserC96((int) a("Weapon.MouserC96.Durability", 500),
 				getIngredients("MouserC96", stringsPistol), (int) a("Weapon.MouserC96.Damage", 2),(double) a("Weapon.MouserC96.Price", 400.0)));
 
-		miscRegister.put(m(22), new Grenades(getIngredients("Grenades", stringsGrenades),(double) a("Weapon.Grenade.Price", 800.0)));
+		miscRegister.put(m(22), new Grenades(getIngredients("Grenades", stringsGrenades),(double) a("Weapon.Grenade.Price", 800.0),(double) a("Weapon.Grenade.radiusdamage", 10.0),(double) a("Weapon.Grenade.radius", 5.0)));
 
 		if (saveTheConfig)
 			saveConfig();
@@ -359,7 +382,7 @@ public class Main extends JavaPlugin implements Listener {
 			f.set("_VALID_WEAPON_TYPES", validGuns.toString());
 			f.set("enableIronSights", false);
 			f.set("ammotype", a1.getName());
-			f.set("_VALID_AMMO_TYPES", a1.toString() + ", " + a2.getName() + ", " + a3.getName() + ", " + a4.getName());
+			f.set("_VALID_AMMO_TYPES", a1.getName() + ", " + a2.getName() + ", " + a3.getName() + ", " + a4.getName());
 			f.set("damage", 5);
 			f.set("sway", 0.2);
 			f.set("material", guntype.name());
@@ -514,9 +537,11 @@ public class Main extends JavaPlugin implements Listener {
 			} catch (Exception e) {
 			}
 		}
+		
+		int amount = (((gunRegister.size()+miscRegister.size()+ammoRegister.size())/9)+1)*9;
 
-		craftingMenu = Bukkit.createInventory(null, 27, S_craftingBenchName);
-		shopMenu = Bukkit.createInventory(null, 27, S_shopName);
+		craftingMenu = Bukkit.createInventory(null, amount, S_craftingBenchName);
+		shopMenu = Bukkit.createInventory(null, amount, S_shopName);
 		for (Gun g : gunRegister.values()) {
 			try {
 				getLogger().info("-Loading Gun:" + g.getName());
@@ -807,55 +832,67 @@ public class Main extends JavaPlugin implements Listener {
 						sender.sendMessage(prefix + sb.toString());
 						return true;
 					}
+					
+					
+					
+					
 					ArmoryBaseObject g = null;
-					StringBuilder gunName = new StringBuilder();
 					// for (int j = 1; j < args.length; j++) {
 					// gunName.append(args[j]);
 					// if (j != args.length - 1)
 					// gunName.append(" ");
 					// }
-					gunName.append(args[1]);
 					// Check if it is a gun, then if it is ammo, then if it is misc
 					for (Entry<MaterialStorage, Gun> e : gunRegister.entrySet())
-						if (e.getValue().getName().equalsIgnoreCase(gunName.toString())) {
+						if (e.getValue().getName().equalsIgnoreCase(args[1])) {
 							g = e.getValue();
 							break;
 						}
 					if (g == null)
 						for (Entry<MaterialStorage, Ammo> e : ammoRegister.entrySet())
-							if (e.getValue().getName().equalsIgnoreCase(gunName.toString())) {
+							if (e.getValue().getName().equalsIgnoreCase(args[1])) {
 								g = e.getValue();
 								break;
 							}
 					if (g == null)
 						for (Entry<MaterialStorage, ArmoryBaseObject> e : miscRegister.entrySet())
-							if (e.getValue().getName().equalsIgnoreCase(gunName.toString())) {
+							if (e.getValue().getName().equalsIgnoreCase(args[1])) {
 								g = e.getValue();
 								break;
 							}
-
 					if (g != null) {
-						Player who = sender instanceof Player ? ((Player) sender) : null;
+						Player who = null;
 						if (args.length > 2)
 							who = Bukkit.getPlayer(args[2]);
+						else
+							if(sender instanceof Player) 
+								who = ((Player) sender);
+							else {
+								sender.sendMessage("A USER IS REQUIRED FOR CONSOLE. /QA give <gun> <player>");
+							}
 						if (who == null) {
 							sender.sendMessage("That player is not online");
 							return true;
 						}
 
 						ItemStack temp;
-						if (g instanceof Gun)
+						if (g instanceof Gun) {
 							temp = ItemFact.getGun((Gun) g);
-						else if (g instanceof Ammo)
-							temp = ItemFact.getAmmo((Ammo) g);
-						else
+							who.getInventory().addItem(temp);
+						}else if (g instanceof Ammo) {
+							//temp = ItemFact.getAmmo((Ammo) g);
+							AmmoUtil.addAmmo(who, (Ammo) g, ((Ammo) g).getMaxAmount());
+						}else {
 							temp = ItemFact.getObject(g);
+							temp.setAmount(g.getCraftingReturn());
+							who.getInventory().addItem(temp);
+						}
 
-						who.getInventory().addItem(temp);
 						sender.sendMessage(prefix + " Adding " + g.getName() + " to your inventory");
 					} else {
 						sender.sendMessage(prefix + " Could not find item \"" + args[1] + "\"");
 					}
+					return true;
 				}
 			}
 			if (sender instanceof Player) {
@@ -1016,7 +1053,7 @@ public class Main extends JavaPlugin implements Listener {
 				}
 			}
 			return;
-		}else if(name.equals(S_shopName)){
+		}else if(name != null && S_shopName!=null && name.equals(S_shopName)){
 			e.setCancelled(true);
 			if(!enableEconomy) {
 				e.getWhoClicked().closeInventory();
@@ -1359,14 +1396,14 @@ public class Main extends JavaPlugin implements Listener {
 								}
 							try {
 								HotbarMessager.sendHotBarMessage(e.getPlayer(), g.getDisplayName() + " = "
-										+ ItemFact.getAmount(usedItem) + "/" + g.getMaxBullets());
+										+ ItemFact.getAmount(usedItem) + "/" + (g.getMaxBullets()-1));
 							} catch (Error | Exception e5) {
 							}
 							return;
 						}
 						try {
 							HotbarMessager.sendHotBarMessage(e.getPlayer(), g.getDisplayName() + " = "
-									+ ItemFact.getAmount(usedItem) + "/" + g.getMaxBullets());
+									+ ItemFact.getAmount(usedItem) + "/" + (g.getMaxBullets()-1));
 						} catch (Error | Exception e5) {
 						}
 						// TODO: Verify that the gun is in the main hand.
@@ -1412,7 +1449,7 @@ public class Main extends JavaPlugin implements Listener {
 
 								try {
 									HotbarMessager.sendHotBarMessage(e.getPlayer(), g.getDisplayName() + " = "
-											+ ItemFact.getAmount(usedItem) + "/" + g.getMaxBullets());
+											+ ItemFact.getAmount(usedItem) + "/" + (g.getMaxBullets()-1));
 								} catch (Error | Exception e5) {
 								}
 							} catch (Error e2) {
@@ -1432,7 +1469,7 @@ public class Main extends JavaPlugin implements Listener {
 								}
 								try {
 									HotbarMessager.sendHotBarMessage(e.getPlayer(), g.getDisplayName() + " = "
-											+ ItemFact.getAmount(usedItem) + "/" + g.getMaxBullets());
+											+ ItemFact.getAmount(usedItem) + "/" +(g.getMaxBullets()-1));
 								} catch (Error | Exception e5) {
 								}
 								// TODO: Verify that the gun is in the main
@@ -1454,7 +1491,7 @@ public class Main extends JavaPlugin implements Listener {
 
 							try {
 								HotbarMessager.sendHotBarMessage(e.getPlayer(), g.getDisplayName() + " = "
-										+ ItemFact.getAmount(usedItem) + "/" + g.getMaxBullets());
+										+ ItemFact.getAmount(usedItem) + "/" + (g.getMaxBullets()-1));
 							} catch (Error | Exception e5) {
 							}
 						}

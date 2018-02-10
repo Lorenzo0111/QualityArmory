@@ -3,6 +3,7 @@ package me.zombie_striker.qg.guns;
 import me.zombie_striker.qg.ArmoryBaseObject;
 import me.zombie_striker.qg.ammo.Ammo;
 import me.zombie_striker.qg.guns.utils.WeaponSounds;
+import me.zombie_striker.qg.guns.utils.WeaponType;
 
 import org.bukkit.entity.Player;
 
@@ -22,5 +23,6 @@ public interface Gun extends ArmoryBaseObject{
 	
 
 	public WeaponSounds getWeaponSound();
+	public WeaponType getWeaponType();
 	
 }

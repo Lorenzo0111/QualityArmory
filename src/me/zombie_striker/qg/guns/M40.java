@@ -21,7 +21,7 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 
-public class M40 extends DefaultGun implements Listener {
+public class M40 extends DefaultGun {
 
 	List<UUID> time = new ArrayList<>();
 
@@ -57,25 +57,8 @@ public class M40 extends DefaultGun implements Listener {
 		return false;
 	}
 
-	@EventHandler
-	public void roggleshift(PlayerToggleSneakEvent e) {
-		try {
-			if (e.getPlayer().getInventory().getItemInOffHand() != null
-					&& e.getPlayer().getInventory().getItemInOffHand().getType() == Main.guntype
-					&& e.getPlayer().getInventory().getItemInOffHand().getDurability() == 13) {
-				if (e.isSneaking())
-					e.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 12000, 4));
-			}
-			if (!e.isSneaking())
-				e.getPlayer().removePotionEffect(PotionEffectType.SLOW);
-		} catch (Error e2) {
-		}
-
-	}
-
 	public M40(int d, ItemStack[] ing, float damage, double cost) {
 		super("M40", MaterialStorage.getMS(Main.guntype, 13), WeaponType.SNIPER, true, AmmoType.getAmmo("556"), 0.1, 4, 8,
 				damage, false, d, WeaponSounds.GUN_BIG, cost,ing);
-		Bukkit.getPluginManager().registerEvents(this, Main.getInstance());
 	}
 }

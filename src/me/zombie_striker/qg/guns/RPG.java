@@ -92,6 +92,10 @@ public class RPG implements Gun {
 		return false;
 	}
 	@Override
+	public WeaponType getWeaponType() {
+		return WeaponType.RPG;
+	}
+	@Override
 	public double cost() {
 		return cost;
 	}
