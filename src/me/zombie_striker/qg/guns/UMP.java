@@ -12,5 +12,6 @@ public class UMP extends DefaultGun {
 	
 	public UMP(int d,ItemStack[] ing, float damage, double cost) {
 		super("UMP", MaterialStorage.getMS(Main.guntype,11), WeaponType.SMG,false, AmmoType.getAmmo("9mm"),  0.3,2, 40, damage,true,d,WeaponSounds.GUN_SMALL,cost,ing);
+		this.setDelayBetweenShots(0.1);
 	}
 }

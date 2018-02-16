@@ -31,7 +31,7 @@ public class HeadShotUtil {
 		return Math.abs(e.getLocation().getY()-shot.getY()+1.9)<1;
 	}
 
-	public static boolean nearestDistance(Entity e, Location closest) {
+	public static boolean closeEnough(Entity e, Location closest) {
 		switch (e.getType().name()) {
 		case "CHICKEN":
 		case "PIG":
@@ -44,10 +44,10 @@ public class HeadShotUtil {
 		case "SQUID":
 		case "SPIDER":
 		case "CAVE_SPIDER":
-			return closest.distance(e.getLocation().clone().add(0, 0.5, 0)) < 1;
+			return closest.distance(e.getLocation().clone().add(0, 0.5, 0)) < 0.7;
 		case "ENDERMAN":
 		case "IRON_GOLEM":
-			return closest.distance(e.getLocation().clone().add(0, 1.5, 0)) < 2;
+			return closest.distance(e.getLocation().clone().add(0, 1.5, 0)) < 1.5;
 		case "MAGMA_CUBE":
 		case "SLIME":
 		case "GUARDIAN":
@@ -55,6 +55,6 @@ public class HeadShotUtil {
 		case "GHAST":
 			return closest.distance(e.getLocation().clone().add(0, 1, 0)) < 3;
 		}
-		return closest.distance(e.getLocation().clone().add(0, 1, 0)) < 1.5;
+		return closest.distance(e.getLocation().clone().add(0, 1, 0)) < 0.8;
 	}
 }

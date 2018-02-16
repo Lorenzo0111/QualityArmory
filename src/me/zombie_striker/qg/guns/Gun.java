@@ -5,6 +5,9 @@ import me.zombie_striker.qg.ammo.Ammo;
 import me.zombie_striker.qg.guns.utils.WeaponSounds;
 import me.zombie_striker.qg.guns.utils.WeaponType;
 
+import java.util.HashMap;
+import java.util.UUID;
+
 import org.bukkit.entity.Player;
 
 public interface Gun extends ArmoryBaseObject{
@@ -25,4 +28,8 @@ public interface Gun extends ArmoryBaseObject{
 	public WeaponSounds getWeaponSound();
 	public WeaponType getWeaponType();
 	
+	public double getDelayBetweenShotsInSeconds();
+	
+	public HashMap<UUID, Long> getLastShotForGun();
+
 }

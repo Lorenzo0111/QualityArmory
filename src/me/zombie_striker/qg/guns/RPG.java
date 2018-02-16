@@ -1,6 +1,8 @@
 package me.zombie_striker.qg.guns;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 
 import me.zombie_striker.qg.ItemFact;
 import me.zombie_striker.qg.Main;
@@ -24,7 +26,10 @@ import org.bukkit.util.Vector;
 
 public class RPG implements Gun {
 
-	
+
+	//This refers to the last time a gun was shot by a player, on a per-gun basis.
+	//Doing this should prevent players from fast-switching to get around bullet-delays
+	public HashMap<UUID, Long> lastshot = new HashMap<>();
 	private double cost;
 	
 	@SuppressWarnings("deprecation")
@@ -201,5 +206,13 @@ public class RPG implements Gun {
 	@Override
 	public String getDisplayName() {
 		return ChatColor.GOLD + getName();
+	}
+	@Override
+	public double getDelayBetweenShotsInSeconds() {
+		return 1;
+	}
+	@Override
+	public HashMap<UUID, Long> getLastShotForGun() {
+		return lastshot;
 	}
 }

@@ -13,5 +13,6 @@ public class PKP extends DefaultGun {
 	//List<UUID> time = new ArrayList<>();=
 	public PKP(int d,ItemStack[] ing, float damage, double cost) {
 		super("PKP", MaterialStorage.getMS(Main.guntype,3), WeaponType.RIFLE,false, AmmoType.getAmmo("556"),  0.3,2, 60, damage,true,d,WeaponSounds.GUN_BIG,cost,ing);
+		this.setDelayBetweenShots(0.005);
 	}
 }

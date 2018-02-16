@@ -12,8 +12,11 @@ import me.zombie_striker.qg.guns.utils.WeaponType;
 import me.zombie_striker.qg.handlers.IronSightsToggleItem;
 import me.zombie_striker.qg.handlers.Update19OffhandChecker;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -39,6 +42,12 @@ public class DefaultGun implements Gun {
 	private WeaponSounds weaponSounds;
 	
 	double cost = 100;
+	
+	private double delayBetweenShots = 0.25;
+	
+	//This refers to the last time a gun was shot by a player, on a per-gun basis.
+	//Doing this should prevent players from fast-switching to get around bullet-delays
+	public HashMap<UUID, Long> lastshot = new HashMap<>();
 
 	public DefaultGun(String name, MaterialStorage id, WeaponType type, boolean h, Ammo am, double acc,
 			double swaymult, int maxBullets, float damage, boolean isAutomatic, int durib, WeaponSounds ws, double cost) {
@@ -57,7 +66,6 @@ public class DefaultGun implements Gun {
 		this.weaponSounds = ws;
 
 		this.cost = cost;
-		
 		this.displayname = ChatColor.GOLD + name;
 	}
 
@@ -219,6 +227,19 @@ public double cost() {
 	@Override
 	public String getDisplayName() {
 		return displayname;
+	}
+
+	@Override
+	public double getDelayBetweenShotsInSeconds() {
+		return delayBetweenShots;
+	}
+	public void setDelayBetweenShots(double seconds) {
+		this.delayBetweenShots = seconds;
+	}
+
+	@Override
+	public HashMap<UUID, Long> getLastShotForGun() {
+		return lastshot;
 	}
 
 }

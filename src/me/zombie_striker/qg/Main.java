@@ -80,11 +80,12 @@ public class Main extends JavaPlugin implements Listener {
 	public static boolean reloadOnF = true;
 
 	public static boolean enableExplosionDamage = false;
+	public static boolean enableExplosionDamageDrop = false;
 
 	public static boolean enableEconomy = false;
 
 	public static boolean overrideURL = false;
-	public static String url = "https://www.dropbox.com/s/uztx0depegg2hat/QualityArmory%201.5.zip?dl=1";
+	public static String url = "https://www.dropbox.com/s/3a8t1qk92bawjil/QualityArmory%201.7.zip?dl=1";
 
 	public static String S_NOPERM = " You do not have permission to do that";
 	public static String S_NORES1 = " You do not have the resoucepack";
@@ -193,13 +194,12 @@ public class Main extends JavaPlugin implements Listener {
 	public void roggleshift(PlayerToggleSneakEvent e) {
 		ItemStack item = e.getPlayer().getInventory().getItemInOffHand();
 		try {
-			if (item != null
-					&& isGun(item)) {
-				
+			if (item != null && isGun(item)) {
+
 				Gun gun = getGun(item);
-				if(gun.getWeaponType() != WeaponType.SNIPER)
+				if (gun.getWeaponType() != WeaponType.SNIPER)
 					return;
-				
+
 				if (e.isSneaking())
 					e.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 12000, 4));
 			}
@@ -260,6 +260,7 @@ public class Main extends JavaPlugin implements Listener {
 		reloadOnF = (boolean) a("enableReloadingWhenSwapToOffhand", true);
 
 		enableExplosionDamage = (boolean) a("enableExplosionDamage", false);
+		enableExplosionDamageDrop = (boolean) a("enableExplosionDamageDrop", false);
 
 		try {
 			enableEconomy = EconHandler.setupEconomy();
@@ -318,10 +319,11 @@ public class Main extends JavaPlugin implements Listener {
 		List<String> stringsAmmoRPG = Arrays.asList(new String[] { getIngString(Material.IRON_INGOT, 0, 4),
 				getIngString(Material.SULPHUR, 0, 6), getIngString(Material.REDSTONE, 0, 1) });
 
-		Ammo a1 = new Ammo556(getIngredients("Ammo556", stringsAmmo), 4,(double) a("Ammo.556.Price", 5.0));
-		Ammo a2 = new Ammo9mm(getIngredients("Ammo9mm", stringsAmmo), 4,(double) a("Ammo.9mm.Price", 2.0));
-		Ammo a3 = new AmmoShotGun(getIngredients("AmmoBuckshot", stringsAmmo), 2,(double) a("Ammo.Buckshot.Price", 5.0));
-		Ammo a4 = new AmmoRPG(getIngredients("AmmoRPG", stringsAmmoRPG), 1,(double) a("Ammo.RPG.Price", 100.0));
+		Ammo a1 = new Ammo556(getIngredients("Ammo556", stringsAmmo), 4, (double) a("Ammo.556.Price", 5.0));
+		Ammo a2 = new Ammo9mm(getIngredients("Ammo9mm", stringsAmmo), 4, (double) a("Ammo.9mm.Price", 2.0));
+		Ammo a3 = new AmmoShotGun(getIngredients("AmmoBuckshot", stringsAmmo), 2,
+				(double) a("Ammo.Buckshot.Price", 5.0));
+		Ammo a4 = new AmmoRPG(getIngredients("AmmoRPG", stringsAmmoRPG), 1, (double) a("Ammo.RPG.Price", 100.0));
 
 		ammoRegister.put(m(14), a1);
 		ammoRegister.put(m(15), a2);
@@ -329,35 +331,49 @@ public class Main extends JavaPlugin implements Listener {
 		ammoRegister.put(m(17), a4);
 
 		gunRegister.put(m(2), new P30((int) a("Weapon.P30.Durability", 500), getIngredients("P30", stringsPistol),
-				(int) a("Weapon.P30.Damage", 3),(double) a("Weapon.P30.Price", 500.5)));
+				(int) a("Weapon.P30.Damage", 3), (double) a("Weapon.P30.Price", 500.5)));
 		gunRegister.put(m(3), new PKP((int) a("Weapon.PKP.Durability", 500), getIngredients("PKP", stringsPistol),
-				(int) a("Weapon.PKP.Damage", 3),(double) a("Weapon.PKP.Price", 2000.0)));
+				(int) a("Weapon.PKP.Damage", 3), (double) a("Weapon.PKP.Price", 2000.0)));
 		gunRegister.put(m(4), new MP5K((int) a("Weapon.MP5K.Durability", 1000), getIngredients("MP5K", stringsPistol),
-				(int) a("Weapon.MP5K.Damage", 1),(double) a("Weapon.MP5K.Price", 800.0)));
+				(int) a("Weapon.MP5K.Damage", 1), (double) a("Weapon.MP5K.Price", 800.0)));
 		gunRegister.put(m(5), new AK47((int) a("Weapon.AK47.Durability", 1000), getIngredients("AK47", stringsWoodRif),
-				(int) a("Weapon.AK47.Damage", 3),(double) a("Weapon.AK47.Price", 1000.0)));
+				(int) a("Weapon.AK47.Damage", 3), (double) a("Weapon.AK47.Price", 1000.0)));
 		gunRegister.put(m(7), new M16((int) a("Weapon.M16.Durability", 1000), getIngredients("M16", stringsMetalRif),
-				(int) a("Weapon.M16.Damage", 3),(double) a("Weapon.M16.Price", 1000.0)));
-		gunRegister.put(m(8), new Remmington((int) a("Weapon.Remmington.Durability", 500),
-				getIngredients("Remmington", stringsMetalRif), (int) a("Weapon.Remmington.Damage", 1),(double) a("Weapon.Remmington.Price", 1000.0)));
-		gunRegister.put(m(9), new FNFal((int) a("Weapon.FNFal.Durability", 1000),
-				getIngredients("FNFal", stringsMetalRif), (int) a("Weapon.FNFal.Damage", 1),(double) a("Weapon.FNFal.Price", 1000.0)));
-		gunRegister.put(m(10), new RPG((int) a("Weapon.RPG.Durability", 100), getIngredients("RPG", stringsRPG),(double) a("Weapon.rPG.Price", 5000.0)));
+				(int) a("Weapon.M16.Damage", 3), (double) a("Weapon.M16.Price", 1000.0)));
+		gunRegister.put(m(8),
+				new Remmington((int) a("Weapon.Remmington.Durability", 500),
+						getIngredients("Remmington", stringsMetalRif), (int) a("Weapon.Remmington.Damage", 1),
+						(double) a("Weapon.Remmington.Price", 1000.0)));
+		gunRegister.put(m(9),
+				new FNFal((int) a("Weapon.FNFal.Durability", 1000), getIngredients("FNFal", stringsMetalRif),
+						(int) a("Weapon.FNFal.Damage", 1), (double) a("Weapon.FNFal.Price", 1000.0)));
+		gunRegister.put(m(10), new RPG((int) a("Weapon.RPG.Durability", 100), getIngredients("RPG", stringsRPG),
+				(double) a("Weapon.rPG.Price", 5000.0)));
 		gunRegister.put(m(11), new UMP((int) a("Weapon.UMP.Durability", 1000), getIngredients("UMP", stringsPistol),
-				(int) a("Weapon.UMP.Damage", 2),(double) a("Weapon.UMP.Price", 1000.0)));
-		gunRegister.put(m(12), new SW1911((int) a("Weapon.SW1911.Durability", 500),
-				getIngredients("SW1911", stringsPistol), (int) a("Weapon.SW1911.Damage", 2),(double) a("Weapon.SW1911.Price", 600.0)));
+				(int) a("Weapon.UMP.Damage", 2), (double) a("Weapon.UMP.Price", 1000.0)));
+		gunRegister.put(m(12),
+				new SW1911((int) a("Weapon.SW1911.Durability", 500), getIngredients("SW1911", stringsPistol),
+						(int) a("Weapon.SW1911.Damage", 2), (double) a("Weapon.SW1911.Price", 600.0)));
 		gunRegister.put(m(13), new M40((int) a("Weapon.M40.Durability", 500), getIngredients("M40", stringsWoodRif),
-				(int) a("Weapon.M40.Damage", 5),(double) a("Weapon.M40.Price", 1000.0)));
+				(int) a("Weapon.M40.Damage", 5), (double) a("Weapon.M40.Price", 1000.0)));
 
-		gunRegister.put(m(18), new Enfield((int) a("Weapon.Enfield.Durability", 500),
-				getIngredients("Enfield", stringsGoldRif), (int) a("Weapon.Enfield.Damage", 2),(double) a("Weapon.Enfield.Price", 500.0)));
-		gunRegister.put(m(19), new HenryRifle((int) a("Weapon.Henry.Durability", 500),
-				getIngredients("Henry", stringsGoldRif), (int) a("Weapon.Henry.Damage", 3),(double) a("Weapon.Henry.Price", 1000.0)));
-		gunRegister.put(m(20), new MouserC96((int) a("Weapon.MouserC96.Durability", 500),
-				getIngredients("MouserC96", stringsPistol), (int) a("Weapon.MouserC96.Damage", 2),(double) a("Weapon.MouserC96.Price", 400.0)));
+		gunRegister.put(m(18),
+				new Enfield((int) a("Weapon.Enfield.Durability", 500), getIngredients("Enfield", stringsGoldRif),
+						(int) a("Weapon.Enfield.Damage", 2), (double) a("Weapon.Enfield.Price", 500.0)));
+		gunRegister.put(m(19),
+				new HenryRifle((int) a("Weapon.Henry.Durability", 500), getIngredients("Henry", stringsGoldRif),
+						(int) a("Weapon.Henry.Damage", 3), (double) a("Weapon.Henry.Price", 1000.0)));
+		gunRegister.put(m(20),
+				new MouserC96((int) a("Weapon.MouserC96.Durability", 500), getIngredients("MouserC96", stringsPistol),
+						(int) a("Weapon.MouserC96.Damage", 2), (double) a("Weapon.MouserC96.Price", 400.0)));
 
-		miscRegister.put(m(22), new Grenades(getIngredients("Grenades", stringsGrenades),(double) a("Weapon.Grenade.Price", 800.0),(double) a("Weapon.Grenade.radiusdamage", 10.0),(double) a("Weapon.Grenade.radius", 5.0)));
+		miscRegister.put(m(22),
+				new Grenades(getIngredients("Grenades", stringsGrenades), (double) a("Weapon.Grenade.Price", 800.0),
+						(double) a("Weapon.Grenade.radiusdamage", 10.0), (double) a("Weapon.Grenade.radius", 5.0)));
+
+		gunRegister.put(m(23),
+				new Dragunov((int) a("Weapon.Dragunov.Durability", 1000), getIngredients("Dragunov", stringsWoodRif),
+						(int) a("Weapon.Dragunov.Damage", 6), (double) a("Weapon.Dragunov.Price", 1200.0)));
 
 		if (saveTheConfig)
 			saveConfig();
@@ -469,11 +485,9 @@ public class Main extends JavaPlugin implements Listener {
 								? ChatColor.translateAlternateColorCodes('&', f2.getString("displayname"))
 								: (ChatColor.GOLD + name);
 						final List<String> extraLore = f2.contains("lore") ? f2.getStringList("lore") : null;
-						
-						
-						final double price = f2.contains("price")?f2.getDouble("price"):100;
-						
-						
+
+						final double price = f2.contains("price") ? f2.getDouble("price") : 100;
+
 						if (weatype.isGun()) {
 							boolean isAutomatic = f2.contains("isAutomatic") ? f2.getBoolean("isAutomatic") : false;
 
@@ -487,12 +501,12 @@ public class Main extends JavaPlugin implements Listener {
 									new DefaultGun(name, ms, weatype, f2.getBoolean("enableIronSights"),
 											AmmoType.getAmmo(f2.getString("ammotype")), f2.getDouble("sway"), 2,
 											f2.getInt("maxbullets"), f2.getInt("damage"), isAutomatic,
-											f2.getInt("durability"), sound, extraLore, displayname, price,materails));
+											f2.getInt("durability"), sound, extraLore, displayname, price, materails));
 
 						} else {
 							if (weatype == WeaponType.AMMO) {
 								ammoRegister.put(ms, new DefaultAmmo(name, displayname, extraLore, m, ms.getData(), 64,
-										false, 1,price, materails));
+										false, 1, price, materails));
 							} else {
 								miscRegister.put(ms, new ArmoryBaseObject() {
 									@Override
@@ -537,8 +551,8 @@ public class Main extends JavaPlugin implements Listener {
 			} catch (Exception e) {
 			}
 		}
-		
-		int amount = (((gunRegister.size()+miscRegister.size()+ammoRegister.size())/9)+1)*9;
+
+		int amount = (((gunRegister.size() + miscRegister.size() + ammoRegister.size()) / 9) + 1) * 9;
 
 		craftingMenu = Bukkit.createInventory(null, amount, S_craftingBenchName);
 		shopMenu = Bukkit.createInventory(null, amount, S_shopName);
@@ -553,9 +567,9 @@ public class Main extends JavaPlugin implements Listener {
 				if (enableVisibleAmounts)
 					is.setAmount(g.getCraftingReturn());
 				craftingMenu.addItem(is);
-				
-				ItemStack shopVers = ItemFact.addShopLore(g,is.clone());
-				shopMenu.addItem(shopVers);				
+
+				ItemStack shopVers = ItemFact.addShopLore(g, is.clone());
+				shopMenu.addItem(shopVers);
 			} catch (Exception e) {
 				getLogger().warning("-Failed to load Gun:" + g.getName());
 				e.printStackTrace();
@@ -573,8 +587,8 @@ public class Main extends JavaPlugin implements Listener {
 					is.setAmount(abo.getCraftingReturn());
 				craftingMenu.addItem(is);
 
-				ItemStack shopVers = ItemFact.addShopLore(abo,is.clone());
-				shopMenu.addItem(shopVers);		
+				ItemStack shopVers = ItemFact.addShopLore(abo, is.clone());
+				shopMenu.addItem(shopVers);
 			} catch (Exception e) {
 				getLogger().warning("-Failed to load MISC:" + abo.getName());
 				e.printStackTrace();
@@ -590,9 +604,9 @@ public class Main extends JavaPlugin implements Listener {
 				is.setItemMeta(im);
 				is.setAmount(ammo.getCraftingReturn());
 				craftingMenu.addItem(is);
-				
-				ItemStack shopVers = ItemFact.addShopLore(ammo,is.clone());
-				shopMenu.addItem(shopVers);		
+
+				ItemStack shopVers = ItemFact.addShopLore(ammo, is.clone());
+				shopMenu.addItem(shopVers);
 			} catch (Exception e) {
 				getLogger().warning("-Failed to load ammo:" + ammo.getName());
 				e.printStackTrace();
@@ -746,16 +760,16 @@ public class Main extends JavaPlugin implements Listener {
 		if (args.length == 2) {
 			List<String> s = new ArrayList<String>();
 			if (args[0].equalsIgnoreCase("give")) {
-				for (Entry<MaterialStorage, Gun> e : gunRegister.entrySet()) 
-					if (b(e.getValue().getName(), args[1])) 
+				for (Entry<MaterialStorage, Gun> e : gunRegister.entrySet())
+					if (b(e.getValue().getName(), args[1]))
 						s.add(e.getValue().getName());
-				for (Entry<MaterialStorage, Ammo> e : ammoRegister.entrySet()) 
-					if (b(e.getValue().getName(), args[1])) 
+				for (Entry<MaterialStorage, Ammo> e : ammoRegister.entrySet())
+					if (b(e.getValue().getName(), args[1]))
 						s.add(e.getValue().getName());
-				for (Entry<MaterialStorage, ArmoryBaseObject> e : miscRegister.entrySet()) 
-					if (b(e.getValue().getName(), args[1])) 
-						s.add(e.getValue().getName());			
-				
+				for (Entry<MaterialStorage, ArmoryBaseObject> e : miscRegister.entrySet())
+					if (b(e.getValue().getName(), args[1]))
+						s.add(e.getValue().getName());
+
 			}
 			return s;
 		}
@@ -786,14 +800,17 @@ public class Main extends JavaPlugin implements Listener {
 						return true;
 					}
 				}
-				if(args[0].equalsIgnoreCase("listItemIds")) {
-					if(sender.hasPermission("qualityarmory.getmaterialsused")){
-						for (ArmoryBaseObject g : miscRegister.values()) 
-							sender.sendMessage(ChatColor.GREEN+g.getName()+": "+ChatColor.WHITE+g.getItemData().getMat().name()+" : "+g.getItemData().getData());
-						for (Gun g : gunRegister.values()) 
-							sender.sendMessage(ChatColor.GOLD+g.getName()+": "+ChatColor.WHITE+g.getItemData().getMat().name()+" : "+g.getItemData().getData());
-						for (Ammo g : ammoRegister.values()) 
-							sender.sendMessage(ChatColor.AQUA+g.getName()+": "+ChatColor.WHITE+g.getItemData().getMat().name()+" : "+g.getItemData().getData());
+				if (args[0].equalsIgnoreCase("listItemIds")) {
+					if (sender.hasPermission("qualityarmory.getmaterialsused")) {
+						for (ArmoryBaseObject g : miscRegister.values())
+							sender.sendMessage(ChatColor.GREEN + g.getName() + ": " + ChatColor.WHITE
+									+ g.getItemData().getMat().name() + " : " + g.getItemData().getData());
+						for (Gun g : gunRegister.values())
+							sender.sendMessage(ChatColor.GOLD + g.getName() + ": " + ChatColor.WHITE
+									+ g.getItemData().getMat().name() + " : " + g.getItemData().getData());
+						for (Ammo g : ammoRegister.values())
+							sender.sendMessage(ChatColor.AQUA + g.getName() + ": " + ChatColor.WHITE
+									+ g.getItemData().getMat().name() + " : " + g.getItemData().getData());
 					} else {
 						sender.sendMessage(prefix + ChatColor.RED + S_NOPERM);
 						return true;
@@ -832,10 +849,7 @@ public class Main extends JavaPlugin implements Listener {
 						sender.sendMessage(prefix + sb.toString());
 						return true;
 					}
-					
-					
-					
-					
+
 					ArmoryBaseObject g = null;
 					// for (int j = 1; j < args.length; j++) {
 					// gunName.append(args[j]);
@@ -864,12 +878,11 @@ public class Main extends JavaPlugin implements Listener {
 						Player who = null;
 						if (args.length > 2)
 							who = Bukkit.getPlayer(args[2]);
-						else
-							if(sender instanceof Player) 
-								who = ((Player) sender);
-							else {
-								sender.sendMessage("A USER IS REQUIRED FOR CONSOLE. /QA give <gun> <player>");
-							}
+						else if (sender instanceof Player)
+							who = ((Player) sender);
+						else {
+							sender.sendMessage("A USER IS REQUIRED FOR CONSOLE. /QA give <gun> <player>");
+						}
 						if (who == null) {
 							sender.sendMessage("That player is not online");
 							return true;
@@ -879,10 +892,10 @@ public class Main extends JavaPlugin implements Listener {
 						if (g instanceof Gun) {
 							temp = ItemFact.getGun((Gun) g);
 							who.getInventory().addItem(temp);
-						}else if (g instanceof Ammo) {
-							//temp = ItemFact.getAmmo((Ammo) g);
+						} else if (g instanceof Ammo) {
+							// temp = ItemFact.getAmmo((Ammo) g);
 							AmmoUtil.addAmmo(who, (Ammo) g, ((Ammo) g).getMaxAmount());
-						}else {
+						} else {
 							temp = ItemFact.getObject(g);
 							temp.setAmount(g.getCraftingReturn());
 							who.getInventory().addItem(temp);
@@ -938,8 +951,7 @@ public class Main extends JavaPlugin implements Listener {
 
 	public void sendHelp(CommandSender sender) {
 		sender.sendMessage(prefix + " Commands:");
-		sender.sendMessage(ChatColor.GRAY
-				+ "/QA give <Item>: Gives the sender the item specified (guns, ammo, misc.)");
+		sender.sendMessage(ChatColor.GRAY + "/QA give <Item>: Gives the sender the item specified (guns, ammo, misc.)");
 		sender.sendMessage(ChatColor.GRAY + "/QA craft: Opens the crafting menu.");
 		sender.sendMessage(ChatColor.GRAY + "/QA shop: Opens the shop menu");
 		sender.sendMessage(ChatColor.GRAY + "/QA listItemIds: Lists the materials and data for all items.");
@@ -957,17 +969,16 @@ public class Main extends JavaPlugin implements Listener {
 
 	@EventHandler(priority = EventPriority.LOWEST)
 	public void oninvClick(final InventoryClickEvent e) {
-		
+
 		String name = null;
 		try {
-			if(e.getClickedInventory() != null)		
+			if (e.getClickedInventory() != null)
 				name = e.getClickedInventory().getTitle();
-		}catch(Error|Exception e4) {
-			if(e.getInventory() != null)		
+		} catch (Error | Exception e4) {
+			if (e.getInventory() != null)
 				name = e.getInventory().getTitle();
 		}
-		
-		
+
 		if (name != null && name.equals(S_craftingBenchName)) {
 			e.setCancelled(true);
 			if (e.getCurrentItem() != null) {
@@ -1053,11 +1064,11 @@ public class Main extends JavaPlugin implements Listener {
 				}
 			}
 			return;
-		}else if(name != null && S_shopName!=null && name.equals(S_shopName)){
+		} else if (name != null && S_shopName != null && name.equals(S_shopName)) {
 			e.setCancelled(true);
-			if(!enableEconomy) {
+			if (!enableEconomy) {
 				e.getWhoClicked().closeInventory();
-				e.getWhoClicked().sendMessage(prefix+S_noEcon);
+				e.getWhoClicked().sendMessage(prefix + S_noEcon);
 				return;
 			}
 			if (e.getCurrentItem() != null) {
@@ -1300,24 +1311,26 @@ public class Main extends JavaPlugin implements Listener {
 			// Quick bugfix for specifically this item.
 			if ((!isGun(e.getItem())) && !isAmmo(e.getItem()) && !isMisc(e.getItem()) && (!isIS(e.getItem()))) {
 				if ((gunRegister.containsKey(
-						MaterialStorage.getMS(e.getItem().getType(), (int) e.getItem().getDurability() + 1))
+						MaterialStorage.getMS(e.getItem().getType(), (int) (e.getItem().getDurability() + 1)))
 						|| ammoRegister.containsKey(
-								MaterialStorage.getMS(e.getItem().getType(), (int) e.getItem().getDurability() + 1)))) {
+								MaterialStorage.getMS(e.getItem().getType(), (int) (e.getItem().getDurability() + 1))))
+						|| miscRegister.containsKey(MaterialStorage.getMS(e.getItem().getType(),
+								(int) (e.getItem().getDurability() + 1)))) {
 					// If the item is not a gun, but the item below it is
 					int safeDurib = e.getItem().getDurability();
 					for (MaterialStorage j : ammoRegister.keySet())
-						if (j.getMat() == e.getItem().getType() && j.getData() > safeDurib)
+						if (j.getMat() == e.getItem().getType() && j.getData() >= safeDurib)
 							safeDurib = j.getData();
 					for (MaterialStorage j : gunRegister.keySet())
-						if (j.getMat() == e.getItem().getType() && j.getData() > safeDurib)
+						if (j.getMat() == e.getItem().getType() && j.getData() >= safeDurib)
 							safeDurib = j.getData();
 					for (MaterialStorage j : miscRegister.keySet())
-						if (j.getMat() == e.getItem().getType() && j.getData() > safeDurib)
+						if (j.getMat() == e.getItem().getType() && j.getData() >= safeDurib)
 							safeDurib = j.getData();
 
 					// if (e.getItem().getDurability() == 1) {
 					ItemStack is = e.getItem();
-					is.setDurability((short) (safeDurib + 2));
+					is.setDurability((short) (safeDurib + 4));
 					e.getPlayer().getInventory().setItem(e.getPlayer().getInventory().getHeldItemSlot(), is);
 					// }
 				}
@@ -1359,8 +1372,18 @@ public class Main extends JavaPlugin implements Listener {
 				} catch (Error e2) {
 				}
 			}
+			if (isAmmo(usedItem)) {
+				if(e.getAction() == Action.RIGHT_CLICK_BLOCK && (e.getClickedBlock().getType()== Material.DIRT||e.getClickedBlock().getType()==Material.GRASS||e.getClickedBlock().getType()==Material.GRASS_PATH||e.getClickedBlock().getType()==Material.MYCEL))
+					e.setCancelled(true);
+				return;
+			}
 
 			Gun g = getGun(usedItem);
+
+			// Check to make sure the gun is not a dup. This should be fast
+			if (isGun(usedItem))
+				checkforDups(e.getPlayer(), usedItem);
+
 			e.setCancelled(true);
 			if (shouldSend && !resourcepackReq.contains(e.getPlayer().getUniqueId())) {
 				sendPacket(e.getPlayer(), true);
@@ -1396,14 +1419,14 @@ public class Main extends JavaPlugin implements Listener {
 								}
 							try {
 								HotbarMessager.sendHotBarMessage(e.getPlayer(), g.getDisplayName() + " = "
-										+ ItemFact.getAmount(usedItem) + "/" + (g.getMaxBullets()-1));
+										+ ItemFact.getAmount(usedItem) + "/" + (g.getMaxBullets() - 1));
 							} catch (Error | Exception e5) {
 							}
 							return;
 						}
 						try {
 							HotbarMessager.sendHotBarMessage(e.getPlayer(), g.getDisplayName() + " = "
-									+ ItemFact.getAmount(usedItem) + "/" + (g.getMaxBullets()-1));
+									+ ItemFact.getAmount(usedItem) + "/" + (g.getMaxBullets() - 1));
 						} catch (Error | Exception e5) {
 						}
 						// TODO: Verify that the gun is in the main hand.
@@ -1449,7 +1472,7 @@ public class Main extends JavaPlugin implements Listener {
 
 								try {
 									HotbarMessager.sendHotBarMessage(e.getPlayer(), g.getDisplayName() + " = "
-											+ ItemFact.getAmount(usedItem) + "/" + (g.getMaxBullets()-1));
+											+ ItemFact.getAmount(usedItem) + "/" + (g.getMaxBullets() - 1));
 								} catch (Error | Exception e5) {
 								}
 							} catch (Error e2) {
@@ -1469,7 +1492,7 @@ public class Main extends JavaPlugin implements Listener {
 								}
 								try {
 									HotbarMessager.sendHotBarMessage(e.getPlayer(), g.getDisplayName() + " = "
-											+ ItemFact.getAmount(usedItem) + "/" +(g.getMaxBullets()-1));
+											+ ItemFact.getAmount(usedItem) + "/" + (g.getMaxBullets() - 1));
 								} catch (Error | Exception e5) {
 								}
 								// TODO: Verify that the gun is in the main
@@ -1491,7 +1514,7 @@ public class Main extends JavaPlugin implements Listener {
 
 							try {
 								HotbarMessager.sendHotBarMessage(e.getPlayer(), g.getDisplayName() + " = "
-										+ ItemFact.getAmount(usedItem) + "/" + (g.getMaxBullets()-1));
+										+ ItemFact.getAmount(usedItem) + "/" + (g.getMaxBullets() - 1));
 							} catch (Error | Exception e5) {
 							}
 						}
@@ -1535,14 +1558,14 @@ public class Main extends JavaPlugin implements Listener {
 			sendPacket(e.getPlayer(), false);
 		} else {
 			for (ItemStack i : e.getPlayer().getInventory().getContents()) {
-				if (i != null && (isGun(i)||isAmmo(i)||isMisc(i) )) {
+				if (i != null && (isGun(i) || isAmmo(i) || isMisc(i))) {
 					if (shouldSend && !resourcepackReq.contains(e.getPlayer().getUniqueId())) {
 						new BukkitRunnable() {
 							@Override
 							public void run() {
 								sendPacket(e.getPlayer(), false);
 							}
-						}.runTaskLater(this, 40);
+						}.runTaskLater(this, 0);
 					}
 					break;
 				}
@@ -1578,6 +1601,8 @@ public class Main extends JavaPlugin implements Listener {
 				return;
 			}
 		}
+		checkforDups(e.getPlayer(), e.getItemDrop().getItemStack());
+		// This should prevent the everything below from being called.
 
 		if (enableIronSightsON_RIGHT_CLICK) {
 			if (e.getPlayer().getItemInHand() != null

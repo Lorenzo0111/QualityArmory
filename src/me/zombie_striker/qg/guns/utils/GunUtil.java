@@ -58,7 +58,7 @@ public class GunUtil {
 							if (dis > dis2)
 								continue;
 							Location test = start.clone();
-							if (HeadShotUtil.nearestDistance(e, test.clone().add(go.clone().multiply(dis)))) {
+							if (HeadShotUtil.closeEnough(e, test.clone().add(go.clone().multiply(dis)))) {
 								// If the entity is close to the line of fire.
 								if (e instanceof Damageable) {
 									boolean occulde = false;
@@ -66,7 +66,7 @@ public class GunUtil {
 									for (int dist = 0; dist < dis / Main.bulletStep; dist++) {
 										test.add(step);
 										if (isSolid(test.getBlock(), test)) {
-											if (HeadShotUtil.nearestDistance(e, test)) {
+											if (!HeadShotUtil.closeEnough(e, test)) {
 												occulde = true;
 												lastingDist = dist;
 												break;
@@ -120,6 +120,8 @@ public class GunUtil {
 							smokeDistance += Main.bulletStep;
 						}
 				} else {
+					// start.getWorld().spawnParticle(Particle.BLOCK_DUST,start,start.getBlock().getTypeId());
+					start.getWorld().playEffect(start, Effect.STEP_SOUND, start.getBlock().getType());
 					break;
 				}
 			}
@@ -131,6 +133,14 @@ public class GunUtil {
 	}
 
 	public static void basicShoot(boolean offhand, Gun g, Player player, double acc, int times) {
+
+		long showdelay = ((int) (g.getDelayBetweenShotsInSeconds() * 1000));
+
+		if (g.getLastShotForGun().containsKey(player.getUniqueId())
+				&& (System.currentTimeMillis() - g.getLastShotForGun().get(player.getUniqueId()) <= showdelay))
+			return;
+		g.getLastShotForGun().put(player.getUniqueId(), System.currentTimeMillis());
+
 		@SuppressWarnings("deprecation")
 		final ItemStack temp = offhand ? Update19OffhandChecker.getItemStackOFfhand(player)
 				: player.getInventory().getItemInHand();
@@ -258,6 +268,7 @@ public class GunUtil {
 			List<BukkitTask> rr = Main.reloadingTasks.get(player.getUniqueId());
 			rr.add(r);
 			Main.reloadingTasks.put(player.getUniqueId(), rr);
+
 		}
 
 	}
@@ -292,6 +303,28 @@ public class GunUtil {
 		if (b.getType().isOccluding()) {
 			return true;
 		}
+		if (b.getType().name().contains("STAIR")) {
+			if (b.getData() < 4 && (l.getY() - l.getBlockY() < 0.5))
+				return true;
+			if (b.getData() >= 4 && (l.getY() - l.getBlockY() > 0.5))
+				return true;
+			switch (b.getData()) {
+			case 0:
+			case 4:
+				return l.getX() - (0.5 + l.getBlockX()) > 0;
+			case 1:
+			case 5:
+				return l.getX() - (0.5 + l.getBlockX()) < 0;
+			case 2:
+			case 6:
+				return l.getZ() - (0.5 + l.getBlockZ()) > 0;
+			case 3:
+			case 7:
+				return l.getZ() - (0.5 + l.getBlockZ()) < 0;
+
+			}
+		}
+
 		return false;
 	}
 }
