@@ -24,6 +24,8 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
 
+import com.alessiodp.partiesapi.Parties;
+
 public class GunUtil {
 
 	public static void shoot(Player p, double sway, double damage, int shots, int range) {
@@ -61,6 +63,14 @@ public class GunUtil {
 							if (HeadShotUtil.closeEnough(e, test.clone().add(go.clone().multiply(dis)))) {
 								// If the entity is close to the line of fire.
 								if (e instanceof Damageable) {
+									if(Main.hasParties&& (!Main.friendlyFire)) {
+										try {
+											if(Parties.getApi().getPartyPlayer(e.getUniqueId()).getPartyName().equalsIgnoreCase(Parties.getApi().getPartyPlayer(p.getUniqueId()).getPartyName()))
+												continue;
+										}catch(Error|Exception e43) {
+											
+										}
+									}
 									boolean occulde = false;
 									double lastingDist = dis;
 									for (int dist = 0; dist < dis / Main.bulletStep; dist++) {

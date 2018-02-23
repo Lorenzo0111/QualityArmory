@@ -34,6 +34,8 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.*;
 
+import com.alessiodp.parties.Parties;
+
 public class Main extends JavaPlugin implements Listener {
 
 	public static HashMap<MaterialStorage, Gun> gunRegister = new HashMap<>();
@@ -114,6 +116,9 @@ public class Main extends JavaPlugin implements Listener {
 	public static Material guntype = Material.DIAMOND_HOE;
 
 	public static CustomYml m;
+	
+	public static boolean hasParties = false;
+	public static boolean friendlyFire = false;
 
 	/**
 	 * GUNLIST:
@@ -216,6 +221,10 @@ public class Main extends JavaPlugin implements Listener {
 		ammoRegister.clear();
 		miscRegister.clear();
 		interactableBlocks.clear();
+		
+		if(getServer().getPluginManager().isPluginEnabled("Parties"))
+			hasParties = true;
+		friendlyFire = (boolean) a("FriendlyFireEnabled", false);
 
 		m = new CustomYml(new File(getDataFolder(), "messages.yml"));
 		S_ANVIL = (String) m.a("NoPermAnvilMessage", S_ANVIL);

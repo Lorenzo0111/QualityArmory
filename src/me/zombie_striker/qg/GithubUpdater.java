@@ -40,7 +40,7 @@ public class GithubUpdater {
 	 * e.printStackTrace(); } }
 	 */
 
-	public static boolean autoUpdate(Plugin main, String author, String githubProject, String jarname) {
+	public static boolean autoUpdate(final Plugin main, String author, String githubProject, String jarname) {
 		try {
 			String version = main.getDescription().getVersion();
 			String parseVersion = version.replace(".", "");
@@ -62,7 +62,7 @@ public class GithubUpdater {
 					+ tagname + "/" + jarname);
 
 			if (latestVersion > Integer.parseInt(parseVersion)) {
-				Bukkit.getConsoleSender().sendMessage(ChatColor.GREEN + "Found a new version " + ChatColor.WHITE
+				Bukkit.getConsoleSender().sendMessage(ChatColor.GREEN + "Found a new version of "+ChatColor.GOLD+main.getDescription().getName()+": " + ChatColor.WHITE
 						+ tagname + ChatColor.LIGHT_PURPLE + " downloading now!!");
 
 				new BukkitRunnable() {
@@ -72,6 +72,7 @@ public class GithubUpdater {
 						try {
 
 							InputStream in = download.openStream();
+							
 
 							File pluginFile = null;
 
@@ -87,12 +88,23 @@ public class GithubUpdater {
 							// if (!temp.exists()) {
 							// temp.mkdir();
 							// }
+							
+							File tempInCaseSomethingGoesWrong = new File(main.getName()+"-backup.jar");
+							copy(new FileInputStream(pluginFile),new FileOutputStream(tempInCaseSomethingGoesWrong));
 
 							// Path path = new File("plugins/update" + File.separator + "COD.jar").toPath();
 							pluginFile.setWritable(true, false);
 							pluginFile.delete();
 							//Files.copy(in, pluginFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
 							copy(in, new FileOutputStream(pluginFile));
+							
+							if(pluginFile.length()<1000) {
+								//Plugin is too small. Keep old version in case new one is incomplete/nonexistant
+								copy(new FileInputStream(tempInCaseSomethingGoesWrong),new FileOutputStream(pluginFile));
+							}else {
+								//Plugin is valid, and we can delete the temp
+								tempInCaseSomethingGoesWrong.delete();
+							}
 
 						} catch (IOException e) {
 							e.printStackTrace();
