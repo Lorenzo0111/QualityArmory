@@ -7,6 +7,7 @@ import me.zombie_striker.qg.ItemFact;
 import me.zombie_striker.qg.Main;
 import me.zombie_striker.qg.ammo.Ammo;
 import me.zombie_striker.qg.ammo.AmmoUtil;
+import me.zombie_striker.qg.guns.DefaultGun;
 import me.zombie_striker.qg.guns.Gun;
 import me.zombie_striker.qg.handlers.AimManager;
 import me.zombie_striker.qg.handlers.HeadShotUtil;
@@ -63,12 +64,14 @@ public class GunUtil {
 							if (HeadShotUtil.closeEnough(e, test.clone().add(go.clone().multiply(dis)))) {
 								// If the entity is close to the line of fire.
 								if (e instanceof Damageable) {
-									if(Main.hasParties&& (!Main.friendlyFire)) {
+									if (Main.hasParties && (!Main.friendlyFire)) {
 										try {
-											if(Parties.getApi().getPartyPlayer(e.getUniqueId()).getPartyName().equalsIgnoreCase(Parties.getApi().getPartyPlayer(p.getUniqueId()).getPartyName()))
+											if (Parties.getApi().getPartyPlayer(e.getUniqueId()).getPartyName()
+													.equalsIgnoreCase(Parties.getApi().getPartyPlayer(p.getUniqueId())
+															.getPartyName()))
 												continue;
-										}catch(Error|Exception e43) {
-											
+										} catch (Error | Exception e43) {
+
 										}
 									}
 									boolean occulde = false;
@@ -155,8 +158,8 @@ public class GunUtil {
 		final ItemStack temp = offhand ? Update19OffhandChecker.getItemStackOFfhand(player)
 				: player.getInventory().getItemInHand();
 		ItemMeta im = temp.getItemMeta();
-
-		GunUtil.shoot(player, acc * AimManager.getSway(g, player.getUniqueId()), g.getDamage(), times, 300);
+		for (int j = 0; j < (g instanceof DefaultGun ? ((DefaultGun) g).getBulletsPerShot() : 1); j++)
+			GunUtil.shoot(player, acc * AimManager.getSway(g, player.getUniqueId()), g.getDamage(), times, 300);
 
 		if (Main.enableVisibleAmounts)
 			temp.setAmount(temp.getAmount() - 1);

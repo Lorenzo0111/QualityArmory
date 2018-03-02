@@ -87,7 +87,7 @@ public class Main extends JavaPlugin implements Listener {
 	public static boolean enableEconomy = false;
 
 	public static boolean overrideURL = false;
-	public static String url = "https://www.dropbox.com/s/3a8t1qk92bawjil/QualityArmory%201.7.zip?dl=1";
+	public static String url = "https://www.dropbox.com/s/wsg2sl5vmclw921/QualityArmory%201.8.zip?dl=1";
 
 	public static String S_NOPERM = " You do not have permission to do that";
 	public static String S_NORES1 = " You do not have the resoucepack";
@@ -383,6 +383,9 @@ public class Main extends JavaPlugin implements Listener {
 		gunRegister.put(m(23),
 				new Dragunov((int) a("Weapon.Dragunov.Durability", 1000), getIngredients("Dragunov", stringsWoodRif),
 						(int) a("Weapon.Dragunov.Damage", 6), (double) a("Weapon.Dragunov.Price", 1200.0)));
+		gunRegister.put(m(24),
+				new Dragunov((int) a("Weapon.Spas.Durability", 1000), getIngredients("Spas", stringsMetalRif),
+						(int) a("Weapon.Spas.Damage", 1), (double) a("Weapon.Spas.Price", 1200.0)));
 
 		if (saveTheConfig)
 			saveConfig();

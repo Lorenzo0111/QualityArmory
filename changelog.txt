@@ -1,3 +1,27 @@
+1.1.50
+	Fixed gun textures for Dragunov and Mouser
+	Added Spas12
+
+1.1.49
+	Fixed Github updater
+	Added support for Parties
+	Added support for disabling friendly fire
+	
+1.1.48
+	Added better checks for damage
+	Fixed explosion Radius
+	Added item drops for explosions
+	Fixed "closeEnough" distance checks
+
+1.1.47
+	Added SVD Dragunov
+	Added explosion drops
+	Added dust to blocks
+	Added check to make sure users can't spam-fire bullets.
+
+1.1.46
+	Added support for stairs.
+
 1.1.45
 	Bugfix: Fixed NPEs
 
@@ -7,7 +31,7 @@
 	Fix ammo desc
 	Added Zoom-scope to all guns that is a SNIPER weapontype
 	Fixed inventory size to match amount of items
-	Fixed bullets moving forever after going throigh stairs
+	Fixed bullets moving forever after going through stairs
 	Added customizable grenade damage in config
 
 1.1.43
