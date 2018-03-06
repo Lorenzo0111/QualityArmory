@@ -1,3 +1,6 @@
+1.1.51
+	Fixed config not loading all values
+
 1.1.50
 	Fixed gun textures for Dragunov and Mouser
 	Added Spas12

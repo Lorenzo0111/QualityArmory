@@ -222,9 +222,6 @@ public class Main extends JavaPlugin implements Listener {
 		miscRegister.clear();
 		interactableBlocks.clear();
 		
-		if(getServer().getPluginManager().isPluginEnabled("Parties"))
-			hasParties = true;
-		friendlyFire = (boolean) a("FriendlyFireEnabled", false);
 
 		m = new CustomYml(new File(getDataFolder(), "messages.yml"));
 		S_ANVIL = (String) m.a("NoPermAnvilMessage", S_ANVIL);
@@ -241,6 +238,11 @@ public class Main extends JavaPlugin implements Listener {
 
 		if (!new File(getDataFolder(), "config.yml").exists())
 			saveDefaultConfig();
+		reloadConfig();
+		
+		if(getServer().getPluginManager().isPluginEnabled("Parties"))
+			hasParties = true;
+		friendlyFire = (boolean) a("FriendlyFireEnabled", false);
 
 		shouldSend = (boolean) a("useDefaultResourcepack", true);
 		UnlimitedAmmoPistol = (boolean) a("UnlimitedPistolAmmo", false);
@@ -271,6 +273,8 @@ public class Main extends JavaPlugin implements Listener {
 		enableExplosionDamage = (boolean) a("enableExplosionDamage", false);
 		enableExplosionDamageDrop = (boolean) a("enableExplosionDamageDrop", false);
 
+		if (saveTheConfig)
+			saveConfig();
 		try {
 			enableEconomy = EconHandler.setupEconomy();
 		} catch (Exception | Error e) {
@@ -306,6 +310,8 @@ public class Main extends JavaPlugin implements Listener {
 				if (m.name().contains("DOOR") || m.name().contains("TRAPDOOR") || m.name().contains("BUTTON")
 						|| m.name().contains("LEVER"))
 					interactableBlocks.add(m);
+		if (saveTheConfig)
+			saveConfig();
 
 		// ,(float)a("Weapon.RPG.Damage", 10)
 
