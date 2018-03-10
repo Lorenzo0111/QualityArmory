@@ -116,7 +116,7 @@ public class Main extends JavaPlugin implements Listener {
 	public static Material guntype = Material.DIAMOND_HOE;
 
 	public static CustomYml m;
-	
+
 	public static boolean hasParties = false;
 	public static boolean friendlyFire = false;
 
@@ -221,7 +221,6 @@ public class Main extends JavaPlugin implements Listener {
 		ammoRegister.clear();
 		miscRegister.clear();
 		interactableBlocks.clear();
-		
 
 		m = new CustomYml(new File(getDataFolder(), "messages.yml"));
 		S_ANVIL = (String) m.a("NoPermAnvilMessage", S_ANVIL);
@@ -239,8 +238,8 @@ public class Main extends JavaPlugin implements Listener {
 		if (!new File(getDataFolder(), "config.yml").exists())
 			saveDefaultConfig();
 		reloadConfig();
-		
-		if(getServer().getPluginManager().isPluginEnabled("Parties"))
+
+		if (getServer().getPluginManager().isPluginEnabled("Parties"))
 			hasParties = true;
 		friendlyFire = (boolean) a("FriendlyFireEnabled", false);
 
@@ -390,7 +389,7 @@ public class Main extends JavaPlugin implements Listener {
 				new Dragunov((int) a("Weapon.Dragunov.Durability", 1000), getIngredients("Dragunov", stringsWoodRif),
 						(int) a("Weapon.Dragunov.Damage", 6), (double) a("Weapon.Dragunov.Price", 1200.0)));
 		gunRegister.put(m(24),
-				new Dragunov((int) a("Weapon.Spas.Durability", 1000), getIngredients("Spas", stringsMetalRif),
+				new Spas12((int) a("Weapon.Spas.Durability", 1000), getIngredients("Spas", stringsMetalRif),
 						(int) a("Weapon.Spas.Damage", 1), (double) a("Weapon.Spas.Price", 1200.0)));
 
 		if (saveTheConfig)
@@ -1304,6 +1303,7 @@ public class Main extends JavaPlugin implements Listener {
 				r.cancel();
 			}
 		}
+		reloadingTasks.remove(e.getEntity().getUniqueId());
 	}
 
 	@SuppressWarnings("deprecation")
@@ -1391,7 +1391,10 @@ public class Main extends JavaPlugin implements Listener {
 				}
 			}
 			if (isAmmo(usedItem)) {
-				if(e.getAction() == Action.RIGHT_CLICK_BLOCK && (e.getClickedBlock().getType()== Material.DIRT||e.getClickedBlock().getType()==Material.GRASS||e.getClickedBlock().getType()==Material.GRASS_PATH||e.getClickedBlock().getType()==Material.MYCEL))
+				if (e.getAction() == Action.RIGHT_CLICK_BLOCK && (e.getClickedBlock().getType() == Material.DIRT
+						|| e.getClickedBlock().getType() == Material.GRASS
+						|| e.getClickedBlock().getType() == Material.GRASS_PATH
+						|| e.getClickedBlock().getType() == Material.MYCEL))
 					e.setCancelled(true);
 				return;
 			}
@@ -1558,6 +1561,12 @@ public class Main extends JavaPlugin implements Listener {
 	@EventHandler
 	public void onQuit(final PlayerQuitEvent e) {
 		resourcepackReq.remove(e.getPlayer().getUniqueId());
+		if (reloadingTasks.containsKey(e.getPlayer().getUniqueId())) {
+			for (BukkitTask r : reloadingTasks.get(e.getPlayer().getUniqueId())) {
+				r.cancel();
+			}
+		}
+		reloadingTasks.remove(e.getPlayer().getUniqueId());
 	}
 
 	@EventHandler
@@ -1615,6 +1624,19 @@ public class Main extends JavaPlugin implements Listener {
 		if (isGun(e.getItemDrop().getItemStack())) {
 			if ((e.getItemDrop().getItemStack().getItemMeta().hasDisplayName()
 					&& e.getItemDrop().getItemStack().getItemMeta().getDisplayName().contains("Reloading"))) {
+				if (!reloadingTasks.containsKey(e.getPlayer().getUniqueId())) {
+					Gun g = getGun(e.getItemDrop().getItemStack());
+					if (g != null) {
+						ItemStack fix = e.getItemDrop().getItemStack();
+						ItemMeta temp = fix.getItemMeta();
+						temp.setDisplayName(g.getDisplayName());
+						fix.setItemMeta(temp);
+						e.getItemDrop().setItemStack(fix);
+						e.setCancelled(false);
+						return;
+					}
+				}
+				//If the gun is glitched, allow dropps. If not, cancel it
 				e.setCancelled(true);
 				return;
 			}

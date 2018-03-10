@@ -1,3 +1,9 @@
+1.1.53
+	Added spas correctly.
+
+1.1.52
+	Added fix for reloading-glithc on quit
+
 1.1.51
 	Fixed config not loading all values
 
