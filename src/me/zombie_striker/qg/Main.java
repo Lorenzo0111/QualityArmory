@@ -680,8 +680,12 @@ public class Main extends JavaPlugin implements Listener {
 												(short) IronSightsToggleItem.getData());
 										ItemMeta im = ironsights.getItemMeta();
 										im.setDisplayName(IronSightsToggleItem.getItemName());
+										try {
 										im.setUnbreakable(true);
+										}catch(Error|Exception e34) {}
+										try {
 										im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_UNBREAKABLE);
+										}catch(Error|Exception e34) {}
 										ironsights.setItemMeta(im);
 										e.getPlayer().getInventory().setItemInMainHand(ironsights);
 										if (tempremove != null) {
@@ -689,6 +693,7 @@ public class Main extends JavaPlugin implements Listener {
 										}
 
 									} catch (Error e2) {
+										e2.printStackTrace();
 									}
 								}
 							} catch (Error e2) {
@@ -1603,6 +1608,12 @@ public class Main extends JavaPlugin implements Listener {
 	@SuppressWarnings({ "deprecation", "unlikely-arg-type" })
 	@EventHandler
 	public void onDrop(final PlayerDropItemEvent e) {
+
+		if (isIS(e.getItemDrop().getItemStack())) {
+			e.setCancelled(true);
+			return;
+		}
+
 		if (e.getPlayer().isDead()) {
 			ItemStack newone = e.getItemDrop().getItemStack();
 			if (isGun(newone)/* newone.getType() == guntype */
@@ -1636,7 +1647,7 @@ public class Main extends JavaPlugin implements Listener {
 						return;
 					}
 				}
-				//If the gun is glitched, allow dropps. If not, cancel it
+				// If the gun is glitched, allow dropps. If not, cancel it
 				e.setCancelled(true);
 				return;
 			}

@@ -53,13 +53,14 @@ public class ItemFact {
 	public static ItemStack addShopLore(ArmoryBaseObject obj, ItemStack current) {
 		ItemMeta meta = current.getItemMeta();
 		List<String> lore = meta.getLore();
-		for(String loreS : new ArrayList<>(lore)) {
-			if(loreS.startsWith(ChatColor.DARK_RED+"Crafts")||loreS.startsWith(ChatColor.RED + Main.S_ITEM_ING)||loreS.startsWith(ChatColor.RED + "-" )) 
+		for (String loreS : new ArrayList<>(lore)) {
+			if (loreS.startsWith(ChatColor.DARK_RED + "Crafts") || loreS.startsWith(ChatColor.RED + Main.S_ITEM_ING)
+					|| loreS.startsWith(ChatColor.RED + "-"))
 				lore.remove(loreS);
-			
+
 		}
-		if(obj.getCraftingReturn()>1)
-			lore.add(ChatColor.DARK_RED+"Returns: "+obj.getCraftingReturn());
+		if (obj.getCraftingReturn() > 1)
+			lore.add(ChatColor.DARK_RED + "Returns: " + obj.getCraftingReturn());
 		lore.add(ChatColor.GOLD + "Price: " + obj.cost());
 		meta.setLore(lore);
 		ItemStack is = current;
@@ -107,6 +108,10 @@ public class ItemFact {
 		im.setLore(lore);
 		try {
 			im.setUnbreakable(true);
+
+		} catch (Error e3) {
+		}
+		try {
 			im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_UNBREAKABLE);
 		} catch (Error e) {
 		}
@@ -133,6 +138,9 @@ public class ItemFact {
 		im.setDisplayName(a.getDisplayName());
 		try {
 			im.setUnbreakable(true);
+		} catch (Error e) {
+		}
+		try {
 			im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_UNBREAKABLE);
 		} catch (Error e) {
 		}
@@ -149,6 +157,9 @@ public class ItemFact {
 		im.setDisplayName(a.getDisplayName());
 		try {
 			im.setUnbreakable(true);
+		} catch (Error e) {
+		}
+		try {
 			im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_UNBREAKABLE);
 		} catch (Error e) {
 		}

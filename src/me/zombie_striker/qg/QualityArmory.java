@@ -6,41 +6,94 @@ import me.zombie_striker.qg.guns.*;
 import me.zombie_striker.qg.guns.utils.WeaponSounds;
 import me.zombie_striker.qg.guns.utils.WeaponType;
 
+import java.util.*;
+
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
 public class QualityArmory {
-
+	/**
+	 * Returns the itemstack instance of a gun by using the material and data.
+	 * @param mat
+	 * @param data
+	 * @return
+	 */
 	public static ItemStack getGunItemStack(Material mat, int data) {
 		if (Main.gunRegister.containsKey(MaterialStorage.getMS(mat, data)))
 			return ItemFact.getGun(MaterialStorage.getMS(mat, data));
 		return null;
 	}
-
+	/**
+	 * Returns the itemstack instance of the gun
+	 * @param gun
+	 * @return
+	 */
 	public static ItemStack getGunItemStack(Gun gun) {
 		return ItemFact.getGun(gun);
 	}
-	public static ItemStack getGunItemStack(BasegameGuns gun) {
-		return ItemFact.getGun(getGun(gun));
-	}
-
+	/**
+	 * Retrusn the gun instance by its material and data
+	 * @param mat
+	 * @param data
+	 * @return
+	 */
 	public static Gun getGun(Material mat, int data) {
 		if (Main.gunRegister.containsKey(MaterialStorage.getMS(mat, data)))
 			return Main.gunRegister.get(MaterialStorage.getMS(mat, data));
 		return null;
 	}
-	public static Gun getGun(BasegameGuns gun){
-		return getGun(Main.guntype, gun.getData());
+	/**
+	 * Returns the gun instance by its name
+	 * @param name
+	 * @return
+	 */
+	public static Gun getGun(String name){
+		for(Gun g : getAllGunTypes()) {
+			if(g.getName().equals(name))
+				return g;
+		}
+		return null;
 	}
-
+	/**
+	 * Returns an itemstack instance of an ammo type by its material and data.
+	 * @param mat
+	 * @param data
+	 * @return
+	 */
 	public static ItemStack getAmmoItemStack(Material mat, int data) {
 		if (Main.ammoRegister.containsKey(MaterialStorage.getMS(mat, data)))
 			return ItemFact.getAmmo(mat, data);
 		return null;
 	}
-
-	public static ItemStack getAmmoItemStack(String name) {
+	/**
+	 * Returns an itemstack instance of an ammo type by its name
+	 * @param name
+	 * @return
+	 */
+	public static ItemStack getAmmoItemStackByName(String name) {
 		return ItemFact.getAmmo(AmmoType.getAmmo(name));
+	}
+	/**
+	 * Retrurns the itemstack instance of an ammo type
+	 * @param ammo
+	 * @return
+	 */
+	public static ItemStack getAmmoItemStack(Ammo ammo) {
+		return ItemFact.getAmmo(ammo);
+	}
+	/**
+	 * Returns all ammo registered
+	 * @return
+	 */
+	public static Collection<Ammo> getAllAmmoTypes(){
+		return Main.ammoRegister.values();
+	}
+	/**
+	 * Returns all guns regisered
+	 * @return
+	 */
+	public static Collection<Gun> getAllGunTypes(){
+		return Main.gunRegister.values();
 	}
 
 	/**
