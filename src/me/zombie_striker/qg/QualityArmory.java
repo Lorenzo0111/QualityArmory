@@ -5,6 +5,7 @@ import me.zombie_striker.qg.ammo.AmmoType;
 import me.zombie_striker.qg.guns.*;
 import me.zombie_striker.qg.guns.utils.WeaponSounds;
 import me.zombie_striker.qg.guns.utils.WeaponType;
+import me.zombie_striker.qg.handlers.IronSightsToggleItem;
 
 import java.util.*;
 
@@ -141,6 +142,75 @@ public class QualityArmory {
 				swayMultiplier, maxBullets, damage,isAutomatic, gunDurability,sound,cost);
 		Main.gunRegister.put(mm, g);
 		return g;
+	}
+	
+
+	/**
+	 * Returns if the item is a misc itemstack.
+	 * @param is
+	 * @return
+	 */
+	public boolean isMiscItem(ItemStack is) {
+		return (is != null && Main.miscRegister.containsKey(MaterialStorage.getMS(is.getType(), (int) is.getDurability())));
+	}
+
+	/**
+	 * Returns the base object for the item.
+	 * @param is
+	 * @return
+	 */
+	public ArmoryBaseObject getMiscItem(ItemStack is) {
+		return Main.miscRegister.get(MaterialStorage.getMS(is.getType(), (int) is.getDurability()));
+	}
+
+	/**
+	 * Returns the gun instance for the item.
+	 * @param is
+	 * @return
+	 */
+	public Gun getGun(ItemStack is) {
+		return Main.gunRegister.get(MaterialStorage.getMS(is.getType(), (int) is.getDurability()));
+	}
+
+	/**
+	 * Returns the ammo instance for the item.
+	 * @param is
+	 * @return
+	 */
+	public Ammo getAmmo(ItemStack is) {
+		return Main.ammoRegister.get(MaterialStorage.getMS(is.getType(), (int) is.getDurability()));
+	}
+
+	/**
+	 * Returns if the item is a gun itemstack.
+	 * @param is
+	 * @return
+	 */
+	public boolean isGun(ItemStack is) {
+		return (is != null && Main.gunRegister.containsKey(MaterialStorage.getMS(is.getType(), (int) is.getDurability())));
+	}
+
+	/**
+	 * Returns if the item is a ammo itemstack.
+	 * @param is
+	 * @return
+	 */
+	public boolean isAmmo(ItemStack is) {
+		return (is != null &&Main. ammoRegister.containsKey(MaterialStorage.getMS(is.getType(), (int) is.getDurability())));
+	}
+
+
+	/**
+	 * Returns if the item is a IronSight itemstack. Useful for checking if the player is aiming.
+	 * 
+	 * If this returns true, the gun is in the player's OFF hand.
+	 * @param is
+	 * @return
+	 */
+	public boolean isIronSight(ItemStack is) {
+		if (is != null && is.getType() == Main.guntype && is.getDurability() == (int) IronSightsToggleItem.getData())
+			return true;
+		return false;
 	}
 
 }

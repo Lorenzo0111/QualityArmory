@@ -1,3 +1,6 @@
+1.1.56
+	Added methods to the API that return the gun/ammo/misc instance for the itemstack.
+
 1.1.55
 	Fixed API
 
