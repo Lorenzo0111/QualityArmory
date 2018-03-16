@@ -7,6 +7,7 @@ import java.util.Map.Entry;
 
 import me.zombie_striker.pluginconstructor.HotbarMessager;
 import me.zombie_striker.qg.ammo.*;
+import me.zombie_striker.qg.armor.ArmorObject;
 import me.zombie_striker.qg.guns.*;
 import me.zombie_striker.qg.guns.utils.GunUtil;
 import me.zombie_striker.qg.guns.utils.WeaponSounds;
@@ -41,6 +42,7 @@ public class Main extends JavaPlugin implements Listener {
 	public static HashMap<MaterialStorage, Gun> gunRegister = new HashMap<>();
 	public static HashMap<MaterialStorage, Ammo> ammoRegister = new HashMap<>();
 	public static HashMap<MaterialStorage, ArmoryBaseObject> miscRegister = new HashMap<>();
+	public static HashMap<MaterialStorage, ArmorObject> armorRegister = new HashMap<>();
 
 	public static HashMap<UUID, List<BukkitTask>> reloadingTasks = new HashMap<UUID, List<BukkitTask>>();
 
@@ -421,6 +423,7 @@ public class Main extends JavaPlugin implements Listener {
 			f.set("material", guntype.name());
 			f.set("maxbullets", 12);
 			f.set("durability", 1000);
+			f.set("delayForReload", 1.5);
 			f.set("isAutomatic", false);
 			try {
 				f.save(new File(getDataFolder(), "newGuns/examplegun.yml"));
@@ -519,6 +522,7 @@ public class Main extends JavaPlugin implements Listener {
 											AmmoType.getAmmo(f2.getString("ammotype")), f2.getDouble("sway"), 2,
 											f2.getInt("maxbullets"), f2.getInt("damage"), isAutomatic,
 											f2.getInt("durability"), sound, extraLore, displayname, price, materails));
+							((DefaultGun)gunRegister.get(ms)).setReloadingTimeInSeconds(f2.getDouble("delayForReload"));
 
 						} else {
 							if (weatype == WeaponType.AMMO) {

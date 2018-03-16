@@ -107,14 +107,12 @@ public class GithubUpdater {
 							}
 
 						} catch (IOException e) {
-							e.printStackTrace();
 						}
 					}
 				}.runTaskLaterAsynchronously(main, 0);
 				return true;
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
 		}
 		return false;
 	}

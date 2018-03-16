@@ -7,6 +7,7 @@ import me.zombie_striker.qg.ItemFact;
 import me.zombie_striker.qg.Main;
 import me.zombie_striker.qg.ammo.Ammo;
 import me.zombie_striker.qg.ammo.AmmoUtil;
+import me.zombie_striker.qg.armor.BulletProtectionUtil;
 import me.zombie_striker.qg.guns.DefaultGun;
 import me.zombie_striker.qg.guns.Gun;
 import me.zombie_striker.qg.handlers.AimManager;
@@ -46,6 +47,8 @@ public class GunUtil {
 			boolean overrideocculde = false;
 
 			boolean headShot = false;
+
+			Location bulletHitLoc = null;
 
 			int maxDistance = range;
 			Block b = p.getTargetBlock(null, range);
@@ -87,6 +90,7 @@ public class GunUtil {
 										}
 									}
 									if (!occulde) {
+										bulletHitLoc = test;
 										dis2 = lastingDist;
 										overrideocculde = true;
 										hitTarget = e;
@@ -105,7 +109,9 @@ public class GunUtil {
 			}
 			if (hitTarget != null) {
 				if (!(hitTarget instanceof Player) || Main.allowGunsInRegion(hitTarget.getLocation())) {
-					((Damageable) hitTarget).damage(damage * (headShot ? 2 : 1), p);
+					((Damageable) hitTarget).damage(damage
+							* (BulletProtectionUtil.stoppedBullet(p, bulletHitLoc, go) ? 0.1 : 1) * (headShot ? 2 : 1),
+							p);
 					((LivingEntity) hitTarget).setNoDamageTicks(0);
 				}
 			}

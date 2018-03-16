@@ -1,3 +1,8 @@
+1.1.57
+	Fixed updater time-out error.
+	Added framework for Kevlar vest.
+	Added support for custom reload times
+
 1.1.56
 	Added methods to the API that return the gun/ammo/misc instance for the itemstack.
 

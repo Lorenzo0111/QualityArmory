@@ -46,6 +46,8 @@ public class DefaultGun implements Gun {
 	private double delayBetweenShots = 0.25;
 
 	private int shotsPerBullet = 1;
+	
+	private double reloadTime = 1.5;
 
 	// This refers to the last time a gun was shot by a player, on a per-gun basis.
 	// Doing this should prevent players from fast-switching to get around
@@ -100,6 +102,13 @@ public class DefaultGun implements Gun {
 
 		this.extralore = extralore;
 		this.displayname = ChatColor.translateAlternateColorCodes('&', displayname);
+	}
+	
+	public double getReloadingTimeInSeconds() {
+		return reloadTime;
+	}
+	public void setReloadingTimeInSeconds(double time) {
+		this.reloadTime = time;
 	}
 	
 	public void setBulletsPerShot(int i) {
@@ -168,7 +177,7 @@ public class DefaultGun implements Gun {
 
 	@Override
 	public void reload(Player player) {
-		GunUtil.basicReload(this, player, WeaponType.isUnlimited(type));
+		GunUtil.basicReload(this, player, WeaponType.isUnlimited(type),reloadTime);
 	}
 
 	@Override
