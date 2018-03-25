@@ -12,7 +12,7 @@ import org.bukkit.inventory.ItemStack;
 public class Spas12 extends DefaultGun{
 	
 public Spas12(int d, ItemStack[] ing, float damage, double cost) {
-	super("Spas12", MaterialStorage.getMS(Main.guntype,24), WeaponType.SHOTGUN, false, AmmoType.getAmmo("shell"),  0.2,2, 7, damage,false,d,WeaponSounds.GUN_MEDIUM,null,ChatColor.GOLD+"Spas-12",cost,ing);
+	super("Spas12", WeaponType.SHOTGUN, false, AmmoType.getAmmo("shell"),  0.2,2.0, 7, damage,false,d,WeaponSounds.GUN_MEDIUM,cost,ing);
 	this.setBulletsPerShot(15);
 }
 

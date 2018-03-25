@@ -90,6 +90,7 @@ public class Main extends JavaPlugin implements Listener {
 
 	public static boolean overrideURL = false;
 	public static String url = "https://www.dropbox.com/s/wsg2sl5vmclw921/QualityArmory%201.8.zip?dl=1";
+	public static String url18 = "https://www.dropbox.com/s/8eqlw8004b0ho8h/QualityArmory1.8V1.0.9.zip?dl=1";
 
 	public static String S_NOPERM = " You do not have permission to do that";
 	public static String S_NORES1 = " You do not have the resoucepack";
@@ -121,6 +122,32 @@ public class Main extends JavaPlugin implements Listener {
 
 	public static boolean hasParties = false;
 	public static boolean friendlyFire = false;
+
+	private static final String SERVER_VERSION;
+
+	static {
+		String name = Bukkit.getServer().getClass().getName();
+		name = name.substring(name.indexOf("craftbukkit.") + "craftbukkit.".length());
+		name = name.substring(0, name.indexOf("."));
+		SERVER_VERSION = name;
+	}
+
+	public static boolean isVersionHigherThan(int mainVersion, int secondVersion) {
+		String firstChar = SERVER_VERSION.substring(1, 2);
+		int fInt = Integer.parseInt(firstChar);
+		if (fInt < mainVersion)
+			return false;
+		StringBuilder secondChar = new StringBuilder();
+		for (int i = 3; i < 10; i++) {
+			if (SERVER_VERSION.charAt(i) == '_' || SERVER_VERSION.charAt(i) == '.')
+				break;
+			secondChar.append(SERVER_VERSION.charAt(i));
+		}
+		int sInt = Integer.parseInt(secondChar.toString());
+		if (sInt < secondVersion)
+			return false;
+		return true;
+	}
 
 	/**
 	 * GUNLIST:
@@ -170,6 +197,10 @@ public class Main extends JavaPlugin implements Listener {
 		Bukkit.getPluginManager().registerEvents(new AimManager(), this);
 
 		try {
+			Bukkit.getPluginManager().registerEvents(new Update18resourcepackhandler(), this);
+		} catch (Exception | Error e) {
+		}
+		try {
 			Bukkit.getPluginManager().registerEvents(new Update19Events(), this);
 		} catch (Exception | Error e) {
 		}
@@ -199,22 +230,24 @@ public class Main extends JavaPlugin implements Listener {
 
 	@EventHandler
 	public void roggleshift(PlayerToggleSneakEvent e) {
-		ItemStack item = e.getPlayer().getInventory().getItemInOffHand();
 		try {
-			if (item != null && isGun(item)) {
+			ItemStack item = e.getPlayer().getInventory().getItemInOffHand();
+			try {
+				if (item != null && isGun(item)) {
 
-				Gun gun = getGun(item);
-				if (gun.getWeaponType() != WeaponType.SNIPER)
-					return;
+					Gun gun = getGun(item);
+					if (gun.getWeaponType() != WeaponType.SNIPER)
+						return;
 
-				if (e.isSneaking())
-					e.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 12000, 4));
+					if (e.isSneaking())
+						e.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 12000, 4));
+				}
+				if (!e.isSneaking())
+					e.getPlayer().removePotionEffect(PotionEffectType.SLOW);
+			} catch (Error e2) {
 			}
-			if (!e.isSneaking())
-				e.getPlayer().removePotionEffect(PotionEffectType.SLOW);
-		} catch (Error e2) {
+		} catch (Error | Exception e4) {
 		}
-
 	}
 
 	public void reloadVals() {
@@ -335,65 +368,89 @@ public class Main extends JavaPlugin implements Listener {
 		List<String> stringsAmmoRPG = Arrays.asList(new String[] { getIngString(Material.IRON_INGOT, 0, 4),
 				getIngString(Material.SULPHUR, 0, 6), getIngString(Material.REDSTONE, 0, 1) });
 
+		/**
+		 * Though ammo is here, it will not be present in 1.8
+		 */
 		Ammo a1 = new Ammo556(getIngredients("Ammo556", stringsAmmo), 4, (double) a("Ammo.556.Price", 5.0));
 		Ammo a2 = new Ammo9mm(getIngredients("Ammo9mm", stringsAmmo), 4, (double) a("Ammo.9mm.Price", 2.0));
 		Ammo a3 = new AmmoShotGun(getIngredients("AmmoBuckshot", stringsAmmo), 2,
 				(double) a("Ammo.Buckshot.Price", 5.0));
 		Ammo a4 = new AmmoRPG(getIngredients("AmmoRPG", stringsAmmoRPG), 1, (double) a("Ammo.RPG.Price", 100.0));
 
-		ammoRegister.put(m(14), a1);
-		ammoRegister.put(m(15), a2);
-		ammoRegister.put(m(16), a3);
-		ammoRegister.put(m(17), a4);
+		if (!isVersionHigherThan(1, 9)) {
+			gunRegister.put(MaterialStorage.getMS(Material.IRON_HOE, -1),
+					new P30((int) a("Weapon.P30.Durability", 500), getIngredients("P30", stringsPistol),
+							(int) a("Weapon.P30.Damage", 3), (double) a("Weapon.P30.Price", 500.5)));
+			gunRegister.put(MaterialStorage.getMS(Material.GOLD_PICKAXE, -1),
+					new MP5K((int) a("Weapon.MP5K.Durability", 1000), getIngredients("MP5K", stringsPistol),
+							(int) a("Weapon.MP5K.Damage", 1), (double) a("Weapon.MP5K.Price", 800.0)));
+			gunRegister.put(MaterialStorage.getMS(Material.GOLD_SPADE, -1),
+					new AK47((int) a("Weapon.AK47.Durability", 1000), getIngredients("AK47", stringsWoodRif),
+							(int) a("Weapon.AK47.Damage", 3), (double) a("Weapon.AK47.Price", 1000.0)));
+			gunRegister.put(MaterialStorage.getMS(Material.GOLD_HOE, -1),
+					new FNFal((int) a("Weapon.FNFal.Durability", 1000), getIngredients("FNFal", stringsMetalRif),
+							(int) a("Weapon.FNFal.Damage", 1), (double) a("Weapon.FNFal.Price", 1000.0)));
+		} else {
 
-		gunRegister.put(m(2), new P30((int) a("Weapon.P30.Durability", 500), getIngredients("P30", stringsPistol),
-				(int) a("Weapon.P30.Damage", 3), (double) a("Weapon.P30.Price", 500.5)));
-		gunRegister.put(m(3), new PKP((int) a("Weapon.PKP.Durability", 500), getIngredients("PKP", stringsPistol),
-				(int) a("Weapon.PKP.Damage", 3), (double) a("Weapon.PKP.Price", 2000.0)));
-		gunRegister.put(m(4), new MP5K((int) a("Weapon.MP5K.Durability", 1000), getIngredients("MP5K", stringsPistol),
-				(int) a("Weapon.MP5K.Damage", 1), (double) a("Weapon.MP5K.Price", 800.0)));
-		gunRegister.put(m(5), new AK47((int) a("Weapon.AK47.Durability", 1000), getIngredients("AK47", stringsWoodRif),
-				(int) a("Weapon.AK47.Damage", 3), (double) a("Weapon.AK47.Price", 1000.0)));
-		gunRegister.put(m(7), new M16((int) a("Weapon.M16.Durability", 1000), getIngredients("M16", stringsMetalRif),
-				(int) a("Weapon.M16.Damage", 3), (double) a("Weapon.M16.Price", 1000.0)));
-		gunRegister.put(m(8),
-				new Remmington((int) a("Weapon.Remmington.Durability", 500),
-						getIngredients("Remmington", stringsMetalRif), (int) a("Weapon.Remmington.Damage", 1),
-						(double) a("Weapon.Remmington.Price", 1000.0)));
-		gunRegister.put(m(9),
-				new FNFal((int) a("Weapon.FNFal.Durability", 1000), getIngredients("FNFal", stringsMetalRif),
-						(int) a("Weapon.FNFal.Damage", 1), (double) a("Weapon.FNFal.Price", 1000.0)));
-		gunRegister.put(m(10), new RPG((int) a("Weapon.RPG.Durability", 100), getIngredients("RPG", stringsRPG),
-				(double) a("Weapon.rPG.Price", 5000.0)));
-		gunRegister.put(m(11), new UMP((int) a("Weapon.UMP.Durability", 1000), getIngredients("UMP", stringsPistol),
-				(int) a("Weapon.UMP.Damage", 2), (double) a("Weapon.UMP.Price", 1000.0)));
-		gunRegister.put(m(12),
-				new SW1911((int) a("Weapon.SW1911.Durability", 500), getIngredients("SW1911", stringsPistol),
-						(int) a("Weapon.SW1911.Damage", 2), (double) a("Weapon.SW1911.Price", 600.0)));
-		gunRegister.put(m(13), new M40((int) a("Weapon.M40.Durability", 500), getIngredients("M40", stringsWoodRif),
-				(int) a("Weapon.M40.Damage", 5), (double) a("Weapon.M40.Price", 1000.0)));
+			ammoRegister.put(m(14), a1);
+			ammoRegister.put(m(15), a2);
+			ammoRegister.put(m(16), a3);
+			ammoRegister.put(m(17), a4);
 
-		gunRegister.put(m(18),
-				new Enfield((int) a("Weapon.Enfield.Durability", 500), getIngredients("Enfield", stringsGoldRif),
-						(int) a("Weapon.Enfield.Damage", 2), (double) a("Weapon.Enfield.Price", 500.0)));
-		gunRegister.put(m(19),
-				new HenryRifle((int) a("Weapon.Henry.Durability", 500), getIngredients("Henry", stringsGoldRif),
-						(int) a("Weapon.Henry.Damage", 3), (double) a("Weapon.Henry.Price", 1000.0)));
-		gunRegister.put(m(20),
-				new MouserC96((int) a("Weapon.MouserC96.Durability", 500), getIngredients("MouserC96", stringsPistol),
-						(int) a("Weapon.MouserC96.Damage", 2), (double) a("Weapon.MouserC96.Price", 400.0)));
+			gunRegister.put(m(2), new P30((int) a("Weapon.P30.Durability", 500), getIngredients("P30", stringsPistol),
+					(int) a("Weapon.P30.Damage", 3), (double) a("Weapon.P30.Price", 500.5)));
+			gunRegister.put(m(3), new PKP((int) a("Weapon.PKP.Durability", 500), getIngredients("PKP", stringsPistol),
+					(int) a("Weapon.PKP.Damage", 3), (double) a("Weapon.PKP.Price", 2000.0)));
+			gunRegister.put(m(4),
+					new MP5K((int) a("Weapon.MP5K.Durability", 1000), getIngredients("MP5K", stringsPistol),
+							(int) a("Weapon.MP5K.Damage", 1), (double) a("Weapon.MP5K.Price", 800.0)));
+			gunRegister.put(m(5),
+					new AK47((int) a("Weapon.AK47.Durability", 1000), getIngredients("AK47", stringsWoodRif),
+							(int) a("Weapon.AK47.Damage", 3), (double) a("Weapon.AK47.Price", 1000.0)));
+			gunRegister.put(m(7),
+					new M16((int) a("Weapon.M16.Durability", 1000), getIngredients("M16", stringsMetalRif),
+							(int) a("Weapon.M16.Damage", 3), (double) a("Weapon.M16.Price", 1000.0)));
+			gunRegister.put(m(8),
+					new Remmington((int) a("Weapon.Remmington.Durability", 500),
+							getIngredients("Remmington", stringsMetalRif), (int) a("Weapon.Remmington.Damage", 1),
+							(double) a("Weapon.Remmington.Price", 1000.0)));
+			gunRegister.put(m(9),
+					new FNFal((int) a("Weapon.FNFal.Durability", 1000), getIngredients("FNFal", stringsMetalRif),
+							(int) a("Weapon.FNFal.Damage", 1), (double) a("Weapon.FNFal.Price", 1000.0)));
+			gunRegister.put(m(10), new RPG((int) a("Weapon.RPG.Durability", 100), getIngredients("RPG", stringsRPG),
+					(double) a("Weapon.rPG.Price", 5000.0)));
+			gunRegister.put(m(11), new UMP((int) a("Weapon.UMP.Durability", 1000), getIngredients("UMP", stringsPistol),
+					(int) a("Weapon.UMP.Damage", 2), (double) a("Weapon.UMP.Price", 1000.0)));
+			gunRegister.put(m(12),
+					new SW1911((int) a("Weapon.SW1911.Durability", 500), getIngredients("SW1911", stringsPistol),
+							(int) a("Weapon.SW1911.Damage", 2), (double) a("Weapon.SW1911.Price", 600.0)));
+			gunRegister.put(m(13), new M40((int) a("Weapon.M40.Durability", 500), getIngredients("M40", stringsWoodRif),
+					(int) a("Weapon.M40.Damage", 5), (double) a("Weapon.M40.Price", 1000.0)));
 
-		miscRegister.put(m(22),
-				new Grenades(getIngredients("Grenades", stringsGrenades), (double) a("Weapon.Grenade.Price", 800.0),
-						(double) a("Weapon.Grenade.radiusdamage", 10.0), (double) a("Weapon.Grenade.radius", 5.0)));
+			gunRegister.put(m(18),
+					new Enfield((int) a("Weapon.Enfield.Durability", 500), getIngredients("Enfield", stringsGoldRif),
+							(int) a("Weapon.Enfield.Damage", 2), (double) a("Weapon.Enfield.Price", 500.0)));
+			gunRegister.put(m(19),
+					new HenryRifle((int) a("Weapon.Henry.Durability", 500), getIngredients("Henry", stringsGoldRif),
+							(int) a("Weapon.Henry.Damage", 3), (double) a("Weapon.Henry.Price", 1000.0)));
+			gunRegister.put(m(20),
+					new MouserC96((int) a("Weapon.MouserC96.Durability", 500),
+							getIngredients("MouserC96", stringsPistol), (int) a("Weapon.MouserC96.Damage", 2),
+							(double) a("Weapon.MouserC96.Price", 400.0)));
 
-		gunRegister.put(m(23),
-				new Dragunov((int) a("Weapon.Dragunov.Durability", 1000), getIngredients("Dragunov", stringsWoodRif),
-						(int) a("Weapon.Dragunov.Damage", 6), (double) a("Weapon.Dragunov.Price", 1200.0)));
-		gunRegister.put(m(24),
-				new Spas12((int) a("Weapon.Spas.Durability", 1000), getIngredients("Spas", stringsMetalRif),
-						(int) a("Weapon.Spas.Damage", 1), (double) a("Weapon.Spas.Price", 1200.0)));
+			miscRegister.put(m(22),
+					new Grenades(getIngredients("Grenades", stringsGrenades), (double) a("Weapon.Grenade.Price", 800.0),
+							(double) a("Weapon.Grenade.radiusdamage", 10.0), (double) a("Weapon.Grenade.radius", 5.0)));
 
+			gunRegister.put(m(23),
+					new Dragunov((int) a("Weapon.Dragunov.Durability", 1000),
+							getIngredients("Dragunov", stringsWoodRif), (int) a("Weapon.Dragunov.Damage", 6),
+							(double) a("Weapon.Dragunov.Price", 1200.0)));
+			gunRegister.put(m(24),
+					new Spas12((int) a("Weapon.Spas.Durability", 1000), getIngredients("Spas", stringsMetalRif),
+							(int) a("Weapon.Spas.Damage", 1), (double) a("Weapon.Spas.Price", 1200.0)));
+
+		}
 		if (saveTheConfig)
 			saveConfig();
 
@@ -522,7 +579,8 @@ public class Main extends JavaPlugin implements Listener {
 											AmmoType.getAmmo(f2.getString("ammotype")), f2.getDouble("sway"), 2,
 											f2.getInt("maxbullets"), f2.getInt("damage"), isAutomatic,
 											f2.getInt("durability"), sound, extraLore, displayname, price, materails));
-							((DefaultGun)gunRegister.get(ms)).setReloadingTimeInSeconds(f2.getDouble("delayForReload"));
+							((DefaultGun) gunRegister.get(ms))
+									.setReloadingTimeInSeconds(f2.getDouble("delayForReload"));
 
 						} else {
 							if (weatype == WeaponType.AMMO) {
@@ -636,13 +694,6 @@ public class Main extends JavaPlugin implements Listener {
 	}
 
 	@EventHandler
-	public void onResourcepackStatusEvent(PlayerResourcePackStatusEvent event) {
-		if (event.getStatus() == PlayerResourcePackStatusEvent.Status.ACCEPTED
-				|| event.getStatus() == PlayerResourcePackStatusEvent.Status.SUCCESSFULLY_LOADED)
-			Main.resourcepackReq.add(event.getPlayer().getUniqueId());
-	}
-
-	@EventHandler
 	public void onHopperpickup(InventoryPickupItemEvent e) {
 		if (e.getInventory().getType() == InventoryType.HOPPER)
 			if (isGun(e.getItem().getItemStack()))
@@ -685,11 +736,13 @@ public class Main extends JavaPlugin implements Listener {
 										ItemMeta im = ironsights.getItemMeta();
 										im.setDisplayName(IronSightsToggleItem.getItemName());
 										try {
-										im.setUnbreakable(true);
-										}catch(Error|Exception e34) {}
+											im.setUnbreakable(true);
+										} catch (Error | Exception e34) {
+										}
 										try {
-										im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_UNBREAKABLE);
-										}catch(Error|Exception e34) {}
+											im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_UNBREAKABLE);
+										} catch (Error | Exception e34) {
+										}
 										ironsights.setItemMeta(im);
 										e.getPlayer().getInventory().setItemInMainHand(ironsights);
 										if (tempremove != null) {
@@ -1337,11 +1390,13 @@ public class Main extends JavaPlugin implements Listener {
 		if (e.getItem() != null) {
 			// Quick bugfix for specifically this item.
 			if ((!isGun(e.getItem())) && !isAmmo(e.getItem()) && !isMisc(e.getItem()) && (!isIS(e.getItem()))) {
-				if ((gunRegister.containsKey(
+				if (gunRegister.containsKey(
 						MaterialStorage.getMS(e.getItem().getType(), (int) (e.getItem().getDurability() + 1)))
 						|| ammoRegister.containsKey(
-								MaterialStorage.getMS(e.getItem().getType(), (int) (e.getItem().getDurability() + 1))))
-						|| miscRegister.containsKey(MaterialStorage.getMS(e.getItem().getType(),
+								MaterialStorage.getMS(e.getItem().getType(), (int) (e.getItem().getDurability() + 1)))
+						|| miscRegister.containsKey(
+								MaterialStorage.getMS(e.getItem().getType(), (int) (e.getItem().getDurability() + 1)))
+						|| armorRegister.containsKey(MaterialStorage.getMS(e.getItem().getType(),
 								(int) (e.getItem().getDurability() + 1)))) {
 					// If the item is not a gun, but the item below it is
 					int safeDurib = e.getItem().getDurability();
@@ -1352,6 +1407,9 @@ public class Main extends JavaPlugin implements Listener {
 						if (j.getMat() == e.getItem().getType() && j.getData() >= safeDurib)
 							safeDurib = j.getData();
 					for (MaterialStorage j : miscRegister.keySet())
+						if (j.getMat() == e.getItem().getType() && j.getData() >= safeDurib)
+							safeDurib = j.getData();
+					for (MaterialStorage j : armorRegister.keySet())
 						if (j.getMat() == e.getItem().getType() && j.getData() >= safeDurib)
 							safeDurib = j.getData();
 
@@ -1365,6 +1423,23 @@ public class Main extends JavaPlugin implements Listener {
 			}
 
 			ItemStack usedItem = e.getPlayer().getItemInHand();
+			// Sedn the resourcepack if the player does not have it.
+			if (shouldSend && !resourcepackReq.contains(e.getPlayer().getUniqueId()))
+				sendPacket(e.getPlayer(), true);
+
+			if (isGun(usedItem)) {
+				try {
+					UUID.fromString(usedItem.getItemMeta().getLocalizedName());
+				} catch (Error | Exception e34) {
+					if (isVersionHigherThan(1, 9)) {
+						ItemStack is = ItemFact.getGun(MaterialStorage.getMS(usedItem));
+						e.setCancelled(true);
+						e.getPlayer().setItemInHand(is);
+						return;
+					}
+				}
+			}
+
 			boolean offhand = false;
 
 			if (isMisc(usedItem)) {
@@ -1415,9 +1490,6 @@ public class Main extends JavaPlugin implements Listener {
 				checkforDups(e.getPlayer(), usedItem);
 
 			e.setCancelled(true);
-			if (shouldSend && !resourcepackReq.contains(e.getPlayer().getUniqueId())) {
-				sendPacket(e.getPlayer(), true);
-			}
 			if ((e.getAction() == Action.LEFT_CLICK_AIR || e.getAction() == Action.LEFT_CLICK_BLOCK)
 					|| (g != null && g.isAutomatic() && e.getPlayer().isSneaking())) {
 				/*
@@ -1730,7 +1802,13 @@ public class Main extends JavaPlugin implements Listener {
 			@Override
 			public void run() {
 				try {
-					player.setResourcePack(url);
+					if (isVersionHigherThan(1, 9))
+						player.setResourcePack(url);
+					else {
+						player.setResourcePack(url18);
+						resourcepackReq.add(player.getUniqueId());
+					}
+
 				} catch (Exception e) {
 
 				}
@@ -1765,27 +1843,36 @@ public class Main extends JavaPlugin implements Listener {
 	}
 
 	public boolean isMisc(ItemStack is) {
-		return (is != null && miscRegister.containsKey(MaterialStorage.getMS(is.getType(), (int) is.getDurability())));
+		return (is != null && (miscRegister.containsKey(MaterialStorage.getMS(is.getType(), (int) is.getDurability()))
+				|| miscRegister.containsKey(MaterialStorage.getMS(is.getType(), -1))));
 	}
 
 	public ArmoryBaseObject getMisc(ItemStack is) {
+		if (miscRegister.containsKey(MaterialStorage.getMS(is.getType(), -1)))
+			return miscRegister.get(MaterialStorage.getMS(is.getType(), -1));
 		return miscRegister.get(MaterialStorage.getMS(is.getType(), (int) is.getDurability()));
 	}
 
 	public Gun getGun(ItemStack is) {
+		if (gunRegister.containsKey(MaterialStorage.getMS(is.getType(), -1)))
+			return gunRegister.get(MaterialStorage.getMS(is.getType(), -1));
 		return gunRegister.get(MaterialStorage.getMS(is.getType(), (int) is.getDurability()));
 	}
 
 	public Ammo getAmmo(ItemStack is) {
+		if (ammoRegister.containsKey(MaterialStorage.getMS(is.getType(), -1)))
+			return ammoRegister.get(MaterialStorage.getMS(is.getType(), -1));
 		return ammoRegister.get(MaterialStorage.getMS(is.getType(), (int) is.getDurability()));
 	}
 
 	public boolean isGun(ItemStack is) {
-		return (is != null && gunRegister.containsKey(MaterialStorage.getMS(is.getType(), (int) is.getDurability())));
+		return (is != null && (gunRegister.containsKey(MaterialStorage.getMS(is.getType(), (int) is.getDurability()))
+				|| gunRegister.containsKey(MaterialStorage.getMS(is.getType(), -1))));
 	}
 
 	public boolean isAmmo(ItemStack is) {
-		return (is != null && ammoRegister.containsKey(MaterialStorage.getMS(is.getType(), (int) is.getDurability())));
+		return (is != null && (ammoRegister.containsKey(MaterialStorage.getMS(is.getType(), (int) is.getDurability()))
+				|| ammoRegister.containsKey(MaterialStorage.getMS(is.getType(), -1))));
 	}
 
 	public boolean isIS(ItemStack is) {

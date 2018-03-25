@@ -14,6 +14,7 @@ import me.zombie_striker.qg.handlers.Update19OffhandChecker;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
@@ -46,7 +47,7 @@ public class DefaultGun implements Gun {
 	private double delayBetweenShots = 0.25;
 
 	private int shotsPerBullet = 1;
-	
+
 	private double reloadTime = 1.5;
 
 	// This refers to the last time a gun was shot by a player, on a per-gun basis.
@@ -56,13 +57,24 @@ public class DefaultGun implements Gun {
 
 	public DefaultGun(String name, MaterialStorage id, WeaponType type, boolean h, Ammo am, double acc, double swaymult,
 			int maxBullets, float damage, boolean isAutomatic, int durib, WeaponSounds ws, double cost) {
-		this(name, id, type, h, am, acc, swaymult, maxBullets, damage, isAutomatic, durib, ws, null, ChatColor.GOLD+ name, cost, null);
+		this(name, id, type, h, am, acc, swaymult, maxBullets, damage, isAutomatic, durib, ws, null,
+				ChatColor.GOLD + name, cost, null);
+		this.ing = Main.getInstance().getIngredients(name);
+
+	}
+
+	public DefaultGun(String name, WeaponType type, boolean h, Ammo am, double acc, double swaymult, int maxBullets,
+			float damage, boolean isAutomatic, int durib, WeaponSounds ws, double cost) {
+		this(name, type, h, am, acc, swaymult, maxBullets, damage, isAutomatic, durib, ws, cost, Main.getInstance().getIngredients(name));
+	}
+
+	public DefaultGun(String name, WeaponType type, boolean h, Ammo am, double acc, double swaymult, int maxBullets,
+			float damage, boolean isAutomatic, int durib, WeaponSounds ws, double cost,ItemStack[] ing) {
 		this.name = name;
-		this.id = id;
 		this.type = type;
 		this.hasIronSights = h;
 		this.ammotype = am;
-		this.ing = Main.getInstance().getIngredients(name);
+		this.ing = ing;
 		this.acc = acc;
 		this.maxbull = maxBullets;
 		this.damage = damage;
@@ -78,7 +90,8 @@ public class DefaultGun implements Gun {
 	public DefaultGun(String name, MaterialStorage id, WeaponType type, boolean h, Ammo am, double acc, double swaymult,
 			int maxBullets, float damage, boolean isAutomatic, int durib, WeaponSounds ws, double cost,
 			ItemStack[] ing) {
-		this(name, id, type, h, am, acc, swaymult, maxBullets, damage, isAutomatic, durib, ws, null, ChatColor.GOLD+ name, cost, ing);
+		this(name, id, type, h, am, acc, swaymult, maxBullets, damage, isAutomatic, durib, ws, null,
+				ChatColor.GOLD + name, cost, ing);
 	}
 
 	public DefaultGun(String name, MaterialStorage id, WeaponType type, boolean h, Ammo am, double acc, double swaymult,
@@ -103,17 +116,19 @@ public class DefaultGun implements Gun {
 		this.extralore = extralore;
 		this.displayname = ChatColor.translateAlternateColorCodes('&', displayname);
 	}
-	
+
 	public double getReloadingTimeInSeconds() {
 		return reloadTime;
 	}
+
 	public void setReloadingTimeInSeconds(double time) {
 		this.reloadTime = time;
 	}
-	
+
 	public void setBulletsPerShot(int i) {
 		this.shotsPerBullet = i;
 	}
+
 	public int getBulletsPerShot() {
 		return shotsPerBullet;
 	}
@@ -172,12 +187,14 @@ public class DefaultGun implements Gun {
 	public boolean playerHasAmmo(Player player) {
 		if (hasUnlimitedAmmo())
 			return true;
+		if (!Main.isVersionHigherThan(1, 9))
+			return true;
 		return GunUtil.hasAmmo(player, this);
 	}
 
 	@Override
 	public void reload(Player player) {
-		GunUtil.basicReload(this, player, WeaponType.isUnlimited(type),reloadTime);
+		GunUtil.basicReload(this, player, WeaponType.isUnlimited(type) || (!Main.isVersionHigherThan(1, 9)), reloadTime);
 	}
 
 	@Override
@@ -219,6 +236,12 @@ public class DefaultGun implements Gun {
 
 	@Override
 	public MaterialStorage getItemData() {
+		if (id == null) {
+			for (Entry<MaterialStorage, Gun> e : Main.gunRegister.entrySet()) {
+				if (e.getValue() == this)
+					return id = e.getKey();
+			}
+		}
 		return id;
 	}
 

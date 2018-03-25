@@ -11,7 +11,7 @@ import org.bukkit.inventory.ItemStack;
 public class M16 extends DefaultGun {
 
 	public M16(int d,ItemStack[] ing, float damage, double cost) {
-		super("M16", MaterialStorage.getMS(Main.guntype,7), WeaponType.RIFLE, true, AmmoType.getAmmo("556"),  0.2,2, 51, damage,true,d,WeaponSounds.GUN_AUTO,cost,ing);
+		super("M16",  WeaponType.RIFLE, true, AmmoType.getAmmo("556"),  0.2,2, 51, damage,true,d,WeaponSounds.GUN_AUTO,cost,ing);
 		this.setDelayBetweenShots(0.1);
 	}
 }

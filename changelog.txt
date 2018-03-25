@@ -1,3 +1,28 @@
+1.1.63
+	//1.8 is buggy.
+	Fixed resourcepack pack applying issue.
+	Fixed bullet reloading issue for 1.8 and 1.9+
+	Fixed issue with firing bullets on 1.8
+	Fixed gun-recreation on 1.8.
+	Fixed incorrect version checks.
+
+1.1.62
+	Fixed key getter
+
+1.1.61
+	Fxied RP link
+
+1.1.60
+	Added setter so resourcepacks will be set when a player clicks on a gun
+	Added 1.8 semi-supoport. A new resourcepack with 4 guns have been added to support 1.8
+	Fixed issue with item replacer resetting the wrong item
+
+1.1.59
+	Added item replacer if item is not a gun
+
+1.1.58
+	Fixed error on shift when using 1.8
+
 1.1.57
 	Fixed updater time-out error.
 	Added framework for Kevlar vest.

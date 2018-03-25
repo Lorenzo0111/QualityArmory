@@ -11,7 +11,7 @@ import org.bukkit.inventory.ItemStack;
 
 public class MP5K extends DefaultGun {
 	public MP5K(int d,ItemStack[] ing, float damage, double cost) {
-		super("MP5K", MaterialStorage.getMS(Main.guntype,4), WeaponType.SMG,false, AmmoType.getAmmo("9mm"),  0.3,2, 34, damage,true,d,WeaponSounds.GUN_SMALL,cost,ing);
+		super("MP5K",WeaponType.SMG,false, AmmoType.getAmmo("9mm"),  0.3,2, 34, damage,true,d,WeaponSounds.GUN_SMALL,cost,ing);
 		this.setDelayBetweenShots(0.1);
 	}
 }

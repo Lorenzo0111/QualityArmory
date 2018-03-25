@@ -102,6 +102,8 @@ public class ItemFact {
 
 	public static ItemStack getGun(Gun g) {
 		ItemStack is = new ItemStack(g.getItemData().getMat(), 0, (short) g.getItemData().getData());
+		if(g.getItemData().getData() < 0)
+			is.setDurability((short) 0);
 		ItemMeta im = is.getItemMeta();
 		im.setDisplayName(g.getDisplayName());
 		List<String> lore = getGunLore(g, null, g.getMaxBullets());
@@ -134,6 +136,8 @@ public class ItemFact {
 
 	public static ItemStack getAmmo(Ammo a) {
 		ItemStack is = new ItemStack(a.getItemData().getMat(), 0, (short) a.getItemData().getData());
+		if(a.getItemData().getData() < 0)
+			is.setDurability((short) 0);
 		ItemMeta im = is.getItemMeta();
 		im.setDisplayName(a.getDisplayName());
 		try {
@@ -153,6 +157,8 @@ public class ItemFact {
 
 	public static ItemStack getObject(ArmoryBaseObject a) {
 		ItemStack is = new ItemStack(a.getItemData().getMat(), 0, (short) a.getItemData().getData());
+		if(a.getItemData().getData() < 0)
+			is.setDurability((short) 0);
 		ItemMeta im = is.getItemMeta();
 		im.setDisplayName(a.getDisplayName());
 		try {

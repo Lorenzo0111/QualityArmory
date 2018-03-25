@@ -51,6 +51,6 @@ public class Enfield extends DefaultGun {
 
 
 	public Enfield(int d,ItemStack[] ing, float damage, double cost) {
-		super("Enfield-1853", MaterialStorage.getMS(Main.guntype,18), WeaponType.PISTOL, true, AmmoType.getAmmo("9mm"),  0.2,2, 7, damage,false,d,WeaponSounds.GUN_SMALL,cost,ing);
+		super("Enfield-1853",  WeaponType.PISTOL, true, AmmoType.getAmmo("9mm"),  0.2,2, 7, damage,false,d,WeaponSounds.GUN_SMALL,cost,ing);
 	}
 }

@@ -58,7 +58,7 @@ public class M40 extends DefaultGun {
 	}
 
 	public M40(int d, ItemStack[] ing, float damage, double cost) {
-		super("M40", MaterialStorage.getMS(Main.guntype, 13), WeaponType.SNIPER, true, AmmoType.getAmmo("556"), 0.1, 4, 8,
+		super("M40", WeaponType.SNIPER, true, AmmoType.getAmmo("556"), 0.1, 4, 8,
 				damage, false, d, WeaponSounds.GUN_BIG, cost,ing);
 		this.setDelayBetweenShots(0.8);
 	}

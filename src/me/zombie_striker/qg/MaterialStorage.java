@@ -12,7 +12,7 @@ public class MaterialStorage {
 	
 	public static MaterialStorage getMS(Material m, int d){
 		for(MaterialStorage k : store){
-			if(k.m==m && k.d==d)
+			if(k.m==m &&( k.d==d || k.d==-1))
 				return k;
 		}
 		MaterialStorage mm = new MaterialStorage(m, d);

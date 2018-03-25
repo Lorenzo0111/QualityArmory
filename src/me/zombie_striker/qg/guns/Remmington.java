@@ -110,7 +110,7 @@ public class Remmington extends DefaultGun {
 	}
 
 	public Remmington(int d, ItemStack[] ing, float damage, double cost) {
-		super("Remmington", MaterialStorage.getMS(Main.guntype, 8), WeaponType.SHOTGUN, false, AmmoType.getAmmo("shell"),
+		super("Remmington",  WeaponType.SHOTGUN, false, AmmoType.getAmmo("shell"),
 				0.2, 2.6, 8, damage, false, d, WeaponSounds.GUN_BIG,cost, ing);
 	}
 }

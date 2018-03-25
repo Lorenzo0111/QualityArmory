@@ -48,6 +48,6 @@ public class HenryRifle extends DefaultGun {
 	}
 	
 	public HenryRifle(int d,ItemStack[] ing, float damage, double cost) {
-		super("HenryRifle", MaterialStorage.getMS(Main.guntype,19), WeaponType.RIFLE, true,AmmoType.getAmmo("556"),  0.2,2, 9, damage,false,d,WeaponSounds.GUN_MEDIUM,cost,ing);
+		super("HenryRifle",  WeaponType.RIFLE, true,AmmoType.getAmmo("556"),  0.2,2, 9, damage,false,d,WeaponSounds.GUN_MEDIUM,cost,ing);
 	}
 }
