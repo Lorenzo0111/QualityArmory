@@ -1,3 +1,11 @@
+1.1.64
+	Added Kevlar Vests.
+	//For developers/server owners: The kevlar vest must be put on the head in order for the models to work.
+	//Also, there is a issue where the vest moves with the head, so armor may come off the body to follow the head. This is known and there will be a fix for it.
+	Added AA12
+	Added some ViaBackwards/ViaRewind support. To do this, if you have this VR, most guns,ammo, and the kevlar vest will be removed. Only 4 guns can exist due to the way 1.8 works.
+	Added more to messages.yml for translations
+
 1.1.63
 	//1.8 is buggy.
 	Fixed resourcepack pack applying issue.

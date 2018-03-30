@@ -9,10 +9,26 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import me.zombie_striker.qg.ammo.Ammo;
+import me.zombie_striker.qg.armor.ArmorObject;
 import me.zombie_striker.qg.guns.Gun;
 
 public class ItemFact {
 
+	public static List<String> getArmorLore(ArmorObject a, ItemStack current) {
+		List<String> lore = new ArrayList<>();
+		if (a.getCustomLore() != null)
+			lore.addAll(a.getCustomLore());
+		
+		if (current != null && current.hasItemMeta() && current.getItemMeta().hasLore())
+			for (String s : current.getItemMeta().getLore()) {
+				if (ChatColor.stripColor(s).contains("UUID")) {
+					lore.add(s);
+					break;
+				}
+			}
+		return lore;
+	}
+	
 	public static List<String> getGunLore(Gun g, ItemStack current, int amount) {
 		List<String> lore = new ArrayList<>();
 		if (g.getCustomLore() != null)
@@ -29,15 +45,13 @@ public class ItemFact {
 		lore.add(ChatColor.GRAY + Main.S_ITEM_AMMO + ": " + g.getAmmoType().getDisplayName());
 
 		if (g.isAutomatic()) {
-			lore.add(ChatColor.DARK_GRAY + "[LMB] to use Single-fire");
-			lore.add(ChatColor.DARK_GRAY + "[RMB] to reload");
+			lore.add(Main.S_LMB_SINGLE);
+			lore.add(Main.S_RMB_RELOAD);
 		} else {
-			lore.add(ChatColor.DARK_GRAY + "[LMB] to use Single-fire");
-			lore.add(ChatColor.DARK_GRAY + (Main.enableIronSightsON_RIGHT_CLICK ? "[DropItem]" : "[RMB]")
-					+ " to reload");
+			lore.add(Main.S_LMB_SINGLE);
+			lore.add(Main.enableIronSightsON_RIGHT_CLICK ? Main.S_RMB_R1:Main.S_RMB_R2);
 			if (g.hasIronSights())
-				lore.add(ChatColor.DARK_GRAY + (Main.enableIronSightsON_RIGHT_CLICK ? "[RMB]" : "[Sneak]")
-						+ " to open ironsights");
+				lore.add(Main.enableIronSightsON_RIGHT_CLICK ? Main.S_RMB_A1:Main.S_RMB_A2);
 		}
 
 		if (current != null && current.hasItemMeta() && current.getItemMeta().hasLore())
@@ -125,6 +139,27 @@ public class ItemFact {
 			is.setAmount(1);
 
 		is = addGunRegister(is);
+		return is;
+	}
+	
+
+	public static ItemStack getArmor(ArmorObject a) {
+		ItemStack is = new ItemStack(a.getItemData().getMat(), 0, (short) a.getItemData().getData());
+		if(a.getItemData().getData() < 0)
+			is.setDurability((short) 0);
+		ItemMeta im = is.getItemMeta();
+		im.setDisplayName(a.getDisplayName());
+		im.setLore(getArmorLore(a, is));
+		try {
+			im.setUnbreakable(true);
+		} catch (Error e) {
+		}
+		try {
+			im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_UNBREAKABLE);
+		} catch (Error e) {
+		}
+
+		is.setItemMeta(im);
 		return is;
 	}
 

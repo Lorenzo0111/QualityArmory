@@ -12,10 +12,10 @@ import me.zombie_striker.qg.MaterialStorage;
 public class BulletProtectionUtil {
 
 	public static boolean stoppedBullet(Player p, Location bullet, Vector velocity) {
-		if (p.getInventory().getChestplate() != null) {
+		if (p.getInventory().getHelmet() != null) {
 			for (Entry<MaterialStorage, ArmorObject> entry : Main.armorRegister.entrySet()) {
-				if (entry.getKey().getMat() == p.getInventory().getChestplate().getType()
-						&& entry.getKey().getData() == p.getInventory().getChestplate().getDurability()) {
+				if (entry.getKey().getMat() == p.getInventory().getHelmet().getType()
+						&& entry.getKey().getData() == p.getInventory().getHelmet().getDurability()) {
 					double offset = (p.isSneaking() ? entry.getValue().getShifitngHeightOffset() : 0);
 					if (bullet.getY() - p.getLocation().getY() > entry.getValue().getMinH() + offset) {
 						if (bullet.getY() - p.getLocation().getY() < entry.getValue().getMaxH() + offset) {

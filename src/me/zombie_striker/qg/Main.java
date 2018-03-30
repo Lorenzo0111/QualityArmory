@@ -8,6 +8,7 @@ import java.util.Map.Entry;
 import me.zombie_striker.pluginconstructor.HotbarMessager;
 import me.zombie_striker.qg.ammo.*;
 import me.zombie_striker.qg.armor.ArmorObject;
+import me.zombie_striker.qg.armor.Kevlar;
 import me.zombie_striker.qg.guns.*;
 import me.zombie_striker.qg.guns.utils.GunUtil;
 import me.zombie_striker.qg.guns.utils.WeaponSounds;
@@ -89,8 +90,9 @@ public class Main extends JavaPlugin implements Listener {
 	public static boolean enableEconomy = false;
 
 	public static boolean overrideURL = false;
-	public static String url = "https://www.dropbox.com/s/wsg2sl5vmclw921/QualityArmory%201.8.zip?dl=1";
+	public static String url19plus = "https://www.dropbox.com/s/1mkwpdpcwugsjls/QualityArmoryv1.0.9.zip?dl=1";
 	public static String url18 = "https://www.dropbox.com/s/8eqlw8004b0ho8h/QualityArmory1.8V1.0.9.zip?dl=1";
+	public static String url = url19plus;
 
 	public static String S_NOPERM = " You do not have permission to do that";
 	public static String S_NORES1 = " You do not have the resoucepack";
@@ -101,7 +103,16 @@ public class Main extends JavaPlugin implements Listener {
 	public static String S_ITEM_DAMAGE = "Damage";
 	public static String S_ITEM_AMMO = "Ammo";
 	public static String S_ITEM_ING = "Ingredients";
+	
+	public static String S_LMB_SINGLE = ChatColor.DARK_GRAY + "[LMB] to use Single-fire";
+	public static String S_RMB_RELOAD = ChatColor.DARK_GRAY + "[RMB] to reload";
+	public static String S_RMB_R1 = ChatColor.DARK_GRAY + "[DropItem] to reload"; 
+	public static String S_RMB_R2 = ChatColor.DARK_GRAY + "[RMB] to reload";
 
+	public static String S_RMB_A1 = ChatColor.DARK_GRAY + "[RMB] to open ironsights";
+	public static String S_RMB_A2 = ChatColor.DARK_GRAY + "[Sneak] to open ironsights";
+	
+	
 	public static double smokeSpacing = 0.5;
 
 	public static String prefix = ChatColor.GRAY + "[" + ChatColor.DARK_GREEN + "QualityArmory" + ChatColor.GRAY + "]"
@@ -143,6 +154,9 @@ public class Main extends JavaPlugin implements Listener {
 				break;
 			secondChar.append(SERVER_VERSION.charAt(i));
 		}
+		if(secondVersion >= 9 &&  Bukkit.getPluginManager().isPluginEnabled("ViaRewind"))
+			return false;
+		
 		int sInt = Integer.parseInt(secondChar.toString());
 		if (sInt < secondVersion)
 			return false;
@@ -197,8 +211,9 @@ public class Main extends JavaPlugin implements Listener {
 		Bukkit.getPluginManager().registerEvents(new AimManager(), this);
 
 		try {
-			Bukkit.getPluginManager().registerEvents(new Update18resourcepackhandler(), this);
+			Bukkit.getPluginManager().registerEvents(new Update19resourcepackhandler(), this);
 		} catch (Exception | Error e) {
+			getLogger().info(prefix+" Resourcepack handler has been disabled due to the update being used.");
 		}
 		try {
 			Bukkit.getPluginManager().registerEvents(new Update19Events(), this);
@@ -269,6 +284,16 @@ public class Main extends JavaPlugin implements Listener {
 		S_ITEM_DAMAGE = (String) m.a("Lore_Damage", S_ITEM_DAMAGE);
 		S_ITEM_DURIB = (String) m.a("Lore_Durib", S_ITEM_DURIB);
 		S_ITEM_ING = (String) m.a("Lore_ingredients", S_ITEM_ING);
+		
+		S_LMB_SINGLE = (String) m.a("Lore-LMB-Single", S_LMB_SINGLE);
+		S_RMB_RELOAD = (String) m.a("Lore-RMB-Reload", S_RMB_RELOAD);
+		S_RMB_A1 = (String) m.a("Lore-Ironsights-RMB", S_RMB_A1);
+		S_RMB_A2= (String) m.a("Lore-Ironsights-Sneak", S_RMB_A2);
+		S_RMB_R1= (String) m.a("Lore-Reload-Dropitem", S_RMB_R1);
+		S_RMB_R2 = (String) m.a("Lore-Reload-RMB", S_RMB_R2);
+		
+		
+		
 
 		if (!new File(getDataFolder(), "config.yml").exists())
 			saveDefaultConfig();
@@ -299,7 +324,7 @@ public class Main extends JavaPlugin implements Listener {
 		sendOnJoin = (boolean) a("sendOnJoin", false);
 
 		enableBulletTrails = (boolean) a("enableBulletTrails", true);
-		smokeSpacing = (double) a("BulletTrailsSpacing", 0.5);
+		smokeSpacing = Double.valueOf(a("BulletTrailsSpacing", 0.5)+"");
 
 		enableVisibleAmounts = (boolean) a("enableVisableBulletCounts", false);
 		reloadOnF = (boolean) a("enableReloadingWhenSwapToOffhand", true);
@@ -326,6 +351,14 @@ public class Main extends JavaPlugin implements Listener {
 			guntype = Material.DIAMOND_HOE;
 		}
 		overrideURL = (boolean) a("DefaultResoucepackOverride", false);
+
+		if (isVersionHigherThan(1, 9)) {
+			url = url19plus;
+		} else {
+			// Use 1.8 resourcepack.
+			url = url18;
+		}
+
 		if (overrideURL) {
 			url = (String) a("DefaultResoucepack", url);
 		} else {
@@ -376,7 +409,7 @@ public class Main extends JavaPlugin implements Listener {
 		Ammo a3 = new AmmoShotGun(getIngredients("AmmoBuckshot", stringsAmmo), 2,
 				(double) a("Ammo.Buckshot.Price", 5.0));
 		Ammo a4 = new AmmoRPG(getIngredients("AmmoRPG", stringsAmmoRPG), 1, (double) a("Ammo.RPG.Price", 100.0));
-
+		
 		if (!isVersionHigherThan(1, 9)) {
 			gunRegister.put(MaterialStorage.getMS(Material.IRON_HOE, -1),
 					new P30((int) a("Weapon.P30.Durability", 500), getIngredients("P30", stringsPistol),
@@ -449,6 +482,12 @@ public class Main extends JavaPlugin implements Listener {
 			gunRegister.put(m(24),
 					new Spas12((int) a("Weapon.Spas.Durability", 1000), getIngredients("Spas", stringsMetalRif),
 							(int) a("Weapon.Spas.Damage", 1), (double) a("Weapon.Spas.Price", 1200.0)));
+
+			armorRegister.put(m(25), new Kevlar(m(25), getIngredients("Kevlarnk1", stringsMetalRif),
+					(int) a("Weapon.Kevlarmk1.DamageThreshold", 1), (double) a("Weapon.Kevlarmk1.Price", 1200.0)));
+			gunRegister.put(m(26),
+					new AA12((int) a("Weapon.AA12.Durability", 1000), getIngredients("AA12", stringsMetalRif),
+							(int) a("Weapon.AA12.Damage", 1), (double) a("Weapon.AA12.Price",2000.0)));
 
 		}
 		if (saveTheConfig)
@@ -688,6 +727,24 @@ public class Main extends JavaPlugin implements Listener {
 				shopMenu.addItem(shopVers);
 			} catch (Exception e) {
 				getLogger().warning("-Failed to load ammo:" + ammo.getName());
+				e.printStackTrace();
+			}
+		}
+		for (ArmorObject armor : armorRegister.values()) {
+			try {
+				getLogger().info("-Loading Armor:" + armor.getName());
+				ItemStack is = ItemFact.getArmor(armor);
+				ItemMeta im = is.getItemMeta();
+				List<String> lore = ItemFact.getCraftingLore(armor);
+				im.setLore(lore);
+				is.setItemMeta(im);
+				is.setAmount(armor.getCraftingReturn());
+				craftingMenu.addItem(is);
+
+				ItemStack shopVers = ItemFact.addShopLore(armor, is.clone());
+				shopMenu.addItem(shopVers);
+			} catch (Exception e) {
+				getLogger().warning("-Failed to load Armor:" + armor.getName());
 				e.printStackTrace();
 			}
 		}
@@ -1138,6 +1195,32 @@ public class Main extends JavaPlugin implements Listener {
 									Sound.valueOf("ANVIL_BREAK"), 1, 1);
 						}
 					}
+				} else if (isArmor(e.getCurrentItem())) {
+					ArmorObject g = getArmor(e.getCurrentItem());
+					if (lookForIngre((Player) e.getWhoClicked(), g)
+							|| e.getWhoClicked().getGameMode() == GameMode.CREATIVE) {
+						removeForIngre((Player) e.getWhoClicked(), g);
+						ItemStack s = ItemFact.getArmor(g);
+						s.setAmount(g.getCraftingReturn());
+						e.getWhoClicked().getInventory().addItem(s);
+						try {
+							((Player) e.getWhoClicked()).playSound(e.getWhoClicked().getLocation(),
+									Sound.BLOCK_ANVIL_USE, 0.7f, 1);
+						} catch (Error e2) {
+							((Player) e.getWhoClicked()).playSound(e.getWhoClicked().getLocation(),
+									Sound.valueOf("ANVIL_USE"), 0.7f, 1);
+						}
+					} else {
+						e.getWhoClicked().closeInventory();
+						e.getWhoClicked().sendMessage(prefix + S_missingIngredients);
+						try {
+							((Player) e.getWhoClicked()).playSound(e.getWhoClicked().getLocation(),
+									Sound.BLOCK_ANVIL_BREAK, 1, 1);
+						} catch (Error e2) {
+							((Player) e.getWhoClicked()).playSound(e.getWhoClicked().getLocation(),
+									Sound.valueOf("ANVIL_BREAK"), 1, 1);
+						}
+					}
 				} else {
 					e.setCancelled(true);
 				}
@@ -1389,7 +1472,7 @@ public class Main extends JavaPlugin implements Listener {
 
 		if (e.getItem() != null) {
 			// Quick bugfix for specifically this item.
-			if ((!isGun(e.getItem())) && !isAmmo(e.getItem()) && !isMisc(e.getItem()) && (!isIS(e.getItem()))) {
+			if ((!isArmor(e.getItem())&&!isGun(e.getItem())) && !isAmmo(e.getItem()) && !isMisc(e.getItem()) && (!isIS(e.getItem()))) {
 				if (gunRegister.containsKey(
 						MaterialStorage.getMS(e.getItem().getType(), (int) (e.getItem().getDurability() + 1)))
 						|| ammoRegister.containsKey(
@@ -1426,6 +1509,20 @@ public class Main extends JavaPlugin implements Listener {
 			// Sedn the resourcepack if the player does not have it.
 			if (shouldSend && !resourcepackReq.contains(e.getPlayer().getUniqueId()))
 				sendPacket(e.getPlayer(), true);
+
+			if (isArmor(usedItem)) {
+				if (e.getAction() == Action.RIGHT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_BLOCK) {
+					ItemStack helm = e.getPlayer().getInventory().getHelmet();
+					e.getPlayer().setItemInHand(helm);
+					e.getPlayer().getInventory().setHelmet(usedItem);
+					try {
+						e.getPlayer().playSound(e.getPlayer().getLocation(), Sound.ITEM_ARMOR_EQUIP_IRON, 2, 1);
+					} catch (Error | Exception e3) {
+					}
+					e.setCancelled(true);
+					return;
+				}
+			}
 
 			if (isGun(usedItem)) {
 				try {
@@ -1802,12 +1899,10 @@ public class Main extends JavaPlugin implements Listener {
 			@Override
 			public void run() {
 				try {
-					if (isVersionHigherThan(1, 9))
-						player.setResourcePack(url);
-					else {
-						player.setResourcePack(url18);
+					player.setResourcePack(url);
+					if (!isVersionHigherThan(1, 9))
 						resourcepackReq.add(player.getUniqueId());
-					}
+					//If the player is on 1.8, manually add them to the resource list.
 
 				} catch (Exception e) {
 
@@ -1840,6 +1935,17 @@ public class Main extends JavaPlugin implements Listener {
 
 	public MaterialStorage m(int d) {
 		return MaterialStorage.getMS(guntype, d);
+	}
+
+	public boolean isArmor(ItemStack is) {
+		return (is != null && (armorRegister.containsKey(MaterialStorage.getMS(is.getType(), (int) is.getDurability()))
+				|| armorRegister.containsKey(MaterialStorage.getMS(is.getType(), -1))));
+	}
+
+	public ArmorObject getArmor(ItemStack is) {
+		if (armorRegister.containsKey(MaterialStorage.getMS(is.getType(), -1)))
+			return armorRegister.get(MaterialStorage.getMS(is.getType(), -1));
+		return armorRegister.get(MaterialStorage.getMS(is.getType(), (int) is.getDurability()));
 	}
 
 	public boolean isMisc(ItemStack is) {
