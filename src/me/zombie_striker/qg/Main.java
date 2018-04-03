@@ -52,6 +52,7 @@ public class Main extends JavaPlugin implements Listener {
 	private static Main main;
 
 	private List<Material> interactableBlocks = new ArrayList<>();
+	private static boolean enableInteractChests = false;
 
 	public static Main getInstance() {
 		return main;
@@ -103,16 +104,15 @@ public class Main extends JavaPlugin implements Listener {
 	public static String S_ITEM_DAMAGE = "Damage";
 	public static String S_ITEM_AMMO = "Ammo";
 	public static String S_ITEM_ING = "Ingredients";
-	
+
 	public static String S_LMB_SINGLE = ChatColor.DARK_GRAY + "[LMB] to use Single-fire";
 	public static String S_RMB_RELOAD = ChatColor.DARK_GRAY + "[RMB] to reload";
-	public static String S_RMB_R1 = ChatColor.DARK_GRAY + "[DropItem] to reload"; 
+	public static String S_RMB_R1 = ChatColor.DARK_GRAY + "[DropItem] to reload";
 	public static String S_RMB_R2 = ChatColor.DARK_GRAY + "[RMB] to reload";
 
 	public static String S_RMB_A1 = ChatColor.DARK_GRAY + "[RMB] to open ironsights";
 	public static String S_RMB_A2 = ChatColor.DARK_GRAY + "[Sneak] to open ironsights";
-	
-	
+
 	public static double smokeSpacing = 0.5;
 
 	public static String prefix = ChatColor.GRAY + "[" + ChatColor.DARK_GREEN + "QualityArmory" + ChatColor.GRAY + "]"
@@ -154,9 +154,9 @@ public class Main extends JavaPlugin implements Listener {
 				break;
 			secondChar.append(SERVER_VERSION.charAt(i));
 		}
-		if(secondVersion >= 9 &&  Bukkit.getPluginManager().isPluginEnabled("ViaRewind"))
+		if (secondVersion >= 9 && Bukkit.getPluginManager().isPluginEnabled("ViaRewind"))
 			return false;
-		
+
 		int sInt = Integer.parseInt(secondChar.toString());
 		if (sInt < secondVersion)
 			return false;
@@ -213,7 +213,7 @@ public class Main extends JavaPlugin implements Listener {
 		try {
 			Bukkit.getPluginManager().registerEvents(new Update19resourcepackhandler(), this);
 		} catch (Exception | Error e) {
-			getLogger().info(prefix+" Resourcepack handler has been disabled due to the update being used.");
+			getLogger().info(prefix + " Resourcepack handler has been disabled due to the update being used.");
 		}
 		try {
 			Bukkit.getPluginManager().registerEvents(new Update19Events(), this);
@@ -284,16 +284,13 @@ public class Main extends JavaPlugin implements Listener {
 		S_ITEM_DAMAGE = (String) m.a("Lore_Damage", S_ITEM_DAMAGE);
 		S_ITEM_DURIB = (String) m.a("Lore_Durib", S_ITEM_DURIB);
 		S_ITEM_ING = (String) m.a("Lore_ingredients", S_ITEM_ING);
-		
+
 		S_LMB_SINGLE = (String) m.a("Lore-LMB-Single", S_LMB_SINGLE);
 		S_RMB_RELOAD = (String) m.a("Lore-RMB-Reload", S_RMB_RELOAD);
 		S_RMB_A1 = (String) m.a("Lore-Ironsights-RMB", S_RMB_A1);
-		S_RMB_A2= (String) m.a("Lore-Ironsights-Sneak", S_RMB_A2);
-		S_RMB_R1= (String) m.a("Lore-Reload-Dropitem", S_RMB_R1);
+		S_RMB_A2 = (String) m.a("Lore-Ironsights-Sneak", S_RMB_A2);
+		S_RMB_R1 = (String) m.a("Lore-Reload-Dropitem", S_RMB_R1);
 		S_RMB_R2 = (String) m.a("Lore-Reload-RMB", S_RMB_R2);
-		
-		
-		
 
 		if (!new File(getDataFolder(), "config.yml").exists())
 			saveDefaultConfig();
@@ -319,12 +316,14 @@ public class Main extends JavaPlugin implements Listener {
 		blockbullet_leaves = (boolean) a("BlockBullets.leaves", false);
 		blockbullet_water = (boolean) a("BlockBullets.water", false);
 
+		enableInteractChests = (boolean) a("enableInteract.Chests", false);
+
 		overrideAnvil = (boolean) a("overrideAnvil", false);
 
 		sendOnJoin = (boolean) a("sendOnJoin", false);
 
 		enableBulletTrails = (boolean) a("enableBulletTrails", true);
-		smokeSpacing = Double.valueOf(a("BulletTrailsSpacing", 0.5)+"");
+		smokeSpacing = Double.valueOf(a("BulletTrailsSpacing", 0.5) + "");
 
 		enableVisibleAmounts = (boolean) a("enableVisableBulletCounts", false);
 		reloadOnF = (boolean) a("enableReloadingWhenSwapToOffhand", true);
@@ -409,7 +408,7 @@ public class Main extends JavaPlugin implements Listener {
 		Ammo a3 = new AmmoShotGun(getIngredients("AmmoBuckshot", stringsAmmo), 2,
 				(double) a("Ammo.Buckshot.Price", 5.0));
 		Ammo a4 = new AmmoRPG(getIngredients("AmmoRPG", stringsAmmoRPG), 1, (double) a("Ammo.RPG.Price", 100.0));
-		
+
 		if (!isVersionHigherThan(1, 9)) {
 			gunRegister.put(MaterialStorage.getMS(Material.IRON_HOE, -1),
 					new P30((int) a("Weapon.P30.Durability", 500), getIngredients("P30", stringsPistol),
@@ -487,7 +486,7 @@ public class Main extends JavaPlugin implements Listener {
 					(int) a("Weapon.Kevlarmk1.DamageThreshold", 1), (double) a("Weapon.Kevlarmk1.Price", 1200.0)));
 			gunRegister.put(m(26),
 					new AA12((int) a("Weapon.AA12.Durability", 1000), getIngredients("AA12", stringsMetalRif),
-							(int) a("Weapon.AA12.Damage", 1), (double) a("Weapon.AA12.Price",2000.0)));
+							(int) a("Weapon.AA12.Damage", 1), (double) a("Weapon.AA12.Price", 2000.0)));
 
 		}
 		if (saveTheConfig)
@@ -1472,7 +1471,8 @@ public class Main extends JavaPlugin implements Listener {
 
 		if (e.getItem() != null) {
 			// Quick bugfix for specifically this item.
-			if ((!isArmor(e.getItem())&&!isGun(e.getItem())) && !isAmmo(e.getItem()) && !isMisc(e.getItem()) && (!isIS(e.getItem()))) {
+			if ((!isArmor(e.getItem()) && !isGun(e.getItem())) && !isAmmo(e.getItem()) && !isMisc(e.getItem())
+					&& (!isIS(e.getItem()))) {
 				if (gunRegister.containsKey(
 						MaterialStorage.getMS(e.getItem().getType(), (int) (e.getItem().getDurability() + 1)))
 						|| ammoRegister.containsKey(
@@ -1529,10 +1529,12 @@ public class Main extends JavaPlugin implements Listener {
 					UUID.fromString(usedItem.getItemMeta().getLocalizedName());
 				} catch (Error | Exception e34) {
 					if (isVersionHigherThan(1, 9)) {
-						ItemStack is = ItemFact.getGun(MaterialStorage.getMS(usedItem));
-						e.setCancelled(true);
-						e.getPlayer().setItemInHand(is);
-						return;
+						if (!usedItem.getItemMeta().hasDisplayName() || !usedItem.getItemMeta().hasLore()) {
+							ItemStack is = ItemFact.getGun(MaterialStorage.getMS(usedItem));
+							e.setCancelled(true);
+							e.getPlayer().setItemInHand(is);
+							return;
+						}
 					}
 				}
 			}
@@ -1585,6 +1587,13 @@ public class Main extends JavaPlugin implements Listener {
 			// Check to make sure the gun is not a dup. This should be fast
 			if (isGun(usedItem))
 				checkforDups(e.getPlayer(), usedItem);
+
+			if (enableInteractChests) {
+				if (e.getClickedBlock() != null && (e.getClickedBlock().getType() == Material.CHEST
+						|| e.getClickedBlock().getType() == Material.TRAPPED_CHEST))
+					return;
+				// Return with no shots if EIC is enabled for chests.
+			}
 
 			e.setCancelled(true);
 			if ((e.getAction() == Action.LEFT_CLICK_AIR || e.getAction() == Action.LEFT_CLICK_BLOCK)
@@ -1902,7 +1911,7 @@ public class Main extends JavaPlugin implements Listener {
 					player.setResourcePack(url);
 					if (!isVersionHigherThan(1, 9))
 						resourcepackReq.add(player.getUniqueId());
-					//If the player is on 1.8, manually add them to the resource list.
+					// If the player is on 1.8, manually add them to the resource list.
 
 				} catch (Exception e) {
 
