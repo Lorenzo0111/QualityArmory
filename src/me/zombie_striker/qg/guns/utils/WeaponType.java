@@ -15,6 +15,8 @@ public enum WeaponType {
 	}
 	
 	public static boolean isUnlimited(WeaponType g){
+		if(!Main.isVersionHigherThan(1, 9))
+			return true;
 		switch(g){
 			case PISTOL:
 			return Main.UnlimitedAmmoPistol;

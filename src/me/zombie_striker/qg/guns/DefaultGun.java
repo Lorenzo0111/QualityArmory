@@ -194,7 +194,7 @@ public class DefaultGun implements Gun {
 
 	@Override
 	public void reload(Player player) {
-		GunUtil.basicReload(this, player, WeaponType.isUnlimited(type) || (!Main.isVersionHigherThan(1, 9)), reloadTime);
+		GunUtil.basicReload(this, player, WeaponType.isUnlimited(type), reloadTime);
 	}
 
 	@Override

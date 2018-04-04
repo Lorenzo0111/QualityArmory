@@ -98,6 +98,11 @@ public class GunUtil {
 										if (headShot) {
 											try {
 												p.playSound(p.getLocation(), Sound.BLOCK_NOTE_PLING, 2, 1);
+												if(!Main.isVersionHigherThan(1, 9))
+												try {
+													p.playSound(p.getLocation(), Sound.valueOf("POP"), 6, 1);
+												} catch (Error | Exception h4) {
+												}
 											} catch (Error | Exception h4) {
 												p.playSound(p.getLocation(), Sound.valueOf("POP"), 1, 1);
 											}
@@ -152,8 +157,8 @@ public class GunUtil {
 	}
 
 	public static void basicShoot(boolean offhand, Gun g, Player player, double acc, int times) {
-
 		long showdelay = ((int) (g.getDelayBetweenShotsInSeconds() * 1000));
+		Main.DEBUG("About to shoot!");
 
 		if (g.getLastShotForGun().containsKey(player.getUniqueId())
 				&& (System.currentTimeMillis() - g.getLastShotForGun().get(player.getUniqueId()) <= showdelay))
@@ -194,6 +199,15 @@ public class GunUtil {
 			 * player.getWorld().playSound(player.getLocation(),
 			 * Sound.ENTITY_ENDERDRAGON_FIREBALL_EXPLODE, 8, 2f);
 			 */
+			if(!Main.isVersionHigherThan(1, 9)) {
+				try {
+				player.getWorld().playSound(player.getLocation(), Sound.valueOf("CLICK"), 5, 1);
+				player.getWorld().playSound(player.getLocation(), Sound.valueOf("WITHER_SHOOT"), 8, 2);
+				player.getWorld().playSound(player.getLocation(), Sound.valueOf("EXPLODE"), 8, 2f);		
+				}catch(Error|Exception e3) {
+					player.getWorld().playSound(player.getLocation(), Sound.valueOf("BLOCK_LEVER_CLICK"), 5, 1);							
+				}
+			}
 		} catch (Error e2) {
 			player.getWorld().playSound(player.getLocation(), Sound.valueOf("CLICK"), 5, 1);
 			player.getWorld().playSound(player.getLocation(), Sound.valueOf("WITHER_SHOOT"), 8, 2);
@@ -226,9 +240,21 @@ public class GunUtil {
 				 */
 
 				player.getWorld().playSound(player.getLocation(), WeaponSounds.RELOAD_MAG_OUT.getName(), 1, 1f);
+				if(!Main.isVersionHigherThan(1, 9)) {
+					try {
+					player.getWorld().playSound(player.getLocation(), Sound.valueOf("CLICK"), 5, 1);	
+					}catch(Error|Exception e3) {
+						player.getWorld().playSound(player.getLocation(), Sound.valueOf("BLOCK_LEVER_CLICK"), 5, 1);							
+					}
+				}
+				
 				return;
 			} catch (Error e2) {
-				player.getWorld().playSound(player.getLocation(), Sound.valueOf("CLICK"), 5, 1);
+				try {
+				player.getWorld().playSound(player.getLocation(), Sound.valueOf("CLICK"), 5, 1);	
+				}catch(Error|Exception e3) {
+					player.getWorld().playSound(player.getLocation(), Sound.valueOf("BLOCK_LEVER_CLICK"), 5, 1);							
+				}
 			}
 		} else {
 			try {
@@ -238,7 +264,11 @@ public class GunUtil {
 				 */
 				player.getWorld().playSound(player.getLocation(), WeaponSounds.RELOAD_MAG_OUT.getName(), 1, 1f);
 			} catch (Error e2) {
-				player.getWorld().playSound(player.getLocation(), Sound.valueOf("CLICK"), 5, 0.7f);
+				try {
+				player.getWorld().playSound(player.getLocation(), Sound.valueOf("CLICK"), 5, 1);	
+				}catch(Error|Exception e3) {
+					player.getWorld().playSound(player.getLocation(), Sound.valueOf("BLOCK_LEVER_CLICK"), 5, 1);							
+				}
 			}
 			final int slot = player.getInventory().getHeldItemSlot();
 
@@ -268,9 +298,19 @@ public class GunUtil {
 						 */
 
 						player.getWorld().playSound(player.getLocation(), WeaponSounds.RELOAD_MAG_IN.getName(), 1, 1f);
+						if(!Main.isVersionHigherThan(1, 9)) {
+							try {
+								player.getWorld().playSound(player.getLocation(), Sound.valueOf("CLICK"), 5, 1);	
+								}catch(Error|Exception e3) {
+									player.getWorld().playSound(player.getLocation(), Sound.valueOf("BLOCK_LEVER_CLICK"), 5, 1);							
+								}				
+						}
 					} catch (Error e2) {
-						player.getWorld().playSound(player.getLocation(), Sound.valueOf("CLICK"), 5, 1);
-						player.getWorld().playSound(player.getLocation(), Sound.valueOf("CLICK"), 5, 1.4f);
+						try {
+							player.getWorld().playSound(player.getLocation(), Sound.valueOf("CLICK"), 5, 1);	
+							}catch(Error|Exception e3) {
+								player.getWorld().playSound(player.getLocation(), Sound.valueOf("BLOCK_LEVER_CLICK"), 5, 1);							
+							}
 					}
 					ItemMeta newim = temp.getItemMeta();
 					newim.setLore(ItemFact.getGunLore(g, temp, reloadAmount));

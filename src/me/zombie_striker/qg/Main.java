@@ -36,7 +36,6 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.*;
 
-import com.alessiodp.parties.Parties;
 
 public class Main extends JavaPlugin implements Listener {
 
@@ -52,10 +51,16 @@ public class Main extends JavaPlugin implements Listener {
 	private static Main main;
 
 	private List<Material> interactableBlocks = new ArrayList<>();
+	private static boolean enableInteractChests = false;
 
 	public static Main getInstance() {
 		return main;
 	}
+	
+	
+	public static boolean DEBUG = false;
+	
+	
 
 	public static Object bulletTrail;
 
@@ -103,16 +108,18 @@ public class Main extends JavaPlugin implements Listener {
 	public static String S_ITEM_DAMAGE = "Damage";
 	public static String S_ITEM_AMMO = "Ammo";
 	public static String S_ITEM_ING = "Ingredients";
-	
+
 	public static String S_LMB_SINGLE = ChatColor.DARK_GRAY + "[LMB] to use Single-fire";
 	public static String S_RMB_RELOAD = ChatColor.DARK_GRAY + "[RMB] to reload";
-	public static String S_RMB_R1 = ChatColor.DARK_GRAY + "[DropItem] to reload"; 
+	public static String S_RMB_R1 = ChatColor.DARK_GRAY + "[DropItem] to reload";
 	public static String S_RMB_R2 = ChatColor.DARK_GRAY + "[RMB] to reload";
 
 	public static String S_RMB_A1 = ChatColor.DARK_GRAY + "[RMB] to open ironsights";
 	public static String S_RMB_A2 = ChatColor.DARK_GRAY + "[Sneak] to open ironsights";
-	
-	
+
+	public static boolean enableCrafting = true;
+	public static boolean enableShop = true;
+
 	public static double smokeSpacing = 0.5;
 
 	public static String prefix = ChatColor.GRAY + "[" + ChatColor.DARK_GREEN + "QualityArmory" + ChatColor.GRAY + "]"
@@ -144,6 +151,8 @@ public class Main extends JavaPlugin implements Listener {
 	}
 
 	public static boolean isVersionHigherThan(int mainVersion, int secondVersion) {
+		if (secondVersion >= 9 && Bukkit.getPluginManager().isPluginEnabled("ViaRewind"))
+			return false;
 		String firstChar = SERVER_VERSION.substring(1, 2);
 		int fInt = Integer.parseInt(firstChar);
 		if (fInt < mainVersion)
@@ -154,9 +163,7 @@ public class Main extends JavaPlugin implements Listener {
 				break;
 			secondChar.append(SERVER_VERSION.charAt(i));
 		}
-		if(secondVersion >= 9 &&  Bukkit.getPluginManager().isPluginEnabled("ViaRewind"))
-			return false;
-		
+
 		int sInt = Integer.parseInt(secondChar.toString());
 		if (sInt < secondVersion)
 			return false;
@@ -193,6 +200,7 @@ public class Main extends JavaPlugin implements Listener {
 	public void onEnable() {
 		main = this;
 		supportWorldGuard = Bukkit.getPluginManager().isPluginEnabled("WorldGuard");
+		DEBUG(ChatColor.RED+"NOTICE ME");
 		reloadVals();
 		new BukkitRunnable() {
 			@Override
@@ -213,7 +221,7 @@ public class Main extends JavaPlugin implements Listener {
 		try {
 			Bukkit.getPluginManager().registerEvents(new Update19resourcepackhandler(), this);
 		} catch (Exception | Error e) {
-			getLogger().info(prefix+" Resourcepack handler has been disabled due to the update being used.");
+			getLogger().info(prefix + " Resourcepack handler has been disabled due to the update being used.");
 		}
 		try {
 			Bukkit.getPluginManager().registerEvents(new Update19Events(), this);
@@ -264,6 +272,11 @@ public class Main extends JavaPlugin implements Listener {
 		} catch (Error | Exception e4) {
 		}
 	}
+	
+	public static void DEBUG(String message) {
+		if(DEBUG)
+			Main.getInstance().getLogger().info(message);
+	}
 
 	public void reloadVals() {
 
@@ -284,16 +297,13 @@ public class Main extends JavaPlugin implements Listener {
 		S_ITEM_DAMAGE = (String) m.a("Lore_Damage", S_ITEM_DAMAGE);
 		S_ITEM_DURIB = (String) m.a("Lore_Durib", S_ITEM_DURIB);
 		S_ITEM_ING = (String) m.a("Lore_ingredients", S_ITEM_ING);
-		
+
 		S_LMB_SINGLE = (String) m.a("Lore-LMB-Single", S_LMB_SINGLE);
 		S_RMB_RELOAD = (String) m.a("Lore-RMB-Reload", S_RMB_RELOAD);
 		S_RMB_A1 = (String) m.a("Lore-Ironsights-RMB", S_RMB_A1);
-		S_RMB_A2= (String) m.a("Lore-Ironsights-Sneak", S_RMB_A2);
-		S_RMB_R1= (String) m.a("Lore-Reload-Dropitem", S_RMB_R1);
+		S_RMB_A2 = (String) m.a("Lore-Ironsights-Sneak", S_RMB_A2);
+		S_RMB_R1 = (String) m.a("Lore-Reload-Dropitem", S_RMB_R1);
 		S_RMB_R2 = (String) m.a("Lore-Reload-RMB", S_RMB_R2);
-		
-		
-		
 
 		if (!new File(getDataFolder(), "config.yml").exists())
 			saveDefaultConfig();
@@ -301,6 +311,8 @@ public class Main extends JavaPlugin implements Listener {
 
 		if (getServer().getPluginManager().isPluginEnabled("Parties"))
 			hasParties = true;
+		DEBUG = (boolean) a("ENABLE-DEBUG", false);
+		
 		friendlyFire = (boolean) a("FriendlyFireEnabled", false);
 
 		shouldSend = (boolean) a("useDefaultResourcepack", true);
@@ -319,12 +331,14 @@ public class Main extends JavaPlugin implements Listener {
 		blockbullet_leaves = (boolean) a("BlockBullets.leaves", false);
 		blockbullet_water = (boolean) a("BlockBullets.water", false);
 
+		enableInteractChests = (boolean) a("enableInteract.Chests", false);
+
 		overrideAnvil = (boolean) a("overrideAnvil", false);
 
 		sendOnJoin = (boolean) a("sendOnJoin", false);
 
 		enableBulletTrails = (boolean) a("enableBulletTrails", true);
-		smokeSpacing = Double.valueOf(a("BulletTrailsSpacing", 0.5)+"");
+		smokeSpacing = Double.valueOf(a("BulletTrailsSpacing", 0.5) + "");
 
 		enableVisibleAmounts = (boolean) a("enableVisableBulletCounts", false);
 		reloadOnF = (boolean) a("enableReloadingWhenSwapToOffhand", true);
@@ -332,6 +346,8 @@ public class Main extends JavaPlugin implements Listener {
 		enableExplosionDamage = (boolean) a("enableExplosionDamage", false);
 		enableExplosionDamageDrop = (boolean) a("enableExplosionDamageDrop", false);
 
+		enableCrafting = (boolean) a("enableCrafting", true);
+		enableShop = (boolean) a("enableShop", true);
 		if (saveTheConfig)
 			saveConfig();
 		try {
@@ -409,7 +425,9 @@ public class Main extends JavaPlugin implements Listener {
 		Ammo a3 = new AmmoShotGun(getIngredients("AmmoBuckshot", stringsAmmo), 2,
 				(double) a("Ammo.Buckshot.Price", 5.0));
 		Ammo a4 = new AmmoRPG(getIngredients("AmmoRPG", stringsAmmoRPG), 1, (double) a("Ammo.RPG.Price", 100.0));
-		
+
+		Bukkit.broadcastMessage((Bukkit.getPluginManager().isPluginEnabled("ViaRewind"))+"sfgdfgdssfdagfdsa");
+		getLogger().info((Bukkit.getPluginManager().isPluginEnabled("ViaRewind"))+"sfgdfgdssfdagfdsa");
 		if (!isVersionHigherThan(1, 9)) {
 			gunRegister.put(MaterialStorage.getMS(Material.IRON_HOE, -1),
 					new P30((int) a("Weapon.P30.Durability", 500), getIngredients("P30", stringsPistol),
@@ -487,7 +505,7 @@ public class Main extends JavaPlugin implements Listener {
 					(int) a("Weapon.Kevlarmk1.DamageThreshold", 1), (double) a("Weapon.Kevlarmk1.Price", 1200.0)));
 			gunRegister.put(m(26),
 					new AA12((int) a("Weapon.AA12.Durability", 1000), getIngredients("AA12", stringsMetalRif),
-							(int) a("Weapon.AA12.Damage", 1), (double) a("Weapon.AA12.Price",2000.0)));
+							(int) a("Weapon.AA12.Damage", 1), (double) a("Weapon.AA12.Price", 2000.0)));
 
 		}
 		if (saveTheConfig)
@@ -882,10 +900,12 @@ public class Main extends JavaPlugin implements Listener {
 			List<String> s = new ArrayList<String>();
 			if (b("give", args[0]))
 				s.add("give");
-			if (b("shop", args[0]))
-				s.add("shop");
-			if (b("craft", args[0]))
-				s.add("craft");
+			if (enableShop)
+				if (b("shop", args[0]))
+					s.add("shop");
+			if (enableCrafting)
+				if (b("craft", args[0]))
+					s.add("craft");
 			if (b("getOpenGunSlot", args[0]))
 				s.add("getOpenGunSlot");
 			if (b("reload", args[0]))
@@ -1059,24 +1079,26 @@ public class Main extends JavaPlugin implements Listener {
 					sendHelp(player);
 					return true;
 				}
-				if (args[0].equalsIgnoreCase("craft")) {
-					if (!sender.hasPermission("qualityarmory.craft")) {
-						sender.sendMessage(prefix + ChatColor.RED + S_NOPERM);
+				if (enableCrafting)
+					if (args[0].equalsIgnoreCase("craft")) {
+						if (!sender.hasPermission("qualityarmory.craft")) {
+							sender.sendMessage(prefix + ChatColor.RED + S_NOPERM);
+							return true;
+						}
+						player.openInventory(craftingMenu);
 						return true;
-					}
-					player.openInventory(craftingMenu);
-					return true;
 
-				}
-				if (args[0].equalsIgnoreCase("shop")) {
-					if (!sender.hasPermission("qualityarmory.shop")) {
-						sender.sendMessage(prefix + ChatColor.RED + S_NOPERM);
+					}
+				if (enableShop)
+					if (args[0].equalsIgnoreCase("shop")) {
+						if (!sender.hasPermission("qualityarmory.shop")) {
+							sender.sendMessage(prefix + ChatColor.RED + S_NOPERM);
+							return true;
+						}
+						player.openInventory(shopMenu);
 						return true;
-					}
-					player.openInventory(shopMenu);
-					return true;
 
-				}
+					}
 				// The user sent an invalid command/no args.
 				sendHelp(player);
 				return true;
@@ -1472,7 +1494,8 @@ public class Main extends JavaPlugin implements Listener {
 
 		if (e.getItem() != null) {
 			// Quick bugfix for specifically this item.
-			if ((!isArmor(e.getItem())&&!isGun(e.getItem())) && !isAmmo(e.getItem()) && !isMisc(e.getItem()) && (!isIS(e.getItem()))) {
+			if ((!isArmor(e.getItem()) && !isGun(e.getItem())) && !isAmmo(e.getItem()) && !isMisc(e.getItem())
+					&& (!isIS(e.getItem()))) {
 				if (gunRegister.containsKey(
 						MaterialStorage.getMS(e.getItem().getType(), (int) (e.getItem().getDurability() + 1)))
 						|| ammoRegister.containsKey(
@@ -1481,6 +1504,7 @@ public class Main extends JavaPlugin implements Listener {
 								MaterialStorage.getMS(e.getItem().getType(), (int) (e.getItem().getDurability() + 1)))
 						|| armorRegister.containsKey(MaterialStorage.getMS(e.getItem().getType(),
 								(int) (e.getItem().getDurability() + 1)))) {
+					Main.DEBUG("A player is using a non-gun item, but may reach the textures of one!");
 					// If the item is not a gun, but the item below it is
 					int safeDurib = e.getItem().getDurability();
 					for (MaterialStorage j : ammoRegister.keySet())
@@ -1507,11 +1531,14 @@ public class Main extends JavaPlugin implements Listener {
 
 			ItemStack usedItem = e.getPlayer().getItemInHand();
 			// Sedn the resourcepack if the player does not have it.
-			if (shouldSend && !resourcepackReq.contains(e.getPlayer().getUniqueId()))
+			if (shouldSend && !resourcepackReq.contains(e.getPlayer().getUniqueId())) {
+				Main.DEBUG("Player does not have resourcepack!");
 				sendPacket(e.getPlayer(), true);
+			}
 
 			if (isArmor(usedItem)) {
 				if (e.getAction() == Action.RIGHT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_BLOCK) {
+					Main.DEBUG("A Player is about to put on armor!");
 					ItemStack helm = e.getPlayer().getInventory().getHelmet();
 					e.getPlayer().setItemInHand(helm);
 					e.getPlayer().getInventory().setHelmet(usedItem);
@@ -1526,13 +1553,23 @@ public class Main extends JavaPlugin implements Listener {
 
 			if (isGun(usedItem)) {
 				try {
-					UUID.fromString(usedItem.getItemMeta().getLocalizedName());
+					if (isVersionHigherThan(1, 9)) {
+						UUID.fromString(usedItem.getItemMeta().getLocalizedName());
+						Main.DEBUG("Gun-Validation check - 1");
+					} else {
+						String k = null;
+						k.toString();
+						// Just throw the error
+					}
 				} catch (Error | Exception e34) {
 					if (isVersionHigherThan(1, 9)) {
-						ItemStack is = ItemFact.getGun(MaterialStorage.getMS(usedItem));
-						e.setCancelled(true);
-						e.getPlayer().setItemInHand(is);
-						return;
+						if (!usedItem.getItemMeta().hasDisplayName() || !usedItem.getItemMeta().hasLore()) {
+							ItemStack is = ItemFact.getGun(MaterialStorage.getMS(usedItem));
+							e.setCancelled(true);
+							e.getPlayer().setItemInHand(is);
+							Main.DEBUG("Gun-Validation check - 2");
+							return;
+						}
 					}
 				}
 			}
@@ -1542,6 +1579,7 @@ public class Main extends JavaPlugin implements Listener {
 			if (isMisc(usedItem)) {
 				ArmoryBaseObject base = getMisc(usedItem);
 				if (base instanceof ThrowableItems) {
+					Main.DEBUG("Misc item is being used!");
 					e.setCancelled(true);
 					if (e.getAction() == Action.RIGHT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_BLOCK) {
 						((ThrowableItems) base).onRightClick(e.getPlayer());
@@ -1564,6 +1602,7 @@ public class Main extends JavaPlugin implements Listener {
 								e.getPlayer().getInventory()
 										.setItemInMainHand(e.getPlayer().getInventory().getItemInOffHand());
 								e.getPlayer().getInventory().setItemInOffHand(null);
+								Main.DEBUG("Swapping gun from offhand to main hand!");
 								return;
 							}
 						}
@@ -1572,6 +1611,7 @@ public class Main extends JavaPlugin implements Listener {
 				}
 			}
 			if (isAmmo(usedItem)) {
+				Main.DEBUG("The item being click is ammo!");
 				if (e.getAction() == Action.RIGHT_CLICK_BLOCK && (e.getClickedBlock().getType() == Material.DIRT
 						|| e.getClickedBlock().getType() == Material.GRASS
 						|| e.getClickedBlock().getType() == Material.GRASS_PATH
@@ -1583,8 +1623,19 @@ public class Main extends JavaPlugin implements Listener {
 			Gun g = getGun(usedItem);
 
 			// Check to make sure the gun is not a dup. This should be fast
-			if (isGun(usedItem))
+			if (isGun(usedItem)) {
+				Main.DEBUG("Dups check");
 				checkforDups(e.getPlayer(), usedItem);
+			}
+
+			if (enableInteractChests) {
+				if (e.getClickedBlock() != null && (e.getClickedBlock().getType() == Material.CHEST
+						|| e.getClickedBlock().getType() == Material.TRAPPED_CHEST)) {
+					Main.DEBUG("Chest interactable check has return true!");
+					return;
+				}
+				// Return with no shots if EIC is enabled for chests.
+			}
 
 			e.setCancelled(true);
 			if ((e.getAction() == Action.LEFT_CLICK_AIR || e.getAction() == Action.LEFT_CLICK_BLOCK)
@@ -1602,6 +1653,7 @@ public class Main extends JavaPlugin implements Listener {
 						if (allowGunsInRegion(e.getPlayer().getLocation())) {
 							try {
 								if (e.getHand() == EquipmentSlot.OFF_HAND) {
+									Main.DEBUG("OffHandChecker was disabled for shooting!");
 									return;
 								}
 							} catch (Error | Exception e4) {
@@ -1622,6 +1674,8 @@ public class Main extends JavaPlugin implements Listener {
 							} catch (Error | Exception e5) {
 							}
 							return;
+						}else {
+							Main.DEBUG("Worldguard region canceled the event");
 						}
 						try {
 							HotbarMessager.sendHotBarMessage(e.getPlayer(), g.getDisplayName() + " = "
@@ -1637,6 +1691,7 @@ public class Main extends JavaPlugin implements Listener {
 				if (enableIronSightsON_RIGHT_CLICK) {
 					if (!Update19OffhandChecker.supportOffhand(e.getPlayer())) {
 						enableIronSightsON_RIGHT_CLICK = false;
+						Main.DEBUG("Offhand checker returned false for the player. Disabling ironsights");
 						return;
 					}
 					// Rest should be okay
@@ -1708,7 +1763,10 @@ public class Main extends JavaPlugin implements Listener {
 					} else {
 						if (g != null) {
 							if (g.playerHasAmmo(e.getPlayer())) {
+								Main.DEBUG("Trying to reload. player has ammo");
 								g.reload(e.getPlayer());
+							}else {
+								Main.DEBUG("Trying to reload. player DOES NOT have ammo");
 							}
 
 							try {
@@ -1719,6 +1777,7 @@ public class Main extends JavaPlugin implements Listener {
 						}
 					}
 				}
+				Main.DEBUG("Reached end for gun-check!");
 			}
 		}
 	}
@@ -1902,7 +1961,7 @@ public class Main extends JavaPlugin implements Listener {
 					player.setResourcePack(url);
 					if (!isVersionHigherThan(1, 9))
 						resourcepackReq.add(player.getUniqueId());
-					//If the player is on 1.8, manually add them to the resource list.
+					// If the player is on 1.8, manually add them to the resource list.
 
 				} catch (Exception e) {
 

@@ -1,3 +1,19 @@
+1.1.69
+	Fixed ViaBackwards support. (Sound enum did not accounbt for VB)
+
+1.1.68
+	Added option to enable/disable crafting menu and the shop menu
+	Added debug option in config
+
+1.1.67
+	Fixed invalid gun error.
+
+1.1.66
+	Fixed debug
+
+1.1.65
+	Addded enableInteract.Chests to the config to allow/disallow users from opening chests.
+
 1.1.64
 	Added Kevlar Vests.
 	//For developers/server owners: The kevlar vest must be put on the head in order for the models to work.

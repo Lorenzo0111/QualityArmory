@@ -18,7 +18,7 @@ public class ItemFact {
 		List<String> lore = new ArrayList<>();
 		if (a.getCustomLore() != null)
 			lore.addAll(a.getCustomLore());
-		
+
 		if (current != null && current.hasItemMeta() && current.getItemMeta().hasLore())
 			for (String s : current.getItemMeta().getLore()) {
 				if (ChatColor.stripColor(s).contains("UUID")) {
@@ -28,7 +28,7 @@ public class ItemFact {
 			}
 		return lore;
 	}
-	
+
 	public static List<String> getGunLore(Gun g, ItemStack current, int amount) {
 		List<String> lore = new ArrayList<>();
 		if (g.getCustomLore() != null)
@@ -49,9 +49,9 @@ public class ItemFact {
 			lore.add(Main.S_RMB_RELOAD);
 		} else {
 			lore.add(Main.S_LMB_SINGLE);
-			lore.add(Main.enableIronSightsON_RIGHT_CLICK ? Main.S_RMB_R1:Main.S_RMB_R2);
+			lore.add(Main.enableIronSightsON_RIGHT_CLICK ? Main.S_RMB_R1 : Main.S_RMB_R2);
 			if (g.hasIronSights())
-				lore.add(Main.enableIronSightsON_RIGHT_CLICK ? Main.S_RMB_A1:Main.S_RMB_A2);
+				lore.add(Main.enableIronSightsON_RIGHT_CLICK ? Main.S_RMB_A1 : Main.S_RMB_A2);
 		}
 
 		if (current != null && current.hasItemMeta() && current.getItemMeta().hasLore())
@@ -116,7 +116,7 @@ public class ItemFact {
 
 	public static ItemStack getGun(Gun g) {
 		ItemStack is = new ItemStack(g.getItemData().getMat(), 0, (short) g.getItemData().getData());
-		if(g.getItemData().getData() < 0)
+		if (g.getItemData().getData() < 0)
 			is.setDurability((short) 0);
 		ItemMeta im = is.getItemMeta();
 		im.setDisplayName(g.getDisplayName());
@@ -141,11 +141,10 @@ public class ItemFact {
 		is = addGunRegister(is);
 		return is;
 	}
-	
 
 	public static ItemStack getArmor(ArmorObject a) {
 		ItemStack is = new ItemStack(a.getItemData().getMat(), 0, (short) a.getItemData().getData());
-		if(a.getItemData().getData() < 0)
+		if (a.getItemData().getData() < 0)
 			is.setDurability((short) 0);
 		ItemMeta im = is.getItemMeta();
 		im.setDisplayName(a.getDisplayName());
@@ -171,7 +170,7 @@ public class ItemFact {
 
 	public static ItemStack getAmmo(Ammo a) {
 		ItemStack is = new ItemStack(a.getItemData().getMat(), 0, (short) a.getItemData().getData());
-		if(a.getItemData().getData() < 0)
+		if (a.getItemData().getData() < 0)
 			is.setDurability((short) 0);
 		ItemMeta im = is.getItemMeta();
 		im.setDisplayName(a.getDisplayName());
@@ -192,7 +191,7 @@ public class ItemFact {
 
 	public static ItemStack getObject(ArmoryBaseObject a) {
 		ItemStack is = new ItemStack(a.getItemData().getMat(), 0, (short) a.getItemData().getData());
-		if(a.getItemData().getData() < 0)
+		if (a.getItemData().getData() < 0)
 			is.setDurability((short) 0);
 		ItemMeta im = is.getItemMeta();
 		im.setDisplayName(a.getDisplayName());
@@ -283,11 +282,12 @@ public class ItemFact {
 			if (Main.enableVisibleAmounts) {
 				return is.getAmount() - 1;
 			} else {
-				for (String lore : is.getItemMeta().getLore()) {
-					if (lore.contains(Main.S_ITEM_BULLETS)) {
-						return Integer.parseInt(lore.split(":")[1].split("/")[0].trim());
+				if (is.hasItemMeta() && is.getItemMeta().hasLore())
+					for (String lore : is.getItemMeta().getLore()) {
+						if (lore.contains(Main.S_ITEM_BULLETS)) {
+							return Integer.parseInt(lore.split(":")[1].split("/")[0].trim());
+						}
 					}
-				}
 				return 0;
 			}
 		}
