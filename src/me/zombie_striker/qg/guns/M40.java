@@ -35,7 +35,11 @@ public class M40 extends DefaultGun {
 				@Override
 				public void run() {
 					try {
-						player.getWorld().playSound(player.getLocation(), Sound.BLOCK_LEVER_CLICK, 5, 1);
+						if (Main.isVersionHigherThan(1, 9)) {
+							player.getWorld().playSound(player.getLocation(), WeaponSounds.RELOAD_BOLT.getName(), 1,
+									1f);
+						} else
+							player.getWorld().playSound(player.getLocation(), Sound.BLOCK_LEVER_CLICK, 5, 1);
 					} catch (Error e) {
 						player.getWorld().playSound(player.getLocation(), Sound.valueOf("CLICK"), 5, 1);
 					}
@@ -45,7 +49,11 @@ public class M40 extends DefaultGun {
 				@Override
 				public void run() {
 					try {
-						player.getWorld().playSound(player.getLocation(), Sound.BLOCK_LEVER_CLICK, 5, 1);
+						if (Main.isVersionHigherThan(1, 9)) {
+							player.getWorld().playSound(player.getLocation(), WeaponSounds.RELOAD_BOLT.getName(), 1,
+									1f);
+						} else
+							player.getWorld().playSound(player.getLocation(), Sound.BLOCK_LEVER_CLICK, 5, 1);
 					} catch (Error e) {
 						player.getWorld().playSound(player.getLocation(), Sound.valueOf("CLICK"), 5, 1);
 					}
@@ -58,8 +66,8 @@ public class M40 extends DefaultGun {
 	}
 
 	public M40(int d, ItemStack[] ing, float damage, double cost) {
-		super("M40", WeaponType.SNIPER, true, AmmoType.getAmmo("556"), 0.1, 4, 8,
-				damage, false, d, WeaponSounds.GUN_BIG, cost,ing);
+		super("M40", WeaponType.SNIPER, true, AmmoType.getAmmo("556"), 0.1, 4, 8, damage, false, d,
+				WeaponSounds.GUN_BIG, cost, ing);
 		this.setDelayBetweenShots(0.8);
 	}
 }

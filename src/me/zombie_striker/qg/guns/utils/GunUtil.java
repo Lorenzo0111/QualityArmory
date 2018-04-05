@@ -134,7 +134,7 @@ public class GunUtil {
 				}
 				if (overrideocculde || !isSolid(start.getBlock(), start)) {
 					if (Main.enableBulletTrails)
-						if (smokeDistance >= Main.smokeSpacing) {
+						if (smokeDistance+i >= Main.smokeSpacing*shots) {
 							try {
 								start.getWorld().spawnParticle((Particle) Main.bulletTrail, start, 0);
 							} catch (Error e2) {

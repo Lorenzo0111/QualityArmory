@@ -1,3 +1,17 @@
+1.1.72
+	Added ability to customize shots/shooting time for custom guns
+	Added ability to swap shooting and reloading controls
+
+1.1.71
+	Added option to disable auto update.
+
+1.1.70
+	Fixed spas-12 firing limit. Even in automatic mode, it takes around one second for the second shell to chamber. No more rapid-fire shotguns
+	Fixed AA-12's firing limit. The minimum delay has been raised to 0.29 seconds which more accuratly models the real world counterpart.
+	Added delay for Enfield revolvers
+	Added more sounds to HenryRifle
+	Fixed sound for M40
+
 1.1.69
 	Fixed ViaBackwards support. (Sound enum did not accounbt for VB)
 

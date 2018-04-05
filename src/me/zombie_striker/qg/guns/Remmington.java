@@ -66,9 +66,14 @@ public class Remmington extends DefaultGun {
 						player.getWorld().playSound(player.getLocation(), Sound.valueOf("CLICK"), 8, 1);
 
 					}
-					time.remove(player.getUniqueId());
 				}
 			}.runTaskLater(Main.getInstance(), 16);
+			new BukkitRunnable() {
+				@Override
+				public void run() {
+					time.remove(player.getUniqueId());
+				}
+			}.runTaskLater(Main.getInstance(), 20);
 			return true;
 		}
 		return false;

@@ -36,7 +36,6 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.*;
 
-
 public class Main extends JavaPlugin implements Listener {
 
 	public static HashMap<MaterialStorage, Gun> gunRegister = new HashMap<>();
@@ -56,11 +55,8 @@ public class Main extends JavaPlugin implements Listener {
 	public static Main getInstance() {
 		return main;
 	}
-	
-	
+
 	public static boolean DEBUG = false;
-	
-	
 
 	public static Object bulletTrail;
 
@@ -143,6 +139,10 @@ public class Main extends JavaPlugin implements Listener {
 
 	private static final String SERVER_VERSION;
 
+	public static boolean AUTOUPDATE = true;
+	
+	public static boolean USE_DEFAULT_CONTROLS = true;
+
 	static {
 		String name = Bukkit.getServer().getClass().getName();
 		name = name.substring(name.indexOf("craftbukkit.") + "craftbukkit.".length());
@@ -200,7 +200,7 @@ public class Main extends JavaPlugin implements Listener {
 	public void onEnable() {
 		main = this;
 		supportWorldGuard = Bukkit.getPluginManager().isPluginEnabled("WorldGuard");
-		DEBUG(ChatColor.RED+"NOTICE ME");
+		DEBUG(ChatColor.RED + "NOTICE ME");
 		reloadVals();
 		new BukkitRunnable() {
 			@Override
@@ -236,7 +236,8 @@ public class Main extends JavaPlugin implements Listener {
 			 * (updater.updaterActive) updater.download(false); }
 			 * }.runTaskTimerAsynchronously(this, 20 /* * 60 *, 20 * 60 * 5);
 			 */
-			GithubUpdater.autoUpdate(this, "ZombieStriker", "QualityArmory", "QualityArmory.jar");
+			if (AUTOUPDATE)
+				GithubUpdater.autoUpdate(this, "ZombieStriker", "QualityArmory", "QualityArmory.jar");
 		} catch (Exception e) {
 		}
 
@@ -272,9 +273,9 @@ public class Main extends JavaPlugin implements Listener {
 		} catch (Error | Exception e4) {
 		}
 	}
-	
+
 	public static void DEBUG(String message) {
-		if(DEBUG)
+		if (DEBUG)
 			Main.getInstance().getLogger().info(message);
 	}
 
@@ -312,7 +313,7 @@ public class Main extends JavaPlugin implements Listener {
 		if (getServer().getPluginManager().isPluginEnabled("Parties"))
 			hasParties = true;
 		DEBUG = (boolean) a("ENABLE-DEBUG", false);
-		
+
 		friendlyFire = (boolean) a("FriendlyFireEnabled", false);
 
 		shouldSend = (boolean) a("useDefaultResourcepack", true);
@@ -348,6 +349,10 @@ public class Main extends JavaPlugin implements Listener {
 
 		enableCrafting = (boolean) a("enableCrafting", true);
 		enableShop = (boolean) a("enableShop", true);
+
+		AUTOUPDATE = (boolean) a("AUTO-UPDATE", true);
+		USE_DEFAULT_CONTROLS = ! (boolean) a("Swap-Reload-and-Shooting-Controls",false);
+		//Force inversion due to naming
 		if (saveTheConfig)
 			saveConfig();
 		try {
@@ -426,8 +431,7 @@ public class Main extends JavaPlugin implements Listener {
 				(double) a("Ammo.Buckshot.Price", 5.0));
 		Ammo a4 = new AmmoRPG(getIngredients("AmmoRPG", stringsAmmoRPG), 1, (double) a("Ammo.RPG.Price", 100.0));
 
-		Bukkit.broadcastMessage((Bukkit.getPluginManager().isPluginEnabled("ViaRewind"))+"sfgdfgdssfdagfdsa");
-		getLogger().info((Bukkit.getPluginManager().isPluginEnabled("ViaRewind"))+"sfgdfgdssfdagfdsa");
+		getLogger().info((Bukkit.getPluginManager().isPluginEnabled("ViaRewind")) + "sfgdfgdssfdagfdsa");
 		if (!isVersionHigherThan(1, 9)) {
 			gunRegister.put(MaterialStorage.getMS(Material.IRON_HOE, -1),
 					new P30((int) a("Weapon.P30.Durability", 500), getIngredients("P30", stringsPistol),
@@ -538,6 +542,8 @@ public class Main extends JavaPlugin implements Listener {
 			f.set("maxbullets", 12);
 			f.set("durability", 1000);
 			f.set("delayForReload", 1.5);
+			f.set("delayForShoot", 0.3);
+			f.set("bullets-per-shot", 1);
 			f.set("isAutomatic", false);
 			try {
 				f.save(new File(getDataFolder(), "newGuns/examplegun.yml"));
@@ -638,6 +644,14 @@ public class Main extends JavaPlugin implements Listener {
 											f2.getInt("durability"), sound, extraLore, displayname, price, materails));
 							((DefaultGun) gunRegister.get(ms))
 									.setReloadingTimeInSeconds(f2.getDouble("delayForReload"));
+							try {
+								((DefaultGun) gunRegister.get(ms)).setDelayBetweenShots(f2.getDouble("delayForShoot"));
+							} catch (Error | Exception er5) {
+							}
+							try {
+								((DefaultGun) gunRegister.get(ms)).setBulletsPerShot(f2.getInt("bullets-per-shot"));
+							} catch (Error | Exception er5) {
+							}
 
 						} else {
 							if (weatype == WeaponType.AMMO) {
@@ -1473,7 +1487,7 @@ public class Main extends JavaPlugin implements Listener {
 		reloadingTasks.remove(e.getEntity().getUniqueId());
 	}
 
-	@SuppressWarnings("deprecation")
+	@SuppressWarnings({ "deprecation", "null" })
 	@EventHandler
 	public void onClick(PlayerInteractEvent e) {
 		if (e.getAction() == Action.RIGHT_CLICK_BLOCK && e.getClickedBlock().getType() == Material.ANVIL
@@ -1596,7 +1610,7 @@ public class Main extends JavaPlugin implements Listener {
 							.getData()) {
 						usedItem = e.getPlayer().getInventory().getItemInOffHand();
 						offhand = true;
-						if (e.getAction() == Action.RIGHT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_BLOCK) {
+						if ((e.getAction() == Action.RIGHT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_BLOCK)==(USE_DEFAULT_CONTROLS)) {
 							if (!e.getPlayer().isSneaking() || !getGun(usedItem).isAutomatic()) {
 								e.setCancelled(true);
 								e.getPlayer().getInventory()
@@ -1638,8 +1652,8 @@ public class Main extends JavaPlugin implements Listener {
 			}
 
 			e.setCancelled(true);
-			if ((e.getAction() == Action.LEFT_CLICK_AIR || e.getAction() == Action.LEFT_CLICK_BLOCK)
-					|| (g != null && g.isAutomatic() && e.getPlayer().isSneaking())) {
+			if (((e.getAction() == Action.LEFT_CLICK_AIR || e.getAction() == Action.LEFT_CLICK_BLOCK)==USE_DEFAULT_CONTROLS)
+					|| (USE_DEFAULT_CONTROLS&& g != null && g.isAutomatic() && e.getPlayer().isSneaking())) {
 				/*
 				 * if(e.getAction().name().contains("RIGHT") && e.getClickedBlock() != null &&
 				 * interactableBlocks.contains(e.getClickedBlock().getType())) {
@@ -1674,7 +1688,7 @@ public class Main extends JavaPlugin implements Listener {
 							} catch (Error | Exception e5) {
 							}
 							return;
-						}else {
+						} else {
 							Main.DEBUG("Worldguard region canceled the event");
 						}
 						try {
@@ -1765,7 +1779,7 @@ public class Main extends JavaPlugin implements Listener {
 							if (g.playerHasAmmo(e.getPlayer())) {
 								Main.DEBUG("Trying to reload. player has ammo");
 								g.reload(e.getPlayer());
-							}else {
+							} else {
 								Main.DEBUG("Trying to reload. player DOES NOT have ammo");
 							}
 

@@ -13,7 +13,8 @@ public class Spas12 extends DefaultGun{
 	
 public Spas12(int d, ItemStack[] ing, float damage, double cost) {
 	super("Spas12", WeaponType.SHOTGUN, false, AmmoType.getAmmo("shell"),  0.2,2.0, 7, damage,false,d,WeaponSounds.GUN_MEDIUM,cost,ing);
-	this.setBulletsPerShot(15);
+	this.setBulletsPerShot(10);
+	this.setDelayBetweenShots(0.8);
 }
 
 }

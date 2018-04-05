@@ -1,19 +1,57 @@
 package me.zombie_striker.qg.guns;
 
-import me.zombie_striker.qg.Main;
-import me.zombie_striker.qg.MaterialStorage;
-import me.zombie_striker.qg.ammo.AmmoType;
-import me.zombie_striker.qg.guns.utils.GunUtil;
-import me.zombie_striker.qg.guns.utils.WeaponSounds;
-import me.zombie_striker.qg.guns.utils.WeaponType;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import me.zombie_striker.qg.Main;
+import me.zombie_striker.qg.ammo.AmmoType;
+import me.zombie_striker.qg.guns.utils.GunUtil;
+import me.zombie_striker.qg.guns.utils.WeaponSounds;
+import me.zombie_striker.qg.guns.utils.WeaponType;
+
 public class HenryRifle extends DefaultGun {
 
+
+	List<UUID> time = new ArrayList<>();
+	@Override
+	public boolean shoot(final Player player) {
+		if (!time.contains(player.getUniqueId())) {
+			boolean shoot = super.shoot(player);
+			time.add(player.getUniqueId());
+			new BukkitRunnable() {
+				
+				@Override
+				public void run() {
+					player.getWorld().playSound(player.getLocation(), WeaponSounds.RELOAD_BULLET.getName(), 1,
+							1f);
+				}
+			}.runTaskLater(Main.getInstance(), 10);
+			new BukkitRunnable() {
+				
+				@Override
+				public void run() {
+					player.getWorld().playSound(player.getLocation(), WeaponSounds.RELOAD_BULLET.getName(), 1,
+							1f);
+				}
+			}.runTaskLater(Main.getInstance(), 15);
+			new BukkitRunnable() {
+				
+				@Override
+				public void run() {
+					time.remove(player.getUniqueId());
+				}
+			}.runTaskLater(Main.getInstance(), 20);
+			
+		}
+		return false;
+	}
+	
 	@SuppressWarnings("deprecation")
 	@Override
 	public void reload(final Player player) {
