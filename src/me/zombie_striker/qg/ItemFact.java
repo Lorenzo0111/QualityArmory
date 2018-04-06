@@ -33,25 +33,28 @@ public class ItemFact {
 		List<String> lore = new ArrayList<>();
 		if (g.getCustomLore() != null)
 			lore.addAll(g.getCustomLore());
-		lore.add(ChatColor.GREEN + Main.S_ITEM_BULLETS + ": " + (amount - 1) + "/" + (g.getMaxBullets() - 1));
-		lore.add(ChatColor.GREEN + Main.S_ITEM_DAMAGE + ": " + g.getDamage());
+		lore.add(Main.S_ITEM_BULLETS + ": " + (amount) + "/" + (g.getMaxBullets()));
+		if (Main.ENABLE_LORE_INFO) {
+			lore.add(Main.S_ITEM_DAMAGE + ": " + g.getDamage());
+			lore.add(Main.S_ITEM_AMMO + ": " + g.getAmmoType().getDisplayName());
+		}
 		if (Main.enableDurability)
 			if (current == null) {
-				lore.add(ChatColor.DARK_GREEN + Main.S_ITEM_DURIB + ":" + g.getDurability() + "/" + g.getDurability());
+				lore.add(Main.S_ITEM_DURIB + ":" + g.getDurability() + "/" + g.getDurability());
 			} else {
 				lore = setDamage(g, lore, getDamage(current));
 			}
 
-		lore.add(ChatColor.GRAY + Main.S_ITEM_AMMO + ": " + g.getAmmoType().getDisplayName());
-
-		if (g.isAutomatic()) {
-			lore.add(Main.S_LMB_SINGLE);
-			lore.add(Main.S_RMB_RELOAD);
-		} else {
-			lore.add(Main.S_LMB_SINGLE);
-			lore.add(Main.enableIronSightsON_RIGHT_CLICK ? Main.S_RMB_R1 : Main.S_RMB_R2);
-			if (g.hasIronSights())
-				lore.add(Main.enableIronSightsON_RIGHT_CLICK ? Main.S_RMB_A1 : Main.S_RMB_A2);
+		if (Main.ENABLE_LORE_HELP) {
+			if (g.isAutomatic()) {
+				lore.add(Main.S_LMB_SINGLE);
+				lore.add(Main.S_RMB_RELOAD);
+			} else {
+				lore.add(Main.S_LMB_SINGLE);
+				lore.add(Main.enableIronSightsON_RIGHT_CLICK ? Main.S_RMB_R1 : Main.S_RMB_R2);
+				if (g.hasIronSights())
+					lore.add(Main.enableIronSightsON_RIGHT_CLICK ? Main.S_RMB_A1 : Main.S_RMB_A2);
+			}
 		}
 
 		if (current != null && current.hasItemMeta() && current.getItemMeta().hasLore())
@@ -134,7 +137,7 @@ public class ItemFact {
 
 		is.setItemMeta(im);
 		if (Main.enableVisibleAmounts)
-			is.setAmount(g.getMaxBullets());
+			is.setAmount(g.getMaxBullets() > 64 ? 64 : g.getMaxBullets());
 		else
 			is.setAmount(1);
 
@@ -184,7 +187,7 @@ public class ItemFact {
 		}
 
 		is.setItemMeta(im);
-		is.setAmount(a.getMaxAmount());
+		is.setAmount(a.getMaxAmount() > 64 ? 64 : a.getMaxAmount());
 
 		return is;
 	}
@@ -212,9 +215,8 @@ public class ItemFact {
 	}
 
 	public static int getDamage(ItemStack is) {
-		for (String lore1 : is.getItemMeta().getLore()) {
-			String lore = ChatColor.stripColor(lore1);
-			if (ChatColor.stripColor(lore).startsWith(Main.S_ITEM_DURIB + ":")) {
+		for (String lore : is.getItemMeta().getLore()) {
+			if (lore.startsWith(Main.S_ITEM_DURIB + ":")) {
 				return Integer.parseInt(lore.split(":")[1].split("/")[0]);
 			}
 		}
@@ -279,16 +281,16 @@ public class ItemFact {
 
 	public static int getAmount(ItemStack is) {
 		if (is != null) {
-			if (Main.enableVisibleAmounts) {
-				return is.getAmount() - 1;
-			} else {
-				if (is.hasItemMeta() && is.getItemMeta().hasLore())
-					for (String lore : is.getItemMeta().getLore()) {
-						if (lore.contains(Main.S_ITEM_BULLETS)) {
-							return Integer.parseInt(lore.split(":")[1].split("/")[0].trim());
-						}
+			if (is.hasItemMeta() && is.getItemMeta().hasLore()) {
+				for (String lore : is.getItemMeta().getLore()) {
+					if (lore.contains(Main.S_ITEM_BULLETS)) {
+						return Integer.parseInt(lore.split(":")[1].split("/")[0].trim());
 					}
+				}
 				return 0;
+			} else {
+				if (Main.enableVisibleAmounts)
+					return is.getAmount();
 			}
 		}
 		return 0;

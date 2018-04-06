@@ -4,6 +4,7 @@ import me.zombie_striker.qg.ArmoryBaseObject;
 import me.zombie_striker.qg.ammo.Ammo;
 import me.zombie_striker.qg.guns.utils.WeaponSounds;
 import me.zombie_striker.qg.guns.utils.WeaponType;
+import me.zombie_striker.qg.handlers.gunvalues.ChargingHandler;
 
 import java.util.HashMap;
 import java.util.UUID;
@@ -31,5 +32,17 @@ public interface Gun extends ArmoryBaseObject{
 	public double getDelayBetweenShotsInSeconds();
 	
 	public HashMap<UUID, Long> getLastShotForGun();
+	
+	public double getReloadTime();
+	
+	public ChargingHandler getChargingVal();
+	public void setChargingHandler(ChargingHandler ch);
+	
 
+	public void setBulletsPerShot(int i);
+
+	public int getBulletsPerShot();
+	
+	public int getMaxDistance();
+	public void setMaxDistance(int distance);
 }

@@ -4,21 +4,20 @@ package me.zombie_striker.qg.guns;
 import me.zombie_striker.qg.ItemFact;
 import me.zombie_striker.qg.Main;
 import me.zombie_striker.qg.MaterialStorage;
-import me.zombie_striker.qg.ammo.Ammo;
-import me.zombie_striker.qg.ammo.AmmoType;
+import me.zombie_striker.qg.ammo.*;
 import me.zombie_striker.qg.guns.utils.GunUtil;
 import me.zombie_striker.qg.guns.utils.WeaponSounds;
 import me.zombie_striker.qg.guns.utils.WeaponType;
 import me.zombie_striker.qg.handlers.IronSightsToggleItem;
 import me.zombie_striker.qg.handlers.Update19OffhandChecker;
+import me.zombie_striker.qg.handlers.gunvalues.ChargingHandler;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.UUID;
 
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
+import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -50,6 +49,10 @@ public class DefaultGun implements Gun {
 
 	private double reloadTime = 1.5;
 
+	private ChargingHandler ch = null;
+
+	private int maxDistance = 150;
+
 	// This refers to the last time a gun was shot by a player, on a per-gun basis.
 	// Doing this should prevent players from fast-switching to get around
 	// bullet-delays
@@ -65,11 +68,12 @@ public class DefaultGun implements Gun {
 
 	public DefaultGun(String name, WeaponType type, boolean h, Ammo am, double acc, double swaymult, int maxBullets,
 			float damage, boolean isAutomatic, int durib, WeaponSounds ws, double cost) {
-		this(name, type, h, am, acc, swaymult, maxBullets, damage, isAutomatic, durib, ws, cost, Main.getInstance().getIngredients(name));
+		this(name, type, h, am, acc, swaymult, maxBullets, damage, isAutomatic, durib, ws, cost,
+				Main.getInstance().getIngredients(name));
 	}
 
 	public DefaultGun(String name, WeaponType type, boolean h, Ammo am, double acc, double swaymult, int maxBullets,
-			float damage, boolean isAutomatic, int durib, WeaponSounds ws, double cost,ItemStack[] ing) {
+			float damage, boolean isAutomatic, int durib, WeaponSounds ws, double cost, ItemStack[] ing) {
 		this.name = name;
 		this.type = type;
 		this.hasIronSights = h;
@@ -117,6 +121,10 @@ public class DefaultGun implements Gun {
 		this.displayname = ChatColor.translateAlternateColorCodes('&', displayname);
 	}
 
+	public double getReloadTime() {
+		return reloadTime;
+	}
+
 	public double getReloadingTimeInSeconds() {
 		return reloadTime;
 	}
@@ -125,10 +133,12 @@ public class DefaultGun implements Gun {
 		this.reloadTime = time;
 	}
 
+	@Override
 	public void setBulletsPerShot(int i) {
 		this.shotsPerBullet = i;
 	}
 
+	@Override
 	public int getBulletsPerShot() {
 		return shotsPerBullet;
 	}
@@ -194,7 +204,8 @@ public class DefaultGun implements Gun {
 
 	@Override
 	public void reload(Player player) {
-		GunUtil.basicReload(this, player, WeaponType.isUnlimited(type), reloadTime);
+		if (getChargingVal() == null || (!getChargingVal().isReloading(player)))
+			GunUtil.basicReload(this, player, WeaponType.isUnlimited(type), reloadTime);
 	}
 
 	@Override
@@ -272,6 +283,25 @@ public class DefaultGun implements Gun {
 	@Override
 	public HashMap<UUID, Long> getLastShotForGun() {
 		return lastshot;
+	}
+
+	@Override
+	public ChargingHandler getChargingVal() {
+		return ch;
+	}
+
+	@Override
+	public void setChargingHandler(ChargingHandler ch) {
+		this.ch = ch;
+	}
+
+	@Override
+	public int getMaxDistance() {
+		return maxDistance;
+	}
+
+	public void setMaxDistance(int a) {
+		this.maxDistance = a;
 	}
 
 }
