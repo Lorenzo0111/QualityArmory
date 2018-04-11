@@ -2,7 +2,8 @@ package me.zombie_striker.qg.handlers.gunvalues;
 
 public enum ChargingHandlerEnum {
 
-	BOLTACTION("BoltAction"), REVOLVER("Revolver"), PUMPACTION("PumpAction"), BREAKACTION("BreakAction"),RPG("SingleRPG"),RAPIDFIRE("RapidFireMode");
+	BOLTACTION("BoltAction"), REVOLVER("Revolver"), PUMPACTION("PumpAction"), BREAKACTION("BreakAction"), RPG(
+			"SingleRPG"), RAPIDFIRE("RapidFireMode"), RPG_ARC("SingleRPG_ARC");
 	private String name;
 
 	private ChargingHandlerEnum(String name) {
@@ -25,6 +26,10 @@ public enum ChargingHandlerEnum {
 			return new BreakactionCharger();
 		case RPG:
 			return new RPGCharger();
+		case RPG_ARC:
+			RPGCharger r = new RPGCharger();
+			r.enableArc = true;
+			return r;
 		case RAPIDFIRE:
 			return new RapidFireCharger();
 		}
@@ -41,7 +46,11 @@ public enum ChargingHandlerEnum {
 		if (en instanceof BreakactionCharger)
 			return ChargingHandlerEnum.BREAKACTION;
 		if (en instanceof RPGCharger)
-			return ChargingHandlerEnum.RPG;
+			if (((RPGCharger) en).enableArc) {
+				return ChargingHandlerEnum.RPG_ARC;
+			} else {
+				return ChargingHandlerEnum.RPG;
+			}
 		if (en instanceof RapidFireCharger)
 			return ChargingHandlerEnum.RAPIDFIRE;
 		return null;

@@ -14,16 +14,15 @@ public class Update19Events implements Listener {
 			try {
 				if (Main.getInstance().isIS(e.getOffHandItem())) {
 					e.setCancelled(true);
-					e.getPlayer().getInventory()
-							.setItemInMainHand(e.getMainHandItem());
+					e.getPlayer().getInventory().setItemInMainHand(e.getMainHandItem());
 					e.getPlayer().getInventory().setItemInOffHand(null);
 				}
 			} catch (Error e2) {
 			}
 			Gun g = null;
-			if (Main.getInstance().isGun(e.getOffHandItem())) {
+			if (Main.isGun(e.getOffHandItem())) {
 				g = Main.getInstance().getGun(e.getOffHandItem());
-			} else if (Main.getInstance().isGun(e.getMainHandItem())) {
+			} else if (Main.isGun(e.getMainHandItem())) {
 				g = Main.getInstance().getGun(e.getMainHandItem());
 			}
 			if (g != null) {
@@ -34,14 +33,11 @@ public class Update19Events implements Listener {
 			}
 
 		} else {
-			if (Main.getInstance().isGun(e.getMainHandItem())) {
+			if (Main.isGun(e.getMainHandItem())) {
 				e.setCancelled(true);
 				return;
 			}
-			if (e.getOffHandItem() != null
-					&& e.getOffHandItem().getType() == Main.guntype
-					&& Main.gunRegister.containsKey((int) e.getOffHandItem()
-							.getDurability())) {
+			if (e.getOffHandItem() != null && Main.isGun(e.getOffHandItem())) {
 				e.setCancelled(true);
 				return;
 			}
@@ -52,17 +48,15 @@ public class Update19Events implements Listener {
 	@EventHandler
 	public void onSwig(PlayerAnimationEvent e) {
 		if (e.getAnimationType() == PlayerAnimationType.ARM_SWING) {
-			if (e.getPlayer().getItemInHand() != null
-					&& e.getPlayer().getItemInHand().getType() == Main.guntype
-					&& Main.gunRegister.containsKey((int) e.getPlayer()
-							.getItemInHand().getDurability()))
-				e.setCancelled(true);
-			if (e.getPlayer().getInventory().getItemInOffHand() != null
-					&& e.getPlayer().getInventory().getItemInOffHand()
-							.getType() == Main.guntype
-					&& Main.gunRegister.containsKey((int) e.getPlayer()
-							.getInventory().getItemInOffHand().getDurability()))
-				e.setCancelled(true);
+			try {
+				if (e.getPlayer().getItemInHand() != null
+						&& Main.isGun(e.getPlayer().getInventory().getItemInMainHand()))
+					e.setCancelled(true);
+				if (e.getPlayer().getInventory().getItemInOffHand() != null
+						&& Main.isGun(e.getPlayer().getInventory().getItemInOffHand()))
+					e.setCancelled(true);
+			} catch (Error | Exception re) {
+			}
 		}
 	}
 }

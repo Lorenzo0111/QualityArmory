@@ -34,7 +34,8 @@ public class DefaultGun implements Gun {
 	private int maxbull;
 	private float damage;
 	private int durib = 1000;
-	private boolean isAutomatic;;
+	private boolean isAutomatic;
+	boolean supports18 = false;
 
 	private List<String> extralore = null;
 	private String displayname = null;
@@ -302,6 +303,16 @@ public class DefaultGun implements Gun {
 
 	public void setMaxDistance(int a) {
 		this.maxDistance = a;
+	}
+
+	@Override
+	public boolean is18Support() {
+		return supports18;
+	}
+
+	@Override
+	public void set18Supported(boolean b) {
+		supports18=b;
 	}
 
 }

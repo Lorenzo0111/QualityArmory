@@ -11,6 +11,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import me.zombie_striker.qg.ammo.Ammo;
 import me.zombie_striker.qg.armor.ArmorObject;
 import me.zombie_striker.qg.guns.Gun;
+import me.zombie_striker.qg.miscitems.MedKit;
 
 public class ItemFact {
 
@@ -108,7 +109,12 @@ public class ItemFact {
 	}
 
 	public static ItemStack getGun(int durib) {
-		Gun g = Main.gunRegister.get(MaterialStorage.getMS(Main.guntype, durib));
+		Gun g = Main.gunRegister.get(MaterialStorage.getMS(Main.guntype, durib, 0));
+		return getGun(g);
+	}
+
+	public static ItemStack getGun(int durib, int varient) {
+		Gun g = Main.gunRegister.get(MaterialStorage.getMS(Main.guntype, durib, varient));
 		return getGun(g);
 	}
 
@@ -124,6 +130,7 @@ public class ItemFact {
 		ItemMeta im = is.getItemMeta();
 		im.setDisplayName(g.getDisplayName());
 		List<String> lore = getGunLore(g, null, g.getMaxBullets());
+		addVarientData(lore, g);
 		im.setLore(lore);
 		try {
 			im.setUnbreakable(true);
@@ -151,7 +158,9 @@ public class ItemFact {
 			is.setDurability((short) 0);
 		ItemMeta im = is.getItemMeta();
 		im.setDisplayName(a.getDisplayName());
-		im.setLore(getArmorLore(a, is));
+		List<String> lore = getArmorLore(a,is);
+		addVarientData(lore, a);
+		im.setLore(lore);
 		try {
 			im.setUnbreakable(true);
 		} catch (Error e) {
@@ -166,8 +175,12 @@ public class ItemFact {
 	}
 
 	public static ItemStack getAmmo(Material m, int data) {
-		if (Main.ammoRegister.containsKey(MaterialStorage.getMS(m, data)))
-			return getAmmo(Main.ammoRegister.get(MaterialStorage.getMS(m, data)));
+		return getAmmo(m, data, 0);
+	}
+
+	public static ItemStack getAmmo(Material m, int data, int varient) {
+		if (Main.ammoRegister.containsKey(MaterialStorage.getMS(m, data, varient)))
+			return getAmmo(Main.ammoRegister.get(MaterialStorage.getMS(m, data, varient)));
 		return null;
 	}
 
@@ -185,7 +198,9 @@ public class ItemFact {
 			im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_UNBREAKABLE);
 		} catch (Error e) {
 		}
-
+		List<String> lore = new ArrayList<String>();
+		lore.addAll(a.getCustomLore());
+		addVarientData(lore, a);
 		is.setItemMeta(im);
 		is.setAmount(a.getMaxAmount() > 64 ? 64 : a.getMaxAmount());
 
@@ -198,6 +213,7 @@ public class ItemFact {
 			is.setDurability((short) 0);
 		ItemMeta im = is.getItemMeta();
 		im.setDisplayName(a.getDisplayName());
+
 		try {
 			im.setUnbreakable(true);
 		} catch (Error e) {
@@ -206,7 +222,16 @@ public class ItemFact {
 			im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_UNBREAKABLE);
 		} catch (Error e) {
 		}
-		im.setLore(a.getCustomLore());
+		List<String> lore = new ArrayList<String>();
+		if (a instanceof MedKit) {
+			if (Main.ENABLE_LORE_HELP) {
+				lore.add(Main.S_MEDKIT_LORE_INFO);
+			}
+		}
+		if (a.getCustomLore() != null)
+			lore.addAll(a.getCustomLore());
+		addVarientData(lore, a);
+		im.setLore(lore);
 
 		is.setItemMeta(im);
 		is.setAmount(a.getCraftingReturn());
@@ -277,6 +302,11 @@ public class ItemFact {
 							return is2.getItemMeta().getLore().contains(s);
 		}
 		return false;
+	}
+
+	public static void addVarientData(List<String> lore, ArmoryBaseObject object) {
+		if (object.getItemData().isVarient())
+			lore.add(Main.S_ITEM_VARIENTS +" "+object.getItemData().getVarient());
 	}
 
 	public static int getAmount(ItemStack is) {

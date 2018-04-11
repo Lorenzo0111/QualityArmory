@@ -22,6 +22,8 @@ public class RPGCharger implements ChargingHandler {
 
 	List<UUID> timeC = new ArrayList<>();
 	List<UUID> timeR = new ArrayList<>();
+	
+	boolean enableArc = false;
 
 	@Override
 	public boolean isCharging(Player player) {
@@ -44,7 +46,7 @@ public class RPGCharger implements ChargingHandler {
 		Vector two = go.clone().multiply(2);
 
 		for (int j = 0; j < (g instanceof DefaultGun ? ((DefaultGun) g).getBulletsPerShot() : 1); j++)
-			new RocketProjectile(start, player, two);
+			new RocketProjectile(start, player, two,enableArc);
 
 
 		GunUtil.playShoot(g, player);

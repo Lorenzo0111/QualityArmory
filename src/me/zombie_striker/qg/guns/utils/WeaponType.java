@@ -3,33 +3,45 @@ package me.zombie_striker.qg.guns.utils;
 import me.zombie_striker.qg.Main;
 
 public enum WeaponType {
-	PISTOL(true),SMG(true),RPG(true),RIFLE(true),SHOTGUN(true),SNIPER(true),GRENADES(false),MINES(false),MEELEE(false),MISC(false),AMMO(false),KEVLAR(false);
-	
+	PISTOL(true), SMG(true), RPG(true), RIFLE(true), SHOTGUN(true), SNIPER(true), GRENADES(false), MINES(false), MEELEE(
+			false), MISC(false), AMMO(false), KEVLAR(false), MEDKIT(false),LAZER(true);
+
 	private boolean isGun;
-	
+
 	public boolean isGun() {
 		return isGun;
 	}
+
 	private WeaponType(boolean isGun) {
 		this.isGun = isGun;
 	}
-	
-	public static boolean isUnlimited(WeaponType g){
-		if(!Main.isVersionHigherThan(1, 9))
+
+	public static WeaponType getByName(String name) {
+		for (WeaponType w : WeaponType.values()) {
+			if (w.name().equals(name))
+				return w;
+		}
+		return MISC;
+	}
+
+	public static boolean isUnlimited(WeaponType g) {
+		if (!Main.isVersionHigherThan(1, 9))
 			return true;
-		switch(g){
-			case PISTOL:
+		switch (g) {
+		case PISTOL:
 			return Main.UnlimitedAmmoPistol;
-			case RIFLE:
+		case RIFLE:
 			return Main.UnlimitedAmmoRifle;
-			case SMG:
+		case SMG:
 			return Main.UnlimitedAmmoSMG;
-			case RPG:
+		case RPG:
 			return Main.UnlimitedAmmoRPG;
-			case SNIPER:
+		case SNIPER:
 			return Main.UnlimitedAmmoSniper;
-			case SHOTGUN:
+		case SHOTGUN:
 			return Main.UnlimitedAmmoShotgun;
+		case LAZER:
+			return Main.UnlimitedAmmoLazer;
 		default:
 			break;
 		}

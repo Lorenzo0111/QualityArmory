@@ -10,6 +10,7 @@ import me.zombie_striker.qg.ammo.AmmoUtil;
 import me.zombie_striker.qg.armor.BulletProtectionUtil;
 import me.zombie_striker.qg.guns.Gun;
 import me.zombie_striker.qg.handlers.AimManager;
+import me.zombie_striker.qg.handlers.BulletWoundHandler;
 import me.zombie_striker.qg.handlers.HeadShotUtil;
 import me.zombie_striker.qg.handlers.Update19OffhandChecker;
 import me.zombie_striker.qg.handlers.gunvalues.ChargingHandlerEnum;
@@ -31,7 +32,7 @@ import com.alessiodp.partiesapi.Parties;
 public class GunUtil {
 
 	@SuppressWarnings("deprecation")
-	public static void shoot(Player p, double sway, double damage, int shots, int range) {
+	public static void shoot(Gun g, Player p, double sway, double damage, int shots, int range) {
 		for (int i = 0; i < shots; i++) {
 			Location start = p.getEyeLocation().clone();
 			Vector go = p.getLocation().getDirection().normalize();
@@ -59,7 +60,7 @@ public class GunUtil {
 
 			double degreeVector = Math.atan2(go.getX(), go.getZ());
 			if (degreeVector > Math.PI)
-				degreeVector = 2*Math.PI-degreeVector;
+				degreeVector = 2 * Math.PI - degreeVector;
 
 			for (Entity e : p.getNearbyEntities(maxDistance, maxDistance, maxDistance)) {
 				if (e instanceof Damageable)
@@ -69,7 +70,7 @@ public class GunUtil {
 						double degreeEntity = Math.atan2(e.getLocation().getX() - start.getX(),
 								e.getLocation().getZ() - start.getZ());
 						if (degreeEntity > Math.PI)
-							degreeEntity = 2*Math.PI-degreeEntity;
+							degreeEntity = 2 * Math.PI - degreeEntity;
 						if (Math.max(degreeEntity, degreeVector) - Math.min(degreeEntity, degreeVector) < Math.PI / 2) {
 
 							double dis = e.getLocation().distance(start);
@@ -130,12 +131,21 @@ public class GunUtil {
 			}
 			if (hitTarget != null) {
 				if (!(hitTarget instanceof Player) || Main.allowGunsInRegion(hitTarget.getLocation())) {
-					((Damageable) hitTarget)
-							.damage(damage
-									* (hitTarget instanceof Player
-											&& BulletProtectionUtil.stoppedBullet(p, bulletHitLoc, go) ? 0.1 : 1)
-									* (headShot ? 2 : 1), p);
+
+					boolean bulletProtection = false;
+					if (hitTarget instanceof Player) {
+						bulletProtection = BulletProtectionUtil.stoppedBullet(p, bulletHitLoc, go);
+						if (!bulletProtection) {
+							BulletWoundHandler.bulletHit((Player) hitTarget, g.getAmmoType().getPiercingDamage());
+						}else {
+							hitTarget.sendMessage(Main.S_BULLETPROOFSTOPPEDBLEEDING);
+						}
+					}
+
+					((Damageable) hitTarget).damage(
+							damage * (bulletProtection ? 0.1 : 1) * (headShot ? (Main.HeadshotOneHit ? 50 : 2) : 1), p);
 					((LivingEntity) hitTarget).setNoDamageTicks(0);
+
 				}
 			}
 			double smokeDistance = 0;
@@ -231,7 +241,7 @@ public class GunUtil {
 		}
 
 		if (regularshoot) {
-			GunUtil.shoot(player, acc * AimManager.getSway(g, player.getUniqueId()), g.getDamage(),
+			GunUtil.shoot(g, player, acc * AimManager.getSway(g, player.getUniqueId()), g.getDamage(),
 					g.getBulletsPerShot(), g.getMaxDistance());
 			playShoot(g, player);
 		}
@@ -404,7 +414,7 @@ public class GunUtil {
 					if (Main.enableVisibleAmounts)
 						temp.setAmount(reloadAmount);
 					player.getInventory().setItem(slot, temp);
-					Main.sendHotbar(player, g, temp);
+					Main.sendHotbarGunAmmoCount(player, g, temp);
 				}
 			}.runTaskLater(Main.getInstance(), (long) (20 * seconds));
 			if (!Main.reloadingTasks.containsKey(player.getUniqueId())) {

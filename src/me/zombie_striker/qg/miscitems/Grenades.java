@@ -3,14 +3,12 @@ package me.zombie_striker.qg.miscitems;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Effect;
 import org.bukkit.GameMode;
 import org.bukkit.Sound;
-import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.LivingEntity;
@@ -63,7 +61,7 @@ public class Grenades implements ThrowableItems {
 
 	@Override
 	public MaterialStorage getItemData() {
-		return MaterialStorage.getMS(Main.guntype, 22);
+		return MaterialStorage.getMS(Main.guntype, 22,0);
 	}
 
 	@Override
@@ -82,6 +80,7 @@ public class Grenades implements ThrowableItems {
 		return ChatColor.GOLD + "Grenade";
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public void onRightClick(Player thrower) {
 		if (grenadeHolder.containsKey(thrower)) {

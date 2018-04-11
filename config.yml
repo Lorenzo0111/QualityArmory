@@ -1,45 +1,52 @@
 #  Quality Armory: A quality gun plugin similar to CrackShot.
-
-
+#
 #FAQ:
 #Q: I do not want to use your resourcepack. How do I disable it?
 #A: Set "useDefaultResourcepack" to false if you do not want any resourcepacks. If you want to use another resourcepack instead, set "DefaultResoucepackOverride" to true and replace "DefaultResoucepack" with the link to the resourcepack you want to use.
-
+#
 #Q: I want to disable friendly fire, but the "FriendlyFireEnabled" value does not do anything
 #A: Friendly fire uses Parties to determine who is a part of the same group. Download "Parties" to enable this feature
-
+#
 #Q: I want guns to degrade as they are used.
 #A: Set "EnableWeaponDurability" to true. Note that old guns will break because of this, so users will need to craft/buy new guns.
-
+#
 #Q:I do not want users to be able to shoot through leaves
 #A: Set the "leaves" value under "BlockBullets" to true
-
+#
 #Q:When players join, I want them to automatically download the resourcepack.
 #A: Set "sendOnJoin" to true to force all users to use the resourcepack
-
+#
 #Q: I want the bullet count to show on the items icon.
 #A: Set "enableVisableBulletCounts" to true. Note that minecraft was not built to handle stacks of hoes, so there is a CHANCE for that the gun may get glitched or duplicated. 
-
+#
 #Q: My server is lagging because there are too many particles when shooting
 #A: Increase "BulletTrailsSpacing" from 0.5 to 1 or 2.
-
+#
 #Q: One of your guns is overpowered/too cheap/ unbalanced
 #A: You can configure the price, damage, and crafting ingredients under the "Weapon","Ammo","Misc", and "crafting" tabs
-
+#
 #Q: I want to add new guns/ammo to the plugin
 #A: Follow this tutoiral: https://www.spigotmc.org/wiki/how-to-create-new-guns-with-quality-armory/
 
-
-
-FriendlyFireEnabled: false
+ENABLE-DEBUG: false
 useDefaultResourcepack: true
+sendOnJoin: false
+DefaultResoucepackOverride: false
+DefaultResoucepack: https://www.dropbox.com/s/3bllojuzjpbbxto/QualityArmoryv1.0.11.zip?dl=1
+hideTextureWarnings: false
+Auto-Detect-Resourcepack: false
+
+Enable_Headshot_Instantkill: true
+
 UnlimitedPistolAmmo: false
 UnlimitedShotgunAmmo: false
 UnlimitedRifleAmmo: false
 UnlimitedSMGAmmo: false
 UnlimitedSniperAmmo: false
 UnlimitedRocketAmmo: false
+UnlimitedLazerAmmo: false
 EnableWeaponDurability: false
+FriendlyFireEnabled: false
 BulletDetection:
   step: 0.1
 BlockBullets:
@@ -47,68 +54,43 @@ BlockBullets:
   halfslabs: false
   leaves: false
   water: false
+enableInteract:
+  Chests: false
 overrideAnvil: false
-sendOnJoin: false
 enableBulletTrails: true
 BulletTrailsSpacing: 0.5
 enableVisableBulletCounts: false
 enableReloadingWhenSwapToOffhand: true
 enableExplosionDamage: false
 enableExplosionDamageDrop: false
+enableCrafting: true
+enableShop: true
+AUTO-UPDATE: true
+Swap-Reload-and-Shooting-Controls: false
+enable_lore_gun-info_messages: true
+enable_lore_control-help_messages: true
+BulletWounds:
+  InitialBloodLevel: 100.0
+  BloodIncreasePerSecond: 0.01
+  Medkit_Heal_Bloodloss_Rate: 0.05
+  enableBleeding: false
+allowGunReload: true
 Bullet-Particle-Type: FIREWORKS_SPARK
 ACCEPTED-BULLET-PARTICLE-VALUES: https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Particle.html
-gunMaterialType: DIAMOND_HOE
-DefaultResoucepackOverride: false
-DefaultResoucepack: https://www.dropbox.com/s/wsg2sl5vmclw921/QualityArmory%201.8.zip?dl=1
+gunMaterialType: DIAMOND_AXE
 IronSightsOnRightCLick: false
 Crafting:
-  Ammo556: &id061
-  - IRON_INGOT,0,1
-  - SULPHUR,0,1
-  - REDSTONE,0,1
-  Ammo9mm: *id061
-  AmmoBuckshot: *id061
-  AmmoRPG:
-  - IRON_INGOT,0,4
-  - SULPHUR,0,6
-  - REDSTONE,0,1
-  P30: &id062
-  - IRON_INGOT,0,5
-  - REDSTONE,0,2
-  PKP: *id062
-  MP5K: *id062
-  AK47: &id064
-  - IRON_INGOT,0,12
-  - WOOD,0,2
-  - REDSTONE,0,5
-  M16: &id063
-  - IRON_INGOT,0,15
-  - REDSTONE,0,5
-  Remmington: *id063
-  FNFal: *id063
-  RPG:
-  - IRON_INGOT,0,32
-  - REDSTONE,0,10
-  UMP: *id062
-  SW1911: *id062
-  M40: *id064
-  Enfield: &id065
-  - IRON_INGOT,0,12
-  - GOLD_INGOT,0,2
-  - REDSTONE,0,5
-  Henry: *id065
-  MouserC96: *id062
   Grenades:
   - IRON_INGOT,0,6
   - SULPHUR,0,10
-  Dragunov: *id064
-  Spas: *id063
-Ammo:
-  '556':
-    Price: 5.0
-  9mm:
-    Price: 2.0
-  Buckshot:
-    Price: 5.0
-  RPG:
-    Price: 100.0
+  Kevlarnk1:
+  - IRON_INGOT,0,15
+  - REDSTONE,0,5
+Weapon:
+  Grenade:
+    Price: 800.0
+    radiusdamage: 10.0
+    radius: 5.0
+  Kevlarmk1:
+    DamageThreshold: 1
+    Price: 1200.0

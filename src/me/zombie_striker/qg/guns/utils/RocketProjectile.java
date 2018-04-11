@@ -5,6 +5,7 @@ import java.util.List;
 
 import me.zombie_striker.qg.Main;
 import me.zombie_striker.qg.handlers.ExplosionHandler;
+import me.zombie_striker.qg.handlers.ParticleHandlers;
 
 import org.bukkit.Effect;
 import org.bukkit.Location;
@@ -17,8 +18,9 @@ import org.bukkit.util.Vector;
 
 public class RocketProjectile {
 
-	public RocketProjectile(final Location s, final Player player,
-			final Vector dir) {
+	public static final double gravity = 0.05;
+
+	public RocketProjectile(final Location s, final Player player, final Vector dir, final boolean arc) {
 		new BukkitRunnable() {
 			int distance = 220;
 
@@ -26,49 +28,53 @@ public class RocketProjectile {
 			public void run() {
 				distance--;
 				s.add(dir);
+				if (arc)
+					dir.setY(dir.getY() - gravity);
 				try {
-					s.getWorld().spawnParticle(org.bukkit.Particle.SMOKE_LARGE,
-							s, 0);
-					s.getWorld().spawnParticle(
-							org.bukkit.Particle.FIREWORKS_SPARK, s, 0);
-					player.getWorld().playSound(s,
-							Sound.ENTITY_ENDERDRAGON_GROWL, 1, 2f);
+					s.getWorld().spawnParticle(org.bukkit.Particle.SMOKE_LARGE, s, 0);
+					s.getWorld().spawnParticle(org.bukkit.Particle.FIREWORKS_SPARK, s, 0);
+					player.getWorld().playSound(s, Sound.ENTITY_ENDERDRAGON_GROWL, 1, 2f);
 
 				} catch (Error e2) {
 					s.getWorld().playEffect(s, Effect.valueOf("CLOUD"), 0);
-					player.getWorld().playSound(s, Sound.valueOf("ENDERDRAGON_GROWL"), 1,
-							2f);
+					player.getWorld().playSound(s, Sound.valueOf("ENDERDRAGON_GROWL"), 1, 2f);
 				}
 				boolean entityNear = false;
 				try {
-					List<Entity> e2 = new ArrayList<>(s.getWorld()
-							.getNearbyEntities(s, 1, 1, 1));
+					List<Entity> e2 = new ArrayList<>(s.getWorld().getNearbyEntities(s, 1, 1, 1));
 					if (!e2.isEmpty())
 						if (e2.size() > 1 || e2.get(0) != player)
 							entityNear = true;
 				} catch (Error e) {
 				}
 
-				if (GunUtil.isSolid(s.getBlock(), s) || entityNear
-						|| distance < 0) {
+				if (GunUtil.isSolid(s.getBlock(), s) || entityNear || distance < 0) {
 					if (Main.enableExplosionDamage) {
 						ExplosionHandler.handleExplosion(s, 4, 1);
 					}
 					try {
-						s.getWorld().spawnParticle(
-								org.bukkit.Particle.EXPLOSION_HUGE, s, 0);
-						player.getWorld().playSound(s,
-								Sound.ENTITY_GENERIC_EXPLODE, 8, 0.7f);
+						player.getWorld().playSound(s, WeaponSounds.WARHEAD_EXPLODE.getName(), 10, 0.9f);
+						player.getWorld().playSound(s, Sound.ENTITY_GENERIC_EXPLODE, 8, 0.7f);
+						if(arc) {
+							ParticleHandlers.spawnMushroomCloud(s);
+							new BukkitRunnable() {
+								
+								@Override
+								public void run() {					
+									ParticleHandlers.spawnMushroomCloud(s);				
+								}
+							}.runTaskLater(Main.getInstance(), 10);
+						}else {
+						s.getWorld().spawnParticle(org.bukkit.Particle.EXPLOSION_HUGE, s, 0);
+						}
 					} catch (Error e3) {
 						s.getWorld().playEffect(s, Effect.valueOf("CLOUD"), 0);
 						player.getWorld().playSound(s, Sound.valueOf("EXPLODE"), 8, 0.7f);
 					}
 					try {
-						for (Entity e : s.getWorld().getNearbyEntities(s, 7, 7,
-								7)) {
+						for (Entity e : s.getWorld().getNearbyEntities(s, 7, 7, 7)) {
 							if (e instanceof LivingEntity) {
-								((LivingEntity) e).damage((20 * 4 / e
-										.getLocation().distance(s)),player);
+								((LivingEntity) e).damage((20 * 4 / e.getLocation().distance(s)), player);
 							}
 						}
 					} catch (Error e) {

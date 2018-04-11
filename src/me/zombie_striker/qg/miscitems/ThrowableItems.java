@@ -3,16 +3,10 @@ package me.zombie_striker.qg.miscitems;
 import java.util.UUID;
 
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
 
-import me.zombie_striker.qg.ArmoryBaseObject;
 
-public interface ThrowableItems extends ArmoryBaseObject {
-
-	public void onRightClick(Player thrower);
-
-	public void onLeftClick(Player thrower);
+public interface ThrowableItems extends InteractableMisc {
 
 	class ThrowableHolder {
 		private Entity holder;

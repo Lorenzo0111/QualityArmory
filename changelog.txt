@@ -1,3 +1,16 @@
+1.1.74
+	[IMPORTANT] Changed DiamondHOE system to now use DiamondAXE. This will mean that servers that had QA before this update will need to delete the config.YML in order for the new guns/system to work properly.
+	Added custom ammo support! The /ammo/ directory will now contain all new ammo types.
+	Added bleeding mechanics (Must be enabled in the config)
+	Added Medkit
+	Added Magnum Revlover!
+	Added 1.8 guns to appear on 1.9 IF "Auto-Detect-Resourcepack" is set to true
+	Added ability to swap 1.8 guns with 1.9 ones and vis versa if a good match exists
+	Added support for new gun-expansion-packs!
+
+1.1.73B
+	Included chatcolor support for lore.
+
 1.1.73
 	==MASSIVE UPDATE==
 	Transfered all guns into their own YML files. You can now modify default guns

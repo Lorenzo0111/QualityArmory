@@ -25,15 +25,14 @@ public class RapidFireCharger implements ChargingHandler {
 
 	@Override
 	public boolean shoot(final Gun g, final Player player, ItemStack stack) {
-		GunUtil.shoot(player, g.getSway() * AimManager.getSway(g, player.getUniqueId()), g.getDamage(), 1, 200);
+		GunUtil.shoot(g,player, g.getSway() * AimManager.getSway(g, player.getUniqueId()), g.getDamage(), 1, 200);
 		GunUtil.playShoot(g, player);
 		for (int j = 1; j < Math.min(ItemFact.getAmount(stack), g.getBulletsPerShot()); j++)
 			new BukkitRunnable() {
 				@Override
 				public void run() {
-					GunUtil.shoot(player, g.getSway() * AimManager.getSway(g, player.getUniqueId()), g.getDamage(), 1,
+					GunUtil.shoot(g,player, g.getSway() * AimManager.getSway(g, player.getUniqueId()), g.getDamage(), 1,
 							200);
-
 					GunUtil.playShoot(g, player);
 
 				}

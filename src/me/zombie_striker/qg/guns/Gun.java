@@ -45,4 +45,7 @@ public interface Gun extends ArmoryBaseObject{
 	
 	public int getMaxDistance();
 	public void setMaxDistance(int distance);
+	
+	public boolean is18Support();
+	public void set18Supported(boolean b);
 }
