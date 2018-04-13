@@ -3,6 +3,8 @@ package me.zombie_striker.qg.handlers;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 
+import me.zombie_striker.qg.guns.Gun;
+
 public class ParticleHandlers {
 
 	public static void spawnMushroomCloud(Location loc) {
@@ -46,6 +48,15 @@ public class ParticleHandlers {
 			radius = 1.5;
 			loc.getWorld().spawnParticle(Particle.REDSTONE, loc.getX() + (Math.sin(d)* radius),
 					loc.getY()+6  , loc.getZ()+ (Math.cos(d)* radius), 0, 1.0, 0.5, 0.0, 1);
+		}
+	}
+	
+	public static void spawnGunParticles(Gun g, Location loc) {
+		if(g.getParticle()==Particle.REDSTONE) {
+		loc.getWorld().spawnParticle(Particle.REDSTONE, loc.getX() ,
+				loc.getY() , loc.getZ(), 0, g.getParticleR(), g.getParticleG(), g.getParticleB(), 1);
+		}else {
+			loc.getWorld().spawnParticle(g.getParticle(), loc, 0);
 		}
 	}
 }

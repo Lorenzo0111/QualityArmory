@@ -267,7 +267,7 @@ public class QualityArmory {
 			Ammo ammotype, double acc, int swayMultiplier, int maxBullets, float damage, boolean isAutomatic,
 			int gunDurability, double cost, WeaponSounds sound) {
 		MaterialStorage mm = MaterialStorage.getMS(mat, data,varient,null);
-		Gun g = new DefaultGun(name, mm, type, hasIronSights, ammotype, acc, swayMultiplier, maxBullets, damage,
+		Gun g = new Gun(name, mm, type, hasIronSights, ammotype, acc, swayMultiplier, maxBullets, damage,
 				isAutomatic, gunDurability, sound, cost);
 		Main.gunRegister.put(mm, g);
 		return g;

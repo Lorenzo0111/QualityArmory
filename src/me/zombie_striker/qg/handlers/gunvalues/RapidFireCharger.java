@@ -6,7 +6,6 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import me.zombie_striker.qg.ItemFact;
 import me.zombie_striker.qg.Main;
-import me.zombie_striker.qg.guns.DefaultGun;
 import me.zombie_striker.qg.guns.Gun;
 import me.zombie_striker.qg.guns.utils.GunUtil;
 import me.zombie_striker.qg.handlers.AimManager;
@@ -36,7 +35,7 @@ public class RapidFireCharger implements ChargingHandler {
 					GunUtil.playShoot(g, player);
 
 				}
-			}.runTaskLater(Main.getInstance(), (long) ((int) ((4.0 / ((DefaultGun) g).getBulletsPerShot()) * (j + 1))));
+			}.runTaskLater(Main.getInstance(), (long) ((int) ((4.0 / g.getBulletsPerShot()) * (j + 1))));
 
 		return false;
 	}

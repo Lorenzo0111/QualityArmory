@@ -12,6 +12,7 @@ import me.zombie_striker.qg.guns.Gun;
 import me.zombie_striker.qg.handlers.AimManager;
 import me.zombie_striker.qg.handlers.BulletWoundHandler;
 import me.zombie_striker.qg.handlers.HeadShotUtil;
+import me.zombie_striker.qg.handlers.ParticleHandlers;
 import me.zombie_striker.qg.handlers.Update19OffhandChecker;
 import me.zombie_striker.qg.handlers.gunvalues.ChargingHandlerEnum;
 
@@ -195,7 +196,8 @@ public class GunUtil {
 					if (Main.enableBulletTrails)
 						if (smokeDistance + i >= Main.smokeSpacing * shots) {
 							try {
-								start.getWorld().spawnParticle((Particle) Main.bulletTrail, start, 0);
+								//start.getWorld().spawnParticle((Particle) Main.bulletTrail, start, 0);
+								ParticleHandlers.spawnGunParticles(g, start);
 							} catch (Error e2) {
 							}
 							smokeDistance = 0;

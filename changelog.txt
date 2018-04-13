@@ -1,3 +1,9 @@
+1.1.76
+	Added customizable particle effects per gun
+	Fixed ironsights for magnum
+	Sorted gunlist by gun's name
+	SkullAmmo can no longer be placed
+
 1.1.75
 	Fixed "UnknownTranslationError" for hotbar messages.
 	Added /qa reload to reload all of the plugin's values

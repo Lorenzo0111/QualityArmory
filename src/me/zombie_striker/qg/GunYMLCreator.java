@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.Particle;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -85,6 +86,21 @@ public class GunYMLCreator {
 			boolean enableIronSights, String ammotype, int damage, double sway, Material type, int maxBullets,
 			int duribility, double delayReload, double delayShoot, int bulletspershot, boolean isAutomatic, int cost,
 			ChargingHandlerEnum ch, int distance, int var, boolean version18, WeaponSounds ws) {
+
+		double particlecolorGB = weapontype == WeaponType.LAZER ? 0.0 : 1.0;
+
+		createNewGun(forceUpdate, dataFolder, invalid, filename, name, displayname, lore, id, craftingRequirements,
+				weapontype, enableIronSights, ammotype, damage, sway, type, maxBullets, duribility, delayReload,
+				delayShoot, bulletspershot, isAutomatic, cost, ch, distance, var, version18, ws, Particle.REDSTONE, 1.0,
+				particlecolorGB, particlecolorGB);
+	}
+
+	public static void createNewGun(boolean forceUpdate, File dataFolder, boolean invalid, String filename, String name,
+			String displayname, List<String> lore, int id, List<String> craftingRequirements, WeaponType weapontype,
+			boolean enableIronSights, String ammotype, int damage, double sway, Material type, int maxBullets,
+			int duribility, double delayReload, double delayShoot, int bulletspershot, boolean isAutomatic, int cost,
+			ChargingHandlerEnum ch, int distance, int var, boolean version18, WeaponSounds ws, Particle particle,
+			double particleR, double particleG, double particleB) {
 		File f2 = new File(dataFolder, "newGuns/" + filename + ".yml");
 		if (!new File(dataFolder, "newGuns").exists())
 			new File(dataFolder, "newGuns").mkdirs();
@@ -118,6 +134,14 @@ public class GunYMLCreator {
 		set(false, f, "isAutomatic", isAutomatic);
 		set(false, f, "price", cost);
 		set(false, f, "maxBulletDistance", distance);
+
+		set(false, f, "particles.bullet_particle", particle.name());
+		if (particle == Particle.REDSTONE) {
+			set(false, f, "particles.bullet_particleR", particleR);
+			set(false, f, "particles.bullet_particleG", particleG);
+			set(false, f, "particles.bullet_particleB", particleB);
+		}
+
 		if (version18)
 			set(!f.contains("Version_18_Support"), f, "Version_18_Support", version18);
 		set(false, f, "ChargingHandler", ch == null ? "null" : ch.getName());
@@ -145,11 +169,13 @@ public class GunYMLCreator {
 	public static void createAmmo(boolean forceUpdate, File dataFolder, boolean invalid, String filename, String name,
 			String displayname, List<String> lore, Material type, int id, List<String> craftingRequirements, int cost,
 			double severity, int maxAmount) {
-		createSkullAmmo(forceUpdate, dataFolder, invalid, filename, name, displayname, lore, type, id, null, craftingRequirements, cost, severity, maxAmount);
+		createSkullAmmo(forceUpdate, dataFolder, invalid, filename, name, displayname, lore, type, id, null,
+				craftingRequirements, cost, severity, maxAmount);
 	}
-	public static void createSkullAmmo(boolean forceUpdate, File dataFolder, boolean invalid, String filename, String name,
-			String displayname, List<String> lore, Material type, int id, String SKULL_OWNER, List<String> craftingRequirements, int cost,
-			double severity, int maxAmount) {
+
+	public static void createSkullAmmo(boolean forceUpdate, File dataFolder, boolean invalid, String filename,
+			String name, String displayname, List<String> lore, Material type, int id, String SKULL_OWNER,
+			List<String> craftingRequirements, int cost, double severity, int maxAmount) {
 		File f2 = new File(dataFolder, "ammo/" + filename + ".yml");
 		if (!new File(dataFolder, "ammo").exists())
 			new File(dataFolder, "ammo").mkdirs();
@@ -166,9 +192,9 @@ public class GunYMLCreator {
 		set(f.contains("material") && f.get("material").equals(Material.DIAMOND_HOE.name()), f, "material",
 				type.name());
 
-		if(SKULL_OWNER!=null)
-			set(false,f,"skull_owner",SKULL_OWNER);
-		
+		if (SKULL_OWNER != null)
+			set(false, f, "skull_owner", SKULL_OWNER);
+
 		set(false, f, "piercingSeverity", severity);
 		if (saveNow)
 			try {
@@ -181,9 +207,9 @@ public class GunYMLCreator {
 
 	public static void createMisc(boolean forceUpdate, File dataFolder, boolean invalid, String filename, String name,
 			String displayname, List<String> lore, MaterialStorage ms, List<String> craftingRequirements, int cost,
-			WeaponType misctype,int damage, int durability) {
+			WeaponType misctype, int damage, int durability) {
 		createMisc(forceUpdate, dataFolder, invalid, filename, name, displayname, lore, ms.getMat(), ms.getData(),
-				craftingRequirements, cost, misctype,damage, durability);
+				craftingRequirements, cost, misctype, damage, durability);
 	}
 
 	public static void createMisc(boolean forceUpdate, File dataFolder, boolean invalid, String filename, String name,
@@ -203,10 +229,9 @@ public class GunYMLCreator {
 		set(false, f, "price", cost);
 		set(f.contains("material") && f.get("material").equals(Material.DIAMOND_HOE.name()), f, "material",
 				type.name());
-		
 
-		set(false,f,"damage",damage);
-		set(false,f ,"durability",durability);		
+		set(false, f, "damage", damage);
+		set(false, f, "durability", durability);
 
 		set(false, f, "MiscType", misctype.name());
 		if (saveNow)

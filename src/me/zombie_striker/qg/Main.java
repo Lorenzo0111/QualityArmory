@@ -11,7 +11,6 @@ import me.zombie_striker.qg.ammo.*;
 import me.zombie_striker.qg.armor.ArmorObject;
 import me.zombie_striker.qg.armor.Kevlar;
 import me.zombie_striker.qg.guns.*;
-import me.zombie_striker.qg.guns.utils.CommentYamlConfiguration;
 import me.zombie_striker.qg.guns.utils.GunUtil;
 import me.zombie_striker.qg.guns.utils.WeaponSounds;
 import me.zombie_striker.qg.guns.utils.WeaponType;
@@ -30,6 +29,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.*;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.PlayerDeathEvent;
@@ -193,16 +193,12 @@ public class Main extends JavaPlugin implements Listener {
 
 	public static boolean AutoDetectResourcepackVersion = false;
 	public static final int ID18 = 106;
-	
-	
-	
-	
+
 	private FileConfiguration config;
 	private File configFile;
-	
 
-	public static List<MaterialStorage> reservedForExps = Arrays.asList(m(53), m(54), m(55), m(56), m(57), m(58),
-			m(59), m(60));
+	public static List<MaterialStorage> reservedForExps = Arrays.asList(m(53), m(54), m(55), m(56), m(57), m(58), m(59),
+			m(60));
 
 	static {
 		String name = Bukkit.getServer().getClass().getName();
@@ -336,7 +332,7 @@ public class Main extends JavaPlugin implements Listener {
 
 	public static void DEBUG(String message) {
 		if (DEBUG)
-			Bukkit.broadcast(message,"qualityarmory.debugmessages");
+			Bukkit.broadcast(message, "qualityarmory.debugmessages");
 	}
 
 	public void reloadVals() {
@@ -706,8 +702,9 @@ public class Main extends JavaPlugin implements Listener {
 		GunYMLCreator.createMisc(false, getDataFolder(), true, "example_knife", "ExampleKnife", "&7Example Knife",
 				Arrays.asList("Now, this is a knife!"), Material.IRON_SWORD, 0, stringsMetalRif, 100, WeaponType.MEELEE,
 				12, 100);
-		
-		GunYMLCreator.createSkullAmmo(false, getDataFolder(),true, "example_skullammo", "exampleSkullAmmo", "&7 Example Ammo", null, Material.SKULL_ITEM, 3, "cactus", null, 4, 1, 64);
+
+		GunYMLCreator.createSkullAmmo(false, getDataFolder(), true, "example_skullammo", "exampleSkullAmmo",
+				"&7 Example Ammo", null, Material.SKULL_ITEM, 3, "cactus", null, 4, 1, 64);
 
 		if (new File(getDataFolder(), "ammo").exists())
 			for (File f : new File(getDataFolder(), "ammo").listFiles()) {
@@ -823,6 +820,20 @@ public class Main extends JavaPlugin implements Listener {
 						final List<String> extraLore2 = f2.contains("lore") ? f2.getStringList("lore") : null;
 						final List<String> extraLore = new ArrayList<String>();
 
+						Particle particle = (Particle) (f2.contains("particles.bullet_particle")
+								? Particle.valueOf(f2.getString("particles.bullet_particle"))
+								: bulletTrail);
+
+						double partr = f2.contains("particles.bullet_particleR")
+								? f2.getDouble("particles.bullet_particleR")
+								: 1.0;
+						double partg = f2.contains("particles.bullet_particleG")
+								? f2.getDouble("particles.bullet_particleG")
+								: 1.0;
+						double partb = f2.contains("particles.bullet_particleB")
+								? f2.getDouble("particles.bullet_particleB")
+								: 1.0;
+
 						try {
 							for (String lore : extraLore2) {
 								extraLore.add(ChatColor.translateAlternateColorCodes('&', lore));
@@ -851,34 +862,40 @@ public class Main extends JavaPlugin implements Listener {
 									sound = WeaponSounds.LAZERSHOOT;
 							}
 
-							gunRegister.put(ms,
-									new DefaultGun(name, ms, weatype, f2.getBoolean("enableIronSights"),
-											AmmoType.getAmmo(f2.getString("ammotype")), f2.getDouble("sway"), 2,
-											f2.getInt("maxbullets"), f2.getInt("damage"), isAutomatic,
-											f2.getInt("durability"), sound, extraLore, displayname, price, materails));
-							((DefaultGun) gunRegister.get(ms))
-									.setReloadingTimeInSeconds(f2.getDouble("delayForReload"));
+							Gun g = new Gun(name, ms, weatype, f2.getBoolean("enableIronSights"),
+									AmmoType.getAmmo(f2.getString("ammotype")), f2.getDouble("sway"), 2,
+									f2.getInt("maxbullets"), f2.getInt("damage"), isAutomatic, f2.getInt("durability"),
+									sound, extraLore, displayname, price, materails);
+
+							gunRegister.put(ms, g);
+
+							g.setReloadingTimeInSeconds(f2.getDouble("delayForReload"));
 							try {
 								if (f2.getString("ChargingHandler") != "null")
-									((DefaultGun) gunRegister.get(ms)).setChargingHandler(
+									g.setChargingHandler(
 											ChargingHandlerEnum.getEnumV(f2.getString("ChargingHandler")).getHandler());
 							} catch (Error | Exception e445) {
 							}
 							try {
-								((DefaultGun) gunRegister.get(ms)).setDelayBetweenShots(f2.getDouble("delayForShoot"));
+								g.setDelayBetweenShots(f2.getDouble("delayForShoot"));
 							} catch (Error | Exception er5) {
 							}
 							try {
-								((DefaultGun) gunRegister.get(ms)).setBulletsPerShot(f2.getInt("bullets-per-shot"));
+								g.setBulletsPerShot(f2.getInt("bullets-per-shot"));
 							} catch (Error | Exception er5) {
 							}
 
 							try {
-								((DefaultGun) gunRegister.get(ms)).setMaxDistance(f2.getInt("maxBulletDistance"));
+								g.setMaxDistance(f2.getInt("maxBulletDistance"));
 							} catch (Error | Exception er5) {
 							}
 							if (f2.contains("Version_18_Support"))
-								((DefaultGun) gunRegister.get(ms)).set18Supported(f2.getBoolean("Version_18_Support"));
+								g.set18Supported(f2.getBoolean("Version_18_Support"));
+
+							try {
+								g.setParticles(particle, partr, partg, partb);
+							} catch (Error | Exception er5) {
+							}
 						} else {
 							miscRegister.put(ms, new ArmoryBaseObject() {
 								@Override
@@ -923,13 +940,19 @@ public class Main extends JavaPlugin implements Listener {
 			} catch (Exception e) {
 			}
 		}
+		
 
 		int amount = (((gunRegister.size() + miscRegister.size() + ammoRegister.size() + miscRegister.size()) / 9) + 1)
 				* 9;
 
 		craftingMenu = Bukkit.createInventory(null, amount, S_craftingBenchName);
 		shopMenu = Bukkit.createInventory(null, amount, S_shopName);
-		for (Gun g : gunRegister.values()) {
+		
+		List<Gun> gunslistr = new ArrayList<Gun>(gunRegister.values());
+
+		Collections.sort(gunslistr);
+		
+		for (Gun g : gunslistr) {
 			try {
 				getLogger().info("-Loading Gun:" + g.getName());
 				ItemStack is = ItemFact.getGun(g);
@@ -1812,6 +1835,12 @@ public class Main extends JavaPlugin implements Listener {
 		}
 		return true;
 	}
+	
+	@EventHandler
+	public void onHeadPlace(BlockPlaceEvent e) {
+		if(isAmmo(e.getItemInHand()) || isGun(e.getItemInHand()))
+			e.setCancelled(true);
+	}
 
 	@EventHandler
 	public void onDeath(PlayerDeathEvent e) {
@@ -2510,7 +2539,7 @@ public class Main extends JavaPlugin implements Listener {
 		if (is != null && is.getType() == guntype && is.getDurability() == (int) IronSightsToggleItem.getData())
 			return true;
 		return false;
-		
+
 	}
 
 	public static void sendHotbarGunAmmoCount(Player p, Gun g, ItemStack usedItem) {
@@ -2520,27 +2549,25 @@ public class Main extends JavaPlugin implements Listener {
 		} catch (Error | Exception e5) {
 		}
 	}
-	
-	
 
-	 
-    @Override
-    public void reloadConfig() {
-        if (configFile == null) {
-            configFile = new File(this.getDataFolder(), "config.yml");
-        }
-        config = CommentYamlConfiguration.loadConfiguration(configFile);
-        InputStream defConfigStream = this.getResource("config.yml");
-        if(defConfigStream != null) {
-            config.setDefaults( CommentYamlConfiguration.loadConfiguration(new InputStreamReader(defConfigStream, Charsets.UTF_8)));
-        }
-    }
+	@Override
+	public void reloadConfig() {
+		if (configFile == null) {
+			configFile = new File(this.getDataFolder(), "config.yml");
+		}
+		config = CommentYamlConfiguration.loadConfiguration(configFile);
+		InputStream defConfigStream = this.getResource("config.yml");
+		if (defConfigStream != null) {
+			config.setDefaults(
+					CommentYamlConfiguration.loadConfiguration(new InputStreamReader(defConfigStream, Charsets.UTF_8)));
+		}
+	}
 
-    @Override
-    public FileConfiguration getConfig() {
-        if(this.config == null) {
-            this.reloadConfig();
-        }
-        return this.config;
-    }
+	@Override
+	public FileConfiguration getConfig() {
+		if (this.config == null) {
+			this.reloadConfig();
+		}
+		return this.config;
+	}
 }

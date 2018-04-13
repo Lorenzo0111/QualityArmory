@@ -12,7 +12,6 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 import me.zombie_striker.qg.Main;
-import me.zombie_striker.qg.guns.DefaultGun;
 import me.zombie_striker.qg.guns.Gun;
 import me.zombie_striker.qg.guns.utils.GunUtil;
 import me.zombie_striker.qg.guns.utils.RocketProjectile;
@@ -45,7 +44,7 @@ public class RPGCharger implements ChargingHandler {
 				(Math.random() * 2 * sway) - sway));
 		Vector two = go.clone().multiply(2);
 
-		for (int j = 0; j < (g instanceof DefaultGun ? ((DefaultGun) g).getBulletsPerShot() : 1); j++)
+		for (int j = 0; j < g.getBulletsPerShot(); j++)
 			new RocketProjectile(start, player, two,enableArc);
 
 
