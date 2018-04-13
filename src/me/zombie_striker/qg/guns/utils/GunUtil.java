@@ -118,11 +118,11 @@ public class GunUtil {
 										p.playSound(p.getLocation(), Sound.BLOCK_NOTE_PLING, 2, 1);
 										if (!Main.isVersionHigherThan(1, 9))
 											try {
-												p.playSound(p.getLocation(), Sound.valueOf("POP"), 6, 1);
+												p.playSound(p.getLocation(), Sound.valueOf("LAVA_POP"), 6, 1);
 											} catch (Error | Exception h4) {
 											}
 									} catch (Error | Exception h4) {
-										p.playSound(p.getLocation(), Sound.valueOf("POP"), 1, 1);
+										p.playSound(p.getLocation(), Sound.valueOf("LAVA_POP"), 1, 1);
 									}
 								}
 							}
@@ -137,7 +137,7 @@ public class GunUtil {
 						bulletProtection = BulletProtectionUtil.stoppedBullet(p, bulletHitLoc, go);
 						if (!bulletProtection) {
 							BulletWoundHandler.bulletHit((Player) hitTarget, g.getAmmoType().getPiercingDamage());
-						}else {
+						} else {
 							hitTarget.sendMessage(Main.S_BULLETPROOFSTOPPEDBLEEDING);
 						}
 					}

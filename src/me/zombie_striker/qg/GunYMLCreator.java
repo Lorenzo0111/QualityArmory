@@ -22,7 +22,7 @@ public class GunYMLCreator {
 			int bulletspershot, boolean isAutomatic, int cost, ChargingHandlerEnum ch, int distance, WeaponSounds ws) {
 		createNewGun(forceUpdate, dataFolder, false, name, name, displayname, null, id, craftingRequirements,
 				weapontype, enableIronSights, ammotype, damage, sway, Main.guntype, maxBullets, duribility, delayReload,
-				delayShoot, bulletspershot, isAutomatic, cost, ch, distance, false,ws);
+				delayShoot, bulletspershot, isAutomatic, cost, ch, distance, false, ws);
 	}
 
 	public static void createNewGun(boolean forceUpdate, File dataFolder, String name, String displayname, int id,
@@ -31,7 +31,7 @@ public class GunYMLCreator {
 			ChargingHandlerEnum ch, int distance, WeaponSounds ws) {
 		createNewGun(forceUpdate, dataFolder, name, displayname, id, craftingRequirements, weapontype, enableIronSights,
 				ammotype, damage, sway, maxBullets, duribility, 1.5, 0.25, bulletspershot, isAutomatic, cost, ch,
-				distance,ws);
+				distance, ws);
 	}
 
 	public static void createNewGun(boolean forceUpdate, File dataFolder, String name, String displayname, int id,
@@ -39,7 +39,7 @@ public class GunYMLCreator {
 			int damage, double sway, int maxBullets, int duribility, boolean isAutomatic, int cost,
 			ChargingHandlerEnum ch, int distance, WeaponSounds ws) {
 		createNewGun(forceUpdate, dataFolder, name, displayname, id, craftingRequirements, weapontype, enableIronSights,
-				ammotype, damage, sway, maxBullets, duribility, 1, isAutomatic, cost, ch, distance,ws);
+				ammotype, damage, sway, maxBullets, duribility, 1, isAutomatic, cost, ch, distance, ws);
 	}
 
 	// Displaynames above
@@ -50,8 +50,8 @@ public class GunYMLCreator {
 			int bulletspershot, boolean isAutomatic, int cost, ChargingHandlerEnum ch, int distance, WeaponSounds ws) {
 		createNewGun(forceUpdate, dataFolder, false, "default_" + name, name, "&" + ChatColor.GOLD.getChar() + name,
 				null, id, craftingRequirements, weapontype, enableIronSights, ammotype, damage, sway, Main.guntype,
-				maxBullets, duribility, delayReload, delayShoot, bulletspershot, isAutomatic, cost, ch, distance,
-				false,ws);
+				maxBullets, duribility, delayReload, delayShoot, bulletspershot, isAutomatic, cost, ch, distance, false,
+				ws);
 	}
 
 	public static void createNewGun(boolean forceUpdate, File dataFolder, String name, int id,
@@ -59,7 +59,7 @@ public class GunYMLCreator {
 			int damage, double sway, int maxBullets, int duribility, int bulletspershot, boolean isAutomatic, int cost,
 			ChargingHandlerEnum ch, int distance, WeaponSounds ws) {
 		createNewGun(forceUpdate, dataFolder, name, id, craftingRequirements, weapontype, enableIronSights, ammotype,
-				damage, sway, maxBullets, duribility, 1.5, 0.25, bulletspershot, isAutomatic, cost, ch, distance,ws);
+				damage, sway, maxBullets, duribility, 1.5, 0.25, bulletspershot, isAutomatic, cost, ch, distance, ws);
 	}
 
 	public static void createNewGun(boolean forceUpdate, File dataFolder, String name, int id,
@@ -67,7 +67,7 @@ public class GunYMLCreator {
 			int damage, double sway, int maxBullets, int duribility, boolean isAutomatic, int cost,
 			ChargingHandlerEnum ch, int distance, WeaponSounds ws) {
 		createNewGun(forceUpdate, dataFolder, name, id, craftingRequirements, weapontype, enableIronSights, ammotype,
-				damage, sway, maxBullets, duribility, 1, isAutomatic, cost, ch, distance,ws);
+				damage, sway, maxBullets, duribility, 1, isAutomatic, cost, ch, distance, ws);
 	}
 
 	public static void createNewGun(boolean forceUpdate, File dataFolder, boolean invalid, String filename, String name,
@@ -77,7 +77,7 @@ public class GunYMLCreator {
 			ChargingHandlerEnum ch, int distance, boolean version18, WeaponSounds ws) {
 		createNewGun(forceUpdate, dataFolder, invalid, filename, name, displayname, lore, id, craftingRequirements,
 				weapontype, enableIronSights, ammotype, damage, sway, type, maxBullets, duribility, delayReload,
-				delayShoot, bulletspershot, isAutomatic, cost, ch, distance, 0, version18,ws);
+				delayShoot, bulletspershot, isAutomatic, cost, ch, distance, 0, version18, ws);
 	}
 
 	public static void createNewGun(boolean forceUpdate, File dataFolder, boolean invalid, String filename, String name,
@@ -100,7 +100,7 @@ public class GunYMLCreator {
 		set(false, f, "variant", var);
 		set(false, f, "craftingRequirements", craftingRequirements);
 		set(false, f, "weapontype", weapontype.name());
-		set(false, f, "weaponsounds", ws!=null?ws.getName():null);
+		set(false, f, "weaponsounds", ws != null ? ws.getName() : null);
 		StringBuilder validGuns = new StringBuilder();
 		for (WeaponType g : WeaponType.values()) {
 			validGuns.append(g.name() + ", ");
@@ -119,7 +119,7 @@ public class GunYMLCreator {
 		set(false, f, "price", cost);
 		set(false, f, "maxBulletDistance", distance);
 		if (version18)
-			set(!f.contains("Version_18_Support"),f, "Version_18_Support", version18);
+			set(!f.contains("Version_18_Support"), f, "Version_18_Support", version18);
 		set(false, f, "ChargingHandler", ch == null ? "null" : ch.getName());
 		if (saveNow)
 			try {
@@ -145,6 +145,11 @@ public class GunYMLCreator {
 	public static void createAmmo(boolean forceUpdate, File dataFolder, boolean invalid, String filename, String name,
 			String displayname, List<String> lore, Material type, int id, List<String> craftingRequirements, int cost,
 			double severity, int maxAmount) {
+		createSkullAmmo(forceUpdate, dataFolder, invalid, filename, name, displayname, lore, type, id, null, craftingRequirements, cost, severity, maxAmount);
+	}
+	public static void createSkullAmmo(boolean forceUpdate, File dataFolder, boolean invalid, String filename, String name,
+			String displayname, List<String> lore, Material type, int id, String SKULL_OWNER, List<String> craftingRequirements, int cost,
+			double severity, int maxAmount) {
 		File f2 = new File(dataFolder, "ammo/" + filename + ".yml");
 		if (!new File(dataFolder, "ammo").exists())
 			new File(dataFolder, "ammo").mkdirs();
@@ -161,6 +166,9 @@ public class GunYMLCreator {
 		set(f.contains("material") && f.get("material").equals(Material.DIAMOND_HOE.name()), f, "material",
 				type.name());
 
+		if(SKULL_OWNER!=null)
+			set(false,f,"skull_owner",SKULL_OWNER);
+		
 		set(false, f, "piercingSeverity", severity);
 		if (saveNow)
 			try {
@@ -173,14 +181,14 @@ public class GunYMLCreator {
 
 	public static void createMisc(boolean forceUpdate, File dataFolder, boolean invalid, String filename, String name,
 			String displayname, List<String> lore, MaterialStorage ms, List<String> craftingRequirements, int cost,
-			WeaponType misctype) {
+			WeaponType misctype,int damage, int durability) {
 		createMisc(forceUpdate, dataFolder, invalid, filename, name, displayname, lore, ms.getMat(), ms.getData(),
-				craftingRequirements, cost, misctype);
+				craftingRequirements, cost, misctype,damage, durability);
 	}
 
 	public static void createMisc(boolean forceUpdate, File dataFolder, boolean invalid, String filename, String name,
 			String displayname, List<String> lore, Material type, int id, List<String> craftingRequirements, int cost,
-			WeaponType misctype) {
+			WeaponType misctype, int damage, int durability) {
 		File f2 = new File(dataFolder, "misc/" + filename + ".yml");
 		if (!new File(dataFolder, "misc").exists())
 			new File(dataFolder, "misc").mkdirs();
@@ -195,6 +203,10 @@ public class GunYMLCreator {
 		set(false, f, "price", cost);
 		set(f.contains("material") && f.get("material").equals(Material.DIAMOND_HOE.name()), f, "material",
 				type.name());
+		
+
+		set(false,f,"damage",damage);
+		set(false,f ,"durability",durability);		
 
 		set(false, f, "MiscType", misctype.name());
 		if (saveNow)
@@ -209,7 +221,7 @@ public class GunYMLCreator {
 	public static boolean saveNow = false;
 
 	public static void set(boolean force, FileConfiguration f, String name, Object v) {
-		if (force || !f.contains(name)) {
+		if (!f.contains(name) || (force && !f.get(name).equals(v))) {
 			f.set(name, v);
 			saveNow = true;
 		}

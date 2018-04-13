@@ -7,6 +7,7 @@ import java.util.UUID;
 import org.bukkit.*;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.SkullMeta;
 
 import me.zombie_striker.qg.ammo.Ammo;
 import me.zombie_striker.qg.armor.ArmorObject;
@@ -34,10 +35,12 @@ public class ItemFact {
 		List<String> lore = new ArrayList<>();
 		if (g.getCustomLore() != null)
 			lore.addAll(g.getCustomLore());
+		addVarientData(lore, g);
 		lore.add(Main.S_ITEM_BULLETS + ": " + (amount) + "/" + (g.getMaxBullets()));
 		if (Main.ENABLE_LORE_INFO) {
 			lore.add(Main.S_ITEM_DAMAGE + ": " + g.getDamage());
-			lore.add(Main.S_ITEM_AMMO + ": " + g.getAmmoType().getDisplayName());
+			if (g.getAmmoType() != null)
+				lore.add(Main.S_ITEM_AMMO + ": " + g.getAmmoType().getDisplayName());
 		}
 		if (Main.enableDurability)
 			if (current == null) {
@@ -109,12 +112,12 @@ public class ItemFact {
 	}
 
 	public static ItemStack getGun(int durib) {
-		Gun g = Main.gunRegister.get(MaterialStorage.getMS(Main.guntype, durib, 0));
+		Gun g = Main.gunRegister.get(MaterialStorage.getMS(Main.guntype, durib, 0,null));
 		return getGun(g);
 	}
 
 	public static ItemStack getGun(int durib, int varient) {
-		Gun g = Main.gunRegister.get(MaterialStorage.getMS(Main.guntype, durib, varient));
+		Gun g = Main.gunRegister.get(MaterialStorage.getMS(Main.guntype, durib, varient,null));
 		return getGun(g);
 	}
 
@@ -130,7 +133,6 @@ public class ItemFact {
 		ItemMeta im = is.getItemMeta();
 		im.setDisplayName(g.getDisplayName());
 		List<String> lore = getGunLore(g, null, g.getMaxBullets());
-		addVarientData(lore, g);
 		im.setLore(lore);
 		try {
 			im.setUnbreakable(true);
@@ -158,7 +160,7 @@ public class ItemFact {
 			is.setDurability((short) 0);
 		ItemMeta im = is.getItemMeta();
 		im.setDisplayName(a.getDisplayName());
-		List<String> lore = getArmorLore(a,is);
+		List<String> lore = getArmorLore(a, is);
 		addVarientData(lore, a);
 		im.setLore(lore);
 		try {
@@ -174,16 +176,17 @@ public class ItemFact {
 		return is;
 	}
 
-	public static ItemStack getAmmo(Material m, int data) {
-		return getAmmo(m, data, 0);
+	public static ItemStack getAmmo(Material m, int data, String extraValues) {
+		return getAmmo(m, data, 0,extraValues);
 	}
 
-	public static ItemStack getAmmo(Material m, int data, int varient) {
-		if (Main.ammoRegister.containsKey(MaterialStorage.getMS(m, data, varient)))
-			return getAmmo(Main.ammoRegister.get(MaterialStorage.getMS(m, data, varient)));
+	public static ItemStack getAmmo(Material m, int data, int varient, String extraValues) {
+		if (Main.ammoRegister.containsKey(MaterialStorage.getMS(m, data, varient,extraValues)))
+			return getAmmo(Main.ammoRegister.get(MaterialStorage.getMS(m, data, varient,extraValues)));
 		return null;
 	}
 
+	@SuppressWarnings("deprecation")
 	public static ItemStack getAmmo(Ammo a) {
 		ItemStack is = new ItemStack(a.getItemData().getMat(), 0, (short) a.getItemData().getData());
 		if (a.getItemData().getData() < 0)
@@ -201,6 +204,11 @@ public class ItemFact {
 		List<String> lore = new ArrayList<String>();
 		lore.addAll(a.getCustomLore());
 		addVarientData(lore, a);
+		
+		if(a.isSkull()) {
+			((SkullMeta)im).setOwner(a.getSkullOwner());
+		}
+		
 		is.setItemMeta(im);
 		is.setAmount(a.getMaxAmount() > 64 ? 64 : a.getMaxAmount());
 
@@ -306,7 +314,7 @@ public class ItemFact {
 
 	public static void addVarientData(List<String> lore, ArmoryBaseObject object) {
 		if (object.getItemData().isVarient())
-			lore.add(Main.S_ITEM_VARIENTS +" "+object.getItemData().getVarient());
+			lore.add(Main.S_ITEM_VARIENTS + " " + object.getItemData().getVarient());
 	}
 
 	public static int getAmount(ItemStack is) {

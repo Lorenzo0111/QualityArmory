@@ -1,5 +1,5 @@
 main: me.zombie_striker.qg.Main
-version: 1.1.74
+version: 1.1.75
 name: QualityArmory
 commands:
   QualityArmory:
@@ -15,10 +15,12 @@ permissions:
      children:
        qualityarmory.give: true
        qualityarmory.create: true
+       qualityarmory.createnewitem: true
        qualityarmory.reload: true
        qualityarmory.getopengunslot: true
        qualityarmory.getmaterialsused: true
        qualityarmory.default: true
+       qualityarmory.debugmessages: true
    qualityarmory.default:
      description: Gives access to all PixelPrinter commands
      children:

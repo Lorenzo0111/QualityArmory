@@ -61,7 +61,7 @@ public class Grenades implements ThrowableItems {
 
 	@Override
 	public MaterialStorage getItemData() {
-		return MaterialStorage.getMS(Main.guntype, 22,0);
+		return MaterialStorage.getMS(Main.guntype, 22,0,null);
 	}
 
 	@Override

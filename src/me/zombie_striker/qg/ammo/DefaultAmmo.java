@@ -25,6 +25,8 @@ public class DefaultAmmo implements Ammo {
 	private double cost;
 
 	private double piercingDamage = 1;
+	
+	private String skullowner = null;
 
 	public DefaultAmmo(String name, MaterialStorage ms, int maxAmount, boolean indiDrop, int returnamount,
 			double cost, ItemStack[] ingredients, double piercing) {
@@ -59,6 +61,16 @@ public class DefaultAmmo implements Ammo {
 		this.piercingDamage = piercing;
 
 		AmmoType.addAmmo(this, name);
+	}
+	public void setSkullOwner(String s) {
+		skullowner = s;
+	}
+	
+	public boolean isSkull() {
+		return skullowner!=null;
+	}
+	public String getSkullOwner() {
+		return skullowner;
 	}
 
 	public double getPiercingDamage() {

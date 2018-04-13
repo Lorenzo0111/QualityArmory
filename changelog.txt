@@ -1,3 +1,31 @@
+1.1.75
+	Fixed "UnknownTranslationError" for hotbar messages.
+	Added /qa reload to reload all of the plugin's values
+	Added better support for Meele weapons
+	Fixed exampleKnife
+	Added head-support for ammo
+	Fixed comments for config file
+	Added /qa createNewGun and /qa createNewAmmo
+
+1.1.74E
+	Fixed issue with materials.
+	Fixed Variant checks for isVar
+	Fixed some error exceptions being called if ammo does not exist.
+	Updated 1.8 resourcepack to include the 3 textures for the new guns.
+	FIXED PROBLEM WITH VARIANT GUNS
+
+1.1.74D
+	Added more debug messages to narrow down the problem.
+
+1.1.74C
+	Fixed variants lore bug
+	Added timer delay
+
+1.1.74B
+	Fixed force. Now gun-yml files will only force-save if the values are different than the ones being set.
+	Added sendTitleOnJoin if you want the title message to be sent on join
+	Changed downloading title message
+
 1.1.74
 	[IMPORTANT] Changed DiamondHOE system to now use DiamondAXE. This will mean that servers that had QA before this update will need to delete the config.YML in order for the new guns/system to work properly.
 	Added custom ammo support! The /ammo/ directory will now contain all new ammo types.

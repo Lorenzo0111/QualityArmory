@@ -72,7 +72,7 @@ public class RocketProjectile {
 						player.getWorld().playSound(s, Sound.valueOf("EXPLODE"), 8, 0.7f);
 					}
 					try {
-						for (Entity e : s.getWorld().getNearbyEntities(s, 7, 7, 7)) {
+						for (Entity e : s.getWorld().getNearbyEntities(s, 10, 10, 10)) {
 							if (e instanceof LivingEntity) {
 								((LivingEntity) e).damage((20 * 4 / e.getLocation().distance(s)), player);
 							}

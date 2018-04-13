@@ -198,7 +198,7 @@ public class DefaultGun implements Gun {
 	public boolean playerHasAmmo(Player player) {
 		if (hasUnlimitedAmmo())
 			return true;
-		if (!Main.isVersionHigherThan(1, 9))
+		if (getAmmoType()==null)
 			return true;
 		return GunUtil.hasAmmo(player, this);
 	}

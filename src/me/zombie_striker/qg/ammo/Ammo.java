@@ -7,4 +7,9 @@ public interface Ammo extends ArmoryBaseObject{
 	public int getMaxAmount();
 	public boolean individualDrop();
 	public double getPiercingDamage();
+	
+
+	public boolean isSkull();
+	public String getSkullOwner();
+	public void setSkullOwner(String s);
 }
