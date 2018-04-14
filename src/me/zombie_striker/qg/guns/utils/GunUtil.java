@@ -1,7 +1,9 @@
 package me.zombie_striker.qg.guns.utils;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 
 import me.zombie_striker.qg.ItemFact;
 import me.zombie_striker.qg.Main;
@@ -31,6 +33,9 @@ import org.bukkit.util.Vector;
 import com.alessiodp.partiesapi.Parties;
 
 public class GunUtil {
+
+	private static HashMap<UUID, Location> AF_locs = new HashMap<>();
+	private static HashMap<UUID, BukkitTask> AF_tasks = new HashMap<>();
 
 	@SuppressWarnings("deprecation")
 	public static void shoot(Gun g, Player p, double sway, double damage, int shots, int range) {
@@ -152,6 +157,9 @@ public class GunUtil {
 			double smokeDistance = 0;
 			List<Player> nonheard = start.getWorld().getPlayers();
 			nonheard.remove(p);
+			if (g.useMuzzleSmoke())
+				ParticleHandlers.spawnMuzzleSmoke(p, start.clone().add(step.clone().multiply(7)));
+
 			for (int dist = 0; dist < (dis2 / Main.bulletStep); dist++) {
 				start.add(step);
 				try {
@@ -196,7 +204,7 @@ public class GunUtil {
 					if (Main.enableBulletTrails)
 						if (smokeDistance + i >= Main.smokeSpacing * shots) {
 							try {
-								//start.getWorld().spawnParticle((Particle) Main.bulletTrail, start, 0);
+								// start.getWorld().spawnParticle((Particle) Main.bulletTrail, start, 0);
 								ParticleHandlers.spawnGunParticles(g, start);
 							} catch (Error e2) {
 							}
@@ -217,7 +225,8 @@ public class GunUtil {
 		basicShoot(offhand, g, player, acc, 1);
 	}
 
-	public static void basicShoot(boolean offhand, Gun g, Player player, double acc, int times) {
+	@SuppressWarnings("deprecation")
+	public static void basicShoot(boolean offhand, Gun g, final Player player, double acc, int times) {
 		long showdelay = ((int) (g.getDelayBetweenShotsInSeconds() * 1000));
 		Main.DEBUG("About to shoot!");
 
@@ -230,7 +239,6 @@ public class GunUtil {
 			return;
 		g.getLastShotForGun().put(player.getUniqueId(), System.currentTimeMillis());
 
-		@SuppressWarnings("deprecation")
 		final ItemStack temp = offhand ? Update19OffhandChecker.getItemStackOFfhand(player)
 				: player.getInventory().getItemInHand();
 		ItemMeta im = temp.getItemMeta();

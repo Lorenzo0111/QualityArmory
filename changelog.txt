@@ -1,3 +1,11 @@
+1.1.77
+	Added multiple pages for crafting and shopping
+	Added MuzzleSmoke
+	Added AWP
+	Added Smoke Grenades
+	Added Flashbangs
+	Added support for custom grenade types
+
 1.1.76
 	Added customizable particle effects per gun
 	Fixed ironsights for magnum

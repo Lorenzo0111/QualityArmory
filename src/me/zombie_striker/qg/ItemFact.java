@@ -12,6 +12,7 @@ import org.bukkit.inventory.meta.SkullMeta;
 import me.zombie_striker.qg.ammo.Ammo;
 import me.zombie_striker.qg.armor.ArmorObject;
 import me.zombie_striker.qg.guns.Gun;
+import me.zombie_striker.qg.handlers.IronSightsToggleItem;
 import me.zombie_striker.qg.miscitems.MedKit;
 
 public class ItemFact {
@@ -112,18 +113,35 @@ public class ItemFact {
 	}
 
 	public static ItemStack getGun(int durib) {
-		Gun g = Main.gunRegister.get(MaterialStorage.getMS(Main.guntype, durib, 0,null));
+		Gun g = Main.gunRegister.get(MaterialStorage.getMS(Main.guntype, durib, 0, null));
 		return getGun(g);
 	}
 
 	public static ItemStack getGun(int durib, int varient) {
-		Gun g = Main.gunRegister.get(MaterialStorage.getMS(Main.guntype, durib, varient,null));
+		Gun g = Main.gunRegister.get(MaterialStorage.getMS(Main.guntype, durib, varient, null));
 		return getGun(g);
 	}
 
 	public static ItemStack getGun(MaterialStorage durib) {
 		Gun g = Main.gunRegister.get(durib);
 		return getGun(g);
+	}
+
+	public static ItemStack getIronSights() {
+
+		ItemStack ironsights = new ItemStack(Main.guntype, 1, (short) IronSightsToggleItem.getData());
+		ItemMeta im = ironsights.getItemMeta();
+		im.setDisplayName(IronSightsToggleItem.getItemName());
+		try {
+			im.setUnbreakable(true);
+		} catch (Error | Exception e34) {
+		}
+		try {
+			im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_UNBREAKABLE);
+		} catch (Error | Exception e34) {
+		}
+		ironsights.setItemMeta(im);
+		return ironsights;
 	}
 
 	public static ItemStack getGun(Gun g) {
@@ -177,12 +195,12 @@ public class ItemFact {
 	}
 
 	public static ItemStack getAmmo(Material m, int data, String extraValues) {
-		return getAmmo(m, data, 0,extraValues);
+		return getAmmo(m, data, 0, extraValues);
 	}
 
 	public static ItemStack getAmmo(Material m, int data, int varient, String extraValues) {
-		if (Main.ammoRegister.containsKey(MaterialStorage.getMS(m, data, varient,extraValues)))
-			return getAmmo(Main.ammoRegister.get(MaterialStorage.getMS(m, data, varient,extraValues)));
+		if (Main.ammoRegister.containsKey(MaterialStorage.getMS(m, data, varient, extraValues)))
+			return getAmmo(Main.ammoRegister.get(MaterialStorage.getMS(m, data, varient, extraValues)));
 		return null;
 	}
 
@@ -204,11 +222,11 @@ public class ItemFact {
 		List<String> lore = new ArrayList<String>();
 		lore.addAll(a.getCustomLore());
 		addVarientData(lore, a);
-		
-		if(a.isSkull()) {
-			((SkullMeta)im).setOwner(a.getSkullOwner());
+
+		if (a.isSkull()) {
+			((SkullMeta) im).setOwner(a.getSkullOwner());
 		}
-		
+
 		is.setItemMeta(im);
 		is.setAmount(a.getMaxAmount() > 64 ? 64 : a.getMaxAmount());
 

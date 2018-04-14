@@ -16,15 +16,21 @@ import me.zombie_striker.qg.guns.utils.WeaponSounds;
 import me.zombie_striker.qg.guns.utils.WeaponType;
 import me.zombie_striker.qg.handlers.*;
 import me.zombie_striker.qg.handlers.gunvalues.ChargingHandlerEnum;
+import me.zombie_striker.qg.miscitems.Flashbang;
+import me.zombie_striker.qg.miscitems.GrenadeBase;
 import me.zombie_striker.qg.miscitems.Grenades;
 import me.zombie_striker.qg.miscitems.InteractableMisc;
 import me.zombie_striker.qg.miscitems.MedKit;
 import me.zombie_striker.qg.miscitems.MeleeItems;
+import me.zombie_striker.qg.miscitems.SmokeGrenades;
+import me.zombie_striker.qg.miscitems.ThrowableItems.ThrowableHolder;
 
 import org.bukkit.*;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.*;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.*;
 import org.bukkit.event.block.Action;
@@ -117,7 +123,7 @@ public class Main extends JavaPlugin implements Listener {
 
 	public static boolean overrideURL = false;
 	public static String url19plus = "https://www.dropbox.com/s/faufrgo7w2zpi3d/QualityArmoryv1.0.10.zip?dl=1";
-	public static String url19plusAXE = "https://www.dropbox.com/s/3bllojuzjpbbxto/QualityArmoryv1.0.11.zip?dl=1";
+	public static String url19plusAXE = "https://www.dropbox.com/s/k5rf8chw45gojp6/QualityArmoryv1.0.12.zip?dl=1";
 	public static String url18 = "https://www.dropbox.com/s/gx6dhahq6onob4g/QualityArmory1.8v1.0.1.zip?dl=1";
 	public static String url = url19plusAXE;
 
@@ -166,14 +172,17 @@ public class Main extends JavaPlugin implements Listener {
 	public static String prefix = ChatColor.GRAY + "[" + ChatColor.DARK_GREEN + "QualityArmory" + ChatColor.GRAY + "]"
 			+ ChatColor.WHITE;
 
-	public Inventory craftingMenu;
-	public static String S_craftingBenchName = "Armory Bench";
+	// public Inventory craftingMenu;
+	public static String S_craftingBenchName = "Armory Bench Page:";
 	public static String S_missingIngredients = "You do not have all the materials needed to craft this";
 
-	public Inventory shopMenu;
-	public static String S_shopName = "Weapons Shop";
+	// public Inventory shopMenu;
+	public static String S_shopName = "Weapons Shop Page:";
 	public static String S_noMoney = "You do not have enough money to buy this";
 	public static String S_noEcon = "ECONOMY NOT ENABLED. REPORT THIS TO THE OWNER!";
+
+	public static ItemStack prevButton = new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 14);
+	public static ItemStack nextButton = new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 5);
 
 	public static Material guntype = Material.DIAMOND_AXE;
 
@@ -239,7 +248,14 @@ public class Main extends JavaPlugin implements Listener {
 
 	@Override
 	public void onDisable() {
-		gunRegister.clear();
+		for(Entry<MaterialStorage, ArmoryBaseObject> misc : miscRegister.entrySet()) {
+			if(misc instanceof GrenadeBase) {
+				for( Entry<Entity, ThrowableHolder> e : ((GrenadeBase)misc).grenadeHolder.entrySet()) {
+					if(e.getKey() instanceof Item)
+						e.getKey().remove();
+				}
+			}
+		}
 	}
 
 	private boolean saveTheConfig = false;
@@ -578,23 +594,29 @@ public class Main extends JavaPlugin implements Listener {
 
 			GunYMLCreator.createNewGun(forceUpdate, getDataFolder(), "P30", 2, stringsPistol, WeaponType.PISTOL, true,
 					"9mm", 3, 0.3, 12, 1000, false, 800, null, 100, null);
-			GunYMLCreator.createNewGun(forceUpdate, getDataFolder(), "PKP", 3, stringsMetalRif, WeaponType.RIFLE, false,
-					"556", 2, 0.3, 100, 1000, 3, 0.27, 3, true, 3000, ChargingHandlerEnum.RAPIDFIRE, 170,
-					WeaponSounds.GUN_BIG);
+			ArmoryYML pkp = GunYMLCreator.createNewGun(forceUpdate, getDataFolder(), "PKP", 3, stringsMetalRif,
+					WeaponType.RIFLE, false, "556", 2, 0.3, 100, 1000, 3, 0.27, 3, true, 3000,
+					ChargingHandlerEnum.RAPIDFIRE, 170, WeaponSounds.GUN_BIG);
+			pkp.set(false, "addMuzzleSmoke", true);
 			GunYMLCreator.createNewGun(forceUpdate, getDataFolder(), "MP5K", 4, stringsMetalRif, WeaponType.SMG, false,
 					"9mm", 3, 0.3, 32, 1000, 3, true, 1000, ChargingHandlerEnum.RAPIDFIRE, 100, WeaponSounds.GUN_SMALL);
-			GunYMLCreator.createNewGun(forceUpdate, getDataFolder(), "AK47", 5, stringsWoodRif, WeaponType.RIFLE, false,
-					"556", 4, 0.3, 50, 1000, 2, true, 1200, ChargingHandlerEnum.RAPIDFIRE, 140, null);
-			GunYMLCreator.createNewGun(forceUpdate, getDataFolder(), "M16", 7, stringsMetalRif, WeaponType.RIFLE, true,
-					"556", 4, 0.3, 50, 1000, 2, true, 1200, ChargingHandlerEnum.RAPIDFIRE, 140, null);
+			ArmoryYML ak47 = GunYMLCreator.createNewGun(forceUpdate, getDataFolder(), "AK47", 5, stringsWoodRif,
+					WeaponType.RIFLE, false, "556", 4, 0.3, 50, 1000, 2, true, 1200, ChargingHandlerEnum.RAPIDFIRE, 140,
+					null);
+			ak47.set(false, "addMuzzleSmoke", true);
+			ArmoryYML m16 = GunYMLCreator.createNewGun(forceUpdate, getDataFolder(), "M16", 7, stringsMetalRif,
+					WeaponType.RIFLE, true, "556", 4, 0.3, 50, 1000, 2, true, 1200, ChargingHandlerEnum.RAPIDFIRE, 140,
+					null);
+			m16.set(false, "addMuzzleSmoke", true);
 			GunYMLCreator.createNewGun(forceUpdate, getDataFolder(), "Remmington", 8, stringsMetalRif,
 					WeaponType.SHOTGUN, false, "shell", 3, 0.15, 8, 1000, 5, 0.4, 10, false, 1400,
 					ChargingHandlerEnum.PUMPACTION, 70, null);
 			GunYMLCreator.createNewGun(forceUpdate, getDataFolder(), "FNFal", 9, stringsWoodRif, WeaponType.RIFLE, true,
 					"556", 3, 0.3, 32, 1000, 2, true, 1000, ChargingHandlerEnum.RAPIDFIRE, 140, null);
 
-			GunYMLCreator.createNewGun(forceUpdate, getDataFolder(), "RPG", 10, stringsRPG, WeaponType.RPG, false,
-					"rocket", 100, 0.1, 1, 200, false, 5000, ChargingHandlerEnum.RPG, 220, null);
+			ArmoryYML rpg = GunYMLCreator.createNewGun(forceUpdate, getDataFolder(), "RPG", 10, stringsRPG,
+					WeaponType.RPG, false, "rocket", 100, 0.1, 1, 200, false, 5000, ChargingHandlerEnum.RPG, 220, null);
+			rpg.set(false, "addMuzzleSmoke", true);
 			GunYMLCreator.createNewGun(forceUpdate, getDataFolder(), "UMP", 11, stringsPistol, WeaponType.SMG, true,
 					"9mm", 2, 0.3, 32, 1000, true, 1300, null, 100, null);
 			GunYMLCreator.createNewGun(forceUpdate, getDataFolder(), "SW1911", 12, stringsPistol, WeaponType.PISTOL,
@@ -613,12 +635,19 @@ public class Main extends JavaPlugin implements Listener {
 					true, "556", 10, 0.2, 12, 1000, false, 2400, null, 140, null);
 			GunYMLCreator.createNewGun(forceUpdate, getDataFolder(), "Spas12", 24, stringsMetalRif, WeaponType.SHOTGUN,
 					false, "shell", 2, 0.15, 8, 1000, 2, 0.5, 10, true, 2000, null, 80, null);
-			GunYMLCreator.createNewGun(forceUpdate, getDataFolder(), "AA12", 26, stringsMetalRif, WeaponType.SHOTGUN,
-					false, "shell", 2, 0.15, 32, 1000, 10, true, 3300, null, 80, null);
+			ArmoryYML aa12 = GunYMLCreator.createNewGun(forceUpdate, getDataFolder(), "AA12", 26, stringsMetalRif,
+					WeaponType.SHOTGUN, false, "shell", 2, 0.15, 32, 1000, 10, true, 3300, null, 80, null);
+			aa12.set(false, "addMuzzleSmoke", true);
 
-			GunYMLCreator.createNewGun(forceUpdate, getDataFolder(), "Magnum", 38, stringsPistol, WeaponType.PISTOL,
-					true, "9mm", 6, 0.3, 6, 1000, 2, 0.5, 1, false, 500, ChargingHandlerEnum.REVOLVER, 140,
-					WeaponSounds.GUN_BIG);
+			ArmoryYML magnum = GunYMLCreator.createNewGun(forceUpdate, getDataFolder(), "Magnum", 38, stringsPistol,
+					WeaponType.PISTOL, true, "9mm", 6, 0.3, 6, 1000, 2, 0.5, 1, false, 500,
+					ChargingHandlerEnum.REVOLVER, 140, WeaponSounds.GUN_BIG);
+			magnum.set(false, "addMuzzleSmoke", true);
+			ArmoryYML awp = GunYMLCreator.createNewGun(forceUpdate, getDataFolder(), "AWP", 39, stringsMetalRif,
+					WeaponType.SNIPER, true, "556", 16, 0.3, 12, 1000, 2, 0.5, 1, false, 500,
+					ChargingHandlerEnum.BOLTACTION, 260, WeaponSounds.GUN_BIG);
+			awp.set(false, "addMuzzleSmoke", true);
+
 			/*
 			 * gunRegister.put(m(2), new P30((int) a("Weapon.P30.Durability", 500),
 			 * getIngredients("P30", stringsPistol), (int) a("Weapon.P30.Damage", 3),
@@ -660,10 +689,37 @@ public class Main extends JavaPlugin implements Listener {
 			 * stringsPistol), (int) a("Weapon.MouserC96.Damage", 2), (double)
 			 * a("Weapon.MouserC96.Price", 400.0)));
 			 */
+			ArmoryYML grenade = GunYMLCreator.createMisc(false, getDataFolder(), false, "default_grenade", "grenade", "&7Grenade",
+					Arrays.asList(ChatColor.DARK_GRAY + "[LMB] to pull pin", ChatColor.DARK_GRAY + "[RMB] to throw",
+							ChatColor.DARK_GRAY + "Grenades wait " + ChatColor.GRAY + "FIVE seconds"
+									+ ChatColor.DARK_GRAY + " before exploding.",
+							ChatColor.DARK_RED + "<!>Will Explode Even If Not Thrown<!>"),
+					m(22), stringsGrenades, 100, WeaponType.GRENADES, 100, 1);
+			grenade.set(false, "radius", 10);
+			
+			
 
-			miscRegister.put(m(22),
-					new Grenades(getIngredients("Grenades", stringsGrenades), (double) a("Weapon.Grenade.Price", 800.0),
-							(double) a("Weapon.Grenade.radiusdamage", 10.0), (double) a("Weapon.Grenade.radius", 5.0)));
+			ArmoryYML smokegrenade = GunYMLCreator.createMisc(false, getDataFolder(), false, "default_smokegrenade", "smokegrenade", "&7Smoke Grenade",
+					Arrays.asList(ChatColor.DARK_GRAY + "[LMB] to pull pin", ChatColor.DARK_GRAY + "[RMB] to throw",
+							ChatColor.DARK_GRAY + "Smoke Grenades wait " + ChatColor.GRAY + "FIVE seconds"
+									+ ChatColor.DARK_GRAY + " before exploding.",
+							ChatColor.DARK_RED + "<!>Will Explode Even If Not Thrown<!>"),
+					m(40), stringsGrenades, 100, WeaponType.SMOKE_GRENADES, 100, 1);
+			smokegrenade.set(false, "radius", 5);
+			ArmoryYML flashbanggrenade = GunYMLCreator.createMisc(false, getDataFolder(), false, "default_flashbang", "flashbang", "&7FlashBang",
+					Arrays.asList(ChatColor.DARK_GRAY + "[LMB] to pull pin", ChatColor.DARK_GRAY + "[RMB] to throw",
+							ChatColor.DARK_GRAY + "Flashbangs wait " + ChatColor.GRAY + "FIVE seconds"
+									+ ChatColor.DARK_GRAY + " before exploding.",
+							ChatColor.DARK_RED + "<!>Will Explode Even If Not Thrown<!>"),
+					m(41), stringsGrenades, 100, WeaponType.FLASHBANGS, 100, 1);
+			flashbanggrenade.set(false, "radius", 5);
+			
+			
+			// miscRegister.put(m(22),
+			// new Grenades(getIngredients("Grenades", stringsGrenades), (double)
+			// a("Weapon.Grenade.Price", 800.0),
+			// (double) a("Weapon.Grenade.radiusdamage", 10.0), (double)
+			// a("Weapon.Grenade.radius", 5.0)));
 
 			/*
 			 * gunRegister.put(m(23), new Dragunov((int) a("Weapon.Dragunov.Durability",
@@ -716,6 +772,8 @@ public class Main extends JavaPlugin implements Listener {
 									? Material.matchMaterial(f2.getString("material"))
 									: guntype);
 							int variant = f2.contains("variant") ? f2.getInt("variant") : 0;
+							final String name = f2.getString("name");
+							getLogger().info("-Loading AmmoType: " + name);
 
 							String extraData = null;
 							if (f2.contains("skull_owner")) {
@@ -724,7 +782,6 @@ public class Main extends JavaPlugin implements Listener {
 
 							final MaterialStorage ms = MaterialStorage.getMS(m, f2.getInt("id"), variant, extraData);
 							final ItemStack[] materails = convertIngredients(f2.getStringList("craftingRequirements"));
-							final String name = f2.getString("name");
 							final String displayname = f2.contains("displayname")
 									? ChatColor.translateAlternateColorCodes('&', f2.getString("displayname"))
 									: (ChatColor.WHITE + name);
@@ -763,21 +820,23 @@ public class Main extends JavaPlugin implements Listener {
 					if (f.getName().contains("yml")) {
 						FileConfiguration f2 = YamlConfiguration.loadConfiguration(f);
 						if ((!f2.contains("invalid")) || !f2.getBoolean("invalid")) {
+							final String name = f2.getString("name");
+							getLogger().info("-Loading Misc: " + name);
+
 							Material m = (Material) (f2.contains("material")
 									? Material.matchMaterial(f2.getString("material"))
 									: guntype);
 							int variant = f2.contains("variant") ? f2.getInt("variant") : 0;
 							final MaterialStorage ms = MaterialStorage.getMS(m, f2.getInt("id"), variant, null);
 							final ItemStack[] materails = convertIngredients(f2.getStringList("craftingRequirements"));
-							final String name = f2.getString("name");
 							final String displayname = f2.contains("displayname")
 									? ChatColor.translateAlternateColorCodes('&', f2.getString("displayname"))
 									: (ChatColor.WHITE + name);
-							final List<String> extraLore2 = f2.contains("lore") ? f2.getStringList("lore") : null;
-							final List<String> extraLore = new ArrayList<String>();
+							final List<String> rawLore = f2.contains("lore") ? f2.getStringList("lore") : null;
+							final List<String> lore = new ArrayList<String>();
 							try {
-								for (String lore : extraLore2) {
-									extraLore.add(ChatColor.translateAlternateColorCodes('&', lore));
+								for (String lore2 : rawLore) {
+									lore.add(ChatColor.translateAlternateColorCodes('&', lore2));
 								}
 							} catch (Error | Exception re52) {
 							}
@@ -788,11 +847,19 @@ public class Main extends JavaPlugin implements Listener {
 							// int durib = f2.contains("durability") ? f2.getInt("durability") : 1000;
 
 							WeaponType wt = WeaponType.getByName(f2.getString("MiscType"));
+							
+							int radius = f2.contains("radius")?f2.getInt("radius"):0;
 
 							if (wt == WeaponType.MEDKIT)
 								miscRegister.put(ms, new MedKit(ms, name, displayname, materails, price));
 							if (wt == WeaponType.MEELEE)
 								miscRegister.put(ms, new MeleeItems(ms, name, displayname, materails, price, damage));
+							if (wt == WeaponType.GRENADES)
+								miscRegister.put(ms, new Grenades(materails, price, damage, radius, name, displayname, lore, ms));
+							if (wt == WeaponType.SMOKE_GRENADES)
+								miscRegister.put(ms, new SmokeGrenades(materails, price, damage, radius, name, displayname, lore, ms));
+							if (wt == WeaponType.FLASHBANGS)
+								miscRegister.put(ms, new Flashbang(materails, price, damage, radius, name, displayname, lore, ms));
 						}
 					}
 				} catch (Exception e) {
@@ -804,6 +871,9 @@ public class Main extends JavaPlugin implements Listener {
 				if (f.getName().contains("yml")) {
 					FileConfiguration f2 = YamlConfiguration.loadConfiguration(f);
 					if ((!f2.contains("invalid")) || !f2.getBoolean("invalid")) {
+						final String name = f2.getString("name");
+						getLogger().info("-Loading Gun: " + name);
+
 						Material m = (Material) (f2.contains("material")
 								? Material.matchMaterial(f2.getString("material"))
 								: guntype);
@@ -812,7 +882,6 @@ public class Main extends JavaPlugin implements Listener {
 						WeaponType weatype = f2.contains("guntype") ? WeaponType.valueOf(f2.getString("guntype"))
 								: WeaponType.valueOf(f2.getString("weapontype"));
 						final ItemStack[] materails = convertIngredients(f2.getStringList("craftingRequirements"));
-						final String name = f2.getString("name");
 
 						final String displayname = f2.contains("displayname")
 								? ChatColor.translateAlternateColorCodes('&', f2.getString("displayname"))
@@ -833,6 +902,9 @@ public class Main extends JavaPlugin implements Listener {
 						double partb = f2.contains("particles.bullet_particleB")
 								? f2.getDouble("particles.bullet_particleB")
 								: 1.0;
+
+						boolean addMuzzleSmoke = f2.contains("addMuzzleSmoke") ? f2.getBoolean("addMuzzleSmoke")
+								: false;
 
 						try {
 							for (String lore : extraLore2) {
@@ -869,6 +941,8 @@ public class Main extends JavaPlugin implements Listener {
 
 							gunRegister.put(ms, g);
 
+							g.setUseMuzzleSmoke(addMuzzleSmoke);
+
 							g.setReloadingTimeInSeconds(f2.getDouble("delayForReload"));
 							try {
 								if (f2.getString("ChargingHandler") != "null")
@@ -896,137 +970,12 @@ public class Main extends JavaPlugin implements Listener {
 								g.setParticles(particle, partr, partg, partb);
 							} catch (Error | Exception er5) {
 							}
-						} else {
-							miscRegister.put(ms, new ArmoryBaseObject() {
-								@Override
-								public String getName() {
-									return name;
-								}
-
-								@Override
-								public MaterialStorage getItemData() {
-									return ms;
-								}
-
-								@Override
-								public ItemStack[] getIngredients() {
-									return materails;
-								}
-
-								@Override
-								public int getCraftingReturn() {
-									return 1;
-								}
-
-								@Override
-								public List<String> getCustomLore() {
-									return extraLore;
-								}
-
-								@Override
-								public String getDisplayName() {
-									return displayname;
-								}
-
-								@Override
-								public double cost() {
-									return price;
-								}
-							});
-
 						}
 					}
 				}
 			} catch (Exception e) {
 			}
 		}
-		
-
-		int amount = (((gunRegister.size() + miscRegister.size() + ammoRegister.size() + miscRegister.size()) / 9) + 1)
-				* 9;
-
-		craftingMenu = Bukkit.createInventory(null, amount, S_craftingBenchName);
-		shopMenu = Bukkit.createInventory(null, amount, S_shopName);
-		
-		List<Gun> gunslistr = new ArrayList<Gun>(gunRegister.values());
-
-		Collections.sort(gunslistr);
-		
-		for (Gun g : gunslistr) {
-			try {
-				getLogger().info("-Loading Gun:" + g.getName());
-				ItemStack is = ItemFact.getGun(g);
-				ItemMeta im = is.getItemMeta();
-				List<String> lore = ItemFact.getCraftingGunLore(g);
-				im.setLore(lore);
-				is.setItemMeta(im);
-				if (enableVisibleAmounts)
-					is.setAmount(g.getCraftingReturn());
-				craftingMenu.addItem(is);
-
-				ItemStack shopVers = ItemFact.addShopLore(g, is.clone());
-				shopMenu.addItem(shopVers);
-			} catch (Exception e) {
-				getLogger().warning("-Failed to load Gun:" + g.getName());
-				e.printStackTrace();
-			}
-		}
-		for (ArmoryBaseObject abo : miscRegister.values()) {
-			try {
-				getLogger().info("-Loading MISC:" + abo.getName());
-				ItemStack is = ItemFact.getObject(abo);
-				ItemMeta im = is.getItemMeta();
-				List<String> lore = ItemFact.getCraftingLore(abo);
-				im.setLore(lore);
-				is.setItemMeta(im);
-				if (enableVisibleAmounts)
-					is.setAmount(abo.getCraftingReturn());
-				craftingMenu.addItem(is);
-
-				ItemStack shopVers = ItemFact.addShopLore(abo, is.clone());
-				shopMenu.addItem(shopVers);
-			} catch (Exception e) {
-				getLogger().warning("-Failed to load MISC:" + abo.getName());
-				e.printStackTrace();
-			}
-		}
-		for (Ammo ammo : ammoRegister.values()) {
-			try {
-				getLogger().info("-Loading Ammo:" + ammo.getName());
-				ItemStack is = ItemFact.getAmmo(ammo);
-				ItemMeta im = is.getItemMeta();
-				List<String> lore = ItemFact.getCraftingLore(ammo);
-				im.setLore(lore);
-				is.setItemMeta(im);
-				is.setAmount(ammo.getCraftingReturn());
-				craftingMenu.addItem(is);
-
-				ItemStack shopVers = ItemFact.addShopLore(ammo, is.clone());
-				shopMenu.addItem(shopVers);
-			} catch (Exception e) {
-				getLogger().warning("-Failed to load ammo:" + ammo.getName());
-				e.printStackTrace();
-			}
-		}
-		for (ArmorObject armor : armorRegister.values()) {
-			try {
-				getLogger().info("-Loading Armor:" + armor.getName());
-				ItemStack is = ItemFact.getArmor(armor);
-				ItemMeta im = is.getItemMeta();
-				List<String> lore = ItemFact.getCraftingLore(armor);
-				im.setLore(lore);
-				is.setItemMeta(im);
-				is.setAmount(armor.getCraftingReturn());
-				craftingMenu.addItem(is);
-
-				ItemStack shopVers = ItemFact.addShopLore(armor, is.clone());
-				shopMenu.addItem(shopVers);
-			} catch (Exception e) {
-				getLogger().warning("-Failed to load Armor:" + armor.getName());
-				e.printStackTrace();
-			}
-		}
-
 		if (Main.enableBleeding)
 			BulletWoundHandler.startTimer();
 	}
@@ -1084,19 +1033,7 @@ public class Main extends JavaPlugin implements Listener {
 											tempremove = e.getPlayer().getInventory().getItemInOffHand();
 										e.getPlayer().getInventory()
 												.setItemInOffHand(e.getPlayer().getInventory().getItemInMainHand());
-										ItemStack ironsights = new ItemStack(guntype, 1,
-												(short) IronSightsToggleItem.getData());
-										ItemMeta im = ironsights.getItemMeta();
-										im.setDisplayName(IronSightsToggleItem.getItemName());
-										try {
-											im.setUnbreakable(true);
-										} catch (Error | Exception e34) {
-										}
-										try {
-											im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_UNBREAKABLE);
-										} catch (Error | Exception e34) {
-										}
-										ironsights.setItemMeta(im);
+										ItemStack ironsights = ItemFact.getIronSights();
 										e.getPlayer().getInventory().setItemInMainHand(ironsights);
 										if (tempremove != null) {
 											e.getPlayer().getInventory().addItem(tempremove);
@@ -1238,6 +1175,8 @@ public class Main extends JavaPlugin implements Listener {
 						getAllKeys.addAll(gunRegister.keySet());
 						getAllKeys.addAll(ammoRegister.keySet());
 						getAllKeys.addAll(miscRegister.keySet());
+						getAllKeys.addAll(armorRegister.keySet());
+						getAllKeys.addAll(reservedForExps);
 						int openID = 1;
 						for (MaterialStorage i : getAllKeys) {
 							if (i.getMat() == guntype)
@@ -1445,7 +1384,7 @@ public class Main extends JavaPlugin implements Listener {
 							sender.sendMessage(prefix + ChatColor.RED + S_NOPERM);
 							return true;
 						}
-						player.openInventory(craftingMenu);
+						player.openInventory(createCraft(0));
 						return true;
 
 					}
@@ -1455,7 +1394,7 @@ public class Main extends JavaPlugin implements Listener {
 							sender.sendMessage(prefix + ChatColor.RED + S_NOPERM);
 							return true;
 						}
-						player.openInventory(shopMenu);
+						player.openInventory(createShop(0));
 						return true;
 
 					}
@@ -1507,9 +1446,21 @@ public class Main extends JavaPlugin implements Listener {
 				name = e.getInventory().getTitle();
 		}
 
-		if (name != null && name.equals(S_craftingBenchName)) {
+		if (name != null && name.startsWith(S_craftingBenchName)) {
 			e.setCancelled(true);
 			if (e.getCurrentItem() != null) {
+
+				if (e.getCurrentItem().equals(prevButton)) {
+					int page = Integer.parseInt(e.getInventory().getTitle().split(S_craftingBenchName)[1]) - 1 - 1;
+					e.getWhoClicked().openInventory(createCraft(Math.max(0, page)));
+					return;
+				}
+				if (e.getCurrentItem().equals(nextButton)) {
+					int page = Integer.parseInt(e.getInventory().getTitle().split(S_craftingBenchName)[1]) - 1 + 1;
+					e.getWhoClicked().openInventory(createCraft(Math.min(getMaxPages(), page)));
+					return;
+				}
+
 				if (isGun(e.getCurrentItem())) {
 					Gun g = getGun(e.getCurrentItem());
 					if (lookForIngre((Player) e.getWhoClicked(), g)
@@ -1617,7 +1568,7 @@ public class Main extends JavaPlugin implements Listener {
 				}
 			}
 			return;
-		} else if (name != null && S_shopName != null && name.equals(S_shopName)) {
+		} else if (name != null && S_shopName != null && name.startsWith(S_shopName)) {
 			e.setCancelled(true);
 			if (!enableEconomy) {
 				e.getWhoClicked().closeInventory();
@@ -1625,6 +1576,18 @@ public class Main extends JavaPlugin implements Listener {
 				return;
 			}
 			if (e.getCurrentItem() != null) {
+
+				if (e.getCurrentItem().equals(prevButton)) {
+					int page = Integer.parseInt(e.getInventory().getTitle().split(S_shopName)[1]) - 1 - 1;
+					e.getWhoClicked().openInventory(createShop(Math.max(0, page)));
+					return;
+				}
+				if (e.getCurrentItem().equals(nextButton)) {
+					int page = Integer.parseInt(e.getInventory().getTitle().split(S_shopName)[1]) - 1 + 1;
+					e.getWhoClicked().openInventory(createShop(Math.min(getMaxPages(), page)));
+					return;
+				}
+
 				if (isGun(e.getCurrentItem())) {
 					Gun g = getGun(e.getCurrentItem());
 					if (EconHandler.hasEnough(g, (Player) e.getWhoClicked())
@@ -1835,10 +1798,10 @@ public class Main extends JavaPlugin implements Listener {
 		}
 		return true;
 	}
-	
+
 	@EventHandler
 	public void onHeadPlace(BlockPlaceEvent e) {
-		if(isAmmo(e.getItemInHand()) || isGun(e.getItemInHand()))
+		if (isAmmo(e.getItemInHand()) || isGun(e.getItemInHand()))
 			e.setCancelled(true);
 	}
 
@@ -1890,7 +1853,7 @@ public class Main extends JavaPlugin implements Listener {
 				e.getPlayer().sendMessage(prefix + ChatColor.RED + S_ANVIL);
 				return;
 			}
-			e.getPlayer().openInventory(craftingMenu);
+			e.getPlayer().openInventory(createCraft(0));
 			e.setCancelled(true);
 			Main.DEBUG("Opening crafting menu");
 			return;
@@ -2545,7 +2508,7 @@ public class Main extends JavaPlugin implements Listener {
 	public static void sendHotbarGunAmmoCount(Player p, Gun g, ItemStack usedItem) {
 		try {
 			HotbarMessager.sendHotBarMessage(p,
-					g.getDisplayName() + " = <" + ItemFact.getAmount(usedItem) + "/" + (g.getMaxBullets()) + ">");
+					g.getDisplayName() + " = " + ItemFact.getAmount(usedItem) + "/" + (g.getMaxBullets()) + "");
 		} catch (Error | Exception e5) {
 		}
 	}
@@ -2569,5 +2532,237 @@ public class Main extends JavaPlugin implements Listener {
 			this.reloadConfig();
 		}
 		return this.config;
+	}
+
+	public static Inventory createShop(int page) {
+		Inventory shopMenu = Bukkit.createInventory(null, 9 * 6, S_shopName + page);
+		List<Gun> gunslistr = new ArrayList<Gun>(gunRegister.values());
+		Collections.sort(gunslistr);
+		int basei = 0;
+		int index = (page * 9 * 5);
+		int maxIndex = (index + (9 * 5));
+
+		shopMenu.setItem((9 * 6) - 1 - 8, prevButton);
+		shopMenu.setItem((9 * 6) - 1, nextButton);
+
+		if (basei + gunslistr.size() < index)
+			basei += gunslistr.size();
+		else
+			for (Gun g : gunslistr) {
+				if (basei < index) {
+					basei++;
+					continue;
+				}
+				basei++;
+				if (index >= maxIndex)
+					break;
+				index++;
+				try {
+					ItemStack is = ItemFact.getGun(g);
+					ItemMeta im = is.getItemMeta();
+					List<String> lore = ItemFact.getCraftingGunLore(g);
+					im.setLore(lore);
+					is.setItemMeta(im);
+					if (enableVisibleAmounts)
+						is.setAmount(g.getCraftingReturn());
+					ItemStack shopVers = ItemFact.addShopLore(g, is.clone());
+					shopMenu.addItem(shopVers);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		if (basei + gunslistr.size() < index)
+			basei += gunslistr.size();
+		else
+			for (ArmoryBaseObject abo : miscRegister.values()) {
+				if (basei < index) {
+					basei++;
+					continue;
+				}
+				basei++;
+				if (index >= maxIndex)
+					break;
+				index++;
+				try {
+					ItemStack is = ItemFact.getObject(abo);
+					ItemMeta im = is.getItemMeta();
+					List<String> lore = ItemFact.getCraftingLore(abo);
+					im.setLore(lore);
+					is.setItemMeta(im);
+					if (enableVisibleAmounts)
+						is.setAmount(abo.getCraftingReturn());
+					ItemStack shopVers = ItemFact.addShopLore(abo, is.clone());
+					shopMenu.addItem(shopVers);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		if (basei + gunslistr.size() < index)
+			basei += gunslistr.size();
+		else
+			for (Ammo ammo : ammoRegister.values()) {
+				if (basei < index) {
+					basei++;
+					continue;
+				}
+				basei++;
+				if (index >= maxIndex)
+					break;
+				index++;
+				try {
+					ItemStack is = ItemFact.getAmmo(ammo);
+					ItemMeta im = is.getItemMeta();
+					List<String> lore = ItemFact.getCraftingLore(ammo);
+					im.setLore(lore);
+					is.setItemMeta(im);
+					is.setAmount(ammo.getCraftingReturn());
+					ItemStack shopVers = ItemFact.addShopLore(ammo, is.clone());
+					shopMenu.addItem(shopVers);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		if (basei + gunslistr.size() < index)
+			basei += gunslistr.size();
+		else
+			for (ArmorObject armor : armorRegister.values()) {
+				if (basei < index) {
+					basei++;
+					continue;
+				}
+				basei++;
+				if (index >= maxIndex)
+					break;
+				index++;
+				try {
+					ItemStack is = ItemFact.getArmor(armor);
+					ItemMeta im = is.getItemMeta();
+					List<String> lore = ItemFact.getCraftingLore(armor);
+					im.setLore(lore);
+					is.setItemMeta(im);
+					is.setAmount(armor.getCraftingReturn());
+					ItemStack shopVers = ItemFact.addShopLore(armor, is.clone());
+					shopMenu.addItem(shopVers);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		return shopMenu;
+	}
+
+	public static Inventory createCraft(int page) {
+		Inventory shopMenu = Bukkit.createInventory(null, 9 * 6, S_craftingBenchName + page);
+		List<Gun> gunslistr = new ArrayList<Gun>(gunRegister.values());
+		Collections.sort(gunslistr);
+		int basei = 0;
+		int index = (page * 9 * 5);
+		int maxIndex = (index + (9 * 5));
+
+		shopMenu.setItem((9 * 6) - 1 - 8, prevButton);
+		shopMenu.setItem((9 * 6) - 1, nextButton);
+
+		if (basei + gunslistr.size() < index)
+			basei += gunslistr.size();
+		else
+			for (Gun g : gunslistr) {
+				if (basei < index) {
+					basei++;
+					continue;
+				}
+				basei++;
+				if (index >= maxIndex)
+					break;
+				index++;
+				try {
+					ItemStack is = ItemFact.getGun(g);
+					ItemMeta im = is.getItemMeta();
+					List<String> lore = ItemFact.getCraftingGunLore(g);
+					im.setLore(lore);
+					is.setItemMeta(im);
+					if (enableVisibleAmounts)
+						is.setAmount(g.getCraftingReturn());
+					shopMenu.addItem(is);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		if (basei + gunslistr.size() < index)
+			basei += gunslistr.size();
+		else
+			for (ArmoryBaseObject abo : miscRegister.values()) {
+				if (basei < index) {
+					basei++;
+					continue;
+				}
+				basei++;
+				if (index >= maxIndex)
+					break;
+				index++;
+				try {
+					ItemStack is = ItemFact.getObject(abo);
+					ItemMeta im = is.getItemMeta();
+					List<String> lore = ItemFact.getCraftingLore(abo);
+					im.setLore(lore);
+					is.setItemMeta(im);
+					if (enableVisibleAmounts)
+						is.setAmount(abo.getCraftingReturn());
+					shopMenu.addItem(is);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		if (basei + gunslistr.size() < index)
+			basei += gunslistr.size();
+		else
+			for (Ammo ammo : ammoRegister.values()) {
+				if (basei < index) {
+					basei++;
+					continue;
+				}
+				basei++;
+				if (index >= maxIndex)
+					break;
+				index++;
+				try {
+					ItemStack is = ItemFact.getAmmo(ammo);
+					ItemMeta im = is.getItemMeta();
+					List<String> lore = ItemFact.getCraftingLore(ammo);
+					im.setLore(lore);
+					is.setItemMeta(im);
+					is.setAmount(ammo.getCraftingReturn());
+					shopMenu.addItem(is);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		if (basei + gunslistr.size() < index)
+			basei += gunslistr.size();
+		else
+			for (ArmorObject armor : armorRegister.values()) {
+				if (basei < index) {
+					basei++;
+					continue;
+				}
+				basei++;
+				if (index >= maxIndex)
+					break;
+				index++;
+				try {
+					ItemStack is = ItemFact.getArmor(armor);
+					ItemMeta im = is.getItemMeta();
+					List<String> lore = ItemFact.getCraftingLore(armor);
+					im.setLore(lore);
+					is.setItemMeta(im);
+					is.setAmount(armor.getCraftingReturn());
+					shopMenu.addItem(is);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		return shopMenu;
+	}
+
+	public static int getMaxPages() {
+		return (armorRegister.size() + ammoRegister.size() + miscRegister.size() + gunRegister.size()) / (9 * 5);
 	}
 }

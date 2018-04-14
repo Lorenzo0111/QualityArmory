@@ -18,8 +18,9 @@ import me.zombie_striker.qg.Main;
 import me.zombie_striker.qg.MaterialStorage;
 import me.zombie_striker.qg.guns.utils.WeaponSounds;
 import me.zombie_striker.qg.handlers.ExplosionHandler;
+import me.zombie_striker.qg.miscitems.ThrowableItems.ThrowableHolder;
 
-public class Grenades implements ThrowableItems {
+public class GrenadeBase implements InteractableMisc {
 
 	private ItemStack[] ing = null;
 
@@ -36,7 +37,7 @@ public class Grenades implements ThrowableItems {
 	List<String> lore;
 	MaterialStorage ms;
 
-	public Grenades(ItemStack[] ingg, double cost, double damage, double explosionreadius, String name,
+	public GrenadeBase(ItemStack[] ingg, double cost, double damage, double explosionreadius, String name,
 			String displayname, List<String> lore, MaterialStorage ms) {
 		this.ing = ingg;
 		this.cost = cost;

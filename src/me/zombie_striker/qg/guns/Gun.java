@@ -22,7 +22,7 @@ import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-public class Gun implements ArmoryBaseObject, Comparable<Gun>{
+public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 
 	private String name;
 	private MaterialStorage id;
@@ -59,6 +59,8 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun>{
 	private double particle_r = 1;
 	private double particle_g = 1;
 	private double particle_b = 1;
+
+	private boolean enableMuzzleSmoke = false;
 
 	// This refers to the last time a gun was shot by a player, on a per-gun basis.
 	// Doing this should prevent players from fast-switching to get around
@@ -309,13 +311,22 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun>{
 	}
 
 	public void setParticles(Particle p) {
-		this.setParticles(p, 1,1,1);
+		this.setParticles(p, 1, 1, 1);
 	}
+
 	public void setParticles(Particle p, double r, double g, double b) {
 		particle = p;
 		this.particle_r = r;
 		this.particle_g = g;
 		this.particle_b = b;
+	}
+
+	public boolean useMuzzleSmoke() {
+		return enableMuzzleSmoke;
+	}
+
+	public void setUseMuzzleSmoke(boolean b) {
+		this.enableMuzzleSmoke = b;
 	}
 
 	@Override
