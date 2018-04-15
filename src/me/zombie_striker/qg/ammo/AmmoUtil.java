@@ -5,16 +5,16 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import me.zombie_striker.qg.ItemFact;
+import me.zombie_striker.qg.Main;
 
 public class AmmoUtil {
 
 	public static int getAmmoAmount(Player player, Ammo a) {
 		int amount = 0;
 		for (ItemStack is : player.getInventory().getContents()) {
-			if (is != null && is.getType() == a.getItemData().getMat()) {
-				if (is.getDurability() == a.getItemData().getData()) {
-					amount += is.getAmount();
-				}
+			if (is != null && Main.getInstance().isAmmo(is)&&Main.getInstance().getAmmo(is).equals(a)) {
+				amount += is.getAmount();
+
 			}
 		}
 		return amount;
@@ -24,19 +24,17 @@ public class AmmoUtil {
 		int remaining = amount;
 		for (int i = 0; i < player.getInventory().getSize(); i++) {
 			ItemStack is = player.getInventory().getItem(i);
-			if (is != null && is.getType() == a.getItemData().getMat()) {
-				if (is.getDurability() == a.getItemData().getData()) {
-					if (is.getAmount() + remaining <= a.getMaxAmount()) {
-						is.setAmount(is.getAmount() + remaining);
-						remaining = 0;
-					} else {
-						remaining -= a.getMaxAmount() - is.getAmount();
-						is.setAmount(a.getMaxAmount());
-					}
-					player.getInventory().setItem(i, is);
-					if (remaining <= 0)
-						break;
+			if (is != null && Main.getInstance().isAmmo(is) && Main.getInstance().getAmmo(is).equals(a)) {
+				if (is.getAmount() + remaining <= a.getMaxAmount()) {
+					is.setAmount(is.getAmount() + remaining);
+					remaining = 0;
+				} else {
+					remaining -= a.getMaxAmount() - is.getAmount();
+					is.setAmount(a.getMaxAmount());
 				}
+				player.getInventory().setItem(i, is);
+				if (remaining <= 0)
+					break;
 			}
 		}
 		if (remaining > 0) {
@@ -54,19 +52,18 @@ public class AmmoUtil {
 		int remaining = amount;
 		for (int i = 0; i < player.getInventory().getSize(); i++) {
 			ItemStack is = player.getInventory().getItem(i);
-			if (is != null && is.getType() == a.getItemData().getMat()) {
-				if (is.getDurability() == a.getItemData().getData()) {
-					int temp = is.getAmount();
-					if (remaining < is.getAmount()) {
-						is.setAmount(is.getAmount() - remaining);
-					} else {
-						is.setType(Material.AIR);
-					}
-					remaining -= temp;
-					player.getInventory().setItem(i, is);
-					if (remaining <= 0)
-						break;
+			if (is != null && Main.getInstance().isAmmo(is)&&Main.getInstance().getAmmo(is).equals(a)) {
+				int temp = is.getAmount();
+				if (remaining < is.getAmount()) {
+					is.setAmount(is.getAmount() - remaining);
+				} else {
+					is.setType(Material.AIR);
 				}
+				remaining -= temp;
+				player.getInventory().setItem(i, is);
+				if (remaining <= 0)
+					break;
+
 			}
 		}
 		return remaining <= 0;

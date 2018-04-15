@@ -69,9 +69,10 @@ public class BreakactionCharger implements ChargingHandler {
 						 * Sound.BLOCK_SAND_BREAK, 8, 1.4f);
 						 */
 						player.getWorld().playSound(player.getLocation(), WeaponSounds.RELOAD_BULLET.getName(), 1, 1f);
-					} catch (Error e) {
+					} catch (Error e) {try {
 						player.getWorld().playSound(player.getLocation(), Sound.valueOf("PISTON_EXTEND"), 5, 4f);
 						player.getWorld().playSound(player.getLocation(), Sound.valueOf("DIG_SAND"), 8, 1.4f);
+					}catch(Error|Exception e43) {}
 					}
 				}
 			}.runTaskLater(Main.getInstance(), (int) (time * i*20));

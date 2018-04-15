@@ -36,12 +36,14 @@ public class BoltactionCharger implements ChargingHandler {
 			public void run() {
 				try {
 					if (Main.isVersionHigherThan(1, 9)) {
-						player.getWorld().playSound(player.getLocation(), WeaponSounds.RELOAD_BOLT.getName(), 1,
-								1f);
+						player.getWorld().playSound(player.getLocation(), WeaponSounds.RELOAD_BOLT.getName(), 1, 1f);
 					} else
 						player.getWorld().playSound(player.getLocation(), Sound.BLOCK_LEVER_CLICK, 5, 1);
 				} catch (Error e) {
-					player.getWorld().playSound(player.getLocation(), Sound.valueOf("CLICK"), 5, 1);
+					try {
+						player.getWorld().playSound(player.getLocation(), Sound.valueOf("CLICK"), 5, 1);
+					} catch (Error | Exception e43) {
+					}
 				}
 			}
 		}.runTaskLater(Main.getInstance(), 10);
@@ -50,12 +52,14 @@ public class BoltactionCharger implements ChargingHandler {
 			public void run() {
 				try {
 					if (Main.isVersionHigherThan(1, 9)) {
-						player.getWorld().playSound(player.getLocation(), WeaponSounds.RELOAD_BOLT.getName(), 1,
-								1f);
+						player.getWorld().playSound(player.getLocation(), WeaponSounds.RELOAD_BOLT.getName(), 1, 1f);
 					} else
 						player.getWorld().playSound(player.getLocation(), Sound.BLOCK_LEVER_CLICK, 5, 1);
 				} catch (Error e) {
-					player.getWorld().playSound(player.getLocation(), Sound.valueOf("CLICK"), 5, 1);
+					try {
+						player.getWorld().playSound(player.getLocation(), Sound.valueOf("CLICK"), 5, 1);
+					} catch (Error | Exception e43) {
+					}
 				}
 				timeR.remove(player.getUniqueId());
 			}
@@ -67,6 +71,5 @@ public class BoltactionCharger implements ChargingHandler {
 	public double reload(final Player player, Gun g, int amountReloading) {
 		return g.getReloadTime();
 	}
-	
 
 }

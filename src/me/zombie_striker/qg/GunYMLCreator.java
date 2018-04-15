@@ -6,8 +6,8 @@ import java.util.List;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.Particle;
 
+import me.zombie_striker.qg.ammo.Ammo;
 import me.zombie_striker.qg.guns.utils.WeaponSounds;
 import me.zombie_striker.qg.guns.utils.WeaponType;
 import me.zombie_striker.qg.handlers.gunvalues.ChargingHandlerEnum;
@@ -92,7 +92,7 @@ public class GunYMLCreator {
 		return createNewGun(forceUpdate, dataFolder, invalid, filename, name, displayname, lore, id,
 				craftingRequirements, weapontype, enableIronSights, ammotype, damage, sway, type, maxBullets,
 				duribility, delayReload, delayShoot, bulletspershot, isAutomatic, cost, ch, distance, var, version18,
-				ws, Particle.REDSTONE, 1.0, particlecolorGB, particlecolorGB);
+				ws, "REDSTONE", 1.0, particlecolorGB, particlecolorGB);
 	}
 
 	public static ArmoryYML createNewGun(boolean forceUpdate, File dataFolder, boolean invalid, String filename,
@@ -100,7 +100,7 @@ public class GunYMLCreator {
 			WeaponType weapontype, boolean enableIronSights, String ammotype, int damage, double sway, Material type,
 			int maxBullets, int duribility, double delayReload, double delayShoot, int bulletspershot,
 			boolean isAutomatic, int cost, ChargingHandlerEnum ch, int distance, int var, boolean version18,
-			WeaponSounds ws, Particle particle, double particleR, double particleG, double particleB) {
+			WeaponSounds ws, String particle, double particleR, double particleG, double particleB) {
 		return createNewGun(forceUpdate, dataFolder, invalid, filename, name, displayname, lore, id,
 				craftingRequirements, weapontype, enableIronSights, ammotype, damage, sway, type, maxBullets,
 				duribility, delayReload, delayShoot, bulletspershot, isAutomatic, cost, ch, distance, var, version18,
@@ -112,7 +112,7 @@ public class GunYMLCreator {
 			WeaponType weapontype, boolean enableIronSights, String ammotype, int damage, double sway, Material type,
 			int maxBullets, int duribility, double delayReload, double delayShoot, int bulletspershot,
 			boolean isAutomatic, int cost, ChargingHandlerEnum ch, int distance, int var, boolean version18,
-			WeaponSounds ws, Particle particle, double particleR, double particleG, double particleB,
+			WeaponSounds ws, String particle, double particleR, double particleG, double particleB,
 			boolean addMuzzleSmoke) {
 		File f2 = new File(dataFolder, "newGuns/" + filename + ".yml");
 		if (!new File(dataFolder, "newGuns").exists())
@@ -147,8 +147,8 @@ public class GunYMLCreator {
 		h.setNoSave(false, "price", cost);
 		h.setNoSave(false, "maxBulletDistance", distance);
 
-		h.setNoSave(false, "particles.bullet_particle", particle.name());
-		if (particle == Particle.REDSTONE) {
+		h.setNoSave(false, "particles.bullet_particle", particle);
+		if (particle.equals("REDSTONE")) {
 			h.setNoSave(false, "particles.bullet_particleR", particleR);
 			h.setNoSave(false, "particles.bullet_particleG", particleG);
 			h.setNoSave(false, "particles.bullet_particleB", particleB);
@@ -203,8 +203,10 @@ public class GunYMLCreator {
 		h.setNoSave(false, "maxAmount", maxAmount);
 		h.setNoSave(false, "material", type.name());
 
-		if (SKULL_OWNER != null)
+		if (SKULL_OWNER != null) {
 			h.setNoSave(false, "skull_owner", SKULL_OWNER);
+			h.setNoSave(false, "skull_owner_custom_url", Ammo.dontuseskin);
+		}
 
 		h.setNoSave(false, "piercingSeverity", severity);
 		if (h.saveNow)

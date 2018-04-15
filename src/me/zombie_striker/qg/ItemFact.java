@@ -13,6 +13,7 @@ import me.zombie_striker.qg.ammo.Ammo;
 import me.zombie_striker.qg.armor.ArmorObject;
 import me.zombie_striker.qg.guns.Gun;
 import me.zombie_striker.qg.handlers.IronSightsToggleItem;
+import me.zombie_striker.qg.handlers.SkullHandler;
 import me.zombie_striker.qg.miscitems.MedKit;
 
 public class ItemFact {
@@ -207,6 +208,11 @@ public class ItemFact {
 	@SuppressWarnings("deprecation")
 	public static ItemStack getAmmo(Ammo a) {
 		ItemStack is = new ItemStack(a.getItemData().getMat(), 0, (short) a.getItemData().getData());
+		boolean setSkull = false;
+		if(a.isSkull() && a.hasCustomSkin()) {
+			setSkull = true;
+			is = SkullHandler.getCustomSkull64(a.getCustomSkin());
+		}
 		if (a.getItemData().getData() < 0)
 			is.setDurability((short) 0);
 		ItemMeta im = is.getItemMeta();
@@ -223,7 +229,7 @@ public class ItemFact {
 		lore.addAll(a.getCustomLore());
 		addVarientData(lore, a);
 
-		if (a.isSkull()) {
+		if (a.isSkull() && !setSkull) {
 			((SkullMeta) im).setOwner(a.getSkullOwner());
 		}
 

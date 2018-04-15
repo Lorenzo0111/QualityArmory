@@ -1,3 +1,11 @@
+1.7.79
+	Added support for skulls with custom-set skins.
+	Fixed problem with sounds for chargers for 1.8.
+	Added ammo support for 1.8
+
+1.1.78
+	Fixed particles for 1.8
+
 1.1.77
 	Added multiple pages for crafting and shopping
 	Added MuzzleSmoke

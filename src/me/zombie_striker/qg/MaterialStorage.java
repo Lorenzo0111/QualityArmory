@@ -16,14 +16,33 @@ public class MaterialStorage {
 	}
 
 	public static MaterialStorage getMS(Material m, int d, int var, String extraValue) {
+		return getMS(m, d, var, extraValue, null);
+	}
+
+	public static MaterialStorage getMS(Material m, int d, int var, String extraValue, String ev2) {
 		for (MaterialStorage k : store) {
-			if (k.m == m && (k.d == d || k.d == -1) && (k.varient == var || var == -1)
-					&& ((extraValue != null && (extraValue.equals("-1")||(k.hasSpecialValue()&&extraValue.equals(k.getSpecialValue()))) || (extraValue == null && !k.hasSpecialValue()))))
-				return k;
+			if (matchesMaterials(k, m, d) && matchVarients(k, var) && matchHeads(k, extraValue, ev2))
+			return k;
 		}
-		MaterialStorage mm = new MaterialStorage(m, d, var,extraValue);
+		MaterialStorage mm = new MaterialStorage(m, d, var, extraValue, ev2);
 		store.add(mm);
 		return mm;
+	}
+
+	private static boolean matchesMaterials(MaterialStorage k, Material m, int d) {
+		return (k.m == m && (k.d == d || k.d == -1));
+	}
+
+	public static boolean matchVarients(MaterialStorage k, int var) {
+		return (k.varient == var || var == -1);
+	}
+
+	public static boolean matchHeads(MaterialStorage k, String ex1, String ex2) {
+		boolean exb1 = (!k.hasSpecialValue() || k.hasSpecialValue2()
+				|| (ex2 != null && (ex2.equals("-1") || k.getSpecialValue().equals(ex2))));
+		boolean exb2 = (!k.hasSpecialValue2()
+				|| (ex2 != null && (ex2.equals("-1") || k.getSpecialValue2().equals(ex2))));
+		return exb1 && exb2;
 	}
 
 	@SuppressWarnings("deprecation")
@@ -36,6 +55,7 @@ public class MaterialStorage {
 	private Material m;
 	private int varient = 0;
 	private String specialValues = null;
+	private String specialValues2 = null;
 
 	public int getData() {
 		return d;
@@ -53,6 +73,18 @@ public class MaterialStorage {
 		this.specialValues = s;
 	}
 
+	public boolean hasSpecialValue2() {
+		return specialValues2 != null;
+	}
+
+	public String getSpecialValue2() {
+		return specialValues2;
+	}
+
+	public void setSpecialValue2(String s) {
+		this.specialValues2 = s;
+	}
+
 	public Material getMat() {
 		return m;
 	}
@@ -61,15 +93,21 @@ public class MaterialStorage {
 		this.m = m;
 		this.d = d;
 	}
+
 	private MaterialStorage(Material m, int d, int var) {
 		this(m, d, var, null);
 	}
 
 	private MaterialStorage(Material m, int d, int var, String extraData) {
+		this(m, d, var, extraData, null);
+	}
+
+	private MaterialStorage(Material m, int d, int var, String extraData, String ed2) {
 		this.m = m;
 		this.d = d;
 		this.varient = var;
-		this.specialValues =extraData;
+		this.specialValues = extraData;
+		this.specialValues2 = ed2;
 	}
 
 	public boolean isVarient() {

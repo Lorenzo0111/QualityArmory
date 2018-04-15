@@ -248,10 +248,10 @@ public class Main extends JavaPlugin implements Listener {
 
 	@Override
 	public void onDisable() {
-		for(Entry<MaterialStorage, ArmoryBaseObject> misc : miscRegister.entrySet()) {
-			if(misc instanceof GrenadeBase) {
-				for( Entry<Entity, ThrowableHolder> e : ((GrenadeBase)misc).grenadeHolder.entrySet()) {
-					if(e.getKey() instanceof Item)
+		for (Entry<MaterialStorage, ArmoryBaseObject> misc : miscRegister.entrySet()) {
+			if (misc instanceof GrenadeBase) {
+				for (Entry<Entity, ThrowableHolder> e : ((GrenadeBase) misc).grenadeHolder.entrySet()) {
+					if (e.getKey() instanceof Item)
 						e.getKey().remove();
 				}
 			}
@@ -553,34 +553,47 @@ public class Main extends JavaPlugin implements Listener {
 			String additive = AutoDetectResourcepackVersion ? "_18" : "";
 
 			GunYMLCreator.createNewGun(forceUpdate, getDataFolder(), false, "default18_P30", "P30" + additive,
-					ChatColor.GOLD + "P30", null, 0, stringsPistol, WeaponType.PISTOL, false, "null", 3, 0.25,
+					ChatColor.GOLD + "P30", null, 0, stringsPistol, WeaponType.PISTOL, false, "556ammo", 3, 0.25,
 					Material.IRON_HOE, 12, 1000, 1.5, 0.25, 1, false, 700, null, 80, true, null);
 			GunYMLCreator.createNewGun(forceUpdate, getDataFolder(), false, "default18_AK47", "AK47" + additive,
-					ChatColor.GOLD + "AK-47", null, -1, stringsWoodRif, WeaponType.RIFLE, true, "null", 3, 0.25,
+					ChatColor.GOLD + "AK-47", null, -1, stringsWoodRif, WeaponType.RIFLE, true, "556ammo", 3, 0.25,
 					Material.GOLD_SPADE, 50, 1000, 1.5, 0.25, 2, true, 1400, ChargingHandlerEnum.RAPIDFIRE, 140, true,
 					null);
 			GunYMLCreator.createNewGun(forceUpdate, getDataFolder(), false, "default18_MP5K", "MP5K" + additive,
-					ChatColor.GOLD + "MP5K", null, 0, stringsMetalRif, WeaponType.SMG, true, "null", 3, 0.25,
+					ChatColor.GOLD + "MP5K", null, 0, stringsMetalRif, WeaponType.SMG, true, "556ammo", 3, 0.25,
 					Material.GOLD_PICKAXE, 32, 1000, 1.5, 0.25, 1, false, 1200, null, 100, true,
 					WeaponSounds.GUN_SMALL);
 			GunYMLCreator.createNewGun(forceUpdate, getDataFolder(), false, "default18_FNFal", "FNFal" + additive,
-					ChatColor.GOLD + "FN-Fal", null, 0, stringsMetalRif, WeaponType.RIFLE, true, "null", 3, 0.25,
+					ChatColor.GOLD + "FN-Fal", null, 0, stringsMetalRif, WeaponType.RIFLE, true, "556ammo", 3, 0.25,
 					Material.GOLD_HOE, 32, 1000, 1.5, 0.25, 1, false, 1000, null, 140, true, null);
 
 			// The the type is not the same, or if it is, if there is no auto detection
 			if (guntype != Material.DIAMOND_HOE || !AutoDetectResourcepackVersion)
 				GunYMLCreator.createNewGun(forceUpdate, getDataFolder(), false, "default18_RPG", "RPG" + additive,
-						ChatColor.GOLD + "RPG", null, 0, stringsRPG, WeaponType.RPG, false, "null", 100, 0.1,
+						ChatColor.GOLD + "RPG", null, 0, stringsRPG, WeaponType.RPG, false, "RPGammo", 100, 0.1,
 						Material.DIAMOND_HOE, 1, 200, 3, 3, 2, false, 5000, ChargingHandlerEnum.RPG, 220, true, null);
 			if (guntype != Material.DIAMOND_AXE || !AutoDetectResourcepackVersion)
 				GunYMLCreator.createNewGun(forceUpdate, getDataFolder(), false, "default18_PKP", "PKP" + additive,
-						ChatColor.GOLD + "PKP", null, 0, stringsMetalRif, WeaponType.RIFLE, false, "null", 2, 0.3,
+						ChatColor.GOLD + "PKP", null, 0, stringsMetalRif, WeaponType.RIFLE, false, "556ammo", 2, 0.3,
 						Material.DIAMOND_AXE, 100, 1000, 3, 0.27, 3, true, 3000, ChargingHandlerEnum.RAPIDFIRE, 170,
 						true, WeaponSounds.GUN_BIG);
 			GunYMLCreator.createNewGun(forceUpdate, getDataFolder(), false, "default18_M16", "M16" + additive,
-					ChatColor.GOLD + "M16", null, 0, stringsMetalRif, WeaponType.RIFLE, false, "null", 4, 0.3,
+					ChatColor.GOLD + "M16", null, 0, stringsMetalRif, WeaponType.RIFLE, false, "556ammo", 4, 0.3,
 					Material.IRON_SPADE, 50, 1000, 0.11, 1.5, 2, true, 1200, ChargingHandlerEnum.RAPIDFIRE, 140, true,
 					null);
+			
+			ArmoryYML skullammo = GunYMLCreator.createSkullAmmo(false, getDataFolder(), false, "default18_ammo556",
+					"556ammo", "&7 5.56x45mm NATO", null, Material.SKULL_ITEM, 3, "cactus", null, 4, 1, 50);
+			skullammo.set(false, "skull_owner_custom_url_COMMENT","Only specify the custom URL if the head does not use a player's skin, and instead sets the skin to a base64 value. If you need to get the head using a command, the URL should be set to the string of letters after \"Properties:{textures:[{Value:\"");
+			skullammo.set(false, "skull_owner_custom_url",
+					"eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYTg3ZmRmNDU4N2E2NDQ5YmZjOGJlMzNhYjJlOTM4ZTM2YmYwNWU0MGY2ZmFhMjc3ZDcxYjUwYmNiMGVhNjgzOCJ9fX0=");
+			ArmoryYML skullammo2 = GunYMLCreator.createSkullAmmo(false, getDataFolder(), false, "default18_ammoRPG",
+					"RPGammo", "&7 Rocket", null, Material.SKULL_ITEM, 3, "cactus", null, 4, 1, 50);
+			skullammo2.set(false, "skull_owner_custom_url_COMMENT","Only specify the custom URL if the head does not use a player's skin, and instead sets the skin to a base64 value. If you need to get the head using a command, the URL should be set to the string of letters after \"Properties:{textures:[{Value:\"");
+			skullammo2.set(false, "skull_owner_custom_url",
+					"eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYTg3ZmRmNDU4N2E2NDQ5YmZjOGJlMzNhYjJlOTM4ZTM2YmYwNWU0MGY2ZmFhMjc3ZDcxYjUwYmNiMGVhNjgzOCJ9fX0=");
+			
+			
 		}
 		if (isVersionHigherThan(1, 9)) {
 
@@ -689,32 +702,32 @@ public class Main extends JavaPlugin implements Listener {
 			 * stringsPistol), (int) a("Weapon.MouserC96.Damage", 2), (double)
 			 * a("Weapon.MouserC96.Price", 400.0)));
 			 */
-			ArmoryYML grenade = GunYMLCreator.createMisc(false, getDataFolder(), false, "default_grenade", "grenade", "&7Grenade",
+			ArmoryYML grenade = GunYMLCreator.createMisc(false, getDataFolder(), false, "default_grenade", "grenade",
+					"&7Grenade",
 					Arrays.asList(ChatColor.DARK_GRAY + "[LMB] to pull pin", ChatColor.DARK_GRAY + "[RMB] to throw",
 							ChatColor.DARK_GRAY + "Grenades wait " + ChatColor.GRAY + "FIVE seconds"
 									+ ChatColor.DARK_GRAY + " before exploding.",
 							ChatColor.DARK_RED + "<!>Will Explode Even If Not Thrown<!>"),
 					m(22), stringsGrenades, 100, WeaponType.GRENADES, 100, 1);
 			grenade.set(false, "radius", 10);
-			
-			
 
-			ArmoryYML smokegrenade = GunYMLCreator.createMisc(false, getDataFolder(), false, "default_smokegrenade", "smokegrenade", "&7Smoke Grenade",
+			ArmoryYML smokegrenade = GunYMLCreator.createMisc(false, getDataFolder(), false, "default_smokegrenade",
+					"smokegrenade", "&7Smoke Grenade",
 					Arrays.asList(ChatColor.DARK_GRAY + "[LMB] to pull pin", ChatColor.DARK_GRAY + "[RMB] to throw",
 							ChatColor.DARK_GRAY + "Smoke Grenades wait " + ChatColor.GRAY + "FIVE seconds"
 									+ ChatColor.DARK_GRAY + " before exploding.",
 							ChatColor.DARK_RED + "<!>Will Explode Even If Not Thrown<!>"),
 					m(40), stringsGrenades, 100, WeaponType.SMOKE_GRENADES, 100, 1);
 			smokegrenade.set(false, "radius", 5);
-			ArmoryYML flashbanggrenade = GunYMLCreator.createMisc(false, getDataFolder(), false, "default_flashbang", "flashbang", "&7FlashBang",
+			ArmoryYML flashbanggrenade = GunYMLCreator.createMisc(false, getDataFolder(), false, "default_flashbang",
+					"flashbang", "&7FlashBang",
 					Arrays.asList(ChatColor.DARK_GRAY + "[LMB] to pull pin", ChatColor.DARK_GRAY + "[RMB] to throw",
 							ChatColor.DARK_GRAY + "Flashbangs wait " + ChatColor.GRAY + "FIVE seconds"
 									+ ChatColor.DARK_GRAY + " before exploding.",
 							ChatColor.DARK_RED + "<!>Will Explode Even If Not Thrown<!>"),
 					m(41), stringsGrenades, 100, WeaponType.FLASHBANGS, 100, 1);
 			flashbanggrenade.set(false, "radius", 5);
-			
-			
+
 			// miscRegister.put(m(22),
 			// new Grenades(getIngredients("Grenades", stringsGrenades), (double)
 			// a("Weapon.Grenade.Price", 800.0),
@@ -759,9 +772,13 @@ public class Main extends JavaPlugin implements Listener {
 				Arrays.asList("Now, this is a knife!"), Material.IRON_SWORD, 0, stringsMetalRif, 100, WeaponType.MEELEE,
 				12, 100);
 
-		GunYMLCreator.createSkullAmmo(false, getDataFolder(), true, "example_skullammo", "exampleSkullAmmo",
-				"&7 Example Ammo", null, Material.SKULL_ITEM, 3, "cactus", null, 4, 1, 64);
-
+		ArmoryYML skullammo = GunYMLCreator.createSkullAmmo(false, getDataFolder(), true, "example_skullammo",
+				"exampleSkullAmmo", "&7 Example Ammo", null, Material.SKULL_ITEM, 3, "cactus", null, 4, 1, 64);
+		skullammo.set(false, "skull_owner_custom_url_COMMENT","Only specify the custom URL if the head does not use a player's skin, and instead sets the skin to a base64 value. If you need to get the head using a command, the URL should be set to the string of letters after \"Properties:{textures:[{Value:\"");
+		skullammo.set(false, "skull_owner_custom_url",
+				"eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYTg3ZmRmNDU4N2E2NDQ5YmZjOGJlMzNhYjJlOTM4ZTM2YmYwNWU0MGY2ZmFhMjc3ZDcxYjUwYmNiMGVhNjgzOCJ9fX0=");
+		//Skull texture
+		
 		if (new File(getDataFolder(), "ammo").exists())
 			for (File f : new File(getDataFolder(), "ammo").listFiles()) {
 				try {
@@ -779,8 +796,14 @@ public class Main extends JavaPlugin implements Listener {
 							if (f2.contains("skull_owner")) {
 								extraData = f2.getString("skull_owner");
 							}
+							String ed2 = null;
+							if (f2.contains("skull_owner_custom_url")
+									&& !f2.getString("skull_owner_custom_url").equals(Ammo.dontuseskin)) {
+								ed2 = f2.getString("skull_owner_custom_url");
+							}
 
-							final MaterialStorage ms = MaterialStorage.getMS(m, f2.getInt("id"), variant, extraData);
+							final MaterialStorage ms = MaterialStorage.getMS(m, f2.getInt("id"), variant, extraData,
+									ed2);
 							final ItemStack[] materails = convertIngredients(f2.getStringList("craftingRequirements"));
 							final String displayname = f2.contains("displayname")
 									? ChatColor.translateAlternateColorCodes('&', f2.getString("displayname"))
@@ -800,14 +823,18 @@ public class Main extends JavaPlugin implements Listener {
 
 							double piercing = f2.getDouble("piercingSeverity");
 
-							DefaultAmmo da = new DefaultAmmo(name, displayname, extraLore, ms, amountA, false, 1, price,
-									materails, piercing);
+							Ammo da = new Ammo(name, displayname, extraLore, ms, amountA, false, 1, price, materails,
+									piercing);
 
 							ammoRegister.put(ms, da);
 
-							if (f2.contains("skull_owner")) {
+							if (extraData != null) {
 								da.setSkullOwner(extraData);
 							}
+							if (ed2 != null) {
+								da.setCustomSkin(ed2);
+							}
+
 						}
 					}
 				} catch (Exception e) {
@@ -847,19 +874,22 @@ public class Main extends JavaPlugin implements Listener {
 							// int durib = f2.contains("durability") ? f2.getInt("durability") : 1000;
 
 							WeaponType wt = WeaponType.getByName(f2.getString("MiscType"));
-							
-							int radius = f2.contains("radius")?f2.getInt("radius"):0;
+
+							int radius = f2.contains("radius") ? f2.getInt("radius") : 0;
 
 							if (wt == WeaponType.MEDKIT)
 								miscRegister.put(ms, new MedKit(ms, name, displayname, materails, price));
 							if (wt == WeaponType.MEELEE)
 								miscRegister.put(ms, new MeleeItems(ms, name, displayname, materails, price, damage));
 							if (wt == WeaponType.GRENADES)
-								miscRegister.put(ms, new Grenades(materails, price, damage, radius, name, displayname, lore, ms));
+								miscRegister.put(ms,
+										new Grenades(materails, price, damage, radius, name, displayname, lore, ms));
 							if (wt == WeaponType.SMOKE_GRENADES)
-								miscRegister.put(ms, new SmokeGrenades(materails, price, damage, radius, name, displayname, lore, ms));
+								miscRegister.put(ms, new SmokeGrenades(materails, price, damage, radius, name,
+										displayname, lore, ms));
 							if (wt == WeaponType.FLASHBANGS)
-								miscRegister.put(ms, new Flashbang(materails, price, damage, radius, name, displayname, lore, ms));
+								miscRegister.put(ms,
+										new Flashbang(materails, price, damage, radius, name, displayname, lore, ms));
 						}
 					}
 				} catch (Exception e) {
@@ -888,10 +918,6 @@ public class Main extends JavaPlugin implements Listener {
 								: (ChatColor.GOLD + name);
 						final List<String> extraLore2 = f2.contains("lore") ? f2.getStringList("lore") : null;
 						final List<String> extraLore = new ArrayList<String>();
-
-						Particle particle = (Particle) (f2.contains("particles.bullet_particle")
-								? Particle.valueOf(f2.getString("particles.bullet_particle"))
-								: bulletTrail);
 
 						double partr = f2.contains("particles.bullet_particleR")
 								? f2.getDouble("particles.bullet_particleR")
@@ -967,6 +993,9 @@ public class Main extends JavaPlugin implements Listener {
 								g.set18Supported(f2.getBoolean("Version_18_Support"));
 
 							try {
+								Particle particle = (Particle) (f2.contains("particles.bullet_particle")
+										? Particle.valueOf(f2.getString("particles.bullet_particle"))
+										: bulletTrail);
 								g.setParticles(particle, partr, partg, partb);
 							} catch (Error | Exception er5) {
 							}
@@ -1863,18 +1892,19 @@ public class Main extends JavaPlugin implements Listener {
 			// Quick bugfix for specifically this item.
 			if ((!isArmor(e.getItem()) && !isGun(e.getItem())) && !isAmmo(e.getItem()) && !isMisc(e.getItem())
 					&& (!isIS(e.getItem()) && (!reservedForExps.contains(MaterialStorage.getMS(e.getItem().getType(),
-							(int) (e.getItem().getDurability()), -1, "-1"))))) {
+							(int) (e.getItem().getDurability()), -1, "-1", "-1"))))) {
 				Main.DEBUG("Item is not any valid item");
-				if (gunRegister.containsKey(
-						MaterialStorage.getMS(e.getItem().getType(), (int) (e.getItem().getDurability() + 1), -1, "-1"))
+				if (gunRegister
+						.containsKey(MaterialStorage.getMS(e.getItem().getType(),
+								(int) (e.getItem().getDurability() + 1), -1, "-1", "-1"))
 						|| ammoRegister.containsKey(MaterialStorage.getMS(e.getItem().getType(),
-								(int) (e.getItem().getDurability() + 1), -1, "-1"))
+								(int) (e.getItem().getDurability() + 1), -1, "-1", "-1"))
 						|| miscRegister.containsKey(MaterialStorage.getMS(e.getItem().getType(),
-								(int) (e.getItem().getDurability() + 1), -1, "-1"))
+								(int) (e.getItem().getDurability() + 1), -1, "-1", "-1"))
 						|| armorRegister.containsKey(MaterialStorage.getMS(e.getItem().getType(),
-								(int) (e.getItem().getDurability() + 1), -1, "-1"))
+								(int) (e.getItem().getDurability() + 1), -1, "-1", "-1"))
 						|| reservedForExps.contains(MaterialStorage.getMS(e.getItem().getType(),
-								(int) (e.getItem().getDurability() + 1), -1, "-1"))) {
+								(int) (e.getItem().getDurability() + 1), -1, "-1", "-1"))) {
 					Main.DEBUG("A player is using a non-gun item, but may reach the textures of one!");
 					// If the item is not a gun, but the item below it is
 					int safeDurib = e.getItem().getDurability();
@@ -2476,9 +2506,12 @@ public class Main extends JavaPlugin implements Listener {
 		int var = MaterialStorage.getVarient(is);
 		@SuppressWarnings("deprecation")
 		String extraData = is.getType() == Material.SKULL_ITEM ? ((SkullMeta) is.getItemMeta()).getOwner() : null;
-		if (ammoRegister.containsKey(MaterialStorage.getMS(is.getType(), (int) is.getDurability(), var, extraData)))
-			return ammoRegister.get(MaterialStorage.getMS(is.getType(), (int) is.getDurability(), var, extraData));
-		return ammoRegister.get(MaterialStorage.getMS(is.getType(), -1, var, extraData));
+		String temp = SkullHandler.getURL64(is);
+		if (ammoRegister
+				.containsKey(MaterialStorage.getMS(is.getType(), (int) is.getDurability(), var, extraData, temp)))
+			return ammoRegister
+					.get(MaterialStorage.getMS(is.getType(), (int) is.getDurability(), var, extraData, temp));
+		return ammoRegister.get(MaterialStorage.getMS(is.getType(), -1, var, extraData, temp));
 	}
 
 	public static boolean isGun(ItemStack is) {
@@ -2492,9 +2525,10 @@ public class Main extends JavaPlugin implements Listener {
 		int var = MaterialStorage.getVarient(is);
 		@SuppressWarnings("deprecation")
 		String extraData = is.getType() == Material.SKULL_ITEM ? ((SkullMeta) is.getItemMeta()).getOwner() : null;
+		String temp = SkullHandler.getURL64(is);
 		boolean k = (is != null && (ammoRegister
-				.containsKey(MaterialStorage.getMS(is.getType(), (int) is.getDurability(), var, extraData))
-				|| ammoRegister.containsKey(MaterialStorage.getMS(is.getType(), -1, var, extraData))));
+				.containsKey(MaterialStorage.getMS(is.getType(), (int) is.getDurability(), var, extraData, temp))
+				|| ammoRegister.containsKey(MaterialStorage.getMS(is.getType(), -1, var, extraData, temp))));
 		return k;
 	}
 

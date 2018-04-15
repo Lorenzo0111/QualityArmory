@@ -34,8 +34,8 @@ import com.alessiodp.partiesapi.Parties;
 
 public class GunUtil {
 
-	private static HashMap<UUID, Location> AF_locs = new HashMap<>();
-	private static HashMap<UUID, BukkitTask> AF_tasks = new HashMap<>();
+	protected static HashMap<UUID, Location> AF_locs = new HashMap<>();
+	protected static HashMap<UUID, BukkitTask> AF_tasks = new HashMap<>();
 
 	@SuppressWarnings("deprecation")
 	public static void shoot(Gun g, Player p, double sway, double damage, int shots, int range) {
