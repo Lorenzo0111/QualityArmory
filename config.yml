@@ -1,3 +1,6 @@
+
+
+
 #  Quality Armory: A quality gun plugin similar to CrackShot.
 #
 #FAQ:
@@ -33,12 +36,10 @@ useDefaultResourcepack: true
 sendOnJoin: false
 sendTitleOnJoin: false
 DefaultResoucepackOverride: false
-DefaultResoucepack: https://www.dropbox.com/s/3bllojuzjpbbxto/QualityArmoryv1.0.11.zip?dl=1
+DefaultResoucepack: https://www.dropbox.com/s/6u62uiaxcp2ef9y/QualityArmoryv1.0.13b.zip?dl=1
 hideTextureWarnings: false
 Auto-Detect-Resourcepack: false
-
 Enable_Headshot_Instantkill: true
-
 UnlimitedPistolAmmo: false
 UnlimitedShotgunAmmo: false
 UnlimitedRifleAmmo: false
@@ -55,6 +56,7 @@ BlockBullets:
   halfslabs: false
   leaves: false
   water: false
+  glass: false
 enableInteract:
   Chests: false
 overrideAnvil: false
@@ -95,3 +97,4 @@ Weapon:
   Kevlarmk1:
     DamageThreshold: 1
     Price: 1200.0
+SecondsTillRPIsSent: 0.0

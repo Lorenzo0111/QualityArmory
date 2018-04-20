@@ -6,6 +6,7 @@ import me.zombie_striker.qg.ItemFact;
 import me.zombie_striker.qg.Main;
 import me.zombie_striker.qg.MaterialStorage;
 import me.zombie_striker.qg.ammo.*;
+import me.zombie_striker.qg.attachments.AttachmentBase;
 import me.zombie_striker.qg.guns.utils.GunUtil;
 import me.zombie_striker.qg.guns.utils.WeaponSounds;
 import me.zombie_striker.qg.guns.utils.WeaponType;
@@ -134,10 +135,6 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 		return reloadTime;
 	}
 
-	public double getReloadingTimeInSeconds() {
-		return reloadTime;
-	}
-
 	public void setReloadingTimeInSeconds(double time) {
 		this.reloadTime = time;
 	}
@@ -174,16 +171,16 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 		return 1;
 	}
 
-	public boolean shoot(Player player) {
-		return Gun.USE_THIS_INSTEAD_OF_INDEVIDUAL_SHOOT_METHODS(this, player, getSway());
+	public boolean shoot(Player player,AttachmentBase attachmentBase) {
+		return Gun.USE_THIS_INSTEAD_OF_INDEVIDUAL_SHOOT_METHODS(this, attachmentBase, player, getSway());
 	}
 
 	@SuppressWarnings("deprecation")
-	public static boolean USE_THIS_INSTEAD_OF_INDEVIDUAL_SHOOT_METHODS(Gun g, Player player, double acc) {
+	public static boolean USE_THIS_INSTEAD_OF_INDEVIDUAL_SHOOT_METHODS(Gun g, AttachmentBase attachmentBase, Player player, double acc) {
 		boolean offhand = player.getInventory().getItemInHand().getDurability() == IronSightsToggleItem.getData();
 		if ((!offhand && ItemFact.getAmount(player.getInventory().getItemInHand()) > 0)
 				|| (offhand && Update19OffhandChecker.hasAmountOFfhandGreaterthan(player, 0))) {
-			GunUtil.basicShoot(offhand, g, player, acc);
+			GunUtil.basicShoot(offhand, g, attachmentBase, player, acc);
 			return true;
 		}
 		return false;
@@ -201,9 +198,9 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 		return GunUtil.hasAmmo(player, this);
 	}
 
-	public void reload(Player player) {
+	public void reload(Player player,AttachmentBase attachmentBase) {
 		if (getChargingVal() == null || (!getChargingVal().isReloading(player)))
-			GunUtil.basicReload(this, player, WeaponType.isUnlimited(type), reloadTime);
+			GunUtil.basicReload(this,attachmentBase, player, WeaponType.isUnlimited(type), reloadTime);
 	}
 
 	public double getDamage() {

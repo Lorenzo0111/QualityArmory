@@ -394,7 +394,6 @@ public class ReflectionsUtil {
 		return clazz;
 	}
 
-	@SuppressWarnings("deprecation")
 	public static <T> T newInstance(Class<T> type) {
 		try {
 			return type.newInstance();

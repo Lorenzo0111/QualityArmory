@@ -8,6 +8,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 
 import me.zombie_striker.qg.ammo.Ammo;
+import me.zombie_striker.qg.guns.Gun;
 import me.zombie_striker.qg.guns.utils.WeaponSounds;
 import me.zombie_striker.qg.guns.utils.WeaponType;
 import me.zombie_striker.qg.handlers.gunvalues.ChargingHandlerEnum;
@@ -170,6 +171,13 @@ public class GunYMLCreator {
 				id, craftingRequirements, cost, severity, maxAmount);
 	}
 
+	public static ArmoryYML createAmmo(boolean forceUpdate, File dataFolder, boolean invalid, String name,
+			String displayname, int id, List<String> craftingRequirements, int cost, double severity, int maxAmount,
+			int returnamount) {
+		return createAmmo(forceUpdate, dataFolder, invalid, "default_" + name, name, displayname, null, Main.guntype,
+				id, craftingRequirements, cost, severity, maxAmount, returnamount);
+	}
+
 	public static ArmoryYML createAmmo(boolean forceUpdate, File dataFolder, boolean invalid, String filename,
 			String name, String displayname, int id, List<String> craftingRequirements, int cost, double severity,
 			int maxAmount) {
@@ -180,13 +188,27 @@ public class GunYMLCreator {
 	public static ArmoryYML createAmmo(boolean forceUpdate, File dataFolder, boolean invalid, String filename,
 			String name, String displayname, List<String> lore, Material type, int id,
 			List<String> craftingRequirements, int cost, double severity, int maxAmount) {
+		return createAmmo(forceUpdate, dataFolder, invalid, filename, name, displayname, lore, type, id,
+				craftingRequirements, cost, severity, maxAmount, maxAmount);
+	}
+
+	public static ArmoryYML createAmmo(boolean forceUpdate, File dataFolder, boolean invalid, String filename,
+			String name, String displayname, List<String> lore, Material type, int id,
+			List<String> craftingRequirements, int cost, double severity, int maxAmount, int returnamount) {
 		return createSkullAmmo(forceUpdate, dataFolder, invalid, filename, name, displayname, lore, type, id, null,
-				craftingRequirements, cost, severity, maxAmount);
+				craftingRequirements, cost, severity, maxAmount, returnamount);
 	}
 
 	public static ArmoryYML createSkullAmmo(boolean forceUpdate, File dataFolder, boolean invalid, String filename,
 			String name, String displayname, List<String> lore, Material type, int id, String SKULL_OWNER,
 			List<String> craftingRequirements, int cost, double severity, int maxAmount) {
+		return createSkullAmmo(forceUpdate, dataFolder, invalid, filename, name, displayname, lore, type, id,
+				SKULL_OWNER, craftingRequirements, cost, severity, maxAmount, maxAmount);
+	}
+
+	public static ArmoryYML createSkullAmmo(boolean forceUpdate, File dataFolder, boolean invalid, String filename,
+			String name, String displayname, List<String> lore, Material type, int id, String SKULL_OWNER,
+			List<String> craftingRequirements, int cost, double severity, int maxAmount, int craftingReturn) {
 		File f2 = new File(dataFolder, "ammo/" + filename + ".yml");
 		if (!new File(dataFolder, "ammo").exists())
 			new File(dataFolder, "ammo").mkdirs();
@@ -199,6 +221,7 @@ public class GunYMLCreator {
 		h.setNoSave(false, "lore", (lore == null ? new ArrayList<String>() : lore));
 		h.setNoSave(false, "id", id);
 		h.setNoSave(false, "craftingRequirements", craftingRequirements);
+		h.setNoSave(false, "craftingReturnAmount", craftingReturn);
 		h.setNoSave(false, "price", cost);
 		h.setNoSave(false, "maxAmount", maxAmount);
 		h.setNoSave(false, "material", type.name());
@@ -212,6 +235,42 @@ public class GunYMLCreator {
 		if (h.saveNow)
 			h.save();
 		return h;
+	}
+
+	public static ArmoryYML createAttachment(boolean forceUpdate, File dataFolder, boolean invalid, String filename,
+			String name, String displayname, List<String> lore, MaterialStorage ms, List<String> craftingRequirements,
+			int cost, Gun originalGun) {
+		return createAttachment(forceUpdate, dataFolder, invalid, filename, name, displayname, lore, ms,
+				craftingRequirements, cost, originalGun.getName());
+	}
+
+	public static ArmoryYML createAttachment(boolean forceUpdate, File dataFolder, boolean invalid, String filename,
+			String name, String displayname, List<String> lore, MaterialStorage ms, List<String> craftingRequirements,
+			int cost, String originalGun) {
+		File f2 = new File(dataFolder, "attachments/" + filename + ".yml");
+		if (!new File(dataFolder, "attachments").exists())
+			new File(dataFolder, "attachments").mkdirs();
+		ArmoryYML h = new ArmoryYML(f2);
+		if (invalid)
+			h.setNoSave(false, "HOW_TO_USE",
+					"Below is just the required values to create a new attachment for the 'basegun'. If you want to modify more parts of the gun, copy the value you want to change from the 'base' gun and paste it here with the value you want.");
+		h.setNoSave(false, "invalid", invalid);
+		h.setNoSave(false, "name", name);
+		h.setNoSave(false, "displayname", displayname);
+		h.setNoSave(false, "lore", (lore == null ? new ArrayList<String>() : lore));
+		h.setNoSave(false, "id", ms.getData());
+		h.setNoSave(false, "craftingRequirements", craftingRequirements);
+		h.setNoSave(false, "price", cost);
+		h.setNoSave(false, "material", ms.getMat().name());
+
+		h.setNoSave(false, "baseGun", originalGun);
+		if (!invalid) {
+
+		}
+		if (h.saveNow)
+			h.save();
+		return h;
+
 	}
 
 	public static ArmoryYML createMisc(boolean forceUpdate, File dataFolder, boolean invalid, String filename,

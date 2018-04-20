@@ -8,6 +8,8 @@ public enum WeaponSounds {
 
 	FLASHBANG("flashbang"), METALHIT("metalhit"), CHAINS("chainsmall"),
 	
+	SILENCEDSHOT("bulletsilence"),
+	
 	HISS("block.lava.extinguish"),
 
 	DEFAULT("hurt");

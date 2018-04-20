@@ -67,6 +67,10 @@ public class Ammo implements ArmoryBaseObject{
 		AmmoType.addAmmo(this, name);
 	}
 	
+	public void setCraftingReturn(int i) {
+		returnAmount = i;
+	}
+	
 	public boolean hasCustomSkin() {
 		return ! dontuseskin.equals(base64SkinURL);
 	}

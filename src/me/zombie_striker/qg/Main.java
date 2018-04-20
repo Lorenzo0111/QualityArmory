@@ -10,25 +10,22 @@ import me.zombie_striker.pluginconstructor.HotbarMessager;
 import me.zombie_striker.qg.ammo.*;
 import me.zombie_striker.qg.armor.ArmorObject;
 import me.zombie_striker.qg.armor.Kevlar;
+import me.zombie_striker.qg.attachments.AttachmentBase;
 import me.zombie_striker.qg.guns.*;
 import me.zombie_striker.qg.guns.utils.GunUtil;
 import me.zombie_striker.qg.guns.utils.WeaponSounds;
 import me.zombie_striker.qg.guns.utils.WeaponType;
 import me.zombie_striker.qg.handlers.*;
 import me.zombie_striker.qg.handlers.gunvalues.ChargingHandlerEnum;
-import me.zombie_striker.qg.miscitems.Flashbang;
-import me.zombie_striker.qg.miscitems.GrenadeBase;
-import me.zombie_striker.qg.miscitems.Grenades;
-import me.zombie_striker.qg.miscitems.InteractableMisc;
-import me.zombie_striker.qg.miscitems.MedKit;
-import me.zombie_striker.qg.miscitems.MeleeItems;
-import me.zombie_striker.qg.miscitems.SmokeGrenades;
+import me.zombie_striker.qg.handlers.gunvalues.RapidFireCharger;
+import me.zombie_striker.qg.miscitems.*;
 import me.zombie_striker.qg.miscitems.ThrowableItems.ThrowableHolder;
 
 import org.bukkit.*;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.*;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
@@ -59,6 +56,7 @@ public class Main extends JavaPlugin implements Listener {
 	public static HashMap<MaterialStorage, Ammo> ammoRegister = new HashMap<>();
 	public static HashMap<MaterialStorage, ArmoryBaseObject> miscRegister = new HashMap<>();
 	public static HashMap<MaterialStorage, ArmorObject> armorRegister = new HashMap<>();
+	public static HashMap<MaterialStorage, AttachmentBase> attachmentRegister = new HashMap<>();
 
 	public static HashMap<UUID, List<BukkitTask>> reloadingTasks = new HashMap<UUID, List<BukkitTask>>();
 
@@ -97,6 +95,7 @@ public class Main extends JavaPlugin implements Listener {
 	public static boolean blockbullet_halfslabs = false;
 	public static boolean blockbullet_door = false;
 	public static boolean blockbullet_water = false;
+	public static boolean blockbullet_glass = false;
 
 	public static boolean overrideAnvil = false;
 	public static boolean supportWorldGuard = false;
@@ -123,7 +122,7 @@ public class Main extends JavaPlugin implements Listener {
 
 	public static boolean overrideURL = false;
 	public static String url19plus = "https://www.dropbox.com/s/faufrgo7w2zpi3d/QualityArmoryv1.0.10.zip?dl=1";
-	public static String url19plusAXE = "https://www.dropbox.com/s/k5rf8chw45gojp6/QualityArmoryv1.0.12.zip?dl=1";
+	public static String url19plusAXE = "https://www.dropbox.com/s/6uc7iekl4kftvg7/QualityArmoryv1.0.13c.zip?dl=1";
 	public static String url18 = "https://www.dropbox.com/s/gx6dhahq6onob4g/QualityArmory1.8v1.0.1.zip?dl=1";
 	public static String url = url19plusAXE;
 
@@ -140,7 +139,8 @@ public class Main extends JavaPlugin implements Listener {
 	public static String S_ITEM_ING = "Ingredients";
 	public static String S_ITEM_VARIENTS = "&7Varient:";
 
-	public static String S_LMB_SINGLE = ChatColor.DARK_GRAY + "[LMB] to use Single-fire";
+	public static String S_LMB_SINGLE = ChatColor.DARK_GRAY + "[LMB] to use Single-fire mode";
+	public static String S_LMB_FULLAUTO = ChatColor.DARK_GRAY + "[Sneak]+[LMB] to use Automatic-fire";
 	public static String S_RMB_RELOAD = ChatColor.DARK_GRAY + "[RMB] to reload";
 	public static String S_RMB_R1 = ChatColor.DARK_GRAY + "[DropItem] to reload";
 	public static String S_RMB_R2 = ChatColor.DARK_GRAY + "[RMB] to reload";
@@ -359,6 +359,8 @@ public class Main extends JavaPlugin implements Listener {
 		armorRegister.clear();
 		interactableBlocks.clear();
 
+		attachmentRegister.clear();
+
 		m = new CustomYml(new File(getDataFolder(), "messages.yml"));
 		S_ANVIL = ChatColor.translateAlternateColorCodes('&', (String) m.a("NoPermAnvilMessage", S_ANVIL));
 		S_NOPERM = ChatColor.translateAlternateColorCodes('&', (String) m.a("NoPerm", S_NOPERM));
@@ -374,6 +376,7 @@ public class Main extends JavaPlugin implements Listener {
 		S_ITEM_VARIENTS = ChatColor.translateAlternateColorCodes('&', (String) m.a("Lore_Varients", S_ITEM_VARIENTS));
 
 		S_LMB_SINGLE = (String) m.a("Lore-LMB-Single", S_LMB_SINGLE);
+		S_LMB_FULLAUTO = (String) m.a("Lore-LMB-FullAuto", S_LMB_FULLAUTO);
 		S_RMB_RELOAD = (String) m.a("Lore-RMB-Reload", S_RMB_RELOAD);
 		S_RMB_A1 = (String) m.a("Lore-Ironsights-RMB", S_RMB_A1);
 		S_RMB_A2 = (String) m.a("Lore-Ironsights-Sneak", S_RMB_A2);
@@ -429,6 +432,7 @@ public class Main extends JavaPlugin implements Listener {
 		blockbullet_halfslabs = (boolean) a("BlockBullets.halfslabs", false);
 		blockbullet_leaves = (boolean) a("BlockBullets.leaves", false);
 		blockbullet_water = (boolean) a("BlockBullets.water", false);
+		blockbullet_glass = (boolean) a("BlockBullets.glass", false);
 
 		enableInteractChests = (boolean) a("enableInteract.Chests", false);
 
@@ -581,34 +585,36 @@ public class Main extends JavaPlugin implements Listener {
 					ChatColor.GOLD + "M16", null, 0, stringsMetalRif, WeaponType.RIFLE, false, "556ammo", 4, 0.3,
 					Material.IRON_SPADE, 50, 1000, 0.11, 1.5, 2, true, 1200, ChargingHandlerEnum.RAPIDFIRE, 140, true,
 					null);
-			
+
 			ArmoryYML skullammo = GunYMLCreator.createSkullAmmo(false, getDataFolder(), false, "default18_ammo556",
 					"556ammo", "&7 5.56x45mm NATO", null, Material.SKULL_ITEM, 3, "cactus", null, 4, 1, 50);
-			skullammo.set(false, "skull_owner_custom_url_COMMENT","Only specify the custom URL if the head does not use a player's skin, and instead sets the skin to a base64 value. If you need to get the head using a command, the URL should be set to the string of letters after \"Properties:{textures:[{Value:\"");
+			skullammo.set(false, "skull_owner_custom_url_COMMENT",
+					"Only specify the custom URL if the head does not use a player's skin, and instead sets the skin to a base64 value. If you need to get the head using a command, the URL should be set to the string of letters after \"Properties:{textures:[{Value:\"");
 			skullammo.set(false, "skull_owner_custom_url",
 					"eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYTg3ZmRmNDU4N2E2NDQ5YmZjOGJlMzNhYjJlOTM4ZTM2YmYwNWU0MGY2ZmFhMjc3ZDcxYjUwYmNiMGVhNjgzOCJ9fX0=");
 			ArmoryYML skullammo2 = GunYMLCreator.createSkullAmmo(false, getDataFolder(), false, "default18_ammoRPG",
 					"RPGammo", "&7 Rocket", null, Material.SKULL_ITEM, 3, "cactus", null, 4, 1, 50);
-			skullammo2.set(false, "skull_owner_custom_url_COMMENT","Only specify the custom URL if the head does not use a player's skin, and instead sets the skin to a base64 value. If you need to get the head using a command, the URL should be set to the string of letters after \"Properties:{textures:[{Value:\"");
+			skullammo2.set(false, "skull_owner_custom_url_COMMENT",
+					"Only specify the custom URL if the head does not use a player's skin, and instead sets the skin to a base64 value. If you need to get the head using a command, the URL should be set to the string of letters after \"Properties:{textures:[{Value:\"");
 			skullammo2.set(false, "skull_owner_custom_url",
 					"eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYTg3ZmRmNDU4N2E2NDQ5YmZjOGJlMzNhYjJlOTM4ZTM2YmYwNWU0MGY2ZmFhMjc3ZDcxYjUwYmNiMGVhNjgzOCJ9fX0=");
-			
-			
+
 		}
 		if (isVersionHigherThan(1, 9)) {
 
 			boolean forceUpdate = false;
 
-			GunYMLCreator.createAmmo(false, getDataFolder(), false, "9mm", "&f9mm", 15, stringsAmmo, 2, 0.7, 50);
-			GunYMLCreator.createAmmo(false, getDataFolder(), false, "556", "&f5x56.NATO", 14, stringsAmmo, 5, 1, 50);
-			GunYMLCreator.createAmmo(false, getDataFolder(), false, "shell", "&fBuckshot", 16, stringsAmmo, 10, 0.5, 8);
+			GunYMLCreator.createAmmo(false, getDataFolder(), false, "9mm", "&f9mm", 15, stringsAmmo, 2, 0.7, 50, 10);
+			GunYMLCreator.createAmmo(false, getDataFolder(), false, "556", "&f5x56.NATO", 14, stringsAmmo, 5, 1, 50, 5);
+			GunYMLCreator.createAmmo(false, getDataFolder(), false, "shell", "&fBuckshot", 16, stringsAmmo, 10, 0.5, 8,
+					4);
 			GunYMLCreator.createAmmo(false, getDataFolder(), false, "rocket", "&fRocket", 17, stringsAmmoRPG, 100, 1000,
 					1);
 
 			GunYMLCreator.createNewGun(forceUpdate, getDataFolder(), "P30", 2, stringsPistol, WeaponType.PISTOL, true,
 					"9mm", 3, 0.3, 12, 1000, false, 800, null, 100, null);
 			ArmoryYML pkp = GunYMLCreator.createNewGun(forceUpdate, getDataFolder(), "PKP", 3, stringsMetalRif,
-					WeaponType.RIFLE, false, "556", 2, 0.3, 100, 1000, 3, 0.27, 3, true, 3000,
+					WeaponType.RIFLE, true, "556", 2, 0.3, 100, 1000, 3, 0.27, 3, true, 3000,
 					ChargingHandlerEnum.RAPIDFIRE, 170, WeaponSounds.GUN_BIG);
 			pkp.set(false, "addMuzzleSmoke", true);
 			GunYMLCreator.createNewGun(forceUpdate, getDataFolder(), "MP5K", 4, stringsMetalRif, WeaponType.SMG, false,
@@ -728,6 +734,12 @@ public class Main extends JavaPlugin implements Listener {
 					m(41), stringsGrenades, 100, WeaponType.FLASHBANGS, 100, 1);
 			flashbanggrenade.set(false, "radius", 5);
 
+			ArmoryYML p30sil = GunYMLCreator.createAttachment(false, getDataFolder(), false, "default_p30_silencer",
+					"p30silenced", ChatColor.GOLD + "P30[Silenced]", null, m(42), stringsPistol, 1000, "p30");
+			p30sil.set(false, "weaponsounds", WeaponSounds.SILENCEDSHOT.getName());
+			@SuppressWarnings("unused")
+			ArmoryYML awp2 = GunYMLCreator.createAttachment(false, getDataFolder(), false, "default_awp_asiimov",
+					"awpasiimov", ChatColor.GOLD + "AWP[Asiimov-skin]", null, m(43), stringsMetalRif, 1000, "awp");
 			// miscRegister.put(m(22),
 			// new Grenades(getIngredients("Grenades", stringsGrenades), (double)
 			// a("Weapon.Grenade.Price", 800.0),
@@ -771,240 +783,20 @@ public class Main extends JavaPlugin implements Listener {
 		GunYMLCreator.createMisc(false, getDataFolder(), true, "example_knife", "ExampleKnife", "&7Example Knife",
 				Arrays.asList("Now, this is a knife!"), Material.IRON_SWORD, 0, stringsMetalRif, 100, WeaponType.MEELEE,
 				12, 100);
+		GunYMLCreator.createAttachment(false, getDataFolder(), true, "example_attachment", "example_attachment",
+				"Attachment For AK47", null, m(28), stringsMetalRif, 100, "AK47");
 
 		ArmoryYML skullammo = GunYMLCreator.createSkullAmmo(false, getDataFolder(), true, "example_skullammo",
 				"exampleSkullAmmo", "&7 Example Ammo", null, Material.SKULL_ITEM, 3, "cactus", null, 4, 1, 64);
-		skullammo.set(false, "skull_owner_custom_url_COMMENT","Only specify the custom URL if the head does not use a player's skin, and instead sets the skin to a base64 value. If you need to get the head using a command, the URL should be set to the string of letters after \"Properties:{textures:[{Value:\"");
+		skullammo.set(false, "skull_owner_custom_url_COMMENT",
+				"Only specify the custom URL if the head does not use a player's skin, and instead sets the skin to a base64 value. If you need to get the head using a command, the URL should be set to the string of letters after \"Properties:{textures:[{Value:\"");
 		skullammo.set(false, "skull_owner_custom_url",
 				"eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYTg3ZmRmNDU4N2E2NDQ5YmZjOGJlMzNhYjJlOTM4ZTM2YmYwNWU0MGY2ZmFhMjc3ZDcxYjUwYmNiMGVhNjgzOCJ9fX0=");
-		//Skull texture
-		
-		if (new File(getDataFolder(), "ammo").exists())
-			for (File f : new File(getDataFolder(), "ammo").listFiles()) {
-				try {
-					if (f.getName().contains("yml")) {
-						FileConfiguration f2 = YamlConfiguration.loadConfiguration(f);
-						if ((!f2.contains("invalid")) || !f2.getBoolean("invalid")) {
-							Material m = (Material) (f2.contains("material")
-									? Material.matchMaterial(f2.getString("material"))
-									: guntype);
-							int variant = f2.contains("variant") ? f2.getInt("variant") : 0;
-							final String name = f2.getString("name");
-							getLogger().info("-Loading AmmoType: " + name);
-
-							String extraData = null;
-							if (f2.contains("skull_owner")) {
-								extraData = f2.getString("skull_owner");
-							}
-							String ed2 = null;
-							if (f2.contains("skull_owner_custom_url")
-									&& !f2.getString("skull_owner_custom_url").equals(Ammo.dontuseskin)) {
-								ed2 = f2.getString("skull_owner_custom_url");
-							}
-
-							final MaterialStorage ms = MaterialStorage.getMS(m, f2.getInt("id"), variant, extraData,
-									ed2);
-							final ItemStack[] materails = convertIngredients(f2.getStringList("craftingRequirements"));
-							final String displayname = f2.contains("displayname")
-									? ChatColor.translateAlternateColorCodes('&', f2.getString("displayname"))
-									: (ChatColor.WHITE + name);
-							final List<String> extraLore2 = f2.contains("lore") ? f2.getStringList("lore") : null;
-							final List<String> extraLore = new ArrayList<String>();
-							try {
-								for (String lore : extraLore2) {
-									extraLore.add(ChatColor.translateAlternateColorCodes('&', lore));
-								}
-							} catch (Error | Exception re52) {
-							}
-
-							final double price = f2.contains("price") ? f2.getDouble("price") : 100;
-
-							int amountA = f2.getInt("maxAmount");
-
-							double piercing = f2.getDouble("piercingSeverity");
-
-							Ammo da = new Ammo(name, displayname, extraLore, ms, amountA, false, 1, price, materails,
-									piercing);
-
-							ammoRegister.put(ms, da);
-
-							if (extraData != null) {
-								da.setSkullOwner(extraData);
-							}
-							if (ed2 != null) {
-								da.setCustomSkin(ed2);
-							}
-
-						}
-					}
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		if (new File(getDataFolder(), "misc").exists())
-			for (File f : new File(getDataFolder(), "misc").listFiles()) {
-				try {
-					if (f.getName().contains("yml")) {
-						FileConfiguration f2 = YamlConfiguration.loadConfiguration(f);
-						if ((!f2.contains("invalid")) || !f2.getBoolean("invalid")) {
-							final String name = f2.getString("name");
-							getLogger().info("-Loading Misc: " + name);
-
-							Material m = (Material) (f2.contains("material")
-									? Material.matchMaterial(f2.getString("material"))
-									: guntype);
-							int variant = f2.contains("variant") ? f2.getInt("variant") : 0;
-							final MaterialStorage ms = MaterialStorage.getMS(m, f2.getInt("id"), variant, null);
-							final ItemStack[] materails = convertIngredients(f2.getStringList("craftingRequirements"));
-							final String displayname = f2.contains("displayname")
-									? ChatColor.translateAlternateColorCodes('&', f2.getString("displayname"))
-									: (ChatColor.WHITE + name);
-							final List<String> rawLore = f2.contains("lore") ? f2.getStringList("lore") : null;
-							final List<String> lore = new ArrayList<String>();
-							try {
-								for (String lore2 : rawLore) {
-									lore.add(ChatColor.translateAlternateColorCodes('&', lore2));
-								}
-							} catch (Error | Exception re52) {
-							}
-
-							final int price = f2.contains("price") ? f2.getInt("price") : 100;
-
-							int damage = f2.contains("damage") ? f2.getInt("damage") : 1;
-							// int durib = f2.contains("durability") ? f2.getInt("durability") : 1000;
-
-							WeaponType wt = WeaponType.getByName(f2.getString("MiscType"));
-
-							int radius = f2.contains("radius") ? f2.getInt("radius") : 0;
-
-							if (wt == WeaponType.MEDKIT)
-								miscRegister.put(ms, new MedKit(ms, name, displayname, materails, price));
-							if (wt == WeaponType.MEELEE)
-								miscRegister.put(ms, new MeleeItems(ms, name, displayname, materails, price, damage));
-							if (wt == WeaponType.GRENADES)
-								miscRegister.put(ms,
-										new Grenades(materails, price, damage, radius, name, displayname, lore, ms));
-							if (wt == WeaponType.SMOKE_GRENADES)
-								miscRegister.put(ms, new SmokeGrenades(materails, price, damage, radius, name,
-										displayname, lore, ms));
-							if (wt == WeaponType.FLASHBANGS)
-								miscRegister.put(ms,
-										new Flashbang(materails, price, damage, radius, name, displayname, lore, ms));
-						}
-					}
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		for (File f : new File(getDataFolder(), "newGuns").listFiles()) {
-			try {
-				if (f.getName().contains("yml")) {
-					FileConfiguration f2 = YamlConfiguration.loadConfiguration(f);
-					if ((!f2.contains("invalid")) || !f2.getBoolean("invalid")) {
-						final String name = f2.getString("name");
-						getLogger().info("-Loading Gun: " + name);
-
-						Material m = (Material) (f2.contains("material")
-								? Material.matchMaterial(f2.getString("material"))
-								: guntype);
-						int variant = f2.contains("variant") ? f2.getInt("variant") : 0;
-						final MaterialStorage ms = MaterialStorage.getMS(m, f2.getInt("id"), variant, null);
-						WeaponType weatype = f2.contains("guntype") ? WeaponType.valueOf(f2.getString("guntype"))
-								: WeaponType.valueOf(f2.getString("weapontype"));
-						final ItemStack[] materails = convertIngredients(f2.getStringList("craftingRequirements"));
-
-						final String displayname = f2.contains("displayname")
-								? ChatColor.translateAlternateColorCodes('&', f2.getString("displayname"))
-								: (ChatColor.GOLD + name);
-						final List<String> extraLore2 = f2.contains("lore") ? f2.getStringList("lore") : null;
-						final List<String> extraLore = new ArrayList<String>();
-
-						double partr = f2.contains("particles.bullet_particleR")
-								? f2.getDouble("particles.bullet_particleR")
-								: 1.0;
-						double partg = f2.contains("particles.bullet_particleG")
-								? f2.getDouble("particles.bullet_particleG")
-								: 1.0;
-						double partb = f2.contains("particles.bullet_particleB")
-								? f2.getDouble("particles.bullet_particleB")
-								: 1.0;
-
-						boolean addMuzzleSmoke = f2.contains("addMuzzleSmoke") ? f2.getBoolean("addMuzzleSmoke")
-								: false;
-
-						try {
-							for (String lore : extraLore2) {
-								extraLore.add(ChatColor.translateAlternateColorCodes('&', lore));
-							}
-						} catch (Error | Exception re52) {
-						}
-
-						final double price = f2.contains("price") ? f2.getDouble("price") : 100;
-
-						if (weatype.isGun()) {
-							boolean isAutomatic = f2.contains("isAutomatic") ? f2.getBoolean("isAutomatic") : false;
-
-							WeaponSounds sound = WeaponSounds.GUN_MEDIUM;
-
-							if (f2.contains("weaponsounds")) {
-								sound = WeaponSounds.getByName(f2.getString("weaponsounds"));
-							} else {
-
-								if (weatype == WeaponType.PISTOL || weatype == WeaponType.SMG)
-									sound = WeaponSounds.GUN_SMALL;
-								if (weatype == WeaponType.SHOTGUN || weatype == WeaponType.SNIPER)
-									sound = WeaponSounds.GUN_BIG;
-								if (weatype == WeaponType.RPG)
-									sound = WeaponSounds.WARHEAD_LAUNCH;
-								if (weatype == WeaponType.LAZER)
-									sound = WeaponSounds.LAZERSHOOT;
-							}
-
-							Gun g = new Gun(name, ms, weatype, f2.getBoolean("enableIronSights"),
-									AmmoType.getAmmo(f2.getString("ammotype")), f2.getDouble("sway"), 2,
-									f2.getInt("maxbullets"), f2.getInt("damage"), isAutomatic, f2.getInt("durability"),
-									sound, extraLore, displayname, price, materails);
-
-							gunRegister.put(ms, g);
-
-							g.setUseMuzzleSmoke(addMuzzleSmoke);
-
-							g.setReloadingTimeInSeconds(f2.getDouble("delayForReload"));
-							try {
-								if (f2.getString("ChargingHandler") != "null")
-									g.setChargingHandler(
-											ChargingHandlerEnum.getEnumV(f2.getString("ChargingHandler")).getHandler());
-							} catch (Error | Exception e445) {
-							}
-							try {
-								g.setDelayBetweenShots(f2.getDouble("delayForShoot"));
-							} catch (Error | Exception er5) {
-							}
-							try {
-								g.setBulletsPerShot(f2.getInt("bullets-per-shot"));
-							} catch (Error | Exception er5) {
-							}
-
-							try {
-								g.setMaxDistance(f2.getInt("maxBulletDistance"));
-							} catch (Error | Exception er5) {
-							}
-							if (f2.contains("Version_18_Support"))
-								g.set18Supported(f2.getBoolean("Version_18_Support"));
-
-							try {
-								Particle particle = (Particle) (f2.contains("particles.bullet_particle")
-										? Particle.valueOf(f2.getString("particles.bullet_particle"))
-										: bulletTrail);
-								g.setParticles(particle, partr, partg, partb);
-							} catch (Error | Exception er5) {
-							}
-						}
-					}
-				}
-			} catch (Exception e) {
-			}
-		}
+		// Skull texture
+		GunYMLLoader.loadAmmo(this);
+		GunYMLLoader.loadMisc(this);
+		GunYMLLoader.loadGuns(this);
+		GunYMLLoader.loadAttachments(this);
 		if (Main.enableBleeding)
 			BulletWoundHandler.startTimer();
 	}
@@ -1044,8 +836,11 @@ public class Main extends JavaPlugin implements Listener {
 	public void onShift(PlayerToggleSneakEvent e) {
 		if (!Main.enableIronSightsON_RIGHT_CLICK) {
 			if (e.isSneaking()) {
-				if (isGun(e.getPlayer().getItemInHand())) {
+				if (isGun(e.getPlayer().getItemInHand()) || isGunWithAttchments(e.getPlayer().getItemInHand())) {
 					Gun g = getGun(e.getPlayer().getItemInHand());
+					AttachmentBase attach = getGunWithAttchments(e.getPlayer().getItemInHand());
+					if (g == null && attach != null)
+						g = gunRegister.get(attach.getBase());
 					if (g != null) {
 						if (g.hasIronSights()) {
 							try {
@@ -1176,6 +971,12 @@ public class Main extends JavaPlugin implements Listener {
 				for (Entry<MaterialStorage, ArmoryBaseObject> e : miscRegister.entrySet())
 					if (b(e.getValue().getName(), args[1]))
 						s.add(e.getValue().getName());
+				for (Entry<MaterialStorage, ArmorObject> e : armorRegister.entrySet())
+					if (b(e.getValue().getName(), args[1]))
+						s.add(e.getValue().getName());
+				for (Entry<MaterialStorage, AttachmentBase> e : attachmentRegister.entrySet())
+					if (b(e.getValue().getAttachmentName(), args[1]))
+						s.add(e.getValue().getAttachmentName());
 
 			}
 			return s;
@@ -1330,11 +1131,20 @@ public class Main extends JavaPlugin implements Listener {
 						for (ArmoryBaseObject g : miscRegister.values()) {
 							sb.append(g.getName() + ",");
 						}
+						sb.append(ChatColor.GRAY);
+						for (ArmorObject g : armorRegister.values()) {
+							sb.append(g.getName() + ",");
+						}
+						sb.append(ChatColor.WHITE);
+						for (AttachmentBase g : attachmentRegister.values()) {
+							sb.append(g.getAttachmentName() + ",");
+						}
 						sender.sendMessage(prefix + sb.toString());
 						return true;
 					}
 
 					ArmoryBaseObject g = null;
+					AttachmentBase attachment = null;
 					// for (int j = 1; j < args.length; j++) {
 					// gunName.append(args[j]);
 					// if (j != args.length - 1)
@@ -1358,7 +1168,21 @@ public class Main extends JavaPlugin implements Listener {
 								g = e.getValue();
 								break;
 							}
-					if (g != null) {
+					if (g == null)
+						for (Entry<MaterialStorage, ArmorObject> e : armorRegister.entrySet())
+							if (e.getValue().getName().equalsIgnoreCase(args[1])) {
+								g = e.getValue();
+								break;
+							}
+					if (g == null)
+						for (Entry<MaterialStorage, AttachmentBase> e : attachmentRegister.entrySet())
+							if (e.getValue().getAttachmentName().equalsIgnoreCase(args[1])) {
+								// g = e.getValue().getBase();
+								attachment = e.getValue();
+								g = gunRegister.get(attachment.getBase());
+								break;
+							}
+					if (g != null || attachment != null) {
 						Player who = null;
 						if (args.length > 2)
 							who = Bukkit.getPlayer(args[2]);
@@ -1373,8 +1197,9 @@ public class Main extends JavaPlugin implements Listener {
 						}
 
 						ItemStack temp;
+
 						if (g instanceof Gun) {
-							temp = ItemFact.getGun((Gun) g);
+							temp = ItemFact.getGun((Gun) g, attachment);
 							who.getInventory().addItem(temp);
 						} else if (g instanceof Ammo) {
 							// temp = ItemFact.getAmmo((Ammo) g);
@@ -1890,9 +1715,7 @@ public class Main extends JavaPlugin implements Listener {
 
 		if (e.getItem() != null) {
 			// Quick bugfix for specifically this item.
-			if ((!isArmor(e.getItem()) && !isGun(e.getItem())) && !isAmmo(e.getItem()) && !isMisc(e.getItem())
-					&& (!isIS(e.getItem()) && (!reservedForExps.contains(MaterialStorage.getMS(e.getItem().getType(),
-							(int) (e.getItem().getDurability()), -1, "-1", "-1"))))) {
+			if (!isCustomItem(e.getItem())) {
 				Main.DEBUG("Item is not any valid item");
 				if (gunRegister
 						.containsKey(MaterialStorage.getMS(e.getItem().getType(),
@@ -1903,26 +1726,13 @@ public class Main extends JavaPlugin implements Listener {
 								(int) (e.getItem().getDurability() + 1), -1, "-1", "-1"))
 						|| armorRegister.containsKey(MaterialStorage.getMS(e.getItem().getType(),
 								(int) (e.getItem().getDurability() + 1), -1, "-1", "-1"))
+						|| attachmentRegister.containsKey(MaterialStorage.getMS(e.getItem().getType(),
+								(int) (e.getItem().getDurability() + 1), -1, "-1", "-1"))
 						|| reservedForExps.contains(MaterialStorage.getMS(e.getItem().getType(),
 								(int) (e.getItem().getDurability() + 1), -1, "-1", "-1"))) {
 					Main.DEBUG("A player is using a non-gun item, but may reach the textures of one!");
 					// If the item is not a gun, but the item below it is
-					int safeDurib = e.getItem().getDurability();
-					for (MaterialStorage j : ammoRegister.keySet())
-						if (j.getMat() == e.getItem().getType() && j.getData() >= safeDurib)
-							safeDurib = j.getData();
-					for (MaterialStorage j : gunRegister.keySet())
-						if (j.getMat() == e.getItem().getType() && j.getData() >= safeDurib)
-							safeDurib = j.getData();
-					for (MaterialStorage j : miscRegister.keySet())
-						if (j.getMat() == e.getItem().getType() && j.getData() >= safeDurib)
-							safeDurib = j.getData();
-					for (MaterialStorage j : armorRegister.keySet())
-						if (j.getMat() == e.getItem().getType() && j.getData() >= safeDurib)
-							safeDurib = j.getData();
-					for (MaterialStorage j : reservedForExps)
-						if (j.getMat() == e.getItem().getType() && j.getData() >= safeDurib)
-							safeDurib = j.getData();
+					int safeDurib = findSafeSpot(e.getItem(), true);
 
 					// if (e.getItem().getDurability() == 1) {
 					Main.DEBUG("Safe Durib " + (safeDurib + 4) + "! ORG " + e.getItem().getDurability());
@@ -1935,6 +1745,19 @@ public class Main extends JavaPlugin implements Listener {
 			}
 
 			ItemStack usedItem = e.getPlayer().getItemInHand();
+
+			try {
+				if (usedItem.getEnchantments().containsKey(Enchantment.MENDING))
+					if (!isCustomItem(usedItem, 0) && isCustomItem(usedItem, -2)) {
+						ItemStack temp2 = usedItem;
+						temp2.setDurability((short)Math.max((findSafeSpot(usedItem, false) -1),0));
+						e.getPlayer().setItemInHand(temp2);
+						return;
+					}
+			} catch (Error | Exception e4532) {
+
+			}
+
 			// Sedn the resourcepack if the player does not have it.
 			if (shouldSend && !resourcepackReq.contains(e.getPlayer().getUniqueId())) {
 				Main.DEBUG("Player does not have resourcepack!");
@@ -1956,12 +1779,14 @@ public class Main extends JavaPlugin implements Listener {
 				}
 			}
 
-			if (isGun(usedItem)) {
+			if (isGun(usedItem) || isGunWithAttchments(usedItem)) {
 				try {
 					if (AutoDetectResourcepackVersion) {
 						if (us.myles.ViaVersion.bukkit.util.ProtocolSupportUtil
 								.getProtocolVersion(e.getPlayer()) < ID18) {
 							Gun g = getGun(usedItem);
+							if (g == null)
+								g = gunRegister.get(getGunWithAttchments(usedItem).getBase());
 
 							if (!g.is18Support()) {
 								for (Gun g2 : gunRegister.values()) {
@@ -1989,6 +1814,8 @@ public class Main extends JavaPlugin implements Listener {
 							if (us.myles.ViaVersion.bukkit.util.ProtocolSupportUtil
 									.getProtocolVersion(e.getPlayer()) >= ID18) {
 								Gun g = getGun(usedItem);
+								if (g == null)
+									g = gunRegister.get(getGunWithAttchments(usedItem).getBase());
 								if (g.is18Support()) {
 									for (Gun g2 : gunRegister.values()) {
 										if (!g2.is18Support()) {
@@ -2088,12 +1915,16 @@ public class Main extends JavaPlugin implements Listener {
 			}
 
 			// Check to make sure the gun is not a dup. This should be fast
-			if (isGun(usedItem)) {
+			if (isGun(usedItem) || isGunWithAttchments(usedItem)) {
 				Main.DEBUG("Dups check");
 				checkforDups(e.getPlayer(), usedItem);
 			}
 
 			Gun g = getGun(usedItem);
+			AttachmentBase attachment = getGunWithAttchments(usedItem);
+			if (g == null)
+				g = gunRegister.get(attachment.getBase());
+			Main.DEBUG("Made it to gun/attachment check : " + g + " - " + attachment);
 			if (enableInteractChests) {
 				if (e.getClickedBlock() != null && (e.getClickedBlock().getType() == Material.CHEST
 						|| e.getClickedBlock().getType() == Material.TRAPPED_CHEST)) {
@@ -2125,22 +1956,26 @@ public class Main extends JavaPlugin implements Listener {
 								}
 							} catch (Error | Exception e4) {
 							}
-							g.shoot(e.getPlayer());
-							if (enableDurability)
-								if (offhand) {
-									try {
-										e.getPlayer().getInventory().setItemInOffHand(ItemFact.damage(g, usedItem));
-									} catch (Error e2) {
+							if (g.isAutomatic() && RapidFireCharger.shooters.containsKey(e.getPlayer().getUniqueId())) {
+								RapidFireCharger.shooters.remove(e.getPlayer().getUniqueId()).cancel();
+							} else {
+								g.shoot(e.getPlayer(), attachment);
+								if (enableDurability)
+									if (offhand) {
+										try {
+											e.getPlayer().getInventory().setItemInOffHand(ItemFact.damage(g, usedItem));
+										} catch (Error e2) {
+										}
+									} else {
+										e.getPlayer().setItemInHand(ItemFact.damage(g, usedItem));
 									}
-								} else {
-									e.getPlayer().setItemInHand(ItemFact.damage(g, usedItem));
-								}
-							sendHotbarGunAmmoCount(e.getPlayer(), g, usedItem);
+							}
+							sendHotbarGunAmmoCount(e.getPlayer(), g, attachment, usedItem);
 							return;
 						} else {
 							Main.DEBUG("Worldguard region canceled the event");
 						}
-						sendHotbarGunAmmoCount(e.getPlayer(), g, usedItem);
+						sendHotbarGunAmmoCount(e.getPlayer(), g, attachment, usedItem);
 						// TODO: Verify that the gun is in the main hand.
 						// Shouldn't work for offhand, but it should still
 						// be checked later.
@@ -2186,7 +2021,7 @@ public class Main extends JavaPlugin implements Listener {
 									e.getPlayer().getInventory().setItemInMainHand(ironsights);
 								}
 
-								sendHotbarGunAmmoCount(e.getPlayer(), g, usedItem);
+								sendHotbarGunAmmoCount(e.getPlayer(), g, attachment, usedItem);
 							} catch (Error e2) {
 								Bukkit.broadcastMessage(prefix
 										+ "Ironsights not compatible for versions lower than 1.8. The server owner should set EnableIronSights to false in the plugin's config");
@@ -2194,7 +2029,7 @@ public class Main extends JavaPlugin implements Listener {
 						} else {
 							if (!enableDurability || ItemFact.getDamage(usedItem) > 0) {
 								if (allowGunsInRegion(e.getPlayer().getLocation())) {
-									g.shoot(e.getPlayer());
+									g.shoot(e.getPlayer(), attachment);
 									if (enableDurability)
 										if (offhand) {
 											e.getPlayer().getInventory().setItemInOffHand(ItemFact.damage(g, usedItem));
@@ -2202,7 +2037,7 @@ public class Main extends JavaPlugin implements Listener {
 											e.getPlayer().setItemInHand(ItemFact.damage(g, usedItem));
 										}
 								}
-								sendHotbarGunAmmoCount(e.getPlayer(), g, usedItem);
+								sendHotbarGunAmmoCount(e.getPlayer(), g, attachment, usedItem);
 								// TODO: Verify that the gun is in the main
 								// hand.
 								// Shouldn't work for offhand, but it should
@@ -2219,12 +2054,12 @@ public class Main extends JavaPlugin implements Listener {
 							if (allowGunReload)
 								if (g.playerHasAmmo(e.getPlayer())) {
 									Main.DEBUG("Trying to reload. player has ammo");
-									g.reload(e.getPlayer());
+									g.reload(e.getPlayer(), attachment);
 								} else {
 									Main.DEBUG("Trying to reload. player DOES NOT have ammo");
 								}
 
-							sendHotbarGunAmmoCount(e.getPlayer(), g, usedItem);
+							sendHotbarGunAmmoCount(e.getPlayer(), g, attachment, usedItem);
 						}
 					}
 				}
@@ -2375,7 +2210,8 @@ public class Main extends JavaPlugin implements Listener {
 								new BukkitRunnable() {
 									@Override
 									public void run() {
-										GunUtil.basicReload(g, e.getPlayer(), g.hasUnlimitedAmmo());
+										GunUtil.basicReload(g, getGunWithAttchments(e.getItemDrop().getItemStack()),
+												e.getPlayer(), g.hasUnlimitedAmmo());
 									}
 								}.runTaskLater(this, 1);
 							}
@@ -2467,6 +2303,24 @@ public class Main extends JavaPlugin implements Listener {
 		return MaterialStorage.getMS(guntype, d, 0);
 	}
 
+	public boolean isCustomItem(ItemStack is) {
+		return isCustomItem(is, 0);
+	}
+
+	public boolean isCustomItem(ItemStack is, int dataOffset) {
+		ItemStack itemstack = is.clone();
+		itemstack.setDurability((short) (is.getDurability() + dataOffset));
+		return isArmor(itemstack) || isGunWithAttchments(itemstack) || isAmmo(itemstack) || isMisc(itemstack)
+				|| isGun(itemstack) || isIS(itemstack) || isReserved(itemstack);
+	}
+
+	public boolean isReserved(ItemStack is) {
+		int var = MaterialStorage.getVarient(is);
+		return (is != null
+				&& (reservedForExps.contains(MaterialStorage.getMS(is.getType(), (int) is.getDurability(), var))
+						|| reservedForExps.contains(MaterialStorage.getMS(is.getType(), -1, -1,"-1","-1"))));
+	}
+
 	public boolean isArmor(ItemStack is) {
 		int var = MaterialStorage.getVarient(is);
 		return (is != null
@@ -2502,6 +2356,27 @@ public class Main extends JavaPlugin implements Listener {
 		return gunRegister.get(MaterialStorage.getMS(is.getType(), -1, var));
 	}
 
+	public static boolean isGun(ItemStack is) {
+		int var = MaterialStorage.getVarient(is);
+		return (is != null
+				&& (gunRegister.containsKey(MaterialStorage.getMS(is.getType(), (int) is.getDurability(), var))
+						|| gunRegister.containsKey(MaterialStorage.getMS(is.getType(), -1, var))));
+	}
+
+	public AttachmentBase getGunWithAttchments(ItemStack is) {
+		int var = MaterialStorage.getVarient(is);
+		if (attachmentRegister.containsKey(MaterialStorage.getMS(is.getType(), (int) is.getDurability(), var)))
+			return attachmentRegister.get(MaterialStorage.getMS(is.getType(), (int) is.getDurability(), var));
+		return attachmentRegister.get(MaterialStorage.getMS(is.getType(), -1, var));
+	}
+
+	public static boolean isGunWithAttchments(ItemStack is) {
+		int var = MaterialStorage.getVarient(is);
+		return (is != null
+				&& (attachmentRegister.containsKey(MaterialStorage.getMS(is.getType(), (int) is.getDurability(), var))
+						|| attachmentRegister.containsKey(MaterialStorage.getMS(is.getType(), -1, var))));
+	}
+
 	public Ammo getAmmo(ItemStack is) {
 		int var = MaterialStorage.getVarient(is);
 		@SuppressWarnings("deprecation")
@@ -2512,13 +2387,6 @@ public class Main extends JavaPlugin implements Listener {
 			return ammoRegister
 					.get(MaterialStorage.getMS(is.getType(), (int) is.getDurability(), var, extraData, temp));
 		return ammoRegister.get(MaterialStorage.getMS(is.getType(), -1, var, extraData, temp));
-	}
-
-	public static boolean isGun(ItemStack is) {
-		int var = MaterialStorage.getVarient(is);
-		return (is != null
-				&& (gunRegister.containsKey(MaterialStorage.getMS(is.getType(), (int) is.getDurability(), var))
-						|| gunRegister.containsKey(MaterialStorage.getMS(is.getType(), -1, var))));
 	}
 
 	public boolean isAmmo(ItemStack is) {
@@ -2539,10 +2407,11 @@ public class Main extends JavaPlugin implements Listener {
 
 	}
 
-	public static void sendHotbarGunAmmoCount(Player p, Gun g, ItemStack usedItem) {
+	public static void sendHotbarGunAmmoCount(Player p, Gun g, AttachmentBase attachmentBase, ItemStack usedItem) {
 		try {
 			HotbarMessager.sendHotBarMessage(p,
-					g.getDisplayName() + " = " + ItemFact.getAmount(usedItem) + "/" + (g.getMaxBullets()) + "");
+					(attachmentBase != null ? attachmentBase.getDisplayName() : g.getDisplayName()) + " = "
+							+ ItemFact.getAmount(usedItem) + "/" + (g.getMaxBullets()) + "");
 		} catch (Error | Exception e5) {
 		}
 	}
@@ -2569,7 +2438,15 @@ public class Main extends JavaPlugin implements Listener {
 	}
 
 	public static Inventory createShop(int page) {
-		Inventory shopMenu = Bukkit.createInventory(null, 9 * 6, S_shopName + page);
+		return createCustomInventory(page, true);
+	}
+
+	public static Inventory createCraft(int page) {
+		return createCustomInventory(page, false);
+	}
+
+	public static Inventory createCustomInventory(int page, boolean shopping) {
+		Inventory shopMenu = Bukkit.createInventory(null, 9 * 6, (shopping ? S_shopName : S_craftingBenchName) + page);
 		List<Gun> gunslistr = new ArrayList<Gun>(gunRegister.values());
 		Collections.sort(gunslistr);
 		int basei = 0;
@@ -2594,13 +2471,14 @@ public class Main extends JavaPlugin implements Listener {
 				try {
 					ItemStack is = ItemFact.getGun(g);
 					ItemMeta im = is.getItemMeta();
-					List<String> lore = ItemFact.getCraftingGunLore(g);
+					List<String> lore = ItemFact.getCraftingGunLore(g, null);
 					im.setLore(lore);
 					is.setItemMeta(im);
 					if (enableVisibleAmounts)
 						is.setAmount(g.getCraftingReturn());
-					ItemStack shopVers = ItemFact.addShopLore(g, is.clone());
-					shopMenu.addItem(shopVers);
+					if (shopping)
+						is = ItemFact.addShopLore(g, is.clone());
+					shopMenu.addItem(is);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -2625,8 +2503,9 @@ public class Main extends JavaPlugin implements Listener {
 					is.setItemMeta(im);
 					if (enableVisibleAmounts)
 						is.setAmount(abo.getCraftingReturn());
-					ItemStack shopVers = ItemFact.addShopLore(abo, is.clone());
-					shopMenu.addItem(shopVers);
+					if (shopping)
+						is = ItemFact.addShopLore(abo, is.clone());
+					shopMenu.addItem(is);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -2650,8 +2529,9 @@ public class Main extends JavaPlugin implements Listener {
 					im.setLore(lore);
 					is.setItemMeta(im);
 					is.setAmount(ammo.getCraftingReturn());
-					ItemStack shopVers = ItemFact.addShopLore(ammo, is.clone());
-					shopMenu.addItem(shopVers);
+					if (shopping)
+						is = ItemFact.addShopLore(ammo, is.clone());
+					shopMenu.addItem(is);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -2675,8 +2555,39 @@ public class Main extends JavaPlugin implements Listener {
 					im.setLore(lore);
 					is.setItemMeta(im);
 					is.setAmount(armor.getCraftingReturn());
-					ItemStack shopVers = ItemFact.addShopLore(armor, is.clone());
-					shopMenu.addItem(shopVers);
+					if (shopping)
+						is = ItemFact.addShopLore(armor, is.clone());
+					shopMenu.addItem(is);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+
+		if (basei + gunslistr.size() < index)
+			basei += gunslistr.size();
+		else
+			for (AttachmentBase g : attachmentRegister.values()) {
+				if (basei < index) {
+					basei++;
+					continue;
+				}
+				basei++;
+				if (index >= maxIndex)
+					break;
+				index++;
+
+				Gun g2 = gunRegister.get(g.getBase());
+				try {
+					ItemStack is = ItemFact.getGun(g);
+					ItemMeta im = is.getItemMeta();
+					List<String> lore = ItemFact.getCraftingGunLore(g2, g);
+					im.setLore(lore);
+					is.setItemMeta(im);
+					if (enableVisibleAmounts)
+						is.setAmount(g2.getCraftingReturn());
+					if (shopping)
+						is = ItemFact.addShopLore(g2, g, is.clone());
+					shopMenu.addItem(is);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -2684,116 +2595,27 @@ public class Main extends JavaPlugin implements Listener {
 		return shopMenu;
 	}
 
-	public static Inventory createCraft(int page) {
-		Inventory shopMenu = Bukkit.createInventory(null, 9 * 6, S_craftingBenchName + page);
-		List<Gun> gunslistr = new ArrayList<Gun>(gunRegister.values());
-		Collections.sort(gunslistr);
-		int basei = 0;
-		int index = (page * 9 * 5);
-		int maxIndex = (index + (9 * 5));
-
-		shopMenu.setItem((9 * 6) - 1 - 8, prevButton);
-		shopMenu.setItem((9 * 6) - 1, nextButton);
-
-		if (basei + gunslistr.size() < index)
-			basei += gunslistr.size();
-		else
-			for (Gun g : gunslistr) {
-				if (basei < index) {
-					basei++;
-					continue;
-				}
-				basei++;
-				if (index >= maxIndex)
-					break;
-				index++;
-				try {
-					ItemStack is = ItemFact.getGun(g);
-					ItemMeta im = is.getItemMeta();
-					List<String> lore = ItemFact.getCraftingGunLore(g);
-					im.setLore(lore);
-					is.setItemMeta(im);
-					if (enableVisibleAmounts)
-						is.setAmount(g.getCraftingReturn());
-					shopMenu.addItem(is);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		if (basei + gunslistr.size() < index)
-			basei += gunslistr.size();
-		else
-			for (ArmoryBaseObject abo : miscRegister.values()) {
-				if (basei < index) {
-					basei++;
-					continue;
-				}
-				basei++;
-				if (index >= maxIndex)
-					break;
-				index++;
-				try {
-					ItemStack is = ItemFact.getObject(abo);
-					ItemMeta im = is.getItemMeta();
-					List<String> lore = ItemFact.getCraftingLore(abo);
-					im.setLore(lore);
-					is.setItemMeta(im);
-					if (enableVisibleAmounts)
-						is.setAmount(abo.getCraftingReturn());
-					shopMenu.addItem(is);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		if (basei + gunslistr.size() < index)
-			basei += gunslistr.size();
-		else
-			for (Ammo ammo : ammoRegister.values()) {
-				if (basei < index) {
-					basei++;
-					continue;
-				}
-				basei++;
-				if (index >= maxIndex)
-					break;
-				index++;
-				try {
-					ItemStack is = ItemFact.getAmmo(ammo);
-					ItemMeta im = is.getItemMeta();
-					List<String> lore = ItemFact.getCraftingLore(ammo);
-					im.setLore(lore);
-					is.setItemMeta(im);
-					is.setAmount(ammo.getCraftingReturn());
-					shopMenu.addItem(is);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		if (basei + gunslistr.size() < index)
-			basei += gunslistr.size();
-		else
-			for (ArmorObject armor : armorRegister.values()) {
-				if (basei < index) {
-					basei++;
-					continue;
-				}
-				basei++;
-				if (index >= maxIndex)
-					break;
-				index++;
-				try {
-					ItemStack is = ItemFact.getArmor(armor);
-					ItemMeta im = is.getItemMeta();
-					List<String> lore = ItemFact.getCraftingLore(armor);
-					im.setLore(lore);
-					is.setItemMeta(im);
-					is.setAmount(armor.getCraftingReturn());
-					shopMenu.addItem(is);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		return shopMenu;
+	public int findSafeSpot(ItemStack newItem, boolean findHighest) {
+		int safeDurib = newItem.getDurability();
+		for (MaterialStorage j : ammoRegister.keySet())
+			if (j.getMat() == newItem.getType() && (j.getData() > safeDurib) == findHighest)
+				safeDurib = j.getData();
+		for (MaterialStorage j : gunRegister.keySet())
+			if (j.getMat() == newItem.getType() && (j.getData() > safeDurib) == findHighest)
+				safeDurib = j.getData();
+		for (MaterialStorage j : miscRegister.keySet())
+			if (j.getMat() == newItem.getType() && (j.getData() > safeDurib) == findHighest)
+				safeDurib = j.getData();
+		for (MaterialStorage j : armorRegister.keySet())
+			if (j.getMat() == newItem.getType() && (j.getData() > safeDurib) == findHighest)
+				safeDurib = j.getData();
+		for (MaterialStorage j : reservedForExps)
+			if (j.getMat() == newItem.getType() && (j.getData() > safeDurib) == findHighest)
+				safeDurib = j.getData();
+		for (MaterialStorage j : attachmentRegister.keySet())
+			if (j.getMat() == newItem.getType() && (j.getData() > safeDurib) == findHighest)
+				safeDurib = j.getData();
+		return safeDurib;
 	}
 
 	public static int getMaxPages() {

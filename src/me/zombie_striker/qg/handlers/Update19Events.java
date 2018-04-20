@@ -1,6 +1,7 @@
 package me.zombie_striker.qg.handlers;
 
 import me.zombie_striker.qg.Main;
+import me.zombie_striker.qg.attachments.AttachmentBase;
 import me.zombie_striker.qg.guns.Gun;
 
 import org.bukkit.event.*;
@@ -28,7 +29,8 @@ public class Update19Events implements Listener {
 			if (g != null) {
 				e.setCancelled(true);
 				if (g.playerHasAmmo(e.getPlayer())) {
-					g.reload(e.getPlayer());
+					AttachmentBase attachmentBase = Main.getInstance().getGunWithAttchments(e.getOffHandItem());
+					g.reload(e.getPlayer(),attachmentBase);
 				}
 			}
 

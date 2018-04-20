@@ -48,7 +48,7 @@ public class RPGCharger implements ChargingHandler {
 			new RocketProjectile(start, player, two,enableArc);
 
 
-		GunUtil.playShoot(g, player);
+		GunUtil.playShoot(g,null, player);
 		
 		new BukkitRunnable() {
 

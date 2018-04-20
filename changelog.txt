@@ -1,4 +1,18 @@
-1.7.79
+1.1.80
+	Added BlockBullets for Glass
+	Added Attachment support.
+	Added Fully-Automatic firing support
+	Added support for mending items
+	Added P30 with a silencer
+	Added AWP skins
+	Added ability for NEW PKPs to use sights
+	Fixed PKP model: Added a small chain for the magazine and fixed clipping issue for ammobox
+	Fixed original AWP to use default green wood.
+	Fixed Dragunov to have correct sights
+	Fixed Dragunov textures.
+	Fixed m40 model and sights
+
+1.1.79
 	Added support for skulls with custom-set skins.
 	Fixed problem with sounds for chargers for 1.8.
 	Added ammo support for 1.8

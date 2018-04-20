@@ -10,13 +10,13 @@ import me.zombie_striker.qg.Main;
 import me.zombie_striker.qg.ammo.Ammo;
 import me.zombie_striker.qg.ammo.AmmoUtil;
 import me.zombie_striker.qg.armor.BulletProtectionUtil;
+import me.zombie_striker.qg.attachments.AttachmentBase;
 import me.zombie_striker.qg.guns.Gun;
 import me.zombie_striker.qg.handlers.AimManager;
 import me.zombie_striker.qg.handlers.BulletWoundHandler;
 import me.zombie_striker.qg.handlers.HeadShotUtil;
 import me.zombie_striker.qg.handlers.ParticleHandlers;
 import me.zombie_striker.qg.handlers.Update19OffhandChecker;
-import me.zombie_striker.qg.handlers.gunvalues.ChargingHandlerEnum;
 
 import org.bukkit.*;
 import org.bukkit.block.Block;
@@ -221,12 +221,12 @@ public class GunUtil {
 		}
 	}
 
-	public static void basicShoot(boolean offhand, Gun g, Player player, double acc) {
-		basicShoot(offhand, g, player, acc, 1);
+	public static void basicShoot(boolean offhand, Gun g,AttachmentBase attachmentBase, Player player, double acc) {
+		basicShoot(offhand, g,attachmentBase, player, acc, 1);
 	}
 
 	@SuppressWarnings("deprecation")
-	public static void basicShoot(boolean offhand, Gun g, final Player player, double acc, int times) {
+	public static void basicShoot(boolean offhand, Gun g,AttachmentBase attachmentBase, final Player player, double acc, int times) {
 		long showdelay = ((int) (g.getDelayBetweenShotsInSeconds() * 1000));
 		Main.DEBUG("About to shoot!");
 
@@ -253,13 +253,13 @@ public class GunUtil {
 		if (regularshoot) {
 			GunUtil.shoot(g, player, acc * AimManager.getSway(g, player.getUniqueId()), g.getDamage(),
 					g.getBulletsPerShot(), g.getMaxDistance());
-			playShoot(g, player);
+			playShoot(g, attachmentBase,player);
 		}
 
-		int amount = ItemFact.getAmount(temp) - (g.getChargingVal() != null
+		int amount = ItemFact.getAmount(temp) - /*(g.getChargingVal() != null
 				&& ChargingHandlerEnum.getEnumV(g.getChargingVal()) == ChargingHandlerEnum.RAPIDFIRE
 						? g.getBulletsPerShot()
-						: 1);
+						: 1)*/1;
 
 		if (amount < 0)
 			amount = 0;
@@ -273,7 +273,7 @@ public class GunUtil {
 		} else {
 			slot = player.getInventory().getHeldItemSlot();
 		}
-		im.setLore(ItemFact.getGunLore(g, temp, amount));
+		im.setLore(ItemFact.getGunLore(g,attachmentBase, temp, amount));
 		temp.setItemMeta(im);
 		if (slot == -1) {
 			try {
@@ -285,12 +285,12 @@ public class GunUtil {
 		}
 	}
 
-	public static void playShoot(final Gun g, final Player player) {
+	public static void playShoot(final Gun g, final AttachmentBase attach, final Player player) {
 		new BukkitRunnable() {
 			@Override
 			public void run() {
 				try {
-					player.getWorld().playSound(player.getLocation(), g.getWeaponSound().getName(), 4, 1);
+					player.getWorld().playSound(player.getLocation(), (attach!=null&&attach.hasNewSound())?attach.getNewSound():g.getWeaponSound().getName(), 4, 1);
 					/*
 					 * player.getWorld().playSound(player.getLocation(), Sound.BLOCK_LEVER_CLICK, 5,
 					 * 1); player.getWorld().playSound(player.getLocation(),
@@ -323,14 +323,16 @@ public class GunUtil {
 		return AmmoUtil.getAmmoAmount(player, g.getAmmoType()) > 0;
 	}
 
-	public static void basicReload(final Gun g, final Player player, boolean doNotRemoveAmmo) {
-		basicReload(g, player, doNotRemoveAmmo, 1.5);
+	public static void basicReload(final Gun g, AttachmentBase attach,final Player player, boolean doNotRemoveAmmo) {
+		basicReload(g,attach, player, doNotRemoveAmmo, 1.5);
 	}
 
-	public static void basicReload(final Gun g, final Player player, boolean doNotRemoveAmmo, double seconds) {
+	public static void basicReload(final Gun g, final AttachmentBase attachment, final Player player, boolean doNotRemoveAmmo, double seconds) {
 		@SuppressWarnings("deprecation")
 		final ItemStack temp = player.getInventory().getItemInHand();
 		ItemMeta im = temp.getItemMeta();
+		
+		final boolean att = attachment!=null;
 
 		if (ItemFact.getAmount(temp) == g.getMaxBullets()) {
 			return;
@@ -385,8 +387,8 @@ public class GunUtil {
 				seconds = g.getChargingVal().reload(player, g, subtractAmount);
 			}
 
-			im.setLore(ItemFact.getGunLore(g, temp, 0));
-			im.setDisplayName(g.getDisplayName() + " [Reloading...]");
+			im.setLore(ItemFact.getGunLore(g,attachment, temp, 0));
+			im.setDisplayName(att?attachment.getDisplayName():g.getDisplayName() + " [Reloading...]");
 			temp.setItemMeta(im);
 			if (Main.enableVisibleAmounts)
 				temp.setAmount(1);
@@ -418,13 +420,13 @@ public class GunUtil {
 						}
 					}
 					ItemMeta newim = temp.getItemMeta();
-					newim.setLore(ItemFact.getGunLore(g, temp, reloadAmount));
-					newim.setDisplayName(g.getDisplayName());
+					newim.setLore(ItemFact.getGunLore(g,attachment, temp, reloadAmount));
+					newim.setDisplayName(att?attachment.getDisplayName():g.getDisplayName());
 					temp.setItemMeta(newim);
 					if (Main.enableVisibleAmounts)
 						temp.setAmount(reloadAmount);
 					player.getInventory().setItem(slot, temp);
-					Main.sendHotbarGunAmmoCount(player, g, temp);
+					Main.sendHotbarGunAmmoCount(player, g, attachment, temp);
 				}
 			}.runTaskLater(Main.getInstance(), (long) (20 * seconds));
 			if (!Main.reloadingTasks.containsKey(player.getUniqueId())) {
@@ -461,6 +463,11 @@ public class GunUtil {
 		}
 		if (b.getType().name().contains("DOOR")) {
 			if (Main.blockbullet_door)
+				return true;
+			return false;
+		}
+		if (b.getType().name().contains("GLASS")) {
+			if (Main.blockbullet_glass)
 				return true;
 			return false;
 		}

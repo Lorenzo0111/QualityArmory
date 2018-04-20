@@ -11,6 +11,7 @@ import org.bukkit.inventory.meta.SkullMeta;
 
 import me.zombie_striker.qg.ammo.Ammo;
 import me.zombie_striker.qg.armor.ArmorObject;
+import me.zombie_striker.qg.attachments.AttachmentBase;
 import me.zombie_striker.qg.guns.Gun;
 import me.zombie_striker.qg.handlers.IronSightsToggleItem;
 import me.zombie_striker.qg.handlers.SkullHandler;
@@ -33,7 +34,7 @@ public class ItemFact {
 		return lore;
 	}
 
-	public static List<String> getGunLore(Gun g, ItemStack current, int amount) {
+	public static List<String> getGunLore(Gun g, AttachmentBase attach, ItemStack current, int amount) {
 		List<String> lore = new ArrayList<>();
 		if (g.getCustomLore() != null)
 			lore.addAll(g.getCustomLore());
@@ -50,10 +51,12 @@ public class ItemFact {
 			} else {
 				lore = setDamage(g, lore, getDamage(current));
 			}
-
+		if(attach !=null)
+			lore.addAll(attach.getLore());
 		if (Main.ENABLE_LORE_HELP) {
 			if (g.isAutomatic()) {
 				lore.add(Main.S_LMB_SINGLE);
+				lore.add(Main.S_LMB_FULLAUTO);
 				lore.add(Main.S_RMB_RELOAD);
 			} else {
 				lore.add(Main.S_LMB_SINGLE);
@@ -73,7 +76,10 @@ public class ItemFact {
 		return lore;
 	}
 
-	public static ItemStack addShopLore(ArmoryBaseObject obj, ItemStack current) {
+	public static ItemStack addShopLore(ArmoryBaseObject obj,ItemStack current) {
+		return addShopLore(obj, null, current);
+	}
+	public static ItemStack addShopLore(ArmoryBaseObject obj,AttachmentBase attach, ItemStack current) {
 		ItemMeta meta = current.getItemMeta();
 		List<String> lore = meta.getLore();
 		for (String loreS : new ArrayList<>(lore)) {
@@ -84,15 +90,15 @@ public class ItemFact {
 		}
 		if (obj.getCraftingReturn() > 1)
 			lore.add(ChatColor.DARK_RED + "Returns: " + obj.getCraftingReturn());
-		lore.add(ChatColor.GOLD + "Price: " + obj.cost());
+		lore.add(ChatColor.GOLD + "Price: " + (attach==null?obj.cost():attach.getPrice()));
 		meta.setLore(lore);
 		ItemStack is = current;
 		is.setItemMeta(meta);
 		return is;
 	}
 
-	public static List<String> getCraftingGunLore(Gun g) {
-		List<String> lore = getGunLore(g, null, 1);
+	public static List<String> getCraftingGunLore(Gun g, AttachmentBase attachmentBase) {
+		List<String> lore = getGunLore(g,attachmentBase, null, 1);
 		lore.addAll(getCraftingLore(g));
 		return lore;
 	}
@@ -114,18 +120,25 @@ public class ItemFact {
 	}
 
 	public static ItemStack getGun(int durib) {
-		Gun g = Main.gunRegister.get(MaterialStorage.getMS(Main.guntype, durib, 0, null));
-		return getGun(g);
+		return getGun(durib,0);
 	}
 
 	public static ItemStack getGun(int durib, int varient) {
-		Gun g = Main.gunRegister.get(MaterialStorage.getMS(Main.guntype, durib, varient, null));
-		return getGun(g);
+		return getGun(MaterialStorage.getMS(Main.guntype, durib, varient, null));
 	}
 
 	public static ItemStack getGun(MaterialStorage durib) {
 		Gun g = Main.gunRegister.get(durib);
-		return getGun(g);
+		AttachmentBase attach =null;
+		if(g==null) {
+			attach = Main.attachmentRegister.get(durib);
+			g = Main.gunRegister.get(attach.getBase());
+		}
+		return getGun(g,attach);
+	}
+	public static ItemStack getGun(AttachmentBase attachmentBase) {
+		Gun g = Main.gunRegister.get(attachmentBase.getBase());
+		return getGun(g,attachmentBase);
 	}
 
 	public static ItemStack getIronSights() {
@@ -146,12 +159,19 @@ public class ItemFact {
 	}
 
 	public static ItemStack getGun(Gun g) {
-		ItemStack is = new ItemStack(g.getItemData().getMat(), 0, (short) g.getItemData().getData());
-		if (g.getItemData().getData() < 0)
+		return getGun(g,null);
+	}
+	public static ItemStack getGun(Gun g, AttachmentBase attachmentBase) {
+		
+		MaterialStorage ms = attachmentBase==null?g.getItemData():attachmentBase.getItem();
+		String displayname = attachmentBase==null?g.getDisplayName():attachmentBase.getDisplayName();
+		
+		ItemStack is = new ItemStack(ms.getMat(), 0, (short) ms.getData());
+		if (ms.getData() < 0)
 			is.setDurability((short) 0);
 		ItemMeta im = is.getItemMeta();
-		im.setDisplayName(g.getDisplayName());
-		List<String> lore = getGunLore(g, null, g.getMaxBullets());
+		im.setDisplayName(displayname);
+		List<String> lore = getGunLore(g, attachmentBase, null, g.getMaxBullets());
 		im.setLore(lore);
 		try {
 			im.setUnbreakable(true);
