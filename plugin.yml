@@ -1,32 +1,32 @@
 main: me.zombie_striker.qg.Main
-version: 1.1.80
+version: 1.1.81
 name: QualityArmory
 commands:
   QualityArmory:
     description: Create images using blocks
     aliases: [qa]
 permissions:
-   qualityarmory.*:
-     description: Gives access to all PixelPrinter commands
-     children:
-       qualityarmory.admin: true
-   qualityarmory.admin:
-     description: Gives access to all PixelPrinter commands
-     children:
-       qualityarmory.give: true
-       qualityarmory.create: true
-       qualityarmory.createnewitem: true
-       qualityarmory.reload: true
-       qualityarmory.getopengunslot: true
-       qualityarmory.getmaterialsused: true
-       qualityarmory.default: true
-       qualityarmory.debugmessages: true
-   qualityarmory.default:
-     default: true
-     description: Gives access to all PixelPrinter commands
-     children:
-       qualityarmory.craft: true
-       qualityarmory.shop: true
+  qualityarmory.*:
+    description: Gives access to all PixelPrinter commands
+    children:
+      qualityarmory.admin: true
+  qualityarmory.admin:
+    description: Gives access to all PixelPrinter commands
+    children:
+      qualityarmory.give: true
+      qualityarmory.create: true
+      qualityarmory.createnewitem: true
+      qualityarmory.reload: true
+      qualityarmory.getopengunslot: true
+      qualityarmory.getmaterialsused: true
+      qualityarmory.default: true
+      qualityarmory.debugmessages: true
+  qualityarmory.default:
+    default: true
+    description: Gives access to all PixelPrinter commands
+    children:
+      qualityarmory.craft: true
+      qualityarmory.shop: true
 softdepend: [Vault, Parties, WorldGuard, ViaVersion, ViaRewind]
 author:
    Zombie_Striker

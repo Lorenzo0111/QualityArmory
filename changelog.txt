@@ -1,3 +1,10 @@
+1.1.81
+	Added "/qa Version" which prints the version of QA installed on the server and the changelog.
+	Fixed lore for ammo and base-objects
+	Fixed order attachments are loaded. Attachments should now appear next to guns.
+	Fixed attachments order so they are listed alphabetically 
+	Fixed custom object YML files will now support comments!	
+
 1.1.80
 	Added BlockBullets for Glass
 	Added Attachment support.

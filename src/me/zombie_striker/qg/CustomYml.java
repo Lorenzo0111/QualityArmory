@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
 
 public class CustomYml {
 
@@ -12,7 +11,7 @@ public class CustomYml {
 	private File s;
 	public CustomYml(File f) {
 		s = f;
-		c = YamlConfiguration.loadConfiguration(s);
+		c = CommentYamlConfiguration.loadConfiguration(s);
 	}
 	public Object a(String path, Object val){
 		if(!c.contains(path)){

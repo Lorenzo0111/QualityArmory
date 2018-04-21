@@ -1,6 +1,8 @@
 package me.zombie_striker.qg;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.*;
@@ -122,7 +124,7 @@ public class Main extends JavaPlugin implements Listener {
 
 	public static boolean overrideURL = false;
 	public static String url19plus = "https://www.dropbox.com/s/faufrgo7w2zpi3d/QualityArmoryv1.0.10.zip?dl=1";
-	public static String url19plusAXE = "https://www.dropbox.com/s/6uc7iekl4kftvg7/QualityArmoryv1.0.13c.zip?dl=1";
+	public static String url19plusAXE = "https://www.dropbox.com/s/76a6isemw6f4j9d/QualityArmoryv1.0.13d.zip?dl=1";
 	public static String url18 = "https://www.dropbox.com/s/gx6dhahq6onob4g/QualityArmory1.8v1.0.1.zip?dl=1";
 	public static String url = url19plusAXE;
 
@@ -939,6 +941,8 @@ public class Main extends JavaPlugin implements Listener {
 			List<String> s = new ArrayList<String>();
 			if (b("give", args[0]))
 				s.add("give");
+			if (b("version", args[0]))
+				s.add("version");
 			if (enableShop)
 				if (b("shop", args[0]))
 					s.add("shop");
@@ -999,6 +1003,27 @@ public class Main extends JavaPlugin implements Listener {
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 		if (command.getName().equalsIgnoreCase("QualityArmory")) {
 			if (args.length > 0) {
+				if (args[0].equalsIgnoreCase("version")) {
+					sender.sendMessage(prefix+ChatColor.WHITE+" This server is using version "+ChatColor.GREEN+this.getDescription().getVersion()+ChatColor.WHITE+" of QualityArmory");
+					sender.sendMessage("--==Changelog==--");
+					InputStream in = getClass().getResourceAsStream("/changelog.txt"); 
+					BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+					for(int i = 0; i <7;i++) {
+						try {
+							String s = reader.readLine();
+							if(s.length() <= 1)
+								break;
+							if(i==6) {
+								sender.sendMessage("......");
+								break;
+							}
+							sender.sendMessage(s);
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+					}
+					return true;
+				}
 				if (args[0].equalsIgnoreCase("getOpenGunSlot")) {
 					if (sender.hasPermission("qualityarmory.getopengunslot")) {
 						List<MaterialStorage> getAllKeys = new ArrayList<>();
@@ -1341,6 +1366,33 @@ public class Main extends JavaPlugin implements Listener {
 									Sound.valueOf("ANVIL_BREAK"), 1, 1);
 						}
 					}
+				} else if (isGunWithAttchments(e.getCurrentItem())) {
+					AttachmentBase g = getGunWithAttchments(e.getCurrentItem());
+					Gun g2 = gunRegister.get(g.getBase());
+					if (lookForIngre((Player) e.getWhoClicked(), g)
+							|| e.getWhoClicked().getGameMode() == GameMode.CREATIVE) {
+						removeForIngre((Player) e.getWhoClicked(), g);
+						ItemStack s = ItemFact.getGun(g);
+						s.setAmount(g2.getCraftingReturn());
+						e.getWhoClicked().getInventory().addItem(s);
+						try {
+							((Player) e.getWhoClicked()).playSound(e.getWhoClicked().getLocation(),
+									Sound.BLOCK_ANVIL_USE, 0.7f, 1);
+						} catch (Error e2) {
+							((Player) e.getWhoClicked()).playSound(e.getWhoClicked().getLocation(),
+									Sound.valueOf("ANVIL_USE"), 0.7f, 1);
+						}
+					} else {
+						e.getWhoClicked().closeInventory();
+						e.getWhoClicked().sendMessage(prefix + S_missingIngredients);
+						try {
+							((Player) e.getWhoClicked()).playSound(e.getWhoClicked().getLocation(),
+									Sound.BLOCK_ANVIL_BREAK, 1, 1);
+						} catch (Error e2) {
+							((Player) e.getWhoClicked()).playSound(e.getWhoClicked().getLocation(),
+									Sound.valueOf("ANVIL_BREAK"), 1, 1);
+						}
+					}
 				} else if (isAmmo(e.getCurrentItem())) {
 					Ammo g = getAmmo(e.getCurrentItem());
 					if (lookForIngre((Player) e.getWhoClicked(), g)
@@ -1592,10 +1644,17 @@ public class Main extends JavaPlugin implements Listener {
 		// }
 	}
 
+	public boolean lookForIngre(Player player, AttachmentBase a) {
+		return lookForIngre(player, a.getCraftingRequirements());
+	}
+
 	public boolean lookForIngre(Player player, ArmoryBaseObject a) {
-		if (a == null || a.getIngredients() == null)
+		return lookForIngre(player, a.getIngredients());
+	}
+
+	public boolean lookForIngre(Player player, ItemStack[] ings) {
+		if (ings == null)
 			return true;
-		ItemStack[] ings = a.getIngredients();
 		boolean[] bb = new boolean[ings.length];
 		for (ItemStack is : player.getInventory().getContents()) {
 			if (is != null) {
@@ -1620,10 +1679,17 @@ public class Main extends JavaPlugin implements Listener {
 		return true;
 	}
 
+	public boolean removeForIngre(Player player, AttachmentBase a) {
+		return removeForIngre(player, a.getCraftingRequirements());
+	}
+
 	public boolean removeForIngre(Player player, ArmoryBaseObject a) {
-		if (a == null || a.getIngredients() == null)
+		return removeForIngre(player, a.getIngredients());
+	}
+
+	public boolean removeForIngre(Player player, ItemStack[] ings) {
+		if (ings == null)
 			return true;
-		ItemStack[] ings = a.getIngredients();
 		boolean[] bb = new boolean[ings.length];
 		for (ItemStack is : player.getInventory().getContents()) {
 			if (is != null) {
@@ -1750,7 +1816,7 @@ public class Main extends JavaPlugin implements Listener {
 				if (usedItem.getEnchantments().containsKey(Enchantment.MENDING))
 					if (!isCustomItem(usedItem, 0) && isCustomItem(usedItem, -2)) {
 						ItemStack temp2 = usedItem;
-						temp2.setDurability((short)Math.max((findSafeSpot(usedItem, false) -1),0));
+						temp2.setDurability((short) Math.max((findSafeSpot(usedItem, false) - 1), 0));
 						e.getPlayer().setItemInHand(temp2);
 						return;
 					}
@@ -2318,7 +2384,7 @@ public class Main extends JavaPlugin implements Listener {
 		int var = MaterialStorage.getVarient(is);
 		return (is != null
 				&& (reservedForExps.contains(MaterialStorage.getMS(is.getType(), (int) is.getDurability(), var))
-						|| reservedForExps.contains(MaterialStorage.getMS(is.getType(), -1, -1,"-1","-1"))));
+						|| reservedForExps.contains(MaterialStorage.getMS(is.getType(), -1, -1, "-1", "-1"))));
 	}
 
 	public boolean isArmor(ItemStack is) {
@@ -2483,6 +2549,38 @@ public class Main extends JavaPlugin implements Listener {
 					e.printStackTrace();
 				}
 			}
+
+		List<AttachmentBase> attlistr = new ArrayList<AttachmentBase>(attachmentRegister.values());
+		Collections.sort(attlistr);
+		if (basei + gunslistr.size() < index)
+			basei += gunslistr.size();
+		else
+			for (AttachmentBase g : attlistr) {
+				if (basei < index) {
+					basei++;
+					continue;
+				}
+				basei++;
+				if (index >= maxIndex)
+					break;
+				index++;
+
+				Gun g2 = gunRegister.get(g.getBase());
+				try {
+					ItemStack is = ItemFact.getGun(g);
+					ItemMeta im = is.getItemMeta();
+					List<String> lore = ItemFact.getCraftingGunLore(g2, g);
+					im.setLore(lore);
+					is.setItemMeta(im);
+					if (enableVisibleAmounts)
+						is.setAmount(g2.getCraftingReturn());
+					if (shopping)
+						is = ItemFact.addShopLore(g2, g, is.clone());
+					shopMenu.addItem(is);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
 		if (basei + gunslistr.size() < index)
 			basei += gunslistr.size();
 		else
@@ -2557,36 +2655,6 @@ public class Main extends JavaPlugin implements Listener {
 					is.setAmount(armor.getCraftingReturn());
 					if (shopping)
 						is = ItemFact.addShopLore(armor, is.clone());
-					shopMenu.addItem(is);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-
-		if (basei + gunslistr.size() < index)
-			basei += gunslistr.size();
-		else
-			for (AttachmentBase g : attachmentRegister.values()) {
-				if (basei < index) {
-					basei++;
-					continue;
-				}
-				basei++;
-				if (index >= maxIndex)
-					break;
-				index++;
-
-				Gun g2 = gunRegister.get(g.getBase());
-				try {
-					ItemStack is = ItemFact.getGun(g);
-					ItemMeta im = is.getItemMeta();
-					List<String> lore = ItemFact.getCraftingGunLore(g2, g);
-					im.setLore(lore);
-					is.setItemMeta(im);
-					if (enableVisibleAmounts)
-						is.setAmount(g2.getCraftingReturn());
-					if (shopping)
-						is = ItemFact.addShopLore(g2, g, is.clone());
 					shopMenu.addItem(is);
 				} catch (Exception e) {
 					e.printStackTrace();

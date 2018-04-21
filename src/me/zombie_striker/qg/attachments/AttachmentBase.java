@@ -12,7 +12,7 @@ import me.zombie_striker.qg.guns.utils.WeaponSounds;
 import me.zombie_striker.qg.guns.utils.WeaponType;
 import me.zombie_striker.qg.handlers.gunvalues.ChargingHandler;
 
-public class AttachmentBase {
+public class AttachmentBase implements Comparable<AttachmentBase>{
 
 	private MaterialStorage base;
 	private Gun baseGun;
@@ -243,6 +243,11 @@ public class AttachmentBase {
 
 	public void setNewWeaponType(WeaponType newWeaponType) {
 		this.newWeaponType = newWeaponType;
+	}
+
+	@Override
+	public int compareTo(AttachmentBase arg0) {
+		return this.displayname.compareTo(arg0.getDisplayName());
 	}
 
 }

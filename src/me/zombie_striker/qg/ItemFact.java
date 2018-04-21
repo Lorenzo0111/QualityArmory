@@ -248,7 +248,7 @@ public class ItemFact {
 		List<String> lore = new ArrayList<String>();
 		lore.addAll(a.getCustomLore());
 		addVarientData(lore, a);
-
+		im.setLore(lore);
 		if (a.isSkull() && !setSkull) {
 			((SkullMeta) im).setOwner(a.getSkullOwner());
 		}
