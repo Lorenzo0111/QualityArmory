@@ -146,13 +146,12 @@ public class MedKit implements InteractableMisc {
 
 		ChatColor severity = percentBlood > 75 ? ChatColor.WHITE
 				: percentBlood > 50 ? ChatColor.GRAY : percentBlood > 25 ? ChatColor.RED : ChatColor.DARK_RED;
-
-		if (BulletWoundHandler.bleedoutMultiplier.get(healer.getUniqueId()) < 0)
+		if (BulletWoundHandler.bleedoutMultiplier.containsKey(healer.getUniqueId()) && BulletWoundHandler.bleedoutMultiplier.get(healer.getUniqueId()) < 0)
 			BulletWoundHandler.bleedoutMultiplier.put(healer.getUniqueId(),
 					Math.min(0,
 							BulletWoundHandler.bleedoutMultiplier.get(healer.getUniqueId())+Main.bulletWound_MedkitBloodlossHealRate));
 
-		double newRate =  BulletWoundHandler.bleedoutMultiplier.get(healer.getUniqueId());
+		double newRate =  BulletWoundHandler.bleedoutMultiplier.containsKey(healer.getUniqueId())?BulletWoundHandler.bleedoutMultiplier.get(healer.getUniqueId()):0;
 
 		try {
 			int totalBars = 25;

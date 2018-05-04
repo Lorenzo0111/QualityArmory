@@ -11,6 +11,7 @@ import org.bukkit.inventory.meta.SkullMeta;
 
 import me.zombie_striker.qg.ammo.Ammo;
 import me.zombie_striker.qg.armor.ArmorObject;
+import me.zombie_striker.qg.armor.angles.AngledArmor;
 import me.zombie_striker.qg.attachments.AttachmentBase;
 import me.zombie_striker.qg.guns.Gun;
 import me.zombie_striker.qg.handlers.IronSightsToggleItem;
@@ -193,6 +194,11 @@ public class ItemFact {
 		return is;
 	}
 
+	public static ItemStack getArmor(AngledArmor a) {
+		ItemStack is = getArmor(Main.armorRegister.get(a.getBase()));
+		is.setDurability((short) a.getMaterial().getData());
+		return is;
+	}
 	public static ItemStack getArmor(ArmorObject a) {
 		ItemStack is = new ItemStack(a.getItemData().getMat(), 0, (short) a.getItemData().getData());
 		if (a.getItemData().getData() < 0)
@@ -293,7 +299,7 @@ public class ItemFact {
 
 	public static int getDamage(ItemStack is) {
 		for (String lore : is.getItemMeta().getLore()) {
-			if (lore.startsWith(Main.S_ITEM_DURIB + ":")) {
+			if (ChatColor.stripColor(lore).startsWith(Main.S_ITEM_DURIB)) {
 				return Integer.parseInt(lore.split(":")[1].split("/")[0]);
 			}
 		}
@@ -316,7 +322,7 @@ public class ItemFact {
 		double k = ((double) damage) / g.getDurability();
 		ChatColor c = k > 0.5 ? ChatColor.DARK_GREEN : k > 0.25 ? ChatColor.GOLD : ChatColor.DARK_RED;
 		for (int j = 0; j < lore.size(); j++) {
-			if (ChatColor.stripColor(lore.get(j)).startsWith(Main.S_ITEM_DURIB)) {
+			if (ChatColor.stripColor(lore.get(j)).contains(Main.S_ITEM_DURIB)) {
 				lore.set(j, c + Main.S_ITEM_DURIB + ":" + damage + "/" + g.getDurability());
 				foundLine = true;
 				break;

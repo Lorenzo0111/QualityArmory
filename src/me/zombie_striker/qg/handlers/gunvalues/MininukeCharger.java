@@ -14,14 +14,13 @@ import org.bukkit.util.Vector;
 import me.zombie_striker.qg.Main;
 import me.zombie_striker.qg.guns.Gun;
 import me.zombie_striker.qg.guns.utils.GunUtil;
-import me.zombie_striker.qg.guns.utils.RocketProjectile;
+import me.zombie_striker.qg.guns.utils.MiniNukeProjectile;
 import me.zombie_striker.qg.guns.utils.WeaponSounds;
 
-public class RPGCharger implements ChargingHandler {
+public class MininukeCharger implements ChargingHandler {
 
 	List<UUID> timeC = new ArrayList<>();
 	List<UUID> timeR = new ArrayList<>();
-	
 
 	@Override
 	public boolean isCharging(Player player) {
@@ -44,7 +43,7 @@ public class RPGCharger implements ChargingHandler {
 		Vector two = go.clone().multiply(2);
 
 		for (int j = 0; j < g.getBulletsPerShot(); j++)
-			new RocketProjectile(start, player, two);
+			new MiniNukeProjectile(start,player,two);
 
 
 		GunUtil.playShoot(g,null, player);

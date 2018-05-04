@@ -3,7 +3,7 @@ package me.zombie_striker.qg.handlers.gunvalues;
 public enum ChargingHandlerEnum {
 
 	BOLTACTION("BoltAction"), REVOLVER("Revolver"), PUMPACTION("PumpAction"), BREAKACTION("BreakAction"), RPG(
-			"SingleRPG"), RAPIDFIRE("RapidFireMode"), RPG_ARC("SingleRPG_ARC");
+			"SingleRPG"), RAPIDFIRE("RapidFireMode"), MININUKELAUNCHER("MininukeLauncher");
 	private String name;
 
 	private ChargingHandlerEnum(String name) {
@@ -19,17 +19,15 @@ public enum ChargingHandlerEnum {
 		case BOLTACTION:
 			return new BoltactionCharger();
 		case REVOLVER:
-			return new PistolCharger();
+			return new RevolverCharger();
 		case PUMPACTION:
 			return new PumpactionCharger();
 		case BREAKACTION:
 			return new BreakactionCharger();
 		case RPG:
 			return new RPGCharger();
-		case RPG_ARC:
-			RPGCharger r = new RPGCharger();
-			r.enableArc = true;
-			return r;
+		case MININUKELAUNCHER:
+			return new MininukeCharger();
 		case RAPIDFIRE:
 			return new RapidFireCharger();
 		}
@@ -39,18 +37,16 @@ public enum ChargingHandlerEnum {
 	public static ChargingHandlerEnum getEnumV(ChargingHandler en) {
 		if (en instanceof BoltactionCharger)
 			return ChargingHandlerEnum.BOLTACTION;
-		if (en instanceof PistolCharger)
+		if (en instanceof RevolverCharger)
 			return ChargingHandlerEnum.REVOLVER;
 		if (en instanceof PumpactionCharger)
 			return ChargingHandlerEnum.PUMPACTION;
 		if (en instanceof BreakactionCharger)
 			return ChargingHandlerEnum.BREAKACTION;
+		if (en instanceof MininukeCharger)
+			return ChargingHandlerEnum.MININUKELAUNCHER;
 		if (en instanceof RPGCharger)
-			if (((RPGCharger) en).enableArc) {
-				return ChargingHandlerEnum.RPG_ARC;
-			} else {
-				return ChargingHandlerEnum.RPG;
-			}
+			return ChargingHandlerEnum.RPG;
 		if (en instanceof RapidFireCharger)
 			return ChargingHandlerEnum.RAPIDFIRE;
 		return null;

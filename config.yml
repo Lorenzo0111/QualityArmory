@@ -31,6 +31,9 @@
 #Q: I want to add new guns/ammo to the plugin
 #A: Follow this tutoiral: https://www.spigotmc.org/wiki/how-to-create-new-guns-with-quality-armory/
 
+unknownTranslationKeyFixer: false
+Enable_Creation_Of_Default_Files: true
+
 ENABLE-DEBUG: false
 useDefaultResourcepack: true
 sendOnJoin: false
@@ -40,6 +43,8 @@ DefaultResoucepack: https://www.dropbox.com/s/6u62uiaxcp2ef9y/QualityArmoryv1.0.
 hideTextureWarnings: false
 Auto-Detect-Resourcepack: false
 Enable_Headshot_Instantkill: true
+Enable_Headshot_Notification_Sound: true
+Enable_Headshot_Sounds: true
 UnlimitedPistolAmmo: false
 UnlimitedShotgunAmmo: false
 UnlimitedRifleAmmo: false
@@ -82,19 +87,4 @@ Bullet-Particle-Type: FIREWORKS_SPARK
 ACCEPTED-BULLET-PARTICLE-VALUES: https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Particle.html
 gunMaterialType: DIAMOND_AXE
 IronSightsOnRightCLick: false
-Crafting:
-  Grenades:
-  - IRON_INGOT,0,6
-  - SULPHUR,0,10
-  Kevlarnk1:
-  - IRON_INGOT,0,15
-  - REDSTONE,0,5
-Weapon:
-  Grenade:
-    Price: 800.0
-    radiusdamage: 10.0
-    radius: 5.0
-  Kevlarmk1:
-    DamageThreshold: 1
-    Price: 1200.0
 SecondsTillRPIsSent: 0.0

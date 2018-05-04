@@ -206,20 +206,20 @@ public class GunYMLLoader {
 						if (weatype.isGun()) {
 							boolean isAutomatic = f2.contains("isAutomatic") ? f2.getBoolean("isAutomatic") : false;
 
-							WeaponSounds sound = WeaponSounds.GUN_MEDIUM;
+							String sound = WeaponSounds.GUN_MEDIUM.getName();
 
 							if (f2.contains("weaponsounds")) {
-								sound = WeaponSounds.getByName(f2.getString("weaponsounds"));
+								sound = f2.getString("weaponsounds");
 							} else {
 
 								if (weatype == WeaponType.PISTOL || weatype == WeaponType.SMG)
-									sound = WeaponSounds.GUN_SMALL;
+									sound = WeaponSounds.GUN_SMALL.getName();
 								if (weatype == WeaponType.SHOTGUN || weatype == WeaponType.SNIPER)
-									sound = WeaponSounds.GUN_BIG;
+									sound = WeaponSounds.GUN_BIG.getName();
 								if (weatype == WeaponType.RPG)
-									sound = WeaponSounds.WARHEAD_LAUNCH;
+									sound = WeaponSounds.WARHEAD_LAUNCH.getName();
 								if (weatype == WeaponType.LAZER)
-									sound = WeaponSounds.LAZERSHOOT;
+									sound = WeaponSounds.LAZERSHOOT.getName();
 							}
 
 							Gun g = new Gun(name, ms, weatype, f2.getBoolean("enableIronSights"),

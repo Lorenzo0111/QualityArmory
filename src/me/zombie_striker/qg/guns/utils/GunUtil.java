@@ -17,6 +17,7 @@ import me.zombie_striker.qg.handlers.BulletWoundHandler;
 import me.zombie_striker.qg.handlers.HeadShotUtil;
 import me.zombie_striker.qg.handlers.ParticleHandlers;
 import me.zombie_striker.qg.handlers.Update19OffhandChecker;
+import me.zombie_striker.qg.handlers.gunvalues.ChargingHandlerEnum;
 
 import org.bukkit.*;
 import org.bukkit.block.Block;
@@ -120,15 +121,19 @@ public class GunUtil {
 								hitTarget = e;
 								headShot = HeadShotUtil.isHeadShot(e, test);
 								if (headShot) {
-									try {
-										p.playSound(p.getLocation(), Sound.BLOCK_NOTE_PLING, 2, 1);
-										if (!Main.isVersionHigherThan(1, 9))
-											try {
-												p.playSound(p.getLocation(), Sound.valueOf("LAVA_POP"), 6, 1);
-											} catch (Error | Exception h4) {
-											}
-									} catch (Error | Exception h4) {
-										p.playSound(p.getLocation(), Sound.valueOf("LAVA_POP"), 1, 1);
+									Main.DEBUG("Headshot!");
+									if (Main.headshotPling) {
+										try {
+											p.playSound(p.getLocation(), Sound.BLOCK_NOTE_PLING, 2, 1);
+											if (!Main.isVersionHigherThan(1, 9))
+												try {
+													p.playSound(p.getLocation(), Sound.valueOf("LAVA_POP"), 6, 1);
+												} catch (Error | Exception h4) {
+												}
+
+										} catch (Error | Exception h4) {
+											p.playSound(p.getLocation(), Sound.valueOf("LAVA_POP"), 1, 1);
+										}
 									}
 								}
 							}
@@ -151,6 +156,7 @@ public class GunUtil {
 					((Damageable) hitTarget).damage(
 							damage * (bulletProtection ? 0.1 : 1) * (headShot ? (Main.HeadshotOneHit ? 50 : 2) : 1), p);
 					((LivingEntity) hitTarget).setNoDamageTicks(0);
+					Main.DEBUG("Damaging entity " + hitTarget.getName());
 
 				}
 			}
@@ -168,19 +174,11 @@ public class GunUtil {
 						List<Player> heard = new ArrayList<>();
 						for (Player p2 : nonheard) {
 							if (p2.getLocation().distance(start) < control * 2) {
-								if (Main.isVersionHigherThan(1, 10)) {
 									try {
 										start.getWorld().playSound(start, Sound.BLOCK_DISPENSER_LAUNCH, 2, 3);
 									} catch (Error e) {
 										start.getWorld().playSound(start, Sound.valueOf("SHOOT_ARROW"), 2, 2);
 									}
-								} else {
-									try {
-										start.getWorld().playSound(start, Sound.BLOCK_DISPENSER_LAUNCH, 2, 3);
-									} catch (Error e) {
-										start.getWorld().playSound(start, Sound.valueOf("SHOOT_ARROW"), 2, 2);
-									}
-								}
 								heard.add(p2);
 							}
 						}
@@ -221,12 +219,13 @@ public class GunUtil {
 		}
 	}
 
-	public static void basicShoot(boolean offhand, Gun g,AttachmentBase attachmentBase, Player player, double acc) {
-		basicShoot(offhand, g,attachmentBase, player, acc, 1);
+	public static void basicShoot(boolean offhand, Gun g, AttachmentBase attachmentBase, Player player, double acc) {
+		basicShoot(offhand, g, attachmentBase, player, acc, 1);
 	}
 
 	@SuppressWarnings("deprecation")
-	public static void basicShoot(boolean offhand, Gun g,AttachmentBase attachmentBase, final Player player, double acc, int times) {
+	public static void basicShoot(boolean offhand, Gun g, AttachmentBase attachmentBase, final Player player,
+			double acc, int times) {
 		long showdelay = ((int) (g.getDelayBetweenShotsInSeconds() * 1000));
 		Main.DEBUG("About to shoot!");
 
@@ -247,19 +246,20 @@ public class GunUtil {
 		if (g.getChargingVal() != null
 				&& (!g.getChargingVal().isCharging(player) && !g.getChargingVal().isReloading(player))) {
 			regularshoot = g.getChargingVal().shoot(g, player, temp);
-
+			Main.DEBUG("Charging shoot debug: "+g.getName()+" = "+(ChargingHandlerEnum.getEnumV(g.getChargingVal()).getName()));
 		}
 
 		if (regularshoot) {
 			GunUtil.shoot(g, player, acc * AimManager.getSway(g, player.getUniqueId()), g.getDamage(),
 					g.getBulletsPerShot(), g.getMaxDistance());
-			playShoot(g, attachmentBase,player);
+			playShoot(g, attachmentBase, player);
 		}
 
-		int amount = ItemFact.getAmount(temp) - /*(g.getChargingVal() != null
-				&& ChargingHandlerEnum.getEnumV(g.getChargingVal()) == ChargingHandlerEnum.RAPIDFIRE
-						? g.getBulletsPerShot()
-						: 1)*/1;
+		int amount = ItemFact.getAmount(temp) - /*
+												 * (g.getChargingVal() != null &&
+												 * ChargingHandlerEnum.getEnumV(g.getChargingVal()) ==
+												 * ChargingHandlerEnum.RAPIDFIRE ? g.getBulletsPerShot() : 1)
+												 */1;
 
 		if (amount < 0)
 			amount = 0;
@@ -273,7 +273,7 @@ public class GunUtil {
 		} else {
 			slot = player.getInventory().getHeldItemSlot();
 		}
-		im.setLore(ItemFact.getGunLore(g,attachmentBase, temp, amount));
+		im.setLore(ItemFact.getGunLore(g, attachmentBase, temp, amount));
 		temp.setItemMeta(im);
 		if (slot == -1) {
 			try {
@@ -290,14 +290,10 @@ public class GunUtil {
 			@Override
 			public void run() {
 				try {
-					player.getWorld().playSound(player.getLocation(), (attach!=null&&attach.hasNewSound())?attach.getNewSound():g.getWeaponSound().getName(), 4, 1);
-					/*
-					 * player.getWorld().playSound(player.getLocation(), Sound.BLOCK_LEVER_CLICK, 5,
-					 * 1); player.getWorld().playSound(player.getLocation(),
-					 * Sound.ENTITY_WITHER_SHOOT, 8, 2);
-					 * player.getWorld().playSound(player.getLocation(),
-					 * Sound.ENTITY_ENDERDRAGON_FIREBALL_EXPLODE, 8, 2f);
-					 */
+					player.getWorld().playSound(player.getLocation(),
+							(attach != null && attach.hasNewSound()) ? attach.getNewSound()
+									: g.getWeaponSound(),
+							4, 1);
 					if (!Main.isVersionHigherThan(1, 9)) {
 						try {
 							player.getWorld().playSound(player.getLocation(), Sound.valueOf("CLICK"), 5, 1);
@@ -323,22 +319,23 @@ public class GunUtil {
 		return AmmoUtil.getAmmoAmount(player, g.getAmmoType()) > 0;
 	}
 
-	public static void basicReload(final Gun g, AttachmentBase attach,final Player player, boolean doNotRemoveAmmo) {
-		basicReload(g,attach, player, doNotRemoveAmmo, 1.5);
+	public static void basicReload(final Gun g, AttachmentBase attach, final Player player, boolean doNotRemoveAmmo) {
+		basicReload(g, attach, player, doNotRemoveAmmo, 1.5);
 	}
 
-	public static void basicReload(final Gun g, final AttachmentBase attachment, final Player player, boolean doNotRemoveAmmo, double seconds) {
+	public static void basicReload(final Gun g, final AttachmentBase attachment, final Player player,
+			boolean doNotRemoveAmmo, double seconds) {
 		@SuppressWarnings("deprecation")
 		final ItemStack temp = player.getInventory().getItemInHand();
 		ItemMeta im = temp.getItemMeta();
-		
-		final boolean att = attachment!=null;
+
+		final boolean att = attachment != null;
 
 		if (ItemFact.getAmount(temp) == g.getMaxBullets()) {
 			return;
 		}
 
-		if (im.getLore() != null && im.getDisplayName().contains("Reloading.")) {
+		if (im.getLore() != null && im.getDisplayName().contains(Main.S_RELOADING_MESSAGE)) {
 			/*
 			 * try { /* player.getWorld().playSound(player.getLocation(),
 			 * Sound.BLOCK_LEVER_CLICK, 5, 1);
@@ -387,8 +384,8 @@ public class GunUtil {
 				seconds = g.getChargingVal().reload(player, g, subtractAmount);
 			}
 
-			im.setLore(ItemFact.getGunLore(g,attachment, temp, 0));
-			im.setDisplayName(att?attachment.getDisplayName():g.getDisplayName() + " [Reloading...]");
+			im.setLore(ItemFact.getGunLore(g, attachment, temp, 0));
+			im.setDisplayName(att ? attachment.getDisplayName() : g.getDisplayName() + Main.S_RELOADING_MESSAGE);
 			temp.setItemMeta(im);
 			if (Main.enableVisibleAmounts)
 				temp.setAmount(1);
@@ -420,8 +417,8 @@ public class GunUtil {
 						}
 					}
 					ItemMeta newim = temp.getItemMeta();
-					newim.setLore(ItemFact.getGunLore(g,attachment, temp, reloadAmount));
-					newim.setDisplayName(att?attachment.getDisplayName():g.getDisplayName());
+					newim.setLore(ItemFact.getGunLore(g, attachment, temp, reloadAmount));
+					newim.setDisplayName(att ? attachment.getDisplayName() : g.getDisplayName());
 					temp.setItemMeta(newim);
 					if (Main.enableVisibleAmounts)
 						temp.setAmount(reloadAmount);

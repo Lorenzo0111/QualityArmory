@@ -22,7 +22,7 @@ public class MaterialStorage {
 	public static MaterialStorage getMS(Material m, int d, int var, String extraValue, String ev2) {
 		for (MaterialStorage k : store) {
 			if (matchesMaterials(k, m, d) && matchVarients(k, var) && matchHeads(k, extraValue, ev2))
-			return k;
+				return k;
 		}
 		MaterialStorage mm = new MaterialStorage(m, d, var, extraValue, ev2);
 		store.add(mm);
@@ -119,19 +119,20 @@ public class MaterialStorage {
 	}
 
 	public static int getVarient(ItemStack is) {
-		if (is.hasItemMeta() && is.getItemMeta().hasLore()) {
-			for (String lore : is.getItemMeta().getLore()) {
-				if (lore.startsWith(Main.S_ITEM_VARIENTS)) {
-					try {
-						int id = Integer.parseInt(lore.split(":")[1].trim());
-						return id;
-					} catch (Error | Exception e4) {
-						e4.printStackTrace();
-						return 0;
+		if (is != null)
+			if (is.hasItemMeta() && is.getItemMeta().hasLore()) {
+				for (String lore : is.getItemMeta().getLore()) {
+					if (lore.startsWith(Main.S_ITEM_VARIENTS)) {
+						try {
+							int id = Integer.parseInt(lore.split(":")[1].trim());
+							return id;
+						} catch (Error | Exception e4) {
+							e4.printStackTrace();
+							return 0;
+						}
 					}
 				}
 			}
-		}
 		return 0;
 	}
 }

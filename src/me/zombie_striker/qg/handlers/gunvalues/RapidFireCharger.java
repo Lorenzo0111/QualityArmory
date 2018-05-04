@@ -33,7 +33,7 @@ public class RapidFireCharger implements ChargingHandler {
 	@Override
 	public boolean shoot(final Gun g,final Player player, final ItemStack stack) {
 		GunUtil.shoot(g, player, g.getSway() * AimManager.getSway(g, player.getUniqueId()), g.getDamage(), 1, 200);
-		final AttachmentBase attach = Main.getInstance().getGunWithAttchments(stack);
+		final AttachmentBase attach = Main.getGunWithAttchments(stack);
 		GunUtil.playShoot(g, attach, player);
 		/*
 		 * for (int j = 1; j < Math.min(ItemFact.getAmount(stack),
@@ -49,7 +49,8 @@ public class RapidFireCharger implements ChargingHandler {
 		shooters.put(player.getUniqueId(),new BukkitRunnable() {			
 			int slotUsed = player.getInventory().getHeldItemSlot();
 			@SuppressWarnings("deprecation")
-			boolean offhand = Main.getInstance().isIS(player.getItemInHand());
+			boolean offhand = Main.isIS(player.getItemInHand());
+			@SuppressWarnings("deprecation")
 			public void run() {
 
 				int amount = ItemFact.getAmount(stack) - /*(g.getChargingVal() != null
@@ -83,7 +84,12 @@ public class RapidFireCharger implements ChargingHandler {
 				stack.setItemMeta(im);
 				if (slot == -1) {
 					try {
+						if(Main.isIS(player.getItemInHand())) {
 						player.getInventory().setItemInOffHand(stack);
+						}else {
+							player.getInventory().setItemInHand(stack);
+						}
+						
 					} catch (Error e) {
 					}
 				} else {

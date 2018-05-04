@@ -13,7 +13,7 @@ public class Update19Events implements Listener {
 	public void onItemHandSwap(PlayerSwapHandItemsEvent e) {
 		if (Main.reloadOnF) {
 			try {
-				if (Main.getInstance().isIS(e.getOffHandItem())) {
+				if (Main.isIS(e.getOffHandItem())) {
 					e.setCancelled(true);
 					e.getPlayer().getInventory().setItemInMainHand(e.getMainHandItem());
 					e.getPlayer().getInventory().setItemInOffHand(null);
@@ -22,14 +22,14 @@ public class Update19Events implements Listener {
 			}
 			Gun g = null;
 			if (Main.isGun(e.getOffHandItem())) {
-				g = Main.getInstance().getGun(e.getOffHandItem());
+				g = Main.getGun(e.getOffHandItem());
 			} else if (Main.isGun(e.getMainHandItem())) {
-				g = Main.getInstance().getGun(e.getMainHandItem());
+				g = Main.getGun(e.getMainHandItem());
 			}
 			if (g != null) {
 				e.setCancelled(true);
 				if (g.playerHasAmmo(e.getPlayer())) {
-					AttachmentBase attachmentBase = Main.getInstance().getGunWithAttchments(e.getOffHandItem());
+					AttachmentBase attachmentBase = Main.getGunWithAttchments(e.getOffHandItem());
 					g.reload(e.getPlayer(),attachmentBase);
 				}
 			}

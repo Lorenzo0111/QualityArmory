@@ -5,6 +5,7 @@ import java.util.List;
 
 import me.zombie_striker.qg.Main;
 import me.zombie_striker.qg.handlers.ExplosionHandler;
+import me.zombie_striker.qg.handlers.ParticleHandlers;
 
 import org.bukkit.Effect;
 import org.bukkit.Location;
@@ -15,9 +16,11 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
-public class RocketProjectile {
+public class MiniNukeProjectile {
 
-	public RocketProjectile(final Location s, final Player player, final Vector dir) {
+	public static final double gravity = 0.05;
+
+	public MiniNukeProjectile(final Location s, final Player player, final Vector dir) {
 		new BukkitRunnable() {
 			int distance = 220;
 
@@ -25,6 +28,7 @@ public class RocketProjectile {
 			public void run() {
 				distance--;
 				s.add(dir);
+				dir.setY(dir.getY() - gravity);
 				try {
 					s.getWorld().spawnParticle(org.bukkit.Particle.SMOKE_LARGE, s, 0);
 					s.getWorld().spawnParticle(org.bukkit.Particle.FIREWORKS_SPARK, s, 0);
@@ -50,8 +54,15 @@ public class RocketProjectile {
 					try {
 						player.getWorld().playSound(s, WeaponSounds.WARHEAD_EXPLODE.getName(), 10, 0.9f);
 						player.getWorld().playSound(s, Sound.ENTITY_GENERIC_EXPLODE, 8, 0.7f);
-						s.getWorld().spawnParticle(org.bukkit.Particle.EXPLOSION_HUGE, s, 0);
-						
+						ParticleHandlers.spawnMushroomCloud(s);
+						new BukkitRunnable() {
+
+							@Override
+							public void run() {
+								ParticleHandlers.spawnMushroomCloud(s);
+							}
+						}.runTaskLater(Main.getInstance(), 10);
+
 					} catch (Error e3) {
 						s.getWorld().playEffect(s, Effect.valueOf("CLOUD"), 0);
 						player.getWorld().playSound(s, Sound.valueOf("EXPLODE"), 8, 0.7f);

@@ -1,6 +1,5 @@
 package me.zombie_striker.qg.ammo;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -13,7 +12,7 @@ public class AmmoUtil {
 	public static int getAmmoAmount(Player player, Ammo a) {
 		int amount = 0;
 		for (ItemStack is : player.getInventory().getContents()) {
-			if (is != null && Main.getInstance().isAmmo(is)&&Main.getInstance().getAmmo(is).equals(a)) {
+			if (is != null && Main.isAmmo(is)&&Main.getAmmo(is).equals(a)) {
 				amount += is.getAmount();
 
 			}
@@ -25,7 +24,7 @@ public class AmmoUtil {
 		int remaining = amount;
 		for (int i = 0; i < player.getInventory().getSize(); i++) {
 			ItemStack is = player.getInventory().getItem(i);
-			if (is != null && Main.getInstance().isAmmo(is) && Main.getInstance().getAmmo(is).equals(a)) {
+			if (is != null && Main.isAmmo(is) && Main.getAmmo(is).equals(a)) {
 				if (is.getAmount() + remaining <= a.getMaxAmount()) {
 					is.setAmount(is.getAmount() + remaining);
 					remaining = 0;
@@ -53,7 +52,7 @@ public class AmmoUtil {
 		int remaining = amount;
 		for (int i = 0; i < player.getInventory().getSize(); i++) {
 			ItemStack is = player.getInventory().getItem(i);
-			if (is != null && Main.getInstance().isAmmo(is)&&Main.getInstance().getAmmo(is).equals(a)) {
+			if (is != null && Main.isAmmo(is)&&Main.getAmmo(is).equals(a)) {
 				int temp = is.getAmount();
 				if (remaining < is.getAmount()) {
 					is.setAmount(is.getAmount() - remaining);

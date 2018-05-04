@@ -1,3 +1,43 @@
+1.1.87
+	Added angled armor. Kevlar vest should follow the player better than before
+	Added AK-47U
+	Added DP-27
+	Added M4A1S
+	Added FN-Five-Seven
+	Added RPK
+	Added SG-557
+	Added Fallout_10MM pistols
+	Added Fallout_Mininukes
+	Added Fallout_Fatman
+	Added Fallout_LazerRifles
+	Added Fallout_InstituteRifles
+	Added Tree Feller support
+	Added custom sound support
+	Possible fix for translation codes
+	Fixed duplication problem with Automatic weapons
+	Added ability to translate Reloading message
+	Added ability to disable note plings on headshots
+	Added ability to stop creation of new gun files
+	
+1.1.86
+	Potential fix for issue where both 1.8 and 1.9+ weapons exist, even when auto-detect was not enabled.
+
+1.1.85
+	Fixed medkits
+
+1.1.84
+	Fixed durability amount checking
+
+1.1.83
+	Added debug messages for entitydamagebyentityevent
+
+1.1.82
+	Removed support for Visible Bullet counts for guns. It caused too many problems when users picked up the gun. [However, you can still enable it in the config]
+	Corrected spelling for Visible in "enableVisableBulletCounts"
+	Dup-checks will now be done if a player picks up a duplicated gun
+	Fixed problem with some durability item not being able to be clicked out of inventory if it is on the specific data value as Ironsights
+	Added debug messages for killing players
+
 1.1.81
 	Added "/qa Version" which prints the version of QA installed on the server and the changelog.
 	Fixed lore for ammo and base-objects

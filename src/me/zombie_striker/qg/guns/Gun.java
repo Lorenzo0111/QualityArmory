@@ -42,7 +42,7 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 	private List<String> extralore = null;
 	private String displayname = null;
 
-	private WeaponSounds weaponSounds;
+	private String weaponSounds;
 
 	double cost = 100;
 
@@ -84,6 +84,10 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 
 	public Gun(String name, WeaponType type, boolean h, Ammo am, double acc, double swaymult, int maxBullets,
 			float damage, boolean isAutomatic, int durib, WeaponSounds ws, double cost, ItemStack[] ing) {
+		this(name, type, h, am, acc, swaymult, maxBullets, damage, isAutomatic, durib, ws.getName(), cost,ing);
+	}
+	public Gun(String name, WeaponType type, boolean h, Ammo am, double acc, double swaymult, int maxBullets,
+			float damage, boolean isAutomatic, int durib, String ws, double cost, ItemStack[] ing) {
 		this.name = name;
 		this.type = type;
 		this.hasIronSights = h;
@@ -110,6 +114,11 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 
 	public Gun(String name, MaterialStorage id, WeaponType type, boolean h, Ammo am, double acc, double swaymult,
 			int maxBullets, float damage, boolean isAutomatic, int durib, WeaponSounds ws, List<String> extralore,
+			String displayname, double cost, ItemStack[] ing) {
+		this(displayname, id, type, h, am, acc, swaymult, maxBullets, damage, isAutomatic, durib, ws.getName(), extralore, displayname, cost, ing);
+	}
+	public Gun(String name, MaterialStorage id, WeaponType type, boolean h, Ammo am, double acc, double swaymult,
+			int maxBullets, float damage, boolean isAutomatic, int durib, String ws, List<String> extralore,
 			String displayname, double cost, ItemStack[] ing) {
 		this.name = name;
 		this.id = id;
@@ -243,7 +252,7 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 		return id;
 	}
 
-	public WeaponSounds getWeaponSound() {
+	public String getWeaponSound() {
 		return weaponSounds;
 	}
 
