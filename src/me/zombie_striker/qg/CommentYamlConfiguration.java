@@ -75,6 +75,12 @@ public class CommentYamlConfiguration extends YamlConfiguration {
     public static YamlConfiguration loadConfiguration(File file) {
         Validate.notNull(file, "File cannot be null");
         YamlConfiguration config = new CommentYamlConfiguration();
+        if(!file.exists())
+			try {
+				file.createNewFile();
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
         try {
             config.load(file);
         } catch (FileNotFoundException e) {

@@ -63,6 +63,10 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 
 	private boolean enableMuzzleSmoke = false;
 
+	public ChatColor glowEffect = null;
+
+	public boolean unlimitedAmmo = false;
+
 	// This refers to the last time a gun was shot by a player, on a per-gun basis.
 	// Doing this should prevent players from fast-switching to get around
 	// bullet-delays
@@ -84,8 +88,9 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 
 	public Gun(String name, WeaponType type, boolean h, Ammo am, double acc, double swaymult, int maxBullets,
 			float damage, boolean isAutomatic, int durib, WeaponSounds ws, double cost, ItemStack[] ing) {
-		this(name, type, h, am, acc, swaymult, maxBullets, damage, isAutomatic, durib, ws.getName(), cost,ing);
+		this(name, type, h, am, acc, swaymult, maxBullets, damage, isAutomatic, durib, ws.getName(), cost, ing);
 	}
+
 	public Gun(String name, WeaponType type, boolean h, Ammo am, double acc, double swaymult, int maxBullets,
 			float damage, boolean isAutomatic, int durib, String ws, double cost, ItemStack[] ing) {
 		this.name = name;
@@ -115,8 +120,10 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 	public Gun(String name, MaterialStorage id, WeaponType type, boolean h, Ammo am, double acc, double swaymult,
 			int maxBullets, float damage, boolean isAutomatic, int durib, WeaponSounds ws, List<String> extralore,
 			String displayname, double cost, ItemStack[] ing) {
-		this(displayname, id, type, h, am, acc, swaymult, maxBullets, damage, isAutomatic, durib, ws.getName(), extralore, displayname, cost, ing);
+		this(displayname, id, type, h, am, acc, swaymult, maxBullets, damage, isAutomatic, durib, ws.getName(),
+				extralore, displayname, cost, ing);
 	}
+
 	public Gun(String name, MaterialStorage id, WeaponType type, boolean h, Ammo am, double acc, double swaymult,
 			int maxBullets, float damage, boolean isAutomatic, int durib, String ws, List<String> extralore,
 			String displayname, double cost, ItemStack[] ing) {
@@ -138,6 +145,17 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 
 		this.extralore = extralore;
 		this.displayname = ChatColor.translateAlternateColorCodes('&', displayname);
+	}
+
+	public ChatColor getGlow() {
+		return glowEffect;
+	}
+
+	/**
+	 * Sets the glow for the item. Null to disable the glow.
+	 */
+	public void setGlow(ChatColor glow) {
+		this.glowEffect = glow;
 	}
 
 	public double getReloadTime() {
@@ -180,12 +198,17 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 		return 1;
 	}
 
-	public boolean shoot(Player player,AttachmentBase attachmentBase) {
+	public void setUnlimitedAmmo(boolean b) {
+		this.unlimitedAmmo = b;
+	}
+
+	public boolean shoot(Player player, AttachmentBase attachmentBase) {
 		return Gun.USE_THIS_INSTEAD_OF_INDEVIDUAL_SHOOT_METHODS(this, attachmentBase, player, getSway());
 	}
 
 	@SuppressWarnings("deprecation")
-	public static boolean USE_THIS_INSTEAD_OF_INDEVIDUAL_SHOOT_METHODS(Gun g, AttachmentBase attachmentBase, Player player, double acc) {
+	public static boolean USE_THIS_INSTEAD_OF_INDEVIDUAL_SHOOT_METHODS(Gun g, AttachmentBase attachmentBase,
+			Player player, double acc) {
 		boolean offhand = player.getInventory().getItemInHand().getDurability() == IronSightsToggleItem.getData();
 		if ((!offhand && ItemFact.getAmount(player.getInventory().getItemInHand()) > 0)
 				|| (offhand && Update19OffhandChecker.hasAmountOFfhandGreaterthan(player, 0))) {
@@ -207,9 +230,9 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 		return GunUtil.hasAmmo(player, this);
 	}
 
-	public void reload(Player player,AttachmentBase attachmentBase) {
+	public void reload(Player player, AttachmentBase attachmentBase) {
 		if (getChargingVal() == null || (!getChargingVal().isReloading(player)))
-			GunUtil.basicReload(this,attachmentBase, player, WeaponType.isUnlimited(type), reloadTime);
+			GunUtil.basicReload(this, attachmentBase, player, WeaponType.isUnlimited(type), reloadTime);
 	}
 
 	public double getDamage() {
@@ -229,6 +252,8 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 	}
 
 	public boolean hasUnlimitedAmmo() {
+		if(unlimitedAmmo)
+			return true;
 		return WeaponType.isUnlimited(type);
 	}
 

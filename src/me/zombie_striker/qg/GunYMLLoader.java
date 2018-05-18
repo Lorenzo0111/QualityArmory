@@ -1,6 +1,7 @@
 package me.zombie_striker.qg;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
@@ -37,7 +38,7 @@ public class GunYMLLoader {
 						if ((!f2.contains("invalid")) || !f2.getBoolean("invalid")) {
 							Material m = (Material) (f2.contains("material")
 									? Material.matchMaterial(f2.getString("material"))
-									: Main.guntype);
+									: Material.DIAMOND_AXE);
 							int variant = f2.contains("variant") ? f2.getInt("variant") : 0;
 							final String name = f2.getString("name");
 							main.getLogger().info("-Loading AmmoType: " + name);
@@ -109,7 +110,7 @@ public class GunYMLLoader {
 
 							Material m = (Material) (f2.contains("material")
 									? Material.matchMaterial(f2.getString("material"))
-									: Main.guntype);
+									: Material.DIAMOND_AXE);
 							int variant = f2.contains("variant") ? f2.getInt("variant") : 0;
 							final MaterialStorage ms = MaterialStorage.getMS(m, f2.getInt("id"), variant, null);
 							final ItemStack[] materails = main
@@ -168,7 +169,7 @@ public class GunYMLLoader {
 
 						Material m = (Material) (f2.contains("material")
 								? Material.matchMaterial(f2.getString("material"))
-								: Main.guntype);
+								: Material.DIAMOND_AXE);
 						int variant = f2.contains("variant") ? f2.getInt("variant") : 0;
 						final MaterialStorage ms = MaterialStorage.getMS(m, f2.getInt("id"), variant, null);
 						WeaponType weatype = f2.contains("guntype") ? WeaponType.valueOf(f2.getString("guntype"))
@@ -232,6 +233,20 @@ public class GunYMLLoader {
 							g.setUseMuzzleSmoke(addMuzzleSmoke);
 
 							g.setReloadingTimeInSeconds(f2.getDouble("delayForReload"));
+							
+							if(f2.contains("drop-glow-color")) {
+								ChatColor c = ChatColor.WHITE;
+								for(ChatColor cc : ChatColor.values())
+									if(cc.name().equals(f2.getString("drop-glow-color"))) {
+										c=cc;
+										break;
+									}
+								g.setGlow(c);
+							}
+							
+							if(f2.contains("unlimitedAmmo"))
+								g.setUnlimitedAmmo(f2.getBoolean("unlimitedAmmo"));
+							
 							try {
 								if (!f2.getString("ChargingHandler").equals("null"))
 									g.setChargingHandler(
@@ -271,6 +286,12 @@ public class GunYMLLoader {
 	}
 
 	public static void loadAttachments(Main main) {
+		if(!new File(main.getDataFolder(), "attachments").exists())
+			try {
+				new File(main.getDataFolder(), "attachments").createNewFile();
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
 		for (File f : new File(main.getDataFolder(), "attachments").listFiles()) {
 			try {
 				if (f.getName().contains("yml")) {
@@ -285,7 +306,7 @@ public class GunYMLLoader {
 
 						Material m = (Material) (f2.contains("material")
 								? Material.matchMaterial(f2.getString("material"))
-								: Main.guntype);
+								: Material.DIAMOND_AXE);
 						int variant = f2.contains("variant") ? f2.getInt("variant") : 0;
 						final MaterialStorage ms = MaterialStorage.getMS(m, f2.getInt("id"), variant, null);
 

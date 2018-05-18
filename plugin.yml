@@ -1,5 +1,5 @@
 main: me.zombie_striker.qg.Main
-version: 1.1.87
+version: 1.1.95
 name: QualityArmory
 commands:
   QualityArmory:
@@ -27,6 +27,7 @@ permissions:
     children:
       qualityarmory.craft: true
       qualityarmory.shop: true
+      qualityarmory.usegun: true
 softdepend: [Vault, Parties, WorldGuard, ViaVersion, ViaRewind]
 author:
    Zombie_Striker

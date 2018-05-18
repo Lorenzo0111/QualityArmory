@@ -29,7 +29,7 @@ public enum WeaponType {
 		if (!Main.isVersionHigherThan(1, 9))
 			return true;
 		switch (g) {
-		case PISTOL:
+		/*case PISTOL:
 			return Main.UnlimitedAmmoPistol;
 		case RIFLE:
 			return Main.UnlimitedAmmoRifle;
@@ -42,7 +42,7 @@ public enum WeaponType {
 		case SHOTGUN:
 			return Main.UnlimitedAmmoShotgun;
 		case LAZER:
-			return Main.UnlimitedAmmoLazer;
+			return Main.UnlimitedAmmoLazer;*/
 		default:
 			break;
 		}

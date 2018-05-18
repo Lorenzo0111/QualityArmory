@@ -356,7 +356,7 @@ public class QualityArmory {
 	 * @return
 	 */
 	public boolean isIronSight(ItemStack is) {
-		if (is != null && is.getType() == Main.guntype && is.getDurability() == (int) IronSightsToggleItem.getData())
+		if (is != null && is.getType() == IronSightsToggleItem.getMat() && is.getDurability() == (int) IronSightsToggleItem.getData())
 			return true;
 		return false;
 	}

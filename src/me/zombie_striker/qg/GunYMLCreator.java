@@ -20,7 +20,7 @@ public class GunYMLCreator {
 			int damage, double sway, int maxBullets, int duribility, double delayReload, double delayShoot,
 			int bulletspershot, boolean isAutomatic, int cost, ChargingHandlerEnum ch, int distance, WeaponSounds ws) {
 		return createNewGun(forceUpdate, dataFolder, false, name, name, displayname, null, id, craftingRequirements,
-				weapontype, enableIronSights, ammotype, damage, sway, Main.guntype, maxBullets, duribility, delayReload,
+				weapontype, enableIronSights, ammotype, damage, sway,Material.DIAMOND_AXE, maxBullets, duribility, delayReload,
 				delayShoot, bulletspershot, isAutomatic, cost, ch, distance, false, ws);
 	}
 
@@ -50,7 +50,7 @@ public class GunYMLCreator {
 			int bulletspershot, boolean isAutomatic, int cost, ChargingHandlerEnum ch, int distance, WeaponSounds ws) {
 		return createNewGun(forceUpdate, dataFolder, false, "default_" + name, name,
 				"&" + ChatColor.GOLD.getChar() + name, null, id, craftingRequirements, weapontype, enableIronSights,
-				ammotype, damage, sway, Main.guntype, maxBullets, duribility, delayReload, delayShoot, bulletspershot,
+				ammotype, damage, sway, Material.DIAMOND_AXE, maxBullets, duribility, delayReload, delayShoot, bulletspershot,
 				isAutomatic, cost, ch, distance, false, ws);
 	}
 
@@ -147,6 +147,7 @@ public class GunYMLCreator {
 		h.setNoSave(false, "isAutomatic", isAutomatic);
 		h.setNoSave(false, "price", cost);
 		h.setNoSave(false, "maxBulletDistance", distance);
+		h.setNoSave(false, "unlimitedAmmo", false);
 
 		h.setNoSave(false, "particles.bullet_particle", particle);
 		if (particle.equals("REDSTONE")) {
@@ -160,6 +161,10 @@ public class GunYMLCreator {
 		h.setNoSave(false, "ChargingHandler", ch == null ? "null" : ch.getName());
 		if (addMuzzleSmoke)
 			h.setNoSave(false, "addMuzzleSmoke", addMuzzleSmoke);
+		
+		if(invalid) {
+			h.setNoSave(false, "drop-glow-color",ChatColor.WHITE.name());
+		}
 		if (h.saveNow)
 			h.save();
 		return h;
@@ -167,21 +172,21 @@ public class GunYMLCreator {
 
 	public static ArmoryYML createAmmo(boolean forceUpdate, File dataFolder, boolean invalid, String name,
 			String displayname, int id, List<String> craftingRequirements, int cost, double severity, int maxAmount) {
-		return createAmmo(forceUpdate, dataFolder, invalid, "default_" + name, name, displayname, null, Main.guntype,
+		return createAmmo(forceUpdate, dataFolder, invalid, "default_" + name, name, displayname, null, Material.DIAMOND_AXE,
 				id, craftingRequirements, cost, severity, maxAmount);
 	}
 
 	public static ArmoryYML createAmmo(boolean forceUpdate, File dataFolder, boolean invalid, String name,
 			String displayname, int id, List<String> craftingRequirements, int cost, double severity, int maxAmount,
 			int returnamount) {
-		return createAmmo(forceUpdate, dataFolder, invalid, "default_" + name, name, displayname, null, Main.guntype,
+		return createAmmo(forceUpdate, dataFolder, invalid, "default_" + name, name, displayname, null, Material.DIAMOND_AXE,
 				id, craftingRequirements, cost, severity, maxAmount, returnamount);
 	}
 
 	public static ArmoryYML createAmmo(boolean forceUpdate, File dataFolder, boolean invalid, String filename,
 			String name, String displayname, int id, List<String> craftingRequirements, int cost, double severity,
 			int maxAmount) {
-		return createAmmo(forceUpdate, dataFolder, invalid, filename, name, displayname, null, Main.guntype, id,
+		return createAmmo(forceUpdate, dataFolder, invalid, filename, name, displayname, null, Material.DIAMOND_AXE, id,
 				craftingRequirements, cost, severity, maxAmount);
 	}
 

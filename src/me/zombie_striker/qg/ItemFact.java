@@ -125,7 +125,10 @@ public class ItemFact {
 	}
 
 	public static ItemStack getGun(int durib, int varient) {
-		return getGun(MaterialStorage.getMS(Main.guntype, durib, varient, null));
+		return getGun(Material.DIAMOND_AXE,durib,varient);
+	}
+	public static ItemStack getGun(Material type,int durib, int varient) {
+		return getGun(MaterialStorage.getMS(type, durib, varient, null));
 	}
 
 	public static ItemStack getGun(MaterialStorage durib) {
@@ -144,7 +147,7 @@ public class ItemFact {
 
 	public static ItemStack getIronSights() {
 
-		ItemStack ironsights = new ItemStack(Main.guntype, 1, (short) IronSightsToggleItem.getData());
+		ItemStack ironsights = new ItemStack(IronSightsToggleItem.getMat(), 1, (short) IronSightsToggleItem.getData());
 		ItemMeta im = ironsights.getItemMeta();
 		im.setDisplayName(IronSightsToggleItem.getItemName());
 		try {
@@ -153,6 +156,8 @@ public class ItemFact {
 		}
 		try {
 			im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_UNBREAKABLE);
+			im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_ATTRIBUTES);
+			im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_DESTROYS);
 		} catch (Error | Exception e34) {
 		}
 		ironsights.setItemMeta(im);
@@ -181,6 +186,8 @@ public class ItemFact {
 		}
 		try {
 			im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_UNBREAKABLE);
+			im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_ATTRIBUTES);
+			im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_DESTROYS);
 		} catch (Error e) {
 		}
 
@@ -214,6 +221,8 @@ public class ItemFact {
 		}
 		try {
 			im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_UNBREAKABLE);
+			im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_ATTRIBUTES);
+			im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_DESTROYS);
 		} catch (Error e) {
 		}
 
@@ -249,6 +258,8 @@ public class ItemFact {
 		}
 		try {
 			im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_UNBREAKABLE);
+			im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_ATTRIBUTES);
+			im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_DESTROYS);
 		} catch (Error e) {
 		}
 		List<String> lore = new ArrayList<String>();
@@ -278,6 +289,8 @@ public class ItemFact {
 		}
 		try {
 			im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_UNBREAKABLE);
+			im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_ATTRIBUTES);
+			im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_DESTROYS);
 		} catch (Error e) {
 		}
 		List<String> lore = new ArrayList<String>();

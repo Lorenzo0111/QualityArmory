@@ -31,8 +31,6 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
 
-import com.alessiodp.partiesapi.Parties;
-
 public class GunUtil {
 
 	protected static HashMap<UUID, Location> AF_locs = new HashMap<>();
@@ -69,28 +67,31 @@ public class GunUtil {
 			if (degreeVector > Math.PI)
 				degreeVector = 2 * Math.PI - degreeVector;
 
+			List<Location> blocksThatWillBreak = new ArrayList<>();
+
 			for (Entity e : p.getNearbyEntities(maxDistance, maxDistance, maxDistance)) {
 				if (e instanceof Damageable)
 					if (e != p && e != p.getVehicle() && e != p.getPassenger()) {
 						// if (e.getLocation().getX() - start.getX() > 0 == posX)
 						// if (e.getLocation().getZ() - start.getZ() > 0 == posZ) {
+						double dis = e.getLocation().distance(start);
+						if (dis > dis2)
+							continue;
 						double degreeEntity = Math.atan2(e.getLocation().getX() - start.getX(),
 								e.getLocation().getZ() - start.getZ());
 						if (degreeEntity > Math.PI)
 							degreeEntity = 2 * Math.PI - degreeEntity;
-						if (Math.max(degreeEntity, degreeVector) - Math.min(degreeEntity, degreeVector) < Math.PI / 2) {
+						if (Math.max(degreeEntity, degreeVector)
+								- Math.min(degreeEntity, degreeVector) < (dis > 10 ? Math.PI / 7 : Math.PI / 2)) {
 
-							double dis = e.getLocation().distance(start);
-							if (dis > dis2)
-								continue;
 							Location test = start.clone();
 							// If the entity is close to the line of fire.
 							if (Main.hasParties && (!Main.friendlyFire)) {
 								try {
 									if (e instanceof Player)
-										if (Parties.getApi().getPartyPlayer(e.getUniqueId()).getPartyName()
-												.equalsIgnoreCase(Parties.getApi().getPartyPlayer(p.getUniqueId())
-														.getPartyName()))
+										if (com.alessiodp.partiesapi.Parties.getApi().getPartyPlayer(e.getUniqueId())
+												.getPartyName().equalsIgnoreCase(com.alessiodp.partiesapi.Parties
+														.getApi().getPartyPlayer(p.getUniqueId()).getPartyName()))
 											continue;
 								} catch (Error | Exception e43) {
 
@@ -99,13 +100,21 @@ public class GunUtil {
 							boolean occulde = false;
 							double lastingDist = dis;
 							boolean hit = false;
+							// Clear this to make sure
 							for (int dist = 0; dist < dis / Main.bulletStep; dist++) {
 								test.add(step);
-								if (test.distance(e.getLocation()) < 7 && HeadShotUtil.closeEnough(e, test)) {
+								if (HeadShotUtil.closeEnough(e, test)) {
 									hit = true;
 									break;
 								}
-								if (isSolid(test.getBlock(), test)) {
+								boolean solid = isSolid(test.getBlock(), test);
+								if ((solid || isBreakable(test.getBlock(), test))
+										&& !blocksThatWillBreak.contains(new Location(test.getWorld(), test.getBlockX(),
+												test.getBlockY(), test.getBlockZ()))) {
+									blocksThatWillBreak.add(new Location(test.getWorld(), test.getBlockX(),
+											test.getBlockY(), test.getBlockZ()));
+								}
+								if (solid) {
 									occulde = true;
 									lastingDist = dist;
 									break;
@@ -174,11 +183,11 @@ public class GunUtil {
 						List<Player> heard = new ArrayList<>();
 						for (Player p2 : nonheard) {
 							if (p2.getLocation().distance(start) < control * 2) {
-									try {
-										start.getWorld().playSound(start, Sound.BLOCK_DISPENSER_LAUNCH, 2, 3);
-									} catch (Error e) {
-										start.getWorld().playSound(start, Sound.valueOf("SHOOT_ARROW"), 2, 2);
-									}
+								try {
+									start.getWorld().playSound(start, Sound.BLOCK_DISPENSER_LAUNCH, 2, 3);
+								} catch (Error e) {
+									start.getWorld().playSound(start, Sound.valueOf("SHOOT_ARROW"), 2, 2);
+								}
 								heard.add(p2);
 							}
 						}
@@ -216,6 +225,23 @@ public class GunUtil {
 					break;
 				}
 			}
+			// Breaking texture
+			if (Main.blockBreakTexture)
+				for (Location l : blocksThatWillBreak) {
+					try {
+						for (Player p2 : l.getWorld().getPlayers()) {
+							com.comphenix.protocol.events.PacketContainer packet = new com.comphenix.protocol.events.PacketContainer(
+									com.comphenix.protocol.Packets.Server.BLOCK_BREAK_ANIMATION);
+							packet.getIntegers().write(0, p2.getEntityId());
+							packet.getBlockPositionModifier().write(1,
+									new com.comphenix.protocol.wrappers.BlockPosition(l.getBlockX(), l.getBlockY(),
+											l.getBlockZ()));
+							packet.getBytes().write(2, (byte) 4);
+							com.comphenix.protocol.ProtocolLibrary.getProtocolManager().sendServerPacket(p2, packet);
+						}
+					} catch (Error | Exception e4) {
+					}
+				}
 		}
 	}
 
@@ -246,7 +272,8 @@ public class GunUtil {
 		if (g.getChargingVal() != null
 				&& (!g.getChargingVal().isCharging(player) && !g.getChargingVal().isReloading(player))) {
 			regularshoot = g.getChargingVal().shoot(g, player, temp);
-			Main.DEBUG("Charging shoot debug: "+g.getName()+" = "+(ChargingHandlerEnum.getEnumV(g.getChargingVal()).getName()));
+			Main.DEBUG("Charging shoot debug: " + g.getName() + " = "
+					+ (ChargingHandlerEnum.getEnumV(g.getChargingVal()).getName()));
 		}
 
 		if (regularshoot) {
@@ -291,9 +318,7 @@ public class GunUtil {
 			public void run() {
 				try {
 					player.getWorld().playSound(player.getLocation(),
-							(attach != null && attach.hasNewSound()) ? attach.getNewSound()
-									: g.getWeaponSound(),
-							4, 1);
+							(attach != null && attach.hasNewSound()) ? attach.getNewSound() : g.getWeaponSound(), 4, 1);
 					if (!Main.isVersionHigherThan(1, 9)) {
 						try {
 							player.getWorld().playSound(player.getLocation(), Sound.valueOf("CLICK"), 5, 1);
@@ -434,6 +459,13 @@ public class GunUtil {
 			Main.reloadingTasks.put(player.getUniqueId(), rr);
 
 		}
+
+	}
+
+	public static boolean isBreakable(Block b, Location l) {
+		if (b.getType().name().contains("GLASS"))
+			return true;
+		return false;
 
 	}
 

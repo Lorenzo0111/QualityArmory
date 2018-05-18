@@ -1,3 +1,41 @@
+1.1.95
+	Added mending item support. Even if the item does turn into a custom item, the new feature will make sure it is converted back to a regular item.
+	Code-Cleanup
+	Fixed skull-ammo NPE
+	Changed reloading system so UnlimitedAmmo modifier is determined by the gun, and not the value in the config.
+	Reorganized the config and added comments
+	Deleted "gunparticle" tab. Use the gun ymls to control the particle
+	Deleted all "unlimitedAmmo" values from the config. Use gun ymls to control the particles for guns.
+	Removed support for Diamond Hoe texturepacks
+	Added "qualityarmory.usegun" permission to determine if a player can use guns.
+	Added the ability to add glow to guns when they drop. Use the "drop-glow-color" to set the color. Removing this tag will remove the glow.
+	Will now play BlockBreakAnimation (show cracked block textures) for solid blocks and glass. 
+	
+1.1.94
+	Fixded null gun
+
+1.1.93
+	Fixed error for clicking null items.
+
+1.1.92
+	Removed checks for duplicate guns, since they should no longer appear (since visible weapons are not support)
+
+1.1.91
+	Fixed issue with messages.yml
+	Fixed issue with attributes showing.
+	Fixed error for when attachment folder was not created.
+	Fixed error with angled armor for crafting menu
+
+1.1.90
+	Fixed anvil and crafting upgrades
+	Added patch so players will be kicked if they do not imput any resourcepack amount
+
+1.1.89
+	Added debug messages.
+
+1.1.88
+	Added the ability to kick players if they did not accept the resourcepack.
+
 1.1.87
 	Added angled armor. Kevlar vest should follow the player better than before
 	Added AK-47U
