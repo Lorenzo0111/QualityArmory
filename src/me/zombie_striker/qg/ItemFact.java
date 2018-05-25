@@ -176,6 +176,8 @@ public class ItemFact {
 		if (ms.getData() < 0)
 			is.setDurability((short) 0);
 		ItemMeta im = is.getItemMeta();
+		if(im==null)
+			im=Bukkit.getServer().getItemFactory().getItemMeta(ms.getMat());
 		im.setDisplayName(displayname);
 		List<String> lore = getGunLore(g, attachmentBase, null, g.getMaxBullets());
 		im.setLore(lore);

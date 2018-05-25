@@ -148,6 +148,7 @@ public class GunYMLCreator {
 		h.setNoSave(false, "price", cost);
 		h.setNoSave(false, "maxBulletDistance", distance);
 		h.setNoSave(false, "unlimitedAmmo", false);
+		h.setNoSave(false, "LightLeveOnShoot", 14);
 
 		h.setNoSave(false, "particles.bullet_particle", particle);
 		if (particle.equals("REDSTONE")) {

@@ -60,6 +60,8 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 	private double particle_r = 1;
 	private double particle_g = 1;
 	private double particle_b = 1;
+	
+	private int lightl = 20;
 
 	private boolean enableMuzzleSmoke = false;
 
@@ -151,6 +153,12 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 		return glowEffect;
 	}
 
+	public void setLightOnShoot(int level) {
+	lightl = level;
+}
+	public int getLightOnShoot() {
+		return lightl;
+	}
 	/**
 	 * Sets the glow for the item. Null to disable the glow.
 	 */

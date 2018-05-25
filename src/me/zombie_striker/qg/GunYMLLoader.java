@@ -22,6 +22,7 @@ import me.zombie_striker.qg.guns.utils.WeaponType;
 import me.zombie_striker.qg.handlers.gunvalues.ChargingHandlerEnum;
 import me.zombie_striker.qg.miscitems.Flashbang;
 import me.zombie_striker.qg.miscitems.Grenades;
+import me.zombie_striker.qg.miscitems.IncendaryGrenades;
 import me.zombie_striker.qg.miscitems.MedKit;
 import me.zombie_striker.qg.miscitems.MeleeItems;
 import me.zombie_striker.qg.miscitems.SmokeGrenades;
@@ -147,6 +148,9 @@ public class GunYMLLoader {
 							if (wt == WeaponType.SMOKE_GRENADES)
 								Main.miscRegister.put(ms, new SmokeGrenades(materails, price, damage, radius, name,
 										displayname, lore, ms));
+							if (wt == WeaponType.INCENDARY_GRENADES)
+								Main.miscRegister.put(ms, new IncendaryGrenades(materails, price, damage, radius, name,
+										displayname, lore, ms));
 							if (wt == WeaponType.FLASHBANGS)
 								Main.miscRegister.put(ms,
 										new Flashbang(materails, price, damage, radius, name, displayname, lore, ms));
@@ -233,39 +237,31 @@ public class GunYMLLoader {
 							g.setUseMuzzleSmoke(addMuzzleSmoke);
 
 							g.setReloadingTimeInSeconds(f2.getDouble("delayForReload"));
-							
-							if(f2.contains("drop-glow-color")) {
+
+							if (f2.contains("drop-glow-color")) {
 								ChatColor c = ChatColor.WHITE;
-								for(ChatColor cc : ChatColor.values())
-									if(cc.name().equals(f2.getString("drop-glow-color"))) {
-										c=cc;
+								for (ChatColor cc : ChatColor.values())
+									if (cc.name().equals(f2.getString("drop-glow-color"))) {
+										c = cc;
 										break;
 									}
 								g.setGlow(c);
 							}
-							
-							if(f2.contains("unlimitedAmmo"))
-								g.setUnlimitedAmmo(f2.getBoolean("unlimitedAmmo"));
-							
-							try {
-								if (!f2.getString("ChargingHandler").equals("null"))
-									g.setChargingHandler(
-											ChargingHandlerEnum.getEnumV(f2.getString("ChargingHandler")).getHandler());
-							} catch (Error | Exception e445) {
-							}
-							try {
-								g.setDelayBetweenShots(f2.getDouble("delayForShoot"));
-							} catch (Error | Exception er5) {
-							}
-							try {
-								g.setBulletsPerShot(f2.getInt("bullets-per-shot"));
-							} catch (Error | Exception er5) {
-							}
 
-							try {
+							if (f2.contains("unlimitedAmmo"))
+								g.setUnlimitedAmmo(f2.getBoolean("unlimitedAmmo"));
+							if (f2.contains("LightLeveOnShoot"))
+								g.setLightOnShoot(f2.getInt("LightLeveOnShoot"));
+
+							if (f2.contains("ChargingHandler") && !f2.getString("ChargingHandler").equals("null"))
+								g.setChargingHandler(
+										ChargingHandlerEnum.getEnumV(f2.getString("ChargingHandler")).getHandler());
+							if (f2.contains("delayForShoot"))
+								g.setDelayBetweenShots(f2.getDouble("delayForShoot"));
+							if (f2.contains("bullets-per-shot"))
+								g.setBulletsPerShot(f2.getInt("bullets-per-shot"));
+							if (f2.contains("maxBulletDistance"))
 								g.setMaxDistance(f2.getInt("maxBulletDistance"));
-							} catch (Error | Exception er5) {
-							}
 							if (f2.contains("Version_18_Support"))
 								g.set18Supported(f2.getBoolean("Version_18_Support"));
 
@@ -286,7 +282,7 @@ public class GunYMLLoader {
 	}
 
 	public static void loadAttachments(Main main) {
-		if(!new File(main.getDataFolder(), "attachments").exists())
+		if (!new File(main.getDataFolder(), "attachments").exists())
 			try {
 				new File(main.getDataFolder(), "attachments").createNewFile();
 			} catch (IOException e1) {

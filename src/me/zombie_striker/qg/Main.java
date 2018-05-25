@@ -91,13 +91,13 @@ public class Main extends JavaPlugin implements Listener {
 	public static double secondsTilSend = 0.0;
 
 	public static boolean enableDurability = false;/*
-	public static boolean UnlimitedAmmoPistol = false;
-	public static boolean UnlimitedAmmoRifle = false;
-	public static boolean UnlimitedAmmoShotgun = false;
-	public static boolean UnlimitedAmmoSMG = false;
-	public static boolean UnlimitedAmmoRPG = false;
-	public static boolean UnlimitedAmmoSniper = false;
-	public static boolean UnlimitedAmmoLazer = false;*/
+													 * public static boolean UnlimitedAmmoPistol = false; public static
+													 * boolean UnlimitedAmmoRifle = false; public static boolean
+													 * UnlimitedAmmoShotgun = false; public static boolean
+													 * UnlimitedAmmoSMG = false; public static boolean UnlimitedAmmoRPG
+													 * = false; public static boolean UnlimitedAmmoSniper = false;
+													 * public static boolean UnlimitedAmmoLazer = false;
+													 */
 
 	public static double bulletStep = 0.10;
 
@@ -134,14 +134,15 @@ public class Main extends JavaPlugin implements Listener {
 
 	public static boolean overrideURL = false;
 	public static boolean kickIfDeniedRequest = false;
-	//public static String url19plus = "https://www.dropbox.com/s/faufrgo7w2zpi3d/QualityArmoryv1.0.10.zip?dl=1";
-	public static String url19plusAXE = "https://www.dropbox.com/s/7xn1a6vmazc29zg/QualityArmoryv1.0.14.zip?dl=1";
+	// public static String url19plus =
+	// "https://www.dropbox.com/s/faufrgo7w2zpi3d/QualityArmoryv1.0.10.zip?dl=1";
+	public static String url19plusAXE = "https://www.dropbox.com/s/n9nk387yzlm327y/QualityArmoryv1.0.15.zip?dl=1";
 	public static String url18 = "https://www.dropbox.com/s/gx6dhahq6onob4g/QualityArmory1.8v1.0.1.zip?dl=1";
 	public static String url = url19plusAXE;
 
 	public static String S_NOPERM = "&c You do not have permission to do that";
 	public static String S_NORES1 = " &c&l Downloading Resourcepack...";
-	public static String S_NORES2 = " &f Accept the resoucepack to see correct textures";
+	public static String S_NORES2 = " &f Accept the resourcepack to see correct textures";
 	public static String S_ANVIL = " &aYou do not have permission to use this armory bench. ShiftClick to access anvil.";
 	public static String S_ITEM_BULLETS = "&aBullets";
 	public static String S_ITEM_DURIB = "Durability";
@@ -194,7 +195,7 @@ public class Main extends JavaPlugin implements Listener {
 	public static ItemStack prevButton = new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 14);
 	public static ItemStack nextButton = new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 5);
 
-	//public static Material guntype = Material.DIAMOND_AXE;
+	// public static Material guntype = Material.DIAMOND_AXE;
 
 	public static CustomYml m;
 
@@ -386,7 +387,7 @@ public class Main extends JavaPlugin implements Listener {
 		S_NOPERM = ChatColor.translateAlternateColorCodes('&', (String) m.a("NoPerm", S_NOPERM));
 		S_craftingBenchName = (String) m.a("CraftingBenchName", S_craftingBenchName);
 		S_missingIngredients = (String) m.a("Missing_Ingredients", S_missingIngredients);
-		S_NORES1 = ChatColor.translateAlternateColorCodes('&', (String) m.a("NoResoucepackMessage1", S_NORES1));
+		S_NORES1 = ChatColor.translateAlternateColorCodes('&', (String) m.a("NoResourcepackMessage1", S_NORES1));
 		S_NORES2 = ChatColor.translateAlternateColorCodes('&', (String) m.a("NoResourcepackMessage2", S_NORES2));
 		S_ITEM_AMMO = ChatColor.translateAlternateColorCodes('&', (String) m.a("Lore_Ammo", S_ITEM_AMMO));
 		S_ITEM_BULLETS = ChatColor.translateAlternateColorCodes('&', (String) m.a("lore_bullets", S_ITEM_BULLETS));
@@ -444,13 +445,15 @@ public class Main extends JavaPlugin implements Listener {
 
 		kickIfDeniedRequest = (boolean) a("KickPlayerIfDeniedResourcepack", false);
 		shouldSend = (boolean) a("useDefaultResourcepack", true);
-		/*UnlimitedAmmoPistol = (boolean) a("UnlimitedPistolAmmo", false);
-		UnlimitedAmmoShotgun = (boolean) a("UnlimitedShotgunAmmo", false);
-		UnlimitedAmmoRifle = (boolean) a("UnlimitedRifleAmmo", false);
-		UnlimitedAmmoSMG = (boolean) a("UnlimitedSMGAmmo", false);
-		UnlimitedAmmoSniper = (boolean) a("UnlimitedSniperAmmo", false);
-		UnlimitedAmmoRPG = (boolean) a("UnlimitedRocketAmmo", false);
-		UnlimitedAmmoLazer = (boolean) a("UnlimitedLazerAmmo", false);*/
+		/*
+		 * UnlimitedAmmoPistol = (boolean) a("UnlimitedPistolAmmo", false);
+		 * UnlimitedAmmoShotgun = (boolean) a("UnlimitedShotgunAmmo", false);
+		 * UnlimitedAmmoRifle = (boolean) a("UnlimitedRifleAmmo", false);
+		 * UnlimitedAmmoSMG = (boolean) a("UnlimitedSMGAmmo", false);
+		 * UnlimitedAmmoSniper = (boolean) a("UnlimitedSniperAmmo", false);
+		 * UnlimitedAmmoRPG = (boolean) a("UnlimitedRocketAmmo", false);
+		 * UnlimitedAmmoLazer = (boolean) a("UnlimitedLazerAmmo", false);
+		 */
 		enableDurability = (boolean) a("EnableWeaponDurability", false);
 
 		bulletStep = (double) a("BulletDetection.step", 0.10);
@@ -511,7 +514,7 @@ public class Main extends JavaPlugin implements Listener {
 
 		// Force inversion due to naming
 		if (saveTheConfig) {
-			Bukkit.getConsoleSender().sendMessage(prefix+" Needed to save config: code=1");
+			Bukkit.getConsoleSender().sendMessage(prefix + " Needed to save config: code=1");
 			saveConfig();
 		}
 		try {
@@ -519,36 +522,37 @@ public class Main extends JavaPlugin implements Listener {
 		} catch (Exception | Error e) {
 		}
 
-		/*try {
-			bulletTrail = Particle.valueOf((String) a("Bullet-Particle-Type", "FIREWORKS_SPARK"));
-			a("ACCEPTED-BULLET-PARTICLE-VALUES", "https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Particle.html");
-		} catch (Exception | Error e) {
-		}*/
+		/*
+		 * try { bulletTrail = Particle.valueOf((String) a("Bullet-Particle-Type",
+		 * "FIREWORKS_SPARK")); a("ACCEPTED-BULLET-PARTICLE-VALUES",
+		 * "https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Particle.html"); } catch
+		 * (Exception | Error e) { }
+		 */
 
-		/*try {
-			guntype = Material.matchMaterial((String) a("gunMaterialType", guntype.toString()));
-		} catch (Exception e) {
-			guntype = Material.DIAMOND_AXE;
-		}*/
-		overrideURL = (boolean) a("DefaultResoucepackOverride", false);
+		/*
+		 * try { guntype = Material.matchMaterial((String) a("gunMaterialType",
+		 * guntype.toString())); } catch (Exception e) { guntype = Material.DIAMOND_AXE;
+		 * }
+		 */
+		overrideURL = (boolean) a("DefaultResourcepackOverride", false);
 
 		if (isVersionHigherThan(1, 9) || AutoDetectResourcepackVersion) {
-				url = url19plusAXE;
-			
+			url = url19plusAXE;
+
 		} else {
 			// Use 1.8 resourcepack.
 			url = url18;
 		}
 
 		if (overrideURL) {
-			url = (String) a("DefaultResoucepack", url);
-			url18 = (String) a("DefaultResoucepack_18", url18);
+			url = (String) a("DefaultResourcepack", url);
+			url18 = (String) a("DefaultResourcepack_18", url18);
 		} else {
 			// Make sure the user is always up to date if they don't override
 			// the resoucepack
-			if (!getConfig().contains("DefaultResoucepack")
-					|| !url.equals(getConfig().getString("DefaultResoucepack"))) {
-				getConfig().set("DefaultResoucepack", url);
+			if (!getConfig().contains("DefaultResourcepack")
+					|| !url.equals(getConfig().getString("DefaultResourcepack"))) {
+				getConfig().set("DefaultResourcepack", url);
 				saveTheConfig = true;
 			}
 		}
@@ -560,7 +564,7 @@ public class Main extends JavaPlugin implements Listener {
 						|| m.name().contains("LEVER"))
 					interactableBlocks.add(m);
 		if (saveTheConfig) {
-			Bukkit.getConsoleSender().sendMessage(prefix+" Needed to save config: code=2");
+			Bukkit.getConsoleSender().sendMessage(prefix + " Needed to save config: code=2");
 			saveConfig();
 		}
 
@@ -611,12 +615,11 @@ public class Main extends JavaPlugin implements Listener {
 						Material.GOLD_HOE, 32, 1000, 1.5, 0.25, 1, false, 1000, null, 140, true, null);
 
 				// The the type is not the same, or if it is, if there is no auto detection
-			//	if (guntype != Material.DIAMOND_HOE || !AutoDetectResourcepackVersion)
-					GunYMLCreator.createNewGun(forceUpdate, getDataFolder(), false, "default18_RPG", "RPG" + additive,
-							ChatColor.GOLD + "RPG", null, 0, stringsRPG, WeaponType.RPG, false, "RPGammo", 100, 0.1,
-							Material.DIAMOND_HOE, 1, 200, 3, 3, 2, false, 5000, ChargingHandlerEnum.RPG, 220, true,
-							null);
-				if (/*guntype != Material.DIAMOND_AXE ||*/ !AutoDetectResourcepackVersion)
+				// if (guntype != Material.DIAMOND_HOE || !AutoDetectResourcepackVersion)
+				GunYMLCreator.createNewGun(forceUpdate, getDataFolder(), false, "default18_RPG", "RPG" + additive,
+						ChatColor.GOLD + "RPG", null, 0, stringsRPG, WeaponType.RPG, false, "RPGammo", 100, 0.1,
+						Material.DIAMOND_HOE, 1, 200, 3, 3, 2, false, 5000, ChargingHandlerEnum.RPG, 220, true, null);
+				if (/* guntype != Material.DIAMOND_AXE || */ !AutoDetectResourcepackVersion)
 					GunYMLCreator.createNewGun(forceUpdate, getDataFolder(), false, "default18_PKP", "PKP" + additive,
 							ChatColor.GOLD + "PKP", null, 0, stringsMetalRif, WeaponType.RIFLE, false, "556ammo", 2,
 							0.3, Material.DIAMOND_AXE, 100, 1000, 3, 0.27, 3, true, 3000, ChargingHandlerEnum.RAPIDFIRE,
@@ -700,23 +703,6 @@ public class Main extends JavaPlugin implements Listener {
 				GunYMLCreator.createNewGun(forceUpdate, getDataFolder(), "Mouserc96", 20, stringsPistol,
 						WeaponType.PISTOL, true, "9mm", 3, 0.3, 12, 1000, false, 800, null, 80, null);
 
-				GunYMLCreator.createNewGun(forceUpdate, getDataFolder(), "Dragunov", 23, stringsMetalRif,
-						WeaponType.SNIPER, true, "556", 10, 0.2, 12, 1000, false, 2400, null, 140, null);
-				GunYMLCreator.createNewGun(forceUpdate, getDataFolder(), "Spas12", 24, stringsMetalRif,
-						WeaponType.SHOTGUN, false, "shell", 2, 0.15, 8, 1000, 2, 0.5, 10, true, 2000, null, 80, null);
-				ArmoryYML aa12 = GunYMLCreator.createNewGun(forceUpdate, getDataFolder(), "AA12", 26, stringsMetalRif,
-						WeaponType.SHOTGUN, false, "shell", 2, 0.15, 32, 1000, 10, true, 3300, null, 80, null);
-				aa12.set(false, "addMuzzleSmoke", true);
-
-				ArmoryYML magnum = GunYMLCreator.createNewGun(forceUpdate, getDataFolder(), "Magnum", 38, stringsPistol,
-						WeaponType.PISTOL, true, "9mm", 6, 0.3, 6, 1000, 2, 0.5, 1, false, 500,
-						ChargingHandlerEnum.REVOLVER, 140, WeaponSounds.GUN_BIG);
-				magnum.set(false, "addMuzzleSmoke", true);
-				ArmoryYML awp = GunYMLCreator.createNewGun(forceUpdate, getDataFolder(), "AWP", 39, stringsMetalRif,
-						WeaponType.SNIPER, true, "556", 16, 0.3, 12, 1000, 2, 0.5, 1, false, 500,
-						ChargingHandlerEnum.BOLTACTION, 260, WeaponSounds.GUN_BIG);
-				awp.set(false, "addMuzzleSmoke", true);
-
 				ArmoryYML grenade = GunYMLCreator.createMisc(false, getDataFolder(), false, "default_grenade",
 						"grenade", "&7Grenade",
 						Arrays.asList(ChatColor.DARK_GRAY + "[LMB] to pull pin", ChatColor.DARK_GRAY + "[RMB] to throw",
@@ -725,6 +711,27 @@ public class Main extends JavaPlugin implements Listener {
 								ChatColor.DARK_RED + "<!>Will Explode Even If Not Thrown<!>"),
 						m(22), stringsGrenades, 100, WeaponType.GRENADES, 100, 1);
 				grenade.set(false, "radius", 10);
+				GunYMLCreator.createNewGun(forceUpdate, getDataFolder(), "Dragunov", 23, stringsMetalRif,
+						WeaponType.SNIPER, true, "556", 10, 0.2, 12, 1000, false, 2400, null, 140, null);
+				GunYMLCreator.createNewGun(forceUpdate, getDataFolder(), "Spas12", 24, stringsMetalRif,
+						WeaponType.SHOTGUN, false, "shell", 2, 0.15, 8, 1000, 2, 0.5, 10, true, 2000, null, 80, null);
+				ArmoryYML aa12 = GunYMLCreator.createNewGun(forceUpdate, getDataFolder(), "AA12", 26, stringsMetalRif,
+						WeaponType.SHOTGUN, false, "shell", 2, 0.15, 32, 1000, 10, true, 3300, null, 80, null);
+				aa12.set(false, "addMuzzleSmoke", true);
+
+				/**
+				 * 27 - 36 taken for custom weapons
+				 */
+				GunYMLCreator.createMisc(false, getDataFolder(), false, "default_Medkit_camo", "medkitcamo", "&5Medkit",
+						null, m(37), stringsHealer, 300, WeaponType.MEDKIT, 1, 1000);
+				ArmoryYML magnum = GunYMLCreator.createNewGun(forceUpdate, getDataFolder(), "Magnum", 38, stringsPistol,
+						WeaponType.PISTOL, true, "9mm", 6, 0.3, 6, 1000, 2, 0.5, 1, false, 500,
+						ChargingHandlerEnum.REVOLVER, 140, WeaponSounds.GUN_BIG);
+				magnum.set(false, "addMuzzleSmoke", true);
+				ArmoryYML awp = GunYMLCreator.createNewGun(forceUpdate, getDataFolder(), "AWP", 39, stringsMetalRif,
+						WeaponType.SNIPER, true, "556", 16, 0.3, 12, 1000, 2, 0.5, 1, false, 500,
+						ChargingHandlerEnum.BOLTACTION, 260, WeaponSounds.GUN_BIG);
+				awp.set(false, "addMuzzleSmoke", true);
 
 				ArmoryYML smokegrenade = GunYMLCreator.createMisc(false, getDataFolder(), false, "default_smokegrenade",
 						"smokegrenade", "&7Smoke Grenade",
@@ -767,6 +774,18 @@ public class Main extends JavaPlugin implements Listener {
 						true, "556", 4, 0.4, 47, 1000, 2, true, 1200, ChargingHandlerEnum.RAPIDFIRE, 140,
 						WeaponSounds.GUN_BIG);
 
+				ArmoryYML incedarygrenade = GunYMLCreator.createMisc(false, getDataFolder(), false,
+						"default_incendarygrenade", "incendarygrenade", "&7Incendary Grenade",
+						Arrays.asList(ChatColor.DARK_GRAY + "[LMB] to pull pin", ChatColor.DARK_GRAY + "[RMB] to throw",
+								ChatColor.DARK_GRAY + "Incendary Grenades wait " + ChatColor.GRAY + "FIVE seconds"
+										+ ChatColor.DARK_GRAY + " before exploding.",
+								ChatColor.DARK_RED + "<!>Will Explode Even If Not Thrown<!>"),
+						m(49), stringsGrenades, 100, WeaponType.INCENDARY_GRENADES, 100, 1);
+				incedarygrenade.set(false, "radius", 5);
+				GunYMLCreator.createNewGun(true, getDataFolder(), "default_homingrpg", "&6Homing RPG Launcher", 50, stringsRPG,
+						WeaponType.RPG, false, "homingrpg", 500, 0.2, 1, 1000, false, 3000,
+						ChargingHandlerEnum.HOMINGRPG, 300, null);
+
 				// miscRegister.put(m(22),
 				// new Grenades(getIngredients("Grenades", stringsGrenades), (double)
 				// a("Weapon.Grenade.Price", 800.0),
@@ -787,8 +806,6 @@ public class Main extends JavaPlugin implements Listener {
 				 * getIngredients("AA12", stringsMetalRif), (int) a("Weapon.AA12.Damage", 1),
 				 * (double) a("Weapon.AA12.Price", 2000.0)));
 				 */
-				GunYMLCreator.createMisc(false, getDataFolder(), false, "default_Medkit_camo", "medkitcamo", "&5Medkit",
-						null, m(37), stringsHealer, 300, WeaponType.MEDKIT, 1, 1000);
 				// miscRegister.put(m(37), new MedKit(m(37),"MedkitCamo", ChatColor.WHITE + "
 				// Medkit", 200));
 
@@ -876,8 +893,10 @@ public class Main extends JavaPlugin implements Listener {
 			if (coloredGunScoreboard == null) {
 				coloredGunScoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
 			}
+
 			for (ChatColor c : ChatColor.values()) {
-				coloredGunScoreboard.registerNewTeam(c.name() + "").setPrefix(c + "");
+				if (coloredGunScoreboard.getTeam("QA_" + c.name() + "") == null)
+					coloredGunScoreboard.registerNewTeam("QA_" + c.name() + "").setPrefix(c + "");
 			}
 		}
 	}
@@ -972,21 +991,21 @@ public class Main extends JavaPlugin implements Listener {
 	}
 
 	public ItemStack[] getIngredients(String name, List<String> ing) {
-		/*if (!getConfig().contains("Crafting." + name)) {
-			getConfig().set("Crafting." + name, ing);
-			saveConfig();
-		}
-		List<String> e = getConfig().getStringList("Crafting." + name);*/
+		/*
+		 * if (!getConfig().contains("Crafting." + name)) { getConfig().set("Crafting."
+		 * + name, ing); saveConfig(); } List<String> e =
+		 * getConfig().getStringList("Crafting." + name);
+		 */
 		return convertIngredients(ing);
 	}
 
 	public ItemStack[] getIngredients(String name) {
-		/*if (!getConfig().contains("Crafting." + name)) {
-			getConfig().set("Crafting." + name,
-					Arrays.asList(new String[] { getIngString(Material.IRON_INGOT, 0, 10) }));
-			saveConfig();
-		}
-		List<String> e = getConfig().getStringList("Crafting." + name);*/
+		/*
+		 * if (!getConfig().contains("Crafting." + name)) { getConfig().set("Crafting."
+		 * + name, Arrays.asList(new String[] { getIngString(Material.IRON_INGOT, 0, 10)
+		 * })); saveConfig(); } List<String> e = getConfig().getStringList("Crafting." +
+		 * name);
+		 */
 		return convertIngredients(Arrays.asList(new String[] { getIngString(Material.IRON_INGOT, 0, 10) }));
 	}
 
@@ -1032,8 +1051,8 @@ public class Main extends JavaPlugin implements Listener {
 			if (enableCrafting)
 				if (b("craft", args[0]))
 					s.add("craft");
-			//if (b("getOpenGunSlot", args[0]))
-			//	s.add("getOpenGunSlot");
+			// if (b("getOpenGunSlot", args[0]))
+			// s.add("getOpenGunSlot");
 			if (sender.hasPermission("qualityarmory.reload"))
 				if (b("reload", args[0]))
 					s.add("reload");
@@ -1108,27 +1127,20 @@ public class Main extends JavaPlugin implements Listener {
 					}
 					return true;
 				}
-				/*if (args[0].equalsIgnoreCase("getOpenGunSlot")) {
-					if (sender.hasPermission("qualityarmory.getopengunslot")) {
-						List<MaterialStorage> getAllKeys = new ArrayList<>();
-						getAllKeys.addAll(gunRegister.keySet());
-						getAllKeys.addAll(ammoRegister.keySet());
-						getAllKeys.addAll(miscRegister.keySet());
-						getAllKeys.addAll(armorRegister.keySet());
-						int openID = 1;
-						for (MaterialStorage i : getAllKeys) {
-							if (i.getMat() == guntype)
-								if (i.getData() > openID)
-									openID = i.getData();
-						}
-						sender.sendMessage(prefix + " The next open slot for \"" + guntype.name() + "\"-base-guns is "
-								+ (openID + 1));
-						return true;
-					} else {
-						sender.sendMessage(prefix + ChatColor.RED + S_NOPERM);
-						return true;
-					}
-				}*/
+				/*
+				 * if (args[0].equalsIgnoreCase("getOpenGunSlot")) { if
+				 * (sender.hasPermission("qualityarmory.getopengunslot")) {
+				 * List<MaterialStorage> getAllKeys = new ArrayList<>();
+				 * getAllKeys.addAll(gunRegister.keySet());
+				 * getAllKeys.addAll(ammoRegister.keySet());
+				 * getAllKeys.addAll(miscRegister.keySet());
+				 * getAllKeys.addAll(armorRegister.keySet()); int openID = 1; for
+				 * (MaterialStorage i : getAllKeys) { if (i.getMat() == guntype) if (i.getData()
+				 * > openID) openID = i.getData(); } sender.sendMessage(prefix +
+				 * " The next open slot for \"" + guntype.name() + "\"-base-guns is " + (openID
+				 * + 1)); return true; } else { sender.sendMessage(prefix + ChatColor.RED +
+				 * S_NOPERM); return true; } }
+				 */
 				if (args[0].equalsIgnoreCase("createNewAmmo")) {
 					if (sender.hasPermission("qualityarmory.createnewitem")) {
 						if (args.length >= 2) {
@@ -1329,7 +1341,7 @@ public class Main extends JavaPlugin implements Listener {
 				final Player player = (Player) sender;
 				if (args.length >= 1 && args[0].equalsIgnoreCase("override")) {
 					resourcepackReq.add(player.getUniqueId());
-					sender.sendMessage(prefix + " Overriding resoucepack requirement.");
+					sender.sendMessage(prefix + " Overriding resourcepack requirement.");
 					return true;
 				}
 				if (shouldSend && !resourcepackReq.contains(player.getUniqueId())) {
@@ -2145,6 +2157,7 @@ public class Main extends JavaPlugin implements Listener {
 								}
 							} catch (Error | Exception e4) {
 							}
+
 							if (g.isAutomatic() && RapidFireCharger.shooters.containsKey(e.getPlayer().getUniqueId())) {
 								RapidFireCharger.shooters.remove(e.getPlayer().getUniqueId()).cancel();
 							} else {
@@ -2159,6 +2172,7 @@ public class Main extends JavaPlugin implements Listener {
 										e.getPlayer().setItemInHand(ItemFact.damage(g, usedItem));
 									}
 							}
+							
 							sendHotbarGunAmmoCount(e.getPlayer(), g, attachment, usedItem);
 							return;
 						} else {
@@ -2290,15 +2304,17 @@ public class Main extends JavaPlugin implements Listener {
 					"Since there is no reason to stay on outdated updates, (1.7 and 1.8 has quite a number of exploits) update your server.");
 			if (shouldSend) {
 				shouldSend = false;
-				Bukkit.broadcastMessage(prefix + ChatColor.RED + " Disabling resoucepack.");
+				Bukkit.broadcastMessage(prefix + ChatColor.RED + " Disabling resourcepack.");
 			}
 		}
-		/*if (guntype == Material.DIAMOND_HOE && !hideTextureWarnings) {
-			Bukkit.broadcastMessage(prefix
-					+ " QA is now moving all items to a new Diamond_Axe system to prevent conflicts with other plugins.");
-			Bukkit.broadcastMessage(prefix
-					+ " Please delete the \"gunMaterialType\"value in the config or hide these warnings by setting \"hideTextureWarnings\" to true.");
-		}*/
+		/*
+		 * if (guntype == Material.DIAMOND_HOE && !hideTextureWarnings) {
+		 * Bukkit.broadcastMessage(prefix +
+		 * " QA is now moving all items to a new Diamond_Axe system to prevent conflicts with other plugins."
+		 * ); Bukkit.broadcastMessage(prefix +
+		 * " Please delete the \"gunMaterialType\"value in the config or hide these warnings by setting \"hideTextureWarnings\" to true."
+		 * ); }
+		 */
 		if (sendOnJoin) {
 			sendPacket(e.getPlayer(), sendTitleOnJoin);
 		} else {
@@ -2365,7 +2381,7 @@ public class Main extends JavaPlugin implements Listener {
 			}
 
 			if (g.getGlow() != null) {
-				coloredGunScoreboard.getTeam(g.getGlow().name() + "")
+				coloredGunScoreboard.getTeam("QA_" + g.getGlow().name() + "")
 						.addEntry(e.getItemDrop().getUniqueId().toString());
 				e.getItemDrop().setGlowing(true);
 			}
@@ -2632,7 +2648,8 @@ public class Main extends JavaPlugin implements Listener {
 	public static boolean isIS(ItemStack is) {
 		if (is == null)
 			return false;
-		if (is != null && is.getType() == IronSightsToggleItem.getMat() && is.getDurability() == (int) IronSightsToggleItem.getData())
+		if (is != null && is.getType() == IronSightsToggleItem.getMat()
+				&& is.getDurability() == (int) IronSightsToggleItem.getData())
 			return true;
 		return false;
 

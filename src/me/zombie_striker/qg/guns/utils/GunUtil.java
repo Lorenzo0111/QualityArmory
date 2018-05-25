@@ -16,8 +16,11 @@ import me.zombie_striker.qg.handlers.AimManager;
 import me.zombie_striker.qg.handlers.BulletWoundHandler;
 import me.zombie_striker.qg.handlers.HeadShotUtil;
 import me.zombie_striker.qg.handlers.ParticleHandlers;
+import me.zombie_striker.qg.handlers.SoundHandler;
 import me.zombie_striker.qg.handlers.Update19OffhandChecker;
 import me.zombie_striker.qg.handlers.gunvalues.ChargingHandlerEnum;
+import ru.beykerykt.lightapi.LightAPI;
+import ru.beykerykt.lightapi.chunks.ChunkInfo;
 
 import org.bukkit.*;
 import org.bukkit.block.Block;
@@ -225,9 +228,36 @@ public class GunUtil {
 					break;
 				}
 			}
+			
+
+			//TODO: Do lights n stuff
+			try {
+				if (Bukkit.getPluginManager().getPlugin("LightAPI") != null) {
+					final Location loc = p.getEyeLocation().clone();
+					LightAPI.createLight(loc, g.getLightOnShoot() , false);
+					for(ChunkInfo c: LightAPI.collectChunks(loc)) {
+						LightAPI.updateChunk(c);
+					}
+					new BukkitRunnable() {
+
+						@Override
+						public void run() {
+							LightAPI.deleteLight(loc, false);
+							for(ChunkInfo c: LightAPI.collectChunks(loc)) {
+								LightAPI.updateChunk(c);
+							}
+						}
+					}.runTaskLater(Main.getInstance(),3);
+				}
+			} catch (Error | Exception e5) {
+			}
+			
+			
+			
 			// Breaking texture
 			if (Main.blockBreakTexture)
 				for (Location l : blocksThatWillBreak) {
+					start.getWorld().playSound(start,SoundHandler.getSoundWhenShot(start.getBlock()) , 2, 1);
 					try {
 						for (Player p2 : l.getWorld().getPlayers()) {
 							com.comphenix.protocol.events.PacketContainer packet = new com.comphenix.protocol.events.PacketContainer(

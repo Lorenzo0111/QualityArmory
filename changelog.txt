@@ -1,3 +1,13 @@
+1.1.97
+	Fixed error with teams
+	Added LightAPI support
+	Added Sounds when block is broken
+	Added IncendaryGrenades
+	Added HomingRPG Launcher
+
+1.1.96
+	Fixed issue where item meta can be null when it shouldn't.
+
 1.1.95
 	Added mending item support. Even if the item does turn into a custom item, the new feature will make sure it is converted back to a regular item.
 	Code-Cleanup
