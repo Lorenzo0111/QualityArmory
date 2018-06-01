@@ -136,7 +136,7 @@ public class Main extends JavaPlugin implements Listener {
 	public static boolean kickIfDeniedRequest = false;
 	// public static String url19plus =
 	// "https://www.dropbox.com/s/faufrgo7w2zpi3d/QualityArmoryv1.0.10.zip?dl=1";
-	public static String url19plusAXE = "https://www.dropbox.com/s/n9nk387yzlm327y/QualityArmoryv1.0.15.zip?dl=1";
+	public static String url19plusAXE = "https://www.dropbox.com/s/dm0ehtevk725qlg/QualityArmoryv1.0.16.zip?dl=1";
 	public static String url18 = "https://www.dropbox.com/s/gx6dhahq6onob4g/QualityArmory1.8v1.0.1.zip?dl=1";
 	public static String url = url19plusAXE;
 
@@ -588,6 +588,8 @@ public class Main extends JavaPlugin implements Listener {
 
 			List<String> stringsAmmo = Arrays.asList(new String[] { getIngString(Material.IRON_INGOT, 0, 1),
 					getIngString(Material.SULPHUR, 0, 1), getIngString(Material.REDSTONE, 0, 1) });
+			List<String> stringsAmmoMusket = Arrays.asList(new String[] { getIngString(Material.IRON_INGOT, 0, 4),
+					getIngString(Material.SULPHUR, 0, 3),  });
 			List<String> stringsAmmoRPG = Arrays.asList(new String[] { getIngString(Material.IRON_INGOT, 0, 4),
 					getIngString(Material.SULPHUR, 0, 6), getIngString(Material.REDSTONE, 0, 1) });
 
@@ -655,6 +657,8 @@ public class Main extends JavaPlugin implements Listener {
 						8, 4);
 				GunYMLCreator.createAmmo(false, getDataFolder(), false, "rocket", "&fRocket", 17, stringsAmmoRPG, 100,
 						1000, 1);
+				GunYMLCreator.createAmmo(false, getDataFolder(), false, "musketball", "&fMusket Ball", 51, stringsAmmoMusket, 1,
+						0.7, 32);
 
 				GunYMLCreator.createNewGun(forceUpdate, getDataFolder(), "P30", 2, stringsPistol, WeaponType.PISTOL,
 						true, "9mm", 3, 0.3, 12, 1000, false, 800, null, 100, null);
@@ -783,8 +787,30 @@ public class Main extends JavaPlugin implements Listener {
 						m(49), stringsGrenades, 100, WeaponType.INCENDARY_GRENADES, 100, 1);
 				incedarygrenade.set(false, "radius", 5);
 				GunYMLCreator.createNewGun(true, getDataFolder(), "default_homingrpg", "&6Homing RPG Launcher", 50, stringsRPG,
-						WeaponType.RPG, false, "homingrpg", 500, 0.2, 1, 1000, false, 3000,
+						WeaponType.RPG, false, "rocket", 500, 0.2, 1, 1000, false, 3000,
 						ChargingHandlerEnum.HOMINGRPG, 300, null);
+
+				GunYMLCreator.createNewGun(forceUpdate, getDataFolder(),"flintlockpistol", "\"Harper's Ferry\" Flintlock Pistol", 52, stringsWoodRif,
+						WeaponType.PISTOL, true, "musketball", 10, 0.5, 1, 1000,3.7,1,1, false, 100, null,
+						100,WeaponSounds.GUN_AUTO );
+				
+				//Jump for armor 
+				
+
+				GunYMLCreator.createNewGun(forceUpdate, getDataFolder(),"musket", "\"Brown Bess\" Musket", 63, stringsWoodRif,
+						WeaponType.RIFLE, true, "musketball", 10, 0.38, 1, 1000,5,1,1, false, 200, null,
+						100, WeaponSounds.GUN_AUTO );
+				/**
+				 * (boolean forceUpdate, File dataFolder, boolean invalid, String filename,
+			String name, String displayname, List<String> lore, int id, List<String> craftingRequirements,
+			WeaponType weapontype, boolean enableIronSights, String ammotype, int damage, double sway, Material type,
+			int maxBullets, int duribility, double delayReload, double delayShoot, int bulletspershot,
+			boolean isAutomatic, int cost, ChargingHandlerEnum ch, int distance, int var, boolean version18,
+			WeaponSounds ws, String particle, double particleR, double particleG, double particleB,
+			boolean addMuzzleSmoke)
+				 * 
+				 */
+				
 
 				// miscRegister.put(m(22),
 				// new Grenades(getIngredients("Grenades", stringsGrenades), (double)
@@ -820,7 +846,7 @@ public class Main extends JavaPlugin implements Listener {
 				GunYMLCreator.createAmmo(true, getDataFolder(), false, "default_fusion_cell", "fusion_cell",
 						"Fusion Cell", 53, strings10mm, 60, 0.2, 50);
 				GunYMLCreator.createNewGun(true, getDataFolder(), "default_lazerrifle", "&6Lazer Rifle", 54,
-						strings10mm, WeaponType.LAZER, false, "fusion_cell", 1000, 0.2, 20, 1000, false, 2000, null,
+						strings10mm, WeaponType.LAZER, false, "fusion_cell", 4, 0.2, 20, 1000, false, 2000, null,
 						120, null);
 				GunYMLCreator.createNewGun(true, getDataFolder(), "default_fatman", "&6Fatman", 55, stringsFatman,
 						WeaponType.RPG, false, "mininuke", 500, 0.2, 1, 1000, false, 3000,
@@ -828,9 +854,9 @@ public class Main extends JavaPlugin implements Listener {
 				GunYMLCreator.createAmmo(true, getDataFolder(), false, "default_mininuke", "mininuke", "MiniNuke", 56,
 						stringsMini, 3000, 100, 1);
 				GunYMLCreator.createNewGun(true, getDataFolder(), "default_10mm", "&610mm Pistol", 57, strings10mm,
-						WeaponType.PISTOL, true, "9mm", 1000, 0.2, 12, 1000, false, 3000, null, 120, null);
+						WeaponType.PISTOL, true, "9mm", 3, 0.2, 12, 1000, false, 3000, null, 120, null);
 				GunYMLCreator.createNewGun(true, getDataFolder(), "default_instituterifle", "&6Institute Rifle", 58,
-						strings10mm, WeaponType.LAZER, false, "fusion_cell", 1000, 0.2, 20, 1000, false, 2000, null,
+						strings10mm, WeaponType.LAZER, false, "fusion_cell", 4, 0.2, 20, 1000, false, 2000, null,
 						120, null);
 
 			}
@@ -871,6 +897,8 @@ public class Main extends JavaPlugin implements Listener {
 			angledArmor.put(m(60), new AngledArmor(m(60), m(25), 180f));
 			angledArmor.put(m(61), new AngledArmor(m(61), m(25), 45f));
 			angledArmor.put(m(62), new AngledArmor(m(62), m(25), 0f));
+			
+			
 		}
 		// Skull texture
 		GunYMLLoader.loadAmmo(this);
@@ -1902,6 +1930,19 @@ public class Main extends JavaPlugin implements Listener {
 			return;
 		}
 
+		try {
+			if (isCustomItem(e.getPlayer().getInventory().getItemInOffHand()) && e.getPlayer().getInventory().getItemInOffHand().getEnchantments().containsKey(Enchantment.MENDING)) {
+				int safeDurib = findSafeSpot(e.getPlayer().getInventory().getItemInOffHand(), false);
+				Main.DEBUG("Safe Durib with mending OFFHAND= " + (safeDurib + 4) + "! ORG " + e.getPlayer().getInventory().getItemInOffHand().getDurability());
+				ItemStack is = e.getPlayer().getInventory().getItemInOffHand();
+				is.setDurability((short) Math.max(0, safeDurib - 1));
+				e.getPlayer().getInventory().setItemInOffHand(is);
+				return;
+				}
+			
+		}catch(Error|Exception e4) {				
+		}
+
 		if (e.getItem() != null) {
 			// Quick bugfix for specifically this item.
 			if (!isCustomItem(e.getItem())) {
@@ -1931,14 +1972,17 @@ public class Main extends JavaPlugin implements Listener {
 					// }
 				}
 				return;
-			} else if (e.getItem().getEnchantments().containsKey(Enchantment.MENDING)) {
+			} else { 
+				if (e.getItem().getEnchantments().containsKey(Enchantment.MENDING)) {
 				int safeDurib = findSafeSpot(e.getItem(), false);
 				Main.DEBUG("Safe Durib with mending= " + (safeDurib + 4) + "! ORG " + e.getItem().getDurability());
 				ItemStack is = e.getItem();
 				is.setDurability((short) Math.max(0, safeDurib - 1));
 				e.getPlayer().getInventory().setItem(e.getPlayer().getInventory().getHeldItemSlot(), is);
 				return;
+				}
 			}
+			
 
 			ItemStack usedItem = e.getPlayer().getItemInHand();
 

@@ -31,4 +31,17 @@ public enum WeaponSounds {
 		}
 		return WeaponSounds.DEFAULT;
 	}
+	
+	public static String getSoundByType(WeaponType type) {
+
+		if (type == WeaponType.PISTOL || type == WeaponType.SMG)
+			return WeaponSounds.GUN_SMALL.getName();
+		if (type == WeaponType.SHOTGUN || type == WeaponType.SNIPER)
+			return WeaponSounds.GUN_BIG.getName();
+		if (type == WeaponType.RPG)
+			return WeaponSounds.WARHEAD_LAUNCH.getName();
+		if (type == WeaponType.LAZER)
+			return WeaponSounds.LAZERSHOOT.getName();
+		return WeaponSounds.GUN_MEDIUM.getName();
+	}
 }

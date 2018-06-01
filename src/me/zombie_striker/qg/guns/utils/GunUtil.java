@@ -167,6 +167,7 @@ public class GunUtil {
 
 					((Damageable) hitTarget).damage(
 							damage * (bulletProtection ? 0.1 : 1) * (headShot ? (Main.HeadshotOneHit ? 50 : 2) : 1), p);
+					if(hitTarget instanceof LivingEntity)
 					((LivingEntity) hitTarget).setNoDamageTicks(0);
 					Main.DEBUG("Damaging entity " + hitTarget.getName());
 

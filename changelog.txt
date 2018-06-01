@@ -1,3 +1,15 @@
+1.1.98
+	Fixed mending for offhand
+	Rebalanced the Fallout weapons
+	Fixed endercrystal error
+	Added Flintlock pistols
+	Added Muskets
+	Added Musket balls
+	Fixed rapid fire shooting two bullets
+
+1.1.97B
+	quick fix for homing rpg
+
 1.1.97
 	Fixed error with teams
 	Added LightAPI support

@@ -129,7 +129,7 @@ public class GunYMLCreator {
 		h.setNoSave(false, "variant", var);
 		h.setNoSave(false, "craftingRequirements", craftingRequirements);
 		h.setNoSave(false, "weapontype", weapontype.name());
-		h.setNoSave(false, "weaponsounds", ws != null ? ws.getName() : null);
+		h.setNoSave(false, "weaponsounds", ws != null ? ws.getName() : WeaponSounds.getSoundByType(weapontype));
 		StringBuilder validGuns = new StringBuilder();
 		for (WeaponType g : WeaponType.values()) {
 			validGuns.append(g.name() + ", ");

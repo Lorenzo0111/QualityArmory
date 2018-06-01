@@ -59,6 +59,7 @@ public class RapidFireCharger implements ChargingHandler {
 								: 1)*/1;
 				if(!player.isSneaking() || slotUsed != player.getInventory().getHeldItemSlot() || amount <= 0) {
 					shooters.remove(player.getUniqueId()).cancel();
+					return;
 				}
 				
 				

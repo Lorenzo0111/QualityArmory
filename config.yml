@@ -44,8 +44,8 @@ Swap-Reload-and-Shooting-Controls: false
 
 #Resourcepack values
 useDefaultResourcepack: true
-DefaultResoucepackOverride: false
-DefaultResoucepack: https://www.dropbox.com/s/7xn1a6vmazc29zg/QualityArmoryv1.0.14.zip?dl=1
+DefaultResourcepackOverride: false
+DefaultResourcepack: https://www.dropbox.com/s/7xn1a6vmazc29zg/QualityArmoryv1.0.14.zip?dl=1
 Auto-Detect-Resourcepack: false
 
 #Determines if the resourcepack should be sent when a player joins.
