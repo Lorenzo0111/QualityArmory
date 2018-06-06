@@ -8,6 +8,13 @@ public enum WeaponSounds {
 
 	FLASHBANG("flashbang"), METALHIT("metalhit"), CHAINS("chainsmall"),
 	
+	
+	
+	SHOCKWAVE("shockwave"),LAZERFIRE("lazerfire"),GUN_STARWARS("bulletswblaster"),GUN_NEEDLER("bulletneedler"),GUN_HALOLAZER("bullethalolazer"),GUN_DEAGLE("bulletdeagle"),
+	
+	
+	
+	
 	SILENCEDSHOT("bulletsilence"),
 	
 	HISS("block.lava.extinguish"),

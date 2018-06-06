@@ -12,4 +12,5 @@ public interface ChargingHandler {
 	public boolean shoot(Gun g, Player player, ItemStack stack);
 	public double reload(Player player, Gun g, int amountReloading);
 	
+	public String getName();
 }

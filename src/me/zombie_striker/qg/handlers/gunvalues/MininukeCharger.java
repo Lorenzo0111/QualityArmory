@@ -21,6 +21,9 @@ public class MininukeCharger implements ChargingHandler {
 
 	List<UUID> timeC = new ArrayList<>();
 	List<UUID> timeR = new ArrayList<>();
+	public MininukeCharger() {
+		ChargingManager.add(this);
+	}
 
 	@Override
 	public boolean isCharging(Player player) {
@@ -101,6 +104,11 @@ public class MininukeCharger implements ChargingHandler {
 			}
 		}.runTaskLater(Main.getInstance(), (int) (time2*20) + 5);
 		return time2;
+	}
+
+	@Override
+	public String getName() {
+		return 	ChargingManager.MININUKELAUNCHER;
 	}
 
 }

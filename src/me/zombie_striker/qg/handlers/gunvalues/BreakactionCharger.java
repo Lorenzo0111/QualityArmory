@@ -18,6 +18,10 @@ public class BreakactionCharger implements ChargingHandler {
 	List<UUID> timeC = new ArrayList<>();
 	List<UUID> timeR = new ArrayList<>();
 
+	public BreakactionCharger() {
+		ChargingManager.add(this);
+	}
+	
 	@Override
 	public boolean isCharging(Player player) {
 		return timeC.contains(player.getUniqueId());
@@ -85,6 +89,11 @@ public class BreakactionCharger implements ChargingHandler {
 			}
 		}.runTaskLater(Main.getInstance(), (int) (time2*20) + 5);
 		return time2;
+	}
+
+	@Override
+	public String getName() {
+		return ChargingManager.BREAKACTION;
 	}
 
 }

@@ -19,8 +19,15 @@ import me.zombie_striker.qg.guns.utils.GunUtil;
 import me.zombie_striker.qg.guns.utils.WeaponSounds;
 import me.zombie_striker.qg.guns.utils.WeaponType;
 import me.zombie_striker.qg.handlers.*;
-import me.zombie_striker.qg.handlers.gunvalues.ChargingHandlerEnum;
+import me.zombie_striker.qg.handlers.gunvalues.BoltactionCharger;
+import me.zombie_striker.qg.handlers.gunvalues.BreakactionCharger;
+import me.zombie_striker.qg.handlers.gunvalues.ChargingManager;
+import me.zombie_striker.qg.handlers.gunvalues.HomingRPGCharger;
+import me.zombie_striker.qg.handlers.gunvalues.MininukeCharger;
+import me.zombie_striker.qg.handlers.gunvalues.PumpactionCharger;
+import me.zombie_striker.qg.handlers.gunvalues.RPGCharger;
 import me.zombie_striker.qg.handlers.gunvalues.RapidFireCharger;
+import me.zombie_striker.qg.handlers.gunvalues.RevolverCharger;
 import me.zombie_striker.qg.miscitems.*;
 import me.zombie_striker.qg.miscitems.ThrowableItems.ThrowableHolder;
 
@@ -63,12 +70,15 @@ public class Main extends JavaPlugin implements Listener {
 	public static HashMap<MaterialStorage, AttachmentBase> attachmentRegister = new HashMap<>();
 
 	public static HashMap<MaterialStorage, AngledArmor> angledArmor = new HashMap<>();
+	public static ArrayList<MaterialStorage> expansionPacks = new ArrayList<>();
 
 	public static HashMap<UUID, List<BukkitTask>> reloadingTasks = new HashMap<UUID, List<BukkitTask>>();
 
 	public static HashMap<UUID, Long> sentResourcepack = new HashMap<>();
 
 	public static ArrayList<UUID> resourcepackReq = new ArrayList<>();
+
+	public List<String> namesToBypass = new ArrayList<String>();
 
 	private static Main main;
 
@@ -136,7 +146,7 @@ public class Main extends JavaPlugin implements Listener {
 	public static boolean kickIfDeniedRequest = false;
 	// public static String url19plus =
 	// "https://www.dropbox.com/s/faufrgo7w2zpi3d/QualityArmoryv1.0.10.zip?dl=1";
-	public static String url19plusAXE = "https://www.dropbox.com/s/dm0ehtevk725qlg/QualityArmoryv1.0.16.zip?dl=1";
+	public static String url19plusAXE = "https://www.dropbox.com/s/3pm2ufs51mhh0qg/QualityArmoryv1.0.17.zip?dl=1";
 	public static String url18 = "https://www.dropbox.com/s/gx6dhahq6onob4g/QualityArmory1.8v1.0.1.zip?dl=1";
 	public static String url = url19plusAXE;
 
@@ -150,8 +160,6 @@ public class Main extends JavaPlugin implements Listener {
 	public static String S_ITEM_AMMO = "&aAmmo";
 	public static String S_ITEM_ING = "Ingredients";
 	public static String S_ITEM_VARIENTS = "&7Varient:";
-
-	public static String S_RELOADING_MESSAGE = "[Reloading...]";
 
 	public static String S_KICKED_FOR_RESOURCEPACK = "&c You have been kicked because you did not accept the resourcepack. \n&f If you want to rejoin the server, edit the server entry and set \"Resourcepack Prompts\" to \"Accept\" or \"Prompt\"'";
 
@@ -174,6 +182,16 @@ public class Main extends JavaPlugin implements Listener {
 	public static String S_BULLETPROOFSTOPPEDBLEEDING = "&aYour Kevlar vest protected you from that bullet!";
 	public static String S_BLEEDOUT_STARTBLEEDING = "&cYOU ARE BLEEDING! FIND A MEDKIT TO STOP THE BLEEDING!";
 	public static String S_BLEEDOUT_LOSINGconscious = "&cYOU ARE LOSING CONSCIOUSNESS DUE TO BLOODLOSS!";
+
+	public static String S_OUT_OF_AMMO = "[Out of Ammo]";
+	public static String S_RELOADING_MESSAGE = "[Reloading...]";
+	public static String S_MAX_FOUND = "[%total%]";
+	public static String S_HOTBAR_FORMAT = "%name% = %amount%/%max% %state%";
+
+	public static String S_RESOURCEPACK_HELP = "In case the resourcepack crashes your client, reject the request and use /qa getResourcepack to get the resourcepack.";
+	public static String S_RESOURCEPACK_DOWNLOAD = "Download this resourcepack and enable it to see gun models (Note that it may take some time to load)";
+	public static String S_RESOURCEPACK_BYPASS = "By issuing this command, you are now added to a whitelist for the resourcepack. You should no longer see the request";
+	public static String S_RESOURCEPACK_OPTIN = "By issuing this command, you have been removed from the whitelist. You will now recieve resourcepack requests";
 
 	public static boolean enableCrafting = true;
 	public static boolean enableShop = true;
@@ -198,6 +216,7 @@ public class Main extends JavaPlugin implements Listener {
 	// public static Material guntype = Material.DIAMOND_AXE;
 
 	public static CustomYml m;
+	public static CustomYml resourcepackwhitelist;
 
 	public static boolean hasParties = false;
 	public static boolean friendlyFire = false;
@@ -274,6 +293,7 @@ public class Main extends JavaPlugin implements Listener {
 				}
 			}
 		}
+
 		AngledArmorHandler.stopTasks();
 		for (Team t : coloredGunScoreboard.getTeams())
 			t.unregister();
@@ -372,7 +392,17 @@ public class Main extends JavaPlugin implements Listener {
 			Bukkit.broadcast(message, "qualityarmory.debugmessages");
 	}
 
+	@SuppressWarnings("unchecked")
 	public void reloadVals() {
+
+		new BoltactionCharger();
+		new BreakactionCharger();
+		new HomingRPGCharger();
+		new MininukeCharger();
+		new PumpactionCharger();
+		new RapidFireCharger();
+		new RevolverCharger();
+		new RPGCharger();
 
 		gunRegister.clear();
 		ammoRegister.clear();
@@ -398,6 +428,9 @@ public class Main extends JavaPlugin implements Listener {
 
 		S_RELOADING_MESSAGE = ChatColor.translateAlternateColorCodes('&',
 				(String) m.a("Reloading_Message", S_RELOADING_MESSAGE));
+		S_MAX_FOUND = ChatColor.translateAlternateColorCodes('&', (String) m.a("State_AmmoCount", S_MAX_FOUND));
+		S_OUT_OF_AMMO = ChatColor.translateAlternateColorCodes('&', (String) m.a("State_OutOfAmmo", S_OUT_OF_AMMO));
+		S_HOTBAR_FORMAT = ChatColor.translateAlternateColorCodes('&', (String) m.a("HotbarMessage", S_HOTBAR_FORMAT));
 
 		S_KICKED_FOR_RESOURCEPACK = ChatColor.translateAlternateColorCodes('&',
 				(String) m.a("Kick_message_if_player_denied_request", S_KICKED_FOR_RESOURCEPACK));
@@ -409,6 +442,11 @@ public class Main extends JavaPlugin implements Listener {
 		S_RMB_A2 = (String) m.a("Lore-Ironsights-Sneak", S_RMB_A2);
 		S_RMB_R1 = (String) m.a("Lore-Reload-Dropitem", S_RMB_R1);
 		S_RMB_R2 = (String) m.a("Lore-Reload-RMB", S_RMB_R2);
+
+		S_RESOURCEPACK_HELP = (String) m.a("Resourcepack_InCaseOfCrash", S_RESOURCEPACK_HELP);
+		S_RESOURCEPACK_DOWNLOAD = (String) m.a("Resourcepack_Download", S_RESOURCEPACK_DOWNLOAD);
+		S_RESOURCEPACK_BYPASS = (String) m.a("Resourcepack_NowBypass", S_RESOURCEPACK_BYPASS);
+		S_RESOURCEPACK_OPTIN = (String) m.a("Resourcepack_NowOptIn", S_RESOURCEPACK_OPTIN);
 
 		S_FULLYHEALED = ChatColor.translateAlternateColorCodes('&', (String) m.a("Medkit-FullyHealed", S_FULLYHEALED));
 		S_MEDKIT_HEALING = ChatColor.translateAlternateColorCodes('&',
@@ -433,6 +471,10 @@ public class Main extends JavaPlugin implements Listener {
 				(String) m.a("Bleeding.StartBleeding", S_BLEEDOUT_STARTBLEEDING));
 		S_BULLETPROOFSTOPPEDBLEEDING = ChatColor.translateAlternateColorCodes('&',
 				(String) m.a("Bleeding.ProtectedByKevlar", S_BULLETPROOFSTOPPEDBLEEDING));
+
+		resourcepackwhitelist = new CustomYml(new File(getDataFolder(), "resourcepackwhitelist.yml"));
+		namesToBypass = (List<String>) resourcepackwhitelist.a("Names_Of_players_to_bypass", namesToBypass);
+
 		if (!new File(getDataFolder(), "config.yml").exists())
 			saveDefaultConfig();
 		reloadConfig();
@@ -490,13 +532,6 @@ public class Main extends JavaPlugin implements Listener {
 		ENABLE_LORE_INFO = (boolean) a("enable_lore_gun-info_messages", true);
 		ENABLE_LORE_HELP = (boolean) a("enable_lore_control-help_messages", true);
 
-		bulletWound_initialbloodamount = (double) a("BulletWounds.InitialBloodLevel", bulletWound_initialbloodamount);
-		bulletWound_BloodIncreasePerSecond = (double) a("BulletWounds.BloodIncreasePerSecond",
-				bulletWound_BloodIncreasePerSecond);
-		bulletWound_MedkitBloodlossHealRate = (double) a("BulletWounds.Medkit_Heal_Bloodloss_Rate",
-				bulletWound_MedkitBloodlossHealRate);
-
-		enableBleeding = (boolean) a("BulletWounds.enableBleeding", enableBleeding);
 		HeadshotOneHit = (boolean) a("Enable_Headshot_Instantkill", HeadshotOneHit);
 		headshotPling = (boolean) a("Enable_Headshot_Notification_Sound", headshotPling);
 		headshotGoreSounds = (boolean) a("Enable_Headshot_Sounds", headshotGoreSounds);
@@ -511,6 +546,14 @@ public class Main extends JavaPlugin implements Listener {
 		enableCreationOfFiles = (boolean) a("Enable_Creation_Of_Default_Files", true);
 
 		blockBreakTexture = (boolean) a("Break-Block-Texture-If-Shot", true);
+
+		bulletWound_initialbloodamount = (double) a("experimental.BulletWounds.InitialBloodLevel",
+				bulletWound_initialbloodamount);
+		bulletWound_BloodIncreasePerSecond = (double) a("experimental.BulletWounds.BloodIncreasePerSecond",
+				bulletWound_BloodIncreasePerSecond);
+		bulletWound_MedkitBloodlossHealRate = (double) a("experimental.BulletWounds.Medkit_Heal_Bloodloss_Rate",
+				bulletWound_MedkitBloodlossHealRate);
+		enableBleeding = (boolean) a("experimental.BulletWounds.enableBleeding", enableBleeding);
 
 		// Force inversion due to naming
 		if (saveTheConfig) {
@@ -588,8 +631,8 @@ public class Main extends JavaPlugin implements Listener {
 
 			List<String> stringsAmmo = Arrays.asList(new String[] { getIngString(Material.IRON_INGOT, 0, 1),
 					getIngString(Material.SULPHUR, 0, 1), getIngString(Material.REDSTONE, 0, 1) });
-			List<String> stringsAmmoMusket = Arrays.asList(new String[] { getIngString(Material.IRON_INGOT, 0, 4),
-					getIngString(Material.SULPHUR, 0, 3),  });
+			List<String> stringsAmmoMusket = Arrays.asList(
+					new String[] { getIngString(Material.IRON_INGOT, 0, 4), getIngString(Material.SULPHUR, 0, 3), });
 			List<String> stringsAmmoRPG = Arrays.asList(new String[] { getIngString(Material.IRON_INGOT, 0, 4),
 					getIngString(Material.SULPHUR, 0, 6), getIngString(Material.REDSTONE, 0, 1) });
 
@@ -606,8 +649,8 @@ public class Main extends JavaPlugin implements Listener {
 						Material.IRON_HOE, 12, 1000, 1.5, 0.25, 1, false, 700, null, 80, true, null);
 				GunYMLCreator.createNewGun(forceUpdate, getDataFolder(), false, "default18_AK47", "AK47" + additive,
 						ChatColor.GOLD + "AK-47", null, -1, stringsWoodRif, WeaponType.RIFLE, true, "556ammo", 3, 0.25,
-						Material.GOLD_SPADE, 40, 1000, 1.5, 0.25, 2, true, 1400, ChargingHandlerEnum.RAPIDFIRE, 140,
-						true, null);
+						Material.GOLD_SPADE, 40, 1000, 1.5, 0.25, 2, true, 1400, ChargingManager.RAPIDFIRE, 140, true,
+						null);
 				GunYMLCreator.createNewGun(forceUpdate, getDataFolder(), false, "default18_MP5K", "MP5K" + additive,
 						ChatColor.GOLD + "MP5K", null, 0, stringsMetalRif, WeaponType.SMG, true, "556ammo", 3, 0.25,
 						Material.GOLD_PICKAXE, 32, 1000, 1.5, 0.25, 1, false, 1200, null, 100, true,
@@ -620,16 +663,16 @@ public class Main extends JavaPlugin implements Listener {
 				// if (guntype != Material.DIAMOND_HOE || !AutoDetectResourcepackVersion)
 				GunYMLCreator.createNewGun(forceUpdate, getDataFolder(), false, "default18_RPG", "RPG" + additive,
 						ChatColor.GOLD + "RPG", null, 0, stringsRPG, WeaponType.RPG, false, "RPGammo", 100, 0.1,
-						Material.DIAMOND_HOE, 1, 200, 3, 3, 2, false, 5000, ChargingHandlerEnum.RPG, 220, true, null);
+						Material.DIAMOND_HOE, 1, 200, 3, 3, 2, false, 5000, ChargingManager.RPG, 220, true, null);
 				if (/* guntype != Material.DIAMOND_AXE || */ !AutoDetectResourcepackVersion)
 					GunYMLCreator.createNewGun(forceUpdate, getDataFolder(), false, "default18_PKP", "PKP" + additive,
 							ChatColor.GOLD + "PKP", null, 0, stringsMetalRif, WeaponType.RIFLE, false, "556ammo", 2,
-							0.3, Material.DIAMOND_AXE, 100, 1000, 3, 0.27, 3, true, 3000, ChargingHandlerEnum.RAPIDFIRE,
+							0.3, Material.DIAMOND_AXE, 100, 1000, 3, 0.27, 3, true, 3000, ChargingManager.RAPIDFIRE,
 							170, true, WeaponSounds.GUN_BIG);
 				GunYMLCreator.createNewGun(forceUpdate, getDataFolder(), false, "default18_M16", "M16" + additive,
 						ChatColor.GOLD + "M16", null, 0, stringsMetalRif, WeaponType.RIFLE, false, "556ammo", 4, 0.3,
-						Material.IRON_SPADE, 30, 1000, 0.11, 1.5, 2, true, 1200, ChargingHandlerEnum.RAPIDFIRE, 140,
-						true, null);
+						Material.IRON_SPADE, 30, 1000, 0.11, 1.5, 2, true, 1200, ChargingManager.RAPIDFIRE, 140, true,
+						null);
 
 				ArmoryYML skullammo = GunYMLCreator.createSkullAmmo(false, getDataFolder(), false, "default18_ammo556",
 						"556ammo", "&7 5.56x45mm NATO", null, Material.SKULL_ITEM, 3, "cactus", null, 4, 1, 50);
@@ -657,53 +700,52 @@ public class Main extends JavaPlugin implements Listener {
 						8, 4);
 				GunYMLCreator.createAmmo(false, getDataFolder(), false, "rocket", "&fRocket", 17, stringsAmmoRPG, 100,
 						1000, 1);
-				GunYMLCreator.createAmmo(false, getDataFolder(), false, "musketball", "&fMusket Ball", 51, stringsAmmoMusket, 1,
-						0.7, 32);
+				GunYMLCreator.createAmmo(false, getDataFolder(), false, "musketball", "&fMusket Ball", 51,
+						stringsAmmoMusket, 1, 0.7, 32, 8);
 
 				GunYMLCreator.createNewGun(forceUpdate, getDataFolder(), "P30", 2, stringsPistol, WeaponType.PISTOL,
 						true, "9mm", 3, 0.3, 12, 1000, false, 800, null, 100, null);
 				ArmoryYML pkp = GunYMLCreator.createNewGun(forceUpdate, getDataFolder(), "PKP", 3, stringsMetalRif,
 						WeaponType.RIFLE, true, "556", 2, 0.3, 100, 1000, 3, 0.27, 3, true, 3000,
-						ChargingHandlerEnum.RAPIDFIRE, 170, WeaponSounds.GUN_BIG);
+						ChargingManager.RAPIDFIRE, 170, WeaponSounds.GUN_BIG);
 				pkp.set(false, "addMuzzleSmoke", true);
 				GunYMLCreator.createNewGun(forceUpdate, getDataFolder(), "MP5K", 4, stringsMetalRif, WeaponType.SMG,
-						false, "9mm", 3, 0.3, 32, 1000, 3, true, 1000, ChargingHandlerEnum.RAPIDFIRE, 100,
+						false, "9mm", 3, 0.3, 32, 1000, 3, true, 1000, ChargingManager.RAPIDFIRE, 100,
 						WeaponSounds.GUN_SMALL);
 				ArmoryYML ak47 = GunYMLCreator.createNewGun(forceUpdate, getDataFolder(), "AK47", 5, stringsWoodRif,
-						WeaponType.RIFLE, false, "556", 4, 0.3, 40, 1000, 2, true, 1200, ChargingHandlerEnum.RAPIDFIRE,
-						140, null);
+						WeaponType.RIFLE, false, "556", 4, 0.3, 40, 1000, 2, true, 1200, ChargingManager.RAPIDFIRE, 140,
+						null);
 				ak47.set(false, "addMuzzleSmoke", true);
 				ArmoryYML ak47u = GunYMLCreator.createNewGun(forceUpdate, getDataFolder(), "AK47U", 6, stringsWoodRif,
-						WeaponType.RIFLE, false, "556", 4, 0.3, 30, 1000, 2, true, 1200, ChargingHandlerEnum.RAPIDFIRE,
-						140, null);
+						WeaponType.RIFLE, false, "556", 4, 0.3, 30, 1000, 2, true, 1200, ChargingManager.RAPIDFIRE, 140,
+						null);
 				ak47u.set(false, "addMuzzleSmoke", true);
 				ArmoryYML m16 = GunYMLCreator.createNewGun(forceUpdate, getDataFolder(), "M16", 7, stringsMetalRif,
-						WeaponType.RIFLE, true, "556", 4, 0.3, 30, 1000, 2, true, 1200, ChargingHandlerEnum.RAPIDFIRE,
-						140, null);
+						WeaponType.RIFLE, true, "556", 4, 0.3, 30, 1000, 2, true, 1200, ChargingManager.RAPIDFIRE, 140,
+						null);
 				m16.set(false, "addMuzzleSmoke", true);
 				GunYMLCreator.createNewGun(forceUpdate, getDataFolder(), "Remmington", 8, stringsMetalRif,
 						WeaponType.SHOTGUN, false, "shell", 3, 0.15, 8, 1000, 5, 0.4, 10, false, 1400,
-						ChargingHandlerEnum.PUMPACTION, 70, null);
+						ChargingManager.PUMPACTION, 70, null);
 				GunYMLCreator.createNewGun(forceUpdate, getDataFolder(), "FNFal", 9, stringsWoodRif, WeaponType.RIFLE,
-						true, "556", 3, 0.3, 32, 1000, 2, true, 1000, ChargingHandlerEnum.RAPIDFIRE, 140, null);
+						true, "556", 3, 0.3, 32, 1000, 2, true, 1000, ChargingManager.RAPIDFIRE, 140, null);
 
 				ArmoryYML rpg = GunYMLCreator.createNewGun(forceUpdate, getDataFolder(), "RPG", 10, stringsRPG,
-						WeaponType.RPG, false, "rocket", 100, 0.1, 1, 200, false, 5000, ChargingHandlerEnum.RPG, 220,
-						null);
+						WeaponType.RPG, false, "rocket", 100, 0.1, 1, 200, false, 5000, ChargingManager.RPG, 220, null);
 				rpg.set(false, "addMuzzleSmoke", true);
 				GunYMLCreator.createNewGun(forceUpdate, getDataFolder(), "UMP", 11, stringsPistol, WeaponType.SMG, true,
 						"9mm", 2, 0.3, 32, 1000, true, 1300, null, 100, null);
 				GunYMLCreator.createNewGun(forceUpdate, getDataFolder(), "SW1911", 12, stringsPistol, WeaponType.PISTOL,
 						true, "9mm", 3, 0.3, 12, 1000, false, 800, null, 100, null);
 				GunYMLCreator.createNewGun(forceUpdate, getDataFolder(), "M40", 13, stringsWoodRif, WeaponType.SNIPER,
-						true, "556", 3, 0.2, 6, 1000, false, 2000, ChargingHandlerEnum.BOLTACTION, 200, null);
+						true, "556", 3, 0.2, 6, 1000, false, 2000, ChargingManager.BOLT, 200, null);
 
 				GunYMLCreator.createNewGun(forceUpdate, getDataFolder(), "Enfield", 18, stringsPistol,
 						WeaponType.PISTOL, true, "9mm", 3, 0.3, 6, 1000, 3, 0.25, 1, false, 500,
-						ChargingHandlerEnum.REVOLVER, 80, null);
+						ChargingManager.REVOLVER, 80, null);
 				GunYMLCreator.createNewGun(forceUpdate, getDataFolder(), "HenryRifle", 19, stringsGoldRif,
-						WeaponType.RIFLE, true, "556", 8, 0.3, 6, 1000, false, 1000, ChargingHandlerEnum.BREAKACTION,
-						100, null);
+						WeaponType.RIFLE, true, "556", 8, 0.3, 6, 1000, false, 1000, ChargingManager.BREAKACTION, 100,
+						null);
 				GunYMLCreator.createNewGun(forceUpdate, getDataFolder(), "Mouserc96", 20, stringsPistol,
 						WeaponType.PISTOL, true, "9mm", 3, 0.3, 12, 1000, false, 800, null, 80, null);
 
@@ -730,11 +772,11 @@ public class Main extends JavaPlugin implements Listener {
 						null, m(37), stringsHealer, 300, WeaponType.MEDKIT, 1, 1000);
 				ArmoryYML magnum = GunYMLCreator.createNewGun(forceUpdate, getDataFolder(), "Magnum", 38, stringsPistol,
 						WeaponType.PISTOL, true, "9mm", 6, 0.3, 6, 1000, 2, 0.5, 1, false, 500,
-						ChargingHandlerEnum.REVOLVER, 140, WeaponSounds.GUN_BIG);
+						ChargingManager.REVOLVER, 140, WeaponSounds.GUN_BIG);
 				magnum.set(false, "addMuzzleSmoke", true);
 				ArmoryYML awp = GunYMLCreator.createNewGun(forceUpdate, getDataFolder(), "AWP", 39, stringsMetalRif,
-						WeaponType.SNIPER, true, "556", 16, 0.3, 12, 1000, 2, 0.5, 1, false, 500,
-						ChargingHandlerEnum.BOLTACTION, 260, WeaponSounds.GUN_BIG);
+						WeaponType.SNIPER, true, "556", 16, 0.3, 12, 1000, 2, 0.5, 1, false, 500, ChargingManager.BOLT,
+						260, WeaponSounds.GUN_BIG);
 				awp.set(false, "addMuzzleSmoke", true);
 
 				ArmoryYML smokegrenade = GunYMLCreator.createMisc(false, getDataFolder(), false, "default_smokegrenade",
@@ -763,19 +805,19 @@ public class Main extends JavaPlugin implements Listener {
 
 				/* ArmoryYML m4a1s= */ GunYMLCreator.createNewGun(forceUpdate, getDataFolder(), "M4A1S", 44,
 						stringsMetalRif, WeaponType.RIFLE, true, "556", 4, 0.3, 30, 1000, 2, true, 1200,
-						ChargingHandlerEnum.RAPIDFIRE, 140, WeaponSounds.SILENCEDSHOT);
+						ChargingManager.RAPIDFIRE, 140, WeaponSounds.SILENCEDSHOT);
 				// m4a1s.set(false, "addMuzzleSmoke", true);
 				ArmoryYML rpk = GunYMLCreator.createNewGun(forceUpdate, getDataFolder(), "RPK", 45, stringsWoodRif,
-						WeaponType.RIFLE, false, "556", 4, 0.3, 70, 1000, 3, true, 1200, ChargingHandlerEnum.RAPIDFIRE,
-						140, null);
+						WeaponType.RIFLE, false, "556", 4, 0.3, 70, 1000, 3, true, 1200, ChargingManager.RAPIDFIRE, 140,
+						null);
 				rpk.set(false, "addMuzzleSmoke", true);
 				GunYMLCreator.createNewGun(forceUpdate, getDataFolder(), "SG-553", 46, stringsMetalRif,
-						WeaponType.RIFLE, true, "556", 4, 0.3, 40, 1000, 2, true, 1200, ChargingHandlerEnum.RAPIDFIRE,
-						140, null);
+						WeaponType.RIFLE, true, "556", 4, 0.3, 40, 1000, 2, true, 1200, ChargingManager.RAPIDFIRE, 140,
+						null);
 				GunYMLCreator.createNewGun(forceUpdate, getDataFolder(), "FN-Five-Seven", 47, stringsPistol,
 						WeaponType.PISTOL, true, "9mm", 3, 0.3, 12, 1000, false, 800, null, 100, null);
 				GunYMLCreator.createNewGun(forceUpdate, getDataFolder(), "DP27", 48, stringsMetalRif, WeaponType.RIFLE,
-						true, "556", 4, 0.4, 47, 1000, 2, true, 1200, ChargingHandlerEnum.RAPIDFIRE, 140,
+						true, "556", 4, 0.4, 47, 1000, 2, true, 1200, ChargingManager.RAPIDFIRE, 140,
 						WeaponSounds.GUN_BIG);
 
 				ArmoryYML incedarygrenade = GunYMLCreator.createMisc(false, getDataFolder(), false,
@@ -786,31 +828,27 @@ public class Main extends JavaPlugin implements Listener {
 								ChatColor.DARK_RED + "<!>Will Explode Even If Not Thrown<!>"),
 						m(49), stringsGrenades, 100, WeaponType.INCENDARY_GRENADES, 100, 1);
 				incedarygrenade.set(false, "radius", 5);
-				GunYMLCreator.createNewGun(true, getDataFolder(), "default_homingrpg", "&6Homing RPG Launcher", 50, stringsRPG,
-						WeaponType.RPG, false, "rocket", 500, 0.2, 1, 1000, false, 3000,
-						ChargingHandlerEnum.HOMINGRPG, 300, null);
+				GunYMLCreator.createNewGun(true, getDataFolder(), "default_homingrpg", "&6Homing RPG Launcher", 50,
+						stringsRPG, WeaponType.RPG, false, "rocket", 500, 0.2, 1, 1000, false, 3000,
+						ChargingManager.HOMINGRPG, 300, null);
 
-				GunYMLCreator.createNewGun(forceUpdate, getDataFolder(),"flintlockpistol", "\"Harper's Ferry\" Flintlock Pistol", 52, stringsWoodRif,
-						WeaponType.PISTOL, true, "musketball", 10, 0.5, 1, 1000,3.7,1,1, false, 100, null,
-						100,WeaponSounds.GUN_AUTO );
-				
-				//Jump for armor 
-				
+				GunYMLCreator.createNewGun(forceUpdate, getDataFolder(), "flintlockpistol",
+						"\"Harper's Ferry\" Flintlock Pistol", 52, stringsWoodRif, WeaponType.PISTOL, true,
+						"musketball", 10, 0.5, 1, 1000, 3.7, 1, 1, false, 100, null, 100, WeaponSounds.GUN_AUTO);
 
-				GunYMLCreator.createNewGun(forceUpdate, getDataFolder(),"musket", "\"Brown Bess\" Musket", 63, stringsWoodRif,
-						WeaponType.RIFLE, true, "musketball", 10, 0.38, 1, 1000,5,1,1, false, 200, null,
-						100, WeaponSounds.GUN_AUTO );
+				// Jump for armor
+
 				/**
 				 * (boolean forceUpdate, File dataFolder, boolean invalid, String filename,
-			String name, String displayname, List<String> lore, int id, List<String> craftingRequirements,
-			WeaponType weapontype, boolean enableIronSights, String ammotype, int damage, double sway, Material type,
-			int maxBullets, int duribility, double delayReload, double delayShoot, int bulletspershot,
-			boolean isAutomatic, int cost, ChargingHandlerEnum ch, int distance, int var, boolean version18,
-			WeaponSounds ws, String particle, double particleR, double particleG, double particleB,
-			boolean addMuzzleSmoke)
+				 * String name, String displayname, List<String> lore, int id, List<String>
+				 * craftingRequirements, WeaponType weapontype, boolean enableIronSights, String
+				 * ammotype, int damage, double sway, Material type, int maxBullets, int
+				 * duribility, double delayReload, double delayShoot, int bulletspershot,
+				 * boolean isAutomatic, int cost, ChargingHandlerEnum ch, int distance, int var,
+				 * boolean version18, WeaponSounds ws, String particle, double particleR, double
+				 * particleG, double particleB, boolean addMuzzleSmoke)
 				 * 
 				 */
-				
 
 				// miscRegister.put(m(22),
 				// new Grenades(getIngredients("Grenades", stringsGrenades), (double)
@@ -843,21 +881,42 @@ public class Main extends JavaPlugin implements Listener {
 				List<String> stringsFatman = Arrays.asList(new String[] { getIngString(Material.IRON_INGOT, 0, 32),
 						getIngString(Material.REDSTONE, 0, 16), getIngString(Material.BLAZE_POWDER, 0, 8) });
 
-				GunYMLCreator.createAmmo(true, getDataFolder(), false, "default_fusion_cell", "fusion_cell",
-						"Fusion Cell", 53, strings10mm, 60, 0.2, 50);
-				GunYMLCreator.createNewGun(true, getDataFolder(), "default_lazerrifle", "&6Lazer Rifle", 54,
-						strings10mm, WeaponType.LAZER, false, "fusion_cell", 4, 0.2, 20, 1000, false, 2000, null,
-						120, null);
-				GunYMLCreator.createNewGun(true, getDataFolder(), "default_fatman", "&6Fatman", 55, stringsFatman,
+				GunYMLCreator.createAmmo(true, getDataFolder(), false, "fusion_cell", "fusion_cell", "Fusion Cell", 53,
+						strings10mm, 60, 0.2, 30);
+				GunYMLCreator.createNewGun(true, getDataFolder(), "lazerrifle", "&6Lazer Rifle", 54, strings10mm,
+						WeaponType.LAZER, false, "fusion_cell", 4, 0.2, 20, 1000, false, 2000, null, 120, null);
+				GunYMLCreator.createNewGun(true, getDataFolder(), "fatman", "&6Fatman", 55, stringsFatman,
 						WeaponType.RPG, false, "mininuke", 500, 0.2, 1, 1000, false, 3000,
-						ChargingHandlerEnum.MININUKELAUNCHER, 300, null);
+						ChargingManager.MININUKELAUNCHER, 300, null);
 				GunYMLCreator.createAmmo(true, getDataFolder(), false, "default_mininuke", "mininuke", "MiniNuke", 56,
 						stringsMini, 3000, 100, 1);
-				GunYMLCreator.createNewGun(true, getDataFolder(), "default_10mm", "&610mm Pistol", 57, strings10mm,
+
+				GunYMLCreator.createNewGun(true, getDataFolder(), "10mm", "&610mm Pistol", 57, strings10mm,
 						WeaponType.PISTOL, true, "9mm", 3, 0.2, 12, 1000, false, 3000, null, 120, null);
-				GunYMLCreator.createNewGun(true, getDataFolder(), "default_instituterifle", "&6Institute Rifle", 58,
-						strings10mm, WeaponType.LAZER, false, "fusion_cell", 4, 0.2, 20, 1000, false, 2000, null,
-						120, null);
+
+				GunYMLCreator.createNewGun(false, getDataFolder(), false, "instituterifle", "&6Institute Rifle", null,
+						58, strings10mm, WeaponType.LAZER, false, "fusion_cell", 4, 0.2, Material.DIAMOND_AXE, 20, 1000,
+						1.5, 0.3, 1, false, 2000, null, 120, 0, false, WeaponSounds.LAZERSHOOT, "REDSTONE", 0.5, 0.9,
+						0.9);
+
+				// GunYMLCreator.createNewGun(true, getDataFolder(), "instituterifle",
+				// "&6Institute Rifle",null, 58,
+				// strings10mm, WeaponType.LAZER, false, "fusion_cell", 4,
+				// 0.2,Material.DIAMOND_AXE, 20, 1000, false, 2000, null,
+				// 120,0,false,WeaponSounds.LAZERSHOOT,
+				// "REDSTONE",0.5,0.9,0.9);
+
+				GunYMLCreator.createNewGun(forceUpdate, getDataFolder(), "musket", "\"Brown Bess\" Musket", 63,
+						stringsWoodRif, WeaponType.RIFLE, true, "musketball", 10, 0.38, 1, 1000, 5, 1, 1, false, 200,
+						null, 100, WeaponSounds.GUN_AUTO);
+
+				expansionPacks.add(MaterialStorage.getMS(Material.DIAMOND_AXE, 68, 0));
+				expansionPacks.add(MaterialStorage.getMS(Material.DIAMOND_AXE, 69, 0));
+				expansionPacks.add(MaterialStorage.getMS(Material.DIAMOND_AXE, 70, 0));
+				expansionPacks.add(MaterialStorage.getMS(Material.DIAMOND_AXE, 71, 0));
+				expansionPacks.add(MaterialStorage.getMS(Material.DIAMOND_AXE, 72, 0));
+				expansionPacks.add(MaterialStorage.getMS(Material.DIAMOND_AXE, 73, 0));
+				// Covers all SciFi weapons
 
 			}
 
@@ -897,8 +956,7 @@ public class Main extends JavaPlugin implements Listener {
 			angledArmor.put(m(60), new AngledArmor(m(60), m(25), 180f));
 			angledArmor.put(m(61), new AngledArmor(m(61), m(25), 45f));
 			angledArmor.put(m(62), new AngledArmor(m(62), m(25), 0f));
-			
-			
+
 		}
 		// Skull texture
 		GunYMLLoader.loadAmmo(this);
@@ -1071,6 +1129,10 @@ public class Main extends JavaPlugin implements Listener {
 			List<String> s = new ArrayList<String>();
 			if (b("give", args[0]))
 				s.add("give");
+			if (b("getResourcepack", args[0]))
+				s.add("getResourcepack");
+			if (b("sendResourcepack", args[0]))
+				s.add("sendResourcepack");
 			if (b("version", args[0]))
 				s.add("version");
 			if (enableShop)
@@ -1195,6 +1257,21 @@ public class Main extends JavaPlugin implements Listener {
 						sender.sendMessage(prefix + ChatColor.RED + S_NOPERM);
 						return true;
 					}
+					return true;
+				}
+				if (args[0].equalsIgnoreCase("sendResourcepack")) {
+					namesToBypass.remove(sender.getName());
+					resourcepackwhitelist.set("Names_Of_players_to_bypass", namesToBypass);
+					sender.sendMessage(prefix + S_RESOURCEPACK_OPTIN);
+					sendResourcepack((Player) sender, true);
+					return true;
+				}
+				if (args[0].equalsIgnoreCase("getResourcepack")) {
+					namesToBypass.add(sender.getName());
+					resourcepackwhitelist.set("Names_Of_players_to_bypass", namesToBypass);
+					sender.sendMessage(prefix + S_RESOURCEPACK_DOWNLOAD);
+					sender.sendMessage(url);
+					sender.sendMessage(prefix + S_RESOURCEPACK_BYPASS);
 					return true;
 				}
 
@@ -1373,7 +1450,7 @@ public class Main extends JavaPlugin implements Listener {
 					return true;
 				}
 				if (shouldSend && !resourcepackReq.contains(player.getUniqueId())) {
-					sendPacket(((Player) sender), true);
+					sendResourcepack(((Player) sender), true);
 					return true;
 				}
 				if (args.length == 0) {
@@ -1443,6 +1520,12 @@ public class Main extends JavaPlugin implements Listener {
 			newi.setDurability((short) findSafeSpot(e.getResult(), false));
 			e.setResult(newi);
 		}
+		for (ItemStack is : e.getInventory().getContents()) {
+			if (is != null && isCustomItem(is)) {
+				e.setResult(new ItemStack(Material.AIR));
+				return;
+			}
+		}
 	}
 
 	@EventHandler(priority = EventPriority.LOWEST)
@@ -1477,27 +1560,31 @@ public class Main extends JavaPlugin implements Listener {
 			if (e.getCurrentItem() != null) {
 				if (shop) {
 
-					if (e.getCurrentItem().equals(prevButton)) {
-						int page = Integer.parseInt(e.getInventory().getTitle().split(S_shopName)[1]) - 1 - 1;
+					if (e.getCurrentItem().isSimilar(prevButton)) {
+						int page = Integer.parseInt(e.getInventory().getTitle().split(S_shopName)[1]) - 1;
+						e.getWhoClicked().closeInventory();
 						e.getWhoClicked().openInventory(createShop(Math.max(0, page)));
 						DEBUG("Prev_Shop");
 						return;
 					}
-					if (e.getCurrentItem().equals(nextButton)) {
-						int page = Integer.parseInt(e.getInventory().getTitle().split(S_shopName)[1]) - 1 + 1;
+					if (e.getCurrentItem().isSimilar(nextButton)) {
+						int page = Integer.parseInt(e.getInventory().getTitle().split(S_shopName)[1]) + 1;
+						e.getWhoClicked().closeInventory();
 						e.getWhoClicked().openInventory(createShop(Math.min(getMaxPages(), page)));
 						DEBUG("next_Shop");
 						return;
 					}
 				} else {
-					if (e.getCurrentItem().equals(prevButton)) {
-						int page = Integer.parseInt(e.getInventory().getTitle().split(S_craftingBenchName)[1]) - 1 - 1;
+					if (e.getCurrentItem().isSimilar(prevButton)) {
+						int page = Integer.parseInt(e.getInventory().getTitle().split(S_craftingBenchName)[1]) - 1;
+						e.getWhoClicked().closeInventory();
 						e.getWhoClicked().openInventory(createCraft(Math.max(0, page)));
 						DEBUG("Prev_craft");
 						return;
 					}
-					if (e.getCurrentItem().equals(nextButton)) {
-						int page = Integer.parseInt(e.getInventory().getTitle().split(S_craftingBenchName)[1]) - 1 + 1;
+					if (e.getCurrentItem().isSimilar(nextButton)) {
+						int page = Integer.parseInt(e.getInventory().getTitle().split(S_craftingBenchName)[1]) + 1;
+						e.getWhoClicked().closeInventory();
 						e.getWhoClicked().openInventory(createCraft(Math.min(getMaxPages(), page)));
 						DEBUG("next_craft");
 						return;
@@ -1750,7 +1837,7 @@ public class Main extends JavaPlugin implements Listener {
 	public void onPickup(PlayerPickupItemEvent e) {
 		if (isAmmo(e.getItem().getItemStack())) {
 			if (shouldSend && !resourcepackReq.contains(e.getPlayer().getUniqueId())) {
-				sendPacket(e.getPlayer(), true);
+				sendResourcepack(e.getPlayer(), true);
 			}
 			AmmoUtil.addAmmo(e.getPlayer(), ammoRegister.get(MaterialStorage.getMS(e.getItem().getItemStack())),
 					e.getItem().getItemStack().getAmount());
@@ -1765,7 +1852,7 @@ public class Main extends JavaPlugin implements Listener {
 
 		if (isGun(e.getItem().getItemStack())) {
 			if (shouldSend && !resourcepackReq.contains(e.getPlayer().getUniqueId())) {
-				sendPacket(e.getPlayer(), true);
+				sendResourcepack(e.getPlayer(), true);
 			}
 			checkforDups(e.getPlayer(), e.getItem().getItemStack());
 		}
@@ -1790,7 +1877,7 @@ public class Main extends JavaPlugin implements Listener {
 					if (bb[i])
 						continue;
 					if (is.getType() == ings[i].getType()
-							&& (is.getDurability() == 0 || is.getDurability() == ings[i].getDurability())) {
+							&& (ings[i].getDurability() == 0 || is.getDurability() == ings[i].getDurability())) {
 						// TODO: Make sure this is clear: If there is no damage value (0), then accept
 						// all damage types.
 						if (is.getAmount() >= ings[i].getAmount())
@@ -1901,7 +1988,7 @@ public class Main extends JavaPlugin implements Listener {
 
 	@SuppressWarnings({ "deprecation", "null" })
 	@EventHandler
-	public void onClick(PlayerInteractEvent e) {
+	public void onClick(final PlayerInteractEvent e) {
 		Main.DEBUG("InteractEvent Called");
 
 		if (Main.kickIfDeniedRequest && sentResourcepack.containsKey(e.getPlayer().getUniqueId())
@@ -1915,7 +2002,7 @@ public class Main extends JavaPlugin implements Listener {
 		if (e.getAction() == Action.RIGHT_CLICK_BLOCK && e.getClickedBlock().getType() == Material.ANVIL
 				&& overrideAnvil && !e.getPlayer().isSneaking()) {
 			if (shouldSend && !resourcepackReq.contains(e.getPlayer().getUniqueId())) {
-				sendPacket(e.getPlayer(), true);
+				sendResourcepack(e.getPlayer(), true);
 				e.setCancelled(true);
 				Main.DEBUG("Resourcepack message being sent!");
 				return;
@@ -1931,16 +2018,33 @@ public class Main extends JavaPlugin implements Listener {
 		}
 
 		try {
-			if (isCustomItem(e.getPlayer().getInventory().getItemInOffHand()) && e.getPlayer().getInventory().getItemInOffHand().getEnchantments().containsKey(Enchantment.MENDING)) {
+			if (e.getPlayer().getInventory().getItemInOffHand() != null
+					&& isCustomItem(e.getPlayer().getInventory().getItemInOffHand()) && e.getPlayer().getInventory()
+							.getItemInOffHand().getEnchantments().containsKey(Enchantment.MENDING)) {
 				int safeDurib = findSafeSpot(e.getPlayer().getInventory().getItemInOffHand(), false);
-				Main.DEBUG("Safe Durib with mending OFFHAND= " + (safeDurib + 4) + "! ORG " + e.getPlayer().getInventory().getItemInOffHand().getDurability());
+				Main.DEBUG("Safe Durib with mending OFFHAND= " + (safeDurib + 4) + "! ORG "
+						+ e.getPlayer().getInventory().getItemInOffHand().getDurability());
 				ItemStack is = e.getPlayer().getInventory().getItemInOffHand();
 				is.setDurability((short) Math.max(0, safeDurib - 1));
 				e.getPlayer().getInventory().setItemInOffHand(is);
 				return;
-				}
-			
-		}catch(Error|Exception e4) {				
+			}
+
+		} catch (Error | Exception e4) {
+		}
+		try {
+			if (e.getPlayer().getItemInHand() != null && isCustomItem(e.getPlayer().getInventory().getItemInHand()) && e
+					.getPlayer().getInventory().getItemInHand().getEnchantments().containsKey(Enchantment.MENDING)) {
+				int safeDurib = findSafeSpot(e.getPlayer().getInventory().getItemInHand(), false);
+				Main.DEBUG("Safe Durib with mending OFFHAND= " + (safeDurib + 4) + "! ORG "
+						+ e.getPlayer().getInventory().getItemInHand().getDurability());
+				ItemStack is = e.getPlayer().getInventory().getItemInHand();
+				is.setDurability((short) Math.max(0, safeDurib - 1));
+				e.getPlayer().getInventory().setItemInHand(is);
+				return;
+			}
+
+		} catch (Error | Exception e4) {
 		}
 
 		if (e.getItem() != null) {
@@ -1959,6 +2063,8 @@ public class Main extends JavaPlugin implements Listener {
 						|| attachmentRegister.containsKey(MaterialStorage.getMS(e.getItem().getType(),
 								(int) (e.getItem().getDurability() + 1), -1, "-1", "-1"))
 						|| angledArmor.containsKey(MaterialStorage.getMS(e.getItem().getType(),
+								(int) (e.getItem().getDurability() + 1), -1, "-1", "-1"))
+						|| expansionPacks.contains(MaterialStorage.getMS(e.getItem().getType(),
 								(int) (e.getItem().getDurability() + 1), -1, "-1", "-1"))) {
 					Main.DEBUG("A player is using a non-gun item, but may reach the textures of one!");
 					// If the item is not a gun, but the item below it is
@@ -1972,17 +2078,31 @@ public class Main extends JavaPlugin implements Listener {
 					// }
 				}
 				return;
-			} else { 
-				if (e.getItem().getEnchantments().containsKey(Enchantment.MENDING)) {
-				int safeDurib = findSafeSpot(e.getItem(), false);
-				Main.DEBUG("Safe Durib with mending= " + (safeDurib + 4) + "! ORG " + e.getItem().getDurability());
-				ItemStack is = e.getItem();
-				is.setDurability((short) Math.max(0, safeDurib - 1));
-				e.getPlayer().getInventory().setItem(e.getPlayer().getInventory().getHeldItemSlot(), is);
-				return;
-				}
+			} else {
+				/*
+				 * if (e.getItem().getEnchantments().containsKey(Enchantment.MENDING)) { int
+				 * safeDurib = findSafeSpot(e.getItem(), false);
+				 * Main.DEBUG("Safe Durib with mending= " + (safeDurib + 4) + "! ORG " +
+				 * e.getItem().getDurability()); ItemStack is = e.getItem();
+				 * is.setDurability((short) Math.max(0, safeDurib - 1));
+				 * e.getPlayer().getInventory().setItem(e.getPlayer().getInventory().
+				 * getHeldItemSlot(), is); return; }
+				 */
+				final ItemStack origin = e.getItem();
+				final int slot = e.getPlayer().getInventory().getHeldItemSlot();
+				if (!isIS(origin))
+					new BukkitRunnable() {
+
+						@Override
+						public void run() {
+							if (origin.getDurability() != e.getPlayer().getItemInHand().getDurability()
+									&& slot == e.getPlayer().getInventory().getHeldItemSlot()) {
+								e.getPlayer().setItemInHand(origin);
+							}
+
+						}
+					}.runTaskLater(this, 1);
 			}
-			
 
 			ItemStack usedItem = e.getPlayer().getItemInHand();
 
@@ -2001,7 +2121,7 @@ public class Main extends JavaPlugin implements Listener {
 			// Sedn the resourcepack if the player does not have it.
 			if (shouldSend && !resourcepackReq.contains(e.getPlayer().getUniqueId())) {
 				Main.DEBUG("Player does not have resourcepack!");
-				sendPacket(e.getPlayer(), true);
+				sendResourcepack(e.getPlayer(), true);
 			}
 
 			if (isArmor(usedItem)) {
@@ -2216,13 +2336,13 @@ public class Main extends JavaPlugin implements Listener {
 										e.getPlayer().setItemInHand(ItemFact.damage(g, usedItem));
 									}
 							}
-							
-							sendHotbarGunAmmoCount(e.getPlayer(), g, attachment, usedItem);
+
+							sendHotbarGunAmmoCount(e.getPlayer(), g, attachment, usedItem, false);
 							return;
 						} else {
 							Main.DEBUG("Worldguard region canceled the event");
 						}
-						sendHotbarGunAmmoCount(e.getPlayer(), g, attachment, usedItem);
+						sendHotbarGunAmmoCount(e.getPlayer(), g, attachment, usedItem, false);
 						// TODO: Verify that the gun is in the main hand.
 						// Shouldn't work for offhand, but it should still
 						// be checked later.
@@ -2268,7 +2388,7 @@ public class Main extends JavaPlugin implements Listener {
 									e.getPlayer().getInventory().setItemInMainHand(ironsights);
 								}
 
-								sendHotbarGunAmmoCount(e.getPlayer(), g, attachment, usedItem);
+								sendHotbarGunAmmoCount(e.getPlayer(), g, attachment, usedItem, false);
 							} catch (Error e2) {
 								Bukkit.broadcastMessage(prefix
 										+ "Ironsights not compatible for versions lower than 1.8. The server owner should set EnableIronSights to false in the plugin's config");
@@ -2284,7 +2404,7 @@ public class Main extends JavaPlugin implements Listener {
 											e.getPlayer().setItemInHand(ItemFact.damage(g, usedItem));
 										}
 								}
-								sendHotbarGunAmmoCount(e.getPlayer(), g, attachment, usedItem);
+								sendHotbarGunAmmoCount(e.getPlayer(), g, attachment, usedItem, false);
 								// TODO: Verify that the gun is in the main
 								// hand.
 								// Shouldn't work for offhand, but it should
@@ -2298,15 +2418,18 @@ public class Main extends JavaPlugin implements Listener {
 						e.setCancelled(false);
 					} else {
 						if (g != null) {
-							if (allowGunReload)
+							if (allowGunReload) {
+								sendHotbarGunAmmoCount(e.getPlayer(), g, attachment, usedItem,
+										g.getMaxBullets() != ItemFact.getAmount(usedItem));
 								if (g.playerHasAmmo(e.getPlayer())) {
 									Main.DEBUG("Trying to reload. player has ammo");
 									g.reload(e.getPlayer(), attachment);
+
 								} else {
 									Main.DEBUG("Trying to reload. player DOES NOT have ammo");
 								}
+							}
 
-							sendHotbarGunAmmoCount(e.getPlayer(), g, attachment, usedItem);
 						}
 					}
 				}
@@ -2360,7 +2483,7 @@ public class Main extends JavaPlugin implements Listener {
 		 * ); }
 		 */
 		if (sendOnJoin) {
-			sendPacket(e.getPlayer(), sendTitleOnJoin);
+			sendResourcepack(e.getPlayer(), sendTitleOnJoin);
 		} else {
 			for (ItemStack i : e.getPlayer().getInventory().getContents()) {
 				if (i != null && (isGun(i) || isAmmo(i) || isMisc(i))) {
@@ -2368,7 +2491,7 @@ public class Main extends JavaPlugin implements Listener {
 						new BukkitRunnable() {
 							@Override
 							public void run() {
-								sendPacket(e.getPlayer(), false);
+								sendResourcepack(e.getPlayer(), false);
 							}
 						}.runTaskLater(this, 0);
 					}
@@ -2493,9 +2616,13 @@ public class Main extends JavaPlugin implements Listener {
 	}
 
 	@SuppressWarnings("deprecation")
-	public void sendPacket(final Player player, final boolean warning) {
+	public void sendResourcepack(final Player player, final boolean warning) {
 		new BukkitRunnable() {
 			public void run() {
+				if (namesToBypass.contains(player.getName())) {
+					Main.resourcepackReq.add(player.getUniqueId());
+					return;
+				}
 				if (warning)
 					try {
 						player.sendTitle(ChatColor.RED + S_NORES1, S_NORES2);
@@ -2503,6 +2630,7 @@ public class Main extends JavaPlugin implements Listener {
 						player.sendMessage(ChatColor.RED + S_NORES1);
 						player.sendMessage(ChatColor.RED + S_NORES2);
 					}
+				player.sendMessage(prefix + S_RESOURCEPACK_HELP);
 				new BukkitRunnable() {
 					@Override
 					public void run() {
@@ -2699,13 +2827,29 @@ public class Main extends JavaPlugin implements Listener {
 
 	}
 
-	public static void sendHotbarGunAmmoCount(Player p, Gun g, AttachmentBase attachmentBase, ItemStack usedItem) {
+	public static void sendHotbarGunAmmoCount(Player p, Gun g, AttachmentBase attachmentBase, ItemStack usedItem,
+			boolean reloading) {
 		try {
+			String message = S_HOTBAR_FORMAT
+					.replaceAll("%name%",
+							(attachmentBase != null ? attachmentBase.getDisplayName() : g.getDisplayName()))
+					.replaceAll("%amount%", ItemFact.getAmount(usedItem) + "")
+					.replaceAll("%max%", g.getMaxBullets() + "");
 
-			String message = (attachmentBase != null ? attachmentBase.getDisplayName() : g.getDisplayName()) + " = "
-					+ ItemFact.getAmount(usedItem) + "/" + (g.getMaxBullets()) + "";
-			if (unknownTranslationKeyFixer)
+			message = message
+					.replaceAll("%state%",
+							reloading ? S_RELOADING_MESSAGE
+									: AmmoUtil.getAmmoAmount(p, g.getAmmoType()) <= 0 ? S_OUT_OF_AMMO : S_MAX_FOUND)
+					.replaceAll("%total%", "" + AmmoUtil.getAmmoAmount(p, g.getAmmoType()));
+
+			// (attachmentBase != null ? attachmentBase.getDisplayName() :
+			// g.getDisplayName()) + " = "
+			// + ItemFact.getAmount(usedItem) + "/" + (g.getMaxBullets()) + "";
+			if (unknownTranslationKeyFixer) {
 				message = ChatColor.stripColor(message);
+			} else {
+				message = ChatColor.translateAlternateColorCodes('&', message);
+			}
 			HotbarMessager.sendHotBarMessage(p, message);
 		} catch (Error | Exception e5) {
 		}
@@ -2910,6 +3054,9 @@ public class Main extends JavaPlugin implements Listener {
 			if (j.getMat() == newItem.getType() && (j.getData() > safeDurib) == findHighest)
 				safeDurib = j.getData();
 		for (MaterialStorage j : angledArmor.keySet())
+			if (j.getMat() == newItem.getType() && (j.getData() > safeDurib) == findHighest)
+				safeDurib = j.getData();
+		for (MaterialStorage j : expansionPacks)
 			if (j.getMat() == newItem.getType() && (j.getData() > safeDurib) == findHighest)
 				safeDurib = j.getData();
 		return safeDurib;

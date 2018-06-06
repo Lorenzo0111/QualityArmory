@@ -19,7 +19,7 @@ import me.zombie_striker.qg.attachments.AttachmentBase;
 import me.zombie_striker.qg.guns.Gun;
 import me.zombie_striker.qg.guns.utils.WeaponSounds;
 import me.zombie_striker.qg.guns.utils.WeaponType;
-import me.zombie_striker.qg.handlers.gunvalues.ChargingHandlerEnum;
+import me.zombie_striker.qg.handlers.gunvalues.ChargingManager;
 import me.zombie_striker.qg.miscitems.Flashbang;
 import me.zombie_striker.qg.miscitems.Grenades;
 import me.zombie_striker.qg.miscitems.IncendaryGrenades;
@@ -255,7 +255,7 @@ public class GunYMLLoader {
 
 							if (f2.contains("ChargingHandler") && !f2.getString("ChargingHandler").equals("null"))
 								g.setChargingHandler(
-										ChargingHandlerEnum.getEnumV(f2.getString("ChargingHandler")).getHandler());
+										ChargingManager.getHandler(f2.getString("ChargingHandler")));
 							if (f2.contains("delayForShoot"))
 								g.setDelayBetweenShots(f2.getDouble("delayForShoot"));
 							if (f2.contains("bullets-per-shot"))
@@ -358,7 +358,7 @@ public class GunYMLLoader {
 						try {
 							if (f2.contains("ChargingHandler") && !f2.getString("ChargingHandler").equals("null"))
 								attach.setCh(
-										ChargingHandlerEnum.getEnumV(f2.getString("ChargingHandler")).getHandler());
+										ChargingManager.getHandler(f2.getString("ChargingHandler")));
 						} catch (Error | Exception e445) {
 						}
 						try {

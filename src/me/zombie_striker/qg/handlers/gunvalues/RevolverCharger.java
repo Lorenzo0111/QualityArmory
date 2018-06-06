@@ -17,7 +17,9 @@ public class RevolverCharger implements ChargingHandler {
 
 	List<UUID> timeC = new ArrayList<>();
 	List<UUID> timeR = new ArrayList<>();
-
+public RevolverCharger() {
+	ChargingManager.add(this);
+}
 	@Override
 	public boolean isCharging(Player player) {
 		return timeC.contains(player.getUniqueId());
@@ -82,6 +84,12 @@ public class RevolverCharger implements ChargingHandler {
 			}
 		}.runTaskLater(Main.getInstance(), (int) (time2*20)+5);
 		return time2;
+	}
+
+	@Override
+	public String getName() {
+
+		return ChargingManager.REVOLVER;
 	}
 
 }

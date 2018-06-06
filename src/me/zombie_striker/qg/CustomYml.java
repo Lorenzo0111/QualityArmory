@@ -21,6 +21,10 @@ public class CustomYml {
 		}
 		return c.get(path);
 	}
+	public void set(String path, Object val) {
+		c.set(path, val);
+		save();
+	}
 	public void save(){
 		try {
 			c.save(s);

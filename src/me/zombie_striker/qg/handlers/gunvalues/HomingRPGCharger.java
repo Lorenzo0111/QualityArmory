@@ -15,14 +15,15 @@ import me.zombie_striker.qg.Main;
 import me.zombie_striker.qg.guns.Gun;
 import me.zombie_striker.qg.guns.utils.GunUtil;
 import me.zombie_striker.qg.guns.utils.HomingRocketProjectile;
-import me.zombie_striker.qg.guns.utils.RocketProjectile;
 import me.zombie_striker.qg.guns.utils.WeaponSounds;
 
 public class HomingRPGCharger implements ChargingHandler {
 
 	List<UUID> timeC = new ArrayList<>();
 	List<UUID> timeR = new ArrayList<>();
-	
+	public HomingRPGCharger() {
+		ChargingManager.add(this);
+	}
 
 	@Override
 	public boolean isCharging(Player player) {
@@ -103,6 +104,11 @@ public class HomingRPGCharger implements ChargingHandler {
 			}
 		}.runTaskLater(Main.getInstance(), (int) (time2*20) + 5);
 		return time2;
+	}
+
+	@Override
+	public String getName() {
+		return ChargingManager.HOMINGRPG;
 	}
 
 }

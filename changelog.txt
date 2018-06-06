@@ -1,3 +1,16 @@
+1.1.99
+	Fixed 1.9 and lower issue where items can turn into other items if hit.
+	Fixed pages for the shop menu and crafting menu
+	Added customizable hotbar messages
+	Added total ammo count to hotbart
+	Added out of ammo to hotbar message
+	Move Bleeding/BulletWounds config options to experimental
+	Added /qa sendResourcepack to send the resourcepack request
+	Added /qa getResourcepack to get the Resourcepack as a URL
+	Added support for custom charging handlers
+	Added support for expansion packs
+	Fixed using anvils on items.
+
 1.1.98
 	Fixed mending for offhand
 	Rebalanced the Fallout weapons

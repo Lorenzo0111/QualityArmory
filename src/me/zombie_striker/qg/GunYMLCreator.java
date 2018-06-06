@@ -11,14 +11,13 @@ import me.zombie_striker.qg.ammo.Ammo;
 import me.zombie_striker.qg.guns.Gun;
 import me.zombie_striker.qg.guns.utils.WeaponSounds;
 import me.zombie_striker.qg.guns.utils.WeaponType;
-import me.zombie_striker.qg.handlers.gunvalues.ChargingHandlerEnum;
 
 public class GunYMLCreator {
 
 	public static ArmoryYML createNewGun(boolean forceUpdate, File dataFolder, String name, String displayname, int id,
 			List<String> craftingRequirements, WeaponType weapontype, boolean enableIronSights, String ammotype,
 			int damage, double sway, int maxBullets, int duribility, double delayReload, double delayShoot,
-			int bulletspershot, boolean isAutomatic, int cost, ChargingHandlerEnum ch, int distance, WeaponSounds ws) {
+			int bulletspershot, boolean isAutomatic, int cost, String ch, int distance, WeaponSounds ws) {
 		return createNewGun(forceUpdate, dataFolder, false, name, name, displayname, null, id, craftingRequirements,
 				weapontype, enableIronSights, ammotype, damage, sway,Material.DIAMOND_AXE, maxBullets, duribility, delayReload,
 				delayShoot, bulletspershot, isAutomatic, cost, ch, distance, false, ws);
@@ -27,7 +26,7 @@ public class GunYMLCreator {
 	public static ArmoryYML createNewGun(boolean forceUpdate, File dataFolder, String name, String displayname, int id,
 			List<String> craftingRequirements, WeaponType weapontype, boolean enableIronSights, String ammotype,
 			int damage, double sway, int maxBullets, int duribility, int bulletspershot, boolean isAutomatic, int cost,
-			ChargingHandlerEnum ch, int distance, WeaponSounds ws) {
+			String ch, int distance, WeaponSounds ws) {
 		return createNewGun(forceUpdate, dataFolder, name, displayname, id, craftingRequirements, weapontype,
 				enableIronSights, ammotype, damage, sway, maxBullets, duribility, 1.5, 0.25, bulletspershot,
 				isAutomatic, cost, ch, distance, ws);
@@ -36,7 +35,7 @@ public class GunYMLCreator {
 	public static ArmoryYML createNewGun(boolean forceUpdate, File dataFolder, String name, String displayname, int id,
 			List<String> craftingRequirements, WeaponType weapontype, boolean enableIronSights, String ammotype,
 			int damage, double sway, int maxBullets, int duribility, boolean isAutomatic, int cost,
-			ChargingHandlerEnum ch, int distance, WeaponSounds ws) {
+			String ch, int distance, WeaponSounds ws) {
 		return createNewGun(forceUpdate, dataFolder, name, displayname, id, craftingRequirements, weapontype,
 				enableIronSights, ammotype, damage, sway, maxBullets, duribility, 1, isAutomatic, cost, ch, distance,
 				ws);
@@ -47,7 +46,7 @@ public class GunYMLCreator {
 	public static ArmoryYML createNewGun(boolean forceUpdate, File dataFolder, String name, int id,
 			List<String> craftingRequirements, WeaponType weapontype, boolean enableIronSights, String ammotype,
 			int damage, double sway, int maxBullets, int duribility, double delayReload, double delayShoot,
-			int bulletspershot, boolean isAutomatic, int cost, ChargingHandlerEnum ch, int distance, WeaponSounds ws) {
+			int bulletspershot, boolean isAutomatic, int cost, String ch, int distance, WeaponSounds ws) {
 		return createNewGun(forceUpdate, dataFolder, false, "default_" + name, name,
 				"&" + ChatColor.GOLD.getChar() + name, null, id, craftingRequirements, weapontype, enableIronSights,
 				ammotype, damage, sway, Material.DIAMOND_AXE, maxBullets, duribility, delayReload, delayShoot, bulletspershot,
@@ -57,7 +56,7 @@ public class GunYMLCreator {
 	public static ArmoryYML createNewGun(boolean forceUpdate, File dataFolder, String name, int id,
 			List<String> craftingRequirements, WeaponType weapontype, boolean enableIronSights, String ammotype,
 			int damage, double sway, int maxBullets, int duribility, int bulletspershot, boolean isAutomatic, int cost,
-			ChargingHandlerEnum ch, int distance, WeaponSounds ws) {
+			String ch, int distance, WeaponSounds ws) {
 		return createNewGun(forceUpdate, dataFolder, name, id, craftingRequirements, weapontype, enableIronSights,
 				ammotype, damage, sway, maxBullets, duribility, 1.5, 0.25, bulletspershot, isAutomatic, cost, ch,
 				distance, ws);
@@ -66,7 +65,7 @@ public class GunYMLCreator {
 	public static ArmoryYML createNewGun(boolean forceUpdate, File dataFolder, String name, int id,
 			List<String> craftingRequirements, WeaponType weapontype, boolean enableIronSights, String ammotype,
 			int damage, double sway, int maxBullets, int duribility, boolean isAutomatic, int cost,
-			ChargingHandlerEnum ch, int distance, WeaponSounds ws) {
+			String ch, int distance, WeaponSounds ws) {
 		return createNewGun(forceUpdate, dataFolder, name, id, craftingRequirements, weapontype, enableIronSights,
 				ammotype, damage, sway, maxBullets, duribility, 1, isAutomatic, cost, ch, distance, ws);
 	}
@@ -75,7 +74,7 @@ public class GunYMLCreator {
 			String name, String displayname, List<String> lore, int id, List<String> craftingRequirements,
 			WeaponType weapontype, boolean enableIronSights, String ammotype, int damage, double sway, Material type,
 			int maxBullets, int duribility, double delayReload, double delayShoot, int bulletspershot,
-			boolean isAutomatic, int cost, ChargingHandlerEnum ch, int distance, boolean version18, WeaponSounds ws) {
+			boolean isAutomatic, int cost, String ch, int distance, boolean version18, WeaponSounds ws) {
 		return createNewGun(forceUpdate, dataFolder, invalid, filename, name, displayname, lore, id,
 				craftingRequirements, weapontype, enableIronSights, ammotype, damage, sway, type, maxBullets,
 				duribility, delayReload, delayShoot, bulletspershot, isAutomatic, cost, ch, distance, 0, version18, ws);
@@ -85,7 +84,7 @@ public class GunYMLCreator {
 			String name, String displayname, List<String> lore, int id, List<String> craftingRequirements,
 			WeaponType weapontype, boolean enableIronSights, String ammotype, int damage, double sway, Material type,
 			int maxBullets, int duribility, double delayReload, double delayShoot, int bulletspershot,
-			boolean isAutomatic, int cost, ChargingHandlerEnum ch, int distance, int var, boolean version18,
+			boolean isAutomatic, int cost, String ch, int distance, int var, boolean version18,
 			WeaponSounds ws) {
 
 		double particlecolorGB = weapontype == WeaponType.LAZER ? 0.0 : 1.0;
@@ -100,9 +99,31 @@ public class GunYMLCreator {
 			String name, String displayname, List<String> lore, int id, List<String> craftingRequirements,
 			WeaponType weapontype, boolean enableIronSights, String ammotype, int damage, double sway, Material type,
 			int maxBullets, int duribility, double delayReload, double delayShoot, int bulletspershot,
-			boolean isAutomatic, int cost, ChargingHandlerEnum ch, int distance, int var, boolean version18,
+			boolean isAutomatic, int cost, String ch, int distance, int var, boolean version18,
 			WeaponSounds ws, String particle, double particleR, double particleG, double particleB) {
 		return createNewGun(forceUpdate, dataFolder, invalid, filename, name, displayname, lore, id,
+				craftingRequirements, weapontype, enableIronSights, ammotype, damage, sway, type, maxBullets,
+				duribility, delayReload, delayShoot, bulletspershot, isAutomatic, cost, ch, distance, var, version18,
+				ws, particle, particleR, particleG, particleB, false);
+	}
+	public static ArmoryYML createNewGun(boolean forceUpdate, File dataFolder, boolean invalid, 
+			String name, String displayname, List<String> lore, int id, List<String> craftingRequirements,
+			WeaponType weapontype, boolean enableIronSights, String ammotype, int damage, double sway, Material type,
+			int maxBullets, int duribility, 
+			boolean isAutomatic, int cost, String ch, int distance, int var, boolean version18,
+			WeaponSounds ws, String particle, double particleR, double particleG, double particleB) {
+		return createNewGun(forceUpdate, dataFolder, invalid, "default_"+name, name, displayname, lore, id,
+				craftingRequirements, weapontype, enableIronSights, ammotype, damage, sway, type, maxBullets,
+				duribility, 1.5, 0.3, 1, isAutomatic, cost, ch, distance, var, version18,
+				ws, particle, particleR, particleG, particleB, false);
+	}
+	public static ArmoryYML createNewGun(boolean forceUpdate, File dataFolder, boolean invalid, 
+			String name, String displayname, List<String> lore, int id, List<String> craftingRequirements,
+			WeaponType weapontype, boolean enableIronSights, String ammotype, int damage, double sway, Material type,
+			int maxBullets, int duribility, double delayReload, double delayShoot, int bulletspershot,
+			boolean isAutomatic, int cost, String ch, int distance, int var, boolean version18,
+			WeaponSounds ws, String particle, double particleR, double particleG, double particleB) {
+		return createNewGun(forceUpdate, dataFolder, invalid, "default_"+name, name, displayname, lore, id,
 				craftingRequirements, weapontype, enableIronSights, ammotype, damage, sway, type, maxBullets,
 				duribility, delayReload, delayShoot, bulletspershot, isAutomatic, cost, ch, distance, var, version18,
 				ws, particle, particleR, particleG, particleB, false);
@@ -112,7 +133,7 @@ public class GunYMLCreator {
 			String name, String displayname, List<String> lore, int id, List<String> craftingRequirements,
 			WeaponType weapontype, boolean enableIronSights, String ammotype, int damage, double sway, Material type,
 			int maxBullets, int duribility, double delayReload, double delayShoot, int bulletspershot,
-			boolean isAutomatic, int cost, ChargingHandlerEnum ch, int distance, int var, boolean version18,
+			boolean isAutomatic, int cost, String ch, int distance, int var, boolean version18,
 			WeaponSounds ws, String particle, double particleR, double particleG, double particleB,
 			boolean addMuzzleSmoke) {
 		File f2 = new File(dataFolder, "newGuns/" + filename + ".yml");
@@ -159,7 +180,7 @@ public class GunYMLCreator {
 
 		if (version18)
 			h.setNoSave(false, "Version_18_Support", version18);
-		h.setNoSave(false, "ChargingHandler", ch == null ? "null" : ch.getName());
+		h.setNoSave(false, "ChargingHandler", ch == null ? "null" : ch);
 		if (addMuzzleSmoke)
 			h.setNoSave(false, "addMuzzleSmoke", addMuzzleSmoke);
 		

@@ -101,11 +101,6 @@ AUTO-UPDATE: true
 
 enable_lore_gun-info_messages: true
 enable_lore_control-help_messages: true
-BulletWounds:
-  InitialBloodLevel: 100.0
-  BloodIncreasePerSecond: 0.01
-  Medkit_Heal_Bloodloss_Rate: 0.05
-  enableBleeding: false
   
 #Determines if a player can reload a gun. 
 allowGunReload: true
@@ -116,3 +111,12 @@ SecondsTillRPIsSent: 0.0
 
 #Determines if block break textures should appear
 Break-Block-Texture-If-Shot: true
+
+
+#This section is used for experimental features. Do not expect everything here to work.
+experimental:
+  BulletWounds:
+    InitialBloodLevel: 100.0
+    BloodIncreasePerSecond: 0.01
+    Medkit_Heal_Bloodloss_Rate: 0.05
+    enableBleeding: false

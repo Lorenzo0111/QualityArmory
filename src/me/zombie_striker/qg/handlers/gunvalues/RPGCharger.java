@@ -21,7 +21,9 @@ public class RPGCharger implements ChargingHandler {
 
 	List<UUID> timeC = new ArrayList<>();
 	List<UUID> timeR = new ArrayList<>();
-	
+	public RPGCharger() {
+		ChargingManager.add(this);
+	}
 
 	@Override
 	public boolean isCharging(Player player) {
@@ -102,6 +104,11 @@ public class RPGCharger implements ChargingHandler {
 			}
 		}.runTaskLater(Main.getInstance(), (int) (time2*20) + 5);
 		return time2;
+	}
+
+	@Override
+	public String getName() {
+		return ChargingManager.RPG;
 	}
 
 }

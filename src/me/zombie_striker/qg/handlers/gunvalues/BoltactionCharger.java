@@ -17,6 +17,10 @@ public class BoltactionCharger implements ChargingHandler {
 
 	List<UUID> timeC = new ArrayList<>();
 	List<UUID> timeR = new ArrayList<>();
+	
+	public BoltactionCharger() {
+		ChargingManager.add(this);
+	}
 
 	@Override
 	public boolean isCharging(Player player) {
@@ -70,6 +74,11 @@ public class BoltactionCharger implements ChargingHandler {
 	@Override
 	public double reload(final Player player, Gun g, int amountReloading) {
 		return g.getReloadTime();
+	}
+
+	@Override
+	public String getName() {
+		return ChargingManager.BOLT;
 	}
 
 }

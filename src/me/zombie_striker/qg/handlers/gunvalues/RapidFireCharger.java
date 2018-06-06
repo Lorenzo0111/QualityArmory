@@ -19,7 +19,9 @@ import me.zombie_striker.qg.handlers.AimManager;
 public class RapidFireCharger implements ChargingHandler {
 	
 	public static HashMap<UUID, BukkitTask> shooters = new HashMap<>();
-
+public RapidFireCharger() {
+	ChargingManager.add(this);
+}
 	@Override
 	public boolean isCharging(Player player) {
 		return false;
@@ -96,7 +98,7 @@ public class RapidFireCharger implements ChargingHandler {
 				} else {
 					player.getInventory().setItem(slot, stack);
 				}
-				Main.sendHotbarGunAmmoCount(player, g, attach, stack);
+				Main.sendHotbarGunAmmoCount(player, g, attach, stack,false);
 			}
 		}.runTaskTimer(Main.getInstance(), 10 / g.getBulletsPerShot(), 10 / g.getBulletsPerShot()));
 		return false;
@@ -105,6 +107,12 @@ public class RapidFireCharger implements ChargingHandler {
 	@Override
 	public double reload(final Player player, Gun g, int amountReloading) {
 		return g.getReloadTime();
+	}
+
+	@Override
+	public String getName() {
+
+		return ChargingManager.RAPIDFIRE;
 	}
 
 }

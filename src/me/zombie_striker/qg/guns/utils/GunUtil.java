@@ -18,7 +18,6 @@ import me.zombie_striker.qg.handlers.HeadShotUtil;
 import me.zombie_striker.qg.handlers.ParticleHandlers;
 import me.zombie_striker.qg.handlers.SoundHandler;
 import me.zombie_striker.qg.handlers.Update19OffhandChecker;
-import me.zombie_striker.qg.handlers.gunvalues.ChargingHandlerEnum;
 import ru.beykerykt.lightapi.LightAPI;
 import ru.beykerykt.lightapi.chunks.ChunkInfo;
 
@@ -304,7 +303,7 @@ public class GunUtil {
 				&& (!g.getChargingVal().isCharging(player) && !g.getChargingVal().isReloading(player))) {
 			regularshoot = g.getChargingVal().shoot(g, player, temp);
 			Main.DEBUG("Charging shoot debug: " + g.getName() + " = "
-					+ (ChargingHandlerEnum.getEnumV(g.getChargingVal()).getName()));
+					+ g.getChargingVal()==null?"null":g.getChargingVal().getName());
 		}
 
 		if (regularshoot) {
@@ -479,7 +478,7 @@ public class GunUtil {
 					if (Main.enableVisibleAmounts)
 						temp.setAmount(reloadAmount);
 					player.getInventory().setItem(slot, temp);
-					Main.sendHotbarGunAmmoCount(player, g, attachment, temp);
+					Main.sendHotbarGunAmmoCount(player, g, attachment, temp,false);
 				}
 			}.runTaskLater(Main.getInstance(), (long) (20 * seconds));
 			if (!Main.reloadingTasks.containsKey(player.getUniqueId())) {
