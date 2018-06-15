@@ -15,4 +15,9 @@ public interface ArmoryBaseObject {
 	public String getDisplayName();
 	
 	public double cost();
+	
+
+	public boolean is18Support();
+
+	public void set18Supported(boolean b);
 }

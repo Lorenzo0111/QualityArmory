@@ -17,11 +17,13 @@ import me.zombie_striker.qg.guns.utils.GunUtil;
 import me.zombie_striker.qg.handlers.AimManager;
 
 public class RapidFireCharger implements ChargingHandler {
-	
+
 	public static HashMap<UUID, BukkitTask> shooters = new HashMap<>();
-public RapidFireCharger() {
-	ChargingManager.add(this);
-}
+
+	public RapidFireCharger() {
+		ChargingManager.add(this);
+	}
+
 	@Override
 	public boolean isCharging(Player player) {
 		return false;
@@ -33,8 +35,8 @@ public RapidFireCharger() {
 	}
 
 	@Override
-	public boolean shoot(final Gun g,final Player player, final ItemStack stack) {
-		GunUtil.shoot(g, player, g.getSway() * AimManager.getSway(g, player.getUniqueId()), g.getDamage(), 1, 200);
+	public boolean shoot(final Gun g, final Player player, final ItemStack stack) {
+		GunUtil.shoot(g, player, g.getSway() * AimManager.getSway(g, player.getUniqueId()), g.getDamage(), 1, g.getMaxDistance());
 		final AttachmentBase attach = Main.getGunWithAttchments(stack);
 		GunUtil.playShoot(g, attach, player);
 		/*
@@ -48,27 +50,28 @@ public RapidFireCharger() {
 		 * } }.runTaskLater(Main.getInstance(), (long) ((int) ((4.0 /
 		 * g.getBulletsPerShot()) * (j + 1))));
 		 */
-		shooters.put(player.getUniqueId(),new BukkitRunnable() {			
+		shooters.put(player.getUniqueId(), new BukkitRunnable() {
 			int slotUsed = player.getInventory().getHeldItemSlot();
 			@SuppressWarnings("deprecation")
 			boolean offhand = Main.isIS(player.getItemInHand());
+
 			@SuppressWarnings("deprecation")
 			public void run() {
 
-				int amount = ItemFact.getAmount(stack) - /*(g.getChargingVal() != null
-						&& ChargingHandlerEnum.getEnumV(g.getChargingVal()) == ChargingHandlerEnum.RAPIDFIRE
-								? g.getBulletsPerShot()
-								: 1)*/1;
-				if(!player.isSneaking() || slotUsed != player.getInventory().getHeldItemSlot() || amount <= 0) {
+				int amount = ItemFact.getAmount(stack)
+						- /*
+							 * (g.getChargingVal() != null &&
+							 * ChargingHandlerEnum.getEnumV(g.getChargingVal()) ==
+							 * ChargingHandlerEnum.RAPIDFIRE ? g.getBulletsPerShot() : 1)
+							 */1;
+				if (!player.isSneaking() || slotUsed != player.getInventory().getHeldItemSlot() || amount <= 0) {
 					shooters.remove(player.getUniqueId()).cancel();
 					return;
 				}
-				
-				
-				GunUtil.shoot(g, player, g.getSway() * AimManager.getSway(g, player.getUniqueId()), g.getDamage(), 1,
-						200);
-				GunUtil.playShoot(g,attach, player);
 
+				GunUtil.shoot(g, player, g.getSway() * AimManager.getSway(g, player.getUniqueId()), g.getDamage(), 1,
+						g.getMaxDistance());
+				GunUtil.playShoot(g, attach, player);
 
 				if (amount < 0)
 					amount = 0;
@@ -83,22 +86,22 @@ public RapidFireCharger() {
 				} else {
 					slot = player.getInventory().getHeldItemSlot();
 				}
-				im.setLore(ItemFact.getGunLore(g,attach, stack, amount));
+				im.setLore(ItemFact.getGunLore(g, attach, stack, amount));
 				stack.setItemMeta(im);
 				if (slot == -1) {
 					try {
-						if(Main.isIS(player.getItemInHand())) {
-						player.getInventory().setItemInOffHand(stack);
-						}else {
+						if (Main.isIS(player.getItemInHand())) {
+							player.getInventory().setItemInOffHand(stack);
+						} else {
 							player.getInventory().setItemInHand(stack);
 						}
-						
+
 					} catch (Error e) {
 					}
 				} else {
 					player.getInventory().setItem(slot, stack);
 				}
-				Main.sendHotbarGunAmmoCount(player, g, attach, stack,false);
+				Main.sendHotbarGunAmmoCount(player, g, attach, stack, false);
 			}
 		}.runTaskTimer(Main.getInstance(), 10 / g.getBulletsPerShot(), 10 / g.getBulletsPerShot()));
 		return false;

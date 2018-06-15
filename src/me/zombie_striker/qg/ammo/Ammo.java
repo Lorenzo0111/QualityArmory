@@ -28,9 +28,9 @@ public class Ammo implements ArmoryBaseObject{
 
 	private double piercingDamage = 1;
 
-	public static final String dontuseskin = "Dont Use Skin";
+	public static final String NO_SKIN_STRING = "Dont Use Skin";
 	private String skullowner = null;
-	private String base64SkinURL = dontuseskin;
+	private String base64SkinURL = NO_SKIN_STRING;
 
 	public Ammo(String name, MaterialStorage ms, int maxAmount, boolean indiDrop, int returnamount,
 			double cost, ItemStack[] ingredients, double piercing) {
@@ -72,7 +72,7 @@ public class Ammo implements ArmoryBaseObject{
 	}
 	
 	public boolean hasCustomSkin() {
-		return ! dontuseskin.equals(base64SkinURL);
+		return ! NO_SKIN_STRING.equals(base64SkinURL);
 	}
 	public String getCustomSkin() {
 		return base64SkinURL;
@@ -130,5 +130,13 @@ public class Ammo implements ArmoryBaseObject{
 
 	public String getDisplayName() {
 		return disName;
+	}
+	@Override
+	public boolean is18Support() {
+		return false;
+	}
+
+	@Override
+	public void set18Supported(boolean b) {		
 	}
 }

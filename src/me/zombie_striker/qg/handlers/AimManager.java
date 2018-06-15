@@ -27,11 +27,12 @@ public class AimManager implements Listener {
 	public AimManager() {
 		new BukkitRunnable() {
 
+			@SuppressWarnings("deprecation")
 			@Override
 			public void run() {
 				for (Player p : Bukkit.getOnlinePlayers()) {
 					double sway = 1;
-					if (p.isSneaking())
+					if (Main.isIS(p.getItemInHand()))
 						sway /= 2;
 					if (p.isSprinting())
 						sway *= 1.3;

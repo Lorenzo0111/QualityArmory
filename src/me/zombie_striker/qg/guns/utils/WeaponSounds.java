@@ -1,19 +1,19 @@
 package me.zombie_striker.qg.guns.utils;
 
 public enum WeaponSounds {
-	GUN_SMALL("bulletsmall"), GUN_MEDIUM("bulletmedium"), GUN_BIG("bulletbig"), GUN_AUTO("bulletauto"), RELOAD_BULLET(
-			"reloadbullet"), RELOAD_MAG_IN("reloadmagin"), RELOAD_MAG_OUT("reloadmagout"), RELOAD_BOLT("reloadbolt"),
+	GUN_SMALL("bulletsmall"), GUN_MEDIUM("bulletmedium"), GUN_BIG("bulletbig"), GUN_AUTO("bulletauto"), GUN_SMALL_AUTO("bulletsmallauto"), 
+	
+	RELOAD_BULLET("reloadbullet"), RELOAD_MAG_IN("reloadmagin"), RELOAD_MAG_OUT("reloadmagout"), RELOAD_BOLT("reloadbolt"),
 
-	WARHEAD_EXPLODE("warheadexplode"), WARHEAD_LAUNCH("warheadlaunch"), LAZERSHOOT("bulletlazer"),
+	WARHEAD_EXPLODE("warheadexplode"), WARHEAD_LAUNCH("warheadlaunch"), 
+	
+	LAZERSHOOT("bulletlazer"),
 
 	FLASHBANG("flashbang"), METALHIT("metalhit"), CHAINS("chainsmall"),
 	
 	
 	
-	SHOCKWAVE("shockwave"),LAZERFIRE("lazerfire"),GUN_STARWARS("bulletswblaster"),GUN_NEEDLER("bulletneedler"),GUN_HALOLAZER("bullethalolazer"),GUN_DEAGLE("bulletdeagle"),
-	
-	
-	
+	SHOCKWAVE("shockwave"),LAZERFIRE("lazerfire"),GUN_STARWARS("bulletswblaster"),GUN_NEEDLER("bulletneedler"),GUN_HALOLAZER("bullethalolazer"),GUN_DEAGLE("bulletdeagle"),	
 	
 	SILENCEDSHOT("bulletsilence"),
 	

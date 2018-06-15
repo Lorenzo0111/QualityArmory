@@ -52,7 +52,7 @@ public class ItemFact {
 			} else {
 				lore = setDamage(g, lore, getDamage(current));
 			}
-		if(attach !=null)
+		if (attach != null)
 			lore.addAll(attach.getLore());
 		if (Main.ENABLE_LORE_HELP) {
 			if (g.isAutomatic()) {
@@ -77,10 +77,11 @@ public class ItemFact {
 		return lore;
 	}
 
-	public static ItemStack addShopLore(ArmoryBaseObject obj,ItemStack current) {
+	public static ItemStack addShopLore(ArmoryBaseObject obj, ItemStack current) {
 		return addShopLore(obj, null, current);
 	}
-	public static ItemStack addShopLore(ArmoryBaseObject obj,AttachmentBase attach, ItemStack current) {
+
+	public static ItemStack addShopLore(ArmoryBaseObject obj, AttachmentBase attach, ItemStack current) {
 		ItemMeta meta = current.getItemMeta();
 		List<String> lore = meta.getLore();
 		for (String loreS : new ArrayList<>(lore)) {
@@ -91,7 +92,7 @@ public class ItemFact {
 		}
 		if (obj.getCraftingReturn() > 1)
 			lore.add(ChatColor.DARK_RED + "Returns: " + obj.getCraftingReturn());
-		lore.add(ChatColor.GOLD + "Price: " + (attach==null?obj.cost():attach.getPrice()));
+		lore.add(ChatColor.GOLD + "Price: " + (attach == null ? obj.cost() : attach.getPrice()));
 		meta.setLore(lore);
 		ItemStack is = current;
 		is.setItemMeta(meta);
@@ -99,7 +100,7 @@ public class ItemFact {
 	}
 
 	public static List<String> getCraftingGunLore(Gun g, AttachmentBase attachmentBase) {
-		List<String> lore = getGunLore(g,attachmentBase, null, 1);
+		List<String> lore = getGunLore(g, attachmentBase, null, 1);
 		lore.addAll(getCraftingLore(g));
 		return lore;
 	}
@@ -121,28 +122,30 @@ public class ItemFact {
 	}
 
 	public static ItemStack getGun(int durib) {
-		return getGun(durib,0);
+		return getGun(durib, 0);
 	}
 
 	public static ItemStack getGun(int durib, int varient) {
-		return getGun(Material.DIAMOND_AXE,durib,varient);
+		return getGun(Material.DIAMOND_AXE, durib, varient);
 	}
-	public static ItemStack getGun(Material type,int durib, int varient) {
+
+	public static ItemStack getGun(Material type, int durib, int varient) {
 		return getGun(MaterialStorage.getMS(type, durib, varient, null));
 	}
 
 	public static ItemStack getGun(MaterialStorage durib) {
 		Gun g = Main.gunRegister.get(durib);
-		AttachmentBase attach =null;
-		if(g==null) {
+		AttachmentBase attach = null;
+		if (g == null) {
 			attach = Main.attachmentRegister.get(durib);
 			g = Main.gunRegister.get(attach.getBase());
 		}
-		return getGun(g,attach);
+		return getGun(g, attach);
 	}
+
 	public static ItemStack getGun(AttachmentBase attachmentBase) {
 		Gun g = Main.gunRegister.get(attachmentBase.getBase());
-		return getGun(g,attachmentBase);
+		return getGun(g, attachmentBase);
 	}
 
 	public static ItemStack getIronSights() {
@@ -165,35 +168,41 @@ public class ItemFact {
 	}
 
 	public static ItemStack getGun(Gun g) {
-		return getGun(g,null);
+		return getGun(g, null);
 	}
+
 	public static ItemStack getGun(Gun g, AttachmentBase attachmentBase) {
-		
-		MaterialStorage ms = attachmentBase==null?g.getItemData():attachmentBase.getItem();
-		String displayname = attachmentBase==null?g.getDisplayName():attachmentBase.getDisplayName();
-		
+
+		MaterialStorage ms = attachmentBase == null ? g.getItemData() : attachmentBase.getItem();
+		String displayname = attachmentBase == null ? g.getDisplayName() : attachmentBase.getDisplayName();
+
 		ItemStack is = new ItemStack(ms.getMat(), 0, (short) ms.getData());
 		if (ms.getData() < 0)
 			is.setDurability((short) 0);
 		ItemMeta im = is.getItemMeta();
-		if(im==null)
-			im=Bukkit.getServer().getItemFactory().getItemMeta(ms.getMat());
-		im.setDisplayName(displayname);
-		List<String> lore = getGunLore(g, attachmentBase, null, g.getMaxBullets());
-		im.setLore(lore);
-		try {
-			im.setUnbreakable(true);
+		if (im == null)
+			im = Bukkit.getServer().getItemFactory().getItemMeta(ms.getMat());
+		if (im != null) {
+			im.setDisplayName(displayname);
+			List<String> lore = getGunLore(g, attachmentBase, null, g.getMaxBullets());
+			im.setLore(lore);
+			try {
+				im.setUnbreakable(true);
 
-		} catch (Error e3) {
-		}
-		try {
-			im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_UNBREAKABLE);
-			im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_ATTRIBUTES);
-			im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_DESTROYS);
-		} catch (Error e) {
-		}
+			} catch (Error e3) {
+			}
+			try {
+				im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_UNBREAKABLE);
+				im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_ATTRIBUTES);
+				im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_DESTROYS);
+			} catch (Error e) {
+			}
 
-		is.setItemMeta(im);
+			is.setItemMeta(im);
+		}else {
+			//Item meta is still null. Catch and report.
+			Main.getInstance().getLogger().warning(Main.prefix+" ItemMeta is null for "+g.getName()+". I have");
+		}
 		if (Main.enableVisibleAmounts)
 			is.setAmount(g.getMaxBullets() > 64 ? 64 : g.getMaxBullets());
 		else
@@ -208,6 +217,7 @@ public class ItemFact {
 		is.setDurability((short) a.getMaterial().getData());
 		return is;
 	}
+
 	public static ItemStack getArmor(ArmorObject a) {
 		ItemStack is = new ItemStack(a.getItemData().getMat(), 0, (short) a.getItemData().getData());
 		if (a.getItemData().getData() < 0)
@@ -246,7 +256,7 @@ public class ItemFact {
 	public static ItemStack getAmmo(Ammo a) {
 		ItemStack is = new ItemStack(a.getItemData().getMat(), 0, (short) a.getItemData().getData());
 		boolean setSkull = false;
-		if(a.isSkull() && a.hasCustomSkin()) {
+		if (a.isSkull() && a.hasCustomSkin()) {
 			setSkull = true;
 			is = SkullHandler.getCustomSkull64(a.getCustomSkin());
 		}

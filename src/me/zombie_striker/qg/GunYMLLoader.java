@@ -50,7 +50,7 @@ public class GunYMLLoader {
 							}
 							String ed2 = null;
 							if (f2.contains("skull_owner_custom_url")
-									&& !f2.getString("skull_owner_custom_url").equals(Ammo.dontuseskin)) {
+									&& !f2.getString("skull_owner_custom_url").equals(Ammo.NO_SKIN_STRING)) {
 								ed2 = f2.getString("skull_owner_custom_url");
 							}
 
@@ -238,7 +238,7 @@ public class GunYMLLoader {
 
 							g.setReloadingTimeInSeconds(f2.getDouble("delayForReload"));
 
-							if (f2.contains("drop-glow-color")) {
+							if (f2.contains("drop-glow-color") && !f2.getString("drop-glow-color").equals("none")) {
 								ChatColor c = ChatColor.WHITE;
 								for (ChatColor cc : ChatColor.values())
 									if (cc.name().equals(f2.getString("drop-glow-color"))) {
@@ -253,7 +253,7 @@ public class GunYMLLoader {
 							if (f2.contains("LightLeveOnShoot"))
 								g.setLightOnShoot(f2.getInt("LightLeveOnShoot"));
 
-							if (f2.contains("ChargingHandler") && !f2.getString("ChargingHandler").equals("null"))
+							if (f2.contains("ChargingHandler") && !f2.getString("ChargingHandler").equals("none"))
 								g.setChargingHandler(
 										ChargingManager.getHandler(f2.getString("ChargingHandler")));
 							if (f2.contains("delayForShoot"))

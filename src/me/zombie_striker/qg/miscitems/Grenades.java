@@ -158,5 +158,13 @@ public class Grenades implements ThrowableItems {
 		grenadeHolder.put(thrower, h);
 
 	}
+	@Override
+	public boolean is18Support() {
+		return false;
+	}
+
+	@Override
+	public void set18Supported(boolean b) {		
+	}
 
 }

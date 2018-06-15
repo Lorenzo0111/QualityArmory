@@ -4,11 +4,28 @@ import me.zombie_striker.qg.Main;
 import me.zombie_striker.qg.attachments.AttachmentBase;
 import me.zombie_striker.qg.guns.Gun;
 
+import org.bukkit.Material;
 import org.bukkit.event.*;
+import org.bukkit.event.inventory.PrepareAnvilEvent;
 import org.bukkit.event.player.*;
+import org.bukkit.inventory.ItemStack;
 
 public class Update19Events implements Listener {
 
+	@EventHandler
+	public void onAnvil(PrepareAnvilEvent e) {
+		if (Main.isCustomItem(e.getResult())) {
+			ItemStack newi = e.getResult();
+			newi.setDurability((short) Main.findSafeSpot(e.getResult(), false));
+			e.setResult(newi);
+		}
+		for (ItemStack is : e.getInventory().getContents()) {
+			if (is != null && Main.isCustomItem(is)) {
+				e.setResult(new ItemStack(Material.AIR));
+				return;
+			}
+		}
+	}
 	@EventHandler
 	public void onItemHandSwap(PlayerSwapHandItemsEvent e) {
 		if (Main.reloadOnF) {

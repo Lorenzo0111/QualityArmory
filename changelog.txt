@@ -1,3 +1,45 @@
+1.1.100
+	[Whoooo! 100 updates]
+	[IMPORTANT]: Due to the addition of 7.62 ammo type, most of the guns have change their ammo types to use 7.62. If you wish to revert the systems so guns only have 556, go into the gun files for the guns you want, disable "allowUpdates", and set the ammo type to "556"
+	Added Mac-10
+	Added Uzi
+	Added Skorpion vz. 61
+	Added SKS-45
+	Added 7.62x39mm
+	Added Aliens assault rifle
+	Added Halo Assault rifle
+	Added Halo Needler
+	Added Bladerunner gun ("That Gun")
+	Added Robocop's The Auto-9
+	Added Halflife's PulseGun
+	Added Starwars lightsabers
+	Added Starwards Blasters
+	Added Firefly's "Vera"
+	Added District-9's Arc-Gun-9
+	Changed a majority of 556 guns so they use 7.62 to reflect their IRL counterparts
+	Chaged aiming system so only guns with ironsights can have better aim when firing.
+	Code-rework: Modified gun creation system to allow for forced updates if allowed.
+	Code-rework: Added a new "GunYML" class to make it easier for plugins to create new guns.
+	Added ability to disable gun-yml updates with "allowUpdates"
+	Added support for unknown translation key for hotbar messages
+	Fixed models for Magnum, M40, AA12, Dragunov, Incendary Grenades, SmokeGrenades, and Flashbangs
+	Fixed naming for Mauser and Remington
+	Added Another fix for 1.9 items-chaing-to-other-items bug.
+	
+
+1.1.99e
+	Fixed issue with unlimited grenades
+
+1.1.99d
+	Added nullcheck to item meta. This should never happen, but someohow it does.
+
+1.1.99c
+	Moved 1.9 event to 1.9 class
+
+1.1.99b
+	Added support for glow with custom scoreboards.
+	Added more support for custom weapons. You should no longer see weapons when trying to use an axe.
+
 1.1.99
 	Fixed 1.9 and lower issue where items can turn into other items if hit.
 	Fixed pages for the shop menu and crafting menu

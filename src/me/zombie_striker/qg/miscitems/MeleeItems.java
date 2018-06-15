@@ -70,4 +70,12 @@ public class MeleeItems implements ArmoryBaseObject{
 	public int getDamage() {
 		return damage;
 	}
+	@Override
+	public boolean is18Support() {
+		return false;
+	}
+
+	@Override
+	public void set18Supported(boolean b) {		
+	}
 }

@@ -82,5 +82,13 @@ public class ArmorObject implements ArmoryBaseObject {
 	public double getDT() {
 		return dt;
 	}
+	@Override
+	public boolean is18Support() {
+		return false;
+	}
+
+	@Override
+	public void set18Supported(boolean b) {		
+	}
 
 }

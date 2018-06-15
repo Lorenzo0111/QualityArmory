@@ -160,4 +160,13 @@ public class GrenadeBase implements InteractableMisc {
 
 	}
 
+	@Override
+	public boolean is18Support() {
+		return false;
+	}
+
+	@Override
+	public void set18Supported(boolean b) {		
+	}
+
 }

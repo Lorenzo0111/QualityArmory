@@ -38,6 +38,8 @@ public class GunUtil {
 	protected static HashMap<UUID, Location> AF_locs = new HashMap<>();
 	protected static HashMap<UUID, BukkitTask> AF_tasks = new HashMap<>();
 
+	
+	
 	@SuppressWarnings("deprecation")
 	public static void shoot(Gun g, Player p, double sway, double damage, int shots, int range) {
 		for (int i = 0; i < shots; i++) {
@@ -60,10 +62,12 @@ public class GunUtil {
 			Location bulletHitLoc = null;
 
 			int maxDistance = range;
+			try {
 			Block b = p.getTargetBlock(null, range);
 			if (isSolid(b, b.getLocation())) {
 				maxDistance = (int) Math.min(range, b.getLocation().distance(start));
 			}
+			}catch(Error|Exception e45) {}
 
 			double degreeVector = Math.atan2(go.getX(), go.getZ());
 			if (degreeVector > Math.PI)

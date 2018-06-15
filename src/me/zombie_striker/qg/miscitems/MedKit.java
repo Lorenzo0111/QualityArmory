@@ -175,5 +175,13 @@ public class MedKit implements InteractableMisc {
 	@Override
 	public void onLeftClick(Player thrower) {
 	}
+	@Override
+	public boolean is18Support() {
+		return false;
+	}
+
+	@Override
+	public void set18Supported(boolean b) {		
+	}
 
 }
