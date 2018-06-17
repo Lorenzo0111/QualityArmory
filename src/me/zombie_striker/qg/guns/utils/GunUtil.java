@@ -385,6 +385,7 @@ public class GunUtil {
 	public static void basicReload(final Gun g, final AttachmentBase attachment, final Player player,
 			boolean doNotRemoveAmmo, double seconds) {
 		@SuppressWarnings("deprecation")
+		
 		final ItemStack temp = player.getInventory().getItemInHand();
 		ItemMeta im = temp.getItemMeta();
 

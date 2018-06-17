@@ -137,7 +137,7 @@ public class Main extends JavaPlugin implements Listener {
 	public static boolean kickIfDeniedRequest = false;
 	// public static String url19plus =
 	// "https://www.dropbox.com/s/faufrgo7w2zpi3d/QualityArmoryv1.0.10.zip?dl=1";
-	public static String url19plusAXE = "https://www.dropbox.com/s/3pm2ufs51mhh0qg/QualityArmoryv1.0.17.zip?dl=1";
+	public static String url19plusAXE = "https://www.dropbox.com/s/ww8e7bmmkjy5da2/QualityArmoryv1.0.18.zip?dl=1";
 	public static String url18 = "https://www.dropbox.com/s/gx6dhahq6onob4g/QualityArmory1.8v1.0.1.zip?dl=1";
 	public static String url = url19plusAXE;
 
@@ -330,7 +330,7 @@ public class Main extends JavaPlugin implements Listener {
 		if (getServer().getPluginManager().getPlugin("Citizens") == null
 				|| getServer().getPluginManager().getPlugin("Citizens").isEnabled() == false) {
 			getLogger().log(Level.SEVERE, "Citizens 2.0 not found or not enabled");
-			getServer().getPluginManager().disablePlugin(this);
+			//getServer().getPluginManager().disablePlugin(this);
 		} else {
 			// Register your trait with Citizens.
 			net.citizensnpcs.api.CitizensAPI.getTraitFactory()
@@ -709,11 +709,11 @@ public class Main extends JavaPlugin implements Listener {
 								.setMaterial(Material.DIAMOND_AXE).setOn18(true).setFullyAutomatic(3).done();
 					GunYMLCreator
 							.createNewCustomGun(getDataFolder(), "default_1_8_mp5k", "mp5k" + additive, "MP5K", 1,
-									stringsMetalRif, WeaponType.SMG, null, true, "9mm", 3, 32, 1000)
+									stringsMetalRif, WeaponType.SMG, null, false, "9mm", 3, 32, 1000)
 							.setMaterial(Material.GOLD_PICKAXE).setOn18(true).setFullyAutomatic(3).done();
 					GunYMLCreator
 							.createNewCustomGun(getDataFolder(), "default_1_8_ak47", "ak47" + additive, "AK47", 1,
-									stringsMetalRif, WeaponType.RIFLE, null, true, "556", 3, 40, 1500)
+									stringsMetalRif, WeaponType.RIFLE, null, false, "556", 3, 40, 1500)
 							.setMaterial(Material.GOLD_SPADE).setOn18(true).setFullyAutomatic(2).done();
 					GunYMLCreator
 							.createNewCustomGun(getDataFolder(), "default_1_8_m16", "m16", "M16" + additive, 1,
@@ -817,11 +817,11 @@ public class Main extends JavaPlugin implements Listener {
 				GunYMLCreator.createNewDefaultGun(getDataFolder(), "pkp", "PKP", 3, stringsMetalRif, WeaponType.RIFLE,
 						WeaponSounds.GUN_BIG, true, "762", 2, 100, 3000).setFullyAutomatic(3).done();
 				GunYMLCreator.createNewDefaultGun(getDataFolder(), "mp5k", "MP5K", 4, stringsMetalRif, WeaponType.SMG,
-						null, true, "9mm", 3, 32, 1000).setFullyAutomatic(3).done();
+						null, false, "9mm", 3, 32, 1000).setFullyAutomatic(3).done();
 				GunYMLCreator.createNewDefaultGun(getDataFolder(), "ak47", "AK47", 5, stringsMetalRif, WeaponType.RIFLE,
-						null, true, "762", 3, 40, 1500).setFullyAutomatic(2).done();
+						null, false, "762", 3, 40, 1500).setFullyAutomatic(2).done();
 				GunYMLCreator.createNewDefaultGun(getDataFolder(), "ak47u", "AK47-U", 6, stringsMetalRif,
-						WeaponType.RIFLE, null, true, "762", 30, 10, 2000).setFullyAutomatic(2).done();
+						WeaponType.RIFLE, null, false, "762", 30, 10, 2000).setFullyAutomatic(2).done();
 				GunYMLCreator.createNewDefaultGun(getDataFolder(), "m16", "M16", 7, stringsMetalRif, WeaponType.RIFLE,
 						null, true, "556", 3, 30, 2000).setFullyAutomatic(2).done();
 				GunYMLCreator
@@ -969,7 +969,7 @@ public class Main extends JavaPlugin implements Listener {
 				// ChargingManager.HOMINGRPG, 300, null);
 				GunYMLCreator
 						.createNewDefaultGun(getDataFolder(), "homingrpg", "&6Homing RPG Launcher", 50, stringsMetalRif,
-								WeaponType.RPG, null, true, "rocket", 100, 1, 200)
+								WeaponType.RPG, null, false, "rocket", 100, 1, 200)
 						.setChargingHandler(ChargingManager.HOMINGRPG).done();
 
 				// GunYMLCreator.createNewGun(forceUpdate, getDataFolder(), "flintlockpistol",
@@ -1091,54 +1091,54 @@ public class Main extends JavaPlugin implements Listener {
 						getIngString(Material.INK_SACK, 4, 3), getIngString(Material.NETHER_STAR, 0, 1) });
 
 				GunYMLCreator.createNewGun(false, getDataFolder(), false, "default_aliensrifle", "M41PulseRifle",
-						ChatColor.AQUA + "M41-A Pulse Rifle", Arrays.asList("&fGame over, man. Game over!"), 64,
+						ChatColor.GOLD + "M41-A Pulse Rifle", Arrays.asList("&fGame over, man. Game over!"), 64,
 						stringsRifle, WeaponType.RIFLE, false, "556", 4, 0.3, Material.DIAMOND_AXE, 40, 1000, 1.5, 0.3,
 						2, true, 3000, ChargingManager.RAPIDFIRE, 200, false, WeaponSounds.GUN_MEDIUM);
 				GunYMLCreator.createNewGun(false, getDataFolder(), false, "default_auto9", "Auto9",
-						ChatColor.AQUA + "The Auto-9", Arrays.asList("&fDead or alive, you're coming with me! "), 65,
+						ChatColor.GOLD + "The Auto-9", Arrays.asList("&fDead or alive, you're coming with me! "), 65,
 						stringsRifle, WeaponType.PISTOL, true, "556", 5, 0.3, Material.DIAMOND_AXE, 12, 1000, 1.5, 0.3,
 						1, false, 2000, null, 200, false, WeaponSounds.GUN_MEDIUM);
 				GunYMLCreator.createNewGun(false, getDataFolder(), false, "default_arcgun9", "ArcGun9",
-						ChatColor.AQUA + "The Arc-Gun-9", Arrays.asList("&fPushy!"), 66, stringsRifle, WeaponType.LAZER,
+						ChatColor.GOLD + "The Arc-Gun-9", Arrays.asList("&fPushy!"), 66, stringsRifle, WeaponType.LAZER,
 						false, "fusion_cell", 8, 0.3, Material.DIAMOND_AXE, 5, 1000, 1.5, 1, 1, false, 2000,
 						PushbackCharger.NAME, 35, false, WeaponSounds.SHOCKWAVE);
 
 				GunYMLCreator.createNewGun(false, getDataFolder(), false, "default_halorifle", "UNSCAssaultRifle",
-						ChatColor.AQUA + "UNSC Assault Rifle", Arrays.asList("&fAlso known as the \"MA5B\""), 67,
+						ChatColor.GOLD + "UNSC Assault Rifle", Arrays.asList("&fAlso known as the \"MA5B\""), 67,
 						stringsRifle, WeaponType.RIFLE, true, "556", 3, 0.3, Material.DIAMOND_AXE, 32, 1000, 1.5, 0.3,
 						2, true, 2000, ChargingManager.RAPIDFIRE, 200, false, WeaponSounds.GUN_MEDIUM);
 				GunYMLCreator.createNewGun(false, getDataFolder(), false, "default_haloalien", "AlienNeedler",
-						ChatColor.AQUA + "\"Needler\"", Arrays.asList("&fWarning: Sharp"), 68, stringsRifle,
+						ChatColor.GOLD + "\"Needler\"", Arrays.asList("&fWarning: Sharp"), 68, stringsRifle,
 						WeaponType.PISTOL, true, "fusion_cell", 1, 0.3, Material.DIAMOND_AXE, 26, 1000, 1.5, 0.3, 3,
 						true, 2000, ChargingManager.RAPIDFIRE, 200, 0, false, WeaponSounds.GUN_NEEDLER, "REDSTONE", 1,
 						0.1, 1);
 
 				GunYMLCreator.createNewGun(false, getDataFolder(), false, "default_thatgun", "ThatGun",
-						ChatColor.AQUA + "\"That Gun\"",
+						ChatColor.GOLD + "\"That Gun\"",
 						Arrays.asList("&fAlso known as the \"LAPD 2019 Detective Special\""), 69, stringsRifle,
 						WeaponType.PISTOL, true, "556", 9, 0.3, Material.DIAMOND_AXE, 12, 1000, 1.3, 0.6, 1, false,
 						5000, null, 200, false, WeaponSounds.GUN_DEAGLE);
 
 				GunYMLCreator.createMisc(false, getDataFolder(), false, "default_lightsaberblue", "LightSaberBlue",
-						ChatColor.AQUA + "(Blue)LightSaber", Arrays.asList("&fMay The Force be with you", "&fAlways"),
+						ChatColor.GOLD + "(Blue)LightSaber", Arrays.asList("&fMay The Force be with you", "&fAlways"),
 						Material.DIAMOND_AXE, 70, stringsLight, 10000, WeaponType.MEELEE, 9, 1000);
 				GunYMLCreator.createMisc(false, getDataFolder(), false, "default_lightsaberred", "LightSaberRed",
-						ChatColor.AQUA + "(Red)LightSaber", Arrays.asList("&fMay The Force be with you", "&fAlways"),
+						ChatColor.GOLD + "(Red)LightSaber", Arrays.asList("&fMay The Force be with you", "&fAlways"),
 						Material.DIAMOND_AXE, 71, stringsLight, 10000, WeaponType.MEELEE, 9, 1000);
 
 				GunYMLCreator.createNewGun(false, getDataFolder(), false, "default_blaster", "Blaster",
-						ChatColor.AQUA + "\"Blaster\" Pistol", Arrays.asList("&fMiss all the shots you want!"), 72,
+						ChatColor.GOLD + "\"Blaster\" Pistol", Arrays.asList("&fMiss all the shots you want!"), 72,
 						stringsRifle, WeaponType.LAZER, true, "fusion_cell", 5, 0.3, Material.DIAMOND_AXE, 20, 1000,
 						1.5, 0.3, 1, true, 3000, ChargingManager.RAPIDFIRE, 200, 0, false, WeaponSounds.GUN_STARWARS,
 						"REDSTONE", 1, 0, 0);
 				GunYMLCreator.createNewGun(false, getDataFolder(), false, "default_hl2pulserifle", "pulserifle",
-						ChatColor.AQUA + "Overwatch Pulse Rifle",
+						ChatColor.GOLD + "Overwatch Pulse Rifle",
 						Arrays.asList("&fStardard Issue Rifles for Combie solders."), 73, stringsRifle,
 						WeaponType.LAZER, true, "fusion_cell", 2, 0.3, Material.DIAMOND_AXE, 30, 1000, 1.5, 0.3, 3,
 						true, 3000, ChargingManager.RAPIDFIRE, 200, 0, false, WeaponSounds.GUN_HALOLAZER, "REDSTONE",
 						05, 0.99, 0.99);
 				GunYMLCreator.createNewGun(false, getDataFolder(), false, "default_vera", "vera",
-						ChatColor.AQUA + "\"Vera\"",
+						ChatColor.GOLD+ "\"Vera\"",
 						Arrays.asList("&fThe Callahan Full-bore Auto-lock.", "&7\"Customized trigger, …",
 								"&7…double cartridge thorough gauge.", "&7It is my very favorite gun …",
 								"&7…This is the best gun made by man.", "&7 It has extreme sentimental value …",
@@ -2771,7 +2771,7 @@ public class Main extends JavaPlugin implements Listener {
 						if (g != null) {
 							if (allowGunReload) {
 								sendHotbarGunAmmoCount(e.getPlayer(), g, attachment, usedItem,
-										g.getMaxBullets() != ItemFact.getAmount(usedItem));
+										((g.getMaxBullets() != ItemFact.getAmount(usedItem)) && GunUtil.hasAmmo(e.getPlayer(), g)));
 								if (g.playerHasAmmo(e.getPlayer())) {
 									Main.DEBUG("Trying to reload. player has ammo");
 									g.reload(e.getPlayer(), attachment);

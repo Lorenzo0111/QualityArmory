@@ -3,6 +3,7 @@ package me.zombie_striker.qg.handlers.gunvalues;
 import java.util.HashMap;
 import java.util.UUID;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -58,12 +59,7 @@ public class RapidFireCharger implements ChargingHandler {
 			@SuppressWarnings("deprecation")
 			public void run() {
 
-				int amount = ItemFact.getAmount(stack)
-						- /*
-							 * (g.getChargingVal() != null &&
-							 * ChargingHandlerEnum.getEnumV(g.getChargingVal()) ==
-							 * ChargingHandlerEnum.RAPIDFIRE ? g.getBulletsPerShot() : 1)
-							 */1;
+				int amount = ItemFact.getAmount(stack);
 				if (!player.isSneaking() || slotUsed != player.getInventory().getHeldItemSlot() || amount <= 0) {
 					shooters.remove(player.getUniqueId()).cancel();
 					return;
@@ -72,6 +68,7 @@ public class RapidFireCharger implements ChargingHandler {
 				GunUtil.shoot(g, player, g.getSway() * AimManager.getSway(g, player.getUniqueId()), g.getDamage(), 1,
 						g.getMaxDistance());
 				GunUtil.playShoot(g, attach, player);
+				amount--;
 
 				if (amount < 0)
 					amount = 0;

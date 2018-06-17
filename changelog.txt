@@ -1,3 +1,10 @@
+1.1.101
+	Fixed Bug where 762 ammo was not detected
+	Fixed bug where rapid fire weapons would not shoot the last bullet while autofiring.
+	Fixed AK, UMP, Homing RPG, and MP5K swapping hands due to accidentally letting that gun use ironsights
+	Fixed issue where hotbar message would say "reloading..." even if the player had no ammo.
+	Fixed color coding for all previously Sci-fi guns. Guns names will now bw gold, instead of aqua.
+
 1.1.100
 	[Whoooo! 100 updates]
 	[IMPORTANT]: Due to the addition of 7.62 ammo type, most of the guns have change their ammo types to use 7.62. If you wish to revert the systems so guns only have 556, go into the gun files for the guns you want, disable "allowUpdates", and set the ammo type to "556"

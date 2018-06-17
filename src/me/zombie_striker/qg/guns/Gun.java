@@ -239,7 +239,7 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 	}
 
 	public void reload(Player player, AttachmentBase attachmentBase) {
-		if (getChargingVal() == null || (!getChargingVal().isReloading(player)))
+		if (getChargingVal() == null || (!getChargingVal().isReloading(player))) 
 			GunUtil.basicReload(this, attachmentBase, player, WeaponType.isUnlimited(type), reloadTime);
 	}
 
