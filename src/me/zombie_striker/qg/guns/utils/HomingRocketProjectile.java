@@ -20,10 +20,11 @@ import org.bukkit.util.Vector;
 
 public class HomingRocketProjectile {
 
-	private final float turnRate = 0.3f;
+	//private final float turnRate = 0.6f;
 
-	public HomingRocketProjectile(final Location s, final Player player, final Vector dir) {
+	public HomingRocketProjectile(final Location starting, final Player player, final Vector dir) {
 		new BukkitRunnable() {
+			Location RPGLOCATION = starting.clone();
 			int distance = 220;
 			Vector vect = dir;
 
@@ -31,68 +32,72 @@ public class HomingRocketProjectile {
 			@Override
 			public void run() {
 				distance--;
-				s.add(vect);
+				RPGLOCATION.add(vect);
 				Block lookat = player.getTargetBlock(null, 300);
 				if (lookat != null && lookat.getType() != Material.AIR) {
 					if (Main.isGun(player.getItemInHand())) {
 						Gun g = Main.getGun(player.getItemInHand());
 						if (g.getChargingVal() != null && g.getChargingVal() instanceof HomingRPGCharger) {
-							Vector newVect = new Vector(lookat.getX() - s.getBlockX(), lookat.getY() - s.getBlockY(),
-									lookat.getZ() - s.getBlockZ()).normalize();
-
-							double newX = newVect.getX() - vect.getBlockX() > turnRate ? vect.getBlockX() + turnRate
-									: newVect.getX() - vect.getBlockX() < -turnRate ? vect.getBlockX() - turnRate
-											: newVect.getX();
-							double newY = newVect.getY() - vect.getBlockY() > turnRate ? vect.getBlockY() + turnRate
-									: newVect.getY() - vect.getBlockY() < -turnRate ? vect.getBlockY() - turnRate
-											: newVect.getY();
-							double newZ = newVect.getZ() - vect.getBlockZ() > turnRate ? vect.getBlockZ() + turnRate
-									: newVect.getZ() - vect.getBlockZ() < -turnRate ? vect.getBlockZ() - turnRate
-											: newVect.getZ();
-
-							vect = new Vector(newX, newY, newZ);
+							/*
+							 * Vector newVect = new Vector(lookat.getX() - RPGLOCATION.getBlockX(),
+							 * lookat.getY() - RPGLOCATION.getBlockY(), lookat.getZ() -
+							 * RPGLOCATION.getBlockZ()).normalize();
+							 * 
+							 * double newX = newVect.getX() - vect.getBlockX() > turnRate ? vect.getBlockX()
+							 * + turnRate : newVect.getX() - vect.getBlockX() < -turnRate ? vect.getBlockX()
+							 * - turnRate : newVect.getX(); double newY = newVect.getY() - vect.getBlockY()
+							 * > turnRate ? vect.getBlockY() + turnRate : newVect.getY() - vect.getBlockY()
+							 * < -turnRate ? vect.getBlockY() - turnRate : newVect.getY(); double newZ =
+							 * newVect.getZ() - vect.getBlockZ() > turnRate ? vect.getBlockZ() + turnRate :
+							 * newVect.getZ() - vect.getBlockZ() < -turnRate ? vect.getBlockZ() - turnRate :
+							 * newVect.getZ();
+							 * 
+							 * vect = new Vector(newX, newY, newZ);
+							 */
+							Vector newDir = lookat.getLocation().clone().subtract(RPGLOCATION).toVector().normalize();
+							vect = newDir;
 						}
 					}
 				}
 				try {
-					s.getWorld().spawnParticle(org.bukkit.Particle.SMOKE_LARGE, s, 0);
-					s.getWorld().spawnParticle(org.bukkit.Particle.FIREWORKS_SPARK, s, 0);
-					player.getWorld().playSound(s, Sound.ENTITY_ENDERDRAGON_GROWL, 1, 2f);
+					RPGLOCATION.getWorld().spawnParticle(org.bukkit.Particle.SMOKE_LARGE, RPGLOCATION, 0);
+					RPGLOCATION.getWorld().spawnParticle(org.bukkit.Particle.FIREWORKS_SPARK, RPGLOCATION, 0);
+					player.getWorld().playSound(RPGLOCATION, Sound.ENTITY_ENDERDRAGON_GROWL, 1, 2f);
 
 				} catch (Error e2) {
-					s.getWorld().playEffect(s, Effect.valueOf("CLOUD"), 0);
-					player.getWorld().playSound(s, Sound.valueOf("ENDERDRAGON_GROWL"), 1, 2f);
+					RPGLOCATION.getWorld().playEffect(RPGLOCATION, Effect.valueOf("CLOUD"), 0);
+					player.getWorld().playSound(RPGLOCATION, Sound.valueOf("ENDERDRAGON_GROWL"), 1, 2f);
 				}
 				boolean entityNear = false;
 				try {
-					List<Entity> e2 = new ArrayList<>(s.getWorld().getNearbyEntities(s, 1, 1, 1));
+					List<Entity> e2 = new ArrayList<>(RPGLOCATION.getWorld().getNearbyEntities(RPGLOCATION, 1, 1, 1));
 					if (!e2.isEmpty())
 						if (e2.size() > 1 || e2.get(0) != player)
 							entityNear = true;
 				} catch (Error e) {
 				}
 
-				if (GunUtil.isSolid(s.getBlock(), s) || entityNear || distance < 0) {
+				if (GunUtil.isSolid(RPGLOCATION.getBlock(), RPGLOCATION) || entityNear || distance < 0) {
 					if (Main.enableExplosionDamage) {
-						ExplosionHandler.handleExplosion(s, 4, 1);
+						ExplosionHandler.handleExplosion(RPGLOCATION, 4, 2);
 					}
 					try {
-						player.getWorld().playSound(s, WeaponSounds.WARHEAD_EXPLODE.getName(), 10, 0.9f);
-						player.getWorld().playSound(s, Sound.ENTITY_GENERIC_EXPLODE, 8, 0.7f);
-						s.getWorld().spawnParticle(org.bukkit.Particle.EXPLOSION_HUGE, s, 0);
+						player.getWorld().playSound(RPGLOCATION, WeaponSounds.WARHEAD_EXPLODE.getName(), 10, 0.9f);
+						player.getWorld().playSound(RPGLOCATION, Sound.ENTITY_GENERIC_EXPLODE, 8, 0.7f);
+						RPGLOCATION.getWorld().spawnParticle(org.bukkit.Particle.EXPLOSION_HUGE, RPGLOCATION, 0);
 
 					} catch (Error e3) {
-						s.getWorld().playEffect(s, Effect.valueOf("CLOUD"), 0);
-						player.getWorld().playSound(s, Sound.valueOf("EXPLODE"), 8, 0.7f);
+						RPGLOCATION.getWorld().playEffect(RPGLOCATION, Effect.valueOf("CLOUD"), 0);
+						player.getWorld().playSound(RPGLOCATION, Sound.valueOf("EXPLODE"), 8, 0.7f);
 					}
 					try {
-						for (Entity e : s.getWorld().getNearbyEntities(s, 10, 10, 10)) {
+						for (Entity e : RPGLOCATION.getWorld().getNearbyEntities(RPGLOCATION, 10, 10, 10)) {
 							if (e instanceof LivingEntity) {
-								((LivingEntity) e).damage((20 * 4 / e.getLocation().distance(s)), player);
+								((LivingEntity) e).damage((20 * 4 / e.getLocation().distance(RPGLOCATION)), player);
 							}
 						}
 					} catch (Error e) {
-						s.getWorld().createExplosion(s, 1);
+						RPGLOCATION.getWorld().createExplosion(RPGLOCATION, 1);
 					}
 					cancel();
 				}

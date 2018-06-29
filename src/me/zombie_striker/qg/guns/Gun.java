@@ -370,6 +370,9 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 
 	@Override
 	public int compareTo(Gun arg0) {
+		if(Main.orderShopByPrice) {
+			return (int) (this.cost-arg0.cost);
+		}
 		return this.displayname.compareTo(arg0.displayname);
 	}
 

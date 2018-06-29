@@ -45,7 +45,7 @@ public class RocketProjectile {
 
 				if (GunUtil.isSolid(s.getBlock(), s) || entityNear || distance < 0) {
 					if (Main.enableExplosionDamage) {
-						ExplosionHandler.handleExplosion(s, 4, 1);
+						ExplosionHandler.handleExplosion(s, 4, 2);
 					}
 					try {
 						player.getWorld().playSound(s, WeaponSounds.WARHEAD_EXPLODE.getName(), 10, 0.9f);

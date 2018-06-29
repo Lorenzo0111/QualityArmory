@@ -16,6 +16,7 @@ import me.zombie_striker.qg.attachments.AttachmentBase;
 import me.zombie_striker.qg.guns.Gun;
 import me.zombie_striker.qg.handlers.IronSightsToggleItem;
 import me.zombie_striker.qg.handlers.SkullHandler;
+import me.zombie_striker.qg.handlers.gunvalues.RapidFireCharger;
 import me.zombie_striker.qg.miscitems.MedKit;
 
 public class ItemFact {
@@ -43,9 +44,12 @@ public class ItemFact {
 		lore.add(Main.S_ITEM_BULLETS + ": " + (amount) + "/" + (g.getMaxBullets()));
 		if (Main.ENABLE_LORE_INFO) {
 			lore.add(Main.S_ITEM_DAMAGE + ": " + g.getDamage());
+			lore.add(Main.S_ITEM_DPS+": "+ ((g.getAmmoType().getName().equals("shell")?g.getDamage()+"x"+g.getBulletsPerShot():g.isAutomatic()? (g.getChargingVal() instanceof RapidFireCharger? ((int)g.getBulletsPerShot()*2*g.getDamage()):((int)3*g.getBulletsPerShot()*g.getDamage()))+"":""+((int)(1.0/g.getDelayBetweenShotsInSeconds())*g.getDamage()))));		
 			if (g.getAmmoType() != null)
 				lore.add(Main.S_ITEM_AMMO + ": " + g.getAmmoType().getDisplayName());
 		}
+		
+		
 		if (Main.enableDurability)
 			if (current == null) {
 				lore.add(Main.S_ITEM_DURIB + ":" + g.getDurability() + "/" + g.getDurability());
@@ -92,7 +96,7 @@ public class ItemFact {
 		}
 		if (obj.getCraftingReturn() > 1)
 			lore.add(ChatColor.DARK_RED + "Returns: " + obj.getCraftingReturn());
-		lore.add(ChatColor.GOLD + "Price: " + (attach == null ? obj.cost() : attach.getPrice()));
+		lore.add(Main.S_ITEM_COST+ (attach == null ? obj.cost() : attach.getPrice()));
 		meta.setLore(lore);
 		ItemStack is = current;
 		is.setItemMeta(meta);

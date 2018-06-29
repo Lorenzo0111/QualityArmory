@@ -1,3 +1,15 @@
+1.1.102
+	Allowed renaming of shops and prices
+	Fixed UMP
+	Fixed reload-on-rightclick for attachment guns.
+	Fixed xp pickup
+	Added optional destructable blocks.
+	Added optional explosion damage caused by grenades
+	Added optional ability to sort shop by cost
+	Added fix for no-death messages
+	Reworked hotbar messages to hopefully fix the UTK issue
+	
+
 1.1.101
 	Fixed Bug where 762 ammo was not detected
 	Fixed bug where rapid fire weapons would not shoot the last bullet while autofiring.

@@ -73,7 +73,9 @@ public class GunUtil {
 			if (degreeVector > Math.PI)
 				degreeVector = 2 * Math.PI - degreeVector;
 
+			List<Location> blocksThatWillPLAYBreak = new ArrayList<>();
 			List<Location> blocksThatWillBreak = new ArrayList<>();
+			
 
 			for (Entity e : p.getNearbyEntities(maxDistance, maxDistance, maxDistance)) {
 				if (e instanceof Damageable)
@@ -115,10 +117,13 @@ public class GunUtil {
 								}
 								boolean solid = isSolid(test.getBlock(), test);
 								if ((solid || isBreakable(test.getBlock(), test))
-										&& !blocksThatWillBreak.contains(new Location(test.getWorld(), test.getBlockX(),
+										&& !blocksThatWillPLAYBreak.contains(new Location(test.getWorld(), test.getBlockX(),
 												test.getBlockY(), test.getBlockZ()))) {
-									blocksThatWillBreak.add(new Location(test.getWorld(), test.getBlockX(),
+									blocksThatWillPLAYBreak.add(new Location(test.getWorld(), test.getBlockX(),
 											test.getBlockY(), test.getBlockZ()));
+								}
+								if(Main.destructableBlocks.contains(test.getBlock().getType())) {
+									blocksThatWillBreak.add(test);
 								}
 								if (solid) {
 									occulde = true;
@@ -175,6 +180,8 @@ public class GunUtil {
 					Main.DEBUG("Damaging entity " + hitTarget.getName());
 
 				}
+			}else {
+				Main.DEBUG("No enities hit.");				
 			}
 			double smokeDistance = 0;
 			List<Player> nonheard = start.getWorld().getPlayers();
@@ -233,6 +240,10 @@ public class GunUtil {
 				}
 			}
 			
+			for(Location l : blocksThatWillBreak) {
+				l.getBlock().breakNaturally();
+			}
+			
 
 			//TODO: Do lights n stuff
 			try {
@@ -260,7 +271,7 @@ public class GunUtil {
 			
 			// Breaking texture
 			if (Main.blockBreakTexture)
-				for (Location l : blocksThatWillBreak) {
+				for (Location l : blocksThatWillPLAYBreak) {
 					start.getWorld().playSound(start,SoundHandler.getSoundWhenShot(start.getBlock()) , 2, 1);
 					try {
 						for (Player p2 : l.getWorld().getPlayers()) {
