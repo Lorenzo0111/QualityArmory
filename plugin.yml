@@ -1,5 +1,5 @@
 main: me.zombie_striker.qg.Main
-version: 1.1.101
+version: 1.1.103
 name: QualityArmory
 commands:
   QualityArmory:

@@ -1,3 +1,7 @@
+1.1.103
+	Fixed version id.
+	Fixed bug with ProtocolLib depend
+
 1.1.102
 	Allowed renaming of shops and prices
 	Fixed UMP

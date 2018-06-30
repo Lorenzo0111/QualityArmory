@@ -79,6 +79,7 @@ public class GunUtil {
 
 			for (Entity e : p.getNearbyEntities(maxDistance, maxDistance, maxDistance)) {
 				if (e instanceof Damageable)
+					if(!Main.ignoreArmorStands||! e.getType().name().equals("ARMOR_STAND"))
 					if (e != p && e != p.getVehicle() && e != p.getPassenger()) {
 						// if (e.getLocation().getX() - start.getX() > 0 == posX)
 						// if (e.getLocation().getZ() - start.getZ() > 0 == posZ) {
@@ -273,7 +274,7 @@ public class GunUtil {
 			if (Main.blockBreakTexture)
 				for (Location l : blocksThatWillPLAYBreak) {
 					start.getWorld().playSound(start,SoundHandler.getSoundWhenShot(start.getBlock()) , 2, 1);
-					try {
+					try {/*
 						for (Player p2 : l.getWorld().getPlayers()) {
 							com.comphenix.protocol.events.PacketContainer packet = new com.comphenix.protocol.events.PacketContainer(
 									com.comphenix.protocol.Packets.Server.BLOCK_BREAK_ANIMATION);
@@ -283,7 +284,7 @@ public class GunUtil {
 											l.getBlockZ()));
 							packet.getBytes().write(2, (byte) 4);
 							com.comphenix.protocol.ProtocolLibrary.getProtocolManager().sendServerPacket(p2, packet);
-						}
+						}*/
 					} catch (Error | Exception e4) {
 					}
 				}

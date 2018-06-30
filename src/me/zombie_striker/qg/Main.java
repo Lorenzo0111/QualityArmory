@@ -78,6 +78,7 @@ public class Main extends JavaPlugin implements Listener {
 	private static boolean enableInteractChests = false;
 
 	private TreeFellerHandler tfh = null;
+	
 
 	public static Main getInstance() {
 		return main;
@@ -127,6 +128,8 @@ public class Main extends JavaPlugin implements Listener {
 
 	public static boolean allowGunReload = true;
 
+	public static boolean ignoreArmorStands = false;
+	
 	public static boolean enableBleeding = false;
 	public static double bulletWound_initialbloodamount = 1500;
 	public static double bulletWound_BloodIncreasePerSecond = 0.01;
@@ -555,6 +558,7 @@ public class Main extends JavaPlugin implements Listener {
 		headshotGoreSounds = (boolean) a("Enable_Headshot_Sounds", headshotGoreSounds);
 
 		hideTextureWarnings = (boolean) a("hideTextureWarnings", false);
+		ignoreArmorStands = (boolean) a("ignoreArmorStands", false);
 
 		allowGunReload = (boolean) a("allowGunReload", allowGunReload);
 		AutoDetectResourcepackVersion = (boolean) a("Auto-Detect-Resourcepack", false);
