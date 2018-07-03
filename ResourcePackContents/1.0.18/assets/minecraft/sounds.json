@@ -1,0 +1,134 @@
+{
+    "bulletbig": {
+        "replace": false,
+        "sounds": [
+            "bulletbig"
+        ]
+    },
+    "bulletmedium": {
+        "replace": false,
+        "sounds": [
+            "bulletmedium"
+        ]
+    },
+    "bulletsmall": {
+        "replace": false,
+        "sounds": [
+            "bulletsmall"
+        ]
+    },
+    "bulletauto": {
+        "replace": false,
+        "sounds": [
+            "bulletauto"
+        ]
+    },
+    "reloadbolt": {
+        "replace": false,
+        "sounds": [
+            "reloadbolt"
+        ]
+    },
+    "reloadbullet": {
+        "replace": false,
+        "sounds": [
+            "reloadbullet"
+        ]
+    },
+    "reloadmagin": {
+        "replace": false,
+        "sounds": [
+            "reloadmagin"
+        ]
+    },
+    "reloadmagout": {
+        "replace": false,
+        "sounds": [
+            "reloadmagout"
+        ]
+    },
+    "warheadexplode": {
+        "replace": false,
+        "sounds": [
+            "warheadexplode"
+        ]
+    },
+    "warheadlaunch": {
+        "replace": false,
+        "sounds": [
+            "warheadlaunch"
+        ]
+    },
+    "bulletlazer": {
+        "replace": false,
+        "sounds": [
+            "bulletlazer"
+        ]
+    },
+    "flashbang": {
+        "replace": false,
+        "sounds": [
+            "flashbang"
+        ]
+    },
+    "chainsmall": {
+        "replace": false,
+        "sounds": [
+            "chainsmall"
+        ]
+    },
+    "metalhit": {
+        "replace": false,
+        "sounds": [
+            "metalhit"
+        ]
+    },
+    "shockwave": {
+        "replace": false,
+        "sounds": [
+            "shockwave"
+        ]
+    },
+    "lazerfire": {
+        "replace": false,
+        "sounds": [
+            "lazerfire"
+        ]
+    },
+    "bulletswblaster": {
+        "replace": false,
+        "sounds": [
+            "bulletswblaster"
+        ]
+    },
+    "bulletneedler": {
+        "replace": false,
+        "sounds": [
+            "bulletneedler"
+        ]
+    },
+    "bullethalolazer": {
+        "replace": false,
+        "sounds": [
+            "bullethalolazer"
+        ]
+    },
+    "bulletdeagle": {
+        "replace": false,
+        "sounds": [
+            "bulletdeagle"
+        ]
+    },
+    "bulletsmallauto": {
+        "replace": false,
+        "sounds": [
+            "bulletsmallauto"
+        ]
+    },
+    "bulletsilence": {
+        "replace": false,
+        "sounds": [
+            "bulletsilence"
+        ]
+    }
+}
