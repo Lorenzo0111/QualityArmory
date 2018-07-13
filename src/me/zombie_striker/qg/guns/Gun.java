@@ -10,9 +10,9 @@ import me.zombie_striker.qg.attachments.AttachmentBase;
 import me.zombie_striker.qg.guns.utils.GunUtil;
 import me.zombie_striker.qg.guns.utils.WeaponSounds;
 import me.zombie_striker.qg.guns.utils.WeaponType;
-import me.zombie_striker.qg.handlers.IronSightsToggleItem;
 import me.zombie_striker.qg.handlers.Update19OffhandChecker;
 import me.zombie_striker.qg.handlers.gunvalues.ChargingHandler;
+import me.zombie_striker.qg.miscitems.IronSightsToggleItem;
 
 import java.util.HashMap;
 import java.util.List;
@@ -30,6 +30,7 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 	private ItemStack[] ing;
 	private WeaponType type;
 	private boolean hasIronSights;
+	private int zoomLevel = 0;
 	private Ammo ammotype;
 	private double acc;
 	private double swaymultiplier;
@@ -38,6 +39,8 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 	private int durib = 1000;
 	private boolean isAutomatic;
 	boolean supports18 = false;
+	
+	private boolean isPrimaryWeapon = true;
 
 	private List<String> extralore = null;
 	private String displayname = null;
@@ -181,9 +184,22 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 	public int getBulletsPerShot() {
 		return shotsPerBullet;
 	}
+	public void setZoomLevel(int zoom) {
+		this.zoomLevel = zoom;
+	}
+	public int getZoomWhenIronSights() {
+		return zoomLevel;
+	}
 
 	public WeaponType getWeaponType() {
 		return type;
+	}
+	
+	public boolean isPrimaryWeapon() {
+		return isPrimaryWeapon;
+	}
+	public void setIsPrimary(boolean isPrimary) {
+		this.isPrimaryWeapon = isPrimary;
 	}
 
 	public double cost() {
@@ -231,6 +247,8 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 	}
 
 	public boolean playerHasAmmo(Player player) {
+		if(player.getGameMode()==GameMode.CREATIVE)
+			return true;
 		if (hasUnlimitedAmmo())
 			return true;
 		if (getAmmoType() == null)

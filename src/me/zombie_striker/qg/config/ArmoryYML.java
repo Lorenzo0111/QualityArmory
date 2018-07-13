@@ -116,11 +116,11 @@ public class ArmoryYML {
 		setNoOverride("variant", 0);
 		setNoOverride("weapontype", WeaponType.RIFLE);
 		setNoOverride("weaponsounds", WeaponSounds.getSoundByType(WeaponType.RIFLE));
-		StringBuilder validGuns = new StringBuilder();
-		for (WeaponType g : WeaponType.values()) {
-			validGuns.append(g.name() + ", ");
-		}
-		setNoOverride("_VALID_WEAPON_TYPES", validGuns.toString());
+		//StringBuilder validGuns = new StringBuilder();
+		//for (WeaponType g : WeaponType.values()) {
+		//	validGuns.append(g.name() + ", ");
+		//}
+		//setNoOverride("_VALID_WEAPON_TYPES", validGuns.toString());
 		setNoOverride("damage", 3);
 		
 		setNoOverride("durability", 1000);

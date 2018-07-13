@@ -103,14 +103,14 @@ public class GrenadeBase implements InteractableMisc {
 			grenadeHolder.put(grenade, holder);
 			grenadeHolder.remove(thrower);
 		} else {
-			thrower.sendMessage(Main.prefix + " Pull the pin first...");
+			thrower.sendMessage(Main.prefix + Main.S_GRENADE_PULLPIN);
 		}
 	}
 
 	@Override
 	public void onLeftClick(Player thrower) {
 		if (grenadeHolder.containsKey(thrower)) {
-			thrower.sendMessage(Main.prefix + "You already pulled the pin!");
+			thrower.sendMessage(Main.prefix + Main.S_GRENADE_PALREADYPULLPIN);
 			thrower.playSound(thrower.getLocation(), WeaponSounds.RELOAD_BULLET.getName(), 1, 1);
 			return;
 		}

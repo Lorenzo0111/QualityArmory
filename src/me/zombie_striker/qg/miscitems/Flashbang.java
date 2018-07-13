@@ -28,7 +28,7 @@ public class Flashbang extends GrenadeBase {
 	@Override
 	public void onLeftClick(Player thrower) {
 		if (grenadeHolder.containsKey(thrower)) {
-			thrower.sendMessage(Main.prefix + "You already pulled the pin!");
+			thrower.sendMessage(Main.prefix + Main.S_GRENADE_PALREADYPULLPIN);
 			thrower.playSound(thrower.getLocation(), WeaponSounds.RELOAD_BULLET.getName(), 1, 1);
 			return;
 		}

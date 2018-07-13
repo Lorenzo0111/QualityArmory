@@ -272,7 +272,7 @@ public class GunUtil {
 			
 			// Breaking texture
 			if (Main.blockBreakTexture)
-				for (Location l : blocksThatWillPLAYBreak) {
+				for (@SuppressWarnings("unused") Location l : blocksThatWillPLAYBreak) {
 					start.getWorld().playSound(start,SoundHandler.getSoundWhenShot(start.getBlock()) , 2, 1);
 					try {/*
 						for (Player p2 : l.getWorld().getPlayers()) {

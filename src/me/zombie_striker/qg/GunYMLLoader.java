@@ -231,7 +231,6 @@ public class GunYMLLoader {
 									AmmoType.getAmmo(f2.getString("ammotype")), f2.getDouble("sway"), 2,
 									f2.getInt("maxbullets"), f2.getInt("damage"), isAutomatic, f2.getInt("durability"),
 									sound, extraLore, displayname, price, materails);
-
 							Main.gunRegister.put(ms, g);
 
 							g.setUseMuzzleSmoke(addMuzzleSmoke);
@@ -254,8 +253,7 @@ public class GunYMLLoader {
 								g.setLightOnShoot(f2.getInt("LightLeveOnShoot"));
 
 							if (f2.contains("ChargingHandler") && !f2.getString("ChargingHandler").equals("none"))
-								g.setChargingHandler(
-										ChargingManager.getHandler(f2.getString("ChargingHandler")));
+								g.setChargingHandler(ChargingManager.getHandler(f2.getString("ChargingHandler")));
 							if (f2.contains("delayForShoot"))
 								g.setDelayBetweenShots(f2.getDouble("delayForShoot"));
 							if (f2.contains("bullets-per-shot"))
@@ -264,6 +262,10 @@ public class GunYMLLoader {
 								g.setMaxDistance(f2.getInt("maxBulletDistance"));
 							if (f2.contains("Version_18_Support"))
 								g.set18Supported(f2.getBoolean("Version_18_Support"));
+							if (f2.contains("isPrimaryWeapon"))
+								g.setIsPrimary(f2.getBoolean("isPrimaryWeapon"));
+							if(f2.contains("setZoomLevel"))
+								g.setZoomLevel(f2.getInt("setZoomLevel"));
 
 							try {
 								Particle particle = (Particle) (f2.contains("particles.bullet_particle")
@@ -357,8 +359,7 @@ public class GunYMLLoader {
 						}
 						try {
 							if (f2.contains("ChargingHandler") && !f2.getString("ChargingHandler").equals("null"))
-								attach.setCh(
-										ChargingManager.getHandler(f2.getString("ChargingHandler")));
+								attach.setCh(ChargingManager.getHandler(f2.getString("ChargingHandler")));
 						} catch (Error | Exception e445) {
 						}
 						try {

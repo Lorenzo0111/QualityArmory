@@ -1,5 +1,6 @@
 package me.zombie_striker.qg.ammo;
 
+import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -11,6 +12,8 @@ public class AmmoUtil {
 
 	public static int getAmmoAmount(Player player, Ammo a) {
 		int amount = 0;
+		if(player.getGameMode()==GameMode.CREATIVE)
+			return 99999;
 		for (ItemStack is : player.getInventory().getContents()) {
 			if (is != null && Main.isAmmo(is)&&Main.getAmmo(is).equals(a)) {
 				amount += is.getAmount();
@@ -49,6 +52,8 @@ public class AmmoUtil {
 
 	public static boolean removeAmmo(Player player, Ammo a, int amount) {
 		int remaining = amount;
+		if(player.getGameMode()==GameMode.CREATIVE)
+			return true;
 		for (int i = 0; i < player.getInventory().getSize(); i++) {
 			ItemStack is = player.getInventory().getItem(i);
 			if (is != null && Main.isAmmo(is)&&Main.getAmmo(is).equals(a)) {

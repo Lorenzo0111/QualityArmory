@@ -5,7 +5,7 @@ import me.zombie_striker.qg.ammo.AmmoType;
 import me.zombie_striker.qg.guns.*;
 import me.zombie_striker.qg.guns.utils.WeaponSounds;
 import me.zombie_striker.qg.guns.utils.WeaponType;
-import me.zombie_striker.qg.handlers.IronSightsToggleItem;
+import me.zombie_striker.qg.miscitems.IronSightsToggleItem;
 
 import java.util.*;
 

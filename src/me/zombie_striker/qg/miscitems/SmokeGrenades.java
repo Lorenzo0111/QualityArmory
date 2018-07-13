@@ -27,7 +27,7 @@ public class SmokeGrenades extends GrenadeBase {
 	@Override
 	public void onLeftClick(Player thrower) {
 		if (grenadeHolder.containsKey(thrower)) {
-			thrower.sendMessage(Main.prefix + "You already pulled the pin!");
+			thrower.sendMessage(Main.prefix + Main.S_GRENADE_PALREADYPULLPIN);
 			thrower.playSound(thrower.getLocation(), WeaponSounds.RELOAD_BULLET.getName(), 1, 1);
 			return;
 		}
@@ -42,6 +42,7 @@ public class SmokeGrenades extends GrenadeBase {
 				try {
 					h.getHolder().getWorld().spawnParticle(org.bukkit.Particle.EXPLOSION_HUGE,
 							h.getHolder().getLocation(), 0);
+					if(k%2==0)
 					h.getHolder().getWorld().playSound(h.getHolder().getLocation(), WeaponSounds.HISS.getName(), 2f,
 							1f);
 				} catch (Error e3) {
@@ -54,7 +55,7 @@ public class SmokeGrenades extends GrenadeBase {
 						((LivingEntity) h.getHolder())
 								.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 20 * 10, 2));
 					}
-				} else if (k == 40) {
+				} else if (k == 80) {
 					if (h.getHolder() instanceof Item) {
 						h.getHolder().remove();
 					}
@@ -63,7 +64,7 @@ public class SmokeGrenades extends GrenadeBase {
 				} else
 					k++;
 			}
-		}.runTaskTimer(Main.getInstance(),5*20,10));
+		}.runTaskTimer(Main.getInstance(),5*20,5));
 		grenadeHolder.put(thrower, h);
 
 	}

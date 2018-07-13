@@ -10,15 +10,17 @@ import me.zombie_striker.qg.Main;
 import me.zombie_striker.qg.handlers.gunvalues.ChargingHandler;
 import me.zombie_striker.qg.handlers.gunvalues.ChargingManager;
 
-public class GunYML extends ArmoryYML{
+public class GunYML extends ArmoryYML {
 
 	public GunYML(File file) {
 		super(file);
 	}
+
 	@Override
 	public void verifyAllTagsExist() {
 		super.verifyAllTagsExist();
 		setNoOverride("enableIronSights", false);
+		setNoOverride("setZoomLevel", 0);
 		setNoOverride("ammotype", "556");
 		setNoOverride("sway", 0.3);
 		setNoOverride("maxbullets", 0);
@@ -42,6 +44,10 @@ public class GunYML extends ArmoryYML{
 		setNoOverride("drop-glow-color", "none");
 	}
 
+	public GunYML setIsSecondaryWeapon(boolean isSecondary) {
+		set(false, "isPrimaryWeapon", !isSecondary);
+		return this;
+	}
 
 	public GunYML setInvalid(boolean invalid) {
 		set(false, "invalid", invalid);
@@ -67,18 +73,16 @@ public class GunYML extends ArmoryYML{
 		set(false, "price", cost);
 		return this;
 	}
+
 	public GunYML setMaterial(Material mat) {
-		set(false,  "material", mat.name());
+		set(false, "material", mat.name());
 		return this;
 	}
-	
-	
-	
-	
-	
-	
-	
-	
+
+	public GunYML setZoomLevel(int zoom) {
+		set(false, "setZoomLevel", zoom);
+		return this;
+	}
 
 	public GunYML setDistance(int distance) {
 		set(false, "maxBulletDistance", distance);

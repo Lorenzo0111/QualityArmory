@@ -1,6 +1,17 @@
+1.1.104
+	Made is so creative users will avoid ammo-count checks, allowing users to shoot without ammo.
+	Added pull-pin messages for grenades to messages.yml
+	Added ability to customize Ironsight toggle item
+	Changed WorlfdGaurd PVP check so players can still shoot in that region. They just can't damage players
+	Added ability to customize the zoom level for a gun.
+	Added option to enable Primaries and Secondaries. This will prevent users from picking up large amounts of guns, and force them to only use one or two.
+	ReAdded ironsights for AK
+	
+
 1.1.103
 	Fixed version id.
 	Fixed bug with ProtocolLib depend
+	Added ability to stop hits if entity is an armorstand
 
 1.1.102
 	Allowed renaming of shops and prices
