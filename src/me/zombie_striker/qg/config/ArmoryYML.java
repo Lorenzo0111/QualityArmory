@@ -12,6 +12,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import me.zombie_striker.qg.ammo.Ammo;
 import me.zombie_striker.qg.guns.utils.WeaponSounds;
 import me.zombie_striker.qg.guns.utils.WeaponType;
+import me.zombie_striker.qg.handlers.MultiVersionLookup;
 
 public class ArmoryYML {
 
@@ -72,7 +73,7 @@ public class ArmoryYML {
 
 	public ArmoryYML setSkullType(String skullowner) {
 		set(false, "id", SkullType.PLAYER.ordinal());
-		set(false, "material", Material.SKULL_ITEM.name());
+		set(false, "material", MultiVersionLookup.getSkull().name());
 		set(false, "skull_owner", skullowner);
 		set(false, "skull_owner_custom_url", Ammo.NO_SKIN_STRING);
 		return this;

@@ -15,6 +15,7 @@ import me.zombie_striker.qg.guns.Gun;
 import me.zombie_striker.qg.handlers.AimManager;
 import me.zombie_striker.qg.handlers.BulletWoundHandler;
 import me.zombie_striker.qg.handlers.HeadShotUtil;
+import me.zombie_striker.qg.handlers.MultiVersionLookup;
 import me.zombie_striker.qg.handlers.ParticleHandlers;
 import me.zombie_striker.qg.handlers.SoundHandler;
 import me.zombie_striker.qg.handlers.Update19OffhandChecker;
@@ -145,7 +146,7 @@ public class GunUtil {
 									Main.DEBUG("Headshot!");
 									if (Main.headshotPling) {
 										try {
-											p.playSound(p.getLocation(), Sound.BLOCK_NOTE_PLING, 2, 1);
+											p.playSound(p.getLocation(), MultiVersionLookup.getPling(), 2, 1);
 											if (!Main.isVersionHigherThan(1, 9))
 												try {
 													p.playSound(p.getLocation(), Sound.valueOf("LAVA_POP"), 6, 1);
@@ -532,7 +533,7 @@ public class GunUtil {
 				return false;
 			return true;
 		}
-		if (b.getType() == Material.BED_BLOCK || b.getType().name().contains("DAYLIGHT_DETECTOR")) {
+		if (b.getType().name().contains("BED_")||b.getType().name().contains("_BED") || b.getType().name().contains("DAYLIGHT_DETECTOR")) {
 			if (!Main.blockbullet_halfslabs && (l.getY() - l.getBlockY() > 0.5))
 				return false;
 			return true;

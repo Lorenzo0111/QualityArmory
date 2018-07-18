@@ -41,7 +41,7 @@ public class SkullHandler {
 		}
 		String encodedData = new String(url64);
 		propertyMap.put("textures", new Property("textures", encodedData));
-		ItemStack head = new ItemStack(Material.SKULL_ITEM, 1, (short) 3);
+		ItemStack head = new ItemStack(MultiVersionLookup.getSkull(), 1, (short) 3);
 		ItemMeta headMeta = head.getItemMeta();
 		Class<?> headMetaClass = headMeta.getClass();
 		ReflectionsUtil.getField(headMetaClass, "profile", GameProfile.class).set(headMeta, profile);
@@ -50,7 +50,7 @@ public class SkullHandler {
 	}
 
 	public static String getURL(ItemStack is) {
-		if (is.getType() != Material.SKULL_ITEM)
+		if (is.getType() !=MultiVersionLookup.getSkull())
 			return null;
 		ItemMeta headMeta = is.getItemMeta();
 		Class<?> headMetaClass = headMeta.getClass();
@@ -73,7 +73,7 @@ public class SkullHandler {
 	}
 
 	public static String getURL64(ItemStack is) {
-		if (is.getType() != Material.SKULL_ITEM)
+		if (is.getType() != MultiVersionLookup.getSkull())
 			return null;
 		ItemMeta headMeta = is.getItemMeta();
 		Class<?> headMetaClass = headMeta.getClass();

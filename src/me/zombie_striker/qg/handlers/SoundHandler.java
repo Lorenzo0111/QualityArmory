@@ -17,7 +17,7 @@ public class SoundHandler {
 		if(b.getType().name().contains("SAND"))
 			return Sound.BLOCK_SAND_BREAK;
 		if(b.getType().name().contains("WOOL"))
-			return Sound.BLOCK_CLOTH_BREAK;
+			return MultiVersionLookup.getWoolSound();
 		return Sound.BLOCK_WOOD_BREAK;
 	}
 }

@@ -142,9 +142,9 @@ public class Main extends JavaPlugin implements Listener {
 	public static boolean kickIfDeniedRequest = false;
 	// public static String url19plus =
 	// "https://www.dropbox.com/s/faufrgo7w2zpi3d/QualityArmoryv1.0.10.zip?dl=1";
-	public static String url19plusAXE = "https://www.dropbox.com/s/gm9pnckfj9yyye9/QualityArmoryv1.0.19.zip?dl=1";
+	public static String url_newest = "https://www.dropbox.com/s/2r367jump1ugtus/QualityArmoryv1.0.21.zip?dl=1";
 	public static String url18 = "https://www.dropbox.com/s/gx6dhahq6onob4g/QualityArmory1.8v1.0.1.zip?dl=1";
-	public static String url = url19plusAXE;
+	public static String url = url_newest;
 
 	public static String S_NOPERM = "&c You do not have permission to do that";
 	public static String S_NORES1 = " &c&l Downloading Resourcepack...";
@@ -218,8 +218,8 @@ public class Main extends JavaPlugin implements Listener {
 	public static String S_noMoney = "You do not have enough money to buy this";
 	public static String S_noEcon = "ECONOMY NOT ENABLED. REPORT THIS TO THE OWNER!";
 
-	public static ItemStack prevButton = new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 14);
-	public static ItemStack nextButton = new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 5);
+	public static ItemStack prevButton;
+	public static ItemStack nextButton;
 
 	// public static Material guntype = Material.DIAMOND_AXE;
 
@@ -418,9 +418,16 @@ public class Main extends JavaPlugin implements Listener {
 			Bukkit.broadcast(message, "qualityarmory.debugmessages");
 	}
 
-	@SuppressWarnings({ "unchecked", "deprecation" })
+	@SuppressWarnings({ "unchecked" })
 	public void reloadVals() {
 
+		Material glass = Material.valueOf("STAINED_GLASS_PANE");
+		if(glass==null)
+			glass = Material.matchMaterial("YELLOW_STAINED_GLASS_PANE");
+		
+		prevButton = new ItemStack(glass, 1, (short) 14);
+		nextButton = new ItemStack(glass, 1, (short) 5);
+		
 		new BoltactionCharger();
 		new BreakactionCharger();
 		new HomingRPGCharger();
@@ -620,7 +627,7 @@ public class Main extends JavaPlugin implements Listener {
 		overrideURL = (boolean) a("DefaultResourcepackOverride", false);
 
 		if (isVersionHigherThan(1, 9) || AutoDetectResourcepackVersion) {
-			url = url19plusAXE;
+			url = url_newest;
 
 		} else {
 			// Use 1.8 resourcepack.
@@ -647,7 +654,7 @@ public class Main extends JavaPlugin implements Listener {
 				destructableBlocks.add(Material.getMaterial(s));
 			} catch (Error | Exception e54) {
 				try {
-					destructableBlocks.add(Material.getMaterial(Integer.parseInt(s.split(":")[0])));
+					//destructableBlocks.add(Material.getMaterial(Integer.parseInt(s.split(":")[0])));
 				} catch (Error | Exception e5) {
 				}
 			}
@@ -668,7 +675,7 @@ public class Main extends JavaPlugin implements Listener {
 		if (enableCreationOfFiles) {
 
 			List<String> stringsWoodRif = Arrays.asList(new String[] { getIngString(Material.IRON_INGOT, 0, 12),
-					getIngString(Material.WOOD, 0, 2), getIngString(Material.REDSTONE, 0, 5) });
+					getIngString(MultiVersionLookup.getWood(), 0, 2), getIngString(Material.REDSTONE, 0, 5) });
 			List<String> stringsGoldRif = Arrays.asList(new String[] { getIngString(Material.IRON_INGOT, 0, 12),
 					getIngString(Material.GOLD_INGOT, 0, 2), getIngString(Material.REDSTONE, 0, 5) });
 			List<String> stringsMetalRif = Arrays.asList(
@@ -679,17 +686,17 @@ public class Main extends JavaPlugin implements Listener {
 					new String[] { getIngString(Material.IRON_INGOT, 0, 32), getIngString(Material.REDSTONE, 0, 10) });
 
 			List<String> stringsGrenades = Arrays.asList(
-					new String[] { getIngString(Material.IRON_INGOT, 0, 6), getIngString(Material.SULPHUR, 0, 10) });
+					new String[] { getIngString(Material.IRON_INGOT, 0, 6), getIngString(MultiVersionLookup.getGunpowder(), 0, 10) });
 
 			List<String> stringsAmmo = Arrays.asList(new String[] { getIngString(Material.IRON_INGOT, 0, 1),
-					getIngString(Material.SULPHUR, 0, 1), getIngString(Material.REDSTONE, 0, 1) });
+					getIngString(MultiVersionLookup.getGunpowder(), 0, 1), getIngString(Material.REDSTONE, 0, 1) });
 			List<String> stringsAmmoMusket = Arrays.asList(
-					new String[] { getIngString(Material.IRON_INGOT, 0, 4), getIngString(Material.SULPHUR, 0, 3), });
+					new String[] { getIngString(Material.IRON_INGOT, 0, 4), getIngString(MultiVersionLookup.getGunpowder(), 0, 3), });
 			List<String> stringsAmmoRPG = Arrays.asList(new String[] { getIngString(Material.IRON_INGOT, 0, 4),
-					getIngString(Material.SULPHUR, 0, 6), getIngString(Material.REDSTONE, 0, 1) });
+					getIngString(MultiVersionLookup.getGunpowder(), 0, 6), getIngString(Material.REDSTONE, 0, 1) });
 
 			List<String> stringsHealer = Arrays.asList(
-					new String[] { getIngString(Material.WOOL, 0, 6), getIngString(Material.GOLDEN_APPLE, 0, 1) });
+					new String[] { getIngString(MultiVersionLookup.getWool(), 0, 6), getIngString(Material.GOLDEN_APPLE, 0, 1) });
 			if (!isVersionHigherThan(1, 9)
 					|| (AutoDetectResourcepackVersion && Bukkit.getPluginManager().isPluginEnabled("ViaRewind"))) {
 				String additive = AutoDetectResourcepackVersion ? "_18" : "";
@@ -754,19 +761,19 @@ public class Main extends JavaPlugin implements Listener {
 					GunYMLCreator
 							.createNewCustomGun(getDataFolder(), "default_1_8_mp5k", "mp5k" + additive, "MP5K", 1,
 									stringsMetalRif, WeaponType.SMG, null, false, "9mm", 3, 32, 1000)
-							.setMaterial(Material.GOLD_PICKAXE).setOn18(true).setFullyAutomatic(3).done();
+							.setMaterial(MultiVersionLookup.getGoldPick()).setOn18(true).setFullyAutomatic(3).done();
 					GunYMLCreator
 							.createNewCustomGun(getDataFolder(), "default_1_8_ak47", "ak47" + additive, "AK47", 1,
 									stringsMetalRif, WeaponType.RIFLE, null, false, "556", 3, 40, 1500)
-							.setMaterial(Material.GOLD_SPADE).setOn18(true).setFullyAutomatic(2).done();
+							.setMaterial(MultiVersionLookup.getGoldShovel()).setOn18(true).setFullyAutomatic(2).done();
 					GunYMLCreator
 							.createNewCustomGun(getDataFolder(), "default_1_8_m16", "m16", "M16" + additive, 1,
 									stringsMetalRif, WeaponType.RIFLE, null, true, "556", 3, 30, 2000)
-							.setMaterial(Material.IRON_SPADE).setOn18(true).setFullyAutomatic(2).done();
+							.setMaterial(MultiVersionLookup.getIronShovel()).setOn18(true).setFullyAutomatic(2).done();
 					GunYMLCreator
 							.createNewCustomGun(getDataFolder(), "default_1_8_fnfal", "fnfal" + additive, "FNFal", 1,
 									stringsMetalRif, WeaponType.RIFLE, null, false, "556", 3, 32, 2000)
-							.setMaterial(Material.GOLD_HOE).setOn18(true).setFullyAutomatic(2).done();
+							.setMaterial(MultiVersionLookup.getGoldHoe()).setOn18(true).setFullyAutomatic(2).done();
 					GunYMLCreator
 							.createNewCustomGun(getDataFolder(), "default_1_8_rpg", "rpg" + additive, "RPG", 1,
 									stringsRPG, WeaponType.RPG, null, false, "rocket", 100, 1, 4000)
@@ -776,13 +783,13 @@ public class Main extends JavaPlugin implements Listener {
 				}
 
 				ArmoryYML skullammo = GunYMLCreator.createSkullAmmo(false, getDataFolder(), false, "default18_ammo556",
-						"556ammo", "&7 5.56x45mm NATO", null, Material.SKULL_ITEM, 3, "cactus", null, 4, 1, 50);
+						"556ammo", "&7 5.56x45mm NATO", null,MultiVersionLookup.getSkull(), 3, "cactus", null, 4, 1, 50);
 				skullammo.set(false, "skull_owner_custom_url_COMMENT",
 						"Only specify the custom URL if the head does not use a player's skin, and instead sets the skin to a base64 value. If you need to get the head using a command, the URL should be set to the string of letters after \"Properties:{textures:[{Value:\"");
 				skullammo.set(false, "skull_owner_custom_url",
 						"eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYTg3ZmRmNDU4N2E2NDQ5YmZjOGJlMzNhYjJlOTM4ZTM2YmYwNWU0MGY2ZmFhMjc3ZDcxYjUwYmNiMGVhNjgzOCJ9fX0=");
 				ArmoryYML skullammo2 = GunYMLCreator.createSkullAmmo(false, getDataFolder(), false, "default18_ammoRPG",
-						"RPGammo", "&7 Rocket", null, Material.SKULL_ITEM, 3, "cactus", null, 4, 1, 50);
+						"RPGammo", "&7 Rocket", null, MultiVersionLookup.getSkull(), 3, "cactus", null, 4, 1, 50);
 				skullammo2.set(false, "skull_owner_custom_url_COMMENT",
 						"Only specify the custom URL if the head does not use a player's skin, and instead sets the skin to a base64 value. If you need to get the head using a command, the URL should be set to the string of letters after \"Properties:{textures:[{Value:\"");
 				skullammo2.set(false, "skull_owner_custom_url",
@@ -1138,8 +1145,7 @@ public class Main extends JavaPlugin implements Listener {
 				new PushbackCharger();
 				List<String> stringsRifle = Arrays.asList(new String[] { getIngString(Material.IRON_INGOT, 0, 8),
 						getIngString(Material.REDSTONE, 0, 3) });
-				List<String> stringsLight = Arrays.asList(new String[] { getIngString(Material.IRON_INGOT, 0, 8),
-						getIngString(Material.INK_SACK, 4, 3), getIngString(Material.NETHER_STAR, 0, 1) });
+				List<String> stringsLight = Arrays.asList(new String[] { getIngString(Material.IRON_INGOT, 0, 8), getIngString(Material.NETHER_STAR, 0, 1) });
 
 				GunYMLCreator.createNewGun(false, getDataFolder(), false, "default_aliensrifle", "M41PulseRifle",
 						ChatColor.GOLD + "M41-A Pulse Rifle", Arrays.asList("&fGame over, man. Game over!"), 64,
@@ -1256,7 +1262,7 @@ public class Main extends JavaPlugin implements Listener {
 					"Attachment For AK47", null, m(28), stringsMetalRif, 100, "AK47");
 
 			ArmoryYML skullammo = GunYMLCreator.createSkullAmmo(false, getDataFolder(), true, "example_skullammo",
-					"exampleSkullAmmo", "&7 Example Ammo", null, Material.SKULL_ITEM, 3, "cactus", null, 4, 1, 64);
+					"exampleSkullAmmo", "&7 Example Ammo", null, MultiVersionLookup.getSkull(), 3, "cactus", null, 4, 1, 64);
 			skullammo.set(false, "skull_owner_custom_url_COMMENT",
 					"Only specify the custom URL if the head does not use a player's skin, and instead sets the skin to a base64 value. If you need to get the head using a command, the URL should be set to the string of letters after \"Properties:{textures:[{Value:\"");
 			skullammo.set(false, "skull_owner_custom_url",
@@ -1410,7 +1416,6 @@ public class Main extends JavaPlugin implements Listener {
 		return convertIngredients(Arrays.asList(new String[] { getIngString(Material.IRON_INGOT, 0, 10) }));
 	}
 
-	@SuppressWarnings("deprecation")
 	public ItemStack[] convertIngredients(List<String> e) {
 		ItemStack[] list = new ItemStack[e.size()];
 		for (int i = 0; i < e.size(); i++) {
@@ -1419,7 +1424,7 @@ public class Main extends JavaPlugin implements Listener {
 			try {
 				temp = new ItemStack(Material.matchMaterial(k[0]));
 			} catch (Exception e2) {
-				temp = new ItemStack(Integer.parseInt(k[0]));
+				//temp = new ItemStack(Integer.parseInt(k[0]));
 			}
 			if (k.length > 1)
 				temp.setDurability(Short.parseShort(k[1]));
@@ -1566,7 +1571,7 @@ public class Main extends JavaPlugin implements Listener {
 							GunYMLCreator.createSkullAmmo(true, getDataFolder(), false, "custom_" + args[1], args[1],
 									args[1], Arrays.asList("Custom_item"), itemInHand.getType(),
 									itemInHand.getDurability(),
-									(itemInHand.getType() == Material.SKULL_ITEM
+									(itemInHand.getType() == MultiVersionLookup.getSkull()
 											? ((SkullMeta) itemInHand.getItemMeta()).getOwner()
 											: null),
 									null, 100, 1, 64);
@@ -1613,7 +1618,7 @@ public class Main extends JavaPlugin implements Listener {
 							GunYMLCreator.createSkullAmmo(true, getDataFolder(), true, "custom_" + args[1], args[1],
 									args[1], Arrays.asList("Custom_item"), itemInHand.getType(),
 									itemInHand.getDurability(),
-									(itemInHand.getType() == Material.SKULL_ITEM
+									(itemInHand.getType() ==MultiVersionLookup.getSkull()
 											? ((SkullMeta) itemInHand.getItemMeta()).getOwner()
 											: null),
 									null, 100, 1, 64);
@@ -2132,7 +2137,7 @@ public class Main extends JavaPlugin implements Listener {
 			}
 		} else {
 			try {
-				((Player) e.getWhoClicked()).playSound(e.getWhoClicked().getLocation(), Sound.BLOCK_NOTE_HARP, 0.7f, 1);
+				((Player) e.getWhoClicked()).playSound(e.getWhoClicked().getLocation(), MultiVersionLookup.getHarp(), 0.7f, 1);
 			} catch (Error e2) {
 				((Player) e.getWhoClicked()).playSound(e.getWhoClicked().getLocation(), Sound.valueOf("NOTE_PIANO"),
 						0.7f, 1);
@@ -2700,7 +2705,7 @@ public class Main extends JavaPlugin implements Listener {
 						&& (e.getClickedBlock().getType() == Material.DIRT
 								|| e.getClickedBlock().getType() == Material.GRASS
 								|| e.getClickedBlock().getType() == Material.GRASS_PATH
-								|| e.getClickedBlock().getType() == Material.MYCEL))
+								|| e.getClickedBlock().getType() == MultiVersionLookup.getMycil()))
 					e.setCancelled(true);
 				return;
 			}
@@ -3282,7 +3287,7 @@ public class Main extends JavaPlugin implements Listener {
 	public static Ammo getAmmo(ItemStack is) {
 		int var = MaterialStorage.getVarient(is);
 		@SuppressWarnings("deprecation")
-		String extraData = is.getType() == Material.SKULL_ITEM ? ((SkullMeta) is.getItemMeta()).getOwner() : null;
+		String extraData = is.getType() == MultiVersionLookup.getSkull()? ((SkullMeta) is.getItemMeta()).getOwner() : null;
 		String temp = SkullHandler.getURL64(is);
 		if (ammoRegister
 				.containsKey(MaterialStorage.getMS(is.getType(), (int) is.getDurability(), var, extraData, temp)))
@@ -3296,7 +3301,7 @@ public class Main extends JavaPlugin implements Listener {
 			return false;
 		int var = MaterialStorage.getVarient(is);
 		@SuppressWarnings("deprecation")
-		String extraData = is.getType() == Material.SKULL_ITEM ? ((SkullMeta) is.getItemMeta()).getOwner() : null;
+		String extraData = is.getType() == MultiVersionLookup.getSkull() ? ((SkullMeta) is.getItemMeta()).getOwner() : null;
 		String temp = null;
 		try {
 			temp = SkullHandler.getURL64(is);

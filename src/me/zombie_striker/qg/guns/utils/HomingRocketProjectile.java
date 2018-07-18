@@ -6,6 +6,7 @@ import java.util.List;
 import me.zombie_striker.qg.Main;
 import me.zombie_striker.qg.guns.Gun;
 import me.zombie_striker.qg.handlers.ExplosionHandler;
+import me.zombie_striker.qg.handlers.MultiVersionLookup;
 import me.zombie_striker.qg.handlers.gunvalues.HomingRPGCharger;
 import org.bukkit.Effect;
 import org.bukkit.Location;
@@ -62,7 +63,7 @@ public class HomingRocketProjectile {
 				try {
 					RPGLOCATION.getWorld().spawnParticle(org.bukkit.Particle.SMOKE_LARGE, RPGLOCATION, 0);
 					RPGLOCATION.getWorld().spawnParticle(org.bukkit.Particle.FIREWORKS_SPARK, RPGLOCATION, 0);
-					player.getWorld().playSound(RPGLOCATION, Sound.ENTITY_ENDERDRAGON_GROWL, 1, 2f);
+					player.getWorld().playSound(RPGLOCATION, MultiVersionLookup.getDragonGrowl(), 1, 2f);
 
 				} catch (Error e2) {
 					RPGLOCATION.getWorld().playEffect(RPGLOCATION, Effect.valueOf("CLOUD"), 0);

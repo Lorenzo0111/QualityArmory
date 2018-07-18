@@ -1,3 +1,11 @@
+1.1.106
+	Fixed missing texture reference for resourcepack
+	Fixed material names for 1.13 conversion.
+
+1.1.105
+	Added pre-support for 1.13
+	Fixed resourcepack to support 1.13.
+
 1.1.104
 	Made is so creative users will avoid ammo-count checks, allowing users to shoot without ammo.
 	Added pull-pin messages for grenades to messages.yml

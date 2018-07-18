@@ -5,6 +5,7 @@ import java.util.List;
 
 import me.zombie_striker.qg.Main;
 import me.zombie_striker.qg.handlers.ExplosionHandler;
+import me.zombie_striker.qg.handlers.MultiVersionLookup;
 import me.zombie_striker.qg.handlers.ParticleHandlers;
 
 import org.bukkit.Effect;
@@ -32,7 +33,7 @@ public class MiniNukeProjectile {
 				try {
 					s.getWorld().spawnParticle(org.bukkit.Particle.SMOKE_LARGE, s, 0);
 					s.getWorld().spawnParticle(org.bukkit.Particle.FIREWORKS_SPARK, s, 0);
-					player.getWorld().playSound(s, Sound.ENTITY_ENDERDRAGON_GROWL, 1, 2f);
+					player.getWorld().playSound(s, MultiVersionLookup.getDragonGrowl(), 1, 2f);
 
 				} catch (Error e2) {
 					s.getWorld().playEffect(s, Effect.valueOf("CLOUD"), 0);
