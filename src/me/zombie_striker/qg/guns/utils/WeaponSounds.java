@@ -9,7 +9,7 @@ public enum WeaponSounds {
 	
 	LAZERSHOOT("bulletlazer"),
 
-	FLASHBANG("flashbang"), METALHIT("metalhit"), CHAINS("chainsmall"),
+	FLASHBANG("flashbang"), METALHIT("metalhit"), CHAINS("chainsmall"),DRIVING("driving"),
 	
 	
 	

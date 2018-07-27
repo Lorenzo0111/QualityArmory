@@ -1,3 +1,11 @@
+1.1.108
+	Added expansion support for future project
+	Added durability recovery. Now items will not apply durability to account for the skip over custom models
+	Fixed api-version tag in plugin.ytml for 1.13
+
+1.1.107
+	Fixed rightclcikcironsights so shifting disables ironsights
+
 1.1.106
 	Fixed missing texture reference for resourcepack
 	Fixed material names for 1.13 conversion.

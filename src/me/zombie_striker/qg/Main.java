@@ -41,6 +41,7 @@ import org.bukkit.event.player.*;
 import org.bukkit.inventory.*;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
+import org.bukkit.material.MaterialData;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -142,7 +143,7 @@ public class Main extends JavaPlugin implements Listener {
 	public static boolean kickIfDeniedRequest = false;
 	// public static String url19plus =
 	// "https://www.dropbox.com/s/faufrgo7w2zpi3d/QualityArmoryv1.0.10.zip?dl=1";
-	public static String url_newest = "https://www.dropbox.com/s/2r367jump1ugtus/QualityArmoryv1.0.21.zip?dl=1";
+	public static String url_newest = "https://www.dropbox.com/s/v10ph299qu3d5sq/QualityArmoryv1.0.22.zip?dl=1";
 	public static String url18 = "https://www.dropbox.com/s/gx6dhahq6onob4g/QualityArmory1.8v1.0.1.zip?dl=1";
 	public static String url = url_newest;
 
@@ -392,24 +393,26 @@ public class Main extends JavaPlugin implements Listener {
 	}
 
 	@EventHandler
-	public void roggleshift(PlayerToggleSneakEvent e) {
-		try {
-			ItemStack item = e.getPlayer().getInventory().getItemInOffHand();
+	public void toggleshift(PlayerToggleSneakEvent e) {
+		if (enableIronSightsON_RIGHT_CLICK) {
 			try {
-				if (item != null && isGun(item)) {
+				ItemStack item = e.getPlayer().getInventory().getItemInOffHand();
+				try {
+					if (item != null && isGun(item)) {
 
-					Gun gun = getGun(item);
-					if (gun.getZoomWhenIronSights() > 0)
-						if (e.isSneaking()) {
-							e.getPlayer().addPotionEffect(
-									new PotionEffect(PotionEffectType.SLOW, 12000, gun.getZoomWhenIronSights()));
-						}
+						Gun gun = getGun(item);
+						if (gun.getZoomWhenIronSights() > 0)
+							if (e.isSneaking()) {
+								e.getPlayer().addPotionEffect(
+										new PotionEffect(PotionEffectType.SLOW, 12000, gun.getZoomWhenIronSights()));
+							}
+					}
+					if (!e.isSneaking())
+						e.getPlayer().removePotionEffect(PotionEffectType.SLOW);
+				} catch (Error e2) {
 				}
-				if (!e.isSneaking())
-					e.getPlayer().removePotionEffect(PotionEffectType.SLOW);
-			} catch (Error e2) {
+			} catch (Error | Exception e4) {
 			}
-		} catch (Error | Exception e4) {
 		}
 	}
 
@@ -422,12 +425,12 @@ public class Main extends JavaPlugin implements Listener {
 	public void reloadVals() {
 
 		Material glass = Material.valueOf("STAINED_GLASS_PANE");
-		if(glass==null)
+		if (glass == null)
 			glass = Material.matchMaterial("YELLOW_STAINED_GLASS_PANE");
-		
+
 		prevButton = new ItemStack(glass, 1, (short) 14);
 		nextButton = new ItemStack(glass, 1, (short) 5);
-		
+
 		new BoltactionCharger();
 		new BreakactionCharger();
 		new HomingRPGCharger();
@@ -654,7 +657,7 @@ public class Main extends JavaPlugin implements Listener {
 				destructableBlocks.add(Material.getMaterial(s));
 			} catch (Error | Exception e54) {
 				try {
-					//destructableBlocks.add(Material.getMaterial(Integer.parseInt(s.split(":")[0])));
+					// destructableBlocks.add(Material.getMaterial(Integer.parseInt(s.split(":")[0])));
 				} catch (Error | Exception e5) {
 				}
 			}
@@ -685,18 +688,18 @@ public class Main extends JavaPlugin implements Listener {
 			List<String> stringsRPG = Arrays.asList(
 					new String[] { getIngString(Material.IRON_INGOT, 0, 32), getIngString(Material.REDSTONE, 0, 10) });
 
-			List<String> stringsGrenades = Arrays.asList(
-					new String[] { getIngString(Material.IRON_INGOT, 0, 6), getIngString(MultiVersionLookup.getGunpowder(), 0, 10) });
+			List<String> stringsGrenades = Arrays.asList(new String[] { getIngString(Material.IRON_INGOT, 0, 6),
+					getIngString(MultiVersionLookup.getGunpowder(), 0, 10) });
 
 			List<String> stringsAmmo = Arrays.asList(new String[] { getIngString(Material.IRON_INGOT, 0, 1),
 					getIngString(MultiVersionLookup.getGunpowder(), 0, 1), getIngString(Material.REDSTONE, 0, 1) });
-			List<String> stringsAmmoMusket = Arrays.asList(
-					new String[] { getIngString(Material.IRON_INGOT, 0, 4), getIngString(MultiVersionLookup.getGunpowder(), 0, 3), });
+			List<String> stringsAmmoMusket = Arrays.asList(new String[] { getIngString(Material.IRON_INGOT, 0, 4),
+					getIngString(MultiVersionLookup.getGunpowder(), 0, 3), });
 			List<String> stringsAmmoRPG = Arrays.asList(new String[] { getIngString(Material.IRON_INGOT, 0, 4),
 					getIngString(MultiVersionLookup.getGunpowder(), 0, 6), getIngString(Material.REDSTONE, 0, 1) });
 
-			List<String> stringsHealer = Arrays.asList(
-					new String[] { getIngString(MultiVersionLookup.getWool(), 0, 6), getIngString(Material.GOLDEN_APPLE, 0, 1) });
+			List<String> stringsHealer = Arrays.asList(new String[] { getIngString(MultiVersionLookup.getWool(), 0, 6),
+					getIngString(Material.GOLDEN_APPLE, 0, 1) });
 			if (!isVersionHigherThan(1, 9)
 					|| (AutoDetectResourcepackVersion && Bukkit.getPluginManager().isPluginEnabled("ViaRewind"))) {
 				String additive = AutoDetectResourcepackVersion ? "_18" : "";
@@ -783,7 +786,8 @@ public class Main extends JavaPlugin implements Listener {
 				}
 
 				ArmoryYML skullammo = GunYMLCreator.createSkullAmmo(false, getDataFolder(), false, "default18_ammo556",
-						"556ammo", "&7 5.56x45mm NATO", null,MultiVersionLookup.getSkull(), 3, "cactus", null, 4, 1, 50);
+						"556ammo", "&7 5.56x45mm NATO", null, MultiVersionLookup.getSkull(), 3, "cactus", null, 4, 1,
+						50);
 				skullammo.set(false, "skull_owner_custom_url_COMMENT",
 						"Only specify the custom URL if the head does not use a player's skin, and instead sets the skin to a base64 value. If you need to get the head using a command, the URL should be set to the string of letters after \"Properties:{textures:[{Value:\"");
 				skullammo.set(false, "skull_owner_custom_url",
@@ -1145,7 +1149,8 @@ public class Main extends JavaPlugin implements Listener {
 				new PushbackCharger();
 				List<String> stringsRifle = Arrays.asList(new String[] { getIngString(Material.IRON_INGOT, 0, 8),
 						getIngString(Material.REDSTONE, 0, 3) });
-				List<String> stringsLight = Arrays.asList(new String[] { getIngString(Material.IRON_INGOT, 0, 8), getIngString(Material.NETHER_STAR, 0, 1) });
+				List<String> stringsLight = Arrays.asList(new String[] { getIngString(Material.IRON_INGOT, 0, 8),
+						getIngString(Material.NETHER_STAR, 0, 1) });
 
 				GunYMLCreator.createNewGun(false, getDataFolder(), false, "default_aliensrifle", "M41PulseRifle",
 						ChatColor.GOLD + "M41-A Pulse Rifle", Arrays.asList("&fGame over, man. Game over!"), 64,
@@ -1218,7 +1223,6 @@ public class Main extends JavaPlugin implements Listener {
 								null, true, "762", 7, 10, 1500)
 						.setDelayShoot(0.6).setZoomLevel(6).setDistance(290).done();
 
-				expansionPacks.add(m(88));
 				// GunYMLCreator.createNewGun(forceUpdate, getDataFolder(), "mac10", "Mac-10",
 				// 75, stringsMetalRif,
 				// WeaponType.SMG, true, "9mm", 3, 0.4, 32, 1000, 3, true, 1000,
@@ -1236,7 +1240,15 @@ public class Main extends JavaPlugin implements Listener {
 				// ChargingManager.RAPIDFIRE, 100, WeaponSounds.GUN_SMALL_AUTO);
 
 				// Covers all SciFi weapons
-
+				expansionPacks.add(m(80));
+				expansionPacks.add(m(81));
+				expansionPacks.add(m(82));
+				expansionPacks.add(m(83));
+				expansionPacks.add(m(84));
+				expansionPacks.add(m(85));
+				expansionPacks.add(m(86));
+				expansionPacks.add(m(87));
+				expansionPacks.add(m(88));
 			}
 
 			// GunYMLCreator.createNewGun(false, getDataFolder(), true, "ExampleGun",
@@ -1262,7 +1274,8 @@ public class Main extends JavaPlugin implements Listener {
 					"Attachment For AK47", null, m(28), stringsMetalRif, 100, "AK47");
 
 			ArmoryYML skullammo = GunYMLCreator.createSkullAmmo(false, getDataFolder(), true, "example_skullammo",
-					"exampleSkullAmmo", "&7 Example Ammo", null, MultiVersionLookup.getSkull(), 3, "cactus", null, 4, 1, 64);
+					"exampleSkullAmmo", "&7 Example Ammo", null, MultiVersionLookup.getSkull(), 3, "cactus", null, 4, 1,
+					64);
 			skullammo.set(false, "skull_owner_custom_url_COMMENT",
 					"Only specify the custom URL if the head does not use a player's skin, and instead sets the skin to a base64 value. If you need to get the head using a command, the URL should be set to the string of letters after \"Properties:{textures:[{Value:\"");
 			skullammo.set(false, "skull_owner_custom_url",
@@ -1424,7 +1437,7 @@ public class Main extends JavaPlugin implements Listener {
 			try {
 				temp = new ItemStack(Material.matchMaterial(k[0]));
 			} catch (Exception e2) {
-				//temp = new ItemStack(Integer.parseInt(k[0]));
+				// temp = new ItemStack(Integer.parseInt(k[0]));
 			}
 			if (k.length > 1)
 				temp.setDurability(Short.parseShort(k[1]));
@@ -1505,7 +1518,33 @@ public class Main extends JavaPlugin implements Listener {
 	public void onBlockBreak(BlockBreakEvent e) {
 		if (e.getPlayer().getItemInHand() != null && (isCustomItem(e.getPlayer().getItemInHand()))) {
 			e.setCancelled(true);
+			return;
 		}
+	}
+
+	@SuppressWarnings("deprecation")
+	@EventHandler(priority = EventPriority.MONITOR)
+	public void onBlockBreakMonitor(final BlockBreakEvent e) {
+		int k = 0;
+		if (e.getPlayer().getItemInHand() != null)
+			if ((k = ItemFact.getCalculatedExtraDurib(e.getPlayer().getItemInHand())) != -1) {
+				ItemStack hand = e.getPlayer().getItemInHand();
+				e.setCancelled(true);
+				e.getBlock().breakNaturally(hand);
+				final ItemStack t;
+				if (k > 0) {
+					t = ItemFact.decrementCalculatedExtra(hand);
+				} else {
+					t = ItemFact.removeCalculatedExtra(hand);
+				}
+				new BukkitRunnable() {
+
+					@Override
+					public void run() {
+						e.getPlayer().setItemInHand(t);
+					}
+				}.runTaskLater(this, 1);
+			}
 	}
 
 	@SuppressWarnings("deprecation")
@@ -1618,7 +1657,7 @@ public class Main extends JavaPlugin implements Listener {
 							GunYMLCreator.createSkullAmmo(true, getDataFolder(), true, "custom_" + args[1], args[1],
 									args[1], Arrays.asList("Custom_item"), itemInHand.getType(),
 									itemInHand.getDurability(),
-									(itemInHand.getType() ==MultiVersionLookup.getSkull()
+									(itemInHand.getType() == MultiVersionLookup.getSkull()
 											? ((SkullMeta) itemInHand.getItemMeta()).getOwner()
 											: null),
 									null, 100, 1, 64);
@@ -2137,7 +2176,8 @@ public class Main extends JavaPlugin implements Listener {
 			}
 		} else {
 			try {
-				((Player) e.getWhoClicked()).playSound(e.getWhoClicked().getLocation(), MultiVersionLookup.getHarp(), 0.7f, 1);
+				((Player) e.getWhoClicked()).playSound(e.getWhoClicked().getLocation(), MultiVersionLookup.getHarp(),
+						0.7f, 1);
 			} catch (Error e2) {
 				((Player) e.getWhoClicked()).playSound(e.getWhoClicked().getLocation(), Sound.valueOf("NOTE_PIANO"),
 						0.7f, 1);
@@ -2457,6 +2497,7 @@ public class Main extends JavaPlugin implements Listener {
 					Main.DEBUG("Safe Durib= " + (safeDurib + 6) + "! ORG " + e.getItem().getDurability());
 					ItemStack is = e.getItem();
 					is.setDurability((short) (safeDurib + 6));
+					is = ItemFact.addCalulatedExtraDurib(is, safeDurib + 6 - 2);
 					e.getPlayer().getInventory().setItem(e.getPlayer().getInventory().getHeldItemSlot(), is);
 					// }
 				}
@@ -2714,154 +2755,154 @@ public class Main extends JavaPlugin implements Listener {
 			if (isGun(usedItem) || isGunWithAttchments(usedItem)) {
 				Main.DEBUG("Dups check");
 				checkforDups(e.getPlayer(), usedItem);
-			}
 
-			Gun g = getGun(usedItem);
-			AttachmentBase attachment = getGunWithAttchments(usedItem);
-			if (g == null)
-				g = gunRegister.get(attachment.getBase());
-			Main.DEBUG("Made it to gun/attachment check : " + g + " - " + attachment);
-			if (enableInteractChests) {
-				if (e.getClickedBlock() != null && (e.getClickedBlock().getType() == Material.CHEST
-						|| e.getClickedBlock().getType() == Material.TRAPPED_CHEST)) {
-					Main.DEBUG("Chest interactable check has return true!");
-					return;
-				}
-				// Return with no shots if EIC is enabled for chests.
-			}
-
-			e.setCancelled(true);
-			if (((e.getAction() == Action.LEFT_CLICK_AIR
-					|| e.getAction() == Action.LEFT_CLICK_BLOCK) == USE_DEFAULT_CONTROLS)
-					|| (USE_DEFAULT_CONTROLS && g != null && g.isAutomatic() && e.getPlayer().isSneaking())) {
-				/*
-				 * if(e.getAction().name().contains("RIGHT") && e.getClickedBlock() != null &&
-				 * interactableBlocks.contains(e.getClickedBlock().getType())) {
-				 * e.setCancelled(false); return; }
-				 */
-				// TODO: Verify If the player is shifting and rightclick, the gun will still
-				// fire. The player has to be standing (non-sneak) in order to interact with
-				// interactable blocks.
-				if (g != null) {
-					if (!enableDurability || ItemFact.getDamage(usedItem) > 0) {
-						// if (allowGunsInRegion(e.getPlayer().getLocation())) {
-						try {
-							if (e.getHand() == EquipmentSlot.OFF_HAND) {
-								Main.DEBUG("OffHandChecker was disabled for shooting!");
-								return;
-							}
-						} catch (Error | Exception e4) {
-						}
-
-						if (g.isAutomatic() && RapidFireCharger.shooters.containsKey(e.getPlayer().getUniqueId())) {
-							RapidFireCharger.shooters.remove(e.getPlayer().getUniqueId()).cancel();
-						} else {
-							g.shoot(e.getPlayer(), attachment);
-							if (enableDurability)
-								if (offhand) {
-									try {
-										e.getPlayer().getInventory().setItemInOffHand(ItemFact.damage(g, usedItem));
-									} catch (Error e2) {
-									}
-								} else {
-									e.getPlayer().setItemInHand(ItemFact.damage(g, usedItem));
-								}
-						}
-
-						sendHotbarGunAmmoCount(e.getPlayer(), g, attachment, usedItem, false);
-						return;
-						/*
-						 * } else { Main.DEBUG("Worldguard region canceled the event"); }
-						 */
-						// sendHotbarGunAmmoCount(e.getPlayer(), g, attachment, usedItem, false);
-						// TODO: Verify that the gun is in the main hand.
-						// Shouldn't work for offhand, but it should still
-						// be checked later.
-					}
-				}
-			} else {
-				if (enableIronSightsON_RIGHT_CLICK) {
-					if (!Update19OffhandChecker.supportOffhand(e.getPlayer())) {
-						enableIronSightsON_RIGHT_CLICK = false;
-						Main.DEBUG("Offhand checker returned false for the player. Disabling ironsights");
+				Gun g = getGun(usedItem);
+				AttachmentBase attachment = getGunWithAttchments(usedItem);
+				if (g == null)
+					g = gunRegister.get(attachment.getBase());
+				Main.DEBUG("Made it to gun/attachment check : " + g);
+				if (enableInteractChests) {
+					if (e.getClickedBlock() != null && (e.getClickedBlock().getType() == Material.CHEST
+							|| e.getClickedBlock().getType() == Material.TRAPPED_CHEST)) {
+						Main.DEBUG("Chest interactable check has return true!");
 						return;
 					}
-					// Rest should be okay
+					// Return with no shots if EIC is enabled for chests.
+				}
+
+				e.setCancelled(true);
+				if (((e.getAction() == Action.LEFT_CLICK_AIR
+						|| e.getAction() == Action.LEFT_CLICK_BLOCK) == USE_DEFAULT_CONTROLS)
+						|| (USE_DEFAULT_CONTROLS && g != null && g.isAutomatic() && e.getPlayer().isSneaking())) {
+					/*
+					 * if(e.getAction().name().contains("RIGHT") && e.getClickedBlock() != null &&
+					 * interactableBlocks.contains(e.getClickedBlock().getType())) {
+					 * e.setCancelled(false); return; }
+					 */
+					// TODO: Verify If the player is shifting and rightclick, the gun will still
+					// fire. The player has to be standing (non-sneak) in order to interact with
+					// interactable blocks.
 					if (g != null) {
-						if (g.hasIronSights()) {
+						if (!enableDurability || ItemFact.getDamage(usedItem) > 0) {
+							// if (allowGunsInRegion(e.getPlayer().getLocation())) {
 							try {
-
-								if (e.getPlayer().getItemInHand().getItemMeta().getDisplayName()
-										.contains(S_RELOADING_MESSAGE)) {
-									Main.DEBUG("Reloading message 1!");
+								if (e.getHand() == EquipmentSlot.OFF_HAND) {
+									Main.DEBUG("OffHandChecker was disabled for shooting!");
 									return;
 								}
-
-								if (Update19OffhandChecker.getItemStackOFfhand(e.getPlayer()) != null) {
-									e.getPlayer().getInventory()
-											.addItem(Update19OffhandChecker.getItemStackOFfhand(e.getPlayer()));
-									Update19OffhandChecker.setOffhand(e.getPlayer(), null);
-								}
-
-								ItemStack tempremove = null;
-								if (e.getPlayer().getInventory().getItemInOffHand() != null)
-									tempremove = e.getPlayer().getInventory().getItemInOffHand();
-								e.getPlayer().getInventory()
-										.setItemInOffHand(e.getPlayer().getInventory().getItemInMainHand());
-								if (tempremove != null) {
-									ItemStack ironsights = new ItemStack(IronSightsToggleItem.getMat(), 1,
-											(short) IronSightsToggleItem.getData());
-									ItemMeta im = ironsights.getItemMeta();
-									im.setDisplayName(IronSightsToggleItem.getItemName());
-									im.setUnbreakable(true);
-									im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_UNBREAKABLE);
-									ironsights.setItemMeta(im);
-									e.getPlayer().getInventory().setItemInMainHand(ironsights);
-								}
-
-								sendHotbarGunAmmoCount(e.getPlayer(), g, attachment, usedItem, false);
-							} catch (Error e2) {
-								Bukkit.broadcastMessage(prefix
-										+ "Ironsights not compatible for versions lower than 1.8. The server owner should set EnableIronSights to false in the plugin's config");
+							} catch (Error | Exception e4) {
 							}
-						} else {
-							if (!enableDurability || ItemFact.getDamage(usedItem) > 0) {
-								// if (allowGunsInRegion(e.getPlayer().getLocation())) {
+
+							if (g.isAutomatic() && RapidFireCharger.shooters.containsKey(e.getPlayer().getUniqueId())) {
+								RapidFireCharger.shooters.remove(e.getPlayer().getUniqueId()).cancel();
+							} else {
 								g.shoot(e.getPlayer(), attachment);
 								if (enableDurability)
 									if (offhand) {
-										e.getPlayer().getInventory().setItemInOffHand(ItemFact.damage(g, usedItem));
+										try {
+											e.getPlayer().getInventory().setItemInOffHand(ItemFact.damage(g, usedItem));
+										} catch (Error e2) {
+										}
 									} else {
 										e.getPlayer().setItemInHand(ItemFact.damage(g, usedItem));
 									}
-								// }
-								sendHotbarGunAmmoCount(e.getPlayer(), g, attachment, usedItem, false);
-								// TODO: Verify that the gun is in the main
-								// hand.
-								// Shouldn't work for offhand, but it should
-								// still
-								// be checked later.
 							}
+
+							sendHotbarGunAmmoCount(e.getPlayer(), g, attachment, usedItem, false);
+							return;
+							/*
+							 * } else { Main.DEBUG("Worldguard region canceled the event"); }
+							 */
+							// sendHotbarGunAmmoCount(e.getPlayer(), g, attachment, usedItem, false);
+							// TODO: Verify that the gun is in the main hand.
+							// Shouldn't work for offhand, but it should still
+							// be checked later.
 						}
 					}
 				} else {
-					if (e.getClickedBlock() != null && interactableBlocks.contains(e.getClickedBlock().getType())) {
-						e.setCancelled(false);
-					} else {
+					if (enableIronSightsON_RIGHT_CLICK) {
+						if (!Update19OffhandChecker.supportOffhand(e.getPlayer())) {
+							enableIronSightsON_RIGHT_CLICK = false;
+							Main.DEBUG("Offhand checker returned false for the player. Disabling ironsights");
+							return;
+						}
+						// Rest should be okay
 						if (g != null) {
-							if (allowGunReload) {
-								sendHotbarGunAmmoCount(e.getPlayer(), g, attachment, usedItem,
-										((g.getMaxBullets() != ItemFact.getAmount(usedItem))
-												&& GunUtil.hasAmmo(e.getPlayer(), g)));
-								if (g.playerHasAmmo(e.getPlayer())) {
-									Main.DEBUG("Trying to reload. player has ammo");
-									g.reload(e.getPlayer(), attachment);
+							if (g.hasIronSights()) {
+								try {
 
-								} else {
-									Main.DEBUG("Trying to reload. player DOES NOT have ammo");
+									if (e.getPlayer().getItemInHand().getItemMeta().getDisplayName()
+											.contains(S_RELOADING_MESSAGE)) {
+										Main.DEBUG("Reloading message 1!");
+										return;
+									}
+
+									if (Update19OffhandChecker.getItemStackOFfhand(e.getPlayer()) != null) {
+										e.getPlayer().getInventory()
+												.addItem(Update19OffhandChecker.getItemStackOFfhand(e.getPlayer()));
+										Update19OffhandChecker.setOffhand(e.getPlayer(), null);
+									}
+
+									ItemStack tempremove = null;
+									if (e.getPlayer().getInventory().getItemInOffHand() != null)
+										tempremove = e.getPlayer().getInventory().getItemInOffHand();
+									e.getPlayer().getInventory()
+											.setItemInOffHand(e.getPlayer().getInventory().getItemInMainHand());
+									if (tempremove != null) {
+										ItemStack ironsights = new ItemStack(IronSightsToggleItem.getMat(), 1,
+												(short) IronSightsToggleItem.getData());
+										ItemMeta im = ironsights.getItemMeta();
+										im.setDisplayName(IronSightsToggleItem.getItemName());
+										im.setUnbreakable(true);
+										im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_UNBREAKABLE);
+										ironsights.setItemMeta(im);
+										e.getPlayer().getInventory().setItemInMainHand(ironsights);
+									}
+
+									sendHotbarGunAmmoCount(e.getPlayer(), g, attachment, usedItem, false);
+								} catch (Error e2) {
+									Bukkit.broadcastMessage(prefix
+											+ "Ironsights not compatible for versions lower than 1.8. The server owner should set EnableIronSights to false in the plugin's config");
+								}
+							} else {
+								if (!enableDurability || ItemFact.getDamage(usedItem) > 0) {
+									// if (allowGunsInRegion(e.getPlayer().getLocation())) {
+									g.shoot(e.getPlayer(), attachment);
+									if (enableDurability)
+										if (offhand) {
+											e.getPlayer().getInventory().setItemInOffHand(ItemFact.damage(g, usedItem));
+										} else {
+											e.getPlayer().setItemInHand(ItemFact.damage(g, usedItem));
+										}
+									// }
+									sendHotbarGunAmmoCount(e.getPlayer(), g, attachment, usedItem, false);
+									// TODO: Verify that the gun is in the main
+									// hand.
+									// Shouldn't work for offhand, but it should
+									// still
+									// be checked later.
 								}
 							}
+						}
+					} else {
+						if (e.getClickedBlock() != null && interactableBlocks.contains(e.getClickedBlock().getType())) {
+							e.setCancelled(false);
+						} else {
+							if (g != null) {
+								if (allowGunReload) {
+									sendHotbarGunAmmoCount(e.getPlayer(), g, attachment, usedItem,
+											((g.getMaxBullets() != ItemFact.getAmount(usedItem))
+													&& GunUtil.hasAmmo(e.getPlayer(), g)));
+									if (g.playerHasAmmo(e.getPlayer())) {
+										Main.DEBUG("Trying to reload. player has ammo");
+										g.reload(e.getPlayer(), attachment);
 
+									} else {
+										Main.DEBUG("Trying to reload. player DOES NOT have ammo");
+									}
+								}
+
+							}
 						}
 					}
 				}
@@ -3287,7 +3328,8 @@ public class Main extends JavaPlugin implements Listener {
 	public static Ammo getAmmo(ItemStack is) {
 		int var = MaterialStorage.getVarient(is);
 		@SuppressWarnings("deprecation")
-		String extraData = is.getType() == MultiVersionLookup.getSkull()? ((SkullMeta) is.getItemMeta()).getOwner() : null;
+		String extraData = is.getType() == MultiVersionLookup.getSkull() ? ((SkullMeta) is.getItemMeta()).getOwner()
+				: null;
 		String temp = SkullHandler.getURL64(is);
 		if (ammoRegister
 				.containsKey(MaterialStorage.getMS(is.getType(), (int) is.getDurability(), var, extraData, temp)))
@@ -3301,7 +3343,8 @@ public class Main extends JavaPlugin implements Listener {
 			return false;
 		int var = MaterialStorage.getVarient(is);
 		@SuppressWarnings("deprecation")
-		String extraData = is.getType() == MultiVersionLookup.getSkull() ? ((SkullMeta) is.getItemMeta()).getOwner() : null;
+		String extraData = is.getType() == MultiVersionLookup.getSkull() ? ((SkullMeta) is.getItemMeta()).getOwner()
+				: null;
 		String temp = null;
 		try {
 			temp = SkullHandler.getURL64(is);

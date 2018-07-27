@@ -36,6 +36,60 @@ public class ItemFact {
 		return lore;
 	}
 
+	private static final String CALCTEXT = ChatColor.BLACK + "useddata:";
+
+	public static int getCalculatedExtraDurib(ItemStack is) {
+		if (!is.hasItemMeta() || !is.getItemMeta().hasLore() || is.getItemMeta().getLore().isEmpty())
+			return -1;
+		List<String> lore = is.getItemMeta().getLore();
+		for (int i = 0; i < lore.size(); i++) {
+			if (lore.get(i).startsWith(CALCTEXT))
+				return Integer.parseInt(lore.get(i).split(CALCTEXT)[1]);
+		}
+		return -1;
+	}
+
+	public static ItemStack addCalulatedExtraDurib(ItemStack is, int number) {
+		ItemMeta im = is.getItemMeta();
+		List<String> lore = im.getLore();
+		if(lore==null) {
+			lore = new ArrayList<>();
+		}else {
+			if(getCalculatedExtraDurib(is)!=-1)
+				is=removeCalculatedExtra(is);
+		}
+		lore.add(CALCTEXT + number);
+		im.setLore(lore);
+		is.setItemMeta(im);
+		return is;
+	}
+
+	public static ItemStack decrementCalculatedExtra(ItemStack is) {
+		ItemMeta im = is.getItemMeta();
+		List<String> lore = is.getItemMeta().getLore();
+		for (int i = 0; i < lore.size(); i++) {
+			if (lore.get(i).startsWith(CALCTEXT)) {
+				lore.set(i, CALCTEXT+"" + (Integer.parseInt(lore.get(i).split(CALCTEXT)[1])-1));
+			}
+		}
+		im.setLore(lore);
+		is.setItemMeta(im);
+		return is;
+	}
+
+	public static ItemStack removeCalculatedExtra(ItemStack is) {
+		ItemMeta im = is.getItemMeta();
+		List<String> lore = is.getItemMeta().getLore();
+		for (int i = 0; i < lore.size(); i++) {
+			if (lore.get(i).startsWith(CALCTEXT)) {
+				lore.remove(i);
+			}
+		}
+		im.setLore(lore);
+		is.setItemMeta(im);
+		return is;
+	}
+
 	public static List<String> getGunLore(Gun g, AttachmentBase attach, ItemStack current, int amount) {
 		List<String> lore = new ArrayList<>();
 		if (g.getCustomLore() != null)
