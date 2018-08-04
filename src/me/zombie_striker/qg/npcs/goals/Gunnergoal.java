@@ -13,7 +13,6 @@ import org.bukkit.util.Vector;
 import me.zombie_striker.qg.guns.Gun;
 import me.zombie_striker.qg.guns.utils.GunUtil;
 import me.zombie_striker.qg.handlers.HeadShotUtil;
-import me.zombie_striker.qg.handlers.gunvalues.RapidFireCharger;
 import me.zombie_striker.qg.npcs.Gunner;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.ai.Goal;
@@ -48,7 +47,7 @@ public class Gunnergoal implements Goal {
 		internalAmmoCount = g.getMaxBullets();
 
 		maxReloadCooldown = (int) (g.getReloadTime() * 20);
-		maxShootCooldown = (int) (g.getChargingVal() instanceof RapidFireCharger ? 10.0 / g.getBulletsPerShot()
+		maxShootCooldown = (int) (g.isAutomatic() ? 10.0*g.getBulletsPerShot()
 				: g.getDelayBetweenShotsInSeconds() * 20);
 	}
 

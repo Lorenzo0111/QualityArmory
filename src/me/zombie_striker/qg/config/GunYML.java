@@ -7,8 +7,8 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 
 import me.zombie_striker.qg.Main;
-import me.zombie_striker.qg.handlers.gunvalues.ChargingHandler;
-import me.zombie_striker.qg.handlers.gunvalues.ChargingManager;
+import me.zombie_striker.qg.handlers.chargers.ChargingHandler;
+import me.zombie_striker.qg.handlers.reloaders.ReloadingHandler;
 
 public class GunYML extends ArmoryYML {
 
@@ -31,6 +31,7 @@ public class GunYML extends ArmoryYML {
 		setNoOverride("maxBulletDistance", 200);
 		setNoOverride("unlimitedAmmo", false);
 		setNoOverride("LightLeveOnShoot", 14);
+		setNoOverride("firerate", 1);
 
 		setNoOverride("particles.bullet_particle", "REDSTONE");
 		setNoOverride("particles.bullet_particleR", 1);
@@ -42,6 +43,11 @@ public class GunYML extends ArmoryYML {
 		setNoOverride("addMuzzleSmoke", true);
 
 		setNoOverride("drop-glow-color", "none");
+	}
+
+	public GunYML setNightVisionOnScope(boolean b) {
+		set(false, "hasNightVisionOnScope", b);
+		return this;
 	}
 
 	public GunYML setIsSecondaryWeapon(boolean isSecondary) {
@@ -113,6 +119,14 @@ public class GunYML extends ArmoryYML {
 		return this;
 	}
 
+	public GunYML setReloadingHandler(ReloadingHandler rh) {
+		return setChargingHandler(rh.getName());
+	}
+
+	public GunYML setReloadingHandler(String rh) {
+		set(false, "ReloadingHandler", rh);
+		return this;
+	}
 	public GunYML setDelayReload(double reload) {
 		set(false, "delayForReload", reload);
 		return this;
@@ -132,10 +146,15 @@ public class GunYML extends ArmoryYML {
 		set(false, "bullets-per-shot", shots);
 		return this;
 	}
+	public GunYML setFireRate(int fireRate) {
+		set(false, "firerate", fireRate);
+		return this;
+	}
 
 	public GunYML setFullyAutomatic(int shots) {
-		set(false, "bullets-per-shot", shots);
-		set(false, "ChargingHandler", ChargingManager.RAPIDFIRE);
+		//set(false, "bullets-per-shot", shots);
+		//set(false, "ChargingHandler", ChargingManager.RAPIDFIRE);
+		set(false, "firerate", shots);
 		set(false, "isAutomatic", true);
 		return this;
 	}

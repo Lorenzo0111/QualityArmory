@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.bukkit.Material;
-import org.bukkit.SkullType;
 import org.bukkit.configuration.file.FileConfiguration;
 
 import me.zombie_striker.qg.ammo.Ammo;
@@ -71,8 +70,9 @@ public class ArmoryYML {
 		}
 	}
 
+	@SuppressWarnings("deprecation")
 	public ArmoryYML setSkullType(String skullowner) {
-		set(false, "id", SkullType.PLAYER.ordinal());
+		set(false, "id", org.bukkit.SkullType.PLAYER.ordinal());
 		set(false, "material", MultiVersionLookup.getSkull().name());
 		set(false, "skull_owner", skullowner);
 		set(false, "skull_owner_custom_url", Ammo.NO_SKIN_STRING);

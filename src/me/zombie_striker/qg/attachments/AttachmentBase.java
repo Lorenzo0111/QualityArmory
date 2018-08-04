@@ -10,7 +10,7 @@ import me.zombie_striker.qg.MaterialStorage;
 import me.zombie_striker.qg.guns.Gun;
 import me.zombie_striker.qg.guns.utils.WeaponSounds;
 import me.zombie_striker.qg.guns.utils.WeaponType;
-import me.zombie_striker.qg.handlers.gunvalues.ChargingHandler;
+import me.zombie_striker.qg.handlers.chargers.ChargingHandler;
 
 public class AttachmentBase implements Comparable<AttachmentBase>{
 

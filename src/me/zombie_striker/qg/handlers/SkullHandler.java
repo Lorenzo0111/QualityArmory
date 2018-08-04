@@ -4,7 +4,6 @@ import java.util.Collection;
 import java.util.UUID;
 
 import org.apache.commons.codec.binary.Base64;
-import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 

@@ -1,3 +1,27 @@
+1.1.109
+	Added BurstfireMode
+	Fixed slowness-not-applying-to-scope bug
+	Fixed scoping if item does not move to off hand
+	Added Nightvision tag for weapons.
+	Added Nightvision to Vera
+	Fixed Vera's Scope.
+	Fixed all scoped weapons so crosshares are aligned with the center of the screen
+	Fixed textures for M40 and AWP
+	Added potential fix for ammo when interacting with inventory-(NOTE:Does not work in Creative)
+	Fixed ammo pick-up sound to match base-game pickup.
+	Changed RapidFireCharger to the isAutomatic tab. This will allow gun creators to have more flexibility to the type of weapons created
+	With changes to RFC, AA12 will now be fully automatic while also firing shots
+	Added ReloadingHandlers to handle reloading. Now gun creators can decide which way the guns reloads (SingleBulletReload, PumpActionReload, or default(null))
+
+1.1.108d
+	Fixed skull_item error for 1.13.
+
+1.1.108c
+	fixed pane glass issue for 1.13
+
+1.1.108b
+	Added small fix in case material is null for gun type
+
 1.1.108
 	Added expansion support for future project
 	Added durability recovery. Now items will not apply durability to account for the skip over custom models

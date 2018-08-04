@@ -47,12 +47,16 @@ public class MaterialStorage {
 
 	@SuppressWarnings("deprecation")
 	public static MaterialStorage getMS(ItemStack is) {
-		Material skull_Compare = Material.valueOf("SKULL_ITEM");
-		if(skull_Compare==null) {
-			skull_Compare=Material.matchMaterial("PLAYER_HEAD");
+		Material skull_Compare = null;
+		try {
+			skull_Compare = Material.valueOf("SKULL_ITEM");
+		} catch (Error | Exception e45) {
+		}
+		if (skull_Compare == null) {
+			skull_Compare = Material.matchMaterial("PLAYER_HEAD");
 		}
 		return getMS(is.getType(), is.getDurability(), getVarient(is),
-				is.getType() == skull_Compare? ((SkullMeta) is.getItemMeta()).getOwner() : null);
+				is.getType() == skull_Compare ? ((SkullMeta) is.getItemMeta()).getOwner() : null);
 	}
 
 	private int d;

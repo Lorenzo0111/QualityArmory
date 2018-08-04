@@ -11,7 +11,8 @@ import me.zombie_striker.qg.guns.utils.GunUtil;
 import me.zombie_striker.qg.guns.utils.WeaponSounds;
 import me.zombie_striker.qg.guns.utils.WeaponType;
 import me.zombie_striker.qg.handlers.Update19OffhandChecker;
-import me.zombie_striker.qg.handlers.gunvalues.ChargingHandler;
+import me.zombie_striker.qg.handlers.chargers.ChargingHandler;
+import me.zombie_striker.qg.handlers.reloaders.ReloadingHandler;
 import me.zombie_striker.qg.miscitems.IronSightsToggleItem;
 
 import java.util.HashMap;
@@ -39,6 +40,7 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 	private int durib = 1000;
 	private boolean isAutomatic;
 	boolean supports18 = false;
+	boolean nightVisionOnScope = false;
 	
 	private boolean isPrimaryWeapon = true;
 
@@ -52,10 +54,12 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 	private double delayBetweenShots = 0.25;
 
 	private int shotsPerBullet = 1;
+	private int firerate=1;
 
 	private double reloadTime = 1.5;
 
 	private ChargingHandler ch = null;
+	private ReloadingHandler rh = null;
 
 	private int maxDistance = 150;
 
@@ -180,6 +184,12 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 	public void setBulletsPerShot(int i) {
 		this.shotsPerBullet = i;
 	}
+	public void setNightVision(boolean nightVisionOnScope) {
+		this.nightVisionOnScope = nightVisionOnScope;
+	}
+	public boolean hasnightVision() {
+		return nightVisionOnScope;
+	}
 
 	public int getBulletsPerShot() {
 		return shotsPerBullet;
@@ -189,6 +199,15 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 	}
 	public int getZoomWhenIronSights() {
 		return zoomLevel;
+	}
+	public void setFireRate(int firerate) {
+		this.firerate=firerate;
+	}
+	public int getFireRate() {
+		return firerate;
+	}
+	public void setDisplayName(String displayname) {
+		this.displayname = displayname;
 	}
 
 	public WeaponType getWeaponType() {
@@ -257,7 +276,7 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 	}
 
 	public void reload(Player player, AttachmentBase attachmentBase) {
-		if (getChargingVal() == null || (!getChargingVal().isReloading(player))) 
+		if (getChargingVal() == null || (getReloadingingVal()==null||!getReloadingingVal().isReloading(player))) 
 			GunUtil.basicReload(this, attachmentBase, player, WeaponType.isUnlimited(type), reloadTime);
 	}
 
@@ -335,6 +354,13 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 		this.ch = ch;
 	}
 
+	public ReloadingHandler getReloadingingVal() {
+		return rh;
+	}
+
+	public void setReloadingHandler(ReloadingHandler rh) {
+		this.rh = rh;
+	}
 	public int getMaxDistance() {
 		return maxDistance;
 	}

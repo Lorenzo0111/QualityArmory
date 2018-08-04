@@ -15,7 +15,6 @@ import me.zombie_striker.qg.armor.angles.AngledArmor;
 import me.zombie_striker.qg.attachments.AttachmentBase;
 import me.zombie_striker.qg.guns.Gun;
 import me.zombie_striker.qg.handlers.SkullHandler;
-import me.zombie_striker.qg.handlers.gunvalues.RapidFireCharger;
 import me.zombie_striker.qg.miscitems.IronSightsToggleItem;
 import me.zombie_striker.qg.miscitems.MedKit;
 
@@ -52,11 +51,11 @@ public class ItemFact {
 	public static ItemStack addCalulatedExtraDurib(ItemStack is, int number) {
 		ItemMeta im = is.getItemMeta();
 		List<String> lore = im.getLore();
-		if(lore==null) {
+		if (lore == null) {
 			lore = new ArrayList<>();
-		}else {
-			if(getCalculatedExtraDurib(is)!=-1)
-				is=removeCalculatedExtra(is);
+		} else {
+			if (getCalculatedExtraDurib(is) != -1)
+				is = removeCalculatedExtra(is);
 		}
 		lore.add(CALCTEXT + number);
 		im.setLore(lore);
@@ -69,7 +68,7 @@ public class ItemFact {
 		List<String> lore = is.getItemMeta().getLore();
 		for (int i = 0; i < lore.size(); i++) {
 			if (lore.get(i).startsWith(CALCTEXT)) {
-				lore.set(i, CALCTEXT+"" + (Integer.parseInt(lore.get(i).split(CALCTEXT)[1])-1));
+				lore.set(i, CALCTEXT + "" + (Integer.parseInt(lore.get(i).split(CALCTEXT)[1]) - 1));
 			}
 		}
 		im.setLore(lore);
@@ -99,13 +98,8 @@ public class ItemFact {
 		if (Main.ENABLE_LORE_INFO) {
 			lore.add(Main.S_ITEM_DAMAGE + ": " + g.getDamage());
 			lore.add(Main.S_ITEM_DPS + ": "
-					+ (((g.getAmmoType() != null && g.getAmmoType().getName().equals("shell"))
-							? g.getDamage() + "x" + g.getBulletsPerShot()
-							: g.isAutomatic()
-									? (g.getChargingVal() instanceof RapidFireCharger
-											? ((int) g.getBulletsPerShot() * 2 * g.getDamage())
-											: ((int) 3 * g.getBulletsPerShot() * g.getDamage())) + ""
-									: "" + ((int) (1.0 / g.getDelayBetweenShotsInSeconds()) * g.getDamage()))));
+					+ (g.isAutomatic() ? ((int) 2 * g.getFireRate() * g.getDamage()) + "" + (g.getBulletsPerShot()>1?"x"+g.getBulletsPerShot():"")
+									: "" + ((int) (1.0 / g.getDelayBetweenShotsInSeconds()) * g.getDamage())+(g.getBulletsPerShot()>1?"x"+g.getBulletsPerShot():"")));
 			if (g.getAmmoType() != null)
 				lore.add(Main.S_ITEM_AMMO + ": " + g.getAmmoType().getDisplayName());
 		}
@@ -239,6 +233,8 @@ public class ItemFact {
 
 		MaterialStorage ms = attachmentBase == null ? g.getItemData() : attachmentBase.getItem();
 		String displayname = attachmentBase == null ? g.getDisplayName() : attachmentBase.getDisplayName();
+		if (ms == null || ms.getMat() == null)
+			return new ItemStack(Material.AIR);
 
 		ItemStack is = new ItemStack(ms.getMat(), 0, (short) ms.getData());
 		if (ms.getData() < 0)

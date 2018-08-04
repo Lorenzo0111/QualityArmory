@@ -2,7 +2,6 @@ package me.zombie_striker.qg.handlers;
 
 import org.bukkit.Location;
 
-import me.zombie_striker.qg.Main;
 
 public class ExplosionHandler {
 

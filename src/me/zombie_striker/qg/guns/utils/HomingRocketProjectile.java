@@ -7,7 +7,8 @@ import me.zombie_striker.qg.Main;
 import me.zombie_striker.qg.guns.Gun;
 import me.zombie_striker.qg.handlers.ExplosionHandler;
 import me.zombie_striker.qg.handlers.MultiVersionLookup;
-import me.zombie_striker.qg.handlers.gunvalues.HomingRPGCharger;
+import me.zombie_striker.qg.handlers.chargers.HomingRPGCharger;
+
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
