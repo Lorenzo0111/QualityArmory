@@ -11,14 +11,10 @@ import me.zombie_striker.qg.ammo.Ammo;
 import me.zombie_striker.qg.ammo.AmmoUtil;
 import me.zombie_striker.qg.armor.BulletProtectionUtil;
 import me.zombie_striker.qg.attachments.AttachmentBase;
+import me.zombie_striker.qg.boundingbox.AbstractBoundingBox;
+import me.zombie_striker.qg.boundingbox.BoundingBoxManager;
 import me.zombie_striker.qg.guns.Gun;
-import me.zombie_striker.qg.handlers.AimManager;
-import me.zombie_striker.qg.handlers.BulletWoundHandler;
-import me.zombie_striker.qg.handlers.HeadShotUtil;
-import me.zombie_striker.qg.handlers.MultiVersionLookup;
-import me.zombie_striker.qg.handlers.ParticleHandlers;
-import me.zombie_striker.qg.handlers.SoundHandler;
-import me.zombie_striker.qg.handlers.Update19OffhandChecker;
+import me.zombie_striker.qg.handlers.*;
 import ru.beykerykt.lightapi.LightAPI;
 import ru.beykerykt.lightapi.chunks.ChunkInfo;
 
@@ -94,6 +90,8 @@ public class GunUtil {
 							if (Math.max(degreeEntity, degreeVector)
 									- Math.min(degreeEntity, degreeVector) < (dis > 10 ? Math.PI / 7 : Math.PI / 2)) {
 
+								AbstractBoundingBox box = BoundingBoxManager.getBoundingBox(e);
+
 								Location test = start.clone();
 								// If the entity is close to the line of fire.
 								if (Main.hasParties && (!Main.friendlyFire)) {
@@ -114,7 +112,7 @@ public class GunUtil {
 								// Clear this to make sure
 								for (int dist = 0; dist < dis / Main.bulletStep; dist++) {
 									test.add(step);
-									if (HeadShotUtil.closeEnough(e, test)) {
+									if (box.intersects(test, e)) {
 										hit = true;
 										break;
 									}
@@ -142,7 +140,7 @@ public class GunUtil {
 									dis2 = lastingDist;
 									overrideocculde = true;
 									hitTarget = e;
-									headShot = HeadShotUtil.isHeadShot(e, test);
+									headShot = box.allowsHeadshots() ? box.isHeadShot(test, e) : false;
 									if (headShot) {
 										Main.DEBUG("Headshot!");
 										if (Main.headshotPling) {
@@ -176,8 +174,8 @@ public class GunUtil {
 						}
 					}
 
-					((Damageable) hitTarget).damage(
-							damage * (bulletProtection ? 0.1 : 1) * (headShot ? (Main.HeadshotOneHit ? 50 : 2) : 1), p);
+					((Damageable) hitTarget).damage(damage * (bulletProtection ? 0.1 : 1)
+							* (headShot ? (Main.HeadshotOneHit ? 50 : g.getHeadshotMultiplier()) : 1), p);
 					if (hitTarget instanceof LivingEntity)
 						((LivingEntity) hitTarget).setNoDamageTicks(0);
 					Main.DEBUG("Damaging entity " + hitTarget.getName());
@@ -302,8 +300,8 @@ public class GunUtil {
 		long showdelay = ((int) (g.getDelayBetweenShotsInSeconds() * 1000));
 		Main.DEBUG("About to shoot!");
 
-		if (g.getChargingVal() != null
-				&& (g.getChargingVal().isCharging(player) || (g.getReloadingingVal()!=null&&g.getReloadingingVal().isReloading(player))))
+		if (g.getChargingVal() != null && (g.getChargingVal().isCharging(player)
+				|| (g.getReloadingingVal() != null && g.getReloadingingVal().isReloading(player))))
 			return;
 
 		if (g.getLastShotForGun().containsKey(player.getUniqueId())
@@ -317,15 +315,14 @@ public class GunUtil {
 				: player.getInventory().getItemInHand();
 		ItemMeta im = temp.getItemMeta();
 
-		if(rapidfireshooters.containsKey(player.getUniqueId())) {
+		if (rapidfireshooters.containsKey(player.getUniqueId())) {
 			Main.DEBUG("Shooting canceled due to rapid fire being enabled.");
 			return;
 		}
-		
-		
+
 		boolean regularshoot = true;
-		if (g.getChargingVal() != null
-				&& (!g.getChargingVal().isCharging(player) &&  (g.getReloadingingVal()==null||!g.getReloadingingVal().isReloading(player)))) {
+		if (g.getChargingVal() != null && (!g.getChargingVal().isCharging(player)
+				&& (g.getReloadingingVal() == null || !g.getReloadingingVal().isReloading(player)))) {
 			regularshoot = g.getChargingVal().shoot(g, player, temp);
 			Main.DEBUG("Charging shoot debug: " + g.getName() + " = " + g.getChargingVal() == null ? "null"
 					: g.getChargingVal().getName());
@@ -340,6 +337,7 @@ public class GunUtil {
 				int slotUsed = player.getInventory().getHeldItemSlot();
 				boolean offhand = Main.isIS(player.getItemInHand());
 
+				@Override
 				public void run() {
 					final AttachmentBase attach = Main.getGunWithAttchments(temp);
 
@@ -350,8 +348,8 @@ public class GunUtil {
 					}
 
 					boolean regularshoot = true;
-					if (g.getChargingVal() != null
-							&& (!g.getChargingVal().isCharging(player) &&  (g.getReloadingingVal()==null||!g.getReloadingingVal().isReloading(player)))) {
+					if (g.getChargingVal() != null && (!g.getChargingVal().isCharging(player)
+							&& (g.getReloadingingVal() == null || !g.getReloadingingVal().isReloading(player)))) {
 						regularshoot = g.getChargingVal().shoot(g, player, temp);
 						Main.DEBUG(
 								"Charging (rapidfire) shoot debug: " + g.getName() + " = " + g.getChargingVal() == null

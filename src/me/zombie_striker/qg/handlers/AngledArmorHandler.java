@@ -34,13 +34,13 @@ public class AngledArmorHandler {
 				}
 				for (Player p : Bukkit.getOnlinePlayers()) {
 					if (angledPlayers.contains(p.getUniqueId())) {
-						if (p.getInventory().getHelmet() == null || (!Main.isArmor(p.getInventory().getHelmet())
-								&& !Main.isAngledArmor(p.getInventory().getHelmet()))) {
+						if (p.getInventory().getHelmet() == null || (/*!Main.isArmor(p.getInventory().getHelmet())
+								&&*/ !Main.isAngledArmor(p.getInventory().getHelmet()))) {
 							angledPlayers.remove(p.getUniqueId());
 						}
 					} else {
-						if (p.getInventory().getHelmet() != null && (Main.isArmor(p.getInventory().getHelmet())
-								|| Main.isAngledArmor(p.getInventory().getHelmet()))) {
+						if (p.getInventory().getHelmet() != null && (/*Main.isArmor(p.getInventory().getHelmet())
+								||*/ Main.isAngledArmor(p.getInventory().getHelmet()))) {
 							angledPlayers.add(p.getUniqueId());
 						}
 					}
@@ -68,17 +68,17 @@ public class AngledArmorHandler {
 					double close = 10000;
 					AngledArmor closest = null;
 					ArmorObject base = null;
-					for (AngledArmor ag : Main.angledArmor.values()) {
+					/*for (AngledArmor ag : Main.angledArmor.values()) {
 						double k = Math.abs(ag.getAngle() - angle);
 						if (k < close) {
 							close = k;
 							closest = ag;
 						}
 					}
-					if (Math.abs(90 - angle) < close) {
+					if (Math.abs(90 - angle) < close) {*/
 						base = Main.armorRegister.get(closest.getBase());
 						closest = null;
-					}
+					//}
 					if (closest != null || base != null) {
 						ItemStack is;
 						if (base != null)

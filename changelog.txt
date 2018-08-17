@@ -1,3 +1,41 @@
+1.1.111
+	Added BoundBox managers
+	Added glow to mushroom clouds
+	Removed Angled Armor! It wasted slots that could have been used for more weapons, and the armor most likely could be added another way.
+	
+
+1.1.110E
+	Added fix for anti-grief protection
+
+1.1.110D
+	Added ability to cancel all messages
+
+1.1.110C
+	Added debug messages for ammo.
+
+1.1.110B
+	Added raw-slot fix.
+
+1.1.110
+	Added 50.cal BMG rounds
+	Added the Barrett Anti Material Rifle
+	Added Makarov PM Pistol
+	Added ability to customize headshot damage multiplier
+	Updated resourcepack.
+	
+1.1.109e
+	Fixed missing depend .
+
+1.1.109d
+	Fixed some models for expansionpack
+	Fixed redstone particles for 1.13
+
+1.1.109c
+	Added ability to disable hotbar messages for certain occasions. 
+
+1.1.109b
+	Fixed multiversionlookup
+
 1.1.109
 	Added BurstfireMode
 	Fixed slowness-not-applying-to-scope bug

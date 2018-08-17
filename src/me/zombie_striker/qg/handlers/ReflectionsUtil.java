@@ -390,7 +390,7 @@ public class ReflectionsUtil {
 	 */
 	public static Class<Object> getUntypedClass(String lookupName) {
 		@SuppressWarnings({ "rawtypes", "unchecked" })
-		Class<Object> clazz = (Class<Object>) (Class) getClass(lookupName);
+		Class<Object> clazz = (Class) getClass(lookupName);
 		return clazz;
 	}
 

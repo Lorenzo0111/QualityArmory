@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import org.bukkit.Effect;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;

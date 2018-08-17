@@ -38,12 +38,14 @@ public class GunnerTrait extends Trait {
 	// This is called AFTER onAttach so you can load defaults in onAttach and they
 	// will be overridden here.
 	// This is called BEFORE onSpawn, npc.getBukkitEntity() will return null.
+	@Override
 	public void load(DataKey key) {
 		SomeSetting = key.getBoolean("SomeSetting", false);
 	}
 
 	// Save settings for this NPC (optional). These values will be persisted to the
 	// Citizens saves file
+	@Override
 	public void save(DataKey key) {
 		key.setBoolean("SomeSetting", SomeSetting);
 	}

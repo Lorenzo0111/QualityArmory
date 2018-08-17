@@ -27,7 +27,7 @@ public class SingleBulletReloader implements ReloadingHandler {
 
 	@Override
 	public double reload(final Player player, Gun g, int amountReloading) {
-		double time = ((double) g.getReloadTime()) / g.getMaxBullets();
+		double time = (g.getReloadTime()) / g.getMaxBullets();
 		double time2 = time * amountReloading;
 		for (int i = 0; i < amountReloading; i++) {
 			new BukkitRunnable() {

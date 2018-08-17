@@ -281,7 +281,7 @@ public class QualityArmory {
 	 */
 	public boolean isMiscItem(ItemStack is) {
 		return (is != null
-				&& Main.miscRegister.containsKey(MaterialStorage.getMS(is.getType(), (int) is.getDurability(),MaterialStorage.getVarient(is),null)));
+				&& Main.miscRegister.containsKey(MaterialStorage.getMS(is.getType(), is.getDurability(),MaterialStorage.getVarient(is),null)));
 	}
 
 	/**
@@ -291,7 +291,7 @@ public class QualityArmory {
 	 * @return
 	 */
 	public ArmoryBaseObject getMiscItem(ItemStack is) {
-		return Main.miscRegister.get(MaterialStorage.getMS(is.getType(), (int) is.getDurability(),MaterialStorage.getVarient(is),null));
+		return Main.miscRegister.get(MaterialStorage.getMS(is.getType(), is.getDurability(),MaterialStorage.getVarient(is),null));
 	}
 
 	/**
@@ -301,7 +301,7 @@ public class QualityArmory {
 	 * @return
 	 */
 	public Gun getGun(ItemStack is) {
-		return Main.gunRegister.get(MaterialStorage.getMS(is.getType(), (int) is.getDurability(),MaterialStorage.getVarient(is),null));
+		return Main.gunRegister.get(MaterialStorage.getMS(is.getType(), is.getDurability(),MaterialStorage.getVarient(is),null));
 	}
 
 	/**
@@ -311,7 +311,7 @@ public class QualityArmory {
 	 * @return
 	 */
 	public Ammo getAmmo(ItemStack is) {
-		return Main.ammoRegister.get(MaterialStorage.getMS(is.getType(), (int) is.getDurability(),MaterialStorage.getVarient(is),null));
+		return Main.ammoRegister.get(MaterialStorage.getMS(is.getType(), is.getDurability(),MaterialStorage.getVarient(is),null));
 	}
 	/**
 	 * Returns the ammo instance for the item.
@@ -321,7 +321,7 @@ public class QualityArmory {
 	 */
 	@SuppressWarnings("deprecation")
 	public Ammo getSkullAmmo(ItemStack is) {
-		return Main.ammoRegister.get(MaterialStorage.getMS(is.getType(), (int) is.getDurability(),MaterialStorage.getVarient(is),(((SkullMeta)is.getItemMeta()).getOwner())));
+		return Main.ammoRegister.get(MaterialStorage.getMS(is.getType(), is.getDurability(),MaterialStorage.getVarient(is),(((SkullMeta)is.getItemMeta()).getOwner())));
 	}
 
 	/**
@@ -332,7 +332,7 @@ public class QualityArmory {
 	 */
 	public boolean isGun(ItemStack is) {
 		return (is != null
-				&& Main.gunRegister.containsKey(MaterialStorage.getMS(is.getType(), (int) is.getDurability(),MaterialStorage.getVarient(is),null)));
+				&& Main.gunRegister.containsKey(MaterialStorage.getMS(is.getType(), is.getDurability(),MaterialStorage.getVarient(is),null)));
 	}
 
 	/**
@@ -343,7 +343,7 @@ public class QualityArmory {
 	 */
 	public boolean isAmmo(ItemStack is) {
 		return (is != null
-				&& Main.ammoRegister.containsKey(MaterialStorage.getMS(is.getType(), (int) is.getDurability(),MaterialStorage.getVarient(is),null)));
+				&& Main.ammoRegister.containsKey(MaterialStorage.getMS(is.getType(), is.getDurability(),MaterialStorage.getVarient(is),null)));
 	}
 
 	/**
@@ -356,7 +356,7 @@ public class QualityArmory {
 	 * @return
 	 */
 	public boolean isIronSight(ItemStack is) {
-		if (is != null && is.getType() == IronSightsToggleItem.getMat() && is.getDurability() == (int) IronSightsToggleItem.getData())
+		if (is != null && is.getType() == IronSightsToggleItem.getMat() && is.getDurability() == IronSightsToggleItem.getData())
 			return true;
 		return false;
 	}

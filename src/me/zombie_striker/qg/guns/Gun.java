@@ -42,6 +42,8 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 	boolean supports18 = false;
 	boolean nightVisionOnScope = false;
 	
+	private double headshotMultiplier = 2;
+	
 	private boolean isPrimaryWeapon = true;
 
 	private List<String> extralore = null;
@@ -155,6 +157,12 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 		this.extralore = extralore;
 		this.displayname = ChatColor.translateAlternateColorCodes('&', displayname);
 	}
+	public void setHeadshotMultiplier(double dam) {
+		headshotMultiplier = dam;
+	}
+	public double getHeadshotMultiplier() {
+		return headshotMultiplier;
+	}
 
 	public ChatColor getGlow() {
 		return glowEffect;
@@ -221,6 +229,7 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 		this.isPrimaryWeapon = isPrimary;
 	}
 
+	@Override
 	public double cost() {
 		return cost;
 	}
@@ -229,14 +238,17 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 		return isAutomatic;
 	}
 
+	@Override
 	public String getName() {
 		return name;
 	}
 
+	@Override
 	public ItemStack[] getIngredients() {
 		return ing;
 	}
 
+	@Override
 	public int getCraftingReturn() {
 		return 1;
 	}
@@ -277,7 +289,7 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 
 	public void reload(Player player, AttachmentBase attachmentBase) {
 		if (getChargingVal() == null || (getReloadingingVal()==null||!getReloadingingVal().isReloading(player))) 
-			GunUtil.basicReload(this, attachmentBase, player, WeaponType.isUnlimited(type), reloadTime);
+			GunUtil.basicReload(this, attachmentBase, player, unlimitedAmmo, reloadTime);
 	}
 
 	public double getDamage() {
@@ -299,7 +311,7 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 	public boolean hasUnlimitedAmmo() {
 		if(unlimitedAmmo)
 			return true;
-		return WeaponType.isUnlimited(type);
+		return ammotype==null;
 	}
 
 	public double getSway() {
@@ -312,6 +324,7 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 		return swaymultiplier;
 	}
 
+	@Override
 	public MaterialStorage getItemData() {
 		if (id == null) {
 			for (Entry<MaterialStorage, Gun> e : Main.gunRegister.entrySet()) {
@@ -326,10 +339,12 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 		return weaponSounds;
 	}
 
+	@Override
 	public List<String> getCustomLore() {
 		return extralore;
 	}
 
+	@Override
 	public String getDisplayName() {
 		return displayname;
 	}
@@ -369,10 +384,12 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 		this.maxDistance = a;
 	}
 
+	@Override
 	public boolean is18Support() {
 		return supports18;
 	}
 
+	@Override
 	public void set18Supported(boolean b) {
 		supports18 = b;
 	}

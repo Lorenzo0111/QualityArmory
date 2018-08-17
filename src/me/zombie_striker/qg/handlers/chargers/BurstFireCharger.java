@@ -52,6 +52,7 @@ public class BurstFireCharger implements ChargingHandler {
 			boolean offhand = Main.isIS(player.getItemInHand());
 			int shotCurrently = 1;
 
+			@Override
 			@SuppressWarnings("deprecation")
 			public void run() {
 

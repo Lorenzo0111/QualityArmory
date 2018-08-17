@@ -29,4 +29,13 @@ public class EconHandler {
 	public static void pay(ArmoryBaseObject base, Player player) {
 		econ.withdrawPlayer(player, base.cost());
 	}
+	public static boolean hasEnough(int cost, Player player) {
+		return (econ.getBalance(player) >= cost);
+	}
+	public static void pay(int cost, Player player) {
+		econ.withdrawPlayer(player, cost);
+	}
+	public static void deposit(int cost, Player player) {
+		econ.depositPlayer(player, cost);
+	}
 }

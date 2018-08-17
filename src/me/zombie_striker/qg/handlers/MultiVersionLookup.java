@@ -24,7 +24,10 @@ public class MultiVersionLookup {
 
 	public static Sound getPling() {
 		if (pliung == null) {
-			pliung = Sound.valueOf("BLOCK_NOTE_PLING");
+			try {
+				pliung = Sound.valueOf("BLOCK_NOTE_PLING");
+			} catch (Error | Exception e) {
+			}
 			if (pliung == null)
 				pliung = Sound.BLOCK_NOTE_BLOCK_PLING;
 		}
@@ -33,7 +36,10 @@ public class MultiVersionLookup {
 
 	public static Sound getDragonGrowl() {
 		if (enderdrag == null) {
-			enderdrag = Sound.valueOf("ENTITY_ENDERDRAGON_GROWL");
+			try {
+				enderdrag = Sound.valueOf("ENTITY_ENDERDRAGON_GROWL");
+			} catch (Error | Exception e) {
+			}
 			if (enderdrag == null)
 				enderdrag = Sound.ENTITY_ENDER_DRAGON_GROWL;
 		}
@@ -42,7 +48,10 @@ public class MultiVersionLookup {
 
 	public static Sound getWoolSound() {
 		if (woolsound == null) {
-			woolsound = Sound.valueOf("BLOCK_CLOTH_BREAK");
+			try {
+				woolsound = Sound.valueOf("BLOCK_CLOTH_BREAK");
+			} catch (Error | Exception e) {
+			}
 			if (woolsound == null)
 				woolsound = Sound.BLOCK_WOOL_BREAK;
 		}
@@ -51,17 +60,22 @@ public class MultiVersionLookup {
 
 	public static Sound getHarp() {
 		if (noteHarp == null) {
-			noteHarp = Sound.valueOf("BLOCK_NOTE_HARP");
+			try {
+				noteHarp = Sound.valueOf("BLOCK_NOTE_HARP");
+			} catch (Error | Exception e) {
+			}
 			if (noteHarp == null)
 				noteHarp = Sound.BLOCK_NOTE_BLOCK_HARP;
 		}
 		return noteHarp;
 	}
 
-	
 	public static Material getINKSAC() {
 		if (ink == null) {
-			ink = Material.matchMaterial("INK_SACK");
+			try {
+				ink = Material.matchMaterial("INK_SACK");
+			} catch (Error | Exception e) {
+			}
 			if (ink == null)
 				ink = Material.INK_SAC;
 		}
@@ -70,7 +84,10 @@ public class MultiVersionLookup {
 
 	public static Material getIronShovel() {
 		if (ironshovel == null) {
-			ironshovel = Material.matchMaterial("IRON_SPADE");
+			try {
+				ironshovel = Material.matchMaterial("IRON_SPADE");
+			} catch (Error | Exception e) {
+			}
 			if (ironshovel == null)
 				ironshovel = Material.IRON_SHOVEL;
 		}
@@ -79,7 +96,10 @@ public class MultiVersionLookup {
 
 	public static Material getGoldHoe() {
 		if (goldhoe == null) {
-			goldhoe = Material.matchMaterial("GOLD_HOE");
+			try {
+				goldhoe = Material.matchMaterial("GOLD_HOE");
+			} catch (Error | Exception e) {
+			}
 			if (goldhoe == null)
 				goldhoe = Material.GOLDEN_HOE;
 		}
@@ -88,7 +108,10 @@ public class MultiVersionLookup {
 
 	public static Material getGoldShovel() {
 		if (goldshovel == null) {
-			goldshovel = Material.matchMaterial("GOLD_SPADE");
+			try {
+				goldshovel = Material.matchMaterial("GOLD_SPADE");
+			} catch (Error | Exception e) {
+			}
 			if (goldshovel == null)
 				goldshovel = Material.GOLDEN_SHOVEL;
 		}
@@ -97,7 +120,10 @@ public class MultiVersionLookup {
 
 	public static Material getGoldPick() {
 		if (goldpickaxe == null) {
-			goldpickaxe = Material.matchMaterial("GOLD_PICKAXE");
+			try {
+				goldpickaxe = Material.matchMaterial("GOLD_PICKAXE");
+			} catch (Error | Exception e) {
+			}
 			if (goldpickaxe == null)
 				goldpickaxe = Material.GOLDEN_PICKAXE;
 		}
@@ -106,7 +132,10 @@ public class MultiVersionLookup {
 
 	public static Material getWool() {
 		if (wool == null) {
-			wool = Material.matchMaterial("WOOL");
+			try {
+				wool = Material.matchMaterial("WOOL");
+			} catch (Error | Exception e) {
+			}
 			if (wool == null)
 				wool = Material.WHITE_WOOL;
 		}
@@ -115,7 +144,10 @@ public class MultiVersionLookup {
 
 	public static Material getWood() {
 		if (wood == null) {
-			wood = Material.matchMaterial("WOOD");
+			try {
+				wood = Material.matchMaterial("WOOD");
+			} catch (Error | Exception e) {
+			}
 			if (wood == null)
 				wood = Material.OAK_PLANKS;
 		}
@@ -124,7 +156,10 @@ public class MultiVersionLookup {
 
 	public static Material getGlass() {
 		if (glasspane == null) {
-			glasspane = Material.matchMaterial("STAINED_GLASS_PANE");
+			try {
+				glasspane = Material.matchMaterial("STAINED_GLASS_PANE");
+			} catch (Error | Exception e) {
+			}
 			if (glasspane == null)
 				glasspane = Material.YELLOW_STAINED_GLASS_PANE;
 		}
@@ -133,7 +168,10 @@ public class MultiVersionLookup {
 
 	public static Material getGunpowder() {
 		if (gunpowderr == null) {
-			gunpowderr = Material.matchMaterial("SULPHUR");
+			try {
+				gunpowderr = Material.matchMaterial("SULPHUR");
+			} catch (Error | Exception e) {
+			}
 			if (gunpowderr == null)
 				try {
 					gunpowderr = Material.GUNPOWDER;
@@ -145,7 +183,10 @@ public class MultiVersionLookup {
 
 	public static Material getSkull() {
 		if (skull == null) {
-			skull = Material.matchMaterial("SKULL_ITEM");
+			try {
+				skull = Material.matchMaterial("SKULL_ITEM");
+			} catch (Error | Exception e) {
+			}
 			if (skull == null)
 				skull = Material.PLAYER_HEAD;
 		}
@@ -154,7 +195,10 @@ public class MultiVersionLookup {
 
 	public static Material getMycil() {
 		if (mycil == null) {
-			mycil = Material.matchMaterial("MYCEL");
+			try {
+				mycil = Material.matchMaterial("MYCEL");
+			} catch (Error | Exception e) {
+			}
 			if (mycil == null)
 				mycil = Material.MYCELIUM;
 		}

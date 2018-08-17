@@ -80,6 +80,7 @@ public class GithubDependDownloader {
 						copy(in, new FileOutputStream(pluginFile));
 
 						new BukkitRunnable() {
+							@Override
 							public void run() {
 								Bukkit.reload();
 							}

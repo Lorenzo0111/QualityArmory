@@ -39,12 +39,17 @@ public class GunYML extends ArmoryYML {
 		setNoOverride("particles.bullet_particleB", 1);
 
 		setNoOverride("Version_18_Support", !Main.isVersionHigherThan(1, 9));
-		setNoOverride("ChargingHandler", "nonw");
+		setNoOverride("ChargingHandler", "none");
 		setNoOverride("addMuzzleSmoke", true);
 
 		setNoOverride("drop-glow-color", "none");
+		setNoOverride("headshotMultiplier", 2);
 	}
 
+	public GunYML setHeadShotMultiplier(double multiplier) {
+		set(false, "headshotMultiplier", multiplier);
+		return this;
+	}
 	public GunYML setNightVisionOnScope(boolean b) {
 		set(false, "hasNightVisionOnScope", b);
 		return this;
@@ -55,31 +60,37 @@ public class GunYML extends ArmoryYML {
 		return this;
 	}
 
+	@Override
 	public GunYML setInvalid(boolean invalid) {
 		set(false, "invalid", invalid);
 		return this;
 	}
 
+	@Override
 	public GunYML setLore(List<String> lore) {
 		set(false, "lore", lore);
 		return this;
 	}
 
+	@Override
 	public GunYML setVariant(int var) {
 		set(false, "variant", var);
 		return this;
 	}
 
+	@Override
 	public GunYML setDurability(int durib) {
 		set(false, "durability", durib);
 		return this;
 	}
 
+	@Override
 	public GunYML setPrice(int cost) {
 		set(false, "price", cost);
 		return this;
 	}
 
+	@Override
 	public GunYML setMaterial(Material mat) {
 		set(false, "material", mat.name());
 		return this;

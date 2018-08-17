@@ -98,7 +98,7 @@ public class ItemFact {
 		if (Main.ENABLE_LORE_INFO) {
 			lore.add(Main.S_ITEM_DAMAGE + ": " + g.getDamage());
 			lore.add(Main.S_ITEM_DPS + ": "
-					+ (g.isAutomatic() ? ((int) 2 * g.getFireRate() * g.getDamage()) + "" + (g.getBulletsPerShot()>1?"x"+g.getBulletsPerShot():"")
+					+ (g.isAutomatic() ? (2 * g.getFireRate() * g.getDamage()) + "" + (g.getBulletsPerShot()>1?"x"+g.getBulletsPerShot():"")
 									: "" + ((int) (1.0 / g.getDelayBetweenShotsInSeconds()) * g.getDamage())+(g.getBulletsPerShot()>1?"x"+g.getBulletsPerShot():"")));
 			if (g.getAmmoType() != null)
 				lore.add(Main.S_ITEM_AMMO + ": " + g.getAmmoType().getDisplayName());

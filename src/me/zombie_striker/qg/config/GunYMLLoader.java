@@ -40,9 +40,9 @@ public class GunYMLLoader {
 					if (f.getName().contains("yml")) {
 						FileConfiguration f2 = YamlConfiguration.loadConfiguration(f);
 						if ((!f2.contains("invalid")) || !f2.getBoolean("invalid")) {
-							Material m = (Material) (f2.contains("material")
+							Material m = f2.contains("material")
 									? Material.matchMaterial(f2.getString("material"))
-									: Material.DIAMOND_AXE);
+									: Material.DIAMOND_AXE;
 							int variant = f2.contains("variant") ? f2.getInt("variant") : 0;
 							final String name = f2.getString("name");
 							main.getLogger().info("-Loading AmmoType: " + name);
@@ -112,9 +112,9 @@ public class GunYMLLoader {
 							final String name = f2.getString("name");
 							main.getLogger().info("-Loading Misc: " + name);
 
-							Material m = (Material) (f2.contains("material")
+							Material m = f2.contains("material")
 									? Material.matchMaterial(f2.getString("material"))
-									: Material.DIAMOND_AXE);
+									: Material.DIAMOND_AXE;
 							int variant = f2.contains("variant") ? f2.getInt("variant") : 0;
 							final MaterialStorage ms = MaterialStorage.getMS(m, f2.getInt("id"), variant, null);
 							final ItemStack[] materails = main
@@ -166,7 +166,6 @@ public class GunYMLLoader {
 	}
 
 	public static void loadGuns(Main main) {
-		List<FileConfiguration> crackshotguns = new ArrayList<>();
 		for (File f : new File(main.getDataFolder(), "newGuns").listFiles()) {
 			try {
 				if (f.getName().contains("yml")) {
@@ -177,9 +176,9 @@ public class GunYMLLoader {
 						final String name = f2.getString("name");
 						main.getLogger().info("-Loading Gun: " + name);
 
-						Material m = (Material) (f2.contains("material")
+						Material m = f2.contains("material")
 								? Material.matchMaterial(f2.getString("material"))
-								: Material.DIAMOND_AXE);
+								: Material.DIAMOND_AXE;
 						int variant = f2.contains("variant") ? f2.getInt("variant") : 0;
 						final MaterialStorage ms = MaterialStorage.getMS(m, f2.getInt("id"), variant, null);
 						WeaponType weatype = f2.contains("guntype") ? WeaponType.valueOf(f2.getString("guntype"))
@@ -252,7 +251,8 @@ public class GunYMLLoader {
 									}
 								g.setGlow(c);
 							}
-
+							if(f2.contains("headshotMultiplier"))
+								g.setHeadshotMultiplier(f2.getDouble("headshotMultiplier"));
 							if (f2.contains("unlimitedAmmo"))
 								g.setUnlimitedAmmo(f2.getBoolean("unlimitedAmmo"));
 							if (f2.contains("LightLeveOnShoot"))
@@ -313,9 +313,9 @@ public class GunYMLLoader {
 								: (ChatColor.GOLD + name);
 						final List<String> extraLore2 = f2.contains("lore") ? f2.getStringList("lore") : null;
 
-						Material m = (Material) (f2.contains("material")
+						Material m = f2.contains("material")
 								? Material.matchMaterial(f2.getString("material"))
-								: Material.DIAMOND_AXE);
+								: Material.DIAMOND_AXE;
 						int variant = f2.contains("variant") ? f2.getInt("variant") : 0;
 						final MaterialStorage ms = MaterialStorage.getMS(m, f2.getInt("id"), variant, null);
 

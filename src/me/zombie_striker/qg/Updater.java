@@ -737,7 +737,8 @@ public class Updater {
         private UpdateResult updateResult;
         private Updater updater;
 
-        public void run() {
+        @Override
+		public void run() {
             for (UpdateCallback callback : callbacks) {
                 callback.updated(updateResult, updater);
             }

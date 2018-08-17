@@ -96,10 +96,12 @@ public class Ammo implements ArmoryBaseObject{
 		return piercingDamage;
 	}
 
+	@Override
 	public double cost() {
 		return cost;
 	}
 
+	@Override
 	public String getName() {
 		return name;
 	}
@@ -112,22 +114,27 @@ public class Ammo implements ArmoryBaseObject{
 		return indiDrop;
 	}
 
+	@Override
 	public MaterialStorage getItemData() {
 		return ms;
 	}
 
+	@Override
 	public int getCraftingReturn() {
 		return returnAmount;
 	}
 
+	@Override
 	public ItemStack[] getIngredients() {
 		return ingredients;
 	}
 
+	@Override
 	public List<String> getCustomLore() {
 		return lore;
 	}
 
+	@Override
 	public String getDisplayName() {
 		return disName;
 	}

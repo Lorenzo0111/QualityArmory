@@ -18,6 +18,7 @@ public class PartyCharger implements ChargingHandler {
 		// represents if the code is currently active.
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public boolean shoot(Gun g, final Player player, ItemStack stack) {
 		player.playEffect(player.getEyeLocation(), Effect.FIREWORK_SHOOT, 0);
