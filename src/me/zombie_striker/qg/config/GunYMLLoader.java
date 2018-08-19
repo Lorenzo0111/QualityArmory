@@ -40,8 +40,7 @@ public class GunYMLLoader {
 					if (f.getName().contains("yml")) {
 						FileConfiguration f2 = YamlConfiguration.loadConfiguration(f);
 						if ((!f2.contains("invalid")) || !f2.getBoolean("invalid")) {
-							Material m = f2.contains("material")
-									? Material.matchMaterial(f2.getString("material"))
+							Material m = f2.contains("material") ? Material.matchMaterial(f2.getString("material"))
 									: Material.DIAMOND_AXE;
 							int variant = f2.contains("variant") ? f2.getInt("variant") : 0;
 							final String name = f2.getString("name");
@@ -112,8 +111,7 @@ public class GunYMLLoader {
 							final String name = f2.getString("name");
 							main.getLogger().info("-Loading Misc: " + name);
 
-							Material m = f2.contains("material")
-									? Material.matchMaterial(f2.getString("material"))
+							Material m = f2.contains("material") ? Material.matchMaterial(f2.getString("material"))
 									: Material.DIAMOND_AXE;
 							int variant = f2.contains("variant") ? f2.getInt("variant") : 0;
 							final MaterialStorage ms = MaterialStorage.getMS(m, f2.getInt("id"), variant, null);
@@ -165,132 +163,135 @@ public class GunYMLLoader {
 			}
 	}
 
-	public static void loadGuns(Main main) {
-		for (File f : new File(main.getDataFolder(), "newGuns").listFiles()) {
-			try {
-				if (f.getName().contains("yml")) {
-					FileConfiguration f2 = YamlConfiguration.loadConfiguration(f);
-					
-					
-					if ((!f2.contains("invalid")) || !f2.getBoolean("invalid")) {
-						final String name = f2.getString("name");
-						main.getLogger().info("-Loading Gun: " + name);
+	public static void loadGuns(Main main, File f) {
+		try {
+			if (f.getName().contains("yml")) {
+				FileConfiguration f2 = YamlConfiguration.loadConfiguration(f);
 
-						Material m = f2.contains("material")
-								? Material.matchMaterial(f2.getString("material"))
-								: Material.DIAMOND_AXE;
-						int variant = f2.contains("variant") ? f2.getInt("variant") : 0;
-						final MaterialStorage ms = MaterialStorage.getMS(m, f2.getInt("id"), variant, null);
-						WeaponType weatype = f2.contains("guntype") ? WeaponType.valueOf(f2.getString("guntype"))
-								: WeaponType.valueOf(f2.getString("weapontype"));
-						final ItemStack[] materails = main.convertIngredients(f2.getStringList("craftingRequirements"));
+				if ((!f2.contains("invalid")) || !f2.getBoolean("invalid")) {
+					final String name = f2.getString("name");
+					main.getLogger().info("-Loading Gun: " + name);
 
-						final String displayname = f2.contains("displayname")
-								? ChatColor.translateAlternateColorCodes('&', f2.getString("displayname"))
-								: (ChatColor.GOLD + name);
-						final List<String> extraLore2 = f2.contains("lore") ? f2.getStringList("lore") : null;
-						final List<String> extraLore = new ArrayList<String>();
+					Material m = f2.contains("material") ? Material.matchMaterial(f2.getString("material"))
+							: Material.DIAMOND_AXE;
+					int variant = f2.contains("variant") ? f2.getInt("variant") : 0;
+					final MaterialStorage ms = MaterialStorage.getMS(m, f2.getInt("id"), variant, null);
+					WeaponType weatype = f2.contains("guntype") ? WeaponType.valueOf(f2.getString("guntype"))
+							: WeaponType.valueOf(f2.getString("weapontype"));
+					final ItemStack[] materails = main.convertIngredients(f2.getStringList("craftingRequirements"));
 
-						double partr = f2.contains("particles.bullet_particleR")
-								? f2.getDouble("particles.bullet_particleR")
-								: 1.0;
-						double partg = f2.contains("particles.bullet_particleG")
-								? f2.getDouble("particles.bullet_particleG")
-								: 1.0;
-						double partb = f2.contains("particles.bullet_particleB")
-								? f2.getDouble("particles.bullet_particleB")
-								: 1.0;
+					final String displayname = f2.contains("displayname")
+							? ChatColor.translateAlternateColorCodes('&', f2.getString("displayname"))
+							: (ChatColor.GOLD + name);
+					final List<String> extraLore2 = f2.contains("lore") ? f2.getStringList("lore") : null;
+					final List<String> extraLore = new ArrayList<String>();
 
-						boolean addMuzzleSmoke = f2.contains("addMuzzleSmoke") ? f2.getBoolean("addMuzzleSmoke")
-								: false;
+					double partr = f2.contains("particles.bullet_particleR")
+							? f2.getDouble("particles.bullet_particleR")
+							: 1.0;
+					double partg = f2.contains("particles.bullet_particleG")
+							? f2.getDouble("particles.bullet_particleG")
+							: 1.0;
+					double partb = f2.contains("particles.bullet_particleB")
+							? f2.getDouble("particles.bullet_particleB")
+							: 1.0;
+
+					boolean addMuzzleSmoke = f2.contains("addMuzzleSmoke") ? f2.getBoolean("addMuzzleSmoke")
+							: false;
+
+					try {
+						for (String lore : extraLore2) {
+							extraLore.add(ChatColor.translateAlternateColorCodes('&', lore));
+						}
+					} catch (Error | Exception re52) {
+					}
+
+					final double price = f2.contains("price") ? f2.getDouble("price") : 100;
+
+					if (weatype.isGun()) {
+						boolean isAutomatic = f2.contains("isAutomatic") ? f2.getBoolean("isAutomatic") : false;
+
+						String sound = WeaponSounds.GUN_MEDIUM.getName();
+
+						if (f2.contains("weaponsounds")) {
+							sound = f2.getString("weaponsounds");
+						} else {
+
+							if (weatype == WeaponType.PISTOL || weatype == WeaponType.SMG)
+								sound = WeaponSounds.GUN_SMALL.getName();
+							if (weatype == WeaponType.SHOTGUN || weatype == WeaponType.SNIPER)
+								sound = WeaponSounds.GUN_BIG.getName();
+							if (weatype == WeaponType.RPG)
+								sound = WeaponSounds.WARHEAD_LAUNCH.getName();
+							if (weatype == WeaponType.LAZER)
+								sound = WeaponSounds.LAZERSHOOT.getName();
+						}
+
+						Gun g = new Gun(name, ms, weatype, f2.getBoolean("enableIronSights"),
+								AmmoType.getAmmo(f2.getString("ammotype")), f2.getDouble("sway"),
+								f2.contains("swayMultiplier") ? f2.getDouble("swayMultiplier") : 2,
+								f2.getInt("maxbullets"), f2.getInt("damage"), isAutomatic, f2.getInt("durability"),
+								sound, extraLore, displayname, price, materails);
+						Main.gunRegister.put(ms, g);
+
+						g.setUseMuzzleSmoke(addMuzzleSmoke);
+
+						g.setReloadingTimeInSeconds(f2.getDouble("delayForReload"));
+
+						if (f2.contains("drop-glow-color") && !f2.getString("drop-glow-color").equals("none")) {
+							ChatColor c = ChatColor.WHITE;
+							for (ChatColor cc : ChatColor.values())
+								if (cc.name().equals(f2.getString("drop-glow-color"))) {
+									c = cc;
+									break;
+								}
+							g.setGlow(c);
+						}
+						if (f2.contains("headshotMultiplier"))
+							g.setHeadshotMultiplier(f2.getDouble("headshotMultiplier"));
+						if (f2.contains("unlimitedAmmo"))
+							g.setUnlimitedAmmo(f2.getBoolean("unlimitedAmmo"));
+						if (f2.contains("LightLeveOnShoot"))
+							g.setLightOnShoot(f2.getInt("LightLeveOnShoot"));
+						if (f2.contains("firerate"))
+							g.setFireRate(f2.getInt("firerate"));
+						if (f2.contains("ReloadingHandler"))
+							g.setReloadingHandler(ReloadingManager.getHandler(f2.getString("ReloadingHandler")));
+						if (f2.contains("ChargingHandler") && !f2.getString("ChargingHandler").equals("none"))
+							g.setChargingHandler(ChargingManager.getHandler(f2.getString("ChargingHandler")));
+						if (f2.contains("delayForShoot"))
+							g.setDelayBetweenShots(f2.getDouble("delayForShoot"));
+						if (f2.contains("bullets-per-shot"))
+							g.setBulletsPerShot(f2.getInt("bullets-per-shot"));
+						if (f2.contains("maxBulletDistance"))
+							g.setMaxDistance(f2.getInt("maxBulletDistance"));
+						if (f2.contains("Version_18_Support"))
+							g.set18Supported(f2.getBoolean("Version_18_Support"));
+						if (f2.contains("hasNightVisionOnScope"))
+							g.setNightVision(f2.getBoolean("hasNightVisionOnScope"));
+						if (f2.contains("isPrimaryWeapon"))
+							g.setIsPrimary(f2.getBoolean("isPrimaryWeapon"));
+						if (f2.contains("setZoomLevel"))
+							g.setZoomLevel(f2.getInt("setZoomLevel"));
 
 						try {
-							for (String lore : extraLore2) {
-								extraLore.add(ChatColor.translateAlternateColorCodes('&', lore));
-							}
-						} catch (Error | Exception re52) {
+							Particle particle = (Particle) (f2.contains("particles.bullet_particle")
+									? Particle.valueOf(f2.getString("particles.bullet_particle"))
+									: Main.bulletTrail);
+							g.setParticles(particle, partr, partg, partb);
+						} catch (Error | Exception er5) {
 						}
-
-						final double price = f2.contains("price") ? f2.getDouble("price") : 100;
-
-						if (weatype.isGun()) {
-							boolean isAutomatic = f2.contains("isAutomatic") ? f2.getBoolean("isAutomatic") : false;
-
-							String sound = WeaponSounds.GUN_MEDIUM.getName();
-
-							if (f2.contains("weaponsounds")) {
-								sound = f2.getString("weaponsounds");
-							} else {
-
-								if (weatype == WeaponType.PISTOL || weatype == WeaponType.SMG)
-									sound = WeaponSounds.GUN_SMALL.getName();
-								if (weatype == WeaponType.SHOTGUN || weatype == WeaponType.SNIPER)
-									sound = WeaponSounds.GUN_BIG.getName();
-								if (weatype == WeaponType.RPG)
-									sound = WeaponSounds.WARHEAD_LAUNCH.getName();
-								if (weatype == WeaponType.LAZER)
-									sound = WeaponSounds.LAZERSHOOT.getName();
-							}
-
-							Gun g = new Gun(name, ms, weatype, f2.getBoolean("enableIronSights"),
-									AmmoType.getAmmo(f2.getString("ammotype")), f2.getDouble("sway"), 2,
-									f2.getInt("maxbullets"), f2.getInt("damage"), isAutomatic, f2.getInt("durability"),
-									sound, extraLore, displayname, price, materails);
-							Main.gunRegister.put(ms, g);
-
-							g.setUseMuzzleSmoke(addMuzzleSmoke);
-
-							g.setReloadingTimeInSeconds(f2.getDouble("delayForReload"));
-
-							if (f2.contains("drop-glow-color") && !f2.getString("drop-glow-color").equals("none")) {
-								ChatColor c = ChatColor.WHITE;
-								for (ChatColor cc : ChatColor.values())
-									if (cc.name().equals(f2.getString("drop-glow-color"))) {
-										c = cc;
-										break;
-									}
-								g.setGlow(c);
-							}
-							if(f2.contains("headshotMultiplier"))
-								g.setHeadshotMultiplier(f2.getDouble("headshotMultiplier"));
-							if (f2.contains("unlimitedAmmo"))
-								g.setUnlimitedAmmo(f2.getBoolean("unlimitedAmmo"));
-							if (f2.contains("LightLeveOnShoot"))
-								g.setLightOnShoot(f2.getInt("LightLeveOnShoot"));
-							if(f2.contains("firerate")) 
-								g.setFireRate(f2.getInt("firerate"));						
-							if(f2.contains("ReloadingHandler"))
-								g.setReloadingHandler(ReloadingManager.getHandler(f2.getString("ReloadingHandler")));
-							if (f2.contains("ChargingHandler") && !f2.getString("ChargingHandler").equals("none"))
-								g.setChargingHandler(ChargingManager.getHandler(f2.getString("ChargingHandler")));
-							if (f2.contains("delayForShoot"))
-								g.setDelayBetweenShots(f2.getDouble("delayForShoot"));
-							if (f2.contains("bullets-per-shot"))
-								g.setBulletsPerShot(f2.getInt("bullets-per-shot"));
-							if (f2.contains("maxBulletDistance"))
-								g.setMaxDistance(f2.getInt("maxBulletDistance"));
-							if (f2.contains("Version_18_Support"))
-								g.set18Supported(f2.getBoolean("Version_18_Support"));
-							if(f2.contains("hasNightVisionOnScope"))
-								g.setNightVision(f2.getBoolean("hasNightVisionOnScope"));
-							if (f2.contains("isPrimaryWeapon"))
-								g.setIsPrimary(f2.getBoolean("isPrimaryWeapon"));
-							if(f2.contains("setZoomLevel"))
-								g.setZoomLevel(f2.getInt("setZoomLevel"));
-
-							try {
-								Particle particle = (Particle) (f2.contains("particles.bullet_particle")
-										? Particle.valueOf(f2.getString("particles.bullet_particle"))
-										: Main.bulletTrail);
-								g.setParticles(particle, partr, partg, partb);
-							} catch (Error | Exception er5) {
-							}
-						}
-
 					}
+
 				}
-			} catch (Exception e) {
 			}
+		} catch (Exception e) {
+		}
+		
+	}
+	public static void loadGuns(Main main) {
+		for (File f : new File(main.getDataFolder(), "newGuns").listFiles()) {
+			loadGuns(main, f);
 		}
 	}
 
@@ -313,8 +314,7 @@ public class GunYMLLoader {
 								: (ChatColor.GOLD + name);
 						final List<String> extraLore2 = f2.contains("lore") ? f2.getStringList("lore") : null;
 
-						Material m = f2.contains("material")
-								? Material.matchMaterial(f2.getString("material"))
+						Material m = f2.contains("material") ? Material.matchMaterial(f2.getString("material"))
 								: Material.DIAMOND_AXE;
 						int variant = f2.contains("variant") ? f2.getInt("variant") : 0;
 						final MaterialStorage ms = MaterialStorage.getMS(m, f2.getInt("id"), variant, null);

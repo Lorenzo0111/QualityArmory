@@ -10,7 +10,7 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
-import me.zombie_striker.qg.Main;
+import me.zombie_striker.qg.QualityArmory;
 
 public class TreeFellerHandler implements Listener {
 
@@ -19,16 +19,16 @@ public class TreeFellerHandler implements Listener {
 	@SuppressWarnings("deprecation")
 	@EventHandler(priority=EventPriority.LOWEST)
 	public void onClickFirst(PlayerInteractEvent e) {
-		if(!Main.isCustomItem(e.getPlayer().getItemInHand())) {
+		if(!QualityArmory.isCustomItem(e.getPlayer().getItemInHand())) {
 			lastClicked.put(e.getPlayer().getUniqueId(), System.currentTimeMillis());
 		}
 	}
 	@SuppressWarnings("deprecation")
 	@EventHandler(priority=EventPriority.MONITOR)
 	public void onBlock(BlockBreakEvent e) {
-		if(Main.isCustomItem(e.getPlayer().getItemInHand()) && (System.currentTimeMillis()-lastClicked.get(e.getPlayer().getUniqueId())<1000)) {
+		if(QualityArmory.isCustomItem(e.getPlayer().getItemInHand()) && (System.currentTimeMillis()-lastClicked.get(e.getPlayer().getUniqueId())<1000)) {
 			lastClicked.put(e.getPlayer().getUniqueId(), System.currentTimeMillis());
-			int durib = Main.findSafeSpot(e.getPlayer().getItemInHand(), true);
+			int durib = QualityArmory.findSafeSpot(e.getPlayer().getItemInHand(), true);
 			ItemStack temp = e.getPlayer().getItemInHand();
 			temp.setDurability((short) (durib+4));
 			e.getPlayer().setItemInHand(temp);

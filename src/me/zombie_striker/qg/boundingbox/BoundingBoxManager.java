@@ -3,7 +3,6 @@ package me.zombie_striker.qg.boundingbox;
 import java.util.HashMap;
 import java.util.UUID;
 
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 

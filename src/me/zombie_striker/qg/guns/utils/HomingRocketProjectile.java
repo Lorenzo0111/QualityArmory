@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import me.zombie_striker.qg.Main;
+import me.zombie_striker.qg.QualityArmory;
 import me.zombie_striker.qg.guns.Gun;
 import me.zombie_striker.qg.handlers.ExplosionHandler;
 import me.zombie_striker.qg.handlers.MultiVersionLookup;
@@ -37,8 +38,8 @@ public class HomingRocketProjectile {
 				RPGLOCATION.add(vect);
 				Block lookat = player.getTargetBlock(null, 300);
 				if (lookat != null && lookat.getType() != Material.AIR) {
-					if (Main.isGun(player.getItemInHand())) {
-						Gun g = Main.getGun(player.getItemInHand());
+					if (QualityArmory.isGun(player.getItemInHand())) {
+						Gun g = QualityArmory.getGun(player.getItemInHand());
 						if (g.getChargingVal() != null && g.getChargingVal() instanceof HomingRPGCharger) {
 							/*
 							 * Vector newVect = new Vector(lookat.getX() - RPGLOCATION.getBlockX(),

@@ -11,6 +11,7 @@ import org.bukkit.scheduler.BukkitTask;
 
 import me.zombie_striker.qg.ItemFact;
 import me.zombie_striker.qg.Main;
+import me.zombie_striker.qg.QualityArmory;
 import me.zombie_striker.qg.attachments.AttachmentBase;
 import me.zombie_striker.qg.guns.Gun;
 import me.zombie_striker.qg.guns.utils.GunUtil;
@@ -33,7 +34,7 @@ public class BurstFireCharger implements ChargingHandler {
 	public boolean shoot(final Gun g, final Player player, final ItemStack stack) {
 		GunUtil.shoot(g, player, g.getSway() * AimManager.getSway(g, player.getUniqueId()), g.getDamage(), 1,
 				g.getMaxDistance());
-		final AttachmentBase attach = Main.getGunWithAttchments(stack);
+		final AttachmentBase attach = QualityArmory.getGunWithAttchments(stack);
 		GunUtil.playShoot(g, attach, player);
 		/*
 		 * for (int j = 1; j < Math.min(ItemFact.getAmount(stack),
@@ -49,7 +50,7 @@ public class BurstFireCharger implements ChargingHandler {
 		shooters.put(player.getUniqueId(), new BukkitRunnable() {
 			int slotUsed = player.getInventory().getHeldItemSlot();
 			@SuppressWarnings("deprecation")
-			boolean offhand = Main.isIS(player.getItemInHand());
+			boolean offhand = QualityArmory.isIronSights(player.getItemInHand());
 			int shotCurrently = 1;
 
 			@Override
@@ -87,7 +88,7 @@ public class BurstFireCharger implements ChargingHandler {
 				stack.setItemMeta(im);
 				if (slot == -1) {
 					try {
-						if (Main.isIS(player.getItemInHand())) {
+						if (QualityArmory.isIronSights(player.getItemInHand())) {
 							player.getInventory().setItemInOffHand(stack);
 						} else {
 							player.getInventory().setItemInHand(stack);
@@ -98,7 +99,7 @@ public class BurstFireCharger implements ChargingHandler {
 				} else {
 					player.getInventory().setItem(slot, stack);
 				}
-				Main.sendHotbarGunAmmoCount(player, g, attach, stack, false);
+				QualityArmory.sendHotbarGunAmmoCount(player, g, attach, stack, false);
 			}
 		}.runTaskTimer(Main.getInstance(), 10 / g.getBulletsPerShot(), 10 / g.getBulletsPerShot()));
 		return false;

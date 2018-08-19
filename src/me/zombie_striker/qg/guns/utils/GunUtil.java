@@ -7,6 +7,7 @@ import java.util.UUID;
 
 import me.zombie_striker.qg.ItemFact;
 import me.zombie_striker.qg.Main;
+import me.zombie_striker.qg.QualityArmory;
 import me.zombie_striker.qg.ammo.Ammo;
 import me.zombie_striker.qg.ammo.AmmoUtil;
 import me.zombie_striker.qg.armor.BulletProtectionUtil;
@@ -162,7 +163,7 @@ public class GunUtil {
 						}
 			}
 			if (hitTarget != null) {
-				if (!(hitTarget instanceof Player) || Main.allowGunsInRegion(hitTarget.getLocation())) {
+				if (!(hitTarget instanceof Player) || QualityArmory.allowGunsInRegion(hitTarget.getLocation())) {
 
 					boolean bulletProtection = false;
 					if (hitTarget instanceof Player) {
@@ -335,11 +336,11 @@ public class GunUtil {
 		if (g.isAutomatic()) {
 			rapidfireshooters.put(player.getUniqueId(), new BukkitRunnable() {
 				int slotUsed = player.getInventory().getHeldItemSlot();
-				boolean offhand = Main.isIS(player.getItemInHand());
+				boolean offhand = QualityArmory.isIronSights(player.getItemInHand());
 
 				@Override
 				public void run() {
-					final AttachmentBase attach = Main.getGunWithAttchments(temp);
+					final AttachmentBase attach = QualityArmory.getGunWithAttchments(temp);
 
 					int amount = ItemFact.getAmount(temp);
 					if (!player.isSneaking() || slotUsed != player.getInventory().getHeldItemSlot() || amount <= 0) {
@@ -386,7 +387,7 @@ public class GunUtil {
 					temp.setItemMeta(im);
 					if (slot == -1) {
 						try {
-							if (Main.isIS(player.getItemInHand())) {
+							if (QualityArmory.isIronSights(player.getItemInHand())) {
 								player.getInventory().setItemInOffHand(temp);
 							} else {
 								player.getInventory().setItemInHand(temp);
@@ -397,7 +398,7 @@ public class GunUtil {
 					} else {
 						player.getInventory().setItem(slot, temp);
 					}
-					Main.sendHotbarGunAmmoCount(player, g, attach, temp, false);
+					QualityArmory.sendHotbarGunAmmoCount(player, g, attach, temp, false);
 				}
 			}.runTaskTimer(Main.getInstance(), 10 / g.getFireRate(), 10 / g.getFireRate()));
 		}
@@ -480,33 +481,10 @@ public class GunUtil {
 		if (ItemFact.getAmount(temp) == g.getMaxBullets()) {
 			return;
 		}
-
 		if (im.getLore() != null && im.getDisplayName().contains(Main.S_RELOADING_MESSAGE)) {
-			/*
-			 * try { /* player.getWorld().playSound(player.getLocation(),
-			 * Sound.BLOCK_LEVER_CLICK, 5, 1);
-			 *
-			 * 
-			 * player.getWorld().playSound(player.getLocation(),
-			 * WeaponSounds.RELOAD_MAG_OUT.getName(), 1, 1f); if
-			 * (!Main.isVersionHigherThan(1, 9)) { try {
-			 * player.getWorld().playSound(player.getLocation(), Sound.valueOf("CLICK"), 5,
-			 * 1); } catch (Error | Exception e3) {
-			 * player.getWorld().playSound(player.getLocation(),
-			 * Sound.valueOf("BLOCK_LEVER_CLICK"), 5, 1); } }
-			 * 
-			 * return; } catch (Error e2) { try {
-			 * player.getWorld().playSound(player.getLocation(), Sound.valueOf("CLICK"), 5,
-			 * 1); } catch (Error | Exception e3) {
-			 * player.getWorld().playSound(player.getLocation(),
-			 * Sound.valueOf("BLOCK_LEVER_CLICK"), 5, 1); } }
-			 */
+			
 		} else {
 			try {
-				/*
-				 * player.getWorld().playSound(player.getLocation(), Sound.BLOCK_LEVER_CLICK, 5,
-				 * 0.7f);
-				 */
 				player.getWorld().playSound(player.getLocation(), WeaponSounds.RELOAD_MAG_OUT.getName(), 1, 1f);
 			} catch (Error e2) {
 				try {
@@ -569,7 +547,7 @@ public class GunUtil {
 					if (Main.enableVisibleAmounts)
 						temp.setAmount(reloadAmount);
 					player.getInventory().setItem(slot, temp);
-					Main.sendHotbarGunAmmoCount(player, g, attachment, temp, false);
+					QualityArmory.sendHotbarGunAmmoCount(player, g, attachment, temp, false);
 				}
 			}.runTaskLater(Main.getInstance(), (long) (20 * seconds));
 			if (!Main.reloadingTasks.containsKey(player.getUniqueId())) {

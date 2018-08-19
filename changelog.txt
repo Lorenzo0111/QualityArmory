@@ -1,3 +1,17 @@
+1.1.112
+	Revamped All Gun models and textures.
+	Revamped API to correspond to changes made in the core plugin
+	Added the PPSh-41
+	Swapped all models to use one RGB sheet instead of multiple textures, so the filesize is smaller
+	Fixed gun prices to match a better formula (DPS*MaxBullets +Features/(Sway*20))
+	Fixed config. If you delete the config, all of the values should look better
+	Swapped "allowUpdate" to "AllowUserModifications" for more clarity
+	Fixed issue where events where still fired even if other plugins canceled them.
+
+1.1.111B
+	Added ability to set price to -1 to stop the item from being added to shop.
+	Added option "automaticallyReloadGunWhenOutOfAmmo" to enable reloads on out-of-ammo.
+
 1.1.111
 	Added BoundBox managers
 	Added glow to mushroom clouds

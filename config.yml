@@ -35,36 +35,60 @@ hideTextureWarnings: false
 
 #Use this if you are expierincing a problem. 
 ENABLE-DEBUG: false
+#If you need to change the material used for guns:
+Material_For_IronSightToggle_Item: DIAMOND_AXE
+Data_For_IronSightToggle_Item: 21
 
 #Enables weapon duribility and degredation on every shot.
 EnableWeaponDurability: false
 
-#Swaps the reload button to LMB and shoot to RMB, if you are more familiar with Crackshot's shooting controls
+#Configures Primary Weapons Systems
+enablePrimaryWeaponLimiter: false
+weaponlimiter_primaries: 2
+weaponlimiter_secondaries: 2
+
+#QA Controls
 Swap-Reload-and-Shooting-Controls: false
+enableReloadingWhenSwapToOffhand: true
+IronSightsOnRightClick: false
+automaticallyReloadGunWhenOutOfAmmo: false
+allowGunReload: true
+
+#Modifiers for QA systems
+generalModifiers:
+  sway:
+    Run: 2.0
+    Walk: 1.5
+    Ironsights: 0.8
+    Sneak: 0.7
+
+#If parties is enabled, FriendlyFire will determine if players can shoot members of their party.
+FriendlyFireEnabled: false
 
 #Resourcepack values
 useDefaultResourcepack: true
 DefaultResourcepackOverride: false
 DefaultResourcepack: https://www.dropbox.com/s/7xn1a6vmazc29zg/QualityArmoryv1.0.14.zip?dl=1
 Auto-Detect-Resourcepack: false
-
-#Determines if the resourcepack should be sent when a player joins.
 sendOnJoin: false
 sendTitleOnJoin: false
+SecondsTillRPIsSent: 0.0
 
 #Experminetal: Headshots will have more features in the future
 Enable_Headshot_Instantkill: true
 Enable_Headshot_Notification_Sound: true
 Enable_Headshot_Sounds: true
 
-#If parties is enabled, FriendlyFire will determine if players can shoot members of their party.
-FriendlyFireEnabled: false
 
 #This is used for calculating the bullet step. 
 #If you're server is lagging for every shot, increase this value. 
 #If you want more accurate shots around corners, decrease it.
 BulletDetection:
   step: 0.1 
+#Determines if bullets will leave a trail of particles. Set to false if your players/server can't handle the particles AT ALL. 
+enableBulletTrails: true
+BulletTrailsSpacing: 0.5
+
 #By default, these blocks will allow bullets. If you want glass or leaves to stop bullets, set the values to true.
 BlockBullets:
   door: false
@@ -77,16 +101,10 @@ enableInteract:
   Chests: false
 #If set to true, overrideAnvil will let the anvil turn into a gun-crafting station.
 overrideAnvil: false
-#Determines if bullets will leave a trail of particles. Set to false if your players/server can't handle the particles AT ALL. 
-enableBulletTrails: true
-#Determines the spacing between particles. If your players/server can't hande that many particles, increase the values
-BulletTrailsSpacing: 0.5
 
 #UNSUPPORTED: Enable bullet counts for guns.
 enableVisibleBulletCounts: false
 
-#Reloads the gun if the user tries to swap it to the off hand.
-enableReloadingWhenSwapToOffhand: true
 
 #EXPERIMENTAL: Explosion damage
 enableExplosionDamage: false
@@ -99,16 +117,14 @@ enableShop: true
 #Determines if the plugin should auto-update. Disable this if you need a specific version of QA.
 AUTO-UPDATE: true
 
+#Messages section
 enable_lore_gun-info_messages: true
 enable_lore_control-help_messages: true
-  
-#Determines if a player can reload a gun. 
-allowGunReload: true
-
-IronSightsOnRightClick: false
-#Determines how long the till the Resourcepack message should be sent.
-SecondsTillRPIsSent: 0.0
-
+disableHotbarMessages:
+  OutOfAmmo: false
+  Shoot: false
+  Reload: false
+ 
 #Determines if block break textures should appear
 Break-Block-Texture-If-Shot: true
 
@@ -120,3 +136,9 @@ experimental:
     BloodIncreasePerSecond: 0.01
     Medkit_Heal_Bloodloss_Rate: 0.05
     enableBleeding: false
+    
+Order-Shop-By-Price: false
+ignoreArmorStands: false
+EnableGlowEffects: true
+DestructableMaterials:
+- MATERIAL_NAME_HERE

@@ -6,12 +6,11 @@ import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
-import me.zombie_striker.qg.ItemFact;
 import me.zombie_striker.qg.Main;
+import me.zombie_striker.qg.QualityArmory;
 import me.zombie_striker.qg.armor.ArmorObject;
 import me.zombie_striker.qg.armor.angles.AngledArmor;
 
@@ -35,12 +34,12 @@ public class AngledArmorHandler {
 				for (Player p : Bukkit.getOnlinePlayers()) {
 					if (angledPlayers.contains(p.getUniqueId())) {
 						if (p.getInventory().getHelmet() == null || (/*!Main.isArmor(p.getInventory().getHelmet())
-								&&*/ !Main.isAngledArmor(p.getInventory().getHelmet()))) {
+								&&*/ !QualityArmory.isAngledArmor(p.getInventory().getHelmet()))) {
 							angledPlayers.remove(p.getUniqueId());
 						}
 					} else {
 						if (p.getInventory().getHelmet() != null && (/*Main.isArmor(p.getInventory().getHelmet())
-								||*/ Main.isAngledArmor(p.getInventory().getHelmet()))) {
+								||*/ QualityArmory.isAngledArmor(p.getInventory().getHelmet()))) {
 							angledPlayers.add(p.getUniqueId());
 						}
 					}
@@ -59,13 +58,13 @@ public class AngledArmorHandler {
 						continue;
 					}
 
-					if (p.getInventory().getHelmet() == null || (!Main.isAngledArmor(p.getInventory().getHelmet())
-							&& !Main.isArmor(p.getInventory().getHelmet())))
+					if (p.getInventory().getHelmet() == null || (!QualityArmory.isAngledArmor(p.getInventory().getHelmet())
+							&& !QualityArmory.isArmor(p.getInventory().getHelmet())))
 						continue;
 
-					float angle = p.getLocation().getPitch() + 90;
+					//float angle = p.getLocation().getPitch() + 90;
 					// 90 = foward. 180 = up. 0 = down
-					double close = 10000;
+					//double close = 10000;
 					AngledArmor closest = null;
 					ArmorObject base = null;
 					/*for (AngledArmor ag : Main.angledArmor.values()) {
@@ -76,20 +75,20 @@ public class AngledArmorHandler {
 						}
 					}
 					if (Math.abs(90 - angle) < close) {*/
-						base = Main.armorRegister.get(closest.getBase());
+					//	base = Main.armorRegister.get(closest.getBase());
 						closest = null;
 					//}
 					if (closest != null || base != null) {
-						ItemStack is;
-						if (base != null)
-							is = ItemFact.getArmor(base);
-						else
-							is = ItemFact.getArmor(closest);
+					//	ItemStack is;
+					//	if (base != null)
+					//		is = ItemFact.getArmor(base);
+						//else
+						//	is = ItemFact.getArmor(closest);
 						// p.getInventory().get
 						//REally bad hack
-						ItemStack helmet = p.getInventory().getHelmet();
-						helmet.setDurability(is.getDurability());
-						p.getInventory().setHelmet(helmet);
+						//ItemStack helmet = p.getInventory().getHelmet();
+						//helmet.setDurability(is.getDurability());
+						//p.getInventory().setHelmet(helmet);
 					}
 				}
 			}

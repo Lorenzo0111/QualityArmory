@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.UUID;
 
 import me.zombie_striker.qg.Main;
+import me.zombie_striker.qg.QualityArmory;
 import me.zombie_striker.qg.guns.Gun;
 
 import org.bukkit.Bukkit;
@@ -32,10 +33,12 @@ public class AimManager implements Listener {
 			public void run() {
 				for (Player p : Bukkit.getOnlinePlayers()) {
 					double sway = 1;
-					if (Main.isIS(p.getItemInHand()))
-						sway /= 2;
-					if (p.isSprinting())
-						sway *= 1.3;
+					if (QualityArmory.isIronSights(p.getItemInHand()))
+						sway *= Main.swayModifier_Ironsights;
+					if (p.isSneaking())
+						sway *= Main.swayModifier_Sneak;
+					if (p.isSprinting()) 
+						sway *= 1.3;					
 					if (lasLocCheck.containsKey(p.getUniqueId())) {
 						long s = System.currentTimeMillis()
 								- lasLocCheck.get(p.getUniqueId());
@@ -43,7 +46,7 @@ public class AimManager implements Listener {
 							s=1;
 						if (s < 800) {
 							// less than 1.5 sec
-							sway *= Math.min(1.3, 800 / s);
+							sway *= Math.min(Main.swayModifier_Walk, 800 / s);
 						}
 					}
 					accState.put(p.getUniqueId(), sway);

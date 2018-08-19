@@ -44,6 +44,11 @@ public class GunYML extends ArmoryYML {
 
 		setNoOverride("drop-glow-color", "none");
 		setNoOverride("headshotMultiplier", 2);
+		setNoOverride("swayMultiplier", 2);
+	}
+	public GunYML setSwayMultiplier(double multiplier) {
+		set(false, "swayMultiplier", multiplier);
+		return this;
 	}
 
 	public GunYML setHeadShotMultiplier(double multiplier) {

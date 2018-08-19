@@ -32,6 +32,14 @@ public class ArmoryYML {
 		fileConfig = CommentYamlConfiguration.loadConfiguration(file);
 	}
 
+	public Object get(String path) {
+		return fileConfig.get(path);
+	}
+
+	public boolean contains(String path) {
+		return fileConfig.contains(path);
+	}
+
 	protected void setNoOverride(String name, Object v) {
 		if (!fileConfig.contains(name)) {
 			fileConfig.set(name, v);
@@ -40,16 +48,13 @@ public class ArmoryYML {
 	}
 
 	public void setNoSave(boolean force, String name, Object v) {
-		if (!fileConfig.contains(name)
-				|| ((fileConfig.getBoolean("allowUpdates") || force) && !fileConfig.get(name).equals(v))) {
-			fileConfig.set(name, v);
-			saveNow = true;
-		}
+		set(force, name, v);
 	}
 
 	public void set(boolean force, String name, Object v) {
 		if (!fileConfig.contains(name)
-				|| ((fileConfig.getBoolean("allowUpdates") || force) && !fileConfig.get(name).equals(v))) {
+				|| ((!fileConfig.contains("AllowUserModifications") || !fileConfig.getBoolean("AllowUserModifications"))
+						|| fileConfig.getBoolean("allowUpdates") || force) && !fileConfig.get(name).equals(v)) {
 			fileConfig.set(name, v);
 			saveNow = true;
 		}
@@ -103,29 +108,25 @@ public class ArmoryYML {
 		set(false, "price", cost);
 		return this;
 	}
+
 	public ArmoryYML setMaterial(Material mat) {
-		//h.setNoSave(false, "material", Material.DIAMOND_AXE.name());
-		set(false,  "material", mat.name());
+		set(false, "material", mat.name());
 		return this;
 	}
 
 	public void verifyAllTagsExist() {
-		setNoOverride("allowUpdates", true);
+		setNoOverride("AllowUserModifications", (contains("allowUpdates") ? (!(boolean) get("allowUpdates")) : false));
+		setNoOverride("allowUpdates", null);
 		setNoOverride("invalid", false);
 		setNoOverride("lore", new ArrayList<String>());
 		setNoOverride("material", Material.DIAMOND_AXE.name());
 		setNoOverride("variant", 0);
 		setNoOverride("weapontype", WeaponType.RIFLE);
 		setNoOverride("weaponsounds", WeaponSounds.getSoundByType(WeaponType.RIFLE));
-		//StringBuilder validGuns = new StringBuilder();
-		//for (WeaponType g : WeaponType.values()) {
-		//	validGuns.append(g.name() + ", ");
-		//}
-		//setNoOverride("_VALID_WEAPON_TYPES", validGuns.toString());
 		setNoOverride("damage", 3);
-		
+
 		setNoOverride("durability", 1000);
-		
+
 		setNoOverride("price", 1000);
 	}
 }

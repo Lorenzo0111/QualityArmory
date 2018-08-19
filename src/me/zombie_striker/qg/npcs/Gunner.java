@@ -7,6 +7,7 @@ import org.bukkit.entity.Player;
 
 import me.zombie_striker.qg.ItemFact;
 import me.zombie_striker.qg.Main;
+import me.zombie_striker.qg.QualityArmory;
 import me.zombie_striker.qg.guns.Gun;
 import me.zombie_striker.qg.npcs.goals.Gunnergoal;
 import net.citizensnpcs.api.CitizensAPI;
@@ -29,7 +30,7 @@ public class Gunner {
 		// new BukkitRunnable() {
 		// @Override
 		// public void run() {
-		Gun g = Main.getGunByName(gun);
+		Gun g = QualityArmory.getGunByName(gun);
 		if (g == null) {
 			Bukkit.broadcastMessage("gun is null");
 		} else {

@@ -15,26 +15,29 @@ import me.zombie_striker.qg.guns.utils.WeaponType;
 
 public class GunYMLCreator {
 
-	public static GunYML createNewDefaultGun(File dataFolder, String name, String displayname,  int id,
+	public static GunYML createNewDefaultGun(File dataFolder, String name, String displayname, int id,
 			List<String> craftingRequirements, WeaponType weapontype, WeaponSounds ws, boolean enableIronSights,
 			String ammotype, int damage, int maxBullets, int cost) {
-		return createNewCustomGun(dataFolder, "default_" + name, name, displayname, id, craftingRequirements, weapontype, ws, enableIronSights, ammotype, damage, maxBullets, cost);
+		return createNewCustomGun(dataFolder, "default_" + name, name, displayname, id, craftingRequirements,
+				weapontype, ws, enableIronSights, ammotype, damage, maxBullets, cost);
 	}
-		public static GunYML createNewCustomGun(File dataFolder,String filename, String name, String displayname,  int id,
-				List<String> craftingRequirements, WeaponType weapontype, WeaponSounds ws, boolean enableIronSights,
-				String ammotype, int damage, int maxBullets, int cost) {
+
+	public static GunYML createNewCustomGun(File dataFolder, String filename, String name, String displayname, int id,
+			List<String> craftingRequirements, WeaponType weapontype, WeaponSounds ws, boolean enableIronSights,
+			String ammotype, int damage, int maxBullets, int cost) {
 
 		File f2 = new File(dataFolder, "newGuns/" + filename + ".yml");
 		if (!new File(dataFolder, "newGuns").exists())
 			new File(dataFolder, "newGuns").mkdirs();
 
 		GunYML h = new GunYML(f2);
-		h.setNoSave(false, "allowUpdates", true);
-		//h.setNoSave(false, "invalid", false);
+		h.setNoSave(false, "AllowUserModifications",
+				(h.contains("allowUpdates") ? (!(boolean) h.get("allowUpdates")) : false));
+		// h.setNoSave(false, "invalid", false);
 		h.setNoSave(false, "name", name);
-		h.setNoSave(false, "displayname", displayname.startsWith("&")?displayname:"&6"+displayname);
+		h.setNoSave(false, "displayname", displayname.startsWith("&") ? displayname : "&6" + displayname);
 		// h.setNoSave(false, "lore", (lore == null ? new ArrayList<String>() : lore));
-		//h.setNoSave(false, "material", Material.DIAMOND_AXE.name());
+		// h.setNoSave(false, "material", Material.DIAMOND_AXE.name());
 		h.setNoSave(false, "id", id);
 		h.setNoSave(false, "variant", 0);
 		h.setNoSave(false, "craftingRequirements", craftingRequirements);
@@ -55,9 +58,9 @@ public class GunYMLCreator {
 		// h.setNoSave(false, "bullets-per-shot", bulletspershot);
 		// h.setNoSave(false, "isAutomatic", isAutomatic);
 		h.setNoSave(false, "price", cost);
-	//	h.setNoSave(false, "maxBulletDistance", distance);
-		//h.setNoSave(false, "unlimitedAmmo", false);
-		//h.setNoSave(false, "LightLeveOnShoot", 14);
+		// h.setNoSave(false, "maxBulletDistance", distance);
+		// h.setNoSave(false, "unlimitedAmmo", false);
+		// h.setNoSave(false, "LightLeveOnShoot", 14);
 
 		// h.setNoSave(false, "particles.bullet_particle", particle);
 		// if (particle.equals("REDSTONE")) {
@@ -68,19 +71,17 @@ public class GunYMLCreator {
 
 		// if (version18)
 		// h.setNoSave(false, "Version_18_Support", version18);
-		//h.setNoSave(false, "ChargingHandler", ch == null ? "null" : ch);
+		// h.setNoSave(false, "ChargingHandler", ch == null ? "null" : ch);
 		// if (addMuzzleSmoke)
 		// h.setNoSave(false, "addMuzzleSmoke", addMuzzleSmoke);
 
 		// if(invalid) {
 		// h.setNoSave(false, "drop-glow-color",ChatColor.WHITE.name());
 
-		//if (h.saveNow)
-		//	h.save();
+		// if (h.saveNow)
+		// h.save();
 		return h;
 	}
-	
-	
 
 	public static ArmoryYML createNewGun(boolean forceUpdate, File dataFolder, String name, String displayname, int id,
 			List<String> craftingRequirements, WeaponType weapontype, boolean enableIronSights, String ammotype,
@@ -208,7 +209,8 @@ public class GunYMLCreator {
 			new File(dataFolder, "newGuns").mkdirs();
 
 		ArmoryYML h = new ArmoryYML(f2);
-		h.setNoSave(false, "allowUpdates", true);
+		h.setNoSave(false, "AllowUserModifications",
+				(h.contains("allowUpdates") ? (!(boolean) h.get("allowUpdates")) : false));
 		h.setNoSave(false, "invalid", invalid);
 		h.setNoSave(false, "name", name);
 		h.setNoSave(false, "displayname", displayname);
@@ -310,7 +312,8 @@ public class GunYMLCreator {
 
 		ArmoryYML h = new ArmoryYML(f2);
 
-		h.setNoSave(false, "allowUpdates", true);
+		h.setNoSave(false, "AllowUserModifications",
+				(h.contains("allowUpdates") ? (!(boolean) h.get("allowUpdates")) : false));
 		h.setNoSave(false, "invalid", invalid);
 		h.setNoSave(false, "name", name);
 		h.setNoSave(false, "displayname", displayname);
@@ -351,7 +354,8 @@ public class GunYMLCreator {
 			h.setNoSave(false, "HOW_TO_USE",
 					"Below is just the required values to create a new attachment for the 'basegun'. If you want to modify more parts of the gun, copy the value you want to change from the 'base' gun and paste it here with the value you want.");
 
-		h.setNoSave(false, "allowUpdates", true);
+		h.setNoSave(false, "AllowUserModifications",
+				(h.contains("allowUpdates") ? (!(boolean) h.get("allowUpdates")) : false));
 		h.setNoSave(false, "invalid", invalid);
 		h.setNoSave(false, "name", name);
 		h.setNoSave(false, "displayname", displayname);
@@ -385,7 +389,8 @@ public class GunYMLCreator {
 		if (!new File(dataFolder, "misc").exists())
 			new File(dataFolder, "misc").mkdirs();
 		ArmoryYML h = new ArmoryYML(f2);
-		h.setNoSave(false, "allowUpdates", true);
+		h.setNoSave(false, "AllowUserModifications",
+				(h.contains("allowUpdates") ? (!(boolean) h.get("allowUpdates")) : false));
 		h.setNoSave(false, "invalid", invalid);
 		h.setNoSave(false, "name", name);
 		h.setNoSave(false, "displayname", displayname);

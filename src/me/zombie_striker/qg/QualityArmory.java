@@ -1,364 +1,413 @@
 package me.zombie_striker.qg;
 
-import me.zombie_striker.qg.ammo.Ammo;
-import me.zombie_striker.qg.ammo.AmmoType;
-import me.zombie_striker.qg.guns.*;
-import me.zombie_striker.qg.guns.utils.WeaponSounds;
-import me.zombie_striker.qg.guns.utils.WeaponType;
-import me.zombie_striker.qg.miscitems.IronSightsToggleItem;
+import java.io.File;
 
-import java.util.*;
-
+import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
+import org.bukkit.scheduler.BukkitRunnable;
+
+import me.zombie_striker.pluginconstructor.HotbarMessager;
+import me.zombie_striker.qg.ammo.Ammo;
+import me.zombie_striker.qg.ammo.AmmoUtil;
+import me.zombie_striker.qg.armor.ArmorObject;
+import me.zombie_striker.qg.armor.angles.AngledArmor;
+import me.zombie_striker.qg.attachments.AttachmentBase;
+import me.zombie_striker.qg.config.GunYML;
+import me.zombie_striker.qg.config.GunYMLCreator;
+import me.zombie_striker.qg.config.GunYMLLoader;
+import me.zombie_striker.qg.guns.Gun;
+import me.zombie_striker.qg.guns.utils.WeaponSounds;
+import me.zombie_striker.qg.guns.utils.WeaponType;
+import me.zombie_striker.qg.handlers.MultiVersionLookup;
+import me.zombie_striker.qg.handlers.SkullHandler;
+import me.zombie_striker.qg.handlers.WorldGuardSupport;
+import me.zombie_striker.qg.miscitems.IronSightsToggleItem;
 
 public class QualityArmory {
-	/**
-	 * Returns the itemstack instance of a gun by using the material and data.
-	 * 
-	 * @param mat
-	 * @param data
-	 * @return
-	 */
-	public static ItemStack getGunItemStack(Material mat, int data) {
-		return getGunItemStack(mat,data,0);
+
+	public static GunYML createAndLoadNewGun(String name, String displayname, Material material, int id,
+			WeaponType type, WeaponSounds sound, boolean hasIronSights, String ammotype, int damage, int maxBullets,
+			int cost) {
+		File newGunsDir = new File(Main.getInstance().getDataFolder(), "newGuns");
+		final File gunFile = new File(newGunsDir, name);
+		new BukkitRunnable() {
+			public void run() {
+				GunYMLLoader.loadGuns(Main.getInstance(), gunFile);
+			}
+		}.runTaskLater(Main.getInstance(), 1);
+		return GunYMLCreator.createNewCustomGun(Main.getInstance().getDataFolder(), name, name, displayname, id, null,
+				type, sound, hasIronSights, ammotype, damage, maxBullets, cost).setMaterial(material);
 	}
-	/**
-	 * Returns the itemstack instance of a gun by using the material and data.
-	 * 
-	 * @param mat
-	 * @param data
-	 * @param varient The varient of the gun, if one exists
-	 * @return
-	 */
-	public static ItemStack getGunItemStack(Material mat, int data, int varient) {
-		if (Main.gunRegister.containsKey(MaterialStorage.getMS(mat, data,varient,null)))
-			return ItemFact.getGun(MaterialStorage.getMS(mat, data,varient,null));
+
+	public static GunYML createNewGunYML(String name, String displayname, Material material, int id, WeaponType type,
+			WeaponSounds sound, boolean hasIronSights, String ammotype, int damage, int maxBullets, int cost) {
+		return GunYMLCreator.createNewCustomGun(Main.getInstance().getDataFolder(), name, name, displayname, id, null,
+				type, sound, hasIronSights, ammotype, damage, maxBullets, cost);
+	}
+
+	public static void registerNewUsedExpansionItem(Material used, int id) {
+		registerNewUsedExpansionItem(used, id, 0);
+	}
+
+	public static void registerNewUsedExpansionItem(Material used, int id, int var) {
+		Main.expansionPacks.add(MaterialStorage.getMS(used, id, var));
+	}
+
+	@SuppressWarnings("deprecation")
+	public static void sendResourcepack(final Player player, final boolean warning) {
+		new BukkitRunnable() {
+			@Override
+			public void run() {
+				if (Main.namesToBypass.contains(player.getName())) {
+					Main.resourcepackReq.add(player.getUniqueId());
+					return;
+				}
+				if (warning)
+					try {
+						player.sendTitle(ChatColor.RED + Main.S_NORES1, Main.S_NORES2);
+					} catch (Error e2) {
+						player.sendMessage(ChatColor.RED + Main.S_NORES1);
+						player.sendMessage(ChatColor.RED + Main.S_NORES2);
+					}
+				player.sendMessage(Main.prefix + Main.S_RESOURCEPACK_HELP);
+				new BukkitRunnable() {
+					@Override
+					public void run() {
+						try {
+							try {
+								if (Main.AutoDetectResourcepackVersion
+										&& us.myles.ViaVersion.bukkit.util.ProtocolSupportUtil
+												.getProtocolVersion(player) < Main.ID18) {
+									player.setResourcePack(Main.url18);
+								} else {
+									player.setResourcePack(Main.url);
+								}
+							} catch (Error | Exception e4) {
+								player.setResourcePack(Main.url);
+							}
+
+							if (!Main.isVersionHigherThan(1, 9)) {
+								Main.resourcepackReq.add(player.getUniqueId());
+								Main.sentResourcepack.put(player.getUniqueId(), System.currentTimeMillis());
+							}
+							// If the player is on 1.8, manually add them to the resource list.
+
+						} catch (Exception e) {
+
+						}
+					}
+				}.runTaskLater(Main.getInstance(), 20 * (warning ? 1 : 5));
+			}
+		}.runTaskLater(Main.getInstance(), (long) (20 * Main.secondsTilSend));
+	}
+
+	public static boolean allowGunsInRegion(Location loc) {
+		if (!Main.supportWorldGuard)
+			return true;
+		try {
+			return WorldGuardSupport.a(loc);
+		} catch (Error e) {
+		}
+		return true;
+	}
+
+	public static boolean isCustomItem(ItemStack is) {
+		return isCustomItem(is, 0);
+	}
+
+	public static ArmoryBaseObject getCustomItem(ItemStack is) {
+		if (isGun(is))
+			return getGun(is);
+		if (isAmmo(is))
+			return getAmmo(is);
+		if (isArmor(is))
+			return getArmor(is);
+		if (isMisc(is))
+			return getMisc(is);
+		if (isAngledArmor(is))
+			return Main.armorRegister.get(getAngledArmor(is).getBase());
+		if (isGunWithAttchments(is))
+			return Main.gunRegister.get(getGunWithAttchments(is).getBase());
 		return null;
 	}
 
-	/**
-	 * Returns the itemstack instance of the gun
-	 * 
-	 * @param gun
-	 * @return
-	 */
-	public static ItemStack getGunItemStack(Gun gun) {
-		return ItemFact.getGun(gun);
+	public static boolean isCustomItem(ItemStack is, int dataOffset) {
+		ItemStack itemstack = is.clone();
+		itemstack.setDurability((short) (is.getDurability() + dataOffset));
+		return isArmor(itemstack) || isGunWithAttchments(itemstack) || isAmmo(itemstack) || isMisc(itemstack)
+				|| isGun(itemstack) || isIronSights(itemstack) || isAngledArmor(itemstack)
+				|| Main.expansionPacks.contains(MaterialStorage.getMS(is));
 	}
 
-	/**
-	 * Returns the gun instance by its material and data
-	 * @param mat
-	 * @param data
-	 * @return
-	 */
-	public static Gun getGun(Material mat, int data) {
-		return getGun(mat,data,0);
+	public static boolean isArmor(ItemStack is) {
+		if (is == null)
+			return false;
+		int var = MaterialStorage.getVarient(is);
+		if (isAngledArmor(is))
+			return true;
+		return (is != null
+				&& (Main.armorRegister.containsKey(MaterialStorage.getMS(is.getType(), is.getDurability(), var))
+						|| Main.armorRegister.containsKey(MaterialStorage.getMS(is.getType(), -1, var))));
 	}
 
-	/**
-	 * Returns the gun instance by its material and data
-	 * 
-	 * @param mat
-	 * @param data
-	 * @param varient
-	 *            The variant of the gun, if one exists
-	 * @return
-	 */
-	public static Gun getGun(Material mat, int data, int varient) {
-		if (Main.gunRegister.containsKey(MaterialStorage.getMS(mat, data, varient,null)))
-			return Main.gunRegister.get(MaterialStorage.getMS(mat, data, varient,null));
-		return null;
+	public static boolean isAngledArmor(ItemStack is) {
+		if (is == null)
+			return false;
+		int var = MaterialStorage.getVarient(is);
+		if (Main.angledArmor.containsKey(MaterialStorage.getMS(is.getType(), is.getDurability(), var)))
+			return true;
+		return false;
 	}
 
-	/**
-	 * Returns the gun instance by its name
-	 * 
-	 * @param name
-	 * @return
-	 */
-	public static Gun getGun(String name) {
-		for (Gun g : getAllGunTypes()) {
+	public static AngledArmor getAngledArmor(ItemStack is) {
+		int var = MaterialStorage.getVarient(is);
+		if (Main.angledArmor.containsKey(MaterialStorage.getMS(is.getType(), is.getDurability(), var)))
+			return Main.angledArmor.get(MaterialStorage.getMS(is.getType(), is.getDurability(), var));
+		return Main.angledArmor.get(MaterialStorage.getMS(is.getType(), -1, var));
+
+	}
+
+	public static ArmorObject getArmor(ItemStack is) {
+		int var = MaterialStorage.getVarient(is);
+		if (isArmor(is)) {
+			try {
+				AngledArmor ms = getAngledArmor(is);
+				return Main.armorRegister.get(ms.getBase());
+			} catch (Error | Exception e4) {
+			}
+		}
+		if (Main.armorRegister.containsKey(MaterialStorage.getMS(is.getType(), is.getDurability(), var)))
+			return Main.armorRegister.get(MaterialStorage.getMS(is.getType(), is.getDurability(), var));
+		return Main.armorRegister.get(MaterialStorage.getMS(is.getType(), -1, var));
+	}
+
+	public static boolean isMisc(ItemStack is) {
+		if (is == null)
+			return false;
+		int var = MaterialStorage.getVarient(is);
+		return (is != null
+				&& (Main.miscRegister.containsKey(MaterialStorage.getMS(is.getType(), is.getDurability(), var))
+						|| Main.miscRegister.containsKey(MaterialStorage.getMS(is.getType(), -1, var))));
+	}
+
+	public static ArmoryBaseObject getMisc(ItemStack is) {
+		int var = MaterialStorage.getVarient(is);
+		if (Main.miscRegister.containsKey(MaterialStorage.getMS(is.getType(), is.getDurability(), var)))
+			return Main.miscRegister.get(MaterialStorage.getMS(is.getType(), is.getDurability(), var));
+		return Main.miscRegister.get(MaterialStorage.getMS(is.getType(), -1, var));
+	}
+
+	public static Gun getGun(ItemStack is) {
+		int var = MaterialStorage.getVarient(is);
+		if (Main.gunRegister.containsKey(MaterialStorage.getMS(is.getType(), is.getDurability(), var)))
+			return Main.gunRegister.get(MaterialStorage.getMS(is.getType(), is.getDurability(), var));
+		return Main.gunRegister.get(MaterialStorage.getMS(is.getType(), -1, var));
+	}
+
+	public static boolean isGun(ItemStack is) {
+		if (is == null)
+			return false;
+		int var = MaterialStorage.getVarient(is);
+		return (is != null
+				&& (Main.gunRegister.containsKey(MaterialStorage.getMS(is.getType(), is.getDurability(), var))
+						|| Main.gunRegister.containsKey(MaterialStorage.getMS(is.getType(), -1, var))));
+	}
+
+	public static AttachmentBase getGunWithAttchments(ItemStack is) {
+		int var = MaterialStorage.getVarient(is);
+		if (Main.attachmentRegister.containsKey(MaterialStorage.getMS(is.getType(), is.getDurability(), var)))
+			return Main.attachmentRegister.get(MaterialStorage.getMS(is.getType(), is.getDurability(), var));
+		return Main.attachmentRegister.get(MaterialStorage.getMS(is.getType(), -1, var));
+	}
+
+	public static boolean isGunWithAttchments(ItemStack is) {
+		if (is == null)
+			return false;
+		int var = MaterialStorage.getVarient(is);
+		return (is != null
+				&& (Main.attachmentRegister.containsKey(MaterialStorage.getMS(is.getType(), is.getDurability(), var))
+						|| Main.attachmentRegister.containsKey(MaterialStorage.getMS(is.getType(), -1, var))));
+	}
+
+	public static Ammo getAmmo(ItemStack is) {
+		int var = MaterialStorage.getVarient(is);
+		@SuppressWarnings("deprecation")
+		String extraData = is.getType() == MultiVersionLookup.getSkull() ? ((SkullMeta) is.getItemMeta()).getOwner()
+				: null;
+		String temp = SkullHandler.getURL64(is);
+		if (Main.ammoRegister
+				.containsKey(MaterialStorage.getMS(is.getType(), is.getDurability(), var, extraData, temp)))
+			return Main.ammoRegister.get(MaterialStorage.getMS(is.getType(), is.getDurability(), var, extraData, temp));
+		return Main.ammoRegister.get(MaterialStorage.getMS(is.getType(), -1, var, extraData, temp));
+	}
+
+	public static boolean isAmmo(ItemStack is) {
+		if (is == null)
+			return false;
+		int var = MaterialStorage.getVarient(is);
+		@SuppressWarnings("deprecation")
+		String extraData = is.getType() == MultiVersionLookup.getSkull() ? ((SkullMeta) is.getItemMeta()).getOwner()
+				: null;
+		String temp = null;
+		try {
+			temp = SkullHandler.getURL64(is);
+		} catch (Error | Exception e4) {
+		}
+		boolean k = (is != null && (Main.ammoRegister
+				.containsKey(MaterialStorage.getMS(is.getType(), is.getDurability(), var, extraData, temp))
+				|| Main.ammoRegister.containsKey(MaterialStorage.getMS(is.getType(), -1, var, extraData, temp))));
+		return k;
+	}
+
+	public static boolean isIronSights(ItemStack is) {
+		if (is == null)
+			return false;
+		if (is != null && is.getType() == IronSightsToggleItem.getMat()
+				&& is.getDurability() == IronSightsToggleItem.getData())
+			return true;
+		return false;
+	}
+
+	public static Gun getGunByName(String name) {
+		for (Gun g : Main.gunRegister.values()) {
 			if (g.getName().equals(name))
 				return g;
 		}
 		return null;
 	}
 
-	/**
-	 * Returns an itemstack instance of an ammo type by its material and data.
-	 * 
-	 * @param mat
-	 * @param data
-	 * @return
-	 */
-	public static ItemStack getAmmoItemStack(Material mat, int data) {
-		return getAmmoItemStack(mat,data,0);
-	}
-	/**
-	 * Returns an itemstack instance of an ammo type by its material and data.
-	 * 
-	 * @param mat
-	 * @param data
-	 * @param varient The varient of the gun, if one exists
-	 * @return
-	 */
-	public static ItemStack getAmmoItemStack(Material mat, int data,int varient) {
-		if (Main.ammoRegister.containsKey(MaterialStorage.getMS(mat, data,varient,null)))
-			return ItemFact.getAmmo(mat, data,null);
-		return null;
-	}
-	/**
-	 * Returns an itemstack instance of an ammo type by its material and data.
-	 * 
-	 * @param mat
-	 * @param data
-	 * @param varient The varient of the gun, if one exists
-	 * @param extraData The name of the skull
-	 * @return
-	 */
-	public static ItemStack getSkullAmmoItemStack(Material mat, int data,int varient, String extraData) {
-		if (Main.ammoRegister.containsKey(MaterialStorage.getMS(mat, data,varient,extraData)))
-			return ItemFact.getAmmo(mat, data,extraData);
-		return null;
+	public static void sendHotbarGunAmmoCount(Player p, Gun g, ItemStack usedItem, boolean reloading) {
+		sendHotbarGunAmmoCount(p, g, null, usedItem, reloading);
 	}
 
-	/**
-	 * Returns an itemstack instance of an ammo type by its name
-	 * 
-	 * @param name
-	 * @return
-	 */
-	public static ItemStack getAmmoItemStackByName(String name) {
-		return ItemFact.getAmmo(AmmoType.getAmmo(name));
+	public static void sendHotbarGunAmmoCount(Player p, Gun g, AttachmentBase attachmentBase, ItemStack usedItem,
+			boolean reloading) {
+		try {
+			String message = Main.S_HOTBAR_FORMAT;
+			int ammoamount = AmmoUtil.getAmmoAmount(p, g.getAmmoType());
+
+			if (Main.disableHotBarMessageOnOutOfAmmo && Main.disableHotBarMessageOnReload
+					&& Main.disableHotBarMessageOnShoot)
+				return;
+			if (reloading && Main.disableHotBarMessageOnReload)
+				return;
+			if (ammoamount <= 0 && Main.disableHotBarMessageOnOutOfAmmo)
+				return;
+			if (!reloading && ammoamount > 0 && Main.disableHotBarMessageOnShoot)
+				return;
+
+			if (message.contains("%name%"))
+				message = message.replace("%name%",
+						(attachmentBase != null ? attachmentBase.getDisplayName() : g.getDisplayName()));
+			if (message.contains("%amount%"))
+				message = message.replace("%amount%", ItemFact.getAmount(usedItem) + "");
+			if (message.contains("%max%"))
+				message = message.replace("%max%", g.getMaxBullets() + "");
+
+			if (message.contains("%state%"))
+				message = message.replace("%state%",
+						reloading ? Main.S_RELOADING_MESSAGE : ammoamount <= 0 ? Main.S_OUT_OF_AMMO : Main.S_MAX_FOUND);
+			if (message.contains("%total%"))
+				message = message.replace("%total%", "" + ammoamount);
+
+			// (attachmentBase != null ? attachmentBase.getDisplayName() :
+			// g.getDisplayName()) + " = "
+			// + ItemFact.getAmount(usedItem) + "/" + (g.getMaxBullets()) + "";
+			if (Main.unknownTranslationKeyFixer) {
+				message = ChatColor.stripColor(message);
+			} else {
+				message = ChatColor.translateAlternateColorCodes('&', message);
+			}
+			HotbarMessager.sendHotBarMessage(p, message);
+		} catch (Error | Exception e5) {
+		}
 	}
 
-	/**
-	 * Retrurns the itemstack instance of an ammo type
-	 * 
-	 * @param ammo
-	 * @return
-	 */
-	public static ItemStack getAmmoItemStack(Ammo ammo) {
-		return ItemFact.getAmmo(ammo);
+	public static int findSafeSpot(ItemStack newItem, boolean findHighest) {
+		return findSafeSpot(newItem.getType(), newItem.getDurability(), findHighest);
 	}
 
-	/**
-	 * Returns all ammo registered
-	 * 
-	 * @return
-	 */
-	public static Collection<Ammo> getAllAmmoTypes() {
-		return Main.ammoRegister.values();
+	public static int findSafeSpot(Material newItemtype, int startingData, boolean findHighest) {
+		int safeDurib = startingData;
+		for (MaterialStorage j : Main.ammoRegister.keySet())
+			if (j.getMat() == newItemtype && (j.getData() > safeDurib) == findHighest)
+				safeDurib = j.getData();
+		for (MaterialStorage j : Main.gunRegister.keySet())
+			if (j.getMat() == newItemtype && (j.getData() > safeDurib) == findHighest)
+				safeDurib = j.getData();
+		for (MaterialStorage j : Main.miscRegister.keySet())
+			if (j.getMat() == newItemtype && (j.getData() > safeDurib) == findHighest)
+				safeDurib = j.getData();
+		for (MaterialStorage j : Main.armorRegister.keySet())
+			if (j.getMat() == newItemtype && (j.getData() > safeDurib) == findHighest)
+				safeDurib = j.getData();
+		for (MaterialStorage j : Main.attachmentRegister.keySet())
+			if (j.getMat() == newItemtype && (j.getData() > safeDurib) == findHighest)
+				safeDurib = j.getData();
+		for (MaterialStorage j : Main.angledArmor.keySet())
+			if (j.getMat() == newItemtype && (j.getData() > safeDurib) == findHighest)
+				safeDurib = j.getData();
+		for (MaterialStorage j : Main.expansionPacks)
+			if (j.getMat() == newItemtype && (j.getData() > safeDurib) == findHighest)
+				safeDurib = j.getData();
+		return safeDurib;
 	}
 
-	/**
-	 * Returns all guns regisered
-	 * 
-	 * @return
-	 */
-	public static Collection<Gun> getAllGunTypes() {
-		return Main.gunRegister.values();
+	public static int findSafeSpotVariant(ItemStack newItem, boolean findHighest) {
+		return findSafeSpotVariant(newItem.getType(), newItem.getDurability(), findHighest);
 	}
 
-	/**
-	 * Creates and registers a new gun.
-	 * 
-	 * @param name
-	 *            of gun
-	 * @param m
-	 *            Material type
-	 * @param data
-	 *            durability int
-	 * @param type
-	 *            gun type
-	 * @param hasIronSights
-	 *            if the gun has ironsights
-	 * @param ammotype
-	 *            ammo type
-	 * @param acc
-	 *            default accuracy (normally 0.2)
-	 * @param swayMultiplier
-	 *            (normally 1)
-	 * @param maxBullets
-	 *            Maximum amount of bullets per reload
-	 * @param damage
-	 *            damage per bullet
-	 * @param gunDurability
-	 *            durability of gun (does not matter unless you have durability
-	 *            enabled)
-	 * @return The instance of the gun you created
-	 */
-	public static Gun createSimpleGun(String name, Material mat, int data, WeaponType type, boolean hasIronSights,
-			Ammo ammotype, double acc, int swayMultiplier, int maxBullets, float damage, int gunDurability,
-			double cost) {
-		return createSimpleGun(name, mat, data, type, hasIronSights, ammotype, acc, swayMultiplier, maxBullets, damage,
-				false, gunDurability, cost, WeaponSounds.GUN_MEDIUM);
+	public static int findSafeSpotVariant(Material newItemtype, int startingData, boolean findHighest) {
+		int safeDurib = 0;
+		for (MaterialStorage j : Main.ammoRegister.keySet())
+			if (j.getMat() == newItemtype && (j.getData() == startingData)
+					&& ((j.getVarient() > safeDurib) == findHighest))
+				safeDurib = j.getVarient();
+		for (MaterialStorage j : Main.gunRegister.keySet())
+			if (j.getMat() == newItemtype && (j.getData() == startingData)
+					&& ((j.getVarient() > safeDurib) == findHighest))
+				safeDurib = j.getVarient();
+		for (MaterialStorage j : Main.miscRegister.keySet())
+			if (j.getMat() == newItemtype && (j.getData() == startingData)
+					&& ((j.getVarient() > safeDurib) == findHighest))
+				safeDurib = j.getVarient();
+		for (MaterialStorage j : Main.armorRegister.keySet())
+			if (j.getMat() == newItemtype && (j.getData() == startingData)
+					&& ((j.getVarient() > safeDurib) == findHighest))
+				safeDurib = j.getVarient();
+		for (MaterialStorage j : Main.attachmentRegister.keySet())
+			if (j.getMat() == newItemtype && (j.getData() == startingData)
+					&& ((j.getVarient() > safeDurib) == findHighest))
+				safeDurib = j.getVarient();
+		for (MaterialStorage j : Main.angledArmor.keySet())
+			if (j.getMat() == newItemtype && (j.getData() == startingData)
+					&& ((j.getVarient() > safeDurib) == findHighest))
+				safeDurib = j.getVarient();
+		for (MaterialStorage j : Main.expansionPacks)
+			if (j.getMat() == newItemtype && (j.getData() == startingData)
+					&& ((j.getVarient() > safeDurib) == findHighest))
+				safeDurib = j.getVarient();
+		return safeDurib;
 	}
 
-	/**
-	 * Creates and registers a new gun.
-	 * 
-	 * @param name
-	 *            of gun
-	 * @param m
-	 *            Material type
-	 * @param data
-	 *            durability int
-	 * @param type
-	 *            gun type
-	 * @param hasIronSights
-	 *            if the gun has ironsights
-	 * @param ammotype
-	 *            ammo type
-	 * @param acc
-	 *            default accuracy (normally 0.2)
-	 * @param swayMultiplier
-	 *            (normally 1)
-	 * @param maxBullets
-	 *            Maximum amount of bullets per reload
-	 * @param damage
-	 *            damage per bullet
-	 * @param isAutomatic
-	 *            if the gun is automatic
-	 * @param gunDurability
-	 *            durability of gun (does not matter unless you have durability
-	 *            enabled)
-	 * @return The instance of the gun you created
-	 */
-	public static Gun createSimpleGun(String name, Material mat, int data, WeaponType type, boolean hasIronSights,
-			Ammo ammotype, double acc, int swayMultiplier, int maxBullets, float damage, boolean isAutomatic,
-			int gunDurability, double cost, WeaponSounds sound) {
-		return createSimpleGun(name, mat, data, 0, type, hasIronSights, ammotype, acc, swayMultiplier, maxBullets, damage, isAutomatic, gunDurability, cost, sound);
-	}
-	/**
-	 * Creates and registers a new gun.
-	 * 
-	 * @param name
-	 *            of gun
-	 * @param m
-	 *            Material type
-	 * @param data
-	 *            durability int
-	 * @param type
-	 *            gun type
-	 * @param hasIronSights
-	 *            if the gun has ironsights
-	 * @param ammotype
-	 *            ammo type
-	 * @param acc
-	 *            default accuracy (normally 0.2)
-	 * @param swayMultiplier
-	 *            (normally 1)
-	 * @param maxBullets
-	 *            Maximum amount of bullets per reload
-	 * @param damage
-	 *            damage per bullet
-	 * @param isAutomatic
-	 *            if the gun is automatic
-	 * @param gunDurability
-	 *            durability of gun (does not matter unless you have durability
-	 *            enabled)
-	 * @return The instance of the gun you created
-	 */
-	public static Gun createSimpleGun(String name, Material mat, int data, int varient, WeaponType type, boolean hasIronSights,
-			Ammo ammotype, double acc, int swayMultiplier, int maxBullets, float damage, boolean isAutomatic,
-			int gunDurability, double cost, WeaponSounds sound) {
-		MaterialStorage mm = MaterialStorage.getMS(mat, data,varient,null);
-		Gun g = new Gun(name, mm, type, hasIronSights, ammotype, acc, swayMultiplier, maxBullets, damage,
-				isAutomatic, gunDurability, sound, cost);
-		Main.gunRegister.put(mm, g);
-		return g;
+	public static int getMaxPages() {
+		return (Main.armorRegister.size() + Main.ammoRegister.size() + Main.miscRegister.size()
+				+ Main.gunRegister.size()) / (9 * 5);
 	}
 
-	/**
-	 * Returns if the item is a misc itemstack.
-	 * 
-	 * @param is
-	 * @return
-	 */
-	public boolean isMiscItem(ItemStack is) {
-		return (is != null
-				&& Main.miscRegister.containsKey(MaterialStorage.getMS(is.getType(), is.getDurability(),MaterialStorage.getVarient(is),null)));
+	public static boolean isOverLimitForPrimaryWeapons(Gun g, Player p) {
+		int count = 0;
+		for (ItemStack is : p.getInventory().getContents()) {
+			if (is != null && isGun(is)) {
+				Gun g2 = getGun(is);
+				if (g2.isPrimaryWeapon() == g.isPrimaryWeapon())
+					count++;
+			}
+		}
+		return count >= (g.isPrimaryWeapon() ? Main.primaryWeaponLimit : Main.secondaryWeaponLimit);
 	}
-
-	/**
-	 * Returns the base object for the item.
-	 * 
-	 * @param is
-	 * @return
-	 */
-	public ArmoryBaseObject getMiscItem(ItemStack is) {
-		return Main.miscRegister.get(MaterialStorage.getMS(is.getType(), is.getDurability(),MaterialStorage.getVarient(is),null));
-	}
-
-	/**
-	 * Returns the gun instance for the item.
-	 * 
-	 * @param is
-	 * @return
-	 */
-	public Gun getGun(ItemStack is) {
-		return Main.gunRegister.get(MaterialStorage.getMS(is.getType(), is.getDurability(),MaterialStorage.getVarient(is),null));
-	}
-
-	/**
-	 * Returns the ammo instance for the item.
-	 * 
-	 * @param is
-	 * @return
-	 */
-	public Ammo getAmmo(ItemStack is) {
-		return Main.ammoRegister.get(MaterialStorage.getMS(is.getType(), is.getDurability(),MaterialStorage.getVarient(is),null));
-	}
-	/**
-	 * Returns the ammo instance for the item.
-	 * 
-	 * @param is
-	 * @return
-	 */
-	@SuppressWarnings("deprecation")
-	public Ammo getSkullAmmo(ItemStack is) {
-		return Main.ammoRegister.get(MaterialStorage.getMS(is.getType(), is.getDurability(),MaterialStorage.getVarient(is),(((SkullMeta)is.getItemMeta()).getOwner())));
-	}
-
-	/**
-	 * Returns if the item is a gun itemstack.
-	 * 
-	 * @param is
-	 * @return
-	 */
-	public boolean isGun(ItemStack is) {
-		return (is != null
-				&& Main.gunRegister.containsKey(MaterialStorage.getMS(is.getType(), is.getDurability(),MaterialStorage.getVarient(is),null)));
-	}
-
-	/**
-	 * Returns if the item is a ammo itemstack.
-	 * 
-	 * @param is
-	 * @return
-	 */
-	public boolean isAmmo(ItemStack is) {
-		return (is != null
-				&& Main.ammoRegister.containsKey(MaterialStorage.getMS(is.getType(), is.getDurability(),MaterialStorage.getVarient(is),null)));
-	}
-
-	/**
-	 * Returns if the item is a IronSight itemstack. Useful for checking if the
-	 * player is aiming.
-	 * 
-	 * If this returns true, the gun is in the player's OFF hand.
-	 * 
-	 * @param is
-	 * @return
-	 */
-	public boolean isIronSight(ItemStack is) {
-		if (is != null && is.getType() == IronSightsToggleItem.getMat() && is.getDurability() == IronSightsToggleItem.getData())
-			return true;
-		return false;
-	}
-
 }
