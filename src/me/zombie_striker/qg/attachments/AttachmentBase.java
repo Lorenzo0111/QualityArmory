@@ -65,7 +65,7 @@ public class AttachmentBase implements Comparable<AttachmentBase>{
 	}
 
 	public void setNewSound(WeaponSounds newSound) {
-		setNewSound(newSound.getName());
+		setNewSound(newSound.getSoundName());
 	}
 
 	public void setNewSound(String newSound) {

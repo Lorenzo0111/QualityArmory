@@ -111,10 +111,10 @@ public class GrenadeBase implements InteractableMisc {
 	public void onLeftClick(Player thrower) {
 		if (grenadeHolder.containsKey(thrower)) {
 			thrower.sendMessage(Main.prefix + Main.S_GRENADE_PALREADYPULLPIN);
-			thrower.playSound(thrower.getLocation(), WeaponSounds.RELOAD_BULLET.getName(), 1, 1);
+			thrower.playSound(thrower.getLocation(), WeaponSounds.RELOAD_BULLET.getSoundName(), 1, 1);
 			return;
 		}
-		thrower.getWorld().playSound(thrower.getLocation(), WeaponSounds.RELOAD_MAG_IN.getName(), 2, 1);
+		thrower.getWorld().playSound(thrower.getLocation(), WeaponSounds.RELOAD_MAG_IN.getSoundName(), 2, 1);
 		final ThrowableHolder h = new ThrowableHolder(thrower.getUniqueId(), thrower);
 		h.setTimer(new BukkitRunnable() {
 			@Override
@@ -166,7 +166,7 @@ public class GrenadeBase implements InteractableMisc {
 	}
 
 	@Override
-	public void set18Supported(boolean b) {		
+	public void set18Supported(boolean b) {
 	}
 
 }

@@ -30,7 +30,7 @@ public RevolverCharger() {
 			
 			@Override
 			public void run() {try {
-				player.getWorld().playSound(player.getLocation(), WeaponSounds.RELOAD_BULLET.getName(), 1,
+				player.getWorld().playSound(player.getLocation(), WeaponSounds.RELOAD_BULLET.getSoundName(), 1,
 						0.75f);
 			}catch(Error|Exception e43) {}
 			}

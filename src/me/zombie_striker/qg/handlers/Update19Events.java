@@ -14,6 +14,7 @@ import org.bukkit.inventory.ItemStack;
 public class Update19Events implements Listener {
 
 	@EventHandler
+	@SuppressWarnings("deprecation")
 	public void onAnvil(PrepareAnvilEvent e) {
 		if (QualityArmory.isCustomItem(e.getResult())) {
 			ItemStack newi = e.getResult();

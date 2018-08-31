@@ -196,8 +196,7 @@ public class GunYMLLoader {
 							? f2.getDouble("particles.bullet_particleB")
 							: 1.0;
 
-					boolean addMuzzleSmoke = f2.contains("addMuzzleSmoke") ? f2.getBoolean("addMuzzleSmoke")
-							: false;
+					boolean addMuzzleSmoke = f2.contains("addMuzzleSmoke") ? f2.getBoolean("addMuzzleSmoke") : false;
 
 					try {
 						for (String lore : extraLore2) {
@@ -211,20 +210,20 @@ public class GunYMLLoader {
 					if (weatype.isGun()) {
 						boolean isAutomatic = f2.contains("isAutomatic") ? f2.getBoolean("isAutomatic") : false;
 
-						String sound = WeaponSounds.GUN_MEDIUM.getName();
+						String sound = WeaponSounds.GUN_MEDIUM.getSoundName();
 
 						if (f2.contains("weaponsounds")) {
 							sound = f2.getString("weaponsounds");
 						} else {
 
 							if (weatype == WeaponType.PISTOL || weatype == WeaponType.SMG)
-								sound = WeaponSounds.GUN_SMALL.getName();
+								sound = WeaponSounds.GUN_SMALL.getSoundName();
 							if (weatype == WeaponType.SHOTGUN || weatype == WeaponType.SNIPER)
-								sound = WeaponSounds.GUN_BIG.getName();
+								sound = WeaponSounds.GUN_BIG.getSoundName();
 							if (weatype == WeaponType.RPG)
-								sound = WeaponSounds.WARHEAD_LAUNCH.getName();
+								sound = WeaponSounds.WARHEAD_LAUNCH.getSoundName();
 							if (weatype == WeaponType.LAZER)
-								sound = WeaponSounds.LAZERSHOOT.getName();
+								sound = WeaponSounds.LAZERSHOOT.getSoundName();
 						}
 
 						Gun g = new Gun(name, ms, weatype, f2.getBoolean("enableIronSights"),
@@ -247,6 +246,15 @@ public class GunYMLLoader {
 								}
 							g.setGlow(c);
 						}
+
+						if (f2.contains("CustomProjectiles.projectileType")) {
+							g.setCustomProjectile(f2.getString("CustomProjectiles.projectileType"));
+							if (f2.contains("CustomProjectiles.explosionRadius"))
+								g.setExplosionRadius(f2.getDouble("CustomProjectiles.explosionRadius"));
+							if (f2.contains("CustomProjectiles.Velocity"))
+								g.setRealtimeVelocity(f2.getDouble("CustomProjectiles.Velocity"));
+						}
+
 						if (f2.contains("headshotMultiplier"))
 							g.setHeadshotMultiplier(f2.getDouble("headshotMultiplier"));
 						if (f2.contains("unlimitedAmmo"))
@@ -280,6 +288,7 @@ public class GunYMLLoader {
 									: Main.bulletTrail);
 							g.setParticles(particle, partr, partg, partb);
 						} catch (Error | Exception er5) {
+							er5.printStackTrace();
 						}
 					}
 
@@ -287,8 +296,9 @@ public class GunYMLLoader {
 			}
 		} catch (Exception e) {
 		}
-		
+
 	}
+
 	public static void loadGuns(Main main) {
 		for (File f : new File(main.getDataFolder(), "newGuns").listFiles()) {
 			loadGuns(main, f);

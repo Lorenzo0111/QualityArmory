@@ -38,7 +38,7 @@ public PumpactionCharger() {
 					 * 1.4f); player.getWorld().playSound(player.getLocation(),
 					 * Sound.BLOCK_SAND_BREAK, 8, 1.4f);
 					 */
-					player.getWorld().playSound(player.getLocation(), WeaponSounds.RELOAD_BULLET.getName(), 1, 1f);
+					player.getWorld().playSound(player.getLocation(), WeaponSounds.RELOAD_BULLET.getSoundName(), 1, 1f);
 				} catch (Error e) {
 					try {
 					player.getWorld().playSound(player.getLocation(), Sound.valueOf("CLICK"), 8, 1.4f);
@@ -51,7 +51,7 @@ public PumpactionCharger() {
 			@Override
 			public void run() {
 				try {
-					player.getWorld().playSound(player.getLocation(), WeaponSounds.RELOAD_BOLT.getName(), 1,
+					player.getWorld().playSound(player.getLocation(), WeaponSounds.RELOAD_BOLT.getSoundName(), 1,
 							1f);/*
 								 * player.getWorld().playSound(player.getLocation(), Sound.BLOCK_SAND_BREAK, 8,
 								 * 1.4f); player.getWorld().playSound(player.getLocation(),

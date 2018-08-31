@@ -65,6 +65,18 @@ public class GunYML extends ArmoryYML {
 		return this;
 	}
 
+	public GunYML setCustomProjectileExplosionRadius(double radius) {
+		set(false, "CustomProjectiles.explosionRadius", radius);
+		return this;
+	}
+	public GunYML setCustomProjectile(String customProjectle) {
+		set(false, "CustomProjectiles.projectileType", customProjectle);
+		return this;
+	}
+	public GunYML setCustomProjectileVelocity(double velocity) {
+		set(false, "CustomProjectiles.Velocity", velocity);
+		return this;
+	}
 	@Override
 	public GunYML setInvalid(boolean invalid) {
 		set(false, "invalid", invalid);
@@ -185,15 +197,19 @@ public class GunYML extends ArmoryYML {
 		return this;
 	}
 
+	public GunYML setParticle(String particle) {
+		set(false,"particles.bullet_particle", particle);
+		return this;
+	}
 	public GunYML setParticle(double r, double g, double b) {
 		return setParticle("REDSTONE", r, g, b);
 	}
 
 	public GunYML setParticle(String particle, double r, double g, double b) {
-		setNoOverride("particles.bullet_particle", particle);
-		setNoOverride("particles.bullet_particleR", r);
-		setNoOverride("particles.bullet_particleG", g);
-		setNoOverride("particles.bullet_particleB", b);
+		set(false,"particles.bullet_particle", particle);
+		set(false,"particles.bullet_particleR", r);
+		set(false,"particles.bullet_particleG", g);
+		set(false,"particles.bullet_particleB", b);
 		return this;
 	}
 

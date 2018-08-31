@@ -1,6 +1,8 @@
 package me.zombie_striker.qg.handlers;
 
 import org.bukkit.Location;
+import org.bukkit.entity.Damageable;
+import org.bukkit.entity.Entity;
 
 
 public class ExplosionHandler {
@@ -25,5 +27,14 @@ public class ExplosionHandler {
 		 * origin.getBlock().getDrops()) origin.getWorld().dropItem(origin, drop);
 		 * origin.getBlock().breakNaturally(); } } } }
 		 */
+	}
+	
+	public static void handleAOEExplosion(Entity shooter, Location loc, double damage, double radius) {
+		for(Entity e : loc.getWorld().getNearbyEntities(loc, radius, radius, radius)) {
+			if(e instanceof Damageable) {
+				Damageable d = (Damageable) e;
+				d.damage(damage*radius/e.getLocation().distanceSquared(loc), shooter);
+			}
+		}
 	}
 }

@@ -9,6 +9,7 @@ public class ReloadingManager {
 	public static String PUMPACTIONRELOAD = ("PumpActionReload");
 
 	public static HashMap<String, ReloadingHandler> handlers = new HashMap<>();
+	
 
 	public static void add(ReloadingHandler c) {
 		handlers.put(c.getName(), c);

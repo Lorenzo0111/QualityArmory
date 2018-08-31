@@ -9,11 +9,15 @@ public class ChargingManager {
 	public static String REVOLVER = ("Revolver");
 	public static String PUMPACTION = ("PumpAction");
 	public static String BREAKACTION = ("BreakAction");
-	public static String RPG = ("SingleRPG");
-	public static String MININUKELAUNCHER = ("MininukeLauncher");
-	public static String HOMINGRPG = ("HomingRPG");
 	public static String BURSTFIRE = ("BurstFire");
 	public static String PUSHBACK = "PushBackCharger";
+	public static String REQUIREAIM = "RequireAimCharger";
+	
+	//DEPRECATED
+	public static String LEGACY_RPG = ("SingleRPG");
+	public static String LEGACY_MININUKELAUNCHER = ("MininukeLauncher");
+	public static String LEGACY_HOMINGRPG = ("HomingRPG");
+	
 
 	public static HashMap<String, ChargingHandler> handlers = new HashMap<>();
 

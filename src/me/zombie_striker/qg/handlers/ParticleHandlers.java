@@ -21,85 +21,74 @@ public class ParticleHandlers {
 		is13 = ReflectionUtilREMOVELATEER.isVersionHigherThan(1, 13);
 	}
 
+	public static void spawnExplosion(Location loc) {
+		try {
+			loc.getWorld().spawnParticle(Particle.EXPLOSION_HUGE, loc, 1);
+		} catch (Error | Exception e4) {
+		}
+		// TODO: Do lights n stuff
+		try {
+			if (Bukkit.getPluginManager().getPlugin("LightAPI") != null) {
+				final Location loc2 = loc;
+				LightAPI.createLight(loc, 15, false);
+				for (ChunkInfo c : LightAPI.collectChunks(loc)) {
+					LightAPI.updateChunk(c);
+				}
+				new BukkitRunnable() {
+
+					@Override
+					public void run() {
+						LightAPI.deleteLight(loc2, false);
+						for (ChunkInfo c : LightAPI.collectChunks(loc2)) {
+							LightAPI.updateChunk(c);
+						}
+					}
+				}.runTaskLater(Main.getInstance(), 10);
+			}
+		} catch (Error | Exception e5) {
+		}
+	}
+
 	public static void spawnMushroomCloud(Location loc) {
 		try {
 			for (double d = 0; d < 2 * Math.PI; d += Math.PI / 48) {
 				double radius = 2;
 
-				spawnParticle(1.0,1.0,1.0, new Location(loc.getWorld(), loc.getX() + (Math.sin(d) * radius), loc.getY() ,
-						loc.getZ() + (Math.cos(d) * radius)));
+				spawnParticle(1.0, 1.0, 1.0, new Location(loc.getWorld(), loc.getX() + (Math.sin(d) * radius),
+						loc.getY(), loc.getZ() + (Math.cos(d) * radius)));
 				radius = 1.8;
-				spawnParticle(1.0,0.0,0.0, new Location(loc.getWorld(), loc.getX() + (Math.sin(d) * radius), loc.getY() + 0.5,
-						loc.getZ() + (Math.cos(d) * radius)));
+				spawnParticle(1.0, 0.0, 0.0, new Location(loc.getWorld(), loc.getX() + (Math.sin(d) * radius),
+						loc.getY() + 0.5, loc.getZ() + (Math.cos(d) * radius)));
 				radius = 1.6;
-				spawnParticle(1.0,0.2,0.0, new Location(loc.getWorld(), loc.getX() + (Math.sin(d) * radius), loc.getY() + 1,
-						loc.getZ() + (Math.cos(d) * radius)));
+				spawnParticle(1.0, 0.2, 0.0, new Location(loc.getWorld(), loc.getX() + (Math.sin(d) * radius),
+						loc.getY() + 1, loc.getZ() + (Math.cos(d) * radius)));
 				radius = 1.3;
-				spawnParticle(1.0,0.2,0.0, new Location(loc.getWorld(), loc.getX() + (Math.sin(d) * radius), loc.getY() + 1.5,
-						loc.getZ() + (Math.cos(d) * radius)));
+				spawnParticle(1.0, 0.2, 0.0, new Location(loc.getWorld(), loc.getX() + (Math.sin(d) * radius),
+						loc.getY() + 1.5, loc.getZ() + (Math.cos(d) * radius)));
 				radius = 1.1;
-				spawnParticle(1.0,0.5,0.0, new Location(loc.getWorld(), loc.getX() + (Math.sin(d) * radius), loc.getY() + 2,
-						loc.getZ() + (Math.cos(d) * radius)));
+				spawnParticle(1.0, 0.5, 0.0, new Location(loc.getWorld(), loc.getX() + (Math.sin(d) * radius),
+						loc.getY() + 2, loc.getZ() + (Math.cos(d) * radius)));
 				radius = 1;
-				spawnParticle(1.0,0.5,0.0, new Location(loc.getWorld(), loc.getX() + (Math.sin(d) * radius), loc.getY() + 2.5,
-						loc.getZ() + (Math.cos(d) * radius)));
+				spawnParticle(1.0, 0.5, 0.0, new Location(loc.getWorld(), loc.getX() + (Math.sin(d) * radius),
+						loc.getY() + 2.5, loc.getZ() + (Math.cos(d) * radius)));
 				radius = 3;
-				spawnParticle(1.0,0.5,0.0, new Location(loc.getWorld(), loc.getX() + (Math.sin(d) * radius), loc.getY() + 3,
-						loc.getZ() + (Math.cos(d) * radius)));
+				spawnParticle(1.0, 0.5, 0.0, new Location(loc.getWorld(), loc.getX() + (Math.sin(d) * radius),
+						loc.getY() + 3, loc.getZ() + (Math.cos(d) * radius)));
 				radius = 2.8;
-				spawnParticle(1.0,0.5,0.0, new Location(loc.getWorld(), loc.getX() + (Math.sin(d) * radius), loc.getY() + 3.5,
-						loc.getZ() + (Math.cos(d) * radius)));
+				spawnParticle(1.0, 0.5, 0.0, new Location(loc.getWorld(), loc.getX() + (Math.sin(d) * radius),
+						loc.getY() + 3.5, loc.getZ() + (Math.cos(d) * radius)));
 				radius = 2.5;
-				spawnParticle(1.0,1.0,1.0, new Location(loc.getWorld(), loc.getX() + (Math.sin(d) * radius), loc.getY() + 4,
-						loc.getZ() + (Math.cos(d) * radius)));
+				spawnParticle(1.0, 1.0, 1.0, new Location(loc.getWorld(), loc.getX() + (Math.sin(d) * radius),
+						loc.getY() + 4, loc.getZ() + (Math.cos(d) * radius)));
 				radius = 2;
-				spawnParticle(1.0,1.0,1.0, new Location(loc.getWorld(), loc.getX() + (Math.sin(d) * radius), loc.getY() + 4.5,
-						loc.getZ() + (Math.cos(d) * radius)));
+				spawnParticle(1.0, 1.0, 1.0, new Location(loc.getWorld(), loc.getX() + (Math.sin(d) * radius),
+						loc.getY() + 4.5, loc.getZ() + (Math.cos(d) * radius)));
 				radius = 1.5;
-				spawnParticle(1.0,0.2,0.0, new Location(loc.getWorld(), loc.getX() + (Math.sin(d) * radius), loc.getY() + 5,
-						loc.getZ() + (Math.cos(d) * radius)));
+				spawnParticle(1.0, 0.2, 0.0, new Location(loc.getWorld(), loc.getX() + (Math.sin(d) * radius),
+						loc.getY() + 5, loc.getZ() + (Math.cos(d) * radius)));
 				radius = 0.8;
-				spawnParticle(1.0,0.5,0.0, new Location(loc.getWorld(), loc.getX() + (Math.sin(d) * radius), loc.getY() + 5.5,
-						loc.getZ() + (Math.cos(d) * radius)));
-
-				/*loc.getWorld().spawnParticle(Particle.REDSTONE, loc.getX() + (Math.sin(d) * radius), loc.getY(),
-						loc.getZ() + (Math.cos(d) * radius), 1, 1.0, 1.0, 1.0, 1);
-				radius = 1.8;
-				loc.getWorld().spawnParticle(Particle.REDSTONE, loc.getX() + (Math.sin(d) * radius), loc.getY() + 0.5,
-						loc.getZ() + (Math.cos(d) * radius), 1, 1.0, 0.0, 0.0, 1);
-				radius = 1.6;
-				loc.getWorld().spawnParticle(Particle.REDSTONE, loc.getX() + (Math.sin(d) * radius), loc.getY() + 1,
-						loc.getZ() + (Math.cos(d) * radius), 1, 1.0, 0.2, 0.0, 1);
-				radius = 1.3;
-				loc.getWorld().spawnParticle(Particle.REDSTONE, loc.getX() + (Math.sin(d) * radius), loc.getY() + 1.5,
-						loc.getZ() + (Math.cos(d) * radius), 1, 1.0, 0.2, 0.0, 1);
-				radius = 1.1;
-				loc.getWorld().spawnParticle(Particle.REDSTONE, loc.getX() + (Math.sin(d) * radius), loc.getY() + 2,
-						loc.getZ() + (Math.cos(d) * radius), 1, 1.0, 0.5, 0.0, 1);
-				radius = 1.1;
-				loc.getWorld().spawnParticle(Particle.REDSTONE, loc.getX() + (Math.sin(d) * radius), loc.getY() + 2.5,
-						loc.getZ() + (Math.cos(d) * radius), 1, 1.0, 0.5, 0.0, 1);
-				radius = 1;
-				loc.getWorld().spawnParticle(Particle.REDSTONE, loc.getX() + (Math.sin(d) * radius), loc.getY() + 3,
-						loc.getZ() + (Math.cos(d) * radius), 1, 1.0, 0.5, 0.0, 1);
-				radius = 1;
-				loc.getWorld().spawnParticle(Particle.REDSTONE, loc.getX() + (Math.sin(d) * radius), loc.getY() + 3.5,
-						loc.getZ() + (Math.cos(d) * radius), 1, 1.0, 0.5, 0.0, 1);
-				radius = 3;
-				loc.getWorld().spawnParticle(Particle.REDSTONE, loc.getX() + (Math.sin(d) * radius), loc.getY() + 4,
-						loc.getZ() + (Math.cos(d) * radius), 1, 1.0, 1.0, 1.0, 1);
-				radius = 2.8;
-				loc.getWorld().spawnParticle(Particle.REDSTONE, loc.getX() + (Math.sin(d) * radius), loc.getY() + 4.5,
-						loc.getZ() + (Math.cos(d) * radius), 1, 1.0, 1.0, 1.0, 1);
-				radius = 2.5;
-				loc.getWorld().spawnParticle(Particle.REDSTONE, loc.getX() + (Math.sin(d) * radius), loc.getY() + 5,
-						loc.getZ() + (Math.cos(d) * radius), 1, 1.0, 0.2, 0.0, 1);
-				radius = 2;
-				loc.getWorld().spawnParticle(Particle.REDSTONE, loc.getX() + (Math.sin(d) * radius), loc.getY() + 5.5,
-						loc.getZ() + (Math.cos(d) * radius), 1, 1.0, 0.5, 0.0, 1);
-				radius = 1.5;
-				loc.getWorld().spawnParticle(Particle.REDSTONE, loc.getX() + (Math.sin(d) * radius), loc.getY() + 6,
-						loc.getZ() + (Math.cos(d) * radius), 1, 1.0, 0.5, 0.0, 1);*/
+				spawnParticle(1.0, 0.5, 0.0, new Location(loc.getWorld(), loc.getX() + (Math.sin(d) * radius),
+						loc.getY() + 5.5, loc.getZ() + (Math.cos(d) * radius)));
 			}
 		} catch (Error | Exception e4) {
 		}
@@ -128,6 +117,7 @@ public class ParticleHandlers {
 
 	public static void spawnGunParticles(Gun g, Location loc) {
 		try {
+			if (g.getParticle() != null)
 			if (g.getParticle() == Particle.REDSTONE) {
 				spawnParticle(g.getParticleR(), g.getParticleG(), g.getParticleB(), loc);
 			} else {
@@ -144,7 +134,7 @@ public class ParticleHandlers {
 						Color.fromRGB((int) r * 255, (int) g * 255, (int) b * 255), 1);
 				loc.getWorld().spawnParticle(Particle.REDSTONE, loc.getX(), loc.getY(), loc.getZ(), 0, 0, 0, 0, dust);
 			} else {
-				loc.getWorld().spawnParticle(Particle.REDSTONE, loc.getX(), loc.getY(), loc.getZ(), 0, r, g, b, 1);
+				loc.getWorld().spawnParticle(Particle.REDSTONE, loc.getX(), loc.getY(), loc.getZ(), 0, r, g, b, 0);
 			}
 		} catch (Error | Exception e45) {
 			e45.printStackTrace();

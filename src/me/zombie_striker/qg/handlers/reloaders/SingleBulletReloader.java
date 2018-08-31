@@ -39,7 +39,7 @@ public class SingleBulletReloader implements ReloadingHandler {
 						 * 5, 4f); player.getWorld().playSound(player.getLocation(),
 						 * Sound.BLOCK_SAND_BREAK, 8, 1.4f);
 						 */
-						player.getWorld().playSound(player.getLocation(), WeaponSounds.RELOAD_BULLET.getName(), 1, 1f);
+						player.getWorld().playSound(player.getLocation(), WeaponSounds.RELOAD_BULLET.getSoundName(), 1, 1f);
 					} catch (Error e) {
 						try {
 							player.getWorld().playSound(player.getLocation(), Sound.valueOf("PISTON_EXTEND"), 5, 4f);

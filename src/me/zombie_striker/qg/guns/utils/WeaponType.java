@@ -1,7 +1,7 @@
 package me.zombie_striker.qg.guns.utils;
 
 public enum WeaponType {
-	PISTOL(true), SMG(true), RPG(true), RIFLE(true), SHOTGUN(true), SNIPER(true), GRENADES(false), SMOKE_GRENADES(
+	PISTOL(true), SMG(true), RPG(true), RIFLE(true), SHOTGUN(true), SNIPER(true), BIG_GUN(true), GRENADES(false), SMOKE_GRENADES(
 			false), FLASHBANGS(false), INCENDARY_GRENADES(false), MINES(
 					false), MEELEE(false), MISC(false), AMMO(false), KEVLAR(false), MEDKIT(false), LAZER(true);
 

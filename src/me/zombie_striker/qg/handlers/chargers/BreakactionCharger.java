@@ -33,14 +33,14 @@ public class BreakactionCharger implements ChargingHandler {
 		new BukkitRunnable() {
 			@Override
 			public void run() {
-				player.getWorld().playSound(player.getLocation(), WeaponSounds.RELOAD_BULLET.getName(), 1, 1f);
+				player.getWorld().playSound(player.getLocation(), WeaponSounds.RELOAD_BULLET.getSoundName(), 1, 1f);
 			}
 		}.runTaskLater(Main.getInstance(), 10);
 		new BukkitRunnable() {
 
 			@Override
 			public void run() {
-				player.getWorld().playSound(player.getLocation(), WeaponSounds.RELOAD_BULLET.getName(), 1, 1f);
+				player.getWorld().playSound(player.getLocation(), WeaponSounds.RELOAD_BULLET.getSoundName(), 1, 1f);
 			}
 		}.runTaskLater(Main.getInstance(), 15);
 		new BukkitRunnable() {

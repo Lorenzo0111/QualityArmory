@@ -7,6 +7,8 @@ import me.zombie_striker.qg.Main;
 import me.zombie_striker.qg.MaterialStorage;
 import me.zombie_striker.qg.ammo.*;
 import me.zombie_striker.qg.attachments.AttachmentBase;
+import me.zombie_striker.qg.guns.projectiles.ProjectileManager;
+import me.zombie_striker.qg.guns.projectiles.RealtimeCalculationProjectile;
 import me.zombie_striker.qg.guns.utils.GunUtil;
 import me.zombie_striker.qg.guns.utils.WeaponSounds;
 import me.zombie_striker.qg.guns.utils.WeaponType;
@@ -77,6 +79,10 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 	public ChatColor glowEffect = null;
 
 	public boolean unlimitedAmmo = false;
+	
+	RealtimeCalculationProjectile customProjectile = null;
+	double velocity = 2;
+	double explosionRadius = 10;
 
 	// This refers to the last time a gun was shot by a player, on a per-gun basis.
 	// Doing this should prevent players from fast-switching to get around
@@ -99,7 +105,7 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 
 	public Gun(String name, WeaponType type, boolean h, Ammo am, double acc, double swaymult, int maxBullets,
 			float damage, boolean isAutomatic, int durib, WeaponSounds ws, double cost, ItemStack[] ing) {
-		this(name, type, h, am, acc, swaymult, maxBullets, damage, isAutomatic, durib, ws.getName(), cost, ing);
+		this(name, type, h, am, acc, swaymult, maxBullets, damage, isAutomatic, durib, ws.getSoundName(), cost, ing);
 	}
 
 	public Gun(String name, WeaponType type, boolean h, Ammo am, double acc, double swaymult, int maxBullets,
@@ -131,7 +137,7 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 	public Gun(String name, MaterialStorage id, WeaponType type, boolean h, Ammo am, double acc, double swaymult,
 			int maxBullets, float damage, boolean isAutomatic, int durib, WeaponSounds ws, List<String> extralore,
 			String displayname, double cost, ItemStack[] ing) {
-		this(displayname, id, type, h, am, acc, swaymult, maxBullets, damage, isAutomatic, durib, ws.getName(),
+		this(displayname, id, type, h, am, acc, swaymult, maxBullets, damage, isAutomatic, durib, ws.getSoundName(),
 				extralore, displayname, cost, ing);
 	}
 
@@ -197,6 +203,27 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 	}
 	public boolean hasnightVision() {
 		return nightVisionOnScope;
+	}
+	public boolean usesCustomProjctiles() {
+		return customProjectile!=null;
+	}
+	public void setCustomProjectile(String key) {
+		this.customProjectile = ProjectileManager.getHandler(key);
+	}
+	public RealtimeCalculationProjectile getCustomProjectile() {
+		return customProjectile;
+	}
+	public void setRealtimeVelocity(double velocity) {
+		this.velocity = velocity;
+	}
+	public double getVelocityForRealtimeCalculations() {
+		return velocity;
+	}
+	public double getExplosionRadius() {
+		return explosionRadius;
+	}
+	public void setExplosionRadius(double d) {
+		this.explosionRadius = d;
 	}
 
 	public int getBulletsPerShot() {

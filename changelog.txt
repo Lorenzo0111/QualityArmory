@@ -1,3 +1,23 @@
+1.1.114
+	Added M79 "Thumper"
+	Added Minigun
+	Added Mk-19
+	Added AS-Val
+	Added 40MM round
+	Changed silencer sounds to reflect real-world silencers.
+	Added RequireAimCharger to make sure you are aiming with the gun before you can shoot (Perfect for implementing a 'safety' to the weapon)
+	Fixed model for 9mm
+	Reworked explosion round framework. Rounds can now use "Custom Projectiles" if velocity is needed to be calculated every tick. Good for if you need to have bullet speeds.
+	With custom projectiles comes the ability to modify the speed, explosion radius, and damage caused by explosions.
+	Made it so the headshot sound is customizable in the config
+	Reworked particle system to support different particles for guns.
+	Reworked RPGs so the particles are customizable
+	Added Confirmation message to shopping
+	[Unsupported] Added optional feature to add out of ammo message on the itemstack. Unless you specific NEED this, don't use it, as it could break guns.
+
+1.1.113
+	Fixed bug where the item in the main hand may be replaced with an axe if the player is gaining experience with a mending axe in the off hand.
+
 1.1.112
 	Revamped All Gun models and textures.
 	Revamped API to correspond to changes made in the core plugin

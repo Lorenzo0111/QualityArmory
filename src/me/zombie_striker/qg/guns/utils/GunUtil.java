@@ -38,8 +38,23 @@ public class GunUtil {
 
 	public static HashMap<UUID, BukkitTask> rapidfireshooters = new HashMap<>();
 
+	public static void shootHandler(Gun g, Player p) {
+		double sway = g.getSway() * AimManager.getSway(g, p.getUniqueId());
+		if (g.usesCustomProjctiles()) {
+			for (int i = 0; i < g.getBulletsPerShot(); i++) {
+				Vector go = p.getLocation().getDirection().normalize();
+				go.add(new Vector((Math.random() * 2 * sway) - sway, (Math.random() * 2 * sway) - sway,
+						(Math.random() * 2 * sway) - sway)).normalize();
+				Vector two = go.clone();//.multiply();
+				g.getCustomProjectile().spawn(g, p.getEyeLocation(), p, two);
+			}
+		} else {
+			shootInstantVector(g, p, sway, g.getDamage(), g.getBulletsPerShot(), g.getMaxDistance());
+		}
+	}
+
 	@SuppressWarnings("deprecation")
-	public static void shoot(Gun g, Player p, double sway, double damage, int shots, int range) {
+	public static void shootInstantVector(Gun g, Player p, double sway, double damage, int shots, int range) {
 		for (int i = 0; i < shots; i++) {
 			Location start = p.getEyeLocation().clone();
 			Vector go = p.getLocation().getDirection().normalize();
@@ -146,7 +161,7 @@ public class GunUtil {
 										Main.DEBUG("Headshot!");
 										if (Main.headshotPling) {
 											try {
-												p.playSound(p.getLocation(), MultiVersionLookup.getPling(), 2, 1);
+												p.playSound(p.getLocation(), Main.headshot_sound, 2, 1);
 												if (!Main.isVersionHigherThan(1, 9))
 													try {
 														p.playSound(p.getLocation(), Sound.valueOf("LAVA_POP"), 6, 1);
@@ -329,8 +344,7 @@ public class GunUtil {
 					: g.getChargingVal().getName());
 		}
 		if (regularshoot) {
-			GunUtil.shoot(g, player, acc * AimManager.getSway(g, player.getUniqueId()), g.getDamage(),
-					g.getBulletsPerShot(), g.getMaxDistance());
+			GunUtil.shootHandler(g, player);
 			playShoot(g, attachmentBase, player);
 		}
 		if (g.isAutomatic()) {
@@ -359,8 +373,7 @@ public class GunUtil {
 					}
 
 					if (regularshoot) {
-						GunUtil.shoot(g, player, acc * AimManager.getSway(g, player.getUniqueId()), g.getDamage(),
-								g.getBulletsPerShot(), g.getMaxDistance());
+						GunUtil.shootHandler(g, player);
 						playShoot(g, attachmentBase, player);
 					}
 
@@ -482,10 +495,10 @@ public class GunUtil {
 			return;
 		}
 		if (im.getLore() != null && im.getDisplayName().contains(Main.S_RELOADING_MESSAGE)) {
-			
+
 		} else {
 			try {
-				player.getWorld().playSound(player.getLocation(), WeaponSounds.RELOAD_MAG_OUT.getName(), 1, 1f);
+				player.getWorld().playSound(player.getLocation(), WeaponSounds.RELOAD_MAG_OUT.getSoundName(), 1, 1f);
 			} catch (Error e2) {
 				try {
 					player.getWorld().playSound(player.getLocation(), Sound.valueOf("CLICK"), 5, 1);
@@ -524,7 +537,7 @@ public class GunUtil {
 						 * Sound.BLOCK_LEVER_CLICK, 5, 1.4f);
 						 */
 
-						player.getWorld().playSound(player.getLocation(), WeaponSounds.RELOAD_MAG_IN.getName(), 1, 1f);
+						player.getWorld().playSound(player.getLocation(), WeaponSounds.RELOAD_MAG_IN.getSoundName(), 1, 1f);
 						if (!Main.isVersionHigherThan(1, 9)) {
 							try {
 								player.getWorld().playSound(player.getLocation(), Sound.valueOf("CLICK"), 5, 1);

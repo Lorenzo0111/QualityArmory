@@ -28,10 +28,10 @@ public class SmokeGrenades extends GrenadeBase {
 	public void onLeftClick(Player thrower) {
 		if (grenadeHolder.containsKey(thrower)) {
 			thrower.sendMessage(Main.prefix + Main.S_GRENADE_PALREADYPULLPIN);
-			thrower.playSound(thrower.getLocation(), WeaponSounds.RELOAD_BULLET.getName(), 1, 1);
+			thrower.playSound(thrower.getLocation(), WeaponSounds.RELOAD_BULLET.getSoundName(), 1, 1);
 			return;
 		}
-		thrower.getWorld().playSound(thrower.getLocation(), WeaponSounds.RELOAD_MAG_IN.getName(), 2, 1);
+		thrower.getWorld().playSound(thrower.getLocation(), WeaponSounds.RELOAD_MAG_IN.getSoundName(), 2, 1);
 		final ThrowableHolder h = new ThrowableHolder(thrower.getUniqueId(), thrower);
 		h.setTimer(new BukkitRunnable() {
 
@@ -43,7 +43,7 @@ public class SmokeGrenades extends GrenadeBase {
 					h.getHolder().getWorld().spawnParticle(org.bukkit.Particle.EXPLOSION_HUGE,
 							h.getHolder().getLocation(), 0);
 					if(k%2==0)
-					h.getHolder().getWorld().playSound(h.getHolder().getLocation(), WeaponSounds.HISS.getName(), 2f,
+					h.getHolder().getWorld().playSound(h.getHolder().getLocation(), WeaponSounds.HISS.getSoundName(), 2f,
 							1f);
 				} catch (Error e3) {
 					h.getHolder().getWorld().playEffect(h.getHolder().getLocation(), Effect.valueOf("CLOUD"), 0);

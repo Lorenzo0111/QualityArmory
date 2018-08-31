@@ -55,6 +55,7 @@ automaticallyReloadGunWhenOutOfAmmo: false
 allowGunReload: true
 
 #Modifiers for QA systems
+gravityConstantForDropoffCalculations: 0.05
 generalModifiers:
   sway:
     Run: 2.0
@@ -78,6 +79,7 @@ SecondsTillRPIsSent: 0.0
 Enable_Headshot_Instantkill: true
 Enable_Headshot_Notification_Sound: true
 Enable_Headshot_Sounds: true
+Headshot_Notification_Sound: 'entity.experience_orb.pickup'
 
 
 #This is used for calculating the bullet step. 
@@ -104,6 +106,9 @@ overrideAnvil: false
 
 #UNSUPPORTED: Enable bullet counts for guns.
 enableVisibleBulletCounts: false
+
+#UNSUPPORTED: shows the out of ammo message on the item
+showOutOfAmmoOnItem: false
 
 
 #EXPERIMENTAL: Explosion damage

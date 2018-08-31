@@ -15,7 +15,6 @@ import me.zombie_striker.qg.QualityArmory;
 import me.zombie_striker.qg.attachments.AttachmentBase;
 import me.zombie_striker.qg.guns.Gun;
 import me.zombie_striker.qg.guns.utils.GunUtil;
-import me.zombie_striker.qg.handlers.AimManager;
 
 public class BurstFireCharger implements ChargingHandler {
 
@@ -32,21 +31,10 @@ public class BurstFireCharger implements ChargingHandler {
 
 	@Override
 	public boolean shoot(final Gun g, final Player player, final ItemStack stack) {
-		GunUtil.shoot(g, player, g.getSway() * AimManager.getSway(g, player.getUniqueId()), g.getDamage(), 1,
-				g.getMaxDistance());
+		GunUtil.shootHandler(g, player);
 		final AttachmentBase attach = QualityArmory.getGunWithAttchments(stack);
 		GunUtil.playShoot(g, attach, player);
-		/*
-		 * for (int j = 1; j < Math.min(ItemFact.getAmount(stack),
-		 * g.getBulletsPerShot()); j++) new BukkitRunnable() {
-		 * 
-		 * @Override public void run() { GunUtil.shoot(g,player, g.getSway() *
-		 * AimManager.getSway(g, player.getUniqueId()), g.getDamage(), 1, 200);
-		 * GunUtil.playShoot(g, player);
-		 * 
-		 * } }.runTaskLater(Main.getInstance(), (long) ((int) ((4.0 /
-		 * g.getBulletsPerShot()) * (j + 1))));
-		 */
+		
 		shooters.put(player.getUniqueId(), new BukkitRunnable() {
 			int slotUsed = player.getInventory().getHeldItemSlot();
 			@SuppressWarnings("deprecation")
@@ -65,8 +53,7 @@ public class BurstFireCharger implements ChargingHandler {
 					return;
 				}
 
-				GunUtil.shoot(g, player, g.getSway() * AimManager.getSway(g, player.getUniqueId()), g.getDamage(), 1,
-						g.getMaxDistance());
+				GunUtil.shootHandler(g, player);
 				GunUtil.playShoot(g, attach, player);
 				shotCurrently++;
 				amount--;

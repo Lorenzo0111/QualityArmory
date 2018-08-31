@@ -135,7 +135,10 @@ public class QualityArmory {
 		return null;
 	}
 
+	@SuppressWarnings("deprecation")
 	public static boolean isCustomItem(ItemStack is, int dataOffset) {
+		if (is == null)
+			return false;
 		ItemStack itemstack = is.clone();
 		itemstack.setDurability((short) (is.getDurability() + dataOffset));
 		return isArmor(itemstack) || isGunWithAttchments(itemstack) || isAmmo(itemstack) || isMisc(itemstack)
@@ -143,6 +146,7 @@ public class QualityArmory {
 				|| Main.expansionPacks.contains(MaterialStorage.getMS(is));
 	}
 
+	@SuppressWarnings("deprecation")
 	public static boolean isArmor(ItemStack is) {
 		if (is == null)
 			return false;
@@ -154,6 +158,7 @@ public class QualityArmory {
 						|| Main.armorRegister.containsKey(MaterialStorage.getMS(is.getType(), -1, var))));
 	}
 
+	@SuppressWarnings("deprecation")
 	public static boolean isAngledArmor(ItemStack is) {
 		if (is == null)
 			return false;
@@ -163,6 +168,7 @@ public class QualityArmory {
 		return false;
 	}
 
+	@SuppressWarnings("deprecation")
 	public static AngledArmor getAngledArmor(ItemStack is) {
 		int var = MaterialStorage.getVarient(is);
 		if (Main.angledArmor.containsKey(MaterialStorage.getMS(is.getType(), is.getDurability(), var)))
@@ -171,6 +177,7 @@ public class QualityArmory {
 
 	}
 
+	@SuppressWarnings("deprecation")
 	public static ArmorObject getArmor(ItemStack is) {
 		int var = MaterialStorage.getVarient(is);
 		if (isArmor(is)) {
@@ -185,6 +192,7 @@ public class QualityArmory {
 		return Main.armorRegister.get(MaterialStorage.getMS(is.getType(), -1, var));
 	}
 
+	@SuppressWarnings("deprecation")
 	public static boolean isMisc(ItemStack is) {
 		if (is == null)
 			return false;
@@ -194,6 +202,7 @@ public class QualityArmory {
 						|| Main.miscRegister.containsKey(MaterialStorage.getMS(is.getType(), -1, var))));
 	}
 
+	@SuppressWarnings("deprecation")
 	public static ArmoryBaseObject getMisc(ItemStack is) {
 		int var = MaterialStorage.getVarient(is);
 		if (Main.miscRegister.containsKey(MaterialStorage.getMS(is.getType(), is.getDurability(), var)))
@@ -201,6 +210,7 @@ public class QualityArmory {
 		return Main.miscRegister.get(MaterialStorage.getMS(is.getType(), -1, var));
 	}
 
+	@SuppressWarnings("deprecation")
 	public static Gun getGun(ItemStack is) {
 		int var = MaterialStorage.getVarient(is);
 		if (Main.gunRegister.containsKey(MaterialStorage.getMS(is.getType(), is.getDurability(), var)))
@@ -208,6 +218,7 @@ public class QualityArmory {
 		return Main.gunRegister.get(MaterialStorage.getMS(is.getType(), -1, var));
 	}
 
+	@SuppressWarnings("deprecation")
 	public static boolean isGun(ItemStack is) {
 		if (is == null)
 			return false;
@@ -217,6 +228,8 @@ public class QualityArmory {
 						|| Main.gunRegister.containsKey(MaterialStorage.getMS(is.getType(), -1, var))));
 	}
 
+	@SuppressWarnings("deprecation")
+
 	public static AttachmentBase getGunWithAttchments(ItemStack is) {
 		int var = MaterialStorage.getVarient(is);
 		if (Main.attachmentRegister.containsKey(MaterialStorage.getMS(is.getType(), is.getDurability(), var)))
@@ -224,6 +237,7 @@ public class QualityArmory {
 		return Main.attachmentRegister.get(MaterialStorage.getMS(is.getType(), -1, var));
 	}
 
+	@SuppressWarnings("deprecation")
 	public static boolean isGunWithAttchments(ItemStack is) {
 		if (is == null)
 			return false;
@@ -233,9 +247,9 @@ public class QualityArmory {
 						|| Main.attachmentRegister.containsKey(MaterialStorage.getMS(is.getType(), -1, var))));
 	}
 
+	@SuppressWarnings("deprecation")
 	public static Ammo getAmmo(ItemStack is) {
 		int var = MaterialStorage.getVarient(is);
-		@SuppressWarnings("deprecation")
 		String extraData = is.getType() == MultiVersionLookup.getSkull() ? ((SkullMeta) is.getItemMeta()).getOwner()
 				: null;
 		String temp = SkullHandler.getURL64(is);
@@ -245,11 +259,11 @@ public class QualityArmory {
 		return Main.ammoRegister.get(MaterialStorage.getMS(is.getType(), -1, var, extraData, temp));
 	}
 
+	@SuppressWarnings("deprecation")
 	public static boolean isAmmo(ItemStack is) {
 		if (is == null)
 			return false;
 		int var = MaterialStorage.getVarient(is);
-		@SuppressWarnings("deprecation")
 		String extraData = is.getType() == MultiVersionLookup.getSkull() ? ((SkullMeta) is.getItemMeta()).getOwner()
 				: null;
 		String temp = null;
@@ -263,6 +277,7 @@ public class QualityArmory {
 		return k;
 	}
 
+	@SuppressWarnings("deprecation")
 	public static boolean isIronSights(ItemStack is) {
 		if (is == null)
 			return false;
@@ -327,6 +342,7 @@ public class QualityArmory {
 		}
 	}
 
+	@SuppressWarnings("deprecation")
 	public static int findSafeSpot(ItemStack newItem, boolean findHighest) {
 		return findSafeSpot(newItem.getType(), newItem.getDurability(), findHighest);
 	}
@@ -357,6 +373,7 @@ public class QualityArmory {
 		return safeDurib;
 	}
 
+	@SuppressWarnings("deprecation")
 	public static int findSafeSpotVariant(ItemStack newItem, boolean findHighest) {
 		return findSafeSpotVariant(newItem.getType(), newItem.getDurability(), findHighest);
 	}

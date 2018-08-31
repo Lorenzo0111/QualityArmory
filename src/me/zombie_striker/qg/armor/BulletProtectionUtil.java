@@ -11,6 +11,7 @@ import me.zombie_striker.qg.MaterialStorage;
 
 public class BulletProtectionUtil {
 
+	@SuppressWarnings("deprecation")
 	public static boolean stoppedBullet(Player p, Location bullet, Vector velocity) {
 		if (p.getInventory().getHelmet() != null) {
 			for (Entry<MaterialStorage, ArmorObject> entry : Main.armorRegister.entrySet()) {

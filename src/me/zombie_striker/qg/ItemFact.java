@@ -5,9 +5,11 @@ import java.util.List;
 import java.util.UUID;
 
 import org.bukkit.*;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import me.zombie_striker.qg.ammo.Ammo;
 import me.zombie_striker.qg.armor.ArmorObject;
@@ -76,6 +78,29 @@ public class ItemFact {
 		return is;
 	}
 
+	public static void addOutOfAmmoToDisplayname(final Gun g, final Player player, ItemStack is, final int slot) {
+		final ItemStack k = is;
+		ItemMeta im = k.getItemMeta();
+		im.setDisplayName(g.getDisplayName() + Main.S_OUT_OF_AMMO);
+		k.setItemMeta(im);
+		player.getInventory().setItem(slot, k);
+		new BukkitRunnable() {
+			public void run() {
+				removeOutOfAmmoToDisplayname(g, player, k, slot);
+			}
+		}.runTaskLater(Main.getInstance(), 20 * 3);
+	}
+
+	public static void removeOutOfAmmoToDisplayname(final Gun g, final Player player, ItemStack is, final int slot) {
+		ItemStack temp = player.getInventory().getItem(slot);
+		if (temp != null && temp.isSimilar(is)) {
+			ItemMeta im = is.getItemMeta();
+			im.setDisplayName(g.getDisplayName());
+			is.setItemMeta(im);
+			player.getInventory().setItem(slot, is);
+		}
+	}
+
 	public static ItemStack removeCalculatedExtra(ItemStack is) {
 		ItemMeta im = is.getItemMeta();
 		List<String> lore = is.getItemMeta().getLore();
@@ -98,8 +123,11 @@ public class ItemFact {
 		if (Main.ENABLE_LORE_INFO) {
 			lore.add(Main.S_ITEM_DAMAGE + ": " + g.getDamage());
 			lore.add(Main.S_ITEM_DPS + ": "
-					+ (g.isAutomatic() ? (2 * g.getFireRate() * g.getDamage()) + "" + (g.getBulletsPerShot()>1?"x"+g.getBulletsPerShot():"")
-									: "" + ((int) (1.0 / g.getDelayBetweenShotsInSeconds()) * g.getDamage())+(g.getBulletsPerShot()>1?"x"+g.getBulletsPerShot():"")));
+					+ (g.isAutomatic()
+							? (2 * g.getFireRate() * g.getDamage()) + ""
+									+ (g.getBulletsPerShot() > 1 ? "x" + g.getBulletsPerShot() : "")
+							: "" + ((int) (1.0 / g.getDelayBetweenShotsInSeconds()) * g.getDamage())
+									+ (g.getBulletsPerShot() > 1 ? "x" + g.getBulletsPerShot() : "")));
 			if (g.getAmmoType() != null)
 				lore.add(Main.S_ITEM_AMMO + ": " + g.getAmmoType().getDisplayName());
 		}
@@ -163,6 +191,7 @@ public class ItemFact {
 		return lore;
 	}
 
+	@SuppressWarnings("deprecation")
 	public static List<String> getCraftingLore(ArmoryBaseObject a) {
 		List<String> lore = new ArrayList<String>();
 		lore.add(ChatColor.RED + Main.S_ITEM_ING + ": ");
@@ -206,6 +235,7 @@ public class ItemFact {
 		return getGun(g, attachmentBase);
 	}
 
+	@SuppressWarnings("deprecation")
 	public static ItemStack getIronSights() {
 
 		ItemStack ironsights = new ItemStack(IronSightsToggleItem.getMat(), 1, (short) IronSightsToggleItem.getData());
@@ -229,6 +259,7 @@ public class ItemFact {
 		return getGun(g, null);
 	}
 
+	@SuppressWarnings("deprecation")
 	public static ItemStack getGun(Gun g, AttachmentBase attachmentBase) {
 
 		MaterialStorage ms = attachmentBase == null ? g.getItemData() : attachmentBase.getItem();
@@ -272,12 +303,14 @@ public class ItemFact {
 		return is;
 	}
 
+	@SuppressWarnings("deprecation")
 	public static ItemStack getArmor(AngledArmor a) {
 		ItemStack is = getArmor(Main.armorRegister.get(a.getBase()));
 		is.setDurability((short) a.getMaterial().getData());
 		return is;
 	}
 
+	@SuppressWarnings("deprecation")
 	public static ItemStack getArmor(ArmorObject a) {
 		ItemStack is = new ItemStack(a.getItemData().getMat(), 0, (short) a.getItemData().getData());
 		if (a.getItemData().getData() < 0)
@@ -348,6 +381,7 @@ public class ItemFact {
 		return is;
 	}
 
+	@SuppressWarnings("deprecation")
 	public static ItemStack getObject(ArmoryBaseObject a) {
 		ItemStack is = new ItemStack(a.getItemData().getMat(), 0, (short) a.getItemData().getData());
 		if (a.getItemData().getData() < 0)

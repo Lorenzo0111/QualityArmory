@@ -38,8 +38,6 @@ public class Gunnergoal implements Goal {
 	private int searchCooldown = 0;
 	private int searchCooldownMax = 35;
 
-	private double accuracyMultiplier = 0.5;
-
 	public Gunnergoal(Gunner gunner2, Gun g) {
 		gunner = gunner2;
 		this.npc = gunner.gunner;
@@ -143,8 +141,7 @@ public class Gunnergoal implements Goal {
 				}
 				internalAmmoCount--;
 				shootcooldown = maxShootCooldown;
-				GunUtil.shoot(g, (Player) npc.getEntity(), g.getSway() * accuracyMultiplier, g.getDamage(), 1,
-						g.getMaxDistance());
+				GunUtil.shootHandler(g, (Player) npc.getEntity());
 				GunUtil.playShoot(g, null, (Player) npc.getEntity());
 				if (target == null) {
 					Bukkit.broadcastMessage("Shooting no target");
