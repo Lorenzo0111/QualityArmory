@@ -69,7 +69,7 @@ FriendlyFireEnabled: false
 #Resourcepack values
 useDefaultResourcepack: true
 DefaultResourcepackOverride: false
-DefaultResourcepack: https://www.dropbox.com/s/7xn1a6vmazc29zg/QualityArmoryv1.0.14.zip?dl=1
+DefaultResourcepack: https://www.dropbox.com/s/cn1ygge60hf6eb4/QualityArmoryv1.0.28.zip?dl=1
 Auto-Detect-Resourcepack: false
 sendOnJoin: false
 sendTitleOnJoin: false
@@ -144,6 +144,6 @@ experimental:
     
 Order-Shop-By-Price: false
 ignoreArmorStands: false
-EnableGlowEffects: true
+EnableGlowEffects: false
 DestructableMaterials:
 - MATERIAL_NAME_HERE

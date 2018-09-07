@@ -2,6 +2,7 @@ package me.zombie_striker.qg;
 
 import java.io.File;
 
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -299,46 +300,68 @@ public class QualityArmory {
 		sendHotbarGunAmmoCount(p, g, null, usedItem, reloading);
 	}
 
-	public static void sendHotbarGunAmmoCount(Player p, Gun g, AttachmentBase attachmentBase, ItemStack usedItem,
-			boolean reloading) {
-		try {
-			String message = Main.S_HOTBAR_FORMAT;
-			int ammoamount = AmmoUtil.getAmmoAmount(p, g.getAmmoType());
+	public static void sendHotbarGunAmmoCount(final Player p, final Gun g, AttachmentBase attachmentBase,
+			ItemStack usedItem, boolean reloading) {
+		int ammoamount = AmmoUtil.getAmmoAmount(p, g.getAmmoType());
 
-			if (Main.disableHotBarMessageOnOutOfAmmo && Main.disableHotBarMessageOnReload
-					&& Main.disableHotBarMessageOnShoot)
-				return;
-			if (reloading && Main.disableHotBarMessageOnReload)
-				return;
-			if (ammoamount <= 0 && Main.disableHotBarMessageOnOutOfAmmo)
-				return;
-			if (!reloading && ammoamount > 0 && Main.disableHotBarMessageOnShoot)
-				return;
-
-			if (message.contains("%name%"))
-				message = message.replace("%name%",
-						(attachmentBase != null ? attachmentBase.getDisplayName() : g.getDisplayName()));
-			if (message.contains("%amount%"))
-				message = message.replace("%amount%", ItemFact.getAmount(usedItem) + "");
-			if (message.contains("%max%"))
-				message = message.replace("%max%", g.getMaxBullets() + "");
-
-			if (message.contains("%state%"))
-				message = message.replace("%state%",
-						reloading ? Main.S_RELOADING_MESSAGE : ammoamount <= 0 ? Main.S_OUT_OF_AMMO : Main.S_MAX_FOUND);
-			if (message.contains("%total%"))
-				message = message.replace("%total%", "" + ammoamount);
-
-			// (attachmentBase != null ? attachmentBase.getDisplayName() :
-			// g.getDisplayName()) + " = "
-			// + ItemFact.getAmount(usedItem) + "/" + (g.getMaxBullets()) + "";
-			if (Main.unknownTranslationKeyFixer) {
-				message = ChatColor.stripColor(message);
-			} else {
-				message = ChatColor.translateAlternateColorCodes('&', message);
+		if (Main.showOutOfAmmoOnTitle && ammoamount <= 0 && ItemFact.getAmount(usedItem) < 1) {
+			p.sendTitle(" ", Main.S_OUT_OF_AMMO, 0, 20, 1);
+		} else if (Main.showReloadOnTitle && reloading) {
+			// p.sendTitle(Main.S_RELOADING_MESSAGE,,0,2,1);
+			for (int i = 1; i < g.getReloadTime() * 20; i += 2) {
+				final int id = i;
+				new BukkitRunnable() {
+					@Override
+					public void run() {
+						StringBuilder sb = new StringBuilder();
+						sb.append(ChatColor.GRAY);
+						sb.append(StringUtils.repeat("#", (int) (20 * (1.0 * id / (20 * g.getReloadTime())))));
+						sb.append(ChatColor.DARK_GRAY);
+						sb.append(StringUtils.repeat("#", (int) (20 - ((int) (20.0 * id / (20 * g.getReloadTime()))))));
+						p.sendTitle(Main.S_RELOADING_MESSAGE, sb.toString(), 0, 4, 0);
+					}
+				}.runTaskLater(Main.getInstance(), i);
 			}
-			HotbarMessager.sendHotBarMessage(p, message);
-		} catch (Error | Exception e5) {
+		} else {
+
+			try {
+				String message = Main.S_HOTBAR_FORMAT;
+
+				if (Main.disableHotBarMessageOnOutOfAmmo && Main.disableHotBarMessageOnReload
+						&& Main.disableHotBarMessageOnShoot)
+					return;
+				if (reloading && Main.disableHotBarMessageOnReload)
+					return;
+				if (ammoamount <= 0 && Main.disableHotBarMessageOnOutOfAmmo)
+					return;
+				if (!reloading && ammoamount > 0 && Main.disableHotBarMessageOnShoot)
+					return;
+
+				if (message.contains("%name%"))
+					message = message.replace("%name%",
+							(attachmentBase != null ? attachmentBase.getDisplayName() : g.getDisplayName()));
+				if (message.contains("%amount%"))
+					message = message.replace("%amount%", ItemFact.getAmount(usedItem) + "");
+				if (message.contains("%max%"))
+					message = message.replace("%max%", g.getMaxBullets() + "");
+
+				if (message.contains("%state%"))
+					message = message.replace("%state%", reloading ? Main.S_RELOADING_MESSAGE
+							: ammoamount <= 0 ? Main.S_OUT_OF_AMMO : Main.S_MAX_FOUND);
+				if (message.contains("%total%"))
+					message = message.replace("%total%", "" + ammoamount);
+
+				// (attachmentBase != null ? attachmentBase.getDisplayName() :
+				// g.getDisplayName()) + " = "
+				// + ItemFact.getAmount(usedItem) + "/" + (g.getMaxBullets()) + "";
+				if (Main.unknownTranslationKeyFixer) {
+					message = ChatColor.stripColor(message);
+				} else {
+					message = ChatColor.translateAlternateColorCodes('&', message);
+				}
+				HotbarMessager.sendHotBarMessage(p, message);
+			} catch (Error | Exception e5) {
+			}
 		}
 	}
 

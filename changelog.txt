@@ -1,3 +1,15 @@
+1.1.115
+	Added fix to prevent users from duping guns
+	Added fix for glow effects being enabled by default
+
+1.1.114C
+	Fixed messages for buying
+
+1.1.114B
+	Fixed bug where particle colors defaulted to red
+	Added option to display out of ammo as a title message
+	Added option to show progress of reloading as a title message.
+
 1.1.114
 	Added M79 "Thumper"
 	Added Minigun

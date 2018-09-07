@@ -157,8 +157,10 @@ public class Main extends JavaPlugin implements Listener {
 	public static boolean headshotGoreSounds = true;
 
 	public static boolean showOutOfAmmoOnItem = false;
+	public static boolean showOutOfAmmoOnTitle = false;
+	public static boolean showReloadOnTitle = false;
 
-	public static boolean addGlowEffects = true;
+	public static boolean addGlowEffects = false;
 
 	public static boolean enableReloadWhenOutOfAmmo = false;
 
@@ -561,7 +563,7 @@ public class Main extends JavaPlugin implements Listener {
 		S_RMB_R1 = (String) m.a("Lore-Reload-Dropitem", S_RMB_R1);
 		S_RMB_R2 = (String) m.a("Lore-Reload-RMB", S_RMB_R2);
 		
-		S_BUYCONFIRM = (String) m.a("Shop_Cormirm", S_BUYCONFIRM);
+		S_BUYCONFIRM = ChatColor.translateAlternateColorCodes('&',(String) m.a("Shop_Cormirm", S_BUYCONFIRM));
 
 		S_RESOURCEPACK_HELP = (String) m.a("Resourcepack_InCaseOfCrash", S_RESOURCEPACK_HELP);
 		S_RESOURCEPACK_DOWNLOAD = (String) m.a("Resourcepack_Download", S_RESOURCEPACK_DOWNLOAD);
@@ -641,6 +643,8 @@ public class Main extends JavaPlugin implements Listener {
 		reloadOnF = (boolean) a("enableReloadingWhenSwapToOffhand", true);
 
 		showOutOfAmmoOnItem = (boolean) a("showOutOfAmmoOnItem", false);
+		showOutOfAmmoOnTitle = (boolean) a("showOutOfAmmoOnTitle", false);
+		showReloadOnTitle = (boolean) a("showReloadingTitle", false);
 
 		enableExplosionDamage = (boolean) a("enableExplosionDamage", false);
 		enableExplosionDamageDrop = (boolean) a("enableExplosionDamageDrop", false);
@@ -681,7 +685,7 @@ public class Main extends JavaPlugin implements Listener {
 
 		enableCreationOfFiles = (boolean) a("Enable_Creation_Of_Default_Files", true);
 
-		addGlowEffects = (boolean) a("EnableGlowEffects", true);
+		addGlowEffects = (boolean) a("EnableGlowEffects", false);
 
 		blockBreakTexture = (boolean) a("Break-Block-Texture-If-Shot", true);
 
@@ -1250,7 +1254,7 @@ public class Main extends JavaPlugin implements Listener {
 				GunYMLCreator
 				.createNewDefaultGun(getDataFolder(), "asval", "AS-Val", 103, stringsMetalRif, WeaponType.RIFLE,
 						WeaponSounds.SILENCEDSHOT, true, "762", 3, 30, 7000)
-				.setSway(0.3).setFullyAutomatic(2).done();
+				.setSway(0.3).setFullyAutomatic(3).done();
 			}
 
 			// GunYMLCreator.createNewGun(false, getDataFolder(), true, "ExampleGun",
@@ -1403,7 +1407,7 @@ public class Main extends JavaPlugin implements Listener {
 												.setItemInOffHand(e.getPlayer().getInventory().getItemInMainHand());
 										ItemStack ironsights = ItemFact.getIronSights();
 										e.getPlayer().getInventory().setItemInMainHand(ironsights);
-										if (tempremove != null) {
+										if (tempremove != null&&! QualityArmory.isGun(tempremove)) {
 											e.getPlayer().getInventory().addItem(tempremove);
 										}
 									}
@@ -1975,14 +1979,13 @@ public class Main extends JavaPlugin implements Listener {
 							|| e.getWhoClicked().getGameMode() == GameMode.CREATIVE) {
 						if (shop) {
 							EconHandler.pay(g, (Player) e.getWhoClicked());
-							e.getWhoClicked().sendMessage(S_BUYCONFIRM.replaceAll("%item%",ChatColor.stripColor(g.getDisplayName()).replaceAll("%cost%", ""+g.cost())));					
+							e.getWhoClicked().sendMessage(S_BUYCONFIRM.replaceAll("%item%",ChatColor.stripColor(g.getDisplayName())).replaceAll("%cost%", ""+g.cost()));					
 						}else
 							removeForIngre((Player) e.getWhoClicked(), g);
 						ItemStack s = ItemFact.getGun(g);
 						s.setAmount(g.getCraftingReturn());
 						e.getWhoClicked().getInventory().addItem(s);
-						shopsSounds(e, shop);
-						e.getWhoClicked().sendMessage(S_BUYCONFIRM.replaceAll("%item%",ChatColor.stripColor(g.getDisplayName()).replaceAll("%cost%", ""+g.cost())));
+						shopsSounds(e, shop);	
 						DEBUG("Buy-gun");
 					} else {
 						DEBUG("Failed to buy/craft gun");
@@ -2007,7 +2010,7 @@ public class Main extends JavaPlugin implements Listener {
 							|| e.getWhoClicked().getGameMode() == GameMode.CREATIVE) {
 						if (shop) {
 							EconHandler.pay(g2, (Player) e.getWhoClicked());
-							e.getWhoClicked().sendMessage(S_BUYCONFIRM.replaceAll("%item%",ChatColor.stripColor(g.getDisplayName()).replaceAll("%cost%", ""+g2.cost())));
+							e.getWhoClicked().sendMessage(S_BUYCONFIRM.replaceAll("%item%",ChatColor.stripColor(g.getDisplayName())).replaceAll("%cost%", ""+g2.cost()));	
 						}else
 							removeForIngre((Player) e.getWhoClicked(), g);
 						ItemStack s = ItemFact.getGun(g);
@@ -2036,7 +2039,7 @@ public class Main extends JavaPlugin implements Listener {
 							|| (!shop && lookForIngre((Player) e.getWhoClicked(), g))
 							|| e.getWhoClicked().getGameMode() == GameMode.CREATIVE) {
 						if (shop) {
-							e.getWhoClicked().sendMessage(S_BUYCONFIRM.replaceAll("%item%",ChatColor.stripColor(g.getDisplayName()).replaceAll("%cost%", ""+g.cost())));
+							e.getWhoClicked().sendMessage(S_BUYCONFIRM.replaceAll("%item%",ChatColor.stripColor(g.getDisplayName())).replaceAll("%cost%", ""+g.cost()));		
 							EconHandler.pay(g, (Player) e.getWhoClicked());
 						}else
 							removeForIngre((Player) e.getWhoClicked(), g);
@@ -2065,7 +2068,7 @@ public class Main extends JavaPlugin implements Listener {
 							|| e.getWhoClicked().getGameMode() == GameMode.CREATIVE) {
 						if (shop) {
 							EconHandler.pay(g, (Player) e.getWhoClicked());
-							e.getWhoClicked().sendMessage(S_BUYCONFIRM.replaceAll("%item%",ChatColor.stripColor(g.getDisplayName()).replaceAll("%cost%", ""+g.cost())));
+							e.getWhoClicked().sendMessage(S_BUYCONFIRM.replaceAll("%item%",ChatColor.stripColor(g.getDisplayName())).replaceAll("%cost%", ""+g.cost()));		
 						}else
 							removeForIngre((Player) e.getWhoClicked(), g);
 						ItemStack s = ItemFact.getObject(g);
@@ -2095,7 +2098,7 @@ public class Main extends JavaPlugin implements Listener {
 								|| (!shop && lookForIngre((Player) e.getWhoClicked(), g))
 								|| e.getWhoClicked().getGameMode() == GameMode.CREATIVE) {
 							if (shop) {
-								e.getWhoClicked().sendMessage(S_BUYCONFIRM.replaceAll("%item%",ChatColor.stripColor(g.getDisplayName()).replaceAll("%cost%", ""+g.cost())));
+								e.getWhoClicked().sendMessage(S_BUYCONFIRM.replaceAll("%item%",ChatColor.stripColor(g.getDisplayName())).replaceAll("%cost%", ""+g.cost()));		
 								EconHandler.pay(g, (Player) e.getWhoClicked());
 							}else
 								removeForIngre((Player) e.getWhoClicked(), g);
@@ -2126,7 +2129,7 @@ public class Main extends JavaPlugin implements Listener {
 								|| (!shop && lookForIngre((Player) e.getWhoClicked(), g))
 								|| e.getWhoClicked().getGameMode() == GameMode.CREATIVE) {
 							if (shop) {
-								e.getWhoClicked().sendMessage(S_BUYCONFIRM.replaceAll("%item%",ChatColor.stripColor(g.getDisplayName()).replaceAll("%cost%", ""+g.cost())));
+								e.getWhoClicked().sendMessage(S_BUYCONFIRM.replaceAll("%item%",ChatColor.stripColor(g.getDisplayName())).replaceAll("%cost%", ""+g.cost()));		
 								EconHandler.pay(g, (Player) e.getWhoClicked());
 							}else
 								removeForIngre((Player) e.getWhoClicked(), g);

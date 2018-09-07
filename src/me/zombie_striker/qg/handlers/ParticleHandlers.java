@@ -121,7 +121,7 @@ public class ParticleHandlers {
 			if (g.getParticle() == Particle.REDSTONE) {
 				spawnParticle(g.getParticleR(), g.getParticleG(), g.getParticleB(), loc);
 			} else {
-				loc.getWorld().spawnParticle(g.getParticle(), loc, 0);
+				loc.getWorld().spawnParticle(g.getParticle(), loc, 1);
 			}
 		} catch (Error | Exception e4) {
 		}
@@ -134,7 +134,7 @@ public class ParticleHandlers {
 						Color.fromRGB((int) r * 255, (int) g * 255, (int) b * 255), 1);
 				loc.getWorld().spawnParticle(Particle.REDSTONE, loc.getX(), loc.getY(), loc.getZ(), 0, 0, 0, 0, dust);
 			} else {
-				loc.getWorld().spawnParticle(Particle.REDSTONE, loc.getX(), loc.getY(), loc.getZ(), 0, r, g, b, 0);
+				loc.getWorld().spawnParticle(Particle.REDSTONE, loc.getX(), loc.getY(), loc.getZ(), 0, r, g, b, 1);
 			}
 		} catch (Error | Exception e45) {
 			e45.printStackTrace();
