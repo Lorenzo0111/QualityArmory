@@ -168,7 +168,7 @@ public class Main extends JavaPlugin implements Listener {
 	public static boolean kickIfDeniedRequest = false;
 	// public static String url19plus =
 	// "https://www.dropbox.com/s/faufrgo7w2zpi3d/QualityArmoryv1.0.10.zip?dl=1";
-	public static String url_newest = "https://www.dropbox.com/s/cn1ygge60hf6eb4/QualityArmoryv1.0.28.zip?dl=1";
+	public static String url_newest = "https://www.dropbox.com/s/rjunve842c6uws9/QualityArmoryv1.0.29.zip?dl=1";
 	public static String url18 = "https://www.dropbox.com/s/gx6dhahq6onob4g/QualityArmory1.8v1.0.1.zip?dl=1";
 	public static String url = url_newest;
 
@@ -1255,6 +1255,17 @@ public class Main extends JavaPlugin implements Listener {
 				.createNewDefaultGun(getDataFolder(), "asval", "AS-Val", 103, stringsMetalRif, WeaponType.RIFLE,
 						WeaponSounds.SILENCEDSHOT, true, "762", 3, 30, 7000)
 				.setSway(0.3).setFullyAutomatic(3).done();
+				GunYMLCreator.createNewDefaultGun(getDataFolder(), "fnp90", "FN-P90", 105, stringsMetalRif, WeaponType.SMG,
+						WeaponSounds.SILENCEDSHOT, true, "9mm", 2, 50, 5000).setFullyAutomatic(4).done();
+				GunYMLCreator
+				.createNewDefaultGun(getDataFolder(), "kar98k", "Kar-98K", 106, stringsWoodRif, WeaponType.SNIPER, null,
+						true, "762", 10, 6, 2500)
+				.setZoomLevel(2).setDelayShoot(0.7).setChargingHandler(ChargingManager.BOLT)
+				.setSwayMultiplier(3).setDistance(280).done();
+				GunYMLCreator.createNewDefaultGun(getDataFolder(), "mp40", "Mp40", 107, stringsMetalRif, WeaponType.SMG,
+						WeaponSounds.GUN_SMALL, true, "9mm", 2, 32, 3800).setFullyAutomatic(3).done();
+				GunYMLCreator.createNewDefaultGun(getDataFolder(), "sturmgewehr44", "Sturmgewehr 44", 108, stringsMetalRif, WeaponType.SMG,
+						WeaponSounds.GUN_AUTO, true, "762", 3, 30, 3800).setFullyAutomatic(3).done();
 			}
 
 			// GunYMLCreator.createNewGun(false, getDataFolder(), true, "ExampleGun",

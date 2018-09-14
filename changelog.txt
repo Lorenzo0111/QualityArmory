@@ -1,6 +1,15 @@
+1.1.116
+	Added FN-P90
+	Added Kar-98K
+	Added MP40
+	Added Sturmgewehr 44
+	Revamped most of the models so that they use the RGB sheet.
+	Revamped textures for vehicles to reduce the filesize of the resource
+
 1.1.115
 	Added fix to prevent users from duping guns
 	Added fix for glow effects being enabled by default
+	Added fix to out-of-ammo appearing when there were 1 bullets left
 
 1.1.114C
 	Fixed messages for buying
