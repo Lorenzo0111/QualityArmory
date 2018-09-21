@@ -33,11 +33,10 @@ public class GunYMLCreator {
 		GunYML h = new GunYML(f2);
 		h.setNoSave(false, "AllowUserModifications",
 				(h.contains("allowUpdates") ? (!(boolean) h.get("allowUpdates")) : false));
-		// h.setNoSave(false, "invalid", false);
+
 		h.setNoSave(false, "name", name);
 		h.setNoSave(false, "displayname", displayname.startsWith("&") ? displayname : "&6" + displayname);
-		// h.setNoSave(false, "lore", (lore == null ? new ArrayList<String>() : lore));
-		// h.setNoSave(false, "material", Material.DIAMOND_AXE.name());
+
 		h.setNoSave(false, "id", id);
 		h.setNoSave(false, "variant", 0);
 		h.setNoSave(false, "craftingRequirements", craftingRequirements);
@@ -52,34 +51,9 @@ public class GunYMLCreator {
 		h.setNoSave(false, "ammotype", ammotype);
 		h.setNoSave(false, "damage", damage);
 		h.setNoSave(false, "maxbullets", maxBullets);
-		// h.setNoSave(false, "durability", duribility);
-		// h.setNoSave(false, "delayForReload", delayReload);
-		// h.setNoSave(false, "delayForShoot", delayShoot);
-		// h.setNoSave(false, "bullets-per-shot", bulletspershot);
-		// h.setNoSave(false, "isAutomatic", isAutomatic);
+
 		h.setNoSave(false, "price", cost);
-		// h.setNoSave(false, "maxBulletDistance", distance);
-		// h.setNoSave(false, "unlimitedAmmo", false);
-		// h.setNoSave(false, "LightLeveOnShoot", 14);
 
-		// h.setNoSave(false, "particles.bullet_particle", particle);
-		// if (particle.equals("REDSTONE")) {
-		// h.setNoSave(false, "particles.bullet_particleR", particleR);
-		// h.setNoSave(false, "particles.bullet_particleG", particleG);
-		// h.setNoSave(false, "particles.bullet_particleB", particleB);
-		// }
-
-		// if (version18)
-		// h.setNoSave(false, "Version_18_Support", version18);
-		// h.setNoSave(false, "ChargingHandler", ch == null ? "null" : ch);
-		// if (addMuzzleSmoke)
-		// h.setNoSave(false, "addMuzzleSmoke", addMuzzleSmoke);
-
-		// if(invalid) {
-		// h.setNoSave(false, "drop-glow-color",ChatColor.WHITE.name());
-
-		// if (h.saveNow)
-		// h.save();
 		return h;
 	}
 
@@ -373,6 +347,41 @@ public class GunYMLCreator {
 			h.save();
 		return h;
 
+	}
+
+	public static ArmorYML createDefaultArmor(File dataFolder, boolean invalid, String name, String displayname,
+			List<String> lore, int id, List<String> craftingRequirements, int cost, WeaponType misctype, double min,
+			double max, boolean stopHeadshots) {
+		return createArmor(false, dataFolder, invalid, "default_" + name, name, "&6" + displayname, lore, id,
+				craftingRequirements, cost, misctype, min, max, stopHeadshots);
+	}
+
+	public static ArmorYML createArmor(boolean forceUpdate, File dataFolder, boolean invalid, String filename,
+			String name, String displayname, List<String> lore, int id, List<String> craftingRequirements, int cost,
+			WeaponType misctype, double min, double max, boolean stopHeadshots) {
+		File f2 = new File(dataFolder, "armor/" + filename + ".yml");
+		if (!new File(dataFolder, "armor").exists())
+			new File(dataFolder, "armor").mkdirs();
+		ArmorYML h = new ArmorYML(f2);
+		h.setNoSave(false, "AllowUserModifications",
+				(h.contains("allowUpdates") ? (!(boolean) h.get("allowUpdates")) : false));
+		h.setNoSave(false, "invalid", invalid);
+		h.setNoSave(false, "name", name);
+		h.setNoSave(false, "displayname", displayname);
+		h.setNoSave(false, "lore", (lore == null ? new ArrayList<String>() : lore));
+		h.setNoSave(false, "id", id);
+		h.setNoSave(false, "craftingRequirements", craftingRequirements);
+		h.setNoSave(false, "price", cost);
+		// h.setNoSave(false, "material", type.name());
+
+		h.setNoSave(false, "MiscType", misctype.name());
+
+		h.setNoOverride("minProtectionHeight", min);
+		h.setNoOverride("maxProtectionHeight", max);
+		h.setNoOverride("stopsHeadshots", stopHeadshots);
+		if (h.saveNow)
+			h.save();
+		return h;
 	}
 
 	public static ArmoryYML createMisc(boolean forceUpdate, File dataFolder, boolean invalid, String filename,

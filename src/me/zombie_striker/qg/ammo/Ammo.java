@@ -3,10 +3,16 @@ package me.zombie_striker.qg.ammo;
 import java.util.List;
 
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
+import org.bukkit.event.block.Action;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
 import me.zombie_striker.qg.ArmoryBaseObject;
+import me.zombie_striker.qg.ItemFact;
+import me.zombie_striker.qg.Main;
 import me.zombie_striker.qg.MaterialStorage;
+import me.zombie_striker.qg.handlers.MultiVersionLookup;
 
 public class Ammo implements ArmoryBaseObject{
 
@@ -145,5 +151,26 @@ public class Ammo implements ArmoryBaseObject{
 
 	@Override
 	public void set18Supported(boolean b) {		
+	}
+	
+
+	@Override
+	public void onRMB(PlayerInteractEvent e, ItemStack usedItem) {
+		Main.DEBUG("The item being click is ammo!");
+		if (usedItem.getType() == Material.DIAMOND_HOE && e.getAction() == Action.RIGHT_CLICK_BLOCK
+				&& (e.getClickedBlock().getType() == Material.DIRT
+						|| e.getClickedBlock().getType() == Material.GRASS
+						|| e.getClickedBlock().getType() == Material.GRASS_PATH
+						|| e.getClickedBlock().getType() == MultiVersionLookup.getMycil()))
+			e.setCancelled(true);
+	}
+
+	@Override
+	public void onLMB(PlayerInteractEvent e, ItemStack usedItem) {
+		
+	}
+	@Override
+	public ItemStack getItemStack() {
+		return ItemFact.getAmmo(this,1);
 	}
 }

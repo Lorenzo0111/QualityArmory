@@ -8,6 +8,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -24,7 +25,8 @@ public class IncendaryGrenades extends GrenadeBase {
 	}
 
 	@Override
-	public void onLeftClick(Player thrower) {
+	public void onLMB(PlayerInteractEvent e, ItemStack usedItem) {
+		Player thrower = e.getPlayer();
 		if (grenadeHolder.containsKey(thrower)) {
 			thrower.sendMessage(Main.prefix + Main.S_GRENADE_PALREADYPULLPIN);
 			thrower.playSound(thrower.getLocation(), WeaponSounds.RELOAD_BULLET.getSoundName(), 1, 1);

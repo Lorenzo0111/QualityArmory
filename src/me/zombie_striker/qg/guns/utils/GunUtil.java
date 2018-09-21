@@ -45,7 +45,7 @@ public class GunUtil {
 				Vector go = p.getLocation().getDirection().normalize();
 				go.add(new Vector((Math.random() * 2 * sway) - sway, (Math.random() * 2 * sway) - sway,
 						(Math.random() * 2 * sway) - sway)).normalize();
-				Vector two = go.clone();//.multiply();
+				Vector two = go.clone();// .multiply();
 				g.getCustomProjectile().spawn(g, p.getEyeLocation(), p, two);
 			}
 		} else {
@@ -180,9 +180,13 @@ public class GunUtil {
 			if (hitTarget != null) {
 				if (!(hitTarget instanceof Player) || QualityArmory.allowGunsInRegion(hitTarget.getLocation())) {
 
+					boolean negateHeadshot = false;
 					boolean bulletProtection = false;
 					if (hitTarget instanceof Player) {
 						bulletProtection = BulletProtectionUtil.stoppedBullet(p, bulletHitLoc, go);
+						if (headShot) {
+							negateHeadshot = BulletProtectionUtil.negatesHeadshot(p);
+						}
 						if (!bulletProtection) {
 							BulletWoundHandler.bulletHit((Player) hitTarget, g.getAmmoType().getPiercingDamage());
 						} else {
@@ -191,7 +195,9 @@ public class GunUtil {
 					}
 
 					((Damageable) hitTarget).damage(damage * (bulletProtection ? 0.1 : 1)
-							* (headShot ? (Main.HeadshotOneHit ? 50 : g.getHeadshotMultiplier()) : 1), p);
+							* ((headShot && !negateHeadshot) ? (Main.HeadshotOneHit ? 50 : g.getHeadshotMultiplier())
+									: 1),
+							p);
 					if (hitTarget instanceof LivingEntity)
 						((LivingEntity) hitTarget).setNoDamageTicks(0);
 					Main.DEBUG("Damaging entity " + hitTarget.getName());
@@ -205,7 +211,6 @@ public class GunUtil {
 			nonheard.remove(p);
 			if (g.useMuzzleSmoke())
 				ParticleHandlers.spawnMuzzleSmoke(p, start.clone().add(step.clone().multiply(7)));
-
 			for (int dist = 0; dist < (dis2 / Main.bulletStep); dist++) {
 				start.add(step);
 				try {
@@ -240,12 +245,8 @@ public class GunUtil {
 				}
 				if (overrideocculde || !isSolid(start.getBlock(), start)) {
 					if (Main.enableBulletTrails)
-						if (smokeDistance + i >= Main.smokeSpacing * shots) {
-							try {
-								// start.getWorld().spawnParticle((Particle) Main.bulletTrail, start, 0);
-								ParticleHandlers.spawnGunParticles(g, start);
-							} catch (Error e2) {
-							}
+						if (smokeDistance >= Main.smokeSpacing*i) {
+							ParticleHandlers.spawnGunParticles(g, start);
 							smokeDistance = 0;
 						} else {
 							smokeDistance += Main.bulletStep;
@@ -537,7 +538,8 @@ public class GunUtil {
 						 * Sound.BLOCK_LEVER_CLICK, 5, 1.4f);
 						 */
 
-						player.getWorld().playSound(player.getLocation(), WeaponSounds.RELOAD_MAG_IN.getSoundName(), 1, 1f);
+						player.getWorld().playSound(player.getLocation(), WeaponSounds.RELOAD_MAG_IN.getSoundName(), 1,
+								1f);
 						if (!Main.isVersionHigherThan(1, 9)) {
 							try {
 								player.getWorld().playSound(player.getLocation(), Sound.valueOf("CLICK"), 5, 1);

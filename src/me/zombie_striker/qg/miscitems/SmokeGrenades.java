@@ -7,6 +7,7 @@ import org.bukkit.Sound;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -25,7 +26,8 @@ public class SmokeGrenades extends GrenadeBase {
 	}
 
 	@Override
-	public void onLeftClick(Player thrower) {
+	public void onLMB(PlayerInteractEvent e, ItemStack usedItem) {
+		Player thrower = e.getPlayer();
 		if (grenadeHolder.containsKey(thrower)) {
 			thrower.sendMessage(Main.prefix + Main.S_GRENADE_PALREADYPULLPIN);
 			thrower.playSound(thrower.getLocation(), WeaponSounds.RELOAD_BULLET.getSoundName(), 1, 1);
@@ -42,9 +44,9 @@ public class SmokeGrenades extends GrenadeBase {
 				try {
 					h.getHolder().getWorld().spawnParticle(org.bukkit.Particle.EXPLOSION_HUGE,
 							h.getHolder().getLocation(), 0);
-					if(k%2==0)
-					h.getHolder().getWorld().playSound(h.getHolder().getLocation(), WeaponSounds.HISS.getSoundName(), 2f,
-							1f);
+					if (k % 2 == 0)
+						h.getHolder().getWorld().playSound(h.getHolder().getLocation(),
+								WeaponSounds.HISS.getSoundName(), 2f, 1f);
 				} catch (Error e3) {
 					h.getHolder().getWorld().playEffect(h.getHolder().getLocation(), Effect.valueOf("CLOUD"), 0);
 					h.getHolder().getWorld().playSound(h.getHolder().getLocation(), Sound.valueOf("EXPLODE"), 3, 0.7f);
@@ -64,7 +66,7 @@ public class SmokeGrenades extends GrenadeBase {
 				} else
 					k++;
 			}
-		}.runTaskTimer(Main.getInstance(),5*20,5));
+		}.runTaskTimer(Main.getInstance(), 5 * 20, 5));
 		grenadeHolder.put(thrower, h);
 
 	}

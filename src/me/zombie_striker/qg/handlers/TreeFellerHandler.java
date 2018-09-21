@@ -17,14 +17,14 @@ public class TreeFellerHandler implements Listener {
 	public HashMap<UUID,Long> lastClicked = new HashMap<>();
 	
 	@SuppressWarnings("deprecation")
-	@EventHandler(priority=EventPriority.LOWEST)
+	@EventHandler(priority=EventPriority.LOWEST,ignoreCancelled=true)
 	public void onClickFirst(PlayerInteractEvent e) {
 		if(!QualityArmory.isCustomItem(e.getPlayer().getItemInHand())) {
 			lastClicked.put(e.getPlayer().getUniqueId(), System.currentTimeMillis());
 		}
 	}
 	@SuppressWarnings("deprecation")
-	@EventHandler(priority=EventPriority.MONITOR)
+	@EventHandler(priority=EventPriority.MONITOR,ignoreCancelled=true)
 	public void onBlock(BlockBreakEvent e) {
 		if(QualityArmory.isCustomItem(e.getPlayer().getItemInHand()) && (System.currentTimeMillis()-lastClicked.get(e.getPlayer().getUniqueId())<1000)) {
 			lastClicked.put(e.getPlayer().getUniqueId(), System.currentTimeMillis());

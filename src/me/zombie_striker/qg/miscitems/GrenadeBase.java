@@ -11,16 +11,19 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import me.zombie_striker.qg.ArmoryBaseObject;
+import me.zombie_striker.qg.ItemFact;
 import me.zombie_striker.qg.Main;
 import me.zombie_striker.qg.MaterialStorage;
 import me.zombie_striker.qg.guns.utils.WeaponSounds;
 import me.zombie_striker.qg.handlers.ExplosionHandler;
 import me.zombie_striker.qg.miscitems.ThrowableItems.ThrowableHolder;
 
-public class GrenadeBase implements InteractableMisc {
+public class GrenadeBase implements ArmoryBaseObject {
 
 	private ItemStack[] ing = null;
 
@@ -86,7 +89,8 @@ public class GrenadeBase implements InteractableMisc {
 
 	@SuppressWarnings("deprecation")
 	@Override
-	public void onRightClick(Player thrower) {
+	public void onRMB(PlayerInteractEvent e, ItemStack usedItem) {
+		Player thrower = e.getPlayer();
 		if (grenadeHolder.containsKey(thrower)) {
 			ThrowableHolder holder = grenadeHolder.get(thrower);
 			ItemStack g = thrower.getItemInHand();
@@ -108,7 +112,8 @@ public class GrenadeBase implements InteractableMisc {
 	}
 
 	@Override
-	public void onLeftClick(Player thrower) {
+	public void onLMB(PlayerInteractEvent e, ItemStack usedItem) {
+		Player thrower = e.getPlayer();
 		if (grenadeHolder.containsKey(thrower)) {
 			thrower.sendMessage(Main.prefix + Main.S_GRENADE_PALREADYPULLPIN);
 			thrower.playSound(thrower.getLocation(), WeaponSounds.RELOAD_BULLET.getSoundName(), 1, 1);
@@ -168,5 +173,10 @@ public class GrenadeBase implements InteractableMisc {
 	@Override
 	public void set18Supported(boolean b) {
 	}
+	@Override
+	public ItemStack getItemStack() {
+		return ItemFact.getObject(this,1);
+	}
+
 
 }

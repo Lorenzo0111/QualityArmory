@@ -5,7 +5,6 @@ import java.util.Map.Entry;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -26,9 +25,9 @@ public class BulletWoundHandler {
 			double current = bleedoutMultiplier.containsKey(player.getUniqueId())
 					? bleedoutMultiplier.get(player.getUniqueId())
 					: 0;
-			
-				player.sendMessage(Main.S_BLEEDOUT_STARTBLEEDING);
-					
+
+			player.sendMessage(Main.S_BLEEDOUT_STARTBLEEDING);
+
 			current -= bulletSeverity;
 			bleedoutMultiplier.put(player.getUniqueId(), current);
 			if (!bloodLevel.containsKey(player.getUniqueId())) {
@@ -45,12 +44,13 @@ public class BulletWoundHandler {
 					for (Entry<UUID, Double> e : bleedoutMultiplier.entrySet()) {
 						Player online = Bukkit.getPlayer(e.getKey());
 						if (online != null) {
-							if(!bloodLevel.containsKey(online.getUniqueId()))
+							if (!bloodLevel.containsKey(online.getUniqueId()))
 								bloodLevel.put(online.getUniqueId(), 0.0);
-							double bloodlevel = bloodLevel.get(online.getUniqueId()) + e.getValue() + Main.bulletWound_BloodIncreasePerSecond;
+							double bloodlevel = bloodLevel.get(online.getUniqueId()) + e.getValue()
+									+ Main.bulletWound_BloodIncreasePerSecond;
 
 							if (bloodlevel / Main.bulletWound_initialbloodamount <= 0.75)
-								
+
 								try {
 									online.removePotionEffect(PotionEffectType.CONFUSION);
 									online.addPotionEffect(new PotionEffect(PotionEffectType.CONFUSION, 499, 3));
@@ -64,14 +64,18 @@ public class BulletWoundHandler {
 								}
 							if (bloodlevel / Main.bulletWound_initialbloodamount == 0.0)
 								online.damage(1);
-							// online.getWorld().playEffect(online.getLocation().add(0,1.5,0),
-							// Effect.TILE_BREAK, Material.REDSTONE_BLOCK.getId());
 							if (bleedoutMultiplier.get(online.getUniqueId()) < 0)
-								online.getWorld().spawnParticle(Particle.REDSTONE, online.getLocation().getX(), online.getLocation().getY()+1.5, online.getLocation().getZ(), 0, 1.0, 0.0, 0.0, 1); 
-							//	online.getWorld().spawnParticle(Particle.LAVA, online.getLocation().add(0,1.5,0),0);
-								//online.getWorld().spawnParticle(Particle.BLOCK_DUST,
-								//		online.getLocation().add(0, 1.5, 0), Material.REDSTONE_BLOCK.getId());
-							
+								// online.getWorld().spawnParticle(Particle.REDSTONE,
+								// online.getLocation().getX(), online.getLocation().getY()+1.5,
+								// online.getLocation().getZ(), 0, 1.0, 0.0, 0.0, 1);
+								for (int i = 0; i < 5; i++) {
+									double x = Math.random() - 0.5;
+									double z = Math.random() - 0.5;
+									double yofset = Math.random();
+									ParticleHandlers.spawnParticle(1, 0, 0,
+											online.getLocation().add(x, 0.8 + yofset, z));
+								}
+
 							if (bloodlevel >= Main.bulletWound_initialbloodamount)
 								bloodLevel.remove(online.getUniqueId());
 							else

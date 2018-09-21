@@ -56,6 +56,10 @@ public class AttachmentBase implements Comparable<AttachmentBase>{
 		setSupports18(baseGun.is18Support());
 	}
 
+	public Gun getBaseGun() {
+		return baseGun;
+	}
+	
 	public boolean hasNewSound() {
 		return newSound != null;
 	}

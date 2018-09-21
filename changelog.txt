@@ -1,3 +1,33 @@
+1.1.117
+	-Added Crackshot Gun Converter (Copy all Crackshot files into the /newGuns/ directory to create QA versions)
+	Added VZ.58
+	Added CZ.75
+	Added FAMAS
+	Added Sawed-Off-Shotgun
+	Removed Kevlar vests, as it takes up too many durability IDs while not following the body correctly. These IDs have been replaced with masked and helmet
+	Added Assault Helmet
+	Added NCR Ranger Helmet
+	Added Ski Mask
+	Added Ushanka Hat
+	Refactored the interact system. Now each item type has their own methods for handling RMB and LMB
+	Fixed help messages to include /qa getResourcepack and /qa sendResourcepack
+	Fixed issue where plugin-created items could be replaced with other items if they use IDs that are close to QA IDs.
+	
+
+1.1.117
+	Changed FNP90 so it uses 556 and has longer reload delay.
+
+1.1.116D
+	Fixed reloading issue
+	Fixed Shooting issue
+	Fixed resourcepack for M4a1s, SG556, and RPK
+
+1.1.116C
+	Added fix for particles when using the bleedout system
+
+1.1.116b
+	Added fix for npe if gun with ironsights was somehow not a gun.
+
 1.1.116
 	Added FN-P90
 	Added Kar-98K

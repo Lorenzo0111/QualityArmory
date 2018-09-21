@@ -13,7 +13,6 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import me.zombie_striker.qg.ammo.Ammo;
 import me.zombie_striker.qg.armor.ArmorObject;
-import me.zombie_striker.qg.armor.angles.AngledArmor;
 import me.zombie_striker.qg.attachments.AttachmentBase;
 import me.zombie_striker.qg.guns.Gun;
 import me.zombie_striker.qg.handlers.SkullHandler;
@@ -304,13 +303,6 @@ public class ItemFact {
 	}
 
 	@SuppressWarnings("deprecation")
-	public static ItemStack getArmor(AngledArmor a) {
-		ItemStack is = getArmor(Main.armorRegister.get(a.getBase()));
-		is.setDurability((short) a.getMaterial().getData());
-		return is;
-	}
-
-	@SuppressWarnings("deprecation")
 	public static ItemStack getArmor(ArmorObject a) {
 		ItemStack is = new ItemStack(a.getItemData().getMat(), 0, (short) a.getItemData().getData());
 		if (a.getItemData().getData() < 0)
@@ -344,9 +336,12 @@ public class ItemFact {
 			return getAmmo(Main.ammoRegister.get(MaterialStorage.getMS(m, data, varient, extraValues)));
 		return null;
 	}
+	public static ItemStack getAmmo(Ammo a) {
+		return getAmmo(a, a.getMaxAmount() > 64 ? 64 : a.getMaxAmount());
+	}
 
 	@SuppressWarnings("deprecation")
-	public static ItemStack getAmmo(Ammo a) {
+	public static ItemStack getAmmo(Ammo a, int amount) {
 		ItemStack is = new ItemStack(a.getItemData().getMat(), 0, (short) a.getItemData().getData());
 		boolean setSkull = false;
 		if (a.isSkull() && a.hasCustomSkin()) {
@@ -376,13 +371,16 @@ public class ItemFact {
 		}
 
 		is.setItemMeta(im);
-		is.setAmount(a.getMaxAmount() > 64 ? 64 : a.getMaxAmount());
+		is.setAmount(amount);
 
 		return is;
 	}
 
-	@SuppressWarnings("deprecation")
 	public static ItemStack getObject(ArmoryBaseObject a) {
+		return getObject(a,a.getCraftingReturn());
+	}
+	@SuppressWarnings("deprecation")
+	public static ItemStack getObject(ArmoryBaseObject a, int amount) {
 		ItemStack is = new ItemStack(a.getItemData().getMat(), 0, (short) a.getItemData().getData());
 		if (a.getItemData().getData() < 0)
 			is.setDurability((short) 0);
@@ -411,7 +409,7 @@ public class ItemFact {
 		im.setLore(lore);
 
 		is.setItemMeta(im);
-		is.setAmount(a.getCraftingReturn());
+		is.setAmount(amount);
 
 		return is;
 	}
@@ -456,6 +454,7 @@ public class ItemFact {
 	public static ItemStack addGunRegister(ItemStack base) {
 		ItemMeta im = base.getItemMeta();
 		try {
+			if(Main.enableVisibleAmounts)
 			im.setLocalizedName("" + UUID.randomUUID());
 		} catch (Exception | Error e) {
 			List<String> lore = im.getLore();
@@ -467,6 +466,8 @@ public class ItemFact {
 	}
 
 	public static boolean sameGun(ItemStack is1, ItemStack is2) {
+		if(!Main.enableVisibleAmounts)
+			return false;
 		try {
 			if (is1.hasItemMeta() && is1.getItemMeta().hasLocalizedName())
 				if (is2.hasItemMeta() && is2.getItemMeta().hasLocalizedName())

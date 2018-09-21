@@ -7,7 +7,7 @@ public enum WeaponSounds {
 	RELOAD_BULLET("reloadbullet"), RELOAD_MAG_IN("reloadmagin"), RELOAD_MAG_OUT("reloadmagout"), RELOAD_BOLT(
 			"reloadbolt"),
 
-	WARHEAD_EXPLODE("warheadexplode"), WARHEAD_LAUNCH("warheadlaunch"),
+	WARHEAD_EXPLODE("warheadexplode"), WARHEAD_LAUNCH("warheadlaunch"),HONK("honk"),
 
 	LAZERSHOOT("bulletlazer"),
 

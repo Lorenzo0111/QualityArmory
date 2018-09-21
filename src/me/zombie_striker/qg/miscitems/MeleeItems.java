@@ -5,9 +5,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
 import me.zombie_striker.qg.ArmoryBaseObject;
+import me.zombie_striker.qg.ItemFact;
 import me.zombie_striker.qg.MaterialStorage;
 
 public class MeleeItems implements ArmoryBaseObject{
@@ -77,5 +79,21 @@ public class MeleeItems implements ArmoryBaseObject{
 
 	@Override
 	public void set18Supported(boolean b) {		
+	}
+
+	@Override
+	public void onRMB(PlayerInteractEvent e, ItemStack usedItem) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onLMB(PlayerInteractEvent e, ItemStack usedItem) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public ItemStack getItemStack() {
+		return ItemFact.getObject(this,1);
 	}
 }

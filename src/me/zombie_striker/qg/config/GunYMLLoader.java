@@ -17,6 +17,7 @@ import me.zombie_striker.qg.Main;
 import me.zombie_striker.qg.MaterialStorage;
 import me.zombie_striker.qg.ammo.Ammo;
 import me.zombie_striker.qg.ammo.AmmoType;
+import me.zombie_striker.qg.armor.Helmet;
 import me.zombie_striker.qg.attachments.AttachmentBase;
 import me.zombie_striker.qg.guns.Gun;
 import me.zombie_striker.qg.guns.utils.WeaponSounds;
@@ -101,6 +102,48 @@ public class GunYMLLoader {
 			}
 	}
 
+	public static void loadArmor(Main main) {
+		if (new File(main.getDataFolder(), "armor").exists())
+			for (File f : new File(main.getDataFolder(), "armor").listFiles()) {
+				try {
+					if (f.getName().contains("yml")) {
+						FileConfiguration f2 = YamlConfiguration.loadConfiguration(f);
+						if ((!f2.contains("invalid")) || !f2.getBoolean("invalid")) {
+							final String name = f2.getString("name");
+							main.getLogger().info("-Loading Armor: " + name);
+
+							Material m = f2.contains("material") ? Material.matchMaterial(f2.getString("material"))
+									: Material.DIAMOND_AXE;
+							int variant = f2.contains("variant") ? f2.getInt("variant") : 0;
+							final MaterialStorage ms = MaterialStorage.getMS(m, f2.getInt("id"), variant, null);
+							final ItemStack[] materails = main
+									.convertIngredients(f2.getStringList("craftingRequirements"));
+							final String displayname = f2.contains("displayname")
+									? ChatColor.translateAlternateColorCodes('&', f2.getString("displayname"))
+									: (ChatColor.WHITE + name);
+							final List<String> rawLore = f2.contains("lore") ? f2.getStringList("lore") : null;
+							final List<String> lore = new ArrayList<String>();
+							try {
+								for (String lore2 : rawLore) {
+									lore.add(ChatColor.translateAlternateColorCodes('&', lore2));
+								}
+							} catch (Error | Exception re52) {
+							}
+
+							final int price = f2.contains("price") ? f2.getInt("price") : 100;
+
+							WeaponType wt = WeaponType.getByName(f2.getString("MiscType"));
+
+							if (wt == WeaponType.HELMET) {
+								Main.armorRegister.put(ms, new Helmet(name, displayname, lore, materails, ms, price));
+							}
+						}
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+	}
 	public static void loadMisc(Main main) {
 		if (new File(main.getDataFolder(), "misc").exists())
 			for (File f : new File(main.getDataFolder(), "misc").listFiles()) {
@@ -167,7 +210,6 @@ public class GunYMLLoader {
 		try {
 			if (f.getName().contains("yml")) {
 				FileConfiguration f2 = YamlConfiguration.loadConfiguration(f);
-
 				if ((!f2.contains("invalid")) || !f2.getBoolean("invalid")) {
 					final String name = f2.getString("name");
 					main.getLogger().info("-Loading Gun: " + name);
@@ -301,6 +343,13 @@ public class GunYMLLoader {
 
 	public static void loadGuns(Main main) {
 		for (File f : new File(main.getDataFolder(), "newGuns").listFiles()) {
+			FileConfiguration f2 = YamlConfiguration.loadConfiguration(f);
+			if(CrackshotLoader.isCrackshotGun(f2)) {
+				main.getLogger().info("-Converting Crackshot: " +f.getName());
+				List<Gun> guns = CrackshotLoader.loadCrackshotGuns(f2);
+				CrackshotLoader.createYMLForGuns(guns,main.getDataFolder());
+				continue;
+			}
 			loadGuns(main, f);
 		}
 	}

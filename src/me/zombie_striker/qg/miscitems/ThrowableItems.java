@@ -5,8 +5,10 @@ import java.util.UUID;
 import org.bukkit.entity.Entity;
 import org.bukkit.scheduler.BukkitTask;
 
+import me.zombie_striker.qg.ArmoryBaseObject;
 
-public interface ThrowableItems extends InteractableMisc {
+
+public interface ThrowableItems extends ArmoryBaseObject {
 
 	class ThrowableHolder {
 		private Entity holder;

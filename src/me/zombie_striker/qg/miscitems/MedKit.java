@@ -9,14 +9,17 @@ import java.util.UUID;
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
 import me.zombie_striker.pluginconstructor.HotbarMessager;
+import me.zombie_striker.qg.ArmoryBaseObject;
+import me.zombie_striker.qg.ItemFact;
 import me.zombie_striker.qg.Main;
 import me.zombie_striker.qg.MaterialStorage;
 import me.zombie_striker.qg.handlers.BulletWoundHandler;
 
-public class MedKit implements InteractableMisc {
+public class MedKit implements ArmoryBaseObject {
 
 	MaterialStorage ms;
 	String displayname;
@@ -72,10 +75,19 @@ public class MedKit implements InteractableMisc {
 		return cost;
 	}
 
+	@Override
+	public boolean is18Support() {
+		return false;
+	}
+
+	@Override
+	public void set18Supported(boolean b) {
+	}
+
 	@SuppressWarnings("deprecation")
 	@Override
-	public void onRightClick(final Player healer) {
-
+	public void onRMB(PlayerInteractEvent e, ItemStack usedItem) {
+		Player healer = e.getPlayer();
 		if (!BulletWoundHandler.bloodLevel.containsKey(healer.getUniqueId())) {
 			/*
 			 * if (medkitHeartUsage.contains(healer.getUniqueId())) { try {
@@ -130,7 +142,7 @@ public class MedKit implements InteractableMisc {
 				try {
 					HotbarMessager.sendHotBarMessage(healer, ChatColor.RED + "[" + levelbar.toString() + ChatColor.RED
 							+ "] " + new DecimalFormat("##0.#").format((p2 + percent)) + " percent!");
-				} catch (Exception e) {
+				} catch (Exception e2) {
 				}
 
 			} else {
@@ -142,16 +154,19 @@ public class MedKit implements InteractableMisc {
 			return;
 		}
 		double bloodlevel = BulletWoundHandler.bloodLevel.get(healer.getUniqueId());
-		double percentBlood = Math.max(0,bloodlevel / Main.bulletWound_initialbloodamount);
+		double percentBlood = Math.max(0, bloodlevel / Main.bulletWound_initialbloodamount);
 
 		ChatColor severity = percentBlood > 75 ? ChatColor.WHITE
 				: percentBlood > 50 ? ChatColor.GRAY : percentBlood > 25 ? ChatColor.RED : ChatColor.DARK_RED;
-		if (BulletWoundHandler.bleedoutMultiplier.containsKey(healer.getUniqueId()) && BulletWoundHandler.bleedoutMultiplier.get(healer.getUniqueId()) < 0)
+		if (BulletWoundHandler.bleedoutMultiplier.containsKey(healer.getUniqueId())
+				&& BulletWoundHandler.bleedoutMultiplier.get(healer.getUniqueId()) < 0)
 			BulletWoundHandler.bleedoutMultiplier.put(healer.getUniqueId(),
-					Math.min(0,
-							BulletWoundHandler.bleedoutMultiplier.get(healer.getUniqueId())+Main.bulletWound_MedkitBloodlossHealRate));
+					Math.min(0, BulletWoundHandler.bleedoutMultiplier.get(healer.getUniqueId())
+							+ Main.bulletWound_MedkitBloodlossHealRate));
 
-		double newRate =  BulletWoundHandler.bleedoutMultiplier.containsKey(healer.getUniqueId())?BulletWoundHandler.bleedoutMultiplier.get(healer.getUniqueId()):0;
+		double newRate = BulletWoundHandler.bleedoutMultiplier.containsKey(healer.getUniqueId())
+				? BulletWoundHandler.bleedoutMultiplier.get(healer.getUniqueId())
+				: 0;
 
 		try {
 			int totalBars = 25;
@@ -166,22 +181,21 @@ public class MedKit implements InteractableMisc {
 			HotbarMessager.sendHotBarMessage(healer,
 					ChatColor.RED + Main.S_MEDKIT_HEALING + "[" + levelbar.toString() + ChatColor.RED + "] "
 							+ Main.S_MEDKIT_BLEEDING + " " + (newRate < 0 ? ChatColor.DARK_RED : ChatColor.GRAY)
-							+ new DecimalFormat("##0.##").format(newRate)+ChatColor.GRAY+"+"+Main.bulletWound_BloodIncreasePerSecond);
+							+ new DecimalFormat("##0.##").format(newRate) + ChatColor.GRAY + "+"
+							+ Main.bulletWound_BloodIncreasePerSecond);
 		} catch (Error | Exception e5) {
 		}
+	}
+
+	@Override
+	public void onLMB(PlayerInteractEvent e, ItemStack usedItem) {
+		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void onLeftClick(Player thrower) {
-	}
-	@Override
-	public boolean is18Support() {
-		return false;
-	}
-
-	@Override
-	public void set18Supported(boolean b) {		
+	public ItemStack getItemStack() {
+		return ItemFact.getObject(this, 1);
 	}
 
 }

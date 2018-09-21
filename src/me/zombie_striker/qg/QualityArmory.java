@@ -1,6 +1,7 @@
 package me.zombie_striker.qg;
 
 import java.io.File;
+import java.util.Map.Entry;
 
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.ChatColor;
@@ -15,7 +16,6 @@ import me.zombie_striker.pluginconstructor.HotbarMessager;
 import me.zombie_striker.qg.ammo.Ammo;
 import me.zombie_striker.qg.ammo.AmmoUtil;
 import me.zombie_striker.qg.armor.ArmorObject;
-import me.zombie_striker.qg.armor.angles.AngledArmor;
 import me.zombie_striker.qg.attachments.AttachmentBase;
 import me.zombie_striker.qg.config.GunYML;
 import me.zombie_striker.qg.config.GunYMLCreator;
@@ -129,8 +129,6 @@ public class QualityArmory {
 			return getArmor(is);
 		if (isMisc(is))
 			return getMisc(is);
-		if (isAngledArmor(is))
-			return Main.armorRegister.get(getAngledArmor(is).getBase());
 		if (isGunWithAttchments(is))
 			return Main.gunRegister.get(getGunWithAttchments(is).getBase());
 		return null;
@@ -143,7 +141,7 @@ public class QualityArmory {
 		ItemStack itemstack = is.clone();
 		itemstack.setDurability((short) (is.getDurability() + dataOffset));
 		return isArmor(itemstack) || isGunWithAttchments(itemstack) || isAmmo(itemstack) || isMisc(itemstack)
-				|| isGun(itemstack) || isIronSights(itemstack) || isAngledArmor(itemstack)
+				|| isGun(itemstack) || isIronSights(itemstack) 
 				|| Main.expansionPacks.contains(MaterialStorage.getMS(is));
 	}
 
@@ -152,42 +150,16 @@ public class QualityArmory {
 		if (is == null)
 			return false;
 		int var = MaterialStorage.getVarient(is);
-		if (isAngledArmor(is))
-			return true;
 		return (is != null
 				&& (Main.armorRegister.containsKey(MaterialStorage.getMS(is.getType(), is.getDurability(), var))
 						|| Main.armorRegister.containsKey(MaterialStorage.getMS(is.getType(), -1, var))));
 	}
 
-	@SuppressWarnings("deprecation")
-	public static boolean isAngledArmor(ItemStack is) {
-		if (is == null)
-			return false;
-		int var = MaterialStorage.getVarient(is);
-		if (Main.angledArmor.containsKey(MaterialStorage.getMS(is.getType(), is.getDurability(), var)))
-			return true;
-		return false;
-	}
 
-	@SuppressWarnings("deprecation")
-	public static AngledArmor getAngledArmor(ItemStack is) {
-		int var = MaterialStorage.getVarient(is);
-		if (Main.angledArmor.containsKey(MaterialStorage.getMS(is.getType(), is.getDurability(), var)))
-			return Main.angledArmor.get(MaterialStorage.getMS(is.getType(), is.getDurability(), var));
-		return Main.angledArmor.get(MaterialStorage.getMS(is.getType(), -1, var));
-
-	}
 
 	@SuppressWarnings("deprecation")
 	public static ArmorObject getArmor(ItemStack is) {
 		int var = MaterialStorage.getVarient(is);
-		if (isArmor(is)) {
-			try {
-				AngledArmor ms = getAngledArmor(is);
-				return Main.armorRegister.get(ms.getBase());
-			} catch (Error | Exception e4) {
-			}
-		}
 		if (Main.armorRegister.containsKey(MaterialStorage.getMS(is.getType(), is.getDurability(), var)))
 			return Main.armorRegister.get(MaterialStorage.getMS(is.getType(), is.getDurability(), var));
 		return Main.armorRegister.get(MaterialStorage.getMS(is.getType(), -1, var));
@@ -260,6 +232,22 @@ public class QualityArmory {
 		return Main.ammoRegister.get(MaterialStorage.getMS(is.getType(), -1, var, extraData, temp));
 	}
 
+	public static Ammo getAmmoByName(String name) {
+		for (Entry<MaterialStorage, Ammo> e : Main.ammoRegister.entrySet())
+			if (e.getValue().getName().equalsIgnoreCase(name)) {
+				return e.getValue();
+			}
+		return null;
+	}
+
+	public static AttachmentBase getAttachmentByName(String name) {
+		for (Entry<MaterialStorage, AttachmentBase> e : Main.attachmentRegister.entrySet())
+			if (e.getValue().getAttachmentName().equalsIgnoreCase(name)) {
+				return e.getValue();
+			}
+		return null;
+	}
+
 	@SuppressWarnings("deprecation")
 	public static boolean isAmmo(ItemStack is) {
 		if (is == null)
@@ -286,6 +274,22 @@ public class QualityArmory {
 				&& is.getDurability() == IronSightsToggleItem.getData())
 			return true;
 		return false;
+	}
+
+	public static ArmorObject getArmorByName(String name) {
+		for (ArmorObject g : Main.armorRegister.values()) {
+			if (g.getName().equals(name))
+				return g;
+		}
+		return null;
+	}
+
+	public static ArmoryBaseObject getMiscByName(String name) {
+		for (ArmoryBaseObject g : Main.miscRegister.values()) {
+			if (g.getName().equals(name))
+				return g;
+		}
+		return null;
 	}
 
 	public static Gun getGunByName(String name) {
@@ -387,9 +391,6 @@ public class QualityArmory {
 		for (MaterialStorage j : Main.attachmentRegister.keySet())
 			if (j.getMat() == newItemtype && (j.getData() > safeDurib) == findHighest)
 				safeDurib = j.getData();
-		for (MaterialStorage j : Main.angledArmor.keySet())
-			if (j.getMat() == newItemtype && (j.getData() > safeDurib) == findHighest)
-				safeDurib = j.getData();
 		for (MaterialStorage j : Main.expansionPacks)
 			if (j.getMat() == newItemtype && (j.getData() > safeDurib) == findHighest)
 				safeDurib = j.getData();
@@ -423,10 +424,6 @@ public class QualityArmory {
 			if (j.getMat() == newItemtype && (j.getData() == startingData)
 					&& ((j.getVarient() > safeDurib) == findHighest))
 				safeDurib = j.getVarient();
-		for (MaterialStorage j : Main.angledArmor.keySet())
-			if (j.getMat() == newItemtype && (j.getData() == startingData)
-					&& ((j.getVarient() > safeDurib) == findHighest))
-				safeDurib = j.getVarient();
 		for (MaterialStorage j : Main.expansionPacks)
 			if (j.getMat() == newItemtype && (j.getData() == startingData)
 					&& ((j.getVarient() > safeDurib) == findHighest))
@@ -450,4 +447,52 @@ public class QualityArmory {
 		}
 		return count >= (g.isPrimaryWeapon() ? Main.primaryWeaponLimit : Main.secondaryWeaponLimit);
 	}
+
+	public static ItemStack getCustomItem(ArmoryBaseObject customItem) {
+		if (customItem instanceof Gun) {
+			return getGunItemStack((Gun) customItem);
+		} else if (customItem instanceof AttachmentBase) {
+			return getGunItemStack((AttachmentBase) customItem);
+		} else if (customItem instanceof Ammo) {
+			return getAmmoItemStack((Ammo) customItem);
+		} else {
+			return getMiscObject(customItem);
+		}
+	}
+
+	public static ItemStack getGunItemStack(String name) {
+		AttachmentBase a = getAttachmentByName(name);
+		if (name != null)
+			return getGunItemStack(a);
+		return getGunItemStack(getGunByName(name));
+	}
+
+	public static ItemStack getAmmoItemStack(String name) {
+		return getAmmoItemStack(getAmmoByName(name));
+	}
+
+	public static ItemStack getGunItemStack(Gun g) {
+		return ItemFact.getGun(g);
+	}
+
+	public static ItemStack getGunItemStack(AttachmentBase g) {
+		return ItemFact.getGun(g);
+	}
+
+	public static ItemStack getAmmoItemStack(Ammo g) {
+		return ItemFact.getAmmo(g, 1);
+	}
+
+	public static ItemStack getMiscObject(String name) {
+		return ItemFact.getObject(getMiscByName(name));
+	}
+
+	public static ItemStack getMiscObject(ArmoryBaseObject obj) {
+		return ItemFact.getObject(obj, 1);
+	}
+
+	public static ItemStack getIronSightsItemStack() {
+		return ItemFact.getIronSights();
+	}
+
 }
