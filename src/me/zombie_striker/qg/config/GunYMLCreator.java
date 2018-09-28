@@ -31,9 +31,10 @@ public class GunYMLCreator {
 			new File(dataFolder, "newGuns").mkdirs();
 
 		GunYML h = new GunYML(f2);
+				
 		h.setNoSave(false, "AllowUserModifications",
 				(h.contains("allowUpdates") ? (!(boolean) h.get("allowUpdates")) : false));
-
+		
 		h.setNoSave(false, "name", name);
 		h.setNoSave(false, "displayname", displayname.startsWith("&") ? displayname : "&6" + displayname);
 

@@ -67,7 +67,6 @@ public class HeadShotUtil {
 	}
 
 	public static boolean closeEnough(Entity e, Location closest) {
-
 		switch (e.getType().name()) {
 
 		/**
@@ -103,6 +102,9 @@ public class HeadShotUtil {
 		case "POLAR_BEAR":
 			return within2D(e, closest, 1, 1);
 
+		case "PHANTOM":
+			return within2D(e, closest, 1, 0.5);
+			
 		case "ENDERMAN":
 			return within2D(e, closest, 0.5, 3);
 

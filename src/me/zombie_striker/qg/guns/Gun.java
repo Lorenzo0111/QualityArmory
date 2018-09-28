@@ -86,12 +86,14 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 	RealtimeCalculationProjectile customProjectile = null;
 	double velocity = 2;
 	double explosionRadius = 10;
+	double recoil = 1;
 
 	// This refers to the last time a gun was shot by a player, on a per-gun basis.
 	// Doing this should prevent players from fast-switching to get around
 	// bullet-delays
 	public HashMap<UUID, Long> lastshot = new HashMap<>();
 
+	/*@Deprecated
 	public Gun(String name, MaterialStorage id, WeaponType type, boolean h, Ammo am, double acc, double swaymult,
 			int maxBullets, float damage, boolean isAutomatic, int durib, WeaponSounds ws, double cost) {
 		this(name, id, type, h, am, acc, swaymult, maxBullets, damage, isAutomatic, durib, ws, null,
@@ -99,12 +101,12 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 		this.ing = Main.getInstance().getIngredients(name);
 
 	}
-
+	@Deprecated
 	public Gun(String name, WeaponType type, boolean h, Ammo am, double acc, double swaymult, int maxBullets,
 			float damage, boolean isAutomatic, int durib, WeaponSounds ws, double cost) {
 		this(name, type, h, am, acc, swaymult, maxBullets, damage, isAutomatic, durib, ws, cost,
 				Main.getInstance().getIngredients(name));
-	}
+	}*/
 
 	public Gun(String name, WeaponType type, boolean h, Ammo am, double acc, double swaymult, int maxBullets,
 			float damage, boolean isAutomatic, int durib, WeaponSounds ws, double cost, ItemStack[] ing) {
@@ -187,6 +189,13 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 		return lightl;
 	}
 
+	public double getRecoil() {
+		return recoil;
+	}
+	public void setRecoil(double d) {
+		this.recoil = d;
+	}
+	
 	/**
 	 * Sets the glow for the item. Null to disable the glow.
 	 */
@@ -489,7 +498,7 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 
 	@Override
 	public void onRMB(PlayerInteractEvent e, ItemStack usedItem) {
-		onClick(e, usedItem, !Main.SWAP_RMB_WITH_LMB);
+		onClick(e, usedItem, (Main.reloadOnFOnly||!Main.SWAP_RMB_WITH_LMB));
 	}
 
 	@Override

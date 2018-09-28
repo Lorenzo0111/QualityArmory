@@ -32,6 +32,7 @@ public class GunYML extends ArmoryYML {
 		setNoOverride("unlimitedAmmo", false);
 		setNoOverride("LightLeveOnShoot", 14);
 		setNoOverride("firerate", 1);
+		setNoOverride("recoil", 1);
 
 		setNoOverride("particles.bullet_particle", "REDSTONE");
 		setNoOverride("particles.bullet_particleR", 1);
@@ -45,6 +46,10 @@ public class GunYML extends ArmoryYML {
 		setNoOverride("drop-glow-color", "none");
 		setNoOverride("headshotMultiplier", 2);
 		setNoOverride("swayMultiplier", 2);
+	}
+	public GunYML setRecoil(double recoil) {
+		set(false, "recoil", recoil);
+		return this;
 	}
 	public GunYML setSwayMultiplier(double multiplier) {
 		set(false, "swayMultiplier", multiplier);

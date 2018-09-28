@@ -101,15 +101,17 @@ public class ItemFact {
 	}
 
 	public static ItemStack removeCalculatedExtra(ItemStack is) {
-		ItemMeta im = is.getItemMeta();
-		List<String> lore = is.getItemMeta().getLore();
-		for (int i = 0; i < lore.size(); i++) {
-			if (lore.get(i).startsWith(CALCTEXT)) {
-				lore.remove(i);
+		if (is.hasItemMeta() && is.getItemMeta().hasLore()) {
+			ItemMeta im = is.getItemMeta();
+			List<String> lore = is.getItemMeta().getLore();
+			for (int i = 0; i < lore.size(); i++) {
+				if (lore.get(i).startsWith(CALCTEXT)) {
+					lore.remove(i);
+				}
 			}
+			im.setLore(lore);
+			is.setItemMeta(im);
 		}
-		im.setLore(lore);
-		is.setItemMeta(im);
 		return is;
 	}
 
@@ -336,6 +338,7 @@ public class ItemFact {
 			return getAmmo(Main.ammoRegister.get(MaterialStorage.getMS(m, data, varient, extraValues)));
 		return null;
 	}
+
 	public static ItemStack getAmmo(Ammo a) {
 		return getAmmo(a, a.getMaxAmount() > 64 ? 64 : a.getMaxAmount());
 	}
@@ -377,8 +380,9 @@ public class ItemFact {
 	}
 
 	public static ItemStack getObject(ArmoryBaseObject a) {
-		return getObject(a,a.getCraftingReturn());
+		return getObject(a, a.getCraftingReturn());
 	}
+
 	@SuppressWarnings("deprecation")
 	public static ItemStack getObject(ArmoryBaseObject a, int amount) {
 		ItemStack is = new ItemStack(a.getItemData().getMat(), 0, (short) a.getItemData().getData());
@@ -454,8 +458,8 @@ public class ItemFact {
 	public static ItemStack addGunRegister(ItemStack base) {
 		ItemMeta im = base.getItemMeta();
 		try {
-			if(Main.enableVisibleAmounts)
-			im.setLocalizedName("" + UUID.randomUUID());
+			if (Main.enableVisibleAmounts)
+				im.setLocalizedName("" + UUID.randomUUID());
 		} catch (Exception | Error e) {
 			List<String> lore = im.getLore();
 			lore.add(ChatColor.DARK_GRAY + "UUID" + UUID.randomUUID().toString());
@@ -466,7 +470,7 @@ public class ItemFact {
 	}
 
 	public static boolean sameGun(ItemStack is1, ItemStack is2) {
-		if(!Main.enableVisibleAmounts)
+		if (!Main.enableVisibleAmounts)
 			return false;
 		try {
 			if (is1.hasItemMeta() && is1.getItemMeta().hasLocalizedName())

@@ -131,7 +131,7 @@ public class ParticleHandlers {
 		try {
 			if (is13) {
 				Particle.DustOptions dust = new Particle.DustOptions(
-						Color.fromRGB((int) r * 255, (int) g * 255, (int) b * 255), 1);
+						Color.fromRGB((int) (r * 255), (int) (g * 255), (int) (b * 255)), 1);
 				loc.getWorld().spawnParticle(Particle.REDSTONE, loc.getX(), loc.getY(), loc.getZ(), 0, 0, 0, 0, dust);
 			} else {
 				loc.getWorld().spawnParticle(Particle.REDSTONE, loc.getX(), loc.getY(), loc.getZ(), 0, r, g, b, 1);

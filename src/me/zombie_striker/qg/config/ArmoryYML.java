@@ -52,9 +52,11 @@ public class ArmoryYML {
 	}
 
 	public void set(boolean force, String name, Object v) {
-		if (!fileConfig.contains(name)
-				|| ((!fileConfig.contains("AllowUserModifications") || !fileConfig.getBoolean("AllowUserModifications"))
-						|| fileConfig.getBoolean("allowUpdates") || force) && !fileConfig.get(name).equals(v)) {
+		if (contains("invalid") && (boolean) get("invalid"))
+			return;
+		if (contains("AllowUserModifications") && fileConfig.getBoolean("AllowUserModifications"))
+			return;
+		if (!contains(name) || !get(name).equals(v)) {
 			fileConfig.set(name, v);
 			saveNow = true;
 		}

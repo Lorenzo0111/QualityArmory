@@ -5,7 +5,7 @@ import me.zombie_striker.qg.QualityArmory;
 import me.zombie_striker.qg.attachments.AttachmentBase;
 import me.zombie_striker.qg.guns.Gun;
 
-import org.bukkit.Material;
+import org.bukkit.*;
 import org.bukkit.event.*;
 import org.bukkit.event.inventory.PrepareAnvilEvent;
 import org.bukkit.event.player.*;
@@ -31,32 +31,39 @@ public class Update19Events implements Listener {
 
 	@EventHandler
 	public void onItemHandSwap(PlayerSwapHandItemsEvent e) {
-		if (Main.reloadOnF) {
-			try {
-				if (QualityArmory.isIronSights(e.getOffHandItem())) {
-					e.setCancelled(true);
-					e.getPlayer().getInventory().setItemInMainHand(e.getMainHandItem());
-					e.getPlayer().getInventory().setItemInOffHand(null);
-				}
-			} catch (Error e2) {
+		if (Main.reloadOnF || Main.reloadOnFOnly) {
+			if (QualityArmory.isIronSights(e.getOffHandItem())) {
+				e.setCancelled(true);
+				e.getPlayer().getInventory().setItemInMainHand(e.getMainHandItem());
+				e.getPlayer().getInventory().setItemInOffHand(null);
+				return;
+			} else if (QualityArmory.isGun(e.getMainHandItem())
+					|| (QualityArmory.isGunWithAttchments(e.getMainHandItem()))) {
+				e.setCancelled(true);
+				e.getPlayer().getInventory().setItemInMainHand(e.getMainHandItem());
+				e.getPlayer().getInventory().setItemInOffHand(null);
+				return;
 			}
 			AttachmentBase attach = null;
 			Gun g = null;
-			if (QualityArmory.isGunWithAttchments(e.getOffHandItem())) {
+			if (QualityArmory.isIronSights(e.getOffHandItem())) {
+				if (QualityArmory.isGunWithAttchments(e.getMainHandItem())) {
+					attach = QualityArmory.getGunWithAttchments(e.getMainHandItem());
+					g = Main.gunRegister.get(attach.getBase());
+				} else {
+					if (QualityArmory.isGun(e.getMainHandItem()))
+						g = QualityArmory.getGun(e.getMainHandItem());
+				}
+			}else {
 				if (QualityArmory.isGunWithAttchments(e.getOffHandItem())) {
 					attach = QualityArmory.getGunWithAttchments(e.getOffHandItem());
-				} else if (QualityArmory.isGunWithAttchments(e.getMainHandItem())) {
-					attach = QualityArmory.getGunWithAttchments(e.getMainHandItem());
+					g = Main.gunRegister.get(attach.getBase());
+				} else {
+					if (QualityArmory.isGun(e.getOffHandItem()))
+						g = QualityArmory.getGun(e.getOffHandItem());
 				}
-				g = Main.gunRegister.get(attach.getBase());
-			} else {
-				if (QualityArmory.isGun(e.getOffHandItem())) {
-					g = QualityArmory.getGun(e.getOffHandItem());
-				} else if (QualityArmory.isGun(e.getMainHandItem())) {
-					g = QualityArmory.getGun(e.getMainHandItem());
-				}
+				
 			}
-
 			if (g != null) {
 				e.setCancelled(true);
 				if (g.playerHasAmmo(e.getPlayer())) {
@@ -65,14 +72,18 @@ public class Update19Events implements Listener {
 			}
 
 		} else {
-			if (QualityArmory.isGun(e.getMainHandItem())) {
+			if (QualityArmory.isGun(e.getOffHandItem())) {
 				e.setCancelled(true);
 				return;
 			}
-			if (e.getOffHandItem() != null && QualityArmory.isGun(e.getOffHandItem())) {
+			if (QualityArmory.isIronSights(e.getOffHandItem())) {
 				e.setCancelled(true);
 				return;
 			}
+			/*
+			 * if (e.getOffHandItem() != null && QualityArmory.isGun(e.getOffHandItem())) {
+			 * e.setCancelled(true); return; }
+			 */
 		}
 	}
 

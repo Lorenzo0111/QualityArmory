@@ -1,3 +1,19 @@
+1.1.118
+	Added Recoil
+	Added fix for ReloadOnF
+	Added "enableReloadOnlyOnSwapOffhand", which will override the RMB button.
+	Cleaned code for offhand F reload checker.
+	Cleaned up and revised code for bullet detection.
+	Fixed bullet trails there were not pure white
+	Fixed NPE when axe has no lore.
+
+1.1.117C
+	Added fix where yml files will not modify the invalid tag even with allowUserModifications set to false. You can now disable guns more easily.
+	Fixed URL
+
+1.1.117B
+	Fixed resourcepack bug with PKP and Asii AWP
+
 1.1.117
 	-Added Crackshot Gun Converter (Copy all Crackshot files into the /newGuns/ directory to create QA versions)
 	Added VZ.58

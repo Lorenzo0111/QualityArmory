@@ -42,6 +42,9 @@ Data_For_IronSightToggle_Item: 21
 #Enables weapon duribility and degredation on every shot.
 EnableWeaponDurability: false
 
+#Enables Recoil
+enableRecoil: true
+
 #Configures Primary Weapons Systems
 enablePrimaryWeaponLimiter: false
 weaponlimiter_primaries: 2
@@ -50,6 +53,7 @@ weaponlimiter_secondaries: 2
 #QA Controls
 Swap-Reload-and-Shooting-Controls: false
 enableReloadingWhenSwapToOffhand: true
+enableReloadOnlyWhenSwapToOffhand: false
 IronSightsOnRightClick: false
 automaticallyReloadGunWhenOutOfAmmo: false
 allowGunReload: true

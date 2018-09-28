@@ -296,7 +296,9 @@ public class GunYMLLoader {
 							if (f2.contains("CustomProjectiles.Velocity"))
 								g.setRealtimeVelocity(f2.getDouble("CustomProjectiles.Velocity"));
 						}
-
+						
+						if(f2.contains("recoil"))
+							g.setRecoil(f2.getDouble("recoil"));
 						if (f2.contains("headshotMultiplier"))
 							g.setHeadshotMultiplier(f2.getDouble("headshotMultiplier"));
 						if (f2.contains("unlimitedAmmo"))
