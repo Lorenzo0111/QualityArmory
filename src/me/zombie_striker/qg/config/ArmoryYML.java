@@ -123,7 +123,7 @@ public class ArmoryYML {
 		setNoOverride("lore", new ArrayList<String>());
 		setNoOverride("material", Material.DIAMOND_AXE.name());
 		setNoOverride("variant", 0);
-		setNoOverride("weapontype", WeaponType.RIFLE);
+		//setNoOverride("weapontype", WeaponType.RIFLE.name());
 		setNoOverride("weaponsounds", WeaponSounds.getSoundByType(WeaponType.RIFLE));
 		setNoOverride("damage", 3);
 

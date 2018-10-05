@@ -556,11 +556,11 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 
 		boolean offhand = usedItem != e.getPlayer().getItemInHand();
 
-		Gun g = QualityArmory.getGun(usedItem);
 		AttachmentBase attachment = QualityArmory.getGunWithAttchments(usedItem);
+		/*Gun g = QualityArmory.getGun(usedItem);
 		if (g == null)
-			g = attachment.getBaseGun();
-		Main.DEBUG("Made it to gun/attachment check : " + g);
+			g = attachment.getBaseGun();*/
+		Main.DEBUG("Made it to gun/attachment check : " + getName());
 		if (Main.enableInteractChests) {
 			if (e.getClickedBlock() != null && (e.getClickedBlock().getType() == Material.CHEST
 					|| e.getClickedBlock().getType() == Material.TRAPPED_CHEST)) {
@@ -572,6 +572,7 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 
 		e.setCancelled(true);
 		if (fire) {
+			Main.DEBUG("Fire mode called");
 			if (!Main.enableDurability || ItemFact.getDamage(usedItem) > 0) {
 				// if (allowGunsInRegion(e.getPlayer().getLocation())) {
 				try {
@@ -582,7 +583,7 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 				} catch (Error | Exception e4) {
 				}
 
-				if (g.isAutomatic() && GunUtil.rapidfireshooters.containsKey(e.getPlayer().getUniqueId())) {
+				if (isAutomatic() && GunUtil.rapidfireshooters.containsKey(e.getPlayer().getUniqueId())) {
 					GunUtil.rapidfireshooters.remove(e.getPlayer().getUniqueId()).cancel();
 					if (Main.enableReloadWhenOutOfAmmo)
 						if (ItemFact.getAmount(offhand ? e.getPlayer().getInventory().getItemInOffHand()
@@ -594,12 +595,12 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 								offhand = false;
 							}
 							if (Main.allowGunReload) {
-								QualityArmory.sendHotbarGunAmmoCount(e.getPlayer(), g, attachment, usedItem,
-										((g.getMaxBullets() != ItemFact.getAmount(usedItem))
-												&& GunUtil.hasAmmo(e.getPlayer(), g)));
-								if (g.playerHasAmmo(e.getPlayer())) {
+								QualityArmory.sendHotbarGunAmmoCount(e.getPlayer(), this, attachment, usedItem,
+										((getMaxBullets() != ItemFact.getAmount(usedItem))
+												&& GunUtil.hasAmmo(e.getPlayer(), this)));
+								if (playerHasAmmo(e.getPlayer())) {
 									Main.DEBUG("Trying to reload WITH AUTORELOAD. player has ammo");
-									g.reload(e.getPlayer(), attachment);
+									reload(e.getPlayer(), attachment);
 
 								} else {
 									if (Main.showOutOfAmmoOnItem) {
@@ -622,12 +623,12 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 								offhand = false;
 							}
 							if (Main.allowGunReload) {
-								QualityArmory.sendHotbarGunAmmoCount(e.getPlayer(), g, attachment, usedItem,
-										((g.getMaxBullets() != ItemFact.getAmount(usedItem))
-												&& GunUtil.hasAmmo(e.getPlayer(), g)));
-								if (g.playerHasAmmo(e.getPlayer())) {
+								QualityArmory.sendHotbarGunAmmoCount(e.getPlayer(), this, attachment, usedItem,
+										((getMaxBullets() != ItemFact.getAmount(usedItem))
+												&& GunUtil.hasAmmo(e.getPlayer(), this)));
+								if (playerHasAmmo(e.getPlayer())) {
 									Main.DEBUG("Trying to reload WITH AUTORELOAD. player has ammo");
-									g.reload(e.getPlayer(), attachment);
+									reload(e.getPlayer(), attachment);
 
 								} else {
 									Main.DEBUG("Trying to reload WITH AUTORELOAD. player DOES NOT have ammo");
@@ -635,20 +636,20 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 							}
 							return;
 						}
-					g.shoot(e.getPlayer(), attachment);
+					shoot(e.getPlayer(), attachment);
 					if (Main.enableDurability)
 						if (offhand) {
 							try {
-								e.getPlayer().getInventory().setItemInOffHand(ItemFact.damage(g, usedItem));
+								e.getPlayer().getInventory().setItemInOffHand(ItemFact.damage(this, usedItem));
 							} catch (Error e2) {
 							}
 						} else {
-							e.getPlayer().setItemInHand(ItemFact.damage(g, usedItem));
+							e.getPlayer().setItemInHand(ItemFact.damage(this, usedItem));
 						}
 
 				}
 
-				QualityArmory.sendHotbarGunAmmoCount(e.getPlayer(), g, attachment, usedItem, false);
+				QualityArmory.sendHotbarGunAmmoCount(e.getPlayer(), this, attachment, usedItem, false);
 				return;
 				/*
 				 * } else { Main.DEBUG("Worldguard region canceled the event"); }
@@ -658,8 +659,10 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 				// Shouldn't work for offhand, but it should still
 				// be checked later.
 			}
+			Main.DEBUG("End of fire mode check called");
 
 		} else {
+			Main.DEBUG("Non-Fire mode activated");
 
 			if (Main.enableIronSightsON_RIGHT_CLICK) {
 				if (!Update19OffhandChecker.supportOffhand(e.getPlayer())) {
@@ -668,7 +671,7 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 					return;
 				}
 				// Rest should be okay
-				if (g.hasIronSights()) {
+				if (hasIronSights()) {
 					try {
 
 						if (e.getPlayer().getItemInHand().getItemMeta().getDisplayName()
@@ -698,7 +701,7 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 							e.getPlayer().getInventory().setItemInMainHand(ironsights);
 						}
 
-						QualityArmory.sendHotbarGunAmmoCount(e.getPlayer(), g, attachment, usedItem, false);
+						QualityArmory.sendHotbarGunAmmoCount(e.getPlayer(), this, attachment, usedItem, false);
 					} catch (Error e2) {
 						Bukkit.broadcastMessage(Main.prefix
 								+ "Ironsights not compatible for versions lower than 1.8. The server owner should set EnableIronSights to false in the plugin's config");
@@ -716,24 +719,23 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 					 */
 				}
 
+				Main.DEBUG("Ironsights on RMB finished");
 			} else {
+				Main.DEBUG("Reload called");
 				if (e.getClickedBlock() != null && Main.interactableBlocks.contains(e.getClickedBlock().getType())) {
 					e.setCancelled(false);
 				} else {
-					if (g != null) {
 						if (Main.allowGunReload) {
-							QualityArmory.sendHotbarGunAmmoCount(e.getPlayer(), g, attachment, usedItem,
-									((g.getMaxBullets() != ItemFact.getAmount(usedItem))
-											&& GunUtil.hasAmmo(e.getPlayer(), g)));
-							if (g.playerHasAmmo(e.getPlayer())) {
+							QualityArmory.sendHotbarGunAmmoCount(e.getPlayer(), this, attachment, usedItem,
+									((getMaxBullets() != ItemFact.getAmount(usedItem))
+											&& GunUtil.hasAmmo(e.getPlayer(), this)));
+							if (playerHasAmmo(e.getPlayer())) {
 								Main.DEBUG("Trying to reload. player has ammo");
-								g.reload(e.getPlayer(), attachment);
+								reload(e.getPlayer(), attachment);
 							} else {
 								Main.DEBUG("Trying to reload. player DOES NOT have ammo");
 							}
 						}
-
-					}
 				}
 			}
 

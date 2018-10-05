@@ -160,7 +160,7 @@ public class Main extends JavaPlugin implements Listener {
 	public static boolean kickIfDeniedRequest = false;
 	// public static String url19plus =
 	// "https://www.dropbox.com/s/faufrgo7w2zpi3d/QualityArmoryv1.0.10.zip?dl=1";
-	public static String url_newest = "https://www.dropbox.com/s/3wb9j8rl8c8sus0/QualityArmoryv1.0.33.zip?dl=1";
+	public static String url_newest = "https://www.dropbox.com/s/n002cou1ulg8v1d/QualityArmoryv1.0.34.zip?dl=1";
 	public static String url18 = "https://www.dropbox.com/s/gx6dhahq6onob4g/QualityArmory1.8v1.0.1.zip?dl=1";
 	public static String url = url_newest;
 
@@ -258,7 +258,7 @@ public class Main extends JavaPlugin implements Listener {
 	public static boolean ENABLE_LORE_INFO = true;
 	public static boolean ENABLE_LORE_HELP = true;
 
-	public static boolean AutoDetectResourcepackVersion = false;
+	public static boolean AutoDetectResourcepackVersion = true;
 	public static final int ID18 = 106;
 
 	private FileConfiguration config;
@@ -413,6 +413,20 @@ public class Main extends JavaPlugin implements Listener {
 				return gunRegister.size() + "";
 			}
 		}));
+		metrics.addCustomChart(
+				new Metrics.SimplePie("uses_default_resourcepack", new java.util.concurrent.Callable<String>() {
+					@Override
+					public String call() throws Exception {
+						return overrideURL + "";
+					}
+				}));
+		metrics.addCustomChart(
+				new Metrics.SimplePie("has_an_expansion_pack", new java.util.concurrent.Callable<String>() {
+					@Override
+					public String call() throws Exception {
+						return (expansionPacks.size() > 0) + "";
+					}
+				}));
 
 		new BukkitRunnable() {
 			@SuppressWarnings("deprecation")
@@ -421,7 +435,7 @@ public class Main extends JavaPlugin implements Listener {
 				for (Player p : Bukkit.getOnlinePlayers()) {
 					// if (p.getItemInHand().containsEnchantment(Enchantment.MENDING)) {
 					if (QualityArmory.isCustomItem(p.getItemInHand())) {
-						if (!p.getItemInHand().getItemMeta().isUnbreakable()) {
+						if (!p.getItemInHand().getItemMeta().spigot().isUnbreakable()) {
 							ItemStack temp = p.getItemInHand();
 							int j = QualityArmory.findSafeSpot(temp, false);
 							temp.setDurability((short) Math.max(0, j - 1));
@@ -435,7 +449,7 @@ public class Main extends JavaPlugin implements Listener {
 						// (p.getInventory().getItemInOffHand().containsEnchantment(Enchantment.MENDING))
 						// {
 						if (QualityArmory.isCustomItem(p.getInventory().getItemInOffHand())) {
-							if (!p.getInventory().getItemInOffHand().getItemMeta().isUnbreakable()) {
+							if (!p.getInventory().getItemInOffHand().getItemMeta().spigot().isUnbreakable()) {
 								ItemStack temp = p.getInventory().getItemInOffHand();
 								int j = QualityArmory.findSafeSpot(temp, false);
 								temp.setDurability((short) Math.max(0, j - 1));
@@ -515,6 +529,7 @@ public class Main extends JavaPlugin implements Listener {
 		new ExplodingRoundProjectile();
 		new HomingRocketProjectile();
 		new RocketProjectile();
+		new FireProjectile();
 
 		gunRegister.clear();
 		ammoRegister.clear();
@@ -675,7 +690,7 @@ public class Main extends JavaPlugin implements Listener {
 		gravity = (double) a("gravityConstantForDropoffCalculations", gravity);
 
 		allowGunReload = (boolean) a("allowGunReload", allowGunReload);
-		AutoDetectResourcepackVersion = (boolean) a("Auto-Detect-Resourcepack", false);
+		AutoDetectResourcepackVersion = (boolean) a("Auto-Detect-Resourcepack", AutoDetectResourcepackVersion);
 
 		unknownTranslationKeyFixer = (boolean) a("unknownTranslationKeyFixer", false);
 
@@ -932,6 +947,15 @@ public class Main extends JavaPlugin implements Listener {
 						1);
 				GunYMLCreator.createAmmo(false, getDataFolder(), false, "40mm", "&f40x46mm", 99, stringsAmmo, 30, 10,
 						10, 1);
+				GunYMLCreator
+						.createAmmo(false, getDataFolder(), false, "default_flamerfuel", "fuel", "&fFlamerFuel", null,
+								Material.BLAZE_POWDER, 0,
+								Arrays.asList(new String[] { getIngString(Material.BLAZE_ROD, 0, 1), }), 1, 1, 64, 2)
+						.setVariant(1).done();
+				// .createAmmo(false, getDataFolder(), false, "fuel", "&fFlamerFuel", 0,
+				// Arrays.asList(new String[] { getIngString(Material.BLAZE_POWDER, 0, 1), }),
+				// 1, 1,
+				// 64, 1).setMaterial(Material.BLAZE_POWDER);
 
 				GunYMLCreator.createNewDefaultGun(getDataFolder(), "p30", "P30", 2, stringsPistol, WeaponType.PISTOL,
 						null, true, "9mm", 3, 12, 700).setIsSecondaryWeapon(true).done();
@@ -1321,6 +1345,13 @@ public class Main extends JavaPlugin implements Listener {
 						50, WeaponType.HELMET, 1, 0, false);
 				GunYMLCreator.createDefaultArmor(getDataFolder(), false, "ushanka", "Ushanka-Hat", null, 61,
 						StringsWool, 50, WeaponType.HELMET, 1, 0, false);
+				GunYMLCreator
+						.createNewDefaultGun(getDataFolder(), "flamer", "Flamer", 113, stringsMetalRif,
+								WeaponType.FLAMER, WeaponSounds.HISS, false, "fuel", 1, 60, 8000)
+						.setFullyAutomatic(5).setRecoil(0).setCustomProjectile(ProjectileManager.FIRE).setDistance(11)
+						.done();
+				GunYMLCreator.createNewDefaultGun(getDataFolder(), "glock", "Glock-17", 2, stringsPistol, WeaponType.PISTOL,
+						null, true, "9mm", 3, 15, 1800).setIsSecondaryWeapon(true).setFireRate(3).setVariant(2).done();
 			}
 
 			// GunYMLCreator.createNewGun(false, getDataFolder(), true, "ExampleGun",
@@ -1445,17 +1476,22 @@ public class Main extends JavaPlugin implements Listener {
 		if (e.isCancelled())
 			return;
 		if (!Main.enableIronSightsON_RIGHT_CLICK) {
+			DEBUG("Sneak Toggle Called");
 			try {
 				if (e.isSneaking()) {
 					if (QualityArmory.isGun(e.getPlayer().getItemInHand())
 							|| QualityArmory.isGunWithAttchments(e.getPlayer().getItemInHand())
 									&& (!QualityArmory.isCustomItem(e.getPlayer().getInventory().getItemInOffHand()))) {
+						DEBUG("Sneak Swapping start!");
 						Gun g = QualityArmory.getGun(e.getPlayer().getItemInHand());
 						AttachmentBase attach = QualityArmory.getGunWithAttchments(e.getPlayer().getItemInHand());
-						if (g == null && attach != null)
-							g = gunRegister.get(attach.getBase());
+						if (attach != null)
+							g = attach.getBaseGun();// gunRegister.get(attach.getBase());
 						if (g != null) {
+							DEBUG("Gun used " + g.getName() + " Attach "
+									+ (attach == null ? "null" : attach.getAttachmentName()));
 							if (g.hasIronSights()) {
+								DEBUG("Gun has ironsights");
 								try {
 
 									if (!e.getPlayer().getItemInHand().hasItemMeta()
@@ -1471,8 +1507,10 @@ public class Main extends JavaPlugin implements Listener {
 												.setItemInOffHand(e.getPlayer().getInventory().getItemInMainHand());
 										ItemStack ironsights = ItemFact.getIronSights();
 										e.getPlayer().getInventory().setItemInMainHand(ironsights);
+										DEBUG("Swap gun  to off hand");
 										if (tempremove != null && !QualityArmory.isGun(tempremove)) {
 											e.getPlayer().getInventory().addItem(tempremove);
+											DEBUG("Added offhand back to inventory");
 										}
 									}
 								} catch (Error e2) {
@@ -1486,6 +1524,7 @@ public class Main extends JavaPlugin implements Listener {
 					if (QualityArmory.isIronSights(e.getPlayer().getItemInHand())) {
 						e.getPlayer().getInventory().setItemInMainHand(e.getPlayer().getInventory().getItemInOffHand());
 						e.getPlayer().getInventory().setItemInOffHand(null);
+						DEBUG("Swap gun back to main hand");
 					}
 				}
 			} catch (Error | Exception e2) {
@@ -1520,6 +1559,8 @@ public class Main extends JavaPlugin implements Listener {
 	}
 
 	public boolean b(String arg, String startsWith) {
+		if (arg == null || startsWith == null)
+			return false;
 		return arg.toLowerCase().startsWith(startsWith.toLowerCase());
 	}
 
@@ -2548,7 +2589,7 @@ public class Main extends JavaPlugin implements Listener {
 							e.getPlayer().getItemInHand().getDurability() + 1, -1, "-1", "-1"))) {
 				Main.DEBUG("A player is using a non-gun item, but may reach the textures of one!");
 				// If the item is not a gun, but the item below it is
-				int safeDurib = QualityArmory.findSafeSpot(e.getPlayer().getItemInHand(), true) + 1;
+				int safeDurib = QualityArmory.findSafeSpot(e.getPlayer().getItemInHand(), true) + 3;
 
 				// if (e.getItem().getDurability() == 1) {
 				Main.DEBUG("Safe Durib= " + (safeDurib) + "! ORG " + e.getPlayer().getItemInHand().getDurability());
@@ -2581,7 +2622,7 @@ public class Main extends JavaPlugin implements Listener {
 							e.getPlayer().getInventory().getItemInOffHand().getDurability() + 1, -1, "-1", "-1"))) {
 				Main.DEBUG("A player is using a non-gun item, but may reach the textures of one!");
 				// If the item is not a gun, but the item below it is
-				int safeDurib = QualityArmory.findSafeSpot(e.getPlayer().getInventory().getItemInOffHand(), true) + 1;
+				int safeDurib = QualityArmory.findSafeSpot(e.getPlayer().getInventory().getItemInOffHand(), true) + 3;
 
 				// if (e.getItem().getDurability() == 1) {
 				Main.DEBUG("Safe Durib= " + (safeDurib) + "! ORG "
@@ -2604,10 +2645,10 @@ public class Main extends JavaPlugin implements Listener {
 		// Quick bugfix for specifically this item.
 
 		if (QualityArmory.isCustomItem(e.getPlayer().getItemInHand())) {
-			if (!e.getPlayer().getItemInHand().getItemMeta().isUnbreakable()) {
+			if (!e.getPlayer().getItemInHand().getItemMeta().spigot().isUnbreakable()) {
 				Main.DEBUG("A player is using a breakable item that reached being a gun!");
 				// If the item is not a gun, but the item below it is
-				int safeDurib = QualityArmory.findSafeSpot(e.getPlayer().getItemInHand(), true) + 1;
+				int safeDurib = QualityArmory.findSafeSpot(e.getPlayer().getItemInHand(), true) + 3;
 
 				// if (e.getItem().getDurability() == 1) {
 				Main.DEBUG("Safe Durib= " + (safeDurib) + "! ORG " + e.getPlayer().getItemInHand().getDurability());
@@ -2618,11 +2659,11 @@ public class Main extends JavaPlugin implements Listener {
 		}
 		try {
 			if (QualityArmory.isCustomItem(e.getPlayer().getInventory().getItemInOffHand())) {
-				if (!e.getPlayer().getInventory().getItemInOffHand().getItemMeta().isUnbreakable()) {
+				if (!e.getPlayer().getInventory().getItemInOffHand().getItemMeta().spigot().isUnbreakable()) {
 					Main.DEBUG("A player is using a breakable item that reached being a gun!");
 					// If the item is not a gun, but the item below it is
 					int safeDurib = QualityArmory.findSafeSpot(e.getPlayer().getInventory().getItemInOffHand(), true)
-							+ 1;
+							+ 3;
 
 					// if (e.getItem().getDurability() == 1) {
 					Main.DEBUG("Safe Durib= " + (safeDurib) + "! ORG "

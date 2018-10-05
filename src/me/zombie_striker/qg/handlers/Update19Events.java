@@ -4,12 +4,14 @@ import me.zombie_striker.qg.Main;
 import me.zombie_striker.qg.QualityArmory;
 import me.zombie_striker.qg.attachments.AttachmentBase;
 import me.zombie_striker.qg.guns.Gun;
+import me.zombie_striker.qg.guns.utils.GunUtil;
 
 import org.bukkit.*;
 import org.bukkit.event.*;
 import org.bukkit.event.inventory.PrepareAnvilEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitTask;
 
 public class Update19Events implements Listener {
 
@@ -36,12 +38,18 @@ public class Update19Events implements Listener {
 				e.setCancelled(true);
 				e.getPlayer().getInventory().setItemInMainHand(e.getMainHandItem());
 				e.getPlayer().getInventory().setItemInOffHand(null);
+				BukkitTask task = GunUtil.rapidfireshooters.get(e.getPlayer().getUniqueId());
+				if (task != null)
+					task.cancel();
 				return;
 			} else if (QualityArmory.isGun(e.getMainHandItem())
 					|| (QualityArmory.isGunWithAttchments(e.getMainHandItem()))) {
 				e.setCancelled(true);
 				e.getPlayer().getInventory().setItemInMainHand(e.getMainHandItem());
 				e.getPlayer().getInventory().setItemInOffHand(null);
+				BukkitTask task = GunUtil.rapidfireshooters.get(e.getPlayer().getUniqueId());
+				if (task != null)
+					task.cancel();
 				return;
 			}
 			AttachmentBase attach = null;
@@ -54,7 +62,7 @@ public class Update19Events implements Listener {
 					if (QualityArmory.isGun(e.getMainHandItem()))
 						g = QualityArmory.getGun(e.getMainHandItem());
 				}
-			}else {
+			} else {
 				if (QualityArmory.isGunWithAttchments(e.getOffHandItem())) {
 					attach = QualityArmory.getGunWithAttchments(e.getOffHandItem());
 					g = Main.gunRegister.get(attach.getBase());
@@ -62,12 +70,15 @@ public class Update19Events implements Listener {
 					if (QualityArmory.isGun(e.getOffHandItem()))
 						g = QualityArmory.getGun(e.getOffHandItem());
 				}
-				
+
 			}
 			if (g != null) {
 				e.setCancelled(true);
 				if (g.playerHasAmmo(e.getPlayer())) {
 					g.reload(e.getPlayer(), attach);
+					BukkitTask task = GunUtil.rapidfireshooters.get(e.getPlayer().getUniqueId());
+					if (task != null)
+						task.cancel();
 				}
 			}
 

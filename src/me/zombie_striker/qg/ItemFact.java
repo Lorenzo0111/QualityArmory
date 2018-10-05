@@ -245,6 +245,7 @@ public class ItemFact {
 		try {
 			im.setUnbreakable(true);
 		} catch (Error | Exception e34) {
+			im.spigot().setUnbreakable(true);
 		}
 		try {
 			im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_UNBREAKABLE);
@@ -280,8 +281,8 @@ public class ItemFact {
 			im.setLore(lore);
 			try {
 				im.setUnbreakable(true);
-
-			} catch (Error e3) {
+			} catch (Error | Exception e34) {
+				im.spigot().setUnbreakable(true);
 			}
 			try {
 				im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_UNBREAKABLE);
@@ -316,7 +317,8 @@ public class ItemFact {
 		im.setLore(lore);
 		try {
 			im.setUnbreakable(true);
-		} catch (Error e) {
+		} catch (Error | Exception e34) {
+			im.spigot().setUnbreakable(true);
 		}
 		try {
 			im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_UNBREAKABLE);
@@ -357,7 +359,8 @@ public class ItemFact {
 		im.setDisplayName(a.getDisplayName());
 		try {
 			im.setUnbreakable(true);
-		} catch (Error e) {
+		} catch (Error | Exception e34) {
+			im.spigot().setUnbreakable(true);
 		}
 		try {
 			im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_UNBREAKABLE);
@@ -393,7 +396,8 @@ public class ItemFact {
 
 		try {
 			im.setUnbreakable(true);
-		} catch (Error e) {
+		} catch (Error | Exception e34) {
+			im.spigot().setUnbreakable(true);
 		}
 		try {
 			im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_UNBREAKABLE);

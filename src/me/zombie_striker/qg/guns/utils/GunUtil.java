@@ -88,16 +88,18 @@ public class GunUtil {
 			int maxDistance = (int) getTargetedSolidMaxDistance(step, start, range);
 			double dis2 = maxDistance;
 
-			//double degreeVector = Math.atan2(normalizedDirection.getX(), normalizedDirection.getZ());
-			//if (degreeVector > Math.PI)
-			//	degreeVector = 2 * Math.PI - degreeVector;
+			// double degreeVector = Math.atan2(normalizedDirection.getX(),
+			// normalizedDirection.getZ());
+			// if (degreeVector > Math.PI)
+			// degreeVector = 2 * Math.PI - degreeVector;
 
 			List<Location> blocksThatWillPLAYBreak = new ArrayList<>();
 			List<Location> blocksThatWillBreak = new ArrayList<>();
-			
-			Location centerTest = start.clone().add(normalizedDirection.clone().multiply(maxDistance/2));
 
-			for (Entity e : centerTest.getWorld().getNearbyEntities(centerTest, maxDistance/2, maxDistance/2, maxDistance/2)) {
+			Location centerTest = start.clone().add(normalizedDirection.clone().multiply(maxDistance / 2));
+
+			for (Entity e : centerTest.getWorld().getNearbyEntities(centerTest, maxDistance / 2, maxDistance / 2,
+					maxDistance / 2)) {
 				if (e instanceof Damageable) {
 					if (Main.ignoreArmorStands && e.getType().name().equals("ARMOR_STAND"))
 						continue;
@@ -105,60 +107,61 @@ public class GunUtil {
 						double dis = e.getLocation().distance(start);
 						if (dis > dis2)
 							continue;
-					//	double degreeEntity = Math.atan2(e.getLocation().getX() - start.getX(),
-					//			e.getLocation().getZ() - start.getZ());
-					//	if (degreeEntity > Math.PI)
-					//		degreeEntity = 2 * Math.PI - degreeEntity;
-					//	if (Math.max(degreeEntity, degreeVector)
-					//			- Math.min(degreeEntity, degreeVector) < (dis > 10 ? Math.PI / 7 : Math.PI / 2)) {
+						// double degreeEntity = Math.atan2(e.getLocation().getX() - start.getX(),
+						// e.getLocation().getZ() - start.getZ());
+						// if (degreeEntity > Math.PI)
+						// degreeEntity = 2 * Math.PI - degreeEntity;
+						// if (Math.max(degreeEntity, degreeVector)
+						// - Math.min(degreeEntity, degreeVector) < (dis > 10 ? Math.PI / 7 : Math.PI /
+						// 2)) {
 
-							AbstractBoundingBox box = BoundingBoxManager.getBoundingBox(e);
+						AbstractBoundingBox box = BoundingBoxManager.getBoundingBox(e);
 
-							Location test = start.clone();
-							// If the entity is close to the line of fire.
-							if (Main.hasParties && (!Main.friendlyFire)) {
-								try {
-									if (e instanceof Player)
-										if (com.alessiodp.partiesapi.Parties.getApi().getPartyPlayer(e.getUniqueId())
-												.getPartyName().equalsIgnoreCase(com.alessiodp.partiesapi.Parties
-														.getApi().getPartyPlayer(p.getUniqueId()).getPartyName()))
-											continue;
-								} catch (Error | Exception e43) {
+						Location test = start.clone();
+						// If the entity is close to the line of fire.
+						if (Main.hasParties && (!Main.friendlyFire)) {
+							try {
+								if (e instanceof Player)
+									if (com.alessiodp.partiesapi.Parties.getApi().getPartyPlayer(e.getUniqueId())
+											.getPartyName().equalsIgnoreCase(com.alessiodp.partiesapi.Parties.getApi()
+													.getPartyPlayer(p.getUniqueId()).getPartyName()))
+										continue;
+							} catch (Error | Exception e43) {
 
-								}
 							}
-							boolean hit = false;
-							// Clear this to make sure
-							for (int dist = 0; dist < dis / Main.bulletStep; dist++) {
-								test.add(step);
-								if (box.intersects(test, e)) {
-									hit = true;
-									break;
-								}
+						}
+						boolean hit = false;
+						// Clear this to make sure
+						for (int dist = 0; dist < dis / Main.bulletStep; dist++) {
+							test.add(step);
+							if (box.intersects(test, e)) {
+								hit = true;
+								break;
 							}
-							if (hit) {
-								bulletHitLoc = test;
-								dis2 = dis;
-								hitTarget = e;
-								headShot = box.allowsHeadshots() ? box.isHeadShot(test, e) : false;
-								if (headShot) {
-									Main.DEBUG("Headshot!");
-									if (Main.headshotPling) {
-										try {
-											p.playSound(p.getLocation(), Main.headshot_sound, 2, 1);
-											if (!Main.isVersionHigherThan(1, 9))
-												try {
-													p.playSound(p.getLocation(), Sound.valueOf("LAVA_POP"), 6, 1);
-												} catch (Error | Exception h4) {
-												}
+						}
+						if (hit) {
+							bulletHitLoc = test;
+							dis2 = dis;
+							hitTarget = e;
+							headShot = box.allowsHeadshots() ? box.isHeadShot(test, e) : false;
+							if (headShot) {
+								Main.DEBUG("Headshot!");
+								if (Main.headshotPling) {
+									try {
+										p.playSound(p.getLocation(), Main.headshot_sound, 2, 1);
+										if (!Main.isVersionHigherThan(1, 9))
+											try {
+												p.playSound(p.getLocation(), Sound.valueOf("LAVA_POP"), 6, 1);
+											} catch (Error | Exception h4) {
+											}
 
-										} catch (Error | Exception h4) {
-											p.playSound(p.getLocation(), Sound.valueOf("LAVA_POP"), 1, 1);
-										}
+									} catch (Error | Exception h4) {
+										p.playSound(p.getLocation(), Sound.valueOf("LAVA_POP"), 1, 1);
 									}
 								}
 							}
-					//	}
+						}
+						// }
 					}
 				}
 			}
@@ -196,8 +199,8 @@ public class GunUtil {
 			nonheard.remove(p);
 			if (g.useMuzzleSmoke())
 				ParticleHandlers.spawnMuzzleSmoke(p, start.clone().add(step.clone().multiply(7)));
-			double distSqrt = dis2;//Math.sqrt(dis2);
-			for (double dist = 0; dist < distSqrt/*(dis2 / Main.bulletStep)*/; dist+=Main.bulletStep) {
+			double distSqrt = dis2;// Math.sqrt(dis2);
+			for (double dist = 0; dist < distSqrt/* (dis2 / Main.bulletStep) */; dist += Main.bulletStep) {
 				start.add(step);
 
 				boolean solid = isSolid(start.getBlock(), start);
@@ -355,6 +358,14 @@ public class GunUtil {
 
 				@Override
 				public void run() {
+					if (offhand) {
+						if (!QualityArmory.isIronSights(player.getItemInHand())) {
+							cancel();
+							rapidfireshooters.remove(player.getUniqueId());
+							return;
+						}
+					}
+
 					final AttachmentBase attach = QualityArmory.getGunWithAttchments(temp);
 
 					int amount = ItemFact.getAmount(temp);
@@ -420,11 +431,7 @@ public class GunUtil {
 			}.runTaskTimer(Main.getInstance(), 10 / g.getFireRate(), 10 / g.getFireRate()));
 		}
 
-		int amount = ItemFact.getAmount(temp) - /*
-												 * (g.getChargingVal() != null &&
-												 * ChargingHandlerEnum.getEnumV(g.getChargingVal()) ==
-												 * ChargingHandlerEnum.RAPIDFIRE ? g.getBulletsPerShot() : 1)
-												 */1;
+		int amount = ItemFact.getAmount(temp) - 1;
 
 		if (amount < 0)
 			amount = 0;
@@ -498,7 +505,7 @@ public class GunUtil {
 		if (ItemFact.getAmount(temp) == g.getMaxBullets()) {
 			return;
 		}
-		if(!im.hasDisplayName())
+		if (!im.hasDisplayName())
 			return;
 		if (im.getLore() != null && im.getDisplayName().contains(Main.S_RELOADING_MESSAGE)) {
 
@@ -584,6 +591,8 @@ public class GunUtil {
 	public static HashMap<UUID, Double> highRecoilCounter = new HashMap<>();
 
 	public static void addRecoil(final Player player, Gun g) {
+		if (g.getRecoil() == 0)
+			return;
 		if (g.getFireRate() > 4) {
 			if (highRecoilCounter.containsKey(player.getUniqueId())) {
 				highRecoilCounter.put(player.getUniqueId(),

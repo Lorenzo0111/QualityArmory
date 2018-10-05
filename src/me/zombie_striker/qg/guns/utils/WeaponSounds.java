@@ -7,7 +7,7 @@ public enum WeaponSounds {
 	RELOAD_BULLET("reloadbullet"), RELOAD_MAG_IN("reloadmagin"), RELOAD_MAG_OUT("reloadmagout"), RELOAD_BOLT(
 			"reloadbolt"),
 
-	WARHEAD_EXPLODE("warheadexplode"), WARHEAD_LAUNCH("warheadlaunch"),HONK("honk"),
+	WARHEAD_EXPLODE("warheadexplode"), WARHEAD_LAUNCH("warheadlaunch"), HONK("honk"),
 
 	LAZERSHOOT("bulletlazer"),
 
@@ -16,10 +16,9 @@ public enum WeaponSounds {
 	SHOCKWAVE("shockwave"), LAZERFIRE("lazerfire"), GUN_STARWARS("bulletswblaster"), GUN_NEEDLER(
 			"bulletneedler"), GUN_HALOLAZER("bullethalolazer"), GUN_DEAGLE("bulletdeagle"),
 
-	SILENCEDSHOT("bulletsilence"),
+	SILENCEDSHOT("bulletsilence"), SIREN("siren"),
 
-	HISS("block.lava.extinguish"),
-	XP_ORG_PICKUP("entity.experience_orb.pickup"),
+	HISS("block.lava.extinguish"), XP_ORG_PICKUP("entity.experience_orb.pickup"),
 
 	DEFAULT("hurt");
 

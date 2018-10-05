@@ -1,11 +1,16 @@
 package me.zombie_striker.qg.handlers;
 
 import org.bukkit.Location;
+import org.bukkit.entity.Ageable;
 import org.bukkit.entity.Entity;
 
 public class HeadShotUtil {
 
 	public static boolean isHeadShot(Entity e, Location shot) {
+		double modifier = 1;
+		if(e instanceof Ageable) {
+			modifier = ((Ageable)e).isAdult()?1:0.5;
+		}
 		switch (e.getType().name()) {
 
 		case "CHICKEN":
@@ -16,24 +21,24 @@ public class HeadShotUtil {
 		case "RABBIT":
 		case "PARROT":
 		case "CAVE_SPIDER":
-			return shot.getY() - e.getLocation().getY() > 0.6;
+			return shot.getY() - e.getLocation().getY() > 0.6*modifier;
 		case "PIG":
 		case "WOLF":
 		case "SQUID":
 		case "SPIDER":
-			return shot.getY() - e.getLocation().getY() > 0.3;
+			return shot.getY() - e.getLocation().getY() > 0.3*modifier;
 
 		case "COW":
 		case "SHEEP":
 		case "MUSHROOM_COW":
 		case "POLAR_BEAR":
-			return shot.getY() - e.getLocation().getY() > 1;
+			return shot.getY() - e.getLocation().getY() > 1.0*modifier;
 
 		case "ENDERMAN":
-			return shot.getY() - e.getLocation().getY() > 2.2;
+			return shot.getY() - e.getLocation().getY() > 2.2*modifier;
 
 		case "GIANT":
-			return shot.getY() - e.getLocation().getY() > 12;
+			return shot.getY() - e.getLocation().getY() > 12*modifier;
 
 		case "IRON_GOLEM":
 		case "WITHER":
@@ -43,7 +48,7 @@ public class HeadShotUtil {
 		case "MULE":
 		case "DONKEY":
 		case "ZOMBIE_HORSE":
-			return shot.getY() - e.getLocation().getY() > 2;
+			return shot.getY() - e.getLocation().getY() > 2.0*modifier;
 
 		case "MAGMA_CUBE":
 		case "SLIME":
@@ -53,7 +58,7 @@ public class HeadShotUtil {
 		case "GHAST":
 			return false;
 		}
-		return shot.getY() - e.getLocation().getY() > 1.3;
+		return shot.getY() - e.getLocation().getY() > 1.3*modifier;
 
 		/*
 		 * case "CHICKEN": case "PIG": case "SILVERFISH": case "ENDERMITE": case "BAT":

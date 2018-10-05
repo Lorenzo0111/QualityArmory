@@ -7,6 +7,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 
 import me.zombie_striker.qg.Main;
+import me.zombie_striker.qg.guns.utils.WeaponType;
 import me.zombie_striker.qg.handlers.chargers.ChargingHandler;
 import me.zombie_striker.qg.handlers.reloaders.ReloadingHandler;
 
@@ -19,6 +20,7 @@ public class GunYML extends ArmoryYML {
 	@Override
 	public void verifyAllTagsExist() {
 		super.verifyAllTagsExist();
+		setNoOverride("weapontype", WeaponType.RIFLE.name());
 		setNoOverride("enableIronSights", false);
 		setNoOverride("setZoomLevel", 0);
 		setNoOverride("ammotype", "556");

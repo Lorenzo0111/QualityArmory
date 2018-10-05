@@ -35,6 +35,23 @@ hideTextureWarnings: false
 
 #Use this if you are expierincing a problem. 
 ENABLE-DEBUG: false
+
+
+
+
+
+#Resourcepack values
+useDefaultResourcepack: true
+DefaultResourcepackOverride: false
+DefaultResourcepack: https://www.dropbox.com/s/cn1ygge60hf6eb4/QualityArmoryv1.0.28.zip?dl=1
+Auto-Detect-Resourcepack: true
+sendOnJoin: false
+sendTitleOnJoin: false
+SecondsTillRPIsSent: 0.0
+
+
+
+
 #If you need to change the material used for guns:
 Material_For_IronSightToggle_Item: DIAMOND_AXE
 Data_For_IronSightToggle_Item: 21
@@ -69,15 +86,6 @@ generalModifiers:
 
 #If parties is enabled, FriendlyFire will determine if players can shoot members of their party.
 FriendlyFireEnabled: false
-
-#Resourcepack values
-useDefaultResourcepack: true
-DefaultResourcepackOverride: false
-DefaultResourcepack: https://www.dropbox.com/s/cn1ygge60hf6eb4/QualityArmoryv1.0.28.zip?dl=1
-Auto-Detect-Resourcepack: false
-sendOnJoin: false
-sendTitleOnJoin: false
-SecondsTillRPIsSent: 0.0
 
 #Experminetal: Headshots will have more features in the future
 Enable_Headshot_Instantkill: true

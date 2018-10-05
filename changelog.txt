@@ -1,3 +1,23 @@
+1.1.119
+	Added Flamer and FlamerFuel(fuel)
+	Added Glock17
+	Added fix for bug where reloading weapons while using automatic firing could conflict with eachother
+	Added more metrics categories
+	Fixed issue where baby mobs were considered to be the same as adult mobs when checking for headshots. (Kinda disturbing)
+
+1.1.118E
+	Added more debug lines for toggling shift
+	Set "AutoDetectResourcepack" to true by default
+
+1.1.118D
+	Added fix for attachement guns
+
+1.1.118C
+	Fixed bug caused by patch B
+
+1.1.118B
+	Added fix for 1.10 and lower, where unbreakable tag requires the spigot object.
+
 1.1.118
 	Added Recoil
 	Added fix for ReloadOnF
