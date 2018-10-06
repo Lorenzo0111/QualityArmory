@@ -311,20 +311,20 @@ public class GunYMLCreator {
 		return h;
 	}
 
-	public static ArmoryYML createAttachment(boolean forceUpdate, File dataFolder, boolean invalid, String filename,
+	public static GunYML createAttachment(boolean forceUpdate, File dataFolder, boolean invalid, String filename,
 			String name, String displayname, List<String> lore, MaterialStorage ms, List<String> craftingRequirements,
 			int cost, Gun originalGun) {
 		return createAttachment(forceUpdate, dataFolder, invalid, filename, name, displayname, lore, ms,
 				craftingRequirements, cost, originalGun.getName());
 	}
 
-	public static ArmoryYML createAttachment(boolean forceUpdate, File dataFolder, boolean invalid, String filename,
+	public static GunYML createAttachment(boolean forceUpdate, File dataFolder, boolean invalid, String filename,
 			String name, String displayname, List<String> lore, MaterialStorage ms, List<String> craftingRequirements,
 			int cost, String originalGun) {
 		File f2 = new File(dataFolder, "attachments/" + filename + ".yml");
 		if (!new File(dataFolder, "attachments").exists())
 			new File(dataFolder, "attachments").mkdirs();
-		ArmoryYML h = new ArmoryYML(f2);
+		GunYML h = new GunYML(f2);
 		if (invalid)
 			h.setNoSave(false, "HOW_TO_USE",
 					"Below is just the required values to create a new attachment for the 'basegun'. If you want to modify more parts of the gun, copy the value you want to change from the 'base' gun and paste it here with the value you want.");

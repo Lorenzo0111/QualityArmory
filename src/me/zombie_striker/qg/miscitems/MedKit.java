@@ -15,7 +15,7 @@ import org.bukkit.inventory.ItemStack;
 import me.zombie_striker.pluginconstructor.HotbarMessager;
 import me.zombie_striker.qg.ArmoryBaseObject;
 import me.zombie_striker.qg.ItemFact;
-import me.zombie_striker.qg.Main;
+import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.MaterialStorage;
 import me.zombie_striker.qg.handlers.BulletWoundHandler;
 
@@ -105,7 +105,7 @@ public class MedKit implements ArmoryBaseObject {
 				}
 				lastTimeHealed.put(healer.getUniqueId(), System.currentTimeMillis());
 
-				double percent = (100.0 / 3) / Main.S_MEDKIT_HEALDELAY;
+				double percent = (100.0 / 3) / QAMain.S_MEDKIT_HEALDELAY;
 
 				double p2 = PercentTimeHealed.get(healer.getUniqueId());
 
@@ -114,7 +114,7 @@ public class MedKit implements ArmoryBaseObject {
 
 				} else {
 
-					healer.setHealth(Math.min(healer.getMaxHealth(), healer.getHealth() + Main.S_MEDKIT_HEAL_AMOUNT));
+					healer.setHealth(Math.min(healer.getMaxHealth(), healer.getHealth() + QAMain.S_MEDKIT_HEAL_AMOUNT));
 					PercentTimeHealed.remove(healer.getUniqueId());
 					lastTimeHealed.remove(healer.getUniqueId());
 					/*
@@ -147,14 +147,14 @@ public class MedKit implements ArmoryBaseObject {
 
 			} else {
 				try {
-					HotbarMessager.sendHotBarMessage(healer, Main.S_FULLYHEALED);
+					HotbarMessager.sendHotBarMessage(healer, QAMain.S_FULLYHEALED);
 				} catch (Error | Exception e5) {
 				}
 			}
 			return;
 		}
 		double bloodlevel = BulletWoundHandler.bloodLevel.get(healer.getUniqueId());
-		double percentBlood = Math.max(0, bloodlevel / Main.bulletWound_initialbloodamount);
+		double percentBlood = Math.max(0, bloodlevel / QAMain.bulletWound_initialbloodamount);
 
 		ChatColor severity = percentBlood > 75 ? ChatColor.WHITE
 				: percentBlood > 50 ? ChatColor.GRAY : percentBlood > 25 ? ChatColor.RED : ChatColor.DARK_RED;
@@ -162,7 +162,7 @@ public class MedKit implements ArmoryBaseObject {
 				&& BulletWoundHandler.bleedoutMultiplier.get(healer.getUniqueId()) < 0)
 			BulletWoundHandler.bleedoutMultiplier.put(healer.getUniqueId(),
 					Math.min(0, BulletWoundHandler.bleedoutMultiplier.get(healer.getUniqueId())
-							+ Main.bulletWound_MedkitBloodlossHealRate));
+							+ QAMain.bulletWound_MedkitBloodlossHealRate));
 
 		double newRate = BulletWoundHandler.bleedoutMultiplier.containsKey(healer.getUniqueId())
 				? BulletWoundHandler.bleedoutMultiplier.get(healer.getUniqueId())
@@ -179,10 +179,10 @@ public class MedKit implements ArmoryBaseObject {
 			levelbar.append(StringUtils.repeat(':', totalBars - healthBars));
 
 			HotbarMessager.sendHotBarMessage(healer,
-					ChatColor.RED + Main.S_MEDKIT_HEALING + "[" + levelbar.toString() + ChatColor.RED + "] "
-							+ Main.S_MEDKIT_BLEEDING + " " + (newRate < 0 ? ChatColor.DARK_RED : ChatColor.GRAY)
+					ChatColor.RED + QAMain.S_MEDKIT_HEALING + "[" + levelbar.toString() + ChatColor.RED + "] "
+							+ QAMain.S_MEDKIT_BLEEDING + " " + (newRate < 0 ? ChatColor.DARK_RED : ChatColor.GRAY)
 							+ new DecimalFormat("##0.##").format(newRate) + ChatColor.GRAY + "+"
-							+ Main.bulletWound_BloodIncreasePerSecond);
+							+ QAMain.bulletWound_BloodIncreasePerSecond);
 		} catch (Error | Exception e5) {
 		}
 	}

@@ -18,6 +18,8 @@ public class ArmoryYML {
 	FileConfiguration fileConfig;
 	File save;
 	public boolean saveNow = false;
+	
+	boolean overrideVerify = false;
 
 	public ArmoryYML(File file) {
 		save = file;
@@ -62,6 +64,11 @@ public class ArmoryYML {
 		}
 	}
 
+	public ArmoryYML dontVerify() {
+		this.overrideVerify = true;
+		return this;
+	}
+	
 	public void done() {
 		verifyAllTagsExist();
 		if (saveNow)
@@ -115,8 +122,14 @@ public class ArmoryYML {
 		set(false, "material", mat.name());
 		return this;
 	}
+	public ArmoryYML setWeaponSound(WeaponSounds sound) {
+		set(false, "weaponsounds", sound.getSoundName());
+		return this;
+	}
 
 	public void verifyAllTagsExist() {
+		if(overrideVerify)
+			return;
 		setNoOverride("AllowUserModifications", (contains("allowUpdates") ? (!(boolean) get("allowUpdates")) : false));
 		setNoOverride("allowUpdates", null);
 		setNoOverride("invalid", false);

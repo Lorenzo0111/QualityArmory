@@ -6,7 +6,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import me.zombie_striker.qg.ItemFact;
-import me.zombie_striker.qg.QualityArmory;
+import me.zombie_striker.qg.api.QualityArmory;
 
 public class AmmoUtil {
 
@@ -15,7 +15,7 @@ public class AmmoUtil {
 		if(player.getGameMode()==GameMode.CREATIVE)
 			return 99999;
 		for (ItemStack is : player.getInventory().getContents()) {
-			if (is != null && QualityArmory.isAmmo(is)&&QualityArmory.getAmmo(is).equals(a)) {
+			if (is != null && me.zombie_striker.qg.api.QualityArmory.isAmmo(is)&&QualityArmory.getAmmo(is).equals(a)) {
 				amount += is.getAmount();
 			}
 		}

@@ -37,7 +37,7 @@ public class PushbackCharger implements ChargingHandler {
 		Vector go = p.getLocation().getDirection().normalize();
 		//go.add(new Vector((Math.random() * 2 * sway) - sway, (Math.random() * 2 * sway) - sway,
 		//		(Math.random() * 2 * sway) - sway));
-		GunUtil.playShoot(g, null, p);
+		GunUtil.playShoot(g,  p);
 
 		boolean lookup = (go.getY() > go.getX() && go.getY() > go.getZ());
 		boolean lookdown = (-go.getY() > go.getX() && -go.getY() > go.getZ());

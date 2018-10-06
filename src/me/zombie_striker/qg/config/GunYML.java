@@ -6,7 +6,7 @@ import java.util.List;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 
-import me.zombie_striker.qg.Main;
+import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.guns.utils.WeaponType;
 import me.zombie_striker.qg.handlers.chargers.ChargingHandler;
 import me.zombie_striker.qg.handlers.reloaders.ReloadingHandler;
@@ -19,6 +19,8 @@ public class GunYML extends ArmoryYML {
 
 	@Override
 	public void verifyAllTagsExist() {
+		if(overrideVerify)
+			return;
 		super.verifyAllTagsExist();
 		setNoOverride("weapontype", WeaponType.RIFLE.name());
 		setNoOverride("enableIronSights", false);
@@ -41,7 +43,7 @@ public class GunYML extends ArmoryYML {
 		setNoOverride("particles.bullet_particleG", 1);
 		setNoOverride("particles.bullet_particleB", 1);
 
-		setNoOverride("Version_18_Support", !Main.isVersionHigherThan(1, 9));
+		setNoOverride("Version_18_Support", !QAMain.isVersionHigherThan(1, 9));
 		setNoOverride("ChargingHandler", "none");
 		setNoOverride("addMuzzleSmoke", true);
 

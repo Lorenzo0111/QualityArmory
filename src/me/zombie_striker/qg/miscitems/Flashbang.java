@@ -14,7 +14,7 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import me.zombie_striker.qg.Main;
+import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.MaterialStorage;
 import me.zombie_striker.qg.guns.utils.WeaponSounds;
 import me.zombie_striker.qg.miscitems.ThrowableItems.ThrowableHolder;
@@ -31,7 +31,7 @@ public class Flashbang extends GrenadeBase {
 	public void onLMB(PlayerInteractEvent e, ItemStack usedItem) {
 		Player thrower = e.getPlayer();
 		if (grenadeHolder.containsKey(thrower)) {
-			thrower.sendMessage(Main.prefix + Main.S_GRENADE_PALREADYPULLPIN);
+			thrower.sendMessage(QAMain.prefix + QAMain.S_GRENADE_PALREADYPULLPIN);
 			thrower.playSound(thrower.getLocation(), WeaponSounds.RELOAD_BULLET.getSoundName(), 1, 1);
 			return;
 		}
@@ -68,7 +68,7 @@ public class Flashbang extends GrenadeBase {
 
 				grenadeHolder.remove(h.getHolder());
 			}
-		}.runTaskLater(Main.getInstance(), 5 * 20));
+		}.runTaskLater(QAMain.getInstance(), 5 * 20));
 		grenadeHolder.put(thrower, h);
 
 	}

@@ -8,7 +8,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import me.zombie_striker.pluginconstructor.ReflectionUtilREMOVELATEER;
-import me.zombie_striker.qg.Main;
+import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.guns.Gun;
 import ru.beykerykt.lightapi.LightAPI;
 import ru.beykerykt.lightapi.chunks.ChunkInfo;
@@ -43,7 +43,7 @@ public class ParticleHandlers {
 							LightAPI.updateChunk(c);
 						}
 					}
-				}.runTaskLater(Main.getInstance(), 10);
+				}.runTaskLater(QAMain.getInstance(), 10);
 			}
 		} catch (Error | Exception e5) {
 		}
@@ -109,7 +109,7 @@ public class ParticleHandlers {
 							LightAPI.updateChunk(c);
 						}
 					}
-				}.runTaskLater(Main.getInstance(), 20);
+				}.runTaskLater(QAMain.getInstance(), 20);
 			}
 		} catch (Error | Exception e5) {
 		}

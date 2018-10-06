@@ -8,7 +8,7 @@ import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import me.zombie_striker.qg.Main;
+import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.guns.Gun;
 
 public class PumpactionReloader implements ReloadingHandler {
@@ -51,7 +51,7 @@ public class PumpactionReloader implements ReloadingHandler {
 						}
 					}
 				}
-			}.runTaskLater(Main.getInstance(), (int) (time * i * 20));
+			}.runTaskLater(QAMain.getInstance(), (int) (time * i * 20));
 		}
 		new BukkitRunnable() {
 			@Override
@@ -59,7 +59,7 @@ public class PumpactionReloader implements ReloadingHandler {
 				timeR.remove(player.getUniqueId());
 
 			}
-		}.runTaskLater(Main.getInstance(), (int) (time2 * 20) + 5);
+		}.runTaskLater(QAMain.getInstance(), (int) (time2 * 20) + 5);
 		return time2;
 	}
 

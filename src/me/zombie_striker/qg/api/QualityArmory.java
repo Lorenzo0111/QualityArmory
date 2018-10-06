@@ -1,4 +1,4 @@
-package me.zombie_striker.qg;
+package me.zombie_striker.qg.api;
 
 import java.io.File;
 import java.util.Map.Entry;
@@ -13,6 +13,7 @@ import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import me.zombie_striker.pluginconstructor.HotbarMessager;
+import me.zombie_striker.qg.*;
 import me.zombie_striker.qg.ammo.Ammo;
 import me.zombie_striker.qg.ammo.AmmoUtil;
 import me.zombie_striker.qg.armor.ArmorObject;
@@ -27,7 +28,7 @@ import me.zombie_striker.qg.handlers.MultiVersionLookup;
 import me.zombie_striker.qg.handlers.SkullHandler;
 import me.zombie_striker.qg.handlers.WorldGuardSupport;
 import me.zombie_striker.qg.miscitems.IronSightsToggleItem;
-@Deprecated
+
 public class QualityArmory {
 
 	public static GunYML createAndLoadNewGun(String name, String displayname, Material material, int id,
@@ -57,6 +58,8 @@ public class QualityArmory {
 	public static void registerNewUsedExpansionItem(Material used, int id, int var) {
 		QAMain.expansionPacks.add(MaterialStorage.getMS(used, id, var));
 	}
+
+	@SuppressWarnings("deprecation")
 	public static void sendResourcepack(final Player player, final boolean warning) {
 		new BukkitRunnable() {
 			@Override
@@ -132,6 +135,7 @@ public class QualityArmory {
 		return null;
 	}
 
+	@SuppressWarnings("deprecation")
 	public static boolean isCustomItem(ItemStack is, int dataOffset) {
 		if (is == null)
 			return false;
@@ -142,6 +146,7 @@ public class QualityArmory {
 				|| QAMain.expansionPacks.contains(MaterialStorage.getMS(is));
 	}
 
+	@SuppressWarnings("deprecation")
 	public static boolean isArmor(ItemStack is) {
 		if (is == null)
 			return false;
@@ -153,6 +158,7 @@ public class QualityArmory {
 
 
 
+	@SuppressWarnings("deprecation")
 	public static ArmorObject getArmor(ItemStack is) {
 		int var = MaterialStorage.getVarient(is);
 		if (QAMain.armorRegister.containsKey(MaterialStorage.getMS(is.getType(), is.getDurability(), var)))
@@ -160,6 +166,7 @@ public class QualityArmory {
 		return QAMain.armorRegister.get(MaterialStorage.getMS(is.getType(), -1, var));
 	}
 
+	@SuppressWarnings("deprecation")
 	public static boolean isMisc(ItemStack is) {
 		if (is == null)
 			return false;
@@ -169,6 +176,7 @@ public class QualityArmory {
 						|| QAMain.miscRegister.containsKey(MaterialStorage.getMS(is.getType(), -1, var))));
 	}
 
+	@SuppressWarnings("deprecation")
 	public static ArmoryBaseObject getMisc(ItemStack is) {
 		int var = MaterialStorage.getVarient(is);
 		if (QAMain.miscRegister.containsKey(MaterialStorage.getMS(is.getType(), is.getDurability(), var)))
@@ -176,6 +184,7 @@ public class QualityArmory {
 		return QAMain.miscRegister.get(MaterialStorage.getMS(is.getType(), -1, var));
 	}
 
+	@SuppressWarnings("deprecation")
 	public static Gun getGun(ItemStack is) {
 		int var = MaterialStorage.getVarient(is);
 		if (QAMain.gunRegister.containsKey(MaterialStorage.getMS(is.getType(), is.getDurability(), var)))
@@ -183,6 +192,7 @@ public class QualityArmory {
 		return QAMain.gunRegister.get(MaterialStorage.getMS(is.getType(), -1, var));
 	}
 
+	@SuppressWarnings("deprecation")
 	public static boolean isGun(ItemStack is) {
 		if (is == null)
 			return false;
@@ -212,6 +222,7 @@ public class QualityArmory {
 		return false;
 	}
 
+	@SuppressWarnings("deprecation")
 	public static Ammo getAmmo(ItemStack is) {
 		int var = MaterialStorage.getVarient(is);
 		String extraData = is.getType() == MultiVersionLookup.getSkull() ? ((SkullMeta) is.getItemMeta()).getOwner()
@@ -240,6 +251,7 @@ public class QualityArmory {
 		return null;
 	}
 
+	@SuppressWarnings("deprecation")
 	public static boolean isAmmo(ItemStack is) {
 		if (is == null)
 			return false;
@@ -257,6 +269,7 @@ public class QualityArmory {
 		return k;
 	}
 
+	@SuppressWarnings("deprecation")
 	public static boolean isIronSights(ItemStack is) {
 		if (is == null)
 			return false;
@@ -359,6 +372,7 @@ public class QualityArmory {
 		}
 	}
 
+	@SuppressWarnings("deprecation")
 	public static int findSafeSpot(ItemStack newItem, boolean findHighest) {
 		return findSafeSpot(newItem.getType(), newItem.getDurability(), findHighest);
 	}
@@ -386,6 +400,7 @@ public class QualityArmory {
 		return safeDurib;
 	}
 
+	@SuppressWarnings("deprecation")
 	public static int findSafeSpotVariant(ItemStack newItem, boolean findHighest) {
 		return findSafeSpotVariant(newItem.getType(), newItem.getDurability(), findHighest);
 	}

@@ -3,7 +3,7 @@ package me.zombie_striker.qg.guns.projectiles;
 import java.util.ArrayList;
 import java.util.List;
 
-import me.zombie_striker.qg.Main;
+import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.guns.Gun;
 import me.zombie_striker.qg.guns.utils.GunUtil;
 import me.zombie_striker.qg.guns.utils.WeaponSounds;
@@ -53,7 +53,7 @@ public RocketProjectile() {
 					}
 
 					if (GunUtil.isSolid(s.getBlock(), s) || entityNear || distance < 0) {
-						if (Main.enableExplosionDamage) {
+						if (QAMain.enableExplosionDamage) {
 							ExplosionHandler.handleExplosion(s, 4, 2);
 						}
 						try {
@@ -71,7 +71,7 @@ public RocketProjectile() {
 					}
 				}
 			}
-		}.runTaskTimer(Main.getInstance(), 0, 1);
+		}.runTaskTimer(QAMain.getInstance(), 0, 1);
 	}
 
 	@Override

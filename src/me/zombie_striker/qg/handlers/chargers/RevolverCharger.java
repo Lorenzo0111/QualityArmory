@@ -8,7 +8,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import me.zombie_striker.qg.Main;
+import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.guns.Gun;
 import me.zombie_striker.qg.guns.utils.WeaponSounds;
 
@@ -34,14 +34,14 @@ public RevolverCharger() {
 						0.75f);
 			}catch(Error|Exception e43) {}
 			}
-		}.runTaskLater(Main.getInstance(), 10);
+		}.runTaskLater(QAMain.getInstance(), 10);
 		new BukkitRunnable() {
 			
 			@Override
 			public void run() {
 				timeC.remove(player.getUniqueId());
 			}
-		}.runTaskLater(Main.getInstance(), 15);
+		}.runTaskLater(QAMain.getInstance(), 15);
 		return true;
 	}
 

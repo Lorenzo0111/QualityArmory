@@ -2,7 +2,7 @@ package me.zombie_striker.qg.config;
 
 import java.io.File;
 
-import me.zombie_striker.qg.Main;
+import me.zombie_striker.qg.QAMain;
 
 public class ArmorYML extends ArmoryYML {
 
@@ -10,8 +10,10 @@ public class ArmorYML extends ArmoryYML {
 		super(file);
 	}@Override
 	public void verifyAllTagsExist() {
+		if(overrideVerify)
+			return;
 		super.verifyAllTagsExist();
-		setNoOverride("Version_18_Support", !Main.isVersionHigherThan(1, 9));
+		setNoOverride("Version_18_Support", !QAMain.isVersionHigherThan(1, 9));
 		setNoOverride("minProtectionHeight", 1);
 		setNoOverride("maxProtectionHeight", 2);
 		setNoOverride("stopsHeadshots", false);

@@ -8,7 +8,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import me.zombie_striker.qg.Main;
+import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.guns.Gun;
 import me.zombie_striker.qg.guns.utils.WeaponSounds;
 
@@ -35,21 +35,21 @@ public class BreakactionCharger implements ChargingHandler {
 			public void run() {
 				player.getWorld().playSound(player.getLocation(), WeaponSounds.RELOAD_BULLET.getSoundName(), 1, 1f);
 			}
-		}.runTaskLater(Main.getInstance(), 10);
+		}.runTaskLater(QAMain.getInstance(), 10);
 		new BukkitRunnable() {
 
 			@Override
 			public void run() {
 				player.getWorld().playSound(player.getLocation(), WeaponSounds.RELOAD_BULLET.getSoundName(), 1, 1f);
 			}
-		}.runTaskLater(Main.getInstance(), 15);
+		}.runTaskLater(QAMain.getInstance(), 15);
 		new BukkitRunnable() {
 
 			@Override
 			public void run() {
 				timeC.remove(player.getUniqueId());
 			}
-		}.runTaskLater(Main.getInstance(), 20);
+		}.runTaskLater(QAMain.getInstance(), 20);
 		return true;
 	}
 

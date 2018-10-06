@@ -13,7 +13,6 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import me.zombie_striker.qg.ammo.Ammo;
 import me.zombie_striker.qg.armor.ArmorObject;
-import me.zombie_striker.qg.attachments.AttachmentBase;
 import me.zombie_striker.qg.guns.Gun;
 import me.zombie_striker.qg.handlers.SkullHandler;
 import me.zombie_striker.qg.miscitems.IronSightsToggleItem;
@@ -80,14 +79,14 @@ public class ItemFact {
 	public static void addOutOfAmmoToDisplayname(final Gun g, final Player player, ItemStack is, final int slot) {
 		final ItemStack k = is;
 		ItemMeta im = k.getItemMeta();
-		im.setDisplayName(g.getDisplayName() + Main.S_OUT_OF_AMMO);
+		im.setDisplayName(g.getDisplayName() + QAMain.S_OUT_OF_AMMO);
 		k.setItemMeta(im);
 		player.getInventory().setItem(slot, k);
 		new BukkitRunnable() {
 			public void run() {
 				removeOutOfAmmoToDisplayname(g, player, k, slot);
 			}
-		}.runTaskLater(Main.getInstance(), 20 * 3);
+		}.runTaskLater(QAMain.getInstance(), 20 * 3);
 	}
 
 	public static void removeOutOfAmmoToDisplayname(final Gun g, final Player player, ItemStack is, final int slot) {
@@ -115,42 +114,40 @@ public class ItemFact {
 		return is;
 	}
 
-	public static List<String> getGunLore(Gun g, AttachmentBase attach, ItemStack current, int amount) {
+	public static List<String> getGunLore(Gun g, ItemStack current, int amount) {
 		List<String> lore = new ArrayList<>();
 		if (g.getCustomLore() != null)
 			lore.addAll(g.getCustomLore());
 		addVarientData(lore, g);
-		lore.add(Main.S_ITEM_BULLETS + ": " + (amount) + "/" + (g.getMaxBullets()));
-		if (Main.ENABLE_LORE_INFO) {
-			lore.add(Main.S_ITEM_DAMAGE + ": " + g.getDamage());
-			lore.add(Main.S_ITEM_DPS + ": "
+		lore.add(QAMain.S_ITEM_BULLETS + ": " + (amount) + "/" + (g.getMaxBullets()));
+		if (QAMain.ENABLE_LORE_INFO) {
+			lore.add(QAMain.S_ITEM_DAMAGE + ": " + g.getDamage());
+			lore.add(QAMain.S_ITEM_DPS + ": "
 					+ (g.isAutomatic()
 							? (2 * g.getFireRate() * g.getDamage()) + ""
 									+ (g.getBulletsPerShot() > 1 ? "x" + g.getBulletsPerShot() : "")
 							: "" + ((int) (1.0 / g.getDelayBetweenShotsInSeconds()) * g.getDamage())
 									+ (g.getBulletsPerShot() > 1 ? "x" + g.getBulletsPerShot() : "")));
 			if (g.getAmmoType() != null)
-				lore.add(Main.S_ITEM_AMMO + ": " + g.getAmmoType().getDisplayName());
+				lore.add(QAMain.S_ITEM_AMMO + ": " + g.getAmmoType().getDisplayName());
 		}
 
-		if (Main.enableDurability)
+		if (QAMain.enableDurability)
 			if (current == null) {
-				lore.add(Main.S_ITEM_DURIB + ":" + g.getDurability() + "/" + g.getDurability());
+				lore.add(QAMain.S_ITEM_DURIB + ":" + g.getDurability() + "/" + g.getDurability());
 			} else {
 				lore = setDamage(g, lore, getDamage(current));
 			}
-		if (attach != null)
-			lore.addAll(attach.getLore());
-		if (Main.ENABLE_LORE_HELP) {
+		if (QAMain.ENABLE_LORE_HELP) {
 			if (g.isAutomatic()) {
-				lore.add(Main.S_LMB_SINGLE);
-				lore.add(Main.S_LMB_FULLAUTO);
-				lore.add(Main.S_RMB_RELOAD);
+				lore.add(QAMain.S_LMB_SINGLE);
+				lore.add(QAMain.S_LMB_FULLAUTO);
+				lore.add(QAMain.S_RMB_RELOAD);
 			} else {
-				lore.add(Main.S_LMB_SINGLE);
-				lore.add(Main.enableIronSightsON_RIGHT_CLICK ? Main.S_RMB_R1 : Main.S_RMB_R2);
+				lore.add(QAMain.S_LMB_SINGLE);
+				lore.add(QAMain.enableIronSightsON_RIGHT_CLICK ? QAMain.S_RMB_R1 : QAMain.S_RMB_R2);
 				if (g.hasIronSights())
-					lore.add(Main.enableIronSightsON_RIGHT_CLICK ? Main.S_RMB_A1 : Main.S_RMB_A2);
+					lore.add(QAMain.enableIronSightsON_RIGHT_CLICK ? QAMain.S_RMB_A1 : QAMain.S_RMB_A2);
 			}
 		}
 
@@ -165,29 +162,25 @@ public class ItemFact {
 	}
 
 	public static ItemStack addShopLore(ArmoryBaseObject obj, ItemStack current) {
-		return addShopLore(obj, null, current);
-	}
-
-	public static ItemStack addShopLore(ArmoryBaseObject obj, AttachmentBase attach, ItemStack current) {
 		ItemMeta meta = current.getItemMeta();
 		List<String> lore = meta.getLore();
 		for (String loreS : new ArrayList<>(lore)) {
-			if (loreS.startsWith(ChatColor.DARK_RED + "Crafts") || loreS.startsWith(ChatColor.RED + Main.S_ITEM_ING)
+			if (loreS.startsWith(ChatColor.DARK_RED + "Crafts") || loreS.startsWith(ChatColor.RED + QAMain.S_ITEM_ING)
 					|| loreS.startsWith(ChatColor.RED + "-"))
 				lore.remove(loreS);
 
 		}
 		if (obj.getCraftingReturn() > 1)
 			lore.add(ChatColor.DARK_RED + "Returns: " + obj.getCraftingReturn());
-		lore.add(Main.S_ITEM_COST + (attach == null ? obj.cost() : attach.getPrice()));
+		lore.add(QAMain.S_ITEM_COST + (obj.cost()));
 		meta.setLore(lore);
 		ItemStack is = current;
 		is.setItemMeta(meta);
 		return is;
 	}
 
-	public static List<String> getCraftingGunLore(Gun g, AttachmentBase attachmentBase) {
-		List<String> lore = getGunLore(g, attachmentBase, null, 1);
+	public static List<String> getCraftingGunLore(Gun g) {
+		List<String> lore = getGunLore(g, null, 1);
 		lore.addAll(getCraftingLore(g));
 		return lore;
 	}
@@ -195,7 +188,7 @@ public class ItemFact {
 	@SuppressWarnings("deprecation")
 	public static List<String> getCraftingLore(ArmoryBaseObject a) {
 		List<String> lore = new ArrayList<String>();
-		lore.add(ChatColor.RED + Main.S_ITEM_ING + ": ");
+		lore.add(ChatColor.RED + QAMain.S_ITEM_ING + ": ");
 		for (ItemStack is : a.getIngredients()) {
 			StringBuilder sb = new StringBuilder();
 			sb.append(ChatColor.RED + "-" + is.getAmount() + " " + is.getType().name());
@@ -222,18 +215,8 @@ public class ItemFact {
 	}
 
 	public static ItemStack getGun(MaterialStorage durib) {
-		Gun g = Main.gunRegister.get(durib);
-		AttachmentBase attach = null;
-		if (g == null) {
-			attach = Main.attachmentRegister.get(durib);
-			g = Main.gunRegister.get(attach.getBase());
-		}
-		return getGun(g, attach);
-	}
-
-	public static ItemStack getGun(AttachmentBase attachmentBase) {
-		Gun g = Main.gunRegister.get(attachmentBase.getBase());
-		return getGun(g, attachmentBase);
+		Gun g = QAMain.gunRegister.get(durib);
+		return getGun(g);
 	}
 
 	@SuppressWarnings("deprecation")
@@ -257,15 +240,11 @@ public class ItemFact {
 		return ironsights;
 	}
 
-	public static ItemStack getGun(Gun g) {
-		return getGun(g, null);
-	}
-
 	@SuppressWarnings("deprecation")
-	public static ItemStack getGun(Gun g, AttachmentBase attachmentBase) {
+	public static ItemStack getGun(Gun g) {
 
-		MaterialStorage ms = attachmentBase == null ? g.getItemData() : attachmentBase.getItem();
-		String displayname = attachmentBase == null ? g.getDisplayName() : attachmentBase.getDisplayName();
+		MaterialStorage ms =  g.getItemData() ;
+		String displayname =g.getDisplayName() ;
 		if (ms == null || ms.getMat() == null)
 			return new ItemStack(Material.AIR);
 
@@ -277,7 +256,7 @@ public class ItemFact {
 			im = Bukkit.getServer().getItemFactory().getItemMeta(ms.getMat());
 		if (im != null) {
 			im.setDisplayName(displayname);
-			List<String> lore = getGunLore(g, attachmentBase, null, g.getMaxBullets());
+			List<String> lore = getGunLore(g,  null, g.getMaxBullets());
 			im.setLore(lore);
 			try {
 				im.setUnbreakable(true);
@@ -294,9 +273,9 @@ public class ItemFact {
 			is.setItemMeta(im);
 		} else {
 			// Item meta is still null. Catch and report.
-			Main.getInstance().getLogger().warning(Main.prefix + " ItemMeta is null for " + g.getName() + ". I have");
+			QAMain.getInstance().getLogger().warning(QAMain.prefix + " ItemMeta is null for " + g.getName() + ". I have");
 		}
-		if (Main.enableVisibleAmounts)
+		if (QAMain.enableVisibleAmounts)
 			is.setAmount(g.getMaxBullets() > 64 ? 64 : g.getMaxBullets());
 		else
 			is.setAmount(1);
@@ -336,8 +315,8 @@ public class ItemFact {
 	}
 
 	public static ItemStack getAmmo(Material m, int data, int varient, String extraValues) {
-		if (Main.ammoRegister.containsKey(MaterialStorage.getMS(m, data, varient, extraValues)))
-			return getAmmo(Main.ammoRegister.get(MaterialStorage.getMS(m, data, varient, extraValues)));
+		if (QAMain.ammoRegister.containsKey(MaterialStorage.getMS(m, data, varient, extraValues)))
+			return getAmmo(QAMain.ammoRegister.get(MaterialStorage.getMS(m, data, varient, extraValues)));
 		return null;
 	}
 
@@ -407,8 +386,8 @@ public class ItemFact {
 		}
 		List<String> lore = new ArrayList<String>();
 		if (a instanceof MedKit) {
-			if (Main.ENABLE_LORE_HELP) {
-				lore.add(Main.S_MEDKIT_LORE_INFO);
+			if (QAMain.ENABLE_LORE_HELP) {
+				lore.add(QAMain.S_MEDKIT_LORE_INFO);
 			}
 		}
 		if (a.getCustomLore() != null)
@@ -424,7 +403,7 @@ public class ItemFact {
 
 	public static int getDamage(ItemStack is) {
 		for (String lore : is.getItemMeta().getLore()) {
-			if (ChatColor.stripColor(lore).startsWith(Main.S_ITEM_DURIB)) {
+			if (ChatColor.stripColor(lore).startsWith(QAMain.S_ITEM_DURIB)) {
 				return Integer.parseInt(lore.split(":")[1].split("/")[0]);
 			}
 		}
@@ -447,14 +426,14 @@ public class ItemFact {
 		double k = ((double) damage) / g.getDurability();
 		ChatColor c = k > 0.5 ? ChatColor.DARK_GREEN : k > 0.25 ? ChatColor.GOLD : ChatColor.DARK_RED;
 		for (int j = 0; j < lore.size(); j++) {
-			if (ChatColor.stripColor(lore.get(j)).contains(Main.S_ITEM_DURIB)) {
-				lore.set(j, c + Main.S_ITEM_DURIB + ":" + damage + "/" + g.getDurability());
+			if (ChatColor.stripColor(lore.get(j)).contains(QAMain.S_ITEM_DURIB)) {
+				lore.set(j, c + QAMain.S_ITEM_DURIB + ":" + damage + "/" + g.getDurability());
 				foundLine = true;
 				break;
 			}
 		}
 		if (!foundLine) {
-			lore.add(c + Main.S_ITEM_DURIB + ":" + damage + "/" + g.getDurability());
+			lore.add(c + QAMain.S_ITEM_DURIB + ":" + damage + "/" + g.getDurability());
 		}
 		return lore;
 	}
@@ -462,7 +441,7 @@ public class ItemFact {
 	public static ItemStack addGunRegister(ItemStack base) {
 		ItemMeta im = base.getItemMeta();
 		try {
-			if (Main.enableVisibleAmounts)
+			if (QAMain.enableVisibleAmounts)
 				im.setLocalizedName("" + UUID.randomUUID());
 		} catch (Exception | Error e) {
 			List<String> lore = im.getLore();
@@ -474,7 +453,7 @@ public class ItemFact {
 	}
 
 	public static boolean sameGun(ItemStack is1, ItemStack is2) {
-		if (!Main.enableVisibleAmounts)
+		if (!QAMain.enableVisibleAmounts)
 			return false;
 		try {
 			if (is1.hasItemMeta() && is1.getItemMeta().hasLocalizedName())
@@ -492,20 +471,20 @@ public class ItemFact {
 
 	public static void addVarientData(List<String> lore, ArmoryBaseObject object) {
 		if (object.getItemData().isVarient())
-			lore.add(Main.S_ITEM_VARIENTS + " " + object.getItemData().getVarient());
+			lore.add(QAMain.S_ITEM_VARIENTS + " " + object.getItemData().getVarient());
 	}
 
 	public static int getAmount(ItemStack is) {
 		if (is != null) {
 			if (is.hasItemMeta() && is.getItemMeta().hasLore()) {
 				for (String lore : is.getItemMeta().getLore()) {
-					if (lore.contains(Main.S_ITEM_BULLETS)) {
+					if (lore.contains(QAMain.S_ITEM_BULLETS)) {
 						return Integer.parseInt(lore.split(":")[1].split("/")[0].trim());
 					}
 				}
 				return 0;
 			} else {
-				if (Main.enableVisibleAmounts)
+				if (QAMain.enableVisibleAmounts)
 					return is.getAmount();
 			}
 		}

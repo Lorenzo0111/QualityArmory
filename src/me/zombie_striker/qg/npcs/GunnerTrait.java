@@ -3,7 +3,7 @@ package me.zombie_striker.qg.npcs;
 import org.bukkit.event.EventHandler;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import me.zombie_striker.qg.Main;
+import me.zombie_striker.qg.QAMain;
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
@@ -21,7 +21,7 @@ public class GunnerTrait extends Trait {
 
 	public GunnerTrait() {
 		super("gunnertrait");
-		plugin = Main.getInstance();
+		plugin = QAMain.getInstance();
 	}
 
 	JavaPlugin plugin = null;

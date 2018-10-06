@@ -9,7 +9,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import me.zombie_striker.qg.Main;
+import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.guns.Gun;
 import me.zombie_striker.qg.guns.utils.WeaponSounds;
 
@@ -46,7 +46,7 @@ public PumpactionCharger() {
 					}catch(Error|Exception e43) {}
 				}
 			}
-		}.runTaskLater(Main.getInstance(), 12);
+		}.runTaskLater(QAMain.getInstance(), 12);
 		new BukkitRunnable() {
 			@Override
 			public void run() {
@@ -64,13 +64,13 @@ public PumpactionCharger() {
 
 				}
 			}
-		}.runTaskLater(Main.getInstance(), 16);
+		}.runTaskLater(QAMain.getInstance(), 16);
 		new BukkitRunnable() {
 			@Override
 			public void run() {
 				timeC.remove(player.getUniqueId());
 			}
-		}.runTaskLater(Main.getInstance(), 20);
+		}.runTaskLater(QAMain.getInstance(), 20);
 		return true;
 	}
 

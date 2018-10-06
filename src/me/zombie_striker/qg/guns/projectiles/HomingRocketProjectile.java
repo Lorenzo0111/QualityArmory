@@ -3,8 +3,8 @@ package me.zombie_striker.qg.guns.projectiles;
 import java.util.ArrayList;
 import java.util.List;
 
-import me.zombie_striker.qg.Main;
-import me.zombie_striker.qg.QualityArmory;
+import me.zombie_striker.qg.QAMain;
+import me.zombie_striker.qg.api.QualityArmory;
 import me.zombie_striker.qg.guns.Gun;
 import me.zombie_striker.qg.guns.utils.GunUtil;
 import me.zombie_striker.qg.guns.utils.WeaponSounds;
@@ -43,7 +43,7 @@ public class HomingRocketProjectile implements RealtimeCalculationProjectile {
 					Block lookat = player.getTargetBlock(null, 300);
 					if (lookat != null && lookat.getType() != Material.AIR) {
 						if (QualityArmory.isGun(player.getItemInHand())) {
-							Gun g = QualityArmory.getGun(player.getItemInHand());
+							Gun g = me.zombie_striker.qg.api.QualityArmory.getGun(player.getItemInHand());
 							if (g.usesCustomProjctiles() && g.getCustomProjectile() instanceof HomingRocketProjectile) {
 								Vector newDir = lookat.getLocation().clone().subtract(RPGLOCATION).toVector()
 										.normalize();
@@ -70,7 +70,7 @@ public class HomingRocketProjectile implements RealtimeCalculationProjectile {
 					}
 
 					if (GunUtil.isSolid(RPGLOCATION.getBlock(), RPGLOCATION) || entityNear || distance < 0) {
-						if (Main.enableExplosionDamage) {
+						if (QAMain.enableExplosionDamage) {
 							ExplosionHandler.handleExplosion(RPGLOCATION, 4, 2);
 						}
 						try {
@@ -88,7 +88,7 @@ public class HomingRocketProjectile implements RealtimeCalculationProjectile {
 					}
 				}
 			}
-		}.runTaskTimer(Main.getInstance(), 0, 1);
+		}.runTaskTimer(QAMain.getInstance(), 0, 1);
 	}
 
 	@Override

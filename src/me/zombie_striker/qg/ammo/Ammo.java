@@ -10,7 +10,7 @@ import org.bukkit.inventory.ItemStack;
 
 import me.zombie_striker.qg.ArmoryBaseObject;
 import me.zombie_striker.qg.ItemFact;
-import me.zombie_striker.qg.Main;
+import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.MaterialStorage;
 import me.zombie_striker.qg.handlers.MultiVersionLookup;
 
@@ -156,7 +156,7 @@ public class Ammo implements ArmoryBaseObject{
 
 	@Override
 	public void onRMB(PlayerInteractEvent e, ItemStack usedItem) {
-		Main.DEBUG("The item being click is ammo!");
+		QAMain.DEBUG("The item being click is ammo!");
 		if (usedItem.getType() == Material.DIAMOND_HOE && e.getAction() == Action.RIGHT_CLICK_BLOCK
 				&& (e.getClickedBlock().getType() == Material.DIRT
 						|| e.getClickedBlock().getType() == Material.GRASS

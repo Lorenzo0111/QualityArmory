@@ -2,11 +2,11 @@ package me.zombie_striker.qg.guns;
 
 import me.zombie_striker.qg.ArmoryBaseObject;
 import me.zombie_striker.qg.ItemFact;
-import me.zombie_striker.qg.Main;
+import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.MaterialStorage;
-import me.zombie_striker.qg.QualityArmory;
 import me.zombie_striker.qg.ammo.*;
-import me.zombie_striker.qg.attachments.AttachmentBase;
+import me.zombie_striker.qg.api.QAWeaponPrepareShootEvent;
+import me.zombie_striker.qg.api.QualityArmory;
 import me.zombie_striker.qg.guns.projectiles.ProjectileManager;
 import me.zombie_striker.qg.guns.projectiles.RealtimeCalculationProjectile;
 import me.zombie_striker.qg.guns.utils.GunUtil;
@@ -39,7 +39,7 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 	private int zoomLevel = 0;
 	private Ammo ammotype;
 	private double acc;
-	private double swaymultiplier;
+	private double swaymultiplier=2;
 	private int maxbull;
 	private float damage;
 	private int durib = 1000;
@@ -93,26 +93,71 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 	// bullet-delays
 	public HashMap<UUID, Long> lastshot = new HashMap<>();
 
-	/*@Deprecated
-	public Gun(String name, MaterialStorage id, WeaponType type, boolean h, Ammo am, double acc, double swaymult,
-			int maxBullets, float damage, boolean isAutomatic, int durib, WeaponSounds ws, double cost) {
-		this(name, id, type, h, am, acc, swaymult, maxBullets, damage, isAutomatic, durib, ws, null,
-				ChatColor.GOLD + name, cost, null);
-		this.ing = Main.getInstance().getIngredients(name);
+	public void copyFrom(Gun g) {
+		this.ing = g.ing;
+		this.type = g.type;
+		this.hasIronSights = g.hasIronSights;
+		this.zoomLevel = g.zoomLevel;
+		this.ammotype = g.ammotype;
+		this.acc = g.acc;
+		this.swaymultiplier = g.swaymultiplier;
+		this.maxbull = g.maxbull;
+		this.damage = g.damage;
+		this.durib = g.durib;
+		this.isAutomatic = g.isAutomatic;
+		this.supports18 = g.supports18;
+		this.nightVisionOnScope = g.nightVisionOnScope;
+		this.headshotMultiplier = g.headshotMultiplier;
+		this.isPrimaryWeapon = g.isPrimaryWeapon;
+		this.explosionRadius = g.explosionRadius;
+		this.extralore = g.extralore;
+		// this.displayname = displayname;
+		this.weaponSounds = g.weaponSounds;
+		this.cost = g.cost;
+		this.delayBetweenShots = g.delayBetweenShots;
+		this.shotsPerBullet = g.shotsPerBullet;
+		this.firerate = g.firerate;
+		this.ch = g.ch;
+		this.rh = g.rh;
+		this.maxDistance = g.maxbull;
+		this.particle = g.particle;
+		this.particle_r = g.particle_r;
+		this.particle_g = g.particle_g;
+		this.particle_b = g.particle_b;
+		this.lightl = g.lightl;
+		this.enableMuzzleSmoke = g.enableMuzzleSmoke;
+		this.glowEffect = g.glowEffect;
+		this.unlimitedAmmo = g.unlimitedAmmo;
+		this.customProjectile = g.customProjectile;
+		this.velocity = g.velocity;
+		this.recoil = g.recoil;
 
 	}
-	@Deprecated
-	public Gun(String name, WeaponType type, boolean h, Ammo am, double acc, double swaymult, int maxBullets,
-			float damage, boolean isAutomatic, int durib, WeaponSounds ws, double cost) {
-		this(name, type, h, am, acc, swaymult, maxBullets, damage, isAutomatic, durib, ws, cost,
-				Main.getInstance().getIngredients(name));
-	}*/
 
+	/*
+	 * @Deprecated public Gun(String name, MaterialStorage id, WeaponType type,
+	 * boolean h, Ammo am, double acc, double swaymult, int maxBullets, float
+	 * damage, boolean isAutomatic, int durib, WeaponSounds ws, double cost) {
+	 * this(name, id, type, h, am, acc, swaymult, maxBullets, damage, isAutomatic,
+	 * durib, ws, null, ChatColor.GOLD + name, cost, null); this.ing =
+	 * Main.getInstance().getIngredients(name);
+	 * 
+	 * }
+	 * 
+	 * @Deprecated public Gun(String name, WeaponType type, boolean h, Ammo am,
+	 * double acc, double swaymult, int maxBullets, float damage, boolean
+	 * isAutomatic, int durib, WeaponSounds ws, double cost) { this(name, type, h,
+	 * am, acc, swaymult, maxBullets, damage, isAutomatic, durib, ws, cost,
+	 * Main.getInstance().getIngredients(name)); }
+	 */
+
+	@Deprecated
 	public Gun(String name, WeaponType type, boolean h, Ammo am, double acc, double swaymult, int maxBullets,
 			float damage, boolean isAutomatic, int durib, WeaponSounds ws, double cost, ItemStack[] ing) {
 		this(name, type, h, am, acc, swaymult, maxBullets, damage, isAutomatic, durib, ws.getSoundName(), cost, ing);
 	}
 
+	@Deprecated
 	public Gun(String name, WeaponType type, boolean h, Ammo am, double acc, double swaymult, int maxBullets,
 			float damage, boolean isAutomatic, int durib, String ws, double cost, ItemStack[] ing) {
 		this.name = name;
@@ -132,6 +177,7 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 		this.displayname = ChatColor.GOLD + name;
 	}
 
+	@Deprecated
 	public Gun(String name, MaterialStorage id, WeaponType type, boolean h, Ammo am, double acc, double swaymult,
 			int maxBullets, float damage, boolean isAutomatic, int durib, WeaponSounds ws, double cost,
 			ItemStack[] ing) {
@@ -139,6 +185,7 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 				ChatColor.GOLD + name, cost, ing);
 	}
 
+	@Deprecated
 	public Gun(String name, MaterialStorage id, WeaponType type, boolean h, Ammo am, double acc, double swaymult,
 			int maxBullets, float damage, boolean isAutomatic, int durib, WeaponSounds ws, List<String> extralore,
 			String displayname, double cost, ItemStack[] ing) {
@@ -146,6 +193,7 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 				extralore, displayname, cost, ing);
 	}
 
+	@Deprecated
 	public Gun(String name, MaterialStorage id, WeaponType type, boolean h, Ammo am, double acc, double swaymult,
 			int maxBullets, float damage, boolean isAutomatic, int durib, String ws, List<String> extralore,
 			String displayname, double cost, ItemStack[] ing) {
@@ -167,6 +215,45 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 
 		this.extralore = extralore;
 		this.displayname = ChatColor.translateAlternateColorCodes('&', displayname);
+	}
+
+	public Gun(String name, MaterialStorage id) {
+		this.name = name;
+		this.id = id;
+	}
+
+	public void setIngredients(ItemStack[] ing) {
+		this.ing = ing;
+	}
+
+	public void setAutomatic(boolean automatic) {
+		this.isAutomatic = automatic;
+	}
+	
+	public void setHasIronsights(boolean b) {
+		this.hasIronSights = b;
+	}
+	public void setDamage(float damage) {
+		this.damage = damage;
+	}
+	public void setPrice(double price) {
+		this.cost = price;
+	}
+
+	public void setDuribility(int durib) {
+		this.durib = durib;
+	}
+
+	public void setMaxBullets(int amount) {
+		this.maxbull = amount;
+	}
+
+	public void setSway(double sway) {
+		this.acc = sway;
+	}
+
+	public void setSwayMultiplier(double multiplier) {
+		this.swaymultiplier = multiplier;
 	}
 
 	public void setHeadshotMultiplier(double dam) {
@@ -192,10 +279,11 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 	public double getRecoil() {
 		return recoil;
 	}
+
 	public void setRecoil(double d) {
 		this.recoil = d;
 	}
-	
+
 	/**
 	 * Sets the glow for the item. Null to disable the glow.
 	 */
@@ -217,6 +305,10 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 
 	public void setNightVision(boolean nightVisionOnScope) {
 		this.nightVisionOnScope = nightVisionOnScope;
+	}
+
+	public void setAmmo(Ammo ammo) {
+		this.ammotype = ammo;
 	}
 
 	public boolean hasnightVision() {
@@ -315,17 +407,20 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 		this.unlimitedAmmo = b;
 	}
 
-	public boolean shoot(Player player, AttachmentBase attachmentBase) {
-		return Gun.USE_THIS_INSTEAD_OF_INDEVIDUAL_SHOOT_METHODS(this, attachmentBase, player, getSway());
+	public boolean shoot(Player player) {
+		return Gun.USE_THIS_INSTEAD_OF_INDEVIDUAL_SHOOT_METHODS(this, player, getSway());
 	}
 
 	@SuppressWarnings("deprecation")
-	public static boolean USE_THIS_INSTEAD_OF_INDEVIDUAL_SHOOT_METHODS(Gun g, AttachmentBase attachmentBase,
-			Player player, double acc) {
+	public static boolean USE_THIS_INSTEAD_OF_INDEVIDUAL_SHOOT_METHODS(Gun g, Player player, double acc) {
 		boolean offhand = player.getInventory().getItemInHand().getDurability() == IronSightsToggleItem.getData();
 		if ((!offhand && ItemFact.getAmount(player.getInventory().getItemInHand()) > 0)
 				|| (offhand && Update19OffhandChecker.hasAmountOFfhandGreaterthan(player, 0))) {
-			GunUtil.basicShoot(offhand, g, attachmentBase, player, acc);
+			QAWeaponPrepareShootEvent shootevent = new QAWeaponPrepareShootEvent(player, g);
+			Bukkit.getPluginManager().callEvent(shootevent);
+			if (shootevent.isCanceled())
+				return false;
+			GunUtil.basicShoot(offhand, g, player, acc);
 			return true;
 		}
 		return false;
@@ -345,9 +440,17 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 		return GunUtil.hasAmmo(player, this);
 	}
 
-	public void reload(Player player, AttachmentBase attachmentBase) {
+	public void setSound(WeaponSounds sound) {
+		setSound(sound.getSoundName());
+	}
+
+	public void setSound(String sound) {
+		this.weaponSounds = sound;
+	}
+
+	public void reload(Player player) {
 		if (getChargingVal() == null || (getReloadingingVal() == null || !getReloadingingVal().isReloading(player)))
-			GunUtil.basicReload(this, attachmentBase, player, unlimitedAmmo, reloadTime);
+			GunUtil.basicReload(this, player, unlimitedAmmo, reloadTime);
 	}
 
 	public double getDamage() {
@@ -385,7 +488,7 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 	@Override
 	public MaterialStorage getItemData() {
 		if (id == null) {
-			for (Entry<MaterialStorage, Gun> e : Main.gunRegister.entrySet()) {
+			for (Entry<MaterialStorage, Gun> e : QAMain.gunRegister.entrySet()) {
 				if (e.getValue() == this)
 					return id = e.getKey();
 			}
@@ -490,7 +593,7 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 
 	@Override
 	public int compareTo(Gun arg0) {
-		if (Main.orderShopByPrice) {
+		if (QAMain.orderShopByPrice) {
 			return (int) (this.cost - arg0.cost);
 		}
 		return this.displayname.compareTo(arg0.displayname);
@@ -498,7 +601,7 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 
 	@Override
 	public void onRMB(PlayerInteractEvent e, ItemStack usedItem) {
-		onClick(e, usedItem, (Main.reloadOnFOnly||!Main.SWAP_RMB_WITH_LMB));
+		onClick(e, usedItem, (QAMain.reloadOnFOnly || !QAMain.SWAP_RMB_WITH_LMB));
 	}
 
 	@Override
@@ -515,56 +618,60 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 		// TODO: Verify If the player is shifting and rightclick, the gun will still
 		// fire. The player has to be standing (non-sneak) in order to interact with
 		// interactable blocks.
-		onClick(e, usedItem, Main.SWAP_RMB_WITH_LMB);
+		onClick(e, usedItem, QAMain.SWAP_RMB_WITH_LMB);
 	}
 
 	@SuppressWarnings("deprecation")
 	public void onClick(PlayerInteractEvent e, ItemStack usedItem, boolean fire) {
-		Main.DEBUG("CLICKED GUN "+getName());
+		QAMain.DEBUG("CLICKED GUN " + getName());
 
 		if (!e.getPlayer().hasPermission("qualityarmory.usegun")) {
-			e.getPlayer().sendMessage(Main.S_NOPERM);
+			e.getPlayer().sendMessage(QAMain.S_NOPERM);
 			return;
 		}
 
-		if (Main.enableVisibleAmounts) {
-			Main.DEBUG("UNSUPPORTED - Enable visable ammo amount ID check");
+		if (QAMain.enableVisibleAmounts) {
+			QAMain.DEBUG("UNSUPPORTED - Enable visable ammo amount ID check");
 			boolean validcheck2 = false;
 			try {
-				if (Main.isVersionHigherThan(1, 9)) {
+				if (QAMain.isVersionHigherThan(1, 9)) {
 					UUID.fromString(usedItem.getItemMeta().getLocalizedName());
-					Main.DEBUG("Gun-Validation check - 1");
-				} else {validcheck2=true;
+					QAMain.DEBUG("Gun-Validation check - 1");
+				} else {
+					validcheck2 = true;
 				}
-			} catch (Error | Exception e34) {validcheck2=true;
+			} catch (Error | Exception e34) {
+				validcheck2 = true;
 			}
-			if(validcheck2) {
-				if (Main.isVersionHigherThan(1, 9)) {
+			if (validcheck2) {
+				if (QAMain.isVersionHigherThan(1, 9)) {
 					if (!usedItem.getItemMeta().hasDisplayName() || !usedItem.getItemMeta().hasLore()) {
 						ItemStack is = ItemFact.getGun(MaterialStorage.getMS(usedItem));
 						e.setCancelled(true);
 						e.getPlayer().setItemInHand(is);
-						Main.DEBUG("Gun-Validation check - 2");
+						QAMain.DEBUG("Gun-Validation check - 2");
 						return;
 					}
 				}
 			}
 		}
 
-		Main.DEBUG("Dups check");
-		Main.getInstance().checkforDups(e.getPlayer(), usedItem);
+		QAMain.DEBUG("Dups check");
+		QAMain.getInstance().checkforDups(e.getPlayer(), usedItem);
 
 		boolean offhand = usedItem != e.getPlayer().getItemInHand();
 
-		AttachmentBase attachment = QualityArmory.getGunWithAttchments(usedItem);
-		/*Gun g = QualityArmory.getGun(usedItem);
-		if (g == null)
-			g = attachment.getBaseGun();*/
-		Main.DEBUG("Made it to gun/attachment check : " + getName());
-		if (Main.enableInteractChests) {
+		// AttachmentBase attachment =
+		// me.zombie_striker.qg.api.QualityArmory.getGunWithAttchments(usedItem);
+		/*
+		 * Gun g = QualityArmory.getGun(usedItem); if (g == null) g =
+		 * attachment.getBaseGun();
+		 */
+		QAMain.DEBUG("Made it to gun/attachment check : " + getName());
+		if (QAMain.enableInteractChests) {
 			if (e.getClickedBlock() != null && (e.getClickedBlock().getType() == Material.CHEST
 					|| e.getClickedBlock().getType() == Material.TRAPPED_CHEST)) {
-				Main.DEBUG("Chest interactable check has return true!");
+				QAMain.DEBUG("Chest interactable check has return true!");
 				return;
 			}
 			// Return with no shots if EIC is enabled for chests.
@@ -572,12 +679,12 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 
 		e.setCancelled(true);
 		if (fire) {
-			Main.DEBUG("Fire mode called");
-			if (!Main.enableDurability || ItemFact.getDamage(usedItem) > 0) {
+			QAMain.DEBUG("Fire mode called");
+			if (!QAMain.enableDurability || ItemFact.getDamage(usedItem) > 0) {
 				// if (allowGunsInRegion(e.getPlayer().getLocation())) {
 				try {
 					if (e.getHand() == EquipmentSlot.OFF_HAND) {
-						Main.DEBUG("OffHandChecker was disabled for shooting!");
+						QAMain.DEBUG("OffHandChecker was disabled for shooting!");
 						return;
 					}
 				} catch (Error | Exception e4) {
@@ -585,7 +692,7 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 
 				if (isAutomatic() && GunUtil.rapidfireshooters.containsKey(e.getPlayer().getUniqueId())) {
 					GunUtil.rapidfireshooters.remove(e.getPlayer().getUniqueId()).cancel();
-					if (Main.enableReloadWhenOutOfAmmo)
+					if (QAMain.enableReloadWhenOutOfAmmo)
 						if (ItemFact.getAmount(offhand ? e.getPlayer().getInventory().getItemInOffHand()
 								: e.getPlayer().getItemInHand()) <= 0) {
 							if (offhand) {
@@ -594,26 +701,26 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 								usedItem = e.getPlayer().getItemInHand();
 								offhand = false;
 							}
-							if (Main.allowGunReload) {
-								QualityArmory.sendHotbarGunAmmoCount(e.getPlayer(), this, attachment, usedItem,
+							if (QAMain.allowGunReload) {
+								QualityArmory.sendHotbarGunAmmoCount(e.getPlayer(), this, usedItem,
 										((getMaxBullets() != ItemFact.getAmount(usedItem))
 												&& GunUtil.hasAmmo(e.getPlayer(), this)));
 								if (playerHasAmmo(e.getPlayer())) {
-									Main.DEBUG("Trying to reload WITH AUTORELOAD. player has ammo");
-									reload(e.getPlayer(), attachment);
+									QAMain.DEBUG("Trying to reload WITH AUTORELOAD. player has ammo");
+									reload(e.getPlayer());
 
 								} else {
-									if (Main.showOutOfAmmoOnItem) {
+									if (QAMain.showOutOfAmmoOnItem) {
 										// ItemFact.addOutOfAmmoToDisplayname(g, e.getPlayer(), usedItem, slot);
-										Main.DEBUG("UNSUPPORTED: Out of ammo displayed on item");
+										QAMain.DEBUG("UNSUPPORTED: Out of ammo displayed on item");
 									}
-									Main.DEBUG("Trying to reload WITH AUTORELOAD. player DOES NOT have ammo");
+									QAMain.DEBUG("Trying to reload WITH AUTORELOAD. player DOES NOT have ammo");
 								}
 							}
 							return;
 						}
 				} else {
-					if (Main.enableReloadWhenOutOfAmmo)
+					if (QAMain.enableReloadWhenOutOfAmmo)
 						if (ItemFact.getAmount(offhand ? e.getPlayer().getInventory().getItemInOffHand()
 								: e.getPlayer().getItemInHand()) <= 0) {
 							if (offhand) {
@@ -622,22 +729,22 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 								usedItem = e.getPlayer().getItemInHand();
 								offhand = false;
 							}
-							if (Main.allowGunReload) {
-								QualityArmory.sendHotbarGunAmmoCount(e.getPlayer(), this, attachment, usedItem,
+							if (QAMain.allowGunReload) {
+								QualityArmory.sendHotbarGunAmmoCount(e.getPlayer(), this, usedItem,
 										((getMaxBullets() != ItemFact.getAmount(usedItem))
 												&& GunUtil.hasAmmo(e.getPlayer(), this)));
 								if (playerHasAmmo(e.getPlayer())) {
-									Main.DEBUG("Trying to reload WITH AUTORELOAD. player has ammo");
-									reload(e.getPlayer(), attachment);
+									QAMain.DEBUG("Trying to reload WITH AUTORELOAD. player has ammo");
+									reload(e.getPlayer());
 
 								} else {
-									Main.DEBUG("Trying to reload WITH AUTORELOAD. player DOES NOT have ammo");
+									QAMain.DEBUG("Trying to reload WITH AUTORELOAD. player DOES NOT have ammo");
 								}
 							}
 							return;
 						}
-					shoot(e.getPlayer(), attachment);
-					if (Main.enableDurability)
+					shoot(e.getPlayer());
+					if (QAMain.enableDurability)
 						if (offhand) {
 							try {
 								e.getPlayer().getInventory().setItemInOffHand(ItemFact.damage(this, usedItem));
@@ -649,7 +756,7 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 
 				}
 
-				QualityArmory.sendHotbarGunAmmoCount(e.getPlayer(), this, attachment, usedItem, false);
+				QualityArmory.sendHotbarGunAmmoCount(e.getPlayer(), this, usedItem, false);
 				return;
 				/*
 				 * } else { Main.DEBUG("Worldguard region canceled the event"); }
@@ -659,15 +766,15 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 				// Shouldn't work for offhand, but it should still
 				// be checked later.
 			}
-			Main.DEBUG("End of fire mode check called");
+			QAMain.DEBUG("End of fire mode check called");
 
 		} else {
-			Main.DEBUG("Non-Fire mode activated");
+			QAMain.DEBUG("Non-Fire mode activated");
 
-			if (Main.enableIronSightsON_RIGHT_CLICK) {
+			if (QAMain.enableIronSightsON_RIGHT_CLICK) {
 				if (!Update19OffhandChecker.supportOffhand(e.getPlayer())) {
-					Main.enableIronSightsON_RIGHT_CLICK = false;
-					Main.DEBUG("Offhand checker returned false for the player. Disabling ironsights");
+					QAMain.enableIronSightsON_RIGHT_CLICK = false;
+					QAMain.DEBUG("Offhand checker returned false for the player. Disabling ironsights");
 					return;
 				}
 				// Rest should be okay
@@ -675,8 +782,8 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 					try {
 
 						if (e.getPlayer().getItemInHand().getItemMeta().getDisplayName()
-								.contains(Main.S_RELOADING_MESSAGE)) {
-							Main.DEBUG("Reloading message 1!");
+								.contains(QAMain.S_RELOADING_MESSAGE)) {
+							QAMain.DEBUG("Reloading message 1!");
 							return;
 						}
 
@@ -701,9 +808,9 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 							e.getPlayer().getInventory().setItemInMainHand(ironsights);
 						}
 
-						QualityArmory.sendHotbarGunAmmoCount(e.getPlayer(), this, attachment, usedItem, false);
+						QualityArmory.sendHotbarGunAmmoCount(e.getPlayer(), this, usedItem, false);
 					} catch (Error e2) {
-						Bukkit.broadcastMessage(Main.prefix
+						Bukkit.broadcastMessage(QAMain.prefix
 								+ "Ironsights not compatible for versions lower than 1.8. The server owner should set EnableIronSights to false in the plugin's config");
 					}
 				} else {
@@ -719,28 +826,28 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 					 */
 				}
 
-				Main.DEBUG("Ironsights on RMB finished");
+				QAMain.DEBUG("Ironsights on RMB finished");
 			} else {
-				Main.DEBUG("Reload called");
-				if (e.getClickedBlock() != null && Main.interactableBlocks.contains(e.getClickedBlock().getType())) {
+				QAMain.DEBUG("Reload called");
+				if (e.getClickedBlock() != null && QAMain.interactableBlocks.contains(e.getClickedBlock().getType())) {
 					e.setCancelled(false);
 				} else {
-						if (Main.allowGunReload) {
-							QualityArmory.sendHotbarGunAmmoCount(e.getPlayer(), this, attachment, usedItem,
-									((getMaxBullets() != ItemFact.getAmount(usedItem))
-											&& GunUtil.hasAmmo(e.getPlayer(), this)));
-							if (playerHasAmmo(e.getPlayer())) {
-								Main.DEBUG("Trying to reload. player has ammo");
-								reload(e.getPlayer(), attachment);
-							} else {
-								Main.DEBUG("Trying to reload. player DOES NOT have ammo");
-							}
+					if (QAMain.allowGunReload) {
+						QualityArmory.sendHotbarGunAmmoCount(e.getPlayer(), this, usedItem,
+								((getMaxBullets() != ItemFact.getAmount(usedItem))
+										&& GunUtil.hasAmmo(e.getPlayer(), this)));
+						if (playerHasAmmo(e.getPlayer())) {
+							QAMain.DEBUG("Trying to reload. player has ammo");
+							reload(e.getPlayer());
+						} else {
+							QAMain.DEBUG("Trying to reload. player DOES NOT have ammo");
 						}
+					}
 				}
 			}
 
 		}
-		Main.DEBUG("Reached end for gun-check!");
+		QAMain.DEBUG("Reached end for gun-check!");
 	}
 
 	@Override

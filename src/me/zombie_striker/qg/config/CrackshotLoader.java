@@ -9,10 +9,10 @@ import org.bukkit.*;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.inventory.ItemStack;
 
-import me.zombie_striker.qg.Main;
+import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.MaterialStorage;
-import me.zombie_striker.qg.QualityArmory;
 import me.zombie_striker.qg.ammo.AmmoType;
+import me.zombie_striker.qg.api.QualityArmory;
 import me.zombie_striker.qg.config.GunYML;
 import me.zombie_striker.qg.config.GunYMLCreator;
 import me.zombie_striker.qg.guns.Gun;
@@ -55,7 +55,7 @@ public class CrackshotLoader {
 				yml.setChargingHandler(g.getChargingVal());
 			yml.verifyAllTagsExist();
 			yml.save();
-			Main.DEBUG("-Creating CrackShot guns: " + g.getName());
+			QAMain.DEBUG("-Creating CrackShot guns: " + g.getName());
 		}
 	}
 
@@ -65,8 +65,8 @@ public class CrackshotLoader {
 		for (String name : crackshotFile.getKeys(false)) {
 			String internalname = name.toLowerCase();
 			// Make sure all weapon names are lowercase
-			if (QualityArmory.getGunByName(internalname) != null) {
-				Main.DEBUG("CrackShot gun " + name + " already has a QA Counterpart.");
+			if (me.zombie_striker.qg.api.QualityArmory.getGunByName(internalname) != null) {
+				QAMain.DEBUG("CrackShot gun " + name + " already has a QA Counterpart.");
 				continue;
 			}
 
@@ -230,8 +230,8 @@ public class CrackshotLoader {
 
 			g.setReloadingTimeInSeconds(reloadDelayInTicks / 20);
 			guns4.add(g);
-			Main.gunRegister.put(ms, g);
-			Main.DEBUG("-Registering Crackshot Gun: " + internalname);
+			QAMain.gunRegister.put(ms, g);
+			QAMain.DEBUG("-Registering Crackshot Gun: " + internalname);
 		}
 		return guns4;
 	}

@@ -3,7 +3,7 @@ package me.zombie_striker.qg.guns.projectiles;
 import java.util.ArrayList;
 import java.util.List;
 
-import me.zombie_striker.qg.Main;
+import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.guns.Gun;
 import me.zombie_striker.qg.guns.utils.GunUtil;
 import me.zombie_striker.qg.guns.utils.WeaponSounds;
@@ -30,7 +30,7 @@ public class ExplodingRoundProjectile implements RealtimeCalculationProjectile {
 
 			@Override
 			public void run() {
-				dir.setY(dir.getY() - Main.gravity);
+				dir.setY(dir.getY() - QAMain.gravity);
 				for (int tick = 0; tick < g.getVelocityForRealtimeCalculations(); tick++) {
 					distance--;
 					s.add(dir);
@@ -59,7 +59,7 @@ public class ExplodingRoundProjectile implements RealtimeCalculationProjectile {
 					}
 				}
 			}
-		}.runTaskTimer(Main.getInstance(), 0, 1);
+		}.runTaskTimer(QAMain.getInstance(), 0, 1);
 	}
 
 	@Override

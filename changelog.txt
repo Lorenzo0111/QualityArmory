@@ -1,3 +1,9 @@
+1.1.120
+	Revamped Attachment code so it is the same as Guns. This will make handing guns with attachments easier.
+	Move QualityArmory API class to the "qg.api" package
+	Added QAWeaponDamageEntityEvent
+	Added QAWeaponPrepareShootEvent
+	
 1.1.119
 	Added Flamer and FlamerFuel(fuel)
 	Added Glock17

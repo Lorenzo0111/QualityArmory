@@ -10,7 +10,8 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
-import me.zombie_striker.qg.QualityArmory;
+import me.zombie_striker.qg.api.QualityArmory;
+
 
 public class TreeFellerHandler implements Listener {
 

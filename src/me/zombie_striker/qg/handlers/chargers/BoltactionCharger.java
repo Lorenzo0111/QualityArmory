@@ -9,7 +9,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import me.zombie_striker.qg.Main;
+import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.guns.Gun;
 import me.zombie_striker.qg.guns.utils.WeaponSounds;
 
@@ -35,7 +35,7 @@ public class BoltactionCharger implements ChargingHandler {
 			@Override
 			public void run() {
 				try {
-					if (Main.isVersionHigherThan(1, 9)) {
+					if (QAMain.isVersionHigherThan(1, 9)) {
 						player.getWorld().playSound(player.getLocation(), WeaponSounds.RELOAD_BOLT.getSoundName(), 1, 1f);
 					} else
 						player.getWorld().playSound(player.getLocation(), Sound.BLOCK_LEVER_CLICK, 5, 1);
@@ -46,12 +46,12 @@ public class BoltactionCharger implements ChargingHandler {
 					}
 				}
 			}
-		}.runTaskLater(Main.getInstance(), 10);
+		}.runTaskLater(QAMain.getInstance(), 10);
 		new BukkitRunnable() {
 			@Override
 			public void run() {
 				try {
-					if (Main.isVersionHigherThan(1, 9)) {
+					if (QAMain.isVersionHigherThan(1, 9)) {
 						player.getWorld().playSound(player.getLocation(), WeaponSounds.RELOAD_BOLT.getSoundName(), 1, 1f);
 					} else
 						player.getWorld().playSound(player.getLocation(), Sound.BLOCK_LEVER_CLICK, 5, 1);
@@ -63,7 +63,7 @@ public class BoltactionCharger implements ChargingHandler {
 				}
 				timeR.remove(player.getUniqueId());
 			}
-		}.runTaskLater(Main.getInstance(), 16);
+		}.runTaskLater(QAMain.getInstance(), 16);
 		return true;
 	}
 

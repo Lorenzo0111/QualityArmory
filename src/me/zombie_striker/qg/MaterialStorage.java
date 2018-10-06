@@ -130,7 +130,7 @@ public class MaterialStorage {
 		if (is != null)
 			if (is.hasItemMeta() && is.getItemMeta().hasLore()) {
 				for (String lore : is.getItemMeta().getLore()) {
-					if (lore.startsWith(Main.S_ITEM_VARIENTS)) {
+					if (lore.startsWith(QAMain.S_ITEM_VARIENTS)) {
 						try {
 							int id = Integer.parseInt(lore.split(":")[1].trim());
 							return id;

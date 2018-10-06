@@ -3,7 +3,7 @@ package me.zombie_striker.qg.guns.projectiles;
 import java.util.ArrayList;
 import java.util.List;
 
-import me.zombie_striker.qg.Main;
+import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.guns.Gun;
 import me.zombie_striker.qg.guns.utils.GunUtil;
 import me.zombie_striker.qg.guns.utils.WeaponSounds;
@@ -30,7 +30,7 @@ public MiniNukeProjectile() {
 
 			@Override
 			public void run() {
-				dir.setY(dir.getY() - Main.gravity);
+				dir.setY(dir.getY() - QAMain.gravity);
 				for (int tick = 0; tick < Math.round(0.99+g.getVelocityForRealtimeCalculations()); tick++) {
 				distance--;
 				s.add(dir);
@@ -51,7 +51,7 @@ public MiniNukeProjectile() {
 				}
 
 				if (GunUtil.isSolid(s.getBlock(), s) || entityNear || distance < 0) {
-					if (Main.enableExplosionDamage) {
+					if (QAMain.enableExplosionDamage) {
 						ExplosionHandler.handleExplosion(s, 4, 2);
 					}
 					try {
@@ -64,7 +64,7 @@ public MiniNukeProjectile() {
 							public void run() {
 								ParticleHandlers.spawnMushroomCloud(s);
 							}
-						}.runTaskLater(Main.getInstance(), 10);
+						}.runTaskLater(QAMain.getInstance(), 10);
 
 					} catch (Error e3) {
 						s.getWorld().playEffect(s, Effect.valueOf("CLOUD"), 0);
@@ -77,7 +77,7 @@ public MiniNukeProjectile() {
 				}
 				
 			}
-		}.runTaskTimer(Main.getInstance(), 0, 1);
+		}.runTaskTimer(QAMain.getInstance(), 0, 1);
 	}
 	@Override
 	public String getName() {

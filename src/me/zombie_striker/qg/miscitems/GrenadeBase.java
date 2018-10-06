@@ -17,7 +17,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import me.zombie_striker.qg.ArmoryBaseObject;
 import me.zombie_striker.qg.ItemFact;
-import me.zombie_striker.qg.Main;
+import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.MaterialStorage;
 import me.zombie_striker.qg.guns.utils.WeaponSounds;
 import me.zombie_striker.qg.handlers.ExplosionHandler;
@@ -107,7 +107,7 @@ public class GrenadeBase implements ArmoryBaseObject {
 			grenadeHolder.put(grenade, holder);
 			grenadeHolder.remove(thrower);
 		} else {
-			thrower.sendMessage(Main.prefix + Main.S_GRENADE_PULLPIN);
+			thrower.sendMessage(QAMain.prefix + QAMain.S_GRENADE_PULLPIN);
 		}
 	}
 
@@ -115,7 +115,7 @@ public class GrenadeBase implements ArmoryBaseObject {
 	public void onLMB(PlayerInteractEvent e, ItemStack usedItem) {
 		Player thrower = e.getPlayer();
 		if (grenadeHolder.containsKey(thrower)) {
-			thrower.sendMessage(Main.prefix + Main.S_GRENADE_PALREADYPULLPIN);
+			thrower.sendMessage(QAMain.prefix + QAMain.S_GRENADE_PALREADYPULLPIN);
 			thrower.playSound(thrower.getLocation(), WeaponSounds.RELOAD_BULLET.getSoundName(), 1, 1);
 			return;
 		}
@@ -130,7 +130,7 @@ public class GrenadeBase implements ArmoryBaseObject {
 				if (h.getHolder() instanceof Item) {
 					h.getHolder().remove();
 				}
-				if (Main.enableExplosionDamage) {
+				if (QAMain.enableExplosionDamage) {
 					ExplosionHandler.handleExplosion(h.getHolder().getLocation(), 3, 1);
 				}
 				try {
@@ -160,7 +160,7 @@ public class GrenadeBase implements ArmoryBaseObject {
 				}
 				grenadeHolder.remove(h.getHolder());
 			}
-		}.runTaskLater(Main.getInstance(), 5 * 20));
+		}.runTaskLater(QAMain.getInstance(), 5 * 20));
 		grenadeHolder.put(thrower, h);
 
 	}

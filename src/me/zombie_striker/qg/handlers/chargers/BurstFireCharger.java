@@ -10,9 +10,8 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
 import me.zombie_striker.qg.ItemFact;
-import me.zombie_striker.qg.Main;
-import me.zombie_striker.qg.QualityArmory;
-import me.zombie_striker.qg.attachments.AttachmentBase;
+import me.zombie_striker.qg.QAMain;
+import me.zombie_striker.qg.api.QualityArmory;
 import me.zombie_striker.qg.guns.Gun;
 import me.zombie_striker.qg.guns.utils.GunUtil;
 
@@ -32,8 +31,8 @@ public class BurstFireCharger implements ChargingHandler {
 	@Override
 	public boolean shoot(final Gun g, final Player player, final ItemStack stack) {
 		GunUtil.shootHandler(g, player);
-		final AttachmentBase attach = QualityArmory.getGunWithAttchments(stack);
-		GunUtil.playShoot(g, attach, player);
+	//	final AttachmentBase attach = QualityArmory.getGunWithAttchments(stack);
+		GunUtil.playShoot(g,  player);
 		
 		shooters.put(player.getUniqueId(), new BukkitRunnable() {
 			int slotUsed = player.getInventory().getHeldItemSlot();
@@ -54,14 +53,14 @@ public class BurstFireCharger implements ChargingHandler {
 				}
 
 				GunUtil.shootHandler(g, player);
-				GunUtil.playShoot(g, attach, player);
+				GunUtil.playShoot(g,  player);
 				shotCurrently++;
 				amount--;
 
 				if (amount < 0)
 					amount = 0;
 
-				if (Main.enableVisibleAmounts) {
+				if (QAMain.enableVisibleAmounts) {
 					stack.setAmount(amount > 64 ? 64 : amount == 0 ? 1 : amount);
 				}
 				ItemMeta im = stack.getItemMeta();
@@ -71,7 +70,7 @@ public class BurstFireCharger implements ChargingHandler {
 				} else {
 					slot = player.getInventory().getHeldItemSlot();
 				}
-				im.setLore(ItemFact.getGunLore(g, attach, stack, amount));
+				im.setLore(ItemFact.getGunLore(g, stack, amount));
 				stack.setItemMeta(im);
 				if (slot == -1) {
 					try {
@@ -86,9 +85,9 @@ public class BurstFireCharger implements ChargingHandler {
 				} else {
 					player.getInventory().setItem(slot, stack);
 				}
-				QualityArmory.sendHotbarGunAmmoCount(player, g, attach, stack, false);
+				QualityArmory.sendHotbarGunAmmoCount(player, g, stack, false);
 			}
-		}.runTaskTimer(Main.getInstance(), 10 / g.getBulletsPerShot(), 10 / g.getBulletsPerShot()));
+		}.runTaskTimer(QAMain.getInstance(), 10 / g.getBulletsPerShot(), 10 / g.getBulletsPerShot()));
 		return false;
 	}
 

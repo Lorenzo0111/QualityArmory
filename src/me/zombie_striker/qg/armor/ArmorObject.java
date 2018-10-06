@@ -8,7 +8,7 @@ import org.bukkit.inventory.ItemStack;
 
 import me.zombie_striker.qg.ArmoryBaseObject;
 import me.zombie_striker.qg.ItemFact;
-import me.zombie_striker.qg.Main;
+import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.MaterialStorage;
 
 public class ArmorObject implements ArmoryBaseObject {
@@ -104,7 +104,7 @@ public class ArmorObject implements ArmoryBaseObject {
 	@SuppressWarnings("deprecation")
 	@Override
 	public void onRMB(PlayerInteractEvent e, ItemStack usedItem) {
-			Main.DEBUG("A Player is about to put on armor!");
+			QAMain.DEBUG("A Player is about to put on armor!");
 			ItemStack helm = e.getPlayer().getInventory().getHelmet();
 			e.getPlayer().setItemInHand(helm);
 			e.getPlayer().getInventory().setHelmet(usedItem);

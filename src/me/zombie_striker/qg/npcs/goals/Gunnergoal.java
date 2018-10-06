@@ -142,7 +142,7 @@ public class Gunnergoal implements Goal {
 				internalAmmoCount--;
 				shootcooldown = maxShootCooldown;
 				GunUtil.shootHandler(g, (Player) npc.getEntity());
-				GunUtil.playShoot(g, null, (Player) npc.getEntity());
+				GunUtil.playShoot(g, (Player) npc.getEntity());
 				if (target == null) {
 					Bukkit.broadcastMessage("Shooting no target");
 				}

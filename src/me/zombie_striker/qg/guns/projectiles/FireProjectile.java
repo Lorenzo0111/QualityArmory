@@ -3,7 +3,7 @@ package me.zombie_striker.qg.guns.projectiles;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import me.zombie_striker.qg.Main;
+import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.boundingbox.AbstractBoundingBox;
 import me.zombie_striker.qg.boundingbox.BoundingBoxManager;
 import me.zombie_striker.qg.guns.Gun;
@@ -28,13 +28,13 @@ public class FireProjectile implements RealtimeCalculationProjectile {
 		Location test = player.getEyeLocation();
 		double maxDist = GunUtil.getTargetedSolidMaxDistance(dir, test, g.getMaxDistance());
 
-		Vector dir2 = dir.clone().multiply(Main.bulletStep);
+		Vector dir2 = dir.clone().multiply(QAMain.bulletStep);
 
 		Collection<Entity> nearby = test.getWorld().getNearbyEntities(
 				test.clone().add(dir.clone().multiply(maxDist / 2)), maxDist / 2, maxDist / 2, maxDist / 2);
 
 		// test.add(dir);
-		for (double distance = 0; distance < maxDist; distance += Main.bulletStep) {
+		for (double distance = 0; distance < maxDist; distance += QAMain.bulletStep) {
 			test.add(dir2);
 			if (test.getBlock().getType().name().equals("WATER")
 					|| test.getBlock().getType().name().equals("STATIONARY_WATER"))

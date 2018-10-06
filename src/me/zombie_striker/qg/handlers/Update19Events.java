@@ -1,8 +1,7 @@
 package me.zombie_striker.qg.handlers;
 
-import me.zombie_striker.qg.Main;
-import me.zombie_striker.qg.QualityArmory;
-import me.zombie_striker.qg.attachments.AttachmentBase;
+import me.zombie_striker.qg.QAMain;
+import me.zombie_striker.qg.api.QualityArmory;
 import me.zombie_striker.qg.guns.Gun;
 import me.zombie_striker.qg.guns.utils.GunUtil;
 
@@ -33,7 +32,7 @@ public class Update19Events implements Listener {
 
 	@EventHandler
 	public void onItemHandSwap(PlayerSwapHandItemsEvent e) {
-		if (Main.reloadOnF || Main.reloadOnFOnly) {
+		if (QAMain.reloadOnF || QAMain.reloadOnFOnly) {
 			if (QualityArmory.isIronSights(e.getOffHandItem())) {
 				e.setCancelled(true);
 				e.getPlayer().getInventory().setItemInMainHand(e.getMainHandItem());
@@ -42,8 +41,7 @@ public class Update19Events implements Listener {
 				if (task != null)
 					task.cancel();
 				return;
-			} else if (QualityArmory.isGun(e.getMainHandItem())
-					|| (QualityArmory.isGunWithAttchments(e.getMainHandItem()))) {
+			} else if (QualityArmory.isGun(e.getMainHandItem())) {
 				e.setCancelled(true);
 				e.getPlayer().getInventory().setItemInMainHand(e.getMainHandItem());
 				e.getPlayer().getInventory().setItemInOffHand(null);
@@ -52,30 +50,19 @@ public class Update19Events implements Listener {
 					task.cancel();
 				return;
 			}
-			AttachmentBase attach = null;
 			Gun g = null;
 			if (QualityArmory.isIronSights(e.getOffHandItem())) {
-				if (QualityArmory.isGunWithAttchments(e.getMainHandItem())) {
-					attach = QualityArmory.getGunWithAttchments(e.getMainHandItem());
-					g = Main.gunRegister.get(attach.getBase());
-				} else {
 					if (QualityArmory.isGun(e.getMainHandItem()))
 						g = QualityArmory.getGun(e.getMainHandItem());
-				}
 			} else {
-				if (QualityArmory.isGunWithAttchments(e.getOffHandItem())) {
-					attach = QualityArmory.getGunWithAttchments(e.getOffHandItem());
-					g = Main.gunRegister.get(attach.getBase());
-				} else {
 					if (QualityArmory.isGun(e.getOffHandItem()))
 						g = QualityArmory.getGun(e.getOffHandItem());
-				}
 
 			}
 			if (g != null) {
 				e.setCancelled(true);
 				if (g.playerHasAmmo(e.getPlayer())) {
-					g.reload(e.getPlayer(), attach);
+					g.reload(e.getPlayer());
 					BukkitTask task = GunUtil.rapidfireshooters.get(e.getPlayer().getUniqueId());
 					if (task != null)
 						task.cancel();
