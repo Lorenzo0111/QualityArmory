@@ -52,7 +52,8 @@ public class QAMain extends JavaPlugin implements Listener {
 	public static HashMap<MaterialStorage, Ammo> ammoRegister = new HashMap<>();
 	public static HashMap<MaterialStorage, ArmoryBaseObject> miscRegister = new HashMap<>();
 	public static HashMap<MaterialStorage, ArmorObject> armorRegister = new HashMap<>();
-	//public static HashMap<MaterialStorage, AttachmentBase> attachmentRegister = new HashMap<>();
+	// public static HashMap<MaterialStorage, AttachmentBase> attachmentRegister =
+	// new HashMap<>();
 
 	public static HashMap<UUID, Location> recoilHelperMovedLocation = new HashMap<>();
 
@@ -250,6 +251,8 @@ public class QAMain extends JavaPlugin implements Listener {
 	public static boolean hasParties = false;
 	public static boolean friendlyFire = false;
 
+	public static boolean hasProtocolLib = false;
+
 	private static final String SERVER_VERSION;
 
 	public static boolean AUTOUPDATE = true;
@@ -436,6 +439,7 @@ public class QAMain extends JavaPlugin implements Listener {
 				for (Player p : Bukkit.getOnlinePlayers()) {
 					// if (p.getItemInHand().containsEnchantment(Enchantment.MENDING)) {
 					if (QualityArmory.isCustomItem(p.getItemInHand())) {
+
 						if (!p.getItemInHand().getItemMeta().spigot().isUnbreakable()) {
 							ItemStack temp = p.getItemInHand();
 							int j = QualityArmory.findSafeSpot(temp, false);
@@ -456,6 +460,7 @@ public class QAMain extends JavaPlugin implements Listener {
 								temp.setDurability((short) Math.max(0, j - 1));
 								temp = ItemFact.removeCalculatedExtra(temp);
 								p.getInventory().setItemInOffHand(temp);
+								return;
 							}
 						}
 					} catch (Error | Exception e45) {
@@ -538,7 +543,7 @@ public class QAMain extends JavaPlugin implements Listener {
 		armorRegister.clear();
 		interactableBlocks.clear();
 
-		//attachmentRegister.clear();
+		// attachmentRegister.clear();
 
 		m = new MessagesYML(new File(getDataFolder(), "messages.yml"));
 		S_ANVIL = ChatColor.translateAlternateColorCodes('&', (String) m.a("NoPermAnvilMessage", S_ANVIL));
@@ -614,6 +619,11 @@ public class QAMain extends JavaPlugin implements Listener {
 
 		if (getServer().getPluginManager().isPluginEnabled("Parties"))
 			hasParties = true;
+		if (getServer().getPluginManager().isPluginEnabled("ProtocolLib")) {
+			hasProtocolLib = true;
+			ProtocolLibHandler.initRemoveArmswing();
+		}
+
 		DEBUG = (boolean) a("ENABLE-DEBUG", false);
 
 		friendlyFire = (boolean) a("FriendlyFireEnabled", false);
@@ -1075,10 +1085,14 @@ public class QAMain extends JavaPlugin implements Listener {
 						m(41), stringsGrenades, 100, WeaponType.FLASHBANGS, 100, 1);
 				flashbanggrenade.set(false, "radius", 5);
 
-				GunYMLCreator.createAttachment(false, getDataFolder(), false, "default_p30_silencer",
-						"p30silenced", ChatColor.GOLD + "P30[Silenced]", null, m(42), stringsPistol, 1000, "p30").setWeaponSound(WeaponSounds.SILENCEDSHOT).dontVerify().done();
-				GunYMLCreator.createAttachment(false, getDataFolder(), false, "default_awp_asiimov",
-						"awpasiimov", ChatColor.GOLD + "AWP[Asiimov-skin]", null, m(43), stringsMetalRif, 1000, "awp").dontVerify().done();
+				GunYMLCreator
+						.createAttachment(false, getDataFolder(), false, "default_p30_silencer", "p30silenced",
+								ChatColor.GOLD + "P30[Silenced]", null, m(42), stringsPistol, 1000, "p30")
+						.setWeaponSound(WeaponSounds.SILENCEDSHOT).dontVerify().done();
+				GunYMLCreator
+						.createAttachment(false, getDataFolder(), false, "default_awp_asiimov", "awpasiimov",
+								ChatColor.GOLD + "AWP[Asiimov-skin]", null, m(43), stringsMetalRif, 1000, "awp")
+						.dontVerify().done();
 
 				GunYMLCreator
 						.createNewDefaultGun(getDataFolder(), "m4a1s", "M4A1S", 44, stringsMetalRif, WeaponType.RIFLE,
@@ -1349,8 +1363,10 @@ public class QAMain extends JavaPlugin implements Listener {
 								WeaponType.FLAMER, WeaponSounds.HISS, false, "fuel", 1, 60, 8000)
 						.setFullyAutomatic(5).setRecoil(0).setCustomProjectile(ProjectileManager.FIRE).setDistance(11)
 						.done();
-				GunYMLCreator.createNewDefaultGun(getDataFolder(), "glock", "Glock-17", 2, stringsPistol, WeaponType.PISTOL,
-						null, true, "9mm", 3, 15, 1800).setIsSecondaryWeapon(true).setFireRate(3).setVariant(2).done();
+				GunYMLCreator
+						.createNewDefaultGun(getDataFolder(), "glock", "Glock-17", 2, stringsPistol, WeaponType.PISTOL,
+								null, true, "9mm", 3, 15, 1800)
+						.setIsSecondaryWeapon(true).setFireRate(3).setVariant(2).done();
 			}
 
 			// GunYMLCreator.createNewGun(false, getDataFolder(), true, "ExampleGun",
@@ -1416,6 +1432,7 @@ public class QAMain extends JavaPlugin implements Listener {
 			coloredGunScoreboard = new ArrayList<>();
 			coloredGunScoreboard.add(registerGlowTeams(Bukkit.getScoreboardManager().getMainScoreboard()));
 		}
+
 	}
 
 	public Scoreboard registerGlowTeams(Scoreboard sb) {
@@ -1471,7 +1488,7 @@ public class QAMain extends JavaPlugin implements Listener {
 
 	@SuppressWarnings("deprecation")
 	@EventHandler
-	public void onShift(PlayerToggleSneakEvent e) {
+	public void onShift(final PlayerToggleSneakEvent e) {
 		if (e.isCancelled())
 			return;
 		if (!QAMain.enableIronSightsON_RIGHT_CLICK) {
@@ -1483,12 +1500,13 @@ public class QAMain extends JavaPlugin implements Listener {
 									&& (!QualityArmory.isCustomItem(e.getPlayer().getInventory().getItemInOffHand()))) {
 						DEBUG("Sneak Swapping start!");
 						Gun g = QualityArmory.getGun(e.getPlayer().getItemInHand());
-					//	AttachmentBase attach = QualityArmory.getGunWithAttchments(e.getPlayer().getItemInHand());
-					//	if (attach != null)
-					//		g = attach.getBaseGun();// gunRegister.get(attach.getBase());
+						// AttachmentBase attach =
+						// QualityArmory.getGunWithAttchments(e.getPlayer().getItemInHand());
+						// if (attach != null)
+						// g = attach.getBaseGun();// gunRegister.get(attach.getBase());
 						if (g != null) {
-							DEBUG("Gun used " + g.getName() + " attach?= "+(g instanceof AttachmentBase));
-							//		+ (attach == null ? "null" : attach.getAttachmentName()));
+							DEBUG("Gun used " + g.getName() + " attach?= " + (g instanceof AttachmentBase));
+							// + (attach == null ? "null" : attach.getAttachmentName()));
 							if (g.hasIronSights()) {
 								DEBUG("Gun has ironsights");
 								try {
@@ -1511,6 +1529,22 @@ public class QAMain extends JavaPlugin implements Listener {
 											e.getPlayer().getInventory().addItem(tempremove);
 											DEBUG("Added offhand back to inventory");
 										}
+										
+
+										new BukkitRunnable() {
+											@Override
+											public void run() {
+												Gun g1 = null;
+												Gun g2 = null;
+												if ((g1 = QualityArmory.getGun(e.getPlayer().getItemInHand())) != null
+														&& (g2 = QualityArmory
+																.getGun(e.getPlayer().getInventory().getItemInOffHand())) != null)
+													if (g1 == g2) {
+														e.getPlayer().getInventory().setItemInOffHand(null);
+														DEBUG("Item Duped. Got Rid of using offhand override (code=1)");
+													}
+											}
+										}.runTaskLater(this, 5);
 									}
 								} catch (Error e2) {
 									Bukkit.broadcastMessage(prefix
@@ -1521,6 +1555,22 @@ public class QAMain extends JavaPlugin implements Listener {
 					}
 				} else {
 					if (QualityArmory.isIronSights(e.getPlayer().getItemInHand())) {
+
+						new BukkitRunnable() {
+							@Override
+							public void run() {
+								Gun g1 = null;
+								Gun g2 = null;
+								if ((g1 = QualityArmory.getGun(e.getPlayer().getItemInHand())) != null
+										&& (g2 = QualityArmory
+												.getGun(e.getPlayer().getInventory().getItemInOffHand())) != null)
+									if (g1 == g2) {
+										e.getPlayer().getInventory().setItemInOffHand(null);
+										DEBUG("Item Duped. Got Rid of using offhand override (code=2)");
+									}
+							}
+						}.runTaskLater(this, 5);
+
 						e.getPlayer().getInventory().setItemInMainHand(e.getPlayer().getInventory().getItemInOffHand());
 						e.getPlayer().getInventory().setItemInOffHand(null);
 						DEBUG("Swap gun back to main hand");
@@ -1530,6 +1580,7 @@ public class QAMain extends JavaPlugin implements Listener {
 				DEBUG("Failed to sneak and put gun in off hand.");
 			}
 		}
+
 	}
 
 	@SuppressWarnings("deprecation")
@@ -1610,9 +1661,11 @@ public class QAMain extends JavaPlugin implements Listener {
 				for (Entry<MaterialStorage, ArmorObject> e : armorRegister.entrySet())
 					if (b(e.getValue().getName(), args[1]))
 						s.add(e.getValue().getName());
-				/*for (Entry<MaterialStorage, AttachmentBase> e : attachmentRegister.entrySet())
-					if (b(e.getValue().getAttachmentName(), args[1]))
-						s.add(e.getValue().getAttachmentName());*/
+				/*
+				 * for (Entry<MaterialStorage, AttachmentBase> e :
+				 * attachmentRegister.entrySet()) if (b(e.getValue().getAttachmentName(),
+				 * args[1])) s.add(e.getValue().getAttachmentName());
+				 */
 
 			}
 			return s;
@@ -1840,9 +1893,9 @@ public class QAMain extends JavaPlugin implements Listener {
 							sb.append(g.getName() + ",");
 						}
 						sb.append(ChatColor.WHITE);
-					//	for (AttachmentBase g : attachmentRegister.values()) {
-					//		sb.append(g.getAttachmentName() + ",");
-					//	}
+						// for (AttachmentBase g : attachmentRegister.values()) {
+						// sb.append(g.getAttachmentName() + ",");
+						// }
 						sender.sendMessage(prefix + sb.toString());
 						return true;
 					}
@@ -1877,15 +1930,14 @@ public class QAMain extends JavaPlugin implements Listener {
 								g = e.getValue();
 								break;
 							}
-					/*if (g == null)
-						for (Entry<MaterialStorage, AttachmentBase> e : attachmentRegister.entrySet())
-							if (e.getValue().getAttachmentName().equalsIgnoreCase(args[1])) {
-								// g = e.getValue().getBase();
-								attachment = e.getValue();
-								g = gunRegister.get(attachment.getBase());
-								break;
-							}*/
-					if (g != null ) {
+					/*
+					 * if (g == null) for (Entry<MaterialStorage, AttachmentBase> e :
+					 * attachmentRegister.entrySet()) if
+					 * (e.getValue().getAttachmentName().equalsIgnoreCase(args[1])) { // g =
+					 * e.getValue().getBase(); attachment = e.getValue(); g =
+					 * gunRegister.get(attachment.getBase()); break; }
+					 */
+					if (g != null) {
 						Player who = null;
 						if (args.length > 2)
 							who = Bukkit.getPlayer(args[2]);
@@ -2094,40 +2146,28 @@ public class QAMain extends JavaPlugin implements Listener {
 									Sound.valueOf("ANVIL_BREAK"), 1, 1);
 						}
 					}
-				}/* else if (QualityArmory.isGunWithAttchments(e.getCurrentItem())) {
-					AttachmentBase g = QualityArmory.getGunWithAttchments(e.getCurrentItem());
-					Gun g2 = gunRegister.get(g.getBase());
-					if ((shop && EconHandler.hasEnough(g2, (Player) e.getWhoClicked()))
-							|| (!shop && lookForIngre((Player) e.getWhoClicked(), g))
-							|| e.getWhoClicked().getGameMode() == GameMode.CREATIVE) {
-						if (shop) {
-							EconHandler.pay(g2, (Player) e.getWhoClicked());
-							e.getWhoClicked().sendMessage(
-									S_BUYCONFIRM.replaceAll("%item%", ChatColor.stripColor(g.getDisplayName()))
-											.replaceAll("%cost%", "" + g2.cost()));
-						} else
-							removeForIngre((Player) e.getWhoClicked(), g);
-						ItemStack s = ItemFact.getGun(g);
-						s.setAmount(g2.getCraftingReturn());
-						e.getWhoClicked().getInventory().addItem(s);
-						shopsSounds(e, shop);
-						DEBUG("Buy-attachment");
-					} else {
-						DEBUG("Failed to buy/craft attachment");
-						e.getWhoClicked().closeInventory();
-						if (shop)
-							e.getWhoClicked().sendMessage(prefix + S_noMoney);
-						else
-							e.getWhoClicked().sendMessage(prefix + S_missingIngredients);
-						try {
-							((Player) e.getWhoClicked()).playSound(e.getWhoClicked().getLocation(),
-									Sound.BLOCK_ANVIL_BREAK, 1, 1);
-						} catch (Error e2) {
-							((Player) e.getWhoClicked()).playSound(e.getWhoClicked().getLocation(),
-									Sound.valueOf("ANVIL_BREAK"), 1, 1);
-						}
-					}
-				} */else if (QualityArmory.isAmmo(e.getCurrentItem())) {
+				} /*
+					 * else if (QualityArmory.isGunWithAttchments(e.getCurrentItem())) {
+					 * AttachmentBase g = QualityArmory.getGunWithAttchments(e.getCurrentItem());
+					 * Gun g2 = gunRegister.get(g.getBase()); if ((shop && EconHandler.hasEnough(g2,
+					 * (Player) e.getWhoClicked())) || (!shop && lookForIngre((Player)
+					 * e.getWhoClicked(), g)) || e.getWhoClicked().getGameMode() ==
+					 * GameMode.CREATIVE) { if (shop) { EconHandler.pay(g2, (Player)
+					 * e.getWhoClicked()); e.getWhoClicked().sendMessage(
+					 * S_BUYCONFIRM.replaceAll("%item%", ChatColor.stripColor(g.getDisplayName()))
+					 * .replaceAll("%cost%", "" + g2.cost())); } else removeForIngre((Player)
+					 * e.getWhoClicked(), g); ItemStack s = ItemFact.getGun(g);
+					 * s.setAmount(g2.getCraftingReturn());
+					 * e.getWhoClicked().getInventory().addItem(s); shopsSounds(e, shop);
+					 * DEBUG("Buy-attachment"); } else { DEBUG("Failed to buy/craft attachment");
+					 * e.getWhoClicked().closeInventory(); if (shop)
+					 * e.getWhoClicked().sendMessage(prefix + S_noMoney); else
+					 * e.getWhoClicked().sendMessage(prefix + S_missingIngredients); try { ((Player)
+					 * e.getWhoClicked()).playSound(e.getWhoClicked().getLocation(),
+					 * Sound.BLOCK_ANVIL_BREAK, 1, 1); } catch (Error e2) { ((Player)
+					 * e.getWhoClicked()).playSound(e.getWhoClicked().getLocation(),
+					 * Sound.valueOf("ANVIL_BREAK"), 1, 1); } } }
+					 */else if (QualityArmory.isAmmo(e.getCurrentItem())) {
 					Ammo g = QualityArmory.getAmmo(e.getCurrentItem());
 					if ((shop && EconHandler.hasEnough(g, (Player) e.getWhoClicked()))
 							|| (!shop && lookForIngre((Player) e.getWhoClicked(), g))
@@ -2543,8 +2583,7 @@ public class QAMain extends JavaPlugin implements Listener {
 
 		if (e.getEntity().getKiller() instanceof Player) {
 			Player killer = e.getEntity().getKiller();
-			if (QualityArmory.isGun(killer.getItemInHand())
-					|| QualityArmory.isIronSights(killer.getItemInHand())) {
+			if (QualityArmory.isGun(killer.getItemInHand()) || QualityArmory.isIronSights(killer.getItemInHand())) {
 				DEBUG("This player \"" + e.getEntity().getName() + "\" was killed by a player with a gun");
 			} else if (QualityArmory.isCustomItem(e.getEntity().getItemInHand())) {
 				DEBUG("This player \"" + e.getEntity().getName() + "\" was killed by a player, but not with a gun");
@@ -2572,8 +2611,9 @@ public class QAMain extends JavaPlugin implements Listener {
 							e.getPlayer().getItemInHand().getDurability() + 1, -1, "-1", "-1"))
 					|| armorRegister.containsKey(MaterialStorage.getMS(e.getPlayer().getItemInHand().getType(),
 							e.getPlayer().getItemInHand().getDurability() + 1, -1, "-1", "-1"))
-					//|| attachmentRegister.containsKey(MaterialStorage.getMS(e.getPlayer().getItemInHand().getType(),
-					//		e.getPlayer().getItemInHand().getDurability() + 1, -1, "-1", "-1"))
+					// ||
+					// attachmentRegister.containsKey(MaterialStorage.getMS(e.getPlayer().getItemInHand().getType(),
+					// e.getPlayer().getItemInHand().getDurability() + 1, -1, "-1", "-1"))
 
 					|| expansionPacks.contains(MaterialStorage.getMS(e.getPlayer().getItemInHand().getType(),
 							e.getPlayer().getItemInHand().getDurability() + 1, -1, "-1", "-1"))) {
@@ -2604,9 +2644,10 @@ public class QAMain extends JavaPlugin implements Listener {
 					|| armorRegister.containsKey(MaterialStorage.getMS(
 							e.getPlayer().getInventory().getItemInOffHand().getType(),
 							e.getPlayer().getInventory().getItemInOffHand().getDurability() + 1, -1, "-1", "-1"))
-					//|| attachmentRegister.containsKey(MaterialStorage.getMS(
-					//		e.getPlayer().getInventory().getItemInOffHand().getType(),
-					//		e.getPlayer().getInventory().getItemInOffHand().getDurability() + 1, -1, "-1", "-1"))
+					// || attachmentRegister.containsKey(MaterialStorage.getMS(
+					// e.getPlayer().getInventory().getItemInOffHand().getType(),
+					// e.getPlayer().getInventory().getItemInOffHand().getDurability() + 1, -1,
+					// "-1", "-1"))
 					|| expansionPacks.contains(MaterialStorage.getMS(
 							e.getPlayer().getInventory().getItemInOffHand().getType(),
 							e.getPlayer().getInventory().getItemInOffHand().getDurability() + 1, -1, "-1", "-1"))) {
@@ -2965,7 +3006,7 @@ public class QAMain extends JavaPlugin implements Listener {
 
 		if (e.getPlayer().isDead()) {
 			ItemStack newone = e.getItemDrop().getItemStack();
-			if (QualityArmory.isGun(newone)		&& newone.getItemMeta().hasDisplayName()
+			if (QualityArmory.isGun(newone) && newone.getItemMeta().hasDisplayName()
 					&& newone.getItemMeta().getDisplayName().contains(S_RELOADING_MESSAGE)) {
 				ItemMeta im = newone.getItemMeta();
 				if (QualityArmory.isGun(newone)) {
@@ -3044,8 +3085,7 @@ public class QAMain extends JavaPlugin implements Listener {
 								new BukkitRunnable() {
 									@Override
 									public void run() {
-										GunUtil.basicReload(gk,
-												e.getPlayer(), gk.hasUnlimitedAmmo());
+										GunUtil.basicReload(gk, e.getPlayer(), gk.hasUnlimitedAmmo());
 									}
 								}.runTaskLater(this, 1);
 							}
@@ -3158,39 +3198,22 @@ public class QAMain extends JavaPlugin implements Listener {
 				}
 			}
 
-		/*List<AttachmentBase> attlistr = new ArrayList<AttachmentBase>(attachmentRegister.values());
-		Collections.sort(attlistr);
-		if (basei + gunslistr.size() < index)
-			basei += gunslistr.size();
-		else
-			for (AttachmentBase g : attlistr) {
-				Gun g2 = gunRegister.get(g.getBase());
-				if (shopping && g2.cost() < 0)
-					continue;
-				if (basei < index) {
-					basei++;
-					continue;
-				}
-				basei++;
-				if (index >= maxIndex)
-					break;
-				index++;
-
-				try {
-					ItemStack is = ItemFact.getGun(g);
-					ItemMeta im = is.getItemMeta();
-					List<String> lore = ItemFact.getCraftingGunLore(g2, g);
-					im.setLore(lore);
-					is.setItemMeta(im);
-					if (enableVisibleAmounts)
-						is.setAmount(g2.getCraftingReturn());
-					if (shopping)
-						is = ItemFact.addShopLore(g2, g, is.clone());
-					shopMenu.addItem(is);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}*/
+		/*
+		 * List<AttachmentBase> attlistr = new
+		 * ArrayList<AttachmentBase>(attachmentRegister.values());
+		 * Collections.sort(attlistr); if (basei + gunslistr.size() < index) basei +=
+		 * gunslistr.size(); else for (AttachmentBase g : attlistr) { Gun g2 =
+		 * gunRegister.get(g.getBase()); if (shopping && g2.cost() < 0) continue; if
+		 * (basei < index) { basei++; continue; } basei++; if (index >= maxIndex) break;
+		 * index++;
+		 * 
+		 * try { ItemStack is = ItemFact.getGun(g); ItemMeta im = is.getItemMeta();
+		 * List<String> lore = ItemFact.getCraftingGunLore(g2, g); im.setLore(lore);
+		 * is.setItemMeta(im); if (enableVisibleAmounts)
+		 * is.setAmount(g2.getCraftingReturn()); if (shopping) is =
+		 * ItemFact.addShopLore(g2, g, is.clone()); shopMenu.addItem(is); } catch
+		 * (Exception e) { e.printStackTrace(); } }
+		 */
 		if (basei + gunslistr.size() < index)
 			basei += gunslistr.size();
 		else

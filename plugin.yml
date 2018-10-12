@@ -1,5 +1,5 @@
 main: me.zombie_striker.qg.QAMain
-version: 1.1.120
+version: 1.1.121
 api-version: 1.13
 name: QualityArmory
 commands:
@@ -29,6 +29,6 @@ permissions:
       qualityarmory.craft: true
       qualityarmory.shop: true
       qualityarmory.usegun: true
-softdepend: [Vault, Parties, WorldGuard, ViaVersion, ViaRewind, LightAPI, Citizens]
+softdepend: [Vault, Parties, WorldGuard, ViaVersion, ViaRewind, LightAPI, Citizens, ProtocolLib]
 author:
    Zombie_Striker

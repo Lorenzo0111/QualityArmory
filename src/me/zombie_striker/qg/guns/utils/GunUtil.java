@@ -169,11 +169,10 @@ public class GunUtil {
 
 					boolean negateHeadshot = false;
 					boolean bulletProtection = false;
-					
+
 					double damageMAX = damage * (bulletProtection ? 0.1 : 1)
 							* ((headShot && !negateHeadshot) ? (QAMain.HeadshotOneHit ? 50 : g.getHeadshotMultiplier())
 									: 1);
-
 
 					if (hitTarget instanceof Player) {
 						bulletProtection = BulletProtectionUtil.stoppedBullet(p, bulletHitLoc, normalizedDirection);
@@ -181,28 +180,26 @@ public class GunUtil {
 							negateHeadshot = BulletProtectionUtil.negatesHeadshot(p);
 						}
 					}
-					
-					
-					QAWeaponDamageEntityEvent shootevent = new QAWeaponDamageEntityEvent(p, g, hitTarget, headShot, damage, bulletProtection);
+
+					QAWeaponDamageEntityEvent shootevent = new QAWeaponDamageEntityEvent(p, g, hitTarget, headShot,
+							damage, bulletProtection);
 					Bukkit.getPluginManager().callEvent(shootevent);
 					if (!shootevent.isCanceled()) {
-					
-					
-					if (hitTarget instanceof Player) {
-						if (!bulletProtection) {
-							BulletWoundHandler.bulletHit((Player) hitTarget, g.getAmmoType().getPiercingDamage());
-						} else {
-							hitTarget.sendMessage(QAMain.S_BULLETPROOFSTOPPEDBLEEDING);
-						}
-					}
 
-					((Damageable) hitTarget).damage(damageMAX,
-							p);
-					if (hitTarget instanceof LivingEntity)
-						((LivingEntity) hitTarget).setNoDamageTicks(0);
-					QAMain.DEBUG("Damaging entity " + hitTarget.getName());
-					}else {
-						QAMain.DEBUG("Damaging entity CANCELED " + hitTarget.getName());						
+						if (hitTarget instanceof Player) {
+							if (!bulletProtection) {
+								BulletWoundHandler.bulletHit((Player) hitTarget, g.getAmmoType().getPiercingDamage());
+							} else {
+								hitTarget.sendMessage(QAMain.S_BULLETPROOFSTOPPEDBLEEDING);
+							}
+						}
+
+						((Damageable) hitTarget).damage(damageMAX, p);
+						if (hitTarget instanceof LivingEntity)
+							((LivingEntity) hitTarget).setNoDamageTicks(0);
+						QAMain.DEBUG("Damaging entity " + hitTarget.getName());
+					} else {
+						QAMain.DEBUG("Damaging entity CANCELED " + hitTarget.getName());
 					}
 
 				}
@@ -600,7 +597,7 @@ public class GunUtil {
 
 	public static HashMap<UUID, Double> highRecoilCounter = new HashMap<>();
 
-	public static void addRecoil(final Player player, Gun g) {
+	public static void addRecoil(final Player player, final Gun g) {
 		if (g.getRecoil() == 0)
 			return;
 		if (g.getFireRate() > 4) {
@@ -612,42 +609,48 @@ public class GunUtil {
 				new BukkitRunnable() {
 					@Override
 					public void run() {
-						Location tempCur = (QAMain.recoilHelperMovedLocation.get(player.getUniqueId()));
-						final Location current;
-						if (tempCur == null) {
-							current = player.getLocation();
-						} else {
-							current = tempCur;
-						}
-						Vector movementOffset = player.getVelocity().multiply(0.2);
-						if (movementOffset.getY() > -0.1 && movementOffset.getY() < 0)
-							movementOffset.setY(0);
-						current.add(movementOffset);
-						current.setPitch((float) (current.getPitch() - highRecoilCounter.get(player.getUniqueId())));
-						highRecoilCounter.remove(player.getUniqueId());
-						Vector temp = player.getVelocity();
-						player.teleport(current);
-						player.setVelocity(temp);
+						if (QAMain.hasProtocolLib && QAMain.isVersionHigherThan(1, 13)) {
+							addRecoilWithProtocolLib(player, g, true);
+						}else
+						addRecoilWithTeleport(player, g, true);
 					}
 				}.runTaskLater(QAMain.getInstance(), 5);
 			}
 		} else {
-			Location tempCur = (QAMain.recoilHelperMovedLocation.get(player.getUniqueId()));
-			final Location current;
-			if (tempCur == null) {
-				current = player.getLocation();
-			} else {
-				current = tempCur;
-			}
-			Vector movementOffset = player.getVelocity().multiply(0.2);
-			if (movementOffset.getY() > -0.1 && movementOffset.getY() < 0)
-				movementOffset.setY(0);
-			current.add(movementOffset);
-			current.setPitch((float) (current.getPitch() - g.getRecoil()));
-			Vector temp = player.getVelocity();
-			player.teleport(current);
-			player.setVelocity(temp);
+			if (QAMain.hasProtocolLib && QAMain.isVersionHigherThan(1, 13)) {
+				addRecoilWithProtocolLib(player, g, false);
+			}else
+			addRecoilWithTeleport(player, g, false);
 		}
+	}
+
+	private static void addRecoilWithProtocolLib(Player player, Gun g, boolean useHighRecoil) {
+		Vector newDir = player.getLocation().getDirection();
+		newDir.normalize().setY(newDir.getY() + ((useHighRecoil ? highRecoilCounter.get(player.getUniqueId()) : g.getRecoil()) / 30)).multiply(20);
+		if (useHighRecoil)
+			highRecoilCounter.remove(player.getUniqueId());
+		ProtocolLibHandler.sendYawChange(player, newDir);
+	}
+	private static void addRecoilWithTeleport(Player player, Gun g, boolean useHighRecoil) {
+		Location tempCur = (QAMain.recoilHelperMovedLocation.get(player.getUniqueId()));
+		final Location current;
+		if (tempCur == null) {
+			current = player.getLocation();
+		} else {
+			current = tempCur;
+		}
+		Vector movementOffset = player.getVelocity().multiply(0.2);
+		if (movementOffset.getY() > -0.1 && movementOffset.getY() < 0)
+			movementOffset.setY(0);
+		current.add(movementOffset);
+		current.setPitch((float) (current.getPitch()
+				- (useHighRecoil ? highRecoilCounter.get(player.getUniqueId()) : g.getRecoil())));
+		if (useHighRecoil)
+			highRecoilCounter.remove(player.getUniqueId());
+		Vector temp = player.getVelocity();
+		// player.getLocation().setDirection(vector);
+		player.teleport(current);
+		player.setVelocity(temp);
 	}
 
 	public static boolean isBreakable(Block b, Location l) {
