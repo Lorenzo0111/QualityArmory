@@ -16,9 +16,8 @@ import org.bukkit.scheduler.BukkitRunnable;
 import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.MaterialStorage;
 import me.zombie_striker.qg.guns.utils.WeaponSounds;
-import me.zombie_striker.qg.miscitems.ThrowableItems.ThrowableHolder;
 
-public class SmokeGrenades extends GrenadeBase {
+public class SmokeGrenades extends Grenades {
 
 	public SmokeGrenades(ItemStack[] ingg, double cost, double damage, double explosionreadius, String name,
 			String displayname, List<String> lore, MaterialStorage ms) {
@@ -28,7 +27,7 @@ public class SmokeGrenades extends GrenadeBase {
 	@Override
 	public void onLMB(PlayerInteractEvent e, ItemStack usedItem) {
 		Player thrower = e.getPlayer();
-		if (grenadeHolder.containsKey(thrower)) {
+		if (throwItems.containsKey(thrower)) {
 			thrower.sendMessage(QAMain.prefix + QAMain.S_GRENADE_PALREADYPULLPIN);
 			thrower.playSound(thrower.getLocation(), WeaponSounds.RELOAD_BULLET.getSoundName(), 1, 1);
 			return;
@@ -54,6 +53,7 @@ public class SmokeGrenades extends GrenadeBase {
 				k++;
 				if (k == 1) {
 					if (h.getHolder() instanceof Player) {
+						QAMain.DEBUG("Blinded player");
 						((LivingEntity) h.getHolder())
 								.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 20 * 10, 2));
 					}
@@ -61,13 +61,13 @@ public class SmokeGrenades extends GrenadeBase {
 					if (h.getHolder() instanceof Item) {
 						h.getHolder().remove();
 					}
-					grenadeHolder.remove(h.getHolder());
+					throwItems.remove(h.getHolder());
 					this.cancel();
 				} else
 					k++;
 			}
 		}.runTaskTimer(QAMain.getInstance(), 5 * 20, 5));
-		grenadeHolder.put(thrower, h);
+		throwItems.put(thrower, h);
 
 	}
 

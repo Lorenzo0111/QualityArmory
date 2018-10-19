@@ -31,6 +31,8 @@ public class ProtocolLibHandler {
 						final Player player = event.getPlayer();
 						if (event.getPacketType() == PacketType.Play.Client.ARM_ANIMATION
 								&& player.getVehicle() != null) {
+							try {
+								
 							byte state = event.getPacket().getBytes().readSafely(0);
 							int entityID = event.getPacket().getIntegers().readSafely(0);
 							Player targ = null;
@@ -44,12 +46,13 @@ public class ProtocolLibHandler {
 								Bukkit.broadcastMessage("The ID for the entity is incorrect");
 								return;
 							}
-							Bukkit.broadcastMessage(" " + state);
 							if (state == 0) {
 								if (QualityArmory.isGun(targ.getItemInHand())
 										|| QualityArmory.isIronSights(targ.getItemInHand())) {
 									event.setCancelled(true);
 								}
+							}
+							}catch (Error|Exception e) {
 							}
 						}
 					}

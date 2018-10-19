@@ -1,5 +1,6 @@
 package me.zombie_striker.qg.miscitems;
 
+import java.util.HashMap;
 import java.util.UUID;
 
 import org.bukkit.entity.Entity;
@@ -7,9 +8,10 @@ import org.bukkit.scheduler.BukkitTask;
 
 import me.zombie_striker.qg.ArmoryBaseObject;
 
-
 public interface ThrowableItems extends ArmoryBaseObject {
 
+	public HashMap<Entity, ThrowableHolder> throwItems = new HashMap<>();
+	
 	class ThrowableHolder {
 		private Entity holder;
 		private UUID owner;

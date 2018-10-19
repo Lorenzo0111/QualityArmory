@@ -1,3 +1,21 @@
+1.1.122
+	Fixed recoil for guns whose firerate is set to 4. 
+	(this should have been a full release, not a patch)
+	Added support for Craftbukkit (though spigot should be used)
+
+1.1.121D
+	Fixed NPE for odd reason where packets for armswing change, even though they are the same version as ones that were tested and did work.
+	Fixed gun duplication on Q
+	Fixed issue where ironsights on right click would not apply zoom effect
+	Fixed issue where you could take a gun from the off hand when clicking in inventory.
+
+1.1.121C
+	Added debug messages for grenades explosions
+	Fixed anvil override not working
+
+1.1.121B
+	QuickFix: Fixed issue where if an item exists, and is not null, but somehow does not have an item meta, this would create an NPE
+
 1.1.121
 	Added fix for arm hits, so other players do not see the player's arm move on shoot (there is no way to remove the anmiation for the player shooting)	
 	Fixed recoil for 1.13. This new upgrade will now remove all jitters (another reason to update the server) Required protocol lib.

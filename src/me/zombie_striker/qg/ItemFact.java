@@ -227,8 +227,12 @@ public class ItemFact {
 		im.setDisplayName(IronSightsToggleItem.getItemName());
 		try {
 			im.setUnbreakable(true);
-		} catch (Error | Exception e34) {
-			im.spigot().setUnbreakable(true);
+		} catch (Error | Exception e3423) {
+			try {
+				im.spigot().setUnbreakable(true);
+			} catch (Error | Exception e342) {
+
+			}
 		}
 		try {
 			im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_UNBREAKABLE);
@@ -243,8 +247,8 @@ public class ItemFact {
 	@SuppressWarnings("deprecation")
 	public static ItemStack getGun(Gun g) {
 
-		MaterialStorage ms =  g.getItemData() ;
-		String displayname =g.getDisplayName() ;
+		MaterialStorage ms = g.getItemData();
+		String displayname = g.getDisplayName();
 		if (ms == null || ms.getMat() == null)
 			return new ItemStack(Material.AIR);
 
@@ -256,24 +260,29 @@ public class ItemFact {
 			im = Bukkit.getServer().getItemFactory().getItemMeta(ms.getMat());
 		if (im != null) {
 			im.setDisplayName(displayname);
-			List<String> lore = getGunLore(g,  null, g.getMaxBullets());
+			List<String> lore = getGunLore(g, null, g.getMaxBullets());
 			im.setLore(lore);
 			try {
 				im.setUnbreakable(true);
 			} catch (Error | Exception e34) {
-				im.spigot().setUnbreakable(true);
-			}
-			try {
-				im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_UNBREAKABLE);
-				im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_ATTRIBUTES);
-				im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_DESTROYS);
-			} catch (Error e) {
+				try {
+					im.spigot().setUnbreakable(true);
+				} catch (Error | Exception e344) {
+				}
+				try {
+					im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_UNBREAKABLE);
+					im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_ATTRIBUTES);
+					im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_DESTROYS);
+				} catch (Error e) {
+
+				}
 			}
 
 			is.setItemMeta(im);
 		} else {
 			// Item meta is still null. Catch and report.
-			QAMain.getInstance().getLogger().warning(QAMain.prefix + " ItemMeta is null for " + g.getName() + ". I have");
+			QAMain.getInstance().getLogger()
+					.warning(QAMain.prefix + " ItemMeta is null for " + g.getName() + ". I have");
 		}
 		if (QAMain.enableVisibleAmounts)
 			is.setAmount(g.getMaxBullets() > 64 ? 64 : g.getMaxBullets());
@@ -297,13 +306,17 @@ public class ItemFact {
 		try {
 			im.setUnbreakable(true);
 		} catch (Error | Exception e34) {
-			im.spigot().setUnbreakable(true);
-		}
-		try {
-			im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_UNBREAKABLE);
-			im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_ATTRIBUTES);
-			im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_DESTROYS);
-		} catch (Error e) {
+			try {
+				im.spigot().setUnbreakable(true);
+			} catch (Error | Exception e343) {
+			}
+			try {
+				im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_UNBREAKABLE);
+				im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_ATTRIBUTES);
+				im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_DESTROYS);
+			} catch (Error e) {
+
+			}
 		}
 
 		is.setItemMeta(im);
@@ -339,7 +352,11 @@ public class ItemFact {
 		try {
 			im.setUnbreakable(true);
 		} catch (Error | Exception e34) {
-			im.spigot().setUnbreakable(true);
+			try {
+				im.spigot().setUnbreakable(true);
+			} catch (Error | Exception e343) {
+
+			}
 		}
 		try {
 			im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_UNBREAKABLE);
@@ -376,7 +393,11 @@ public class ItemFact {
 		try {
 			im.setUnbreakable(true);
 		} catch (Error | Exception e34) {
-			im.spigot().setUnbreakable(true);
+			try {
+				im.spigot().setUnbreakable(true);
+			} catch (Error | Exception e343) {
+
+			}
 		}
 		try {
 			im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_UNBREAKABLE);

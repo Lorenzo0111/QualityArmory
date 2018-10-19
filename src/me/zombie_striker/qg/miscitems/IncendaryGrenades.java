@@ -15,9 +15,8 @@ import org.bukkit.scheduler.BukkitRunnable;
 import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.MaterialStorage;
 import me.zombie_striker.qg.guns.utils.WeaponSounds;
-import me.zombie_striker.qg.miscitems.ThrowableItems.ThrowableHolder;
 
-public class IncendaryGrenades extends GrenadeBase {
+public class IncendaryGrenades extends Grenades {
 
 	public IncendaryGrenades(ItemStack[] ingg, double cost, double damage, double explosionreadius, String name,
 			String displayname, List<String> lore, MaterialStorage ms) {
@@ -27,7 +26,7 @@ public class IncendaryGrenades extends GrenadeBase {
 	@Override
 	public void onLMB(PlayerInteractEvent e, ItemStack usedItem) {
 		Player thrower = e.getPlayer();
-		if (grenadeHolder.containsKey(thrower)) {
+		if (throwItems.containsKey(thrower)) {
 			thrower.sendMessage(QAMain.prefix + QAMain.S_GRENADE_PALREADYPULLPIN);
 			thrower.playSound(thrower.getLocation(), WeaponSounds.RELOAD_BULLET.getSoundName(), 1, 1);
 			return;
@@ -55,6 +54,7 @@ public class IncendaryGrenades extends GrenadeBase {
 					h.getHolder().getWorld().playSound(h.getHolder().getLocation(), Sound.valueOf("EXPLODE"), 3, 0.7f);
 				}
 				k++;
+				QAMain.DEBUG("Fireticks");
 				if (k == 1) {
 					if (h.getHolder() instanceof Player) {
 						((LivingEntity) h.getHolder()).setFireTicks(h.getHolder().getMaxFireTicks()/5);
@@ -63,17 +63,19 @@ public class IncendaryGrenades extends GrenadeBase {
 					if (h.getHolder() instanceof Item) {
 						h.getHolder().remove();
 					}
-					grenadeHolder.remove(h.getHolder());
+					throwItems.remove(h.getHolder());
 					this.cancel();
 				} else {
-					for(Entity e : h.getHolder().getNearbyEntities(radius, radius, radius))
-						if(e instanceof LivingEntity)
+					for(Entity e : h.getHolder().getNearbyEntities(radius, radius, radius)) 
+						if(e instanceof LivingEntity) {
+							QAMain.DEBUG("Firedamage to "+e.getName());
 							e.setFireTicks(20);
+						}
 					k++;
 				}
 			}
 		}.runTaskTimer(QAMain.getInstance(),5*20,10));
-		grenadeHolder.put(thrower, h);
+		throwItems.put(thrower, h);
 
 	}
 

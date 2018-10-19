@@ -17,9 +17,8 @@ import org.bukkit.scheduler.BukkitRunnable;
 import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.MaterialStorage;
 import me.zombie_striker.qg.guns.utils.WeaponSounds;
-import me.zombie_striker.qg.miscitems.ThrowableItems.ThrowableHolder;
 
-public class Flashbang extends GrenadeBase {
+public class Flashbang extends Grenades {
 
 	public Flashbang(ItemStack[] ingg, double cost, double damage, double explosionreadius, String name,
 			String displayname, List<String> lore, MaterialStorage ms) {
@@ -30,7 +29,7 @@ public class Flashbang extends GrenadeBase {
 	@Override
 	public void onLMB(PlayerInteractEvent e, ItemStack usedItem) {
 		Player thrower = e.getPlayer();
-		if (grenadeHolder.containsKey(thrower)) {
+		if (throwItems.containsKey(thrower)) {
 			thrower.sendMessage(QAMain.prefix + QAMain.S_GRENADE_PALREADYPULLPIN);
 			thrower.playSound(thrower.getLocation(), WeaponSounds.RELOAD_BULLET.getSoundName(), 1, 1);
 			return;
@@ -52,6 +51,7 @@ public class Flashbang extends GrenadeBase {
 				try {
 					for (Entity e : h.getHolder().getNearbyEntities(radius, radius, radius)) {
 						if (e instanceof LivingEntity) {
+							QAMain.DEBUG("Flashbaned "+e.getName());
 							((LivingEntity) e)
 									.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 20 * 10, 2));
 						}
@@ -59,6 +59,7 @@ public class Flashbang extends GrenadeBase {
 				} catch (Error e) {
 				}
 				if (h.getHolder() instanceof Player) {
+					QAMain.DEBUG("Blinded player");
 					((LivingEntity) h.getHolder())
 							.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 20 * 10, 2));
 				}
@@ -66,10 +67,10 @@ public class Flashbang extends GrenadeBase {
 					h.getHolder().remove();
 				}
 
-				grenadeHolder.remove(h.getHolder());
+				throwItems.remove(h.getHolder());
 			}
 		}.runTaskLater(QAMain.getInstance(), 5 * 20));
-		grenadeHolder.put(thrower, h);
+		throwItems.put(thrower, h);
 
 	}
 

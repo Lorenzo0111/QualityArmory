@@ -600,7 +600,7 @@ public class GunUtil {
 	public static void addRecoil(final Player player, final Gun g) {
 		if (g.getRecoil() == 0)
 			return;
-		if (g.getFireRate() > 4) {
+		if (g.getFireRate() >= 4) {
 			if (highRecoilCounter.containsKey(player.getUniqueId())) {
 				highRecoilCounter.put(player.getUniqueId(),
 						highRecoilCounter.get(player.getUniqueId()) + g.getRecoil());

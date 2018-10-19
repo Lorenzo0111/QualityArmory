@@ -1,6 +1,5 @@
 package me.zombie_striker.qg.miscitems;
 
-import java.util.HashMap;
 import java.util.List;
 
 import org.bukkit.Bukkit;
@@ -27,8 +26,6 @@ public class Grenades implements ThrowableItems {
 
 	double dmageLevel = 10;
 	double radius = 5;
-
-	public HashMap<Entity, ThrowableHolder> grenadeHolder = new HashMap<>();
 
 	double cost;
 
@@ -89,8 +86,8 @@ public class Grenades implements ThrowableItems {
 	@Override
 	public void onRMB(PlayerInteractEvent e, ItemStack usedItem) {
 		Player thrower = e.getPlayer();
-		if (grenadeHolder.containsKey(thrower)) {
-			ThrowableHolder holder = grenadeHolder.get(thrower);
+		if (throwItems.containsKey(thrower)) {
+			ThrowableHolder holder = throwItems.get(thrower);
 			ItemStack g = thrower.getItemInHand();
 			if (thrower.getGameMode() != GameMode.CREATIVE) {
 				thrower.setItemInHand(null);
@@ -102,8 +99,9 @@ public class Grenades implements ThrowableItems {
 			holder.setHolder(grenade);
 			thrower.getWorld().playSound(thrower.getLocation(), Sound.ENTITY_ARROW_SHOOT, 1, 1.5f);
 
-			grenadeHolder.put(grenade, holder);
-			grenadeHolder.remove(thrower);
+			throwItems.put(grenade, holder);
+			throwItems.remove(thrower);
+			QAMain.DEBUG("Throw grenade");
 		} else {
 			thrower.sendMessage(QAMain.prefix + QAMain.S_GRENADE_PULLPIN);
 		}
@@ -112,9 +110,10 @@ public class Grenades implements ThrowableItems {
 	@Override
 	public void onLMB(PlayerInteractEvent e, ItemStack usedItem) {
 		Player thrower = e.getPlayer();
-		if (grenadeHolder.containsKey(thrower)) {
+		if (throwItems.containsKey(thrower)) {
 			thrower.sendMessage(QAMain.prefix + QAMain.S_GRENADE_PALREADYPULLPIN);
 			thrower.playSound(thrower.getLocation(), WeaponSounds.RELOAD_BULLET.getSoundName(), 1, 1);
+			QAMain.DEBUG("Already pin out");
 			return;
 		}
 		thrower.getWorld().playSound(thrower.getLocation(), WeaponSounds.RELOAD_MAG_IN.getSoundName(), 2, 1);
@@ -123,6 +122,7 @@ public class Grenades implements ThrowableItems {
 			@Override
 			public void run() {
 				if (h.getHolder() instanceof Player) {
+					QAMain.DEBUG("Player did not throw. Damaged for 100");
 					((Player) h.getHolder()).damage(100);
 				}
 				if (h.getHolder() instanceof Item) {
@@ -130,6 +130,7 @@ public class Grenades implements ThrowableItems {
 				}
 				if (QAMain.enableExplosionDamage) {
 					ExplosionHandler.handleExplosion(h.getHolder().getLocation(), 3, 1);
+					QAMain.DEBUG("Using default explosions");
 				}
 				try {
 					h.getHolder().getWorld().spawnParticle(org.bukkit.Particle.EXPLOSION_HUGE,
@@ -144,6 +145,7 @@ public class Grenades implements ThrowableItems {
 				try {
 					for (Entity e : h.getHolder().getNearbyEntities(radius, radius, radius)) {
 						if (e instanceof LivingEntity) {
+							QAMain.DEBUG("Damaging "+e.getName());
 							if (thro == null)
 								((LivingEntity) e).damage(
 										(dmageLevel * radius / e.getLocation().distance(h.getHolder().getLocation())));
@@ -155,11 +157,12 @@ public class Grenades implements ThrowableItems {
 					}
 				} catch (Error e) {
 					h.getHolder().getWorld().createExplosion(h.getHolder().getLocation(), 1);
+					QAMain.DEBUG("Failed. Created default explosion");
 				}
-				grenadeHolder.remove(h.getHolder());
+				throwItems.remove(h.getHolder());
 			}
 		}.runTaskLater(QAMain.getInstance(), 5 * 20));
-		grenadeHolder.put(thrower, h);
+		throwItems.put(thrower, h);
 
 	}
 

@@ -27,7 +27,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.scheduler.BukkitRunnable;
 
 public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 
@@ -622,7 +622,7 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 	}
 
 	@SuppressWarnings("deprecation")
-	public void onClick(PlayerInteractEvent e, ItemStack usedItem, boolean fire) {
+	public void onClick(final PlayerInteractEvent e, ItemStack usedItem, boolean fire) {
 		QAMain.DEBUG("CLICKED GUN " + getName());
 
 		if (!e.getPlayer().hasPermission("qualityarmory.usegun")) {
@@ -798,14 +798,28 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 							tempremove = e.getPlayer().getInventory().getItemInOffHand();
 						e.getPlayer().getInventory().setItemInOffHand(e.getPlayer().getInventory().getItemInMainHand());
 						if (tempremove != null) {
-							ItemStack ironsights = new ItemStack(IronSightsToggleItem.getMat(), 1,
-									(short) IronSightsToggleItem.getData());
-							ItemMeta im = ironsights.getItemMeta();
-							im.setDisplayName(IronSightsToggleItem.getItemName());
-							im.setUnbreakable(true);
-							im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_UNBREAKABLE);
-							ironsights.setItemMeta(im);
-							e.getPlayer().getInventory().setItemInMainHand(ironsights);
+							e.getPlayer().getInventory().setItemInMainHand(
+									QualityArmory.getIronSightsItemStack());
+
+							QAMain.toggleNightvision(e.getPlayer(), this, true);
+							final Gun checkTo = QualityArmory.getGun(Update19OffhandChecker.getItemStackOFfhand(e.getPlayer()));
+							new BukkitRunnable() {
+								
+								@Override
+								public void run() {
+									if(!e.getPlayer().isOnline()) {
+										cancel();
+										return;
+									}
+									Gun g = null;
+									if(!QualityArmory.isIronSights(e.getPlayer().getItemInHand())|| (g=QualityArmory.getGun(Update19OffhandChecker.getItemStackOFfhand(e.getPlayer())))==null||g!=checkTo) {
+										QAMain.toggleNightvision(e.getPlayer(), null, false);
+										cancel();
+										return;
+									}
+									
+								}
+							}.runTaskTimer(QAMain.getInstance(), 20, 20);
 						}
 
 						QualityArmory.sendHotbarGunAmmoCount(e.getPlayer(), this, usedItem, false);
