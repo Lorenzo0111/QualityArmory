@@ -88,12 +88,18 @@ public class Grenades implements ThrowableItems {
 		Player thrower = e.getPlayer();
 		if (throwItems.containsKey(thrower)) {
 			ThrowableHolder holder = throwItems.get(thrower);
-			ItemStack g = thrower.getItemInHand();
+			ItemStack grenadeStack = thrower.getItemInHand();
+			ItemStack temp = grenadeStack.clone();
+			temp.setAmount(1);
 			if (thrower.getGameMode() != GameMode.CREATIVE) {
-				thrower.setItemInHand(null);
+				if(grenadeStack.getAmount()>1) {
+					grenadeStack.setAmount(grenadeStack.getAmount()-1);
+				}else {
+					grenadeStack=null;
+				}
+				thrower.setItemInHand(grenadeStack);
 			}
-			g.setAmount(1);
-			Item grenade = holder.getHolder().getWorld().dropItem(holder.getHolder().getLocation().add(0, 1.5, 0), g);
+			Item grenade = holder.getHolder().getWorld().dropItem(holder.getHolder().getLocation().add(0, 1.5, 0), temp);
 			grenade.setPickupDelay(Integer.MAX_VALUE);
 			grenade.setVelocity(thrower.getLocation().getDirection().normalize().multiply(1.2));
 			holder.setHolder(grenade);

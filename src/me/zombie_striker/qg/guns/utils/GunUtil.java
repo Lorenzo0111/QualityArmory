@@ -614,7 +614,7 @@ public class GunUtil {
 						}else
 						addRecoilWithTeleport(player, g, true);
 					}
-				}.runTaskLater(QAMain.getInstance(), 5);
+				}.runTaskLater(QAMain.getInstance(), 3);
 			}
 		} else {
 			if (QAMain.hasProtocolLib && QAMain.isVersionHigherThan(1, 13)) {

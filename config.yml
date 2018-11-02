@@ -43,7 +43,7 @@ ENABLE-DEBUG: false
 #Resourcepack values
 useDefaultResourcepack: true
 DefaultResourcepackOverride: false
-DefaultResourcepack: https://www.dropbox.com/s/cn1ygge60hf6eb4/QualityArmoryv1.0.28.zip?dl=1
+DefaultResourcepack: https://www.dropbox.com/s/xipzen3vs2akksp/QualityArmoryv1.0.35.zip?dl=1
 Auto-Detect-Resourcepack: true
 sendOnJoin: false
 sendTitleOnJoin: false

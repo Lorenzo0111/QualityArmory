@@ -366,7 +366,6 @@ public class GunYMLLoader {
 						: QAMain.bulletTrail);
 				g.setParticles(particle, partr, partg, partb);
 			} catch (Error | Exception er5) {
-				er5.printStackTrace();
 			}
 		}
 	}

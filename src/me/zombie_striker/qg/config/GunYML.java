@@ -26,7 +26,7 @@ public class GunYML extends ArmoryYML {
 		setNoOverride("enableIronSights", false);
 		setNoOverride("setZoomLevel", 0);
 		setNoOverride("ammotype", "556");
-		setNoOverride("sway", 0.3);
+		setNoOverride("sway", 0.2);
 		setNoOverride("maxbullets", 0);
 		setNoOverride("delayForReload", 1.5);
 		setNoOverride("delayForShoot", 0.3);

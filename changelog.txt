@@ -1,3 +1,21 @@
+1.1.123
+	Added STEN gun
+	Added more debug messages when players right click. Should make checking for zoom easier
+	Fixed offhand clicks
+	Fix 1.8 support for particles 
+	Fix for potion effects. If the player has a potion effect for slowness or nightvision that was not added by QA, don't remove it.
+	
+1.1.122D
+	Added Debug messages
+	
+1.1.122C
+	Fixed viaversion resourcepack help.
+
+1.1.122B
+	Fixed recoil math
+	Fixed grenades so that, when they are set to materials that can stack, that only one grenade is thrown
+	Reduced gun sway
+
 1.1.122
 	Fixed recoil for guns whose firerate is set to 4. 
 	(this should have been a full release, not a patch)

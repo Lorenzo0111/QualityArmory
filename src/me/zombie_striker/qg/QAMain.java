@@ -162,7 +162,7 @@ public class QAMain extends JavaPlugin implements Listener {
 	public static boolean kickIfDeniedRequest = false;
 	// public static String url19plus =
 	// "https://www.dropbox.com/s/faufrgo7w2zpi3d/QualityArmoryv1.0.10.zip?dl=1";
-	public static String url_newest = "https://www.dropbox.com/s/n002cou1ulg8v1d/QualityArmoryv1.0.34.zip?dl=1";
+	public static String url_newest = "https://www.dropbox.com/s/xipzen3vs2akksp/QualityArmoryv1.0.35.zip?dl=1";
 	public static String url18 = "https://www.dropbox.com/s/gx6dhahq6onob4g/QualityArmory1.8v1.0.1.zip?dl=1";
 	public static String url = url_newest;
 
@@ -501,12 +501,16 @@ public class QAMain extends JavaPlugin implements Listener {
 			}
 			if (g.hasnightVision()) {
 				currentlyScoping.add(player.getUniqueId());
-				player.addPotionEffect(new PotionEffect(PotionEffectType.NIGHT_VISION, 1200, 1));
+				player.addPotionEffect(new PotionEffect(PotionEffectType.NIGHT_VISION, 1200, 3));
 			}
 		} else {
 			if (currentlyScoping.contains(player.getUniqueId())) {
-				player.removePotionEffect(PotionEffectType.SLOW);
-				player.removePotionEffect(PotionEffectType.NIGHT_VISION);
+				if (player.hasPotionEffect(PotionEffectType.SLOW) && g.getZoomWhenIronSights() > 0
+						&& player.getPotionEffect(PotionEffectType.SLOW).getAmplifier() == g.getZoomWhenIronSights())
+					player.removePotionEffect(PotionEffectType.SLOW);
+				if (player.hasPotionEffect(PotionEffectType.NIGHT_VISION) && g.hasnightVision()
+						&& player.getPotionEffect(PotionEffectType.SLOW).getAmplifier() == 3)
+					player.removePotionEffect(PotionEffectType.NIGHT_VISION);
 				currentlyScoping.remove(player.getUniqueId());
 			}
 		}
@@ -768,13 +772,11 @@ public class QAMain extends JavaPlugin implements Listener {
 		 */
 		overrideURL = (boolean) a("DefaultResourcepackOverride", false);
 
-		if (isVersionHigherThan(1, 9) || AutoDetectResourcepackVersion) {
-			url = url_newest;
-
-		} else {
-			// Use 1.8 resourcepack.
-			url = url18;
-		}
+		// if (isVersionHigherThan(1, 9) || AutoDetectResourcepackVersion) {
+		// url = url_newest;
+		// } else {
+		// url = url18;
+		// }
 
 		if (overrideURL) {
 			url = (String) a("DefaultResourcepack", url);
@@ -993,7 +995,7 @@ public class QAMain extends JavaPlugin implements Listener {
 				GunYMLCreator
 						.createNewDefaultGun(getDataFolder(), "ak47", "AK47", 5, stringsMetalRif, WeaponType.RIFLE,
 								null, true, "762", 3, 40, 5000)
-						.setSway(0.3).setFullyAutomatic(2).setBulletsPerShot(1).setRecoil(2).done();
+						.setSway(0.19).setFullyAutomatic(2).setBulletsPerShot(1).setRecoil(2).done();
 				GunYMLCreator
 						.createNewDefaultGun(getDataFolder(), "ak47u", "AK47-U", 6, stringsMetalRif, WeaponType.RIFLE,
 								null, true, "762", 3, 30, 5000)
@@ -1148,8 +1150,7 @@ public class QAMain extends JavaPlugin implements Listener {
 						.createNewDefaultGun(getDataFolder(), "flintlockpistol", "\"Harper's Ferry\" Flintlock Pistol",
 								52, stringsMetalRif, WeaponType.RIFLE, WeaponSounds.GUN_AUTO, true, "musketball", 10, 1,
 								100)
-						.setSway(0.47).setDelayReload(4).setDelayShoot(1).setIsSecondaryWeapon(true).setRecoil(8)
-						.done();
+						.setSway(0.4).setDelayReload(4).setDelayShoot(1).setIsSecondaryWeapon(true).setRecoil(8).done();
 
 				// Jump for armor
 
@@ -1203,7 +1204,7 @@ public class QAMain extends JavaPlugin implements Listener {
 				GunYMLCreator
 						.createNewDefaultGun(getDataFolder(), "musket", "\"Brown Bess\" Musket", 63, stringsMetalRif,
 								WeaponType.RIFLE, WeaponSounds.GUN_AUTO, true, "musketball", 10, 1, 100)
-						.setSway(0.38).setDelayReload(5).setDelayShoot(1).setSwayMultiplier(3).setRecoil(3).done();
+						.setSway(0.3).setDelayReload(5).setDelayShoot(1).setSwayMultiplier(3).setRecoil(3).done();
 
 				List<String> stringsRifle = Arrays.asList(new String[] { getIngString(Material.IRON_INGOT, 0, 8),
 						getIngString(Material.REDSTONE, 0, 3) });
@@ -1325,7 +1326,7 @@ public class QAMain extends JavaPlugin implements Listener {
 				GunYMLCreator
 						.createNewDefaultGun(getDataFolder(), "asval", "AS-Val", 103, stringsMetalRif, WeaponType.RIFLE,
 								WeaponSounds.SILENCEDSHOT, true, "762", 3, 30, 7000)
-						.setSway(0.3).setFullyAutomatic(3).setRecoil(2).done();
+						.setSway(0.2).setFullyAutomatic(3).setRecoil(2).done();
 				GunYMLCreator
 						.createNewDefaultGun(getDataFolder(), "fnp90", "FN-P90", 105, stringsMetalRif, WeaponType.SMG,
 								WeaponSounds.SILENCEDSHOT, true, "556", 2, 50, 3000)
@@ -1348,7 +1349,7 @@ public class QAMain extends JavaPlugin implements Listener {
 				GunYMLCreator
 						.createNewDefaultGun(getDataFolder(), "vz58", "VZ.58", 5, stringsMetalRif, WeaponType.RIFLE,
 								null, true, "762", 3, 30, 4500)
-						.setSway(0.3).setFullyAutomatic(2).setBulletsPerShot(1).setVariant(1).done();
+						.setSway(0.2).setFullyAutomatic(2).setBulletsPerShot(1).setVariant(1).done();
 				GunYMLCreator.createNewDefaultGun(getDataFolder(), "cz65", "CZ.75", 2, stringsPistol, WeaponType.PISTOL,
 						null, true, "9mm", 3, 12, 700).setIsSecondaryWeapon(true).setVariant(1).done();
 
@@ -1379,6 +1380,11 @@ public class QAMain extends JavaPlugin implements Listener {
 						.createNewDefaultGun(getDataFolder(), "glock", "Glock-17", 2, stringsPistol, WeaponType.PISTOL,
 								null, true, "9mm", 3, 15, 1800)
 						.setIsSecondaryWeapon(true).setFireRate(3).setVariant(2).done();
+
+				GunYMLCreator
+						.createNewDefaultGun(getDataFolder(), "sten", "STEN Gun", 117, stringsMetalRif,
+								WeaponType.RIFLE, WeaponSounds.GUN_SMALL_AUTO, true, "9mm", 2, 32, 2500)
+						.setFullyAutomatic(3).setRecoil(1).done();
 			}
 
 			// GunYMLCreator.createNewGun(false, getDataFolder(), true, "ExampleGun",
@@ -2289,11 +2295,13 @@ public class QAMain extends JavaPlugin implements Listener {
 			return;
 		}
 		try {
-			if (e.getSlot() == 40 && e.getClickedInventory() == e.getWhoClicked().getInventory()) {
+			if (e.getSlot() == 40 && e.getClickedInventory() == e.getWhoClicked().getInventory()
+					&& QualityArmory.isGun(e.getClickedInventory().getItem(40))) {
 				e.setCancelled(true);
 			}
 		} catch (Error | Exception r5) {
-			if (e.getSlot() == 40 && e.getInventory() == e.getWhoClicked().getInventory()) {
+			if (e.getSlot() == 40 && e.getInventory() == e.getWhoClicked().getInventory()
+					&& QualityArmory.isGun(e.getInventory().getItem(40))) {
 				e.setCancelled(true);
 			}
 
@@ -2880,7 +2888,7 @@ public class QAMain extends JavaPlugin implements Listener {
 								e.getPlayer().getInventory()
 										.setItemInMainHand(e.getPlayer().getInventory().getItemInOffHand());
 								e.getPlayer().getInventory().setItemInOffHand(null);
-								toggleNightvision(e.getPlayer(), null, false);
+								toggleNightvision(e.getPlayer(), g, false);
 							}
 						}
 					} catch (Error e2) {

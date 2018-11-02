@@ -802,18 +802,21 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 									QualityArmory.getIronSightsItemStack());
 
 							QAMain.toggleNightvision(e.getPlayer(), this, true);
+							QAMain.DEBUG("Toggle Night vision on right click");
 							final Gun checkTo = QualityArmory.getGun(Update19OffhandChecker.getItemStackOFfhand(e.getPlayer()));
 							new BukkitRunnable() {
 								
 								@Override
 								public void run() {
 									if(!e.getPlayer().isOnline()) {
+										QAMain.DEBUG("Canceling since player is offline");
 										cancel();
 										return;
 									}
 									Gun g = null;
 									if(!QualityArmory.isIronSights(e.getPlayer().getItemInHand())|| (g=QualityArmory.getGun(Update19OffhandChecker.getItemStackOFfhand(e.getPlayer())))==null||g!=checkTo) {
-										QAMain.toggleNightvision(e.getPlayer(), null, false);
+										QAMain.toggleNightvision(e.getPlayer(), checkTo, false);
+										QAMain.DEBUG("Removing nightvision since either the main hand is not ironsights/ offhand gun is null. : "+(!QualityArmory.isIronSights(e.getPlayer().getItemInHand()))+" "+((g=QualityArmory.getGun(Update19OffhandChecker.getItemStackOFfhand(e.getPlayer())))==null)+" "+(g!=checkTo));
 										cancel();
 										return;
 									}
