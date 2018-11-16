@@ -39,7 +39,7 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 	private int zoomLevel = 0;
 	private Ammo ammotype;
 	private double acc;
-	private double swaymultiplier=2;
+	private double swaymultiplier = 2;
 	private int maxbull;
 	private float damage;
 	private int durib = 1000;
@@ -229,13 +229,15 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 	public void setAutomatic(boolean automatic) {
 		this.isAutomatic = automatic;
 	}
-	
+
 	public void setHasIronsights(boolean b) {
 		this.hasIronSights = b;
 	}
+
 	public void setDamage(float damage) {
 		this.damage = damage;
 	}
+
 	public void setPrice(double price) {
 		this.cost = price;
 	}
@@ -744,15 +746,13 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 							return;
 						}
 					shoot(e.getPlayer());
-					if (QAMain.enableDurability)
-						if (offhand) {
-							try {
-								e.getPlayer().getInventory().setItemInOffHand(ItemFact.damage(this, usedItem));
-							} catch (Error e2) {
-							}
+					if (QAMain.enableDurability) {
+						if (QualityArmory.isIronSights(e.getPlayer().getItemInHand())) {
+							Update19OffhandChecker.setOffhand(e.getPlayer(), ItemFact.damage(this, usedItem));
 						} else {
 							e.getPlayer().setItemInHand(ItemFact.damage(this, usedItem));
 						}
+					}
 
 				}
 
@@ -798,29 +798,38 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 							tempremove = e.getPlayer().getInventory().getItemInOffHand();
 						e.getPlayer().getInventory().setItemInOffHand(e.getPlayer().getInventory().getItemInMainHand());
 						if (tempremove != null) {
-							e.getPlayer().getInventory().setItemInMainHand(
-									QualityArmory.getIronSightsItemStack());
+							e.getPlayer().getInventory().setItemInMainHand(QualityArmory.getIronSightsItemStack());
 
 							QAMain.toggleNightvision(e.getPlayer(), this, true);
 							QAMain.DEBUG("Toggle Night vision on right click");
-							final Gun checkTo = QualityArmory.getGun(Update19OffhandChecker.getItemStackOFfhand(e.getPlayer()));
+							final Gun checkTo = QualityArmory
+									.getGun(Update19OffhandChecker.getItemStackOFfhand(e.getPlayer()));
 							new BukkitRunnable() {
-								
+
 								@Override
 								public void run() {
-									if(!e.getPlayer().isOnline()) {
+									if (!e.getPlayer().isOnline()) {
 										QAMain.DEBUG("Canceling since player is offline");
 										cancel();
 										return;
 									}
 									Gun g = null;
-									if(!QualityArmory.isIronSights(e.getPlayer().getItemInHand())|| (g=QualityArmory.getGun(Update19OffhandChecker.getItemStackOFfhand(e.getPlayer())))==null||g!=checkTo) {
+									if (!QualityArmory.isIronSights(e.getPlayer().getItemInHand())
+											|| (g = QualityArmory.getGun(
+													Update19OffhandChecker.getItemStackOFfhand(e.getPlayer()))) == null
+											|| g != checkTo) {
 										QAMain.toggleNightvision(e.getPlayer(), checkTo, false);
-										QAMain.DEBUG("Removing nightvision since either the main hand is not ironsights/ offhand gun is null. : "+(!QualityArmory.isIronSights(e.getPlayer().getItemInHand()))+" "+((g=QualityArmory.getGun(Update19OffhandChecker.getItemStackOFfhand(e.getPlayer())))==null)+" "+(g!=checkTo));
+										QAMain.DEBUG(
+												"Removing nightvision since either the main hand is not ironsights/ offhand gun is null. : "
+														+ (!QualityArmory.isIronSights(e.getPlayer().getItemInHand()))
+														+ " "
+														+ ((g = QualityArmory.getGun(Update19OffhandChecker
+																.getItemStackOFfhand(e.getPlayer()))) == null)
+														+ " " + (g != checkTo));
 										cancel();
 										return;
 									}
-									
+
 								}
 							}.runTaskTimer(QAMain.getInstance(), 20, 20);
 						}

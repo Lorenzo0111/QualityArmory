@@ -1,3 +1,19 @@
+1.1.124
+	Add option to ignore armor protection when dealing bullet damage (enableIgnoreArmorProtection)
+	Fixed config saving system.
+	fix durability iusse
+
+1.1.123D
+	Fixed debug messages
+	Fixed nightvision potion check
+	Code Cleanup
+
+1.1.123C
+	Added fix for if player swaps items while using scopes
+
+1.1.123B
+	Fixed slowness issue
+
 1.1.123
 	Added STEN gun
 	Added more debug messages when players right click. Should make checking for zoom easier

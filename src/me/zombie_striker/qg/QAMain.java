@@ -92,14 +92,9 @@ public class QAMain extends JavaPlugin implements Listener {
 
 	public static boolean orderShopByPrice = false;
 
-	public static boolean enableDurability = false;/*
-													 * public static boolean UnlimitedAmmoPistol = false; public static
-													 * boolean UnlimitedAmmoRifle = false; public static boolean
-													 * UnlimitedAmmoShotgun = false; public static boolean
-													 * UnlimitedAmmoSMG = false; public static boolean UnlimitedAmmoRPG
-													 * = false; public static boolean UnlimitedAmmoSniper = false;
-													 * public static boolean UnlimitedAmmoLazer = false;
-													 */
+	public static boolean enableDurability = false;
+	
+	public static boolean enableArmorIgnore = false;
 
 	public static boolean enableRecoil = true;
 
@@ -243,8 +238,6 @@ public class QAMain extends JavaPlugin implements Listener {
 	public static ItemStack prevButton;
 	public static ItemStack nextButton;
 
-	// public static Material guntype = Material.DIAMOND_AXE;
-
 	public static MessagesYML m;
 	public static MessagesYML resourcepackwhitelist;
 
@@ -275,9 +268,6 @@ public class QAMain extends JavaPlugin implements Listener {
 	public static List<Scoreboard> coloredGunScoreboard = new ArrayList<Scoreboard>();
 	public static boolean blockBreakTexture = false;
 	public static List<UUID> currentlyScoping = new ArrayList<>();
-
-	// public static List<MaterialStorage> reservedForExps = Arrays.asList(m(53),
-	// m(54), m(55), m(56), m(57), m(58), m(59), m(60));
 
 	static {
 		String name = Bukkit.getServer().getClass().getName();
@@ -342,8 +332,8 @@ public class QAMain extends JavaPlugin implements Listener {
 		if (getConfig().contains(path)) {
 			return getConfig().get(path);
 		}
-		saveTheConfig = true;
 		getConfig().set(path, def);
+		saveConfig();
 		return def;
 	}
 
@@ -505,11 +495,10 @@ public class QAMain extends JavaPlugin implements Listener {
 			}
 		} else {
 			if (currentlyScoping.contains(player.getUniqueId())) {
-				if (player.hasPotionEffect(PotionEffectType.SLOW) && g.getZoomWhenIronSights() > 0
-						&& player.getPotionEffect(PotionEffectType.SLOW).getAmplifier() == g.getZoomWhenIronSights())
+				if (player.hasPotionEffect(PotionEffectType.SLOW) && (g == null || g.getZoomWhenIronSights() > 0))
 					player.removePotionEffect(PotionEffectType.SLOW);
-				if (player.hasPotionEffect(PotionEffectType.NIGHT_VISION) && g.hasnightVision()
-						&& player.getPotionEffect(PotionEffectType.SLOW).getAmplifier() == 3)
+				if (player.hasPotionEffect(PotionEffectType.NIGHT_VISION) && (g == null || g.hasnightVision())
+						&& player.getPotionEffect(PotionEffectType.NIGHT_VISION).getAmplifier() == 3)
 					player.removePotionEffect(PotionEffectType.NIGHT_VISION);
 				currentlyScoping.remove(player.getUniqueId());
 			}
@@ -675,6 +664,8 @@ public class QAMain extends JavaPlugin implements Listener {
 
 		enableBulletTrails = (boolean) a("enableBulletTrails", true);
 		smokeSpacing = Double.valueOf(a("BulletTrailsSpacing", 0.5) + "");
+		
+		enableArmorIgnore = (boolean) a ("enableIgnoreArmorProtection",enableArmorIgnore);
 
 		enableVisibleAmounts = (boolean) a("enableVisibleBulletCounts", false);
 		reloadOnF = (boolean) a("enableReloadingWhenSwapToOffhand", true);
@@ -748,35 +739,12 @@ public class QAMain extends JavaPlugin implements Listener {
 		swayModifier_Ironsights = (double) a("generalModifiers.sway.Ironsights", swayModifier_Ironsights);
 		swayModifier_Sneak = (double) a("generalModifiers.sway.Sneak", swayModifier_Sneak);
 
-		// Force inversion due to naming
-		if (saveTheConfig) {
-			Bukkit.getConsoleSender().sendMessage(prefix + " Needed to save config: code=1");
-			saveConfig();
-		}
 		try {
 			enableEconomy = EconHandler.setupEconomy();
 		} catch (Exception | Error e) {
 		}
 
-		/*
-		 * try { bulletTrail = Particle.valueOf((String) a("Bullet-Particle-Type",
-		 * "FIREWORKS_SPARK")); a("ACCEPTED-BULLET-PARTICLE-VALUES",
-		 * "https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Particle.html"); } catch
-		 * (Exception | Error e) { }
-		 */
-
-		/*
-		 * try { guntype = Material.matchMaterial((String) a("gunMaterialType",
-		 * guntype.toString())); } catch (Exception e) { guntype = Material.DIAMOND_AXE;
-		 * }
-		 */
 		overrideURL = (boolean) a("DefaultResourcepackOverride", false);
-
-		// if (isVersionHigherThan(1, 9) || AutoDetectResourcepackVersion) {
-		// url = url_newest;
-		// } else {
-		// url = url18;
-		// }
 
 		if (overrideURL) {
 			url = (String) a("DefaultResourcepack", url);
@@ -814,8 +782,6 @@ public class QAMain extends JavaPlugin implements Listener {
 			saveConfig();
 		}
 
-		// ,(float)a("Weapon.RPG.Damage", 10)
-
 		if (enableCreationOfFiles) {
 
 			List<String> stringsWoodRif = Arrays.asList(new String[] { getIngString(Material.IRON_INGOT, 0, 12),
@@ -850,55 +816,6 @@ public class QAMain extends JavaPlugin implements Listener {
 					|| (AutoDetectResourcepackVersion && Bukkit.getPluginManager().isPluginEnabled("ViaRewind"))) {
 				String additive = AutoDetectResourcepackVersion ? "_18" : "";
 				{
-					// GunYMLCreator.createNewGun(forceUpdate, getDataFolder(), false,
-					// "default18_P30", "P30" + additive,
-					// ChatColor.GOLD + "P30", null, 0, stringsPistol, WeaponType.PISTOL, false,
-					// "556ammo", 3, 0.25,
-					// Material.IRON_HOE, 12, 1000, 1.5, 0.25, 1, false, 700, null, 80, true, null);
-					// GunYMLCreator.createNewGun(forceUpdate, getDataFolder(), false,
-					// "default18_AK47", "AK47" + additive,
-					// ChatColor.GOLD + "AK-47", null, -1, stringsWoodRif, WeaponType.RIFLE, true,
-					// "556ammo", 3, 0.25,
-					// Material.GOLD_SPADE, 40, 1000, 1.5, 0.25, 2, true, 1400,
-					// ChargingManager.RAPIDFIRE, 140, true,
-					// null);
-					// GunYMLCreator.createNewGun(forceUpdate, getDataFolder(), false,
-					// "default18_MP5K", "MP5K" + additive,
-					// ChatColor.GOLD + "MP5K", null, 0, stringsMetalRif, WeaponType.SMG, true,
-					// "556ammo", 3, 0.25,
-					// Material.GOLD_PICKAXE, 32, 1000, 1.5, 0.25, 1, false, 1200, null, 100, true,
-					// WeaponSounds.GUN_SMALL);
-					// GunYMLCreator.createNewGun(forceUpdate, getDataFolder(), false,
-					// "default18_FNFal", "FNFal" + additive,
-					// ChatColor.GOLD + "FN-Fal", null, 0, stringsMetalRif, WeaponType.RIFLE, true,
-					// "556ammo", 3, 0.25,
-					// Material.GOLD_HOE, 32, 1000, 1.5, 0.25, 1, false, 1000, null, 140, true,
-					// null);
-
-					// The the type is not the same, or if it is, if there is no auto detection
-					// if (guntype != Material.DIAMOND_HOE || !AutoDetectResourcepackVersion)
-					// GunYMLCreator.createNewGun(forceUpdate, getDataFolder(), false,
-					// "default18_RPG", "RPG" + additive,
-					// ChatColor.GOLD + "RPG", null, 0, stringsRPG, WeaponType.RPG, false,
-					// "RPGammo", 100, 0.1,
-					// Material.DIAMOND_HOE, 1, 200, 3, 3, 2, false, 5000, ChargingManager.RPG, 220,
-					// true, null);
-					// if (/* guntype != Material.DIAMOND_AXE || */ !AutoDetectResourcepackVersion)
-					// GunYMLCreator.createNewGun(forceUpdate, getDataFolder(), false,
-					// "default18_PKP", "PKP" + additive,
-					// ChatColor.GOLD + "PKP", null, 0, stringsMetalRif, WeaponType.RIFLE, false,
-					// "556ammo", 2,
-					// 0.3, Material.DIAMOND_AXE, 100, 1000, 3, 0.27, 3, true, 3000,
-					// ChargingManager.RAPIDFIRE,
-					// 170, true, WeaponSounds.GUN_BIG);
-					// GunYMLCreator.createNewGun(forceUpdate, getDataFolder(), false,
-					// "default18_M16", "M16" + additive,
-					// ChatColor.GOLD + "M16", null, 0, stringsMetalRif, WeaponType.RIFLE, false,
-					// "556ammo", 4, 0.3,
-					/// Material.IRON_SPADE, 30, 1000, 0.11, 1.5, 2, true, 1200,
-					// ChargingManager.RAPIDFIRE, 140, true,
-					// null);
-
 					GunYMLCreator
 							.createNewCustomGun(getDataFolder(), "default_1_8_p30", "p30" + additive, "P30", 1,
 									stringsPistol, WeaponType.PISTOL, null, true, "9mm", 3, 12, 100)
@@ -977,10 +894,6 @@ public class QAMain extends JavaPlugin implements Listener {
 								Material.BLAZE_POWDER, 0,
 								Arrays.asList(new String[] { getIngString(Material.BLAZE_ROD, 0, 1), }), 1, 1, 64, 2)
 						.setVariant(1).done();
-				// .createAmmo(false, getDataFolder(), false, "fuel", "&fFlamerFuel", 0,
-				// Arrays.asList(new String[] { getIngString(Material.BLAZE_POWDER, 0, 1), }),
-				// 1, 1,
-				// 64, 1).setMaterial(Material.BLAZE_POWDER);
 
 				GunYMLCreator.createNewDefaultGun(getDataFolder(), "p30", "P30", 2, stringsPistol, WeaponType.PISTOL,
 						null, true, "9mm", 3, 12, 700).setIsSecondaryWeapon(true).done();
@@ -1418,21 +1331,6 @@ public class QAMain extends JavaPlugin implements Listener {
 					"eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYTg3ZmRmNDU4N2E2NDQ5YmZjOGJlMzNhYjJlOTM4ZTM2YmYwNWU0MGY2ZmFhMjc3ZDcxYjUwYmNiMGVhNjgzOCJ9fX0=");
 
 		}
-
-		{
-			// Force creation of kevlar
-			// armorRegister.put(m(25),
-			// new Kevlar(m(25),
-			// getIngredients("Kevlarnk1", Arrays.asList(new String[] {
-			// getIngString(Material.IRON_INGOT, 0, 15), getIngString(Material.OBSIDIAN, 0,
-			// 1) })),
-			// 1, 1200));
-			// angledArmor.put(m(59), new AngledArmor(m(59), m(25), 135f));
-			// angledArmor.put(m(60), new AngledArmor(m(60), m(25), 180f));
-			// angledArmor.put(m(61), new AngledArmor(m(61), m(25), 45f));
-			// angledArmor.put(m(62), new AngledArmor(m(62), m(25), 0f));
-
-		}
 		// Skull texture
 		GunYMLLoader.loadAmmo(this);
 		GunYMLLoader.loadMisc(this);
@@ -1518,13 +1416,8 @@ public class QAMain extends JavaPlugin implements Listener {
 									&& (!QualityArmory.isCustomItem(e.getPlayer().getInventory().getItemInOffHand()))) {
 						DEBUG("Sneak Swapping start!");
 						Gun g = QualityArmory.getGun(e.getPlayer().getItemInHand());
-						// AttachmentBase attach =
-						// QualityArmory.getGunWithAttchments(e.getPlayer().getItemInHand());
-						// if (attach != null)
-						// g = attach.getBaseGun();// gunRegister.get(attach.getBase());
 						if (g != null) {
 							DEBUG("Gun used " + g.getName() + " attach?= " + (g instanceof AttachmentBase));
-							// + (attach == null ? "null" : attach.getAttachmentName()));
 							if (g.hasIronSights()) {
 								DEBUG("Gun has ironsights");
 								try {
@@ -2881,7 +2774,6 @@ public class QAMain extends JavaPlugin implements Listener {
 											.setItemInMainHand(e.getPlayer().getInventory().getItemInOffHand());
 									e.getPlayer().getInventory().setItemInOffHand(null);
 									usedItem = e.getPlayer().getInventory().getItemInMainHand();
-									Bukkit.broadcastMessage("used hand swapping");
 								}
 							} else {
 								QAMain.DEBUG("Swapping " + g.getName() + " from offhand to main hand!");

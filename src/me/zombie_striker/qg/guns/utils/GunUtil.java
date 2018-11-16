@@ -19,6 +19,8 @@ import ru.beykerykt.lightapi.LightAPI;
 import ru.beykerykt.lightapi.chunks.ChunkInfo;
 
 import org.bukkit.*;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Entity;
@@ -187,6 +189,34 @@ public class GunUtil {
 					if (!shootevent.isCanceled()) {
 
 						if (hitTarget instanceof Player) {
+							Player player = (Player) hitTarget;
+							if (QAMain.enableArmorIgnore) {
+								try {
+								// damage = damage * ( 1 - min( 20, max( defensePoints / 5, defensePoints -
+								// damage / ( toughness / 4 + 2 ) ) ) / 25 )
+								double defensePoints = 0;
+								double toughness = 0;
+								for (ItemStack is : new ItemStack[] { player.getInventory().getHelmet(),
+										player.getInventory().getChestplate(), player.getInventory().getLeggings(),
+										player.getInventory().getBoots() }) {
+									if (is != null) {
+										if (!is.getItemMeta().getAttributeModifiers(Attribute.GENERIC_ARMOR).isEmpty())
+											for (AttributeModifier a : is.getItemMeta()
+													.getAttributeModifiers(Attribute.GENERIC_ARMOR))
+												defensePoints += a.getAmount();
+										for (AttributeModifier a : is.getItemMeta()
+												.getAttributeModifiers(Attribute.GENERIC_ARMOR_TOUGHNESS))
+											toughness += a.getAmount();
+									}
+								}
+								damageMAX = damageMAX * (1 - Math.min(20,
+										Math.max(defensePoints / 5, defensePoints - damageMAX / (toughness / 4 + 2)))
+										/ 25);
+								}catch(Error|Exception e5) {
+									
+								}
+							}
+
 							if (!bulletProtection) {
 								BulletWoundHandler.bulletHit((Player) hitTarget, g.getAmmoType().getPiercingDamage());
 							} else {
@@ -512,7 +542,7 @@ public class GunUtil {
 		if (ItemFact.getAmount(temp) == g.getMaxBullets()) {
 			return;
 		}
-		if (!im.hasDisplayName())
+		if (im == null || !im.hasDisplayName())
 			return;
 		if (im.getLore() != null && im.getDisplayName().contains(QAMain.S_RELOADING_MESSAGE)) {
 
@@ -609,28 +639,32 @@ public class GunUtil {
 				new BukkitRunnable() {
 					@Override
 					public void run() {
-						if (QAMain.hasProtocolLib && QAMain.isVersionHigherThan(1, 13)) {
+						if (QAMain.hasProtocolLib && QAMain.isVersionHigherThan(1, 12)) {
 							addRecoilWithProtocolLib(player, g, true);
-						}else
-						addRecoilWithTeleport(player, g, true);
+						} else
+							addRecoilWithTeleport(player, g, true);
 					}
 				}.runTaskLater(QAMain.getInstance(), 3);
 			}
 		} else {
-			if (QAMain.hasProtocolLib && QAMain.isVersionHigherThan(1, 13)) {
+			if (QAMain.hasProtocolLib && QAMain.isVersionHigherThan(1, 12)) {
 				addRecoilWithProtocolLib(player, g, false);
-			}else
-			addRecoilWithTeleport(player, g, false);
+			} else
+				addRecoilWithTeleport(player, g, false);
 		}
 	}
 
 	private static void addRecoilWithProtocolLib(Player player, Gun g, boolean useHighRecoil) {
 		Vector newDir = player.getLocation().getDirection();
-		newDir.normalize().setY(newDir.getY() + ((useHighRecoil ? highRecoilCounter.get(player.getUniqueId()) : g.getRecoil()) / 30)).multiply(20);
+		newDir.normalize()
+				.setY(newDir.getY()
+						+ ((useHighRecoil ? highRecoilCounter.get(player.getUniqueId()) : g.getRecoil()) / 30))
+				.multiply(20);
 		if (useHighRecoil)
 			highRecoilCounter.remove(player.getUniqueId());
 		ProtocolLibHandler.sendYawChange(player, newDir);
 	}
+
 	private static void addRecoilWithTeleport(Player player, Gun g, boolean useHighRecoil) {
 		Location tempCur = (QAMain.recoilHelperMovedLocation.get(player.getUniqueId()));
 		final Location current;

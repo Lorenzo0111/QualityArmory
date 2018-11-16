@@ -32,6 +32,7 @@ unknownTranslationKeyFixer: false
 Enable_Creation_Of_Default_Files: true
 KickPlayerIfDeniedResourcepack: false
 hideTextureWarnings: false
+enableIgnoreArmorProtection: false
 
 #Use this if you are expierincing a problem. 
 ENABLE-DEBUG: false
