@@ -93,7 +93,7 @@ public class QAMain extends JavaPlugin implements Listener {
 	public static boolean orderShopByPrice = false;
 
 	public static boolean enableDurability = false;
-	
+
 	public static boolean enableArmorIgnore = false;
 
 	public static boolean enableRecoil = true;
@@ -157,7 +157,7 @@ public class QAMain extends JavaPlugin implements Listener {
 	public static boolean kickIfDeniedRequest = false;
 	// public static String url19plus =
 	// "https://www.dropbox.com/s/faufrgo7w2zpi3d/QualityArmoryv1.0.10.zip?dl=1";
-	public static String url_newest = "https://www.dropbox.com/s/xipzen3vs2akksp/QualityArmoryv1.0.35.zip?dl=1";
+	public static String url_newest = "https://www.dropbox.com/s/a8c6pw5sef4zf5f/QualityArmoryv1.0.36.zip?dl=1";
 	public static String url18 = "https://www.dropbox.com/s/gx6dhahq6onob4g/QualityArmory1.8v1.0.1.zip?dl=1";
 	public static String url = url_newest;
 
@@ -433,7 +433,7 @@ public class QAMain extends JavaPlugin implements Listener {
 							if (QualityArmory.isCustomItem(p.getItemInHand())) {
 								if (!p.getItemInHand().getItemMeta().spigot().isUnbreakable()) {
 									ItemStack temp = p.getItemInHand();
-									int j = QualityArmory.findSafeSpot(temp, false);
+									int j = QualityArmory.findSafeSpot(temp, false, overrideURL);
 									temp.setDurability((short) Math.max(0, j - 1));
 									temp = ItemFact.removeCalculatedExtra(temp);
 									p.setItemInHand(temp);
@@ -449,7 +449,7 @@ public class QAMain extends JavaPlugin implements Listener {
 								if (QualityArmory.isCustomItem(p.getInventory().getItemInOffHand())) {
 									if (!p.getInventory().getItemInOffHand().getItemMeta().spigot().isUnbreakable()) {
 										ItemStack temp = p.getInventory().getItemInOffHand();
-										int j = QualityArmory.findSafeSpot(temp, false);
+										int j = QualityArmory.findSafeSpot(temp, false, overrideURL);
 										temp.setDurability((short) Math.max(0, j - 1));
 										temp = ItemFact.removeCalculatedExtra(temp);
 										p.getInventory().setItemInOffHand(temp);
@@ -664,8 +664,8 @@ public class QAMain extends JavaPlugin implements Listener {
 
 		enableBulletTrails = (boolean) a("enableBulletTrails", true);
 		smokeSpacing = Double.valueOf(a("BulletTrailsSpacing", 0.5) + "");
-		
-		enableArmorIgnore = (boolean) a ("enableIgnoreArmorProtection",enableArmorIgnore);
+
+		enableArmorIgnore = (boolean) a("enableIgnoreArmorProtection", enableArmorIgnore);
 
 		enableVisibleAmounts = (boolean) a("enableVisibleBulletCounts", false);
 		reloadOnF = (boolean) a("enableReloadingWhenSwapToOffhand", true);
@@ -1299,6 +1299,35 @@ public class QAMain extends JavaPlugin implements Listener {
 								WeaponType.RIFLE, WeaponSounds.GUN_SMALL_AUTO, true, "9mm", 2, 32, 2500)
 						.setFullyAutomatic(3).setRecoil(1).done();
 			}
+			
+			
+			
+			
+			//80 81 82 83 84 86 87 88 89 92 94 95 96 97 104 111 112 114 115 116
+			if(!overrideURL) {
+				expansionPacks.add(MaterialStorage.getMS(Material.DIAMOND_AXE, 80, 0));
+				expansionPacks.add(MaterialStorage.getMS(Material.DIAMOND_AXE, 81, 0));
+				expansionPacks.add(MaterialStorage.getMS(Material.DIAMOND_AXE, 82, 0));
+				expansionPacks.add(MaterialStorage.getMS(Material.DIAMOND_AXE, 83, 0));
+				expansionPacks.add(MaterialStorage.getMS(Material.DIAMOND_AXE, 84, 0));
+				expansionPacks.add(MaterialStorage.getMS(Material.DIAMOND_AXE, 85, 0));
+				expansionPacks.add(MaterialStorage.getMS(Material.DIAMOND_AXE, 86, 0));
+				expansionPacks.add(MaterialStorage.getMS(Material.DIAMOND_AXE, 87, 0));
+				expansionPacks.add(MaterialStorage.getMS(Material.DIAMOND_AXE, 88, 0));
+				expansionPacks.add(MaterialStorage.getMS(Material.DIAMOND_AXE, 89, 0));
+				expansionPacks.add(MaterialStorage.getMS(Material.DIAMOND_AXE, 92, 0));
+				expansionPacks.add(MaterialStorage.getMS(Material.DIAMOND_AXE, 94, 0));
+				expansionPacks.add(MaterialStorage.getMS(Material.DIAMOND_AXE, 95, 0));
+				expansionPacks.add(MaterialStorage.getMS(Material.DIAMOND_AXE, 96, 0));
+				expansionPacks.add(MaterialStorage.getMS(Material.DIAMOND_AXE, 97, 0));
+				expansionPacks.add(MaterialStorage.getMS(Material.DIAMOND_AXE, 104, 0));
+				expansionPacks.add(MaterialStorage.getMS(Material.DIAMOND_AXE, 111, 0));
+				expansionPacks.add(MaterialStorage.getMS(Material.DIAMOND_AXE, 112, 0));
+				expansionPacks.add(MaterialStorage.getMS(Material.DIAMOND_AXE, 114, 0));
+				expansionPacks.add(MaterialStorage.getMS(Material.DIAMOND_AXE, 115, 0));
+				expansionPacks.add(MaterialStorage.getMS(Material.DIAMOND_AXE, 116, 0));
+			}
+			
 
 			// GunYMLCreator.createNewGun(false, getDataFolder(), true, "ExampleGun",
 			// "Examplegun",
@@ -2513,7 +2542,8 @@ public class QAMain extends JavaPlugin implements Listener {
 							e.getPlayer().getItemInHand().getDurability() + 1, -1, "-1", "-1"))) {
 				QAMain.DEBUG("A player is using a non-gun item, but may reach the textures of one!");
 				// If the item is not a gun, but the item below it is
-				int safeDurib = QualityArmory.findSafeSpot(e.getPlayer().getItemInHand(), true) + 3;
+				int safeDurib = QualityArmory.findSafeSpot(e.getPlayer().getItemInHand(), true, overrideURL)
+						+ (overrideURL ? 0 : 3);
 
 				// if (e.getItem().getDurability() == 1) {
 				QAMain.DEBUG("Safe Durib= " + (safeDurib) + "! ORG " + e.getPlayer().getItemInHand().getDurability());
@@ -2547,7 +2577,8 @@ public class QAMain extends JavaPlugin implements Listener {
 							e.getPlayer().getInventory().getItemInOffHand().getDurability() + 1, -1, "-1", "-1"))) {
 				QAMain.DEBUG("A player is using a non-gun item, but may reach the textures of one!");
 				// If the item is not a gun, but the item below it is
-				int safeDurib = QualityArmory.findSafeSpot(e.getPlayer().getInventory().getItemInOffHand(), true) + 3;
+				int safeDurib = QualityArmory.findSafeSpot(e.getPlayer().getInventory().getItemInOffHand(), true,
+						overrideURL) + (overrideURL ? 0 : 3);
 
 				// if (e.getItem().getDurability() == 1) {
 				QAMain.DEBUG("Safe Durib= " + (safeDurib) + "! ORG "
@@ -2596,7 +2627,8 @@ public class QAMain extends JavaPlugin implements Listener {
 				if (!e.getPlayer().getItemInHand().getItemMeta().spigot().isUnbreakable()) {
 					QAMain.DEBUG("A player is using a breakable item that reached being a gun!");
 					// If the item is not a gun, but the item below it is
-					int safeDurib = QualityArmory.findSafeSpot(e.getPlayer().getItemInHand(), true) + 3;
+					int safeDurib = QualityArmory.findSafeSpot(e.getPlayer().getItemInHand(), true, overrideURL)
+							+ (overrideURL ? 0 : 3);
 
 					// if (e.getItem().getDurability() == 1) {
 					QAMain.DEBUG(
@@ -2614,8 +2646,8 @@ public class QAMain extends JavaPlugin implements Listener {
 				if (!e.getPlayer().getInventory().getItemInOffHand().getItemMeta().spigot().isUnbreakable()) {
 					QAMain.DEBUG("A player is using a breakable item that reached being a gun!");
 					// If the item is not a gun, but the item below it is
-					int safeDurib = QualityArmory.findSafeSpot(e.getPlayer().getInventory().getItemInOffHand(), true)
-							+ 3;
+					int safeDurib = QualityArmory.findSafeSpot(e.getPlayer().getInventory().getItemInOffHand(), true,
+							overrideURL) + (overrideURL ? 0 : 3);
 
 					// if (e.getItem().getDurability() == 1) {
 					QAMain.DEBUG("Safe Durib= " + (safeDurib) + "! ORG "

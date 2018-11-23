@@ -16,7 +16,7 @@ public enum WeaponSounds {
 	SHOCKWAVE("shockwave"), LAZERFIRE("lazerfire"), GUN_STARWARS("bulletswblaster"), GUN_NEEDLER(
 			"bulletneedler"), GUN_HALOLAZER("bullethalolazer"), GUN_DEAGLE("bulletdeagle"),
 
-	SILENCEDSHOT("bulletsilence"), SIREN("siren"),
+	SILENCEDSHOT("bulletsilence"), SIREN("siren"),ENGINE("engine"),
 
 	HISS("block.lava.extinguish"), XP_ORG_PICKUP("entity.experience_orb.pickup"),
 

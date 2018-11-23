@@ -90,7 +90,7 @@ public class CrackshotLoader {
 					if (m.getId() == i)
 						materialtype = m;
 				}
-				int highestData = QualityArmory.findSafeSpot(materialtype, data, true) + 1;
+				int highestData = QualityArmory.findSafeSpot(materialtype, data, true,false) + 1;
 				if (highestData >= materialtype.getMaxDurability()) {
 					variant = QualityArmory.findSafeSpotVariant(materialtype, data, true) + 1;
 				} else {
@@ -101,7 +101,7 @@ public class CrackshotLoader {
 				if (configMaterial != null) {
 					materialtype = configMaterial;
 				} else {
-					data = QualityArmory.findSafeSpot(materialtype, 2, true) + 1;
+					data = QualityArmory.findSafeSpot(materialtype, 2, true,false) + 1;
 				}
 			}
 

@@ -1,6 +1,8 @@
 package me.zombie_striker.qg;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map.Entry;
 
 import org.apache.commons.lang.StringUtils;
@@ -87,23 +89,23 @@ public class QualityArmory {
 									QAMain.DEBUG("Sending 1.8 auto-detect resourcepack: User is using ID="
 											+ (us.myles.ViaVersion.bukkit.util.ProtocolSupportUtil
 													.getProtocolVersion(player) + ". ID for 1.8= " + QAMain.ID18));
-									QAMain.DEBUG("URL:"+QAMain.url18);
+									QAMain.DEBUG("URL:" + QAMain.url18);
 								} else {
 									player.setResourcePack(QAMain.url);
 									QAMain.DEBUG("Sending default resourcepack: User is using ID="
 											+ (us.myles.ViaVersion.bukkit.util.ProtocolSupportUtil
 													.getProtocolVersion(player) + ". ID for 1.8= " + QAMain.ID18));
-									QAMain.DEBUG("URL:"+QAMain.url);
+									QAMain.DEBUG("URL:" + QAMain.url);
 								}
 							} catch (Error | Exception e4) {
 								if (QAMain.isVersionHigherThan(1, 9)) {
 									QAMain.DEBUG("Sending default resourcepack");
 									player.setResourcePack(QAMain.url);
-									QAMain.DEBUG("URL:"+QAMain.url);
+									QAMain.DEBUG("URL:" + QAMain.url);
 								} else {
 									QAMain.DEBUG("Sending 1.8 resourcepack");
 									player.setResourcePack(QAMain.url18);
-									QAMain.DEBUG("URL:"+QAMain.url18);
+									QAMain.DEBUG("URL:" + QAMain.url18);
 								}
 							}
 
@@ -384,12 +386,40 @@ public class QualityArmory {
 		}
 	}
 
-	public static int findSafeSpot(ItemStack newItem, boolean findHighest) {
-		return findSafeSpot(newItem.getType(), newItem.getDurability(), findHighest);
+	public static int findSafeSpot(ItemStack newItem, boolean findHighest, boolean allowPockets) {
+		return findSafeSpot(newItem.getType(), newItem.getDurability(), findHighest, allowPockets);
 	}
 
-	public static int findSafeSpot(Material newItemtype, int startingData, boolean findHighest) {
+	public static int findSafeSpot(Material newItemtype, int startingData, boolean findHighest, boolean allowPockets) {
 		int safeDurib = startingData;
+		if (allowPockets) {
+			List<Integer> idsToWorryAbout = new ArrayList<>();
+			for (MaterialStorage j : QAMain.ammoRegister.keySet())
+				if (j.getMat() == newItemtype && ((j.getData() > safeDurib) == findHighest))
+					idsToWorryAbout.add(j.getData());
+			for (MaterialStorage j : QAMain.gunRegister.keySet())
+				if (j.getMat() == newItemtype && ((j.getData() > safeDurib) == findHighest))
+					idsToWorryAbout.add(j.getData());
+			for (MaterialStorage j : QAMain.miscRegister.keySet())
+				if (j.getMat() == newItemtype && ((j.getData() > safeDurib) == findHighest))
+					idsToWorryAbout.add(j.getData());
+			for (MaterialStorage j : QAMain.armorRegister.keySet())
+				if (j.getMat() == newItemtype && ((j.getData() > safeDurib) == findHighest))
+					idsToWorryAbout.add(j.getData());
+			if (findHighest) {
+				for (int id = safeDurib+1; id < safeDurib + 1000; id++) {
+					if (!idsToWorryAbout.contains(id))
+						return id;
+				}
+			} else {
+				for (int id = safeDurib-1; id > 0; id--) {
+					if (!idsToWorryAbout.contains(id))
+						return id;
+				}
+			}
+			return 0;
+		}
+
 		for (MaterialStorage j : QAMain.ammoRegister.keySet())
 			if (j.getMat() == newItemtype && (j.getData() > safeDurib) == findHighest)
 				safeDurib = j.getData();

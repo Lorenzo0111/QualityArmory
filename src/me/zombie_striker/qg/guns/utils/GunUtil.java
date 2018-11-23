@@ -639,7 +639,7 @@ public class GunUtil {
 				new BukkitRunnable() {
 					@Override
 					public void run() {
-						if (QAMain.hasProtocolLib && QAMain.isVersionHigherThan(1, 12)) {
+						if (QAMain.hasProtocolLib && QAMain.isVersionHigherThan(1, 13)) {
 							addRecoilWithProtocolLib(player, g, true);
 						} else
 							addRecoilWithTeleport(player, g, true);

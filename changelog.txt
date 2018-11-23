@@ -1,3 +1,7 @@
+1.1.125
+	Added ability to have "pockets" for gun IDs if you have DefaultResourcepackOverride set to true (this is done because QAV uses the same resourcepack, and setting this to true means you know what you're doing)
+	Fixed recoil for 1.12.
+
 1.1.124
 	Add option to ignore armor protection when dealing bullet damage (enableIgnoreArmorProtection)
 	Fixed config saving system.

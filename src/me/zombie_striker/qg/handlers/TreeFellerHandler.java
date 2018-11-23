@@ -10,6 +10,7 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
+import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.api.QualityArmory;
 
 
@@ -29,9 +30,9 @@ public class TreeFellerHandler implements Listener {
 	public void onBlock(BlockBreakEvent e) {
 		if(QualityArmory.isCustomItem(e.getPlayer().getItemInHand()) && (System.currentTimeMillis()-lastClicked.get(e.getPlayer().getUniqueId())<1000)) {
 			lastClicked.put(e.getPlayer().getUniqueId(), System.currentTimeMillis());
-			int durib = QualityArmory.findSafeSpot(e.getPlayer().getItemInHand(), true);
+			int durib = QualityArmory.findSafeSpot(e.getPlayer().getItemInHand(), true,QAMain.overrideURL);
 			ItemStack temp = e.getPlayer().getItemInHand();
-			temp.setDurability((short) (durib+4));
+			temp.setDurability((short) (durib+(QAMain.overrideURL?0:4)));
 			e.getPlayer().setItemInHand(temp);
 		}
 	}

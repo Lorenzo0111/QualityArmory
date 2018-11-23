@@ -1,6 +1,8 @@
 package me.zombie_striker.qg.api;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map.Entry;
 
 import org.apache.commons.lang.StringUtils;
@@ -373,12 +375,43 @@ public class QualityArmory {
 	}
 
 	@SuppressWarnings("deprecation")
-	public static int findSafeSpot(ItemStack newItem, boolean findHighest) {
-		return findSafeSpot(newItem.getType(), newItem.getDurability(), findHighest);
+	public static int findSafeSpot(ItemStack newItem, boolean findHighest, boolean allowPockets) {
+		return findSafeSpot(newItem.getType(), newItem.getDurability(), findHighest, allowPockets);
 	}
 
-	public static int findSafeSpot(Material newItemtype, int startingData, boolean findHighest) {
+	public static int findSafeSpot(Material newItemtype, int startingData, boolean findHighest, boolean allowPockets) {
 		int safeDurib = startingData;
+		if (allowPockets) {
+			List<Integer> idsToWorryAbout = new ArrayList<>();
+			for (MaterialStorage j : QAMain.ammoRegister.keySet())
+				if (j.getMat() == newItemtype && ((j.getData() > safeDurib) == findHighest))
+					idsToWorryAbout.add(j.getData());
+			for (MaterialStorage j : QAMain.gunRegister.keySet())
+				if (j.getMat() == newItemtype && ((j.getData() > safeDurib) == findHighest))
+					idsToWorryAbout.add(j.getData());
+			for (MaterialStorage j : QAMain.miscRegister.keySet())
+				if (j.getMat() == newItemtype && ((j.getData() > safeDurib) == findHighest))
+					idsToWorryAbout.add(j.getData());
+			for (MaterialStorage j : QAMain.armorRegister.keySet())
+				if (j.getMat() == newItemtype && ((j.getData() > safeDurib) == findHighest))
+					idsToWorryAbout.add(j.getData());
+			for (MaterialStorage j : QAMain.expansionPacks)
+				if (j.getMat() == newItemtype && ((j.getData() > safeDurib) == findHighest))
+					idsToWorryAbout.add(j.getData());
+			if (findHighest) {
+				for (int id = safeDurib+1; id < safeDurib + 1000; id++) {
+					if (!idsToWorryAbout.contains(id))
+						return id;
+				}
+			} else {
+				for (int id = safeDurib-1; id > 0; id--) {
+					if (!idsToWorryAbout.contains(id))
+						return id;
+				}
+			}
+			return 0;
+		}
+
 		for (MaterialStorage j : QAMain.ammoRegister.keySet())
 			if (j.getMat() == newItemtype && (j.getData() > safeDurib) == findHighest)
 				safeDurib = j.getData();
@@ -391,15 +424,16 @@ public class QualityArmory {
 		for (MaterialStorage j : QAMain.armorRegister.keySet())
 			if (j.getMat() == newItemtype && (j.getData() > safeDurib) == findHighest)
 				safeDurib = j.getData();
-		/*for (MaterialStorage j : QAMain.attachmentRegister.keySet())
-			if (j.getMat() == newItemtype && (j.getData() > safeDurib) == findHighest)
-				safeDurib = j.getData();*/
+		/*
+		 * for (MaterialStorage j : QAMain.attachmentRegister.keySet()) if (j.getMat()
+		 * == newItemtype && (j.getData() > safeDurib) == findHighest) safeDurib =
+		 * j.getData();
+		 */
 		for (MaterialStorage j : QAMain.expansionPacks)
 			if (j.getMat() == newItemtype && (j.getData() > safeDurib) == findHighest)
 				safeDurib = j.getData();
 		return safeDurib;
 	}
-
 	@SuppressWarnings("deprecation")
 	public static int findSafeSpotVariant(ItemStack newItem, boolean findHighest) {
 		return findSafeSpotVariant(newItem.getType(), newItem.getDurability(), findHighest);

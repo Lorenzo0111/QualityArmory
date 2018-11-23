@@ -19,7 +19,7 @@ public class Update19Events implements Listener {
 	public void onAnvil(PrepareAnvilEvent e) {
 		if (QualityArmory.isCustomItem(e.getResult())) {
 			ItemStack newi = e.getResult();
-			newi.setDurability((short) QualityArmory.findSafeSpot(e.getResult(), false));
+			newi.setDurability((short) QualityArmory.findSafeSpot(e.getResult(), false,QAMain.overrideURL));
 			e.setResult(newi);
 		}
 		for (ItemStack is : e.getInventory().getContents()) {
