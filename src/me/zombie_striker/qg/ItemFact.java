@@ -425,7 +425,7 @@ public class ItemFact {
 	public static int getDamage(ItemStack is) {
 		for (String lore : is.getItemMeta().getLore()) {
 			if (ChatColor.stripColor(lore).startsWith(QAMain.S_ITEM_DURIB)) {
-				return Integer.parseInt(lore.split(":")[1].split("/")[0]);
+				return Integer.parseInt(lore.split(":")[1].split("/")[0].trim());
 			}
 		}
 		return -1;
@@ -492,7 +492,7 @@ public class ItemFact {
 
 	public static void addVarientData(List<String> lore, ArmoryBaseObject object) {
 		if (object.getItemData().isVarient())
-			lore.add(QAMain.S_ITEM_VARIENTS + " " + object.getItemData().getVarient());
+			lore.add(QAMain.S_ITEM_VARIENTS_NEW + " " + object.getItemData().getVarient());
 	}
 
 	public static int getAmount(ItemStack is) {

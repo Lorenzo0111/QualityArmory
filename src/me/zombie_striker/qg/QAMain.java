@@ -92,6 +92,9 @@ public class QAMain extends JavaPlugin implements Listener {
 
 	public static boolean orderShopByPrice = false;
 
+	public static boolean ignoreUnbreaking = false;
+	public static boolean ignoreSkipping = false;
+
 	public static boolean enableDurability = false;
 
 	public static boolean enableArmorIgnore = false;
@@ -157,20 +160,21 @@ public class QAMain extends JavaPlugin implements Listener {
 	public static boolean kickIfDeniedRequest = false;
 	// public static String url19plus =
 	// "https://www.dropbox.com/s/faufrgo7w2zpi3d/QualityArmoryv1.0.10.zip?dl=1";
-	public static String url_newest = "https://www.dropbox.com/s/a8c6pw5sef4zf5f/QualityArmoryv1.0.36.zip?dl=1";
+	public static String url_newest = "https://www.dropbox.com/s/3mkoulo9tzdte8w/QualityArmoryv1.0.37.zip?dl=1";
 	public static String url18 = "https://www.dropbox.com/s/gx6dhahq6onob4g/QualityArmory1.8v1.0.1.zip?dl=1";
 	public static String url = url_newest;
 
-	public static String S_NOPERM = "&c You do not have permission to do that";
+	public static String S_NOPERM = "&c You do not have permission to do that.";
 	public static String S_NORES1 = " &c&l Downloading Resourcepack...";
-	public static String S_NORES2 = " &f Accept the resourcepack to see correct textures";
-	public static String S_ANVIL = " &aYou do not have permission to use this armory bench. ShiftClick to access anvil.";
+	public static String S_NORES2 = " &f Accept the resourcepack to see the custom items";
+	public static String S_ANVIL = " &a You do not have permission to use this armory bench. Shift+Click to access anvil.";
 	public static String S_ITEM_BULLETS = "&aBullets";
 	public static String S_ITEM_DURIB = "Durability";
 	public static String S_ITEM_DAMAGE = "&aDamage";
 	public static String S_ITEM_AMMO = "&aAmmo";
 	public static String S_ITEM_ING = "Ingredients";
-	public static String S_ITEM_VARIENTS = "&7Varient:";
+	public static String S_ITEM_VARIENTS_LEGACY = "&7Varient:";
+	public static String S_ITEM_VARIENTS_NEW = "&7Varient:";
 	public static String S_ITEM_DPS = "&2DPS";
 	public static String S_ITEM_COST = "&" + ChatColor.GOLD.getChar() + "Price: ";
 
@@ -204,9 +208,9 @@ public class QAMain extends JavaPlugin implements Listener {
 	public static String S_HOTBAR_FORMAT = "%name% = %amount%/%max% %state%";
 
 	public static String S_RESOURCEPACK_HELP = "In case the resourcepack crashes your client, reject the request and use /qa getResourcepack to get the resourcepack.";
-	public static String S_RESOURCEPACK_DOWNLOAD = "Download this resourcepack and enable it to see gun models (Note that it may take some time to load)";
-	public static String S_RESOURCEPACK_BYPASS = "By issuing this command, you are now added to a whitelist for the resourcepack. You should no longer see the request";
-	public static String S_RESOURCEPACK_OPTIN = "By issuing this command, you have been removed from the whitelist. You will now recieve resourcepack requests";
+	public static String S_RESOURCEPACK_DOWNLOAD = "Download this resourcepack and enable it to see the custom items (Note that it may take some time to load)";
+	public static String S_RESOURCEPACK_BYPASS = "By issuing this command, you are now added to a whitelist for the resourcepack. You should no longer see the prompt";
+	public static String S_RESOURCEPACK_OPTIN = "By issuing this command, you have been removed from the whitelist. You will now recieve the resourcepack prompt";
 
 	public static String S_GRENADE_PULLPIN = " Pull the pin first...";
 	public static String S_GRENADE_PALREADYPULLPIN = "You already pulled the pin!";
@@ -227,12 +231,12 @@ public class QAMain extends JavaPlugin implements Listener {
 			+ ChatColor.WHITE;
 
 	// public Inventory craftingMenu;
-	public static String S_craftingBenchName = "Armory Bench Page:";
-	public static String S_missingIngredients = "You do not have all the materials needed to craft this";
+	public static String S_craftingBenchName = "Armory Crafting-Bench Page:";
+	public static String S_missingIngredients = "You do not have all the materials needed to craft this.";
 
 	// public Inventory shopMenu;
 	public static String S_shopName = "Weapons Shop Page:";
-	public static String S_noMoney = "You do not have enough money to buy this";
+	public static String S_noMoney = "You do not have enough money to buy this.";
 	public static String S_noEcon = "ECONOMY NOT ENABLED. REPORT THIS TO THE OWNER!";
 
 	public static ItemStack prevButton;
@@ -431,7 +435,7 @@ public class QAMain extends JavaPlugin implements Listener {
 						// if (p.getItemInHand().containsEnchantment(Enchantment.MENDING)) {
 						if (p.getItemInHand() != null && p.getItemInHand().hasItemMeta())
 							if (QualityArmory.isCustomItem(p.getItemInHand())) {
-								if (!p.getItemInHand().getItemMeta().spigot().isUnbreakable()) {
+								if (!p.getItemInHand().getItemMeta().spigot().isUnbreakable() && !ignoreUnbreaking) {
 									ItemStack temp = p.getItemInHand();
 									int j = QualityArmory.findSafeSpot(temp, false, overrideURL);
 									temp.setDurability((short) Math.max(0, j - 1));
@@ -447,7 +451,8 @@ public class QAMain extends JavaPlugin implements Listener {
 							if (p.getInventory().getItemInOffHand() != null
 									&& p.getInventory().getItemInOffHand().hasItemMeta())
 								if (QualityArmory.isCustomItem(p.getInventory().getItemInOffHand())) {
-									if (!p.getInventory().getItemInOffHand().getItemMeta().spigot().isUnbreakable()) {
+									if (!p.getInventory().getItemInOffHand().getItemMeta().spigot().isUnbreakable()
+											&& !ignoreUnbreaking) {
 										ItemStack temp = p.getInventory().getItemInOffHand();
 										int j = QualityArmory.findSafeSpot(temp, false, overrideURL);
 										temp.setDurability((short) Math.max(0, j - 1));
@@ -563,7 +568,11 @@ public class QAMain extends JavaPlugin implements Listener {
 		S_ITEM_DAMAGE = ChatColor.translateAlternateColorCodes('&', (String) m.a("Lore_Damage", S_ITEM_DAMAGE));
 		S_ITEM_DURIB = ChatColor.translateAlternateColorCodes('&', (String) m.a("Lore_Durib", S_ITEM_DURIB));
 		S_ITEM_ING = ChatColor.translateAlternateColorCodes('&', (String) m.a("Lore_ingredients", S_ITEM_ING));
-		S_ITEM_VARIENTS = ChatColor.translateAlternateColorCodes('&', (String) m.a("Lore_Varients", S_ITEM_VARIENTS));
+		if (m.getConfig().contains("Lore_Varients"))
+			S_ITEM_VARIENTS_LEGACY = ChatColor.translateAlternateColorCodes('&',
+					(String) m.a("Lore_Varients", S_ITEM_VARIENTS_LEGACY));
+		S_ITEM_VARIENTS_NEW = ChatColor.translateAlternateColorCodes('&',
+				(String) m.a("Lore_Variants", S_ITEM_VARIENTS_NEW));
 		S_ITEM_COST = ChatColor.translateAlternateColorCodes('&', (String) m.a("Lore_Price", S_ITEM_COST));
 		S_ITEM_DPS = ChatColor.translateAlternateColorCodes('&', (String) m.a("Lore_DamagePerSecond", S_ITEM_DPS));
 
@@ -584,7 +593,7 @@ public class QAMain extends JavaPlugin implements Listener {
 		S_RMB_R1 = (String) m.a("Lore-Reload-Dropitem", S_RMB_R1);
 		S_RMB_R2 = (String) m.a("Lore-Reload-RMB", S_RMB_R2);
 
-		S_BUYCONFIRM = ChatColor.translateAlternateColorCodes('&', (String) m.a("Shop_Cormirm", S_BUYCONFIRM));
+		S_BUYCONFIRM = ChatColor.translateAlternateColorCodes('&', (String) m.a("Shop_Confirm", S_BUYCONFIRM));
 
 		S_RESOURCEPACK_HELP = (String) m.a("Resourcepack_InCaseOfCrash", S_RESOURCEPACK_HELP);
 		S_RESOURCEPACK_DOWNLOAD = (String) m.a("Resourcepack_Download", S_RESOURCEPACK_DOWNLOAD);
@@ -596,13 +605,9 @@ public class QAMain extends JavaPlugin implements Listener {
 				(String) m.a("Medkit-Healing", S_MEDKIT_HEALING));
 		S_MEDKIT_BLEEDING = ChatColor.translateAlternateColorCodes('&',
 				(String) m.a("Medkit-Bleeding", S_MEDKIT_BLEEDING));
-		// S_MEDKIT_HEALINGHEARTS =ChatColor.translateAlternateColorCodes('&',(String)
-		// m.a("Medkit-HEALING_HEARTS", S_MEDKIT_HEALINGHEARTS));
-		// S_MEDKIT_WAIT=ChatColor.translateAlternateColorCodes('&',(String)
-		// m.a("Medkit-HEALING_WAIT", S_MEDKIT_WAIT));
+		
 		S_MEDKIT_HEAL_AMOUNT = (double) m.a("Medkit-HEALING_HEARTS_AMOUNT", S_MEDKIT_HEAL_AMOUNT);
-		// S_MEDKIT_HEARTDELAY =(double) m.a("Medkit-HEALING_DELAY_IN_SECONDS",
-		// S_MEDKIT_HEARTDELAY);
+		
 		S_MEDKIT_HEALDELAY = (double) m.a("Medkit-HEALING_WEAPPING_DELAY_IN_SECONDS", S_MEDKIT_HEALDELAY);
 
 		S_MEDKIT_LORE_INFO = ChatColor.translateAlternateColorCodes('&',
@@ -635,15 +640,7 @@ public class QAMain extends JavaPlugin implements Listener {
 
 		kickIfDeniedRequest = (boolean) a("KickPlayerIfDeniedResourcepack", false);
 		shouldSend = (boolean) a("useDefaultResourcepack", true);
-		/*
-		 * UnlimitedAmmoPistol = (boolean) a("UnlimitedPistolAmmo", false);
-		 * UnlimitedAmmoShotgun = (boolean) a("UnlimitedShotgunAmmo", false);
-		 * UnlimitedAmmoRifle = (boolean) a("UnlimitedRifleAmmo", false);
-		 * UnlimitedAmmoSMG = (boolean) a("UnlimitedSMGAmmo", false);
-		 * UnlimitedAmmoSniper = (boolean) a("UnlimitedSniperAmmo", false);
-		 * UnlimitedAmmoRPG = (boolean) a("UnlimitedRocketAmmo", false);
-		 * UnlimitedAmmoLazer = (boolean) a("UnlimitedLazerAmmo", false);
-		 */
+		
 		enableDurability = (boolean) a("EnableWeaponDurability", false);
 
 		bulletStep = (double) a("BulletDetection.step", 0.10);
@@ -658,20 +655,26 @@ public class QAMain extends JavaPlugin implements Listener {
 
 		overrideAnvil = (boolean) a("overrideAnvil", false);
 
-		sendOnJoin = (boolean) a("sendOnJoin", false);
+		sendOnJoin = (boolean) a("sendOnJoin", true);
 		sendTitleOnJoin = (boolean) a("sendTitleOnJoin", false);
 		secondsTilSend = Double.valueOf(a("SecondsTillRPIsSent", 5.0) + "");
 
 		enableBulletTrails = (boolean) a("enableBulletTrails", true);
 		smokeSpacing = Double.valueOf(a("BulletTrailsSpacing", 0.5) + "");
+		
+		
 
 		enableArmorIgnore = (boolean) a("enableIgnoreArmorProtection", enableArmorIgnore);
+		ignoreUnbreaking = (boolean) a("enableIgnoreUnbreakingChecks", ignoreUnbreaking);
+		ignoreSkipping = (boolean) a("enableIgnoreSkipForBasegameItems", ignoreSkipping);
+		
+		
 
-		enableVisibleAmounts = (boolean) a("enableVisibleBulletCounts", false);
+		//enableVisibleAmounts = (boolean) a("enableVisibleBulletCounts", false);
 		reloadOnF = (boolean) a("enableReloadingWhenSwapToOffhand", true);
 		reloadOnFOnly = (boolean) a("enableReloadOnlyWhenSwapToOffhand", false);
 
-		showOutOfAmmoOnItem = (boolean) a("showOutOfAmmoOnItem", false);
+		//showOutOfAmmoOnItem = (boolean) a("showOutOfAmmoOnItem", false);
 		showOutOfAmmoOnTitle = (boolean) a("showOutOfAmmoOnTitle", false);
 		showReloadOnTitle = (boolean) a("showReloadingTitle", false);
 
@@ -693,8 +696,7 @@ public class QAMain extends JavaPlugin implements Listener {
 		ENABLE_LORE_INFO = (boolean) a("enable_lore_gun-info_messages", true);
 		ENABLE_LORE_HELP = (boolean) a("enable_lore_control-help_messages", true);
 
-		usedIronSightsMaterial = Material
-				.matchMaterial((String) a("Material_For_IronSightToggle_Item", usedIronSightsMaterial.name()));
+		usedIronSightsMaterial = Material.matchMaterial((String) a("Material_For_IronSightToggle_Item", usedIronSightsMaterial.name()));
 		usedIronSightsData = (int) a("Data_For_IronSightToggle_Item", usedIronSightsData);
 
 		HeadshotOneHit = (boolean) a("Enable_Headshot_Instantkill", HeadshotOneHit);
@@ -702,7 +704,6 @@ public class QAMain extends JavaPlugin implements Listener {
 		headshot_sound = (String) a("Headshot_Notification_Sound", headshot_sound);
 		headshotGoreSounds = (boolean) a("Enable_Headshot_Sounds", headshotGoreSounds);
 
-		hideTextureWarnings = (boolean) a("hideTextureWarnings", false);
 		ignoreArmorStands = (boolean) a("ignoreArmorStands", false);
 
 		gravity = (double) a("gravityConstantForDropoffCalculations", gravity);
@@ -755,6 +756,7 @@ public class QAMain extends JavaPlugin implements Listener {
 			if (!getConfig().contains("DefaultResourcepack")
 					|| !url.equals(getConfig().getString("DefaultResourcepack"))) {
 				getConfig().set("DefaultResourcepack", url);
+				getConfig().set("DefaultResourcepack_18", url18);
 				saveTheConfig = true;
 			}
 		}
@@ -778,7 +780,7 @@ public class QAMain extends JavaPlugin implements Listener {
 						|| m.name().contains("LEVER"))
 					interactableBlocks.add(m);
 		if (saveTheConfig) {
-			Bukkit.getConsoleSender().sendMessage(prefix + " Needed to save config: code=2");
+			DEBUG(prefix + " Needed to save config: code=2");
 			saveConfig();
 		}
 
@@ -922,7 +924,7 @@ public class QAMain extends JavaPlugin implements Listener {
 						.setReloadingHandler(ReloadingManager.PUMPACTIONRELOAD).setBulletsPerShot(20).setDistance(70)
 						.setRecoil(10).done();
 				GunYMLCreator
-						.createNewDefaultGun(getDataFolder(), "fnfal", "FNFal", 9, stringsMetalRif, WeaponType.RIFLE,
+						.createNewDefaultGun(getDataFolder(), "fnfal", "FN Fal", 9, stringsMetalRif, WeaponType.RIFLE,
 								null, false, "762", 3, 32, 3800)
 						.setFullyAutomatic(2).setBulletsPerShot(1).setRecoil(2).done();
 				GunYMLCreator
@@ -949,12 +951,12 @@ public class QAMain extends JavaPlugin implements Listener {
 						.setIsSecondaryWeapon(true).setChargingHandler(ChargingManager.REVOLVER)
 						.setReloadingHandler(ReloadingManager.SINGLERELOAD).done();
 				GunYMLCreator
-						.createNewDefaultGun(getDataFolder(), "henryrifle", "HenryRifle", 19, stringsGoldRif,
+						.createNewDefaultGun(getDataFolder(), "henryrifle", "Henry Rifle", 19, stringsGoldRif,
 								WeaponType.RIFLE, null, true, "556", 4, 6, 400)
 						.setChargingHandler(ChargingManager.BREAKACTION)
 						.setReloadingHandler(ReloadingManager.SINGLERELOAD).done();
 				GunYMLCreator
-						.createNewDefaultGun(getDataFolder(), "mauser", "Mauser.c96", 20, stringsPistol,
+						.createNewDefaultGun(getDataFolder(), "mauser", "Mauser C96", 20, stringsPistol,
 								WeaponType.PISTOL, null, true, "9mm", 3, 12, 700)
 						.setSwayMultiplier(3).setIsSecondaryWeapon(true).done();
 
@@ -971,7 +973,7 @@ public class QAMain extends JavaPlugin implements Listener {
 								WeaponType.SNIPER, null, true, "762", 7, 12, 2100)
 						.setDelayShoot(0.4).setZoomLevel(9).setSwayMultiplier(3).setRecoil(5).done();
 				GunYMLCreator
-						.createNewDefaultGun(getDataFolder(), "spas12", "Spas.12", 24, stringsMetalRif,
+						.createNewDefaultGun(getDataFolder(), "spas12", "Spas-12", 24, stringsMetalRif,
 								WeaponType.SHOTGUN, null, false, "shell", 2, 8, 1000)
 						.setBulletsPerShot(20).setDistance(80).setRecoil(10).done();
 				GunYMLCreator
@@ -1022,7 +1024,7 @@ public class QAMain extends JavaPlugin implements Listener {
 						.dontVerify().done();
 
 				GunYMLCreator
-						.createNewDefaultGun(getDataFolder(), "m4a1s", "M4A1S", 44, stringsMetalRif, WeaponType.RIFLE,
+						.createNewDefaultGun(getDataFolder(), "m4a1s", "M4A1s", 44, stringsMetalRif, WeaponType.RIFLE,
 								null, true, "556", 3, 30, 3600)
 						.setFullyAutomatic(2).setBulletsPerShot(1).setRecoil(5).done();
 
@@ -1039,7 +1041,7 @@ public class QAMain extends JavaPlugin implements Listener {
 						WeaponType.PISTOL, null, true, "9mm", 3, 12, 700).setIsSecondaryWeapon(true).done();
 
 				GunYMLCreator
-						.createNewDefaultGun(getDataFolder(), "dp27", "DP27", 48, stringsMetalRif, WeaponType.RIFLE,
+						.createNewDefaultGun(getDataFolder(), "dp27", "DP-27", 48, stringsMetalRif, WeaponType.RIFLE,
 								WeaponSounds.GUN_BIG, true, "762", 3, 47, 3000)
 						.setFullyAutomatic(2).setBulletsPerShot(1).setRecoil(2).done();
 
@@ -1205,13 +1207,13 @@ public class QAMain extends JavaPlugin implements Listener {
 						.setDelayShoot(0.6).setZoomLevel(6).setDistance(290).setSwayMultiplier(3).setRecoil(8).done();
 
 				GunYMLCreator
-						.createNewDefaultGun(getDataFolder(), "barrett", "Barret-M82", 91, stringsWoodRif,
+						.createNewDefaultGun(getDataFolder(), "barrett", "Barrett-M82", 91, stringsWoodRif,
 								WeaponType.SNIPER, WeaponSounds.GUN_BIG, true, "50bmg", 17, 10, 4000)
 						.setDelayShoot(1).setZoomLevel(6).setDistance(350).setDelayReload(2.5).setSwayMultiplier(3)
 						.setNightVisionOnScope(true).setRecoil(15).done();
 
 				GunYMLCreator
-						.createNewDefaultGun(getDataFolder(), "makarov", "Makarov PM", 93, stringsPistol,
+						.createNewDefaultGun(getDataFolder(), "makarov", "Makarov \"PM\"", 93, stringsPistol,
 								WeaponType.PISTOL, WeaponSounds.GUN_SMALL_AUTO, true, "9mm", 3, 8, 700)
 						.setIsSecondaryWeapon(true).done();
 
@@ -1249,7 +1251,7 @@ public class QAMain extends JavaPlugin implements Listener {
 								WeaponType.SNIPER, null, true, "762", 10, 6, 2500)
 						.setZoomLevel(2).setDelayShoot(0.7).setChargingHandler(ChargingManager.BOLT)
 						.setSwayMultiplier(3).setDistance(280).setRecoil(7).done();
-				GunYMLCreator.createNewDefaultGun(getDataFolder(), "mp40", "Mp40", 107, stringsMetalRif, WeaponType.SMG,
+				GunYMLCreator.createNewDefaultGun(getDataFolder(), "mp40", "MP 40", 107, stringsMetalRif, WeaponType.SMG,
 						WeaponSounds.GUN_SMALL, true, "9mm", 2, 32, 3800).setFullyAutomatic(3).done();
 				GunYMLCreator
 						.createNewDefaultGun(getDataFolder(), "sturmgewehr44", "Sturmgewehr 44", 108, stringsMetalRif,
@@ -1299,12 +1301,9 @@ public class QAMain extends JavaPlugin implements Listener {
 								WeaponType.RIFLE, WeaponSounds.GUN_SMALL_AUTO, true, "9mm", 2, 32, 2500)
 						.setFullyAutomatic(3).setRecoil(1).done();
 			}
-			
-			
-			
-			
-			//80 81 82 83 84 86 87 88 89 92 94 95 96 97 104 111 112 114 115 116
-			if(!overrideURL) {
+
+			// 80 81 82 83 84 86 87 88 89 92 94 95 96 97 104 111 112 114 115 116
+			if (!overrideURL) {
 				expansionPacks.add(MaterialStorage.getMS(Material.DIAMOND_AXE, 80, 0));
 				expansionPacks.add(MaterialStorage.getMS(Material.DIAMOND_AXE, 81, 0));
 				expansionPacks.add(MaterialStorage.getMS(Material.DIAMOND_AXE, 82, 0));
@@ -1327,7 +1326,6 @@ public class QAMain extends JavaPlugin implements Listener {
 				expansionPacks.add(MaterialStorage.getMS(Material.DIAMOND_AXE, 115, 0));
 				expansionPacks.add(MaterialStorage.getMS(Material.DIAMOND_AXE, 116, 0));
 			}
-			
 
 			// GunYMLCreator.createNewGun(false, getDataFolder(), true, "ExampleGun",
 			// "Examplegun",
@@ -1731,18 +1729,38 @@ public class QAMain extends JavaPlugin implements Listener {
 					return true;
 				}
 				if (args[0].equalsIgnoreCase("sendResourcepack")) {
-					namesToBypass.remove(sender.getName());
+					Player player = null;
+					if (args.length > 1) {
+						player = Bukkit.getPlayer(args[1]);
+						if (player == null) {
+							sender.sendMessage(prefix + " This player does not exist.");
+							return true;
+						}
+					} else {
+						player = (Player) sender;
+					}
+					namesToBypass.remove(player.getName());
 					resourcepackwhitelist.set("Names_Of_players_to_bypass", namesToBypass);
 					sender.sendMessage(prefix + S_RESOURCEPACK_OPTIN);
-					QualityArmory.sendResourcepack((Player) sender, true);
+					QualityArmory.sendResourcepack(player, true);
 					return true;
 				}
 				if (args[0].equalsIgnoreCase("getResourcepack")) {
-					namesToBypass.add(sender.getName());
+					Player player = null;
+					if (args.length > 1) {
+						player = Bukkit.getPlayer(args[1]);
+						if (player == null) {
+							sender.sendMessage(prefix + " This player does not exist.");
+							return true;
+						}
+					} else {
+						player = (Player) sender;
+					}
+					namesToBypass.add(player.getName());
 					resourcepackwhitelist.set("Names_Of_players_to_bypass", namesToBypass);
-					sender.sendMessage(prefix + S_RESOURCEPACK_DOWNLOAD);
-					sender.sendMessage(url);
-					sender.sendMessage(prefix + S_RESOURCEPACK_BYPASS);
+					player.sendMessage(prefix + S_RESOURCEPACK_DOWNLOAD);
+					player.sendMessage(url);
+					player.sendMessage(prefix + S_RESOURCEPACK_BYPASS);
 					return true;
 				}
 
@@ -2523,23 +2541,11 @@ public class QAMain extends JavaPlugin implements Listener {
 	@SuppressWarnings("deprecation")
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onClickMONITOR(final PlayerInteractEvent e) {
-		if (!QualityArmory.isCustomItem(e.getPlayer().getItemInHand())) {
+		if (ignoreSkipping)
+			return;
+		if (e.getPlayer().getItemInHand() != null && !QualityArmory.isCustomItem(e.getPlayer().getItemInHand())) {
 			QAMain.DEBUG("Item is not any valid item - mainhand");
-			if (gunRegister
-					.containsKey(MaterialStorage.getMS(e.getPlayer().getItemInHand().getType(),
-							e.getPlayer().getItemInHand().getDurability() + 1, -1, "-1", "-1"))
-					|| ammoRegister.containsKey(MaterialStorage.getMS(e.getPlayer().getItemInHand().getType(),
-							e.getPlayer().getItemInHand().getDurability() + 1, -1, "-1", "-1"))
-					|| miscRegister.containsKey(MaterialStorage.getMS(e.getPlayer().getItemInHand().getType(),
-							e.getPlayer().getItemInHand().getDurability() + 1, -1, "-1", "-1"))
-					|| armorRegister.containsKey(MaterialStorage.getMS(e.getPlayer().getItemInHand().getType(),
-							e.getPlayer().getItemInHand().getDurability() + 1, -1, "-1", "-1"))
-					// ||
-					// attachmentRegister.containsKey(MaterialStorage.getMS(e.getPlayer().getItemInHand().getType(),
-					// e.getPlayer().getItemInHand().getDurability() + 1, -1, "-1", "-1"))
-
-					|| expansionPacks.contains(MaterialStorage.getMS(e.getPlayer().getItemInHand().getType(),
-							e.getPlayer().getItemInHand().getDurability() + 1, -1, "-1", "-1"))) {
+			if (QualityArmory.isCustomItemNextId(e.getPlayer().getItemInHand())) {
 				QAMain.DEBUG("A player is using a non-gun item, but may reach the textures of one!");
 				// If the item is not a gun, but the item below it is
 				int safeDurib = QualityArmory.findSafeSpot(e.getPlayer().getItemInHand(), true, overrideURL)
@@ -2554,27 +2560,10 @@ public class QAMain extends JavaPlugin implements Listener {
 				// }
 			}
 		}
-		if (!QualityArmory.isCustomItem(e.getPlayer().getInventory().getItemInOffHand())) {
-			QAMain.DEBUG("Item is not any valid item");
-			if (gunRegister
-					.containsKey(MaterialStorage.getMS(e.getPlayer().getInventory().getItemInOffHand().getType(),
-							e.getPlayer().getInventory().getItemInOffHand().getDurability() + 1, -1, "-1", "-1"))
-					|| ammoRegister.containsKey(MaterialStorage.getMS(
-							e.getPlayer().getInventory().getItemInOffHand().getType(),
-							e.getPlayer().getInventory().getItemInOffHand().getDurability() + 1, -1, "-1", "-1"))
-					|| miscRegister.containsKey(MaterialStorage.getMS(
-							e.getPlayer().getInventory().getItemInOffHand().getType(),
-							e.getPlayer().getInventory().getItemInOffHand().getDurability() + 1, -1, "-1", "-1"))
-					|| armorRegister.containsKey(MaterialStorage.getMS(
-							e.getPlayer().getInventory().getItemInOffHand().getType(),
-							e.getPlayer().getInventory().getItemInOffHand().getDurability() + 1, -1, "-1", "-1"))
-					// || attachmentRegister.containsKey(MaterialStorage.getMS(
-					// e.getPlayer().getInventory().getItemInOffHand().getType(),
-					// e.getPlayer().getInventory().getItemInOffHand().getDurability() + 1, -1,
-					// "-1", "-1"))
-					|| expansionPacks.contains(MaterialStorage.getMS(
-							e.getPlayer().getInventory().getItemInOffHand().getType(),
-							e.getPlayer().getInventory().getItemInOffHand().getDurability() + 1, -1, "-1", "-1"))) {
+		if (e.getPlayer().getInventory().getItemInOffHand() != null
+				&& !QualityArmory.isCustomItem(e.getPlayer().getInventory().getItemInOffHand())) {
+			QAMain.DEBUG("Item is not any valid item - offhand");
+			if (QualityArmory.isCustomItemNextId(e.getPlayer().getInventory().getItemInOffHand())) {
 				QAMain.DEBUG("A player is using a non-gun item, but may reach the textures of one!");
 				// If the item is not a gun, but the item below it is
 				int safeDurib = QualityArmory.findSafeSpot(e.getPlayer().getInventory().getItemInOffHand(), true,
@@ -2623,40 +2612,42 @@ public class QAMain extends JavaPlugin implements Listener {
 		// Quick bugfix for specifically this item.
 
 		try {
-			if (QualityArmory.isCustomItem(e.getPlayer().getItemInHand())) {
-				if (!e.getPlayer().getItemInHand().getItemMeta().spigot().isUnbreakable()) {
-					QAMain.DEBUG("A player is using a breakable item that reached being a gun!");
-					// If the item is not a gun, but the item below it is
-					int safeDurib = QualityArmory.findSafeSpot(e.getPlayer().getItemInHand(), true, overrideURL)
-							+ (overrideURL ? 0 : 3);
+			if (!ignoreUnbreaking)
+				if (QualityArmory.isCustomItem(e.getPlayer().getItemInHand())) {
+					if (!e.getPlayer().getItemInHand().getItemMeta().spigot().isUnbreakable()) {
+						QAMain.DEBUG("A player is using a breakable item that reached being a gun!");
+						// If the item is not a gun, but the item below it is
+						int safeDurib = QualityArmory.findSafeSpot(e.getPlayer().getItemInHand(), true, overrideURL)
+								+ (overrideURL ? 0 : 3);
 
-					// if (e.getItem().getDurability() == 1) {
-					QAMain.DEBUG(
-							"Safe Durib= " + (safeDurib) + "! ORG " + e.getPlayer().getItemInHand().getDurability());
-					ItemStack is = e.getPlayer().getItemInHand();
-					is.setDurability((short) (safeDurib));
-					e.getPlayer().setItemInHand(is);
+						// if (e.getItem().getDurability() == 1) {
+						QAMain.DEBUG("Safe Durib= " + (safeDurib) + "! ORG "
+								+ e.getPlayer().getItemInHand().getDurability());
+						ItemStack is = e.getPlayer().getItemInHand();
+						is.setDurability((short) (safeDurib));
+						e.getPlayer().setItemInHand(is);
+					}
 				}
-			}
 		} catch (Error | Exception e45) {
 		}
 
 		try {
-			if (QualityArmory.isCustomItem(e.getPlayer().getInventory().getItemInOffHand())) {
-				if (!e.getPlayer().getInventory().getItemInOffHand().getItemMeta().spigot().isUnbreakable()) {
-					QAMain.DEBUG("A player is using a breakable item that reached being a gun!");
-					// If the item is not a gun, but the item below it is
-					int safeDurib = QualityArmory.findSafeSpot(e.getPlayer().getInventory().getItemInOffHand(), true,
-							overrideURL) + (overrideURL ? 0 : 3);
+			if (!ignoreUnbreaking)
+				if (QualityArmory.isCustomItem(e.getPlayer().getInventory().getItemInOffHand())) {
+					if (!e.getPlayer().getInventory().getItemInOffHand().getItemMeta().spigot().isUnbreakable()) {
+						QAMain.DEBUG("A player is using a breakable item that reached being a gun!");
+						// If the item is not a gun, but the item below it is
+						int safeDurib = QualityArmory.findSafeSpot(e.getPlayer().getInventory().getItemInOffHand(),
+								true, overrideURL) + (overrideURL ? 0 : 3);
 
-					// if (e.getItem().getDurability() == 1) {
-					QAMain.DEBUG("Safe Durib= " + (safeDurib) + "! ORG "
-							+ e.getPlayer().getInventory().getItemInOffHand().getDurability());
-					ItemStack is = e.getPlayer().getInventory().getItemInOffHand();
-					is.setDurability((short) (safeDurib));
-					e.getPlayer().getInventory().setItemInOffHand(is);
+						// if (e.getItem().getDurability() == 1) {
+						QAMain.DEBUG("Safe Durib= " + (safeDurib) + "! ORG "
+								+ e.getPlayer().getInventory().getItemInOffHand().getDurability());
+						ItemStack is = e.getPlayer().getInventory().getItemInOffHand();
+						is.setDurability((short) (safeDurib));
+						e.getPlayer().getInventory().setItemInOffHand(is);
+					}
 				}
-			}
 		} catch (Error | Exception e45) {
 		}
 

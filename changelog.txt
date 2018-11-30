@@ -1,3 +1,23 @@
+1.1.126
+	Fixed a dozen spelling and grammar mistakes such as "Varient"
+
+1.1.125G
+	Reloading guns while sneaking no longer keeps slowness/nightvision.
+	After guns have been reloading, a sneak check will be done to bring the item back to ironsights/scopes
+	Fixed error if varientprefix is changed.
+
+1.1.125F
+	Changed way items are skipped for defualt items. This check should make sure that both the current item in your hand is not a custom item, while the next one is, without any false positives.
+
+1.1.125E
+	Added option to ignore unbreaking checks.
+
+1.1.125D
+	Added bumpercars to resourcepack (QualityArmoryVehicles Exclusive)
+
+1.1.125B
+	Added exception for spectators. They can no longer block bullets
+
 1.1.125
 	Added ability to have "pockets" for gun IDs if you have DefaultResourcepackOverride set to true (this is done because QAV uses the same resourcepack, and setting this to true means you know what you're doing)
 	Fixed recoil for 1.12.

@@ -31,7 +31,6 @@
 unknownTranslationKeyFixer: false
 Enable_Creation_Of_Default_Files: true
 KickPlayerIfDeniedResourcepack: false
-hideTextureWarnings: false
 enableIgnoreArmorProtection: false
 
 #Use this if you are expierincing a problem. 
@@ -45,10 +44,22 @@ ENABLE-DEBUG: false
 useDefaultResourcepack: true
 DefaultResourcepackOverride: false
 DefaultResourcepack: https://www.dropbox.com/s/xipzen3vs2akksp/QualityArmoryv1.0.35.zip?dl=1
+DefaultResourcepack_18: https://www.dropbox.com/s/gx6dhahq6onob4g/QualityArmory1.8v1.0.1.zip?dl=1
 Auto-Detect-Resourcepack: true
-sendOnJoin: false
+sendOnJoin: true
 sendTitleOnJoin: false
 SecondsTillRPIsSent: 0.0
+SecondsTillRPIsSent: 0.0
+
+
+#QA Controls
+Swap-Reload-and-Shooting-Controls: false
+enableReloadingWhenSwapToOffhand: true
+enableReloadOnlyWhenSwapToOffhand: false
+IronSightsOnRightClick: false
+automaticallyReloadGunWhenOutOfAmmo: false
+allowGunReload: true
+
 
 
 
@@ -68,13 +79,6 @@ enablePrimaryWeaponLimiter: false
 weaponlimiter_primaries: 2
 weaponlimiter_secondaries: 2
 
-#QA Controls
-Swap-Reload-and-Shooting-Controls: false
-enableReloadingWhenSwapToOffhand: true
-enableReloadOnlyWhenSwapToOffhand: false
-IronSightsOnRightClick: false
-automaticallyReloadGunWhenOutOfAmmo: false
-allowGunReload: true
 
 #Modifiers for QA systems
 gravityConstantForDropoffCalculations: 0.05
@@ -117,11 +121,6 @@ enableInteract:
 #If set to true, overrideAnvil will let the anvil turn into a gun-crafting station.
 overrideAnvil: false
 
-#UNSUPPORTED: Enable bullet counts for guns.
-enableVisibleBulletCounts: false
-
-#UNSUPPORTED: shows the out of ammo message on the item
-showOutOfAmmoOnItem: false
 
 
 #EXPERIMENTAL: Explosion damage

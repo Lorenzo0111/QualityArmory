@@ -786,10 +786,10 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 							QAMain.DEBUG("Reloading message 1!");
 							return;
 						}
-
-						if (Update19OffhandChecker.getItemStackOFfhand(e.getPlayer()) != null) {
+						ItemStack offhandItem = Update19OffhandChecker.getItemStackOFfhand(e.getPlayer());
+						if (offhandItem!= null) {
 							e.getPlayer().getInventory()
-									.addItem(Update19OffhandChecker.getItemStackOFfhand(e.getPlayer()));
+									.addItem(offhandItem);
 							Update19OffhandChecker.setOffhand(e.getPlayer(), null);
 						}
 

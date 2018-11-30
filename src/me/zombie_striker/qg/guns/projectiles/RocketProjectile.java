@@ -12,6 +12,7 @@ import me.zombie_striker.qg.handlers.MultiVersionLookup;
 import me.zombie_striker.qg.handlers.ParticleHandlers;
 
 import org.bukkit.Effect;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.entity.Entity;
@@ -20,9 +21,10 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 public class RocketProjectile implements RealtimeCalculationProjectile {
-public RocketProjectile() {
-	ProjectileManager.add(this);
-}
+	public RocketProjectile() {
+		ProjectileManager.add(this);
+	}
+
 	@Override
 	public void spawn(final Gun g, final Location s, final Player player, final Vector dir) {
 		new BukkitRunnable() {
@@ -33,22 +35,24 @@ public RocketProjectile() {
 				for (int tick = 0; tick < g.getVelocityForRealtimeCalculations(); tick++) {
 					distance--;
 					s.add(dir);
-					ParticleHandlers.spawnGunParticles(g, s);//.spawnParticle(r, g, b, loc);
+					ParticleHandlers.spawnGunParticles(g, s);// .spawnParticle(r, g, b, loc);
 					try {
-						//s.getWorld().spawnParticle(org.bukkit.Particle.SMOKE_LARGE, s, 0);
-						//s.getWorld().spawnParticle(org.bukkit.Particle.FIREWORKS_SPARK, s, 0);
+						// s.getWorld().spawnParticle(org.bukkit.Particle.SMOKE_LARGE, s, 0);
+						// s.getWorld().spawnParticle(org.bukkit.Particle.FIREWORKS_SPARK, s, 0);
 						player.getWorld().playSound(s, MultiVersionLookup.getDragonGrowl(), 1, 2f);
 
 					} catch (Error e2) {
-						//s.getWorld().playEffect(s, Effect.valueOf("CLOUD"), 0);
+						// s.getWorld().playEffect(s, Effect.valueOf("CLOUD"), 0);
 						player.getWorld().playSound(s, Sound.valueOf("ENDERDRAGON_GROWL"), 1, 2f);
 					}
 					boolean entityNear = false;
 					try {
 						List<Entity> e2 = new ArrayList<>(s.getWorld().getNearbyEntities(s, 1, 1, 1));
-						if (!e2.isEmpty())
-							if (e2.size() > 1 || e2.get(0) != player)
+						for (Entity e : e2) {
+							if (e != player
+									&& (!(e instanceof Player) || ((Player) e).getGameMode() != GameMode.SPECTATOR))
 								entityNear = true;
+						}
 					} catch (Error e) {
 					}
 

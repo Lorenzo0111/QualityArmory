@@ -13,6 +13,7 @@ import me.zombie_striker.qg.handlers.MultiVersionLookup;
 import me.zombie_striker.qg.handlers.ParticleHandlers;
 
 import org.bukkit.Effect;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -63,9 +64,10 @@ public class HomingRocketProjectile implements RealtimeCalculationProjectile {
 					try {
 						List<Entity> e2 = new ArrayList<>(
 								RPGLOCATION.getWorld().getNearbyEntities(RPGLOCATION, 1, 1, 1));
-						if (!e2.isEmpty())
-							if (e2.size() > 1 || e2.get(0) != player)
+						for(Entity e : e2) {
+							if(e != player && (!(e instanceof Player) || ((Player)e).getGameMode()!=GameMode.SPECTATOR))
 								entityNear = true;
+						}
 					} catch (Error e) {
 					}
 

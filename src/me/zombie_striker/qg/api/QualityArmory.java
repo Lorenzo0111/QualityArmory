@@ -123,6 +123,25 @@ public class QualityArmory {
 		return isCustomItem(is, 0);
 	}
 
+	@SuppressWarnings("deprecation")
+	public static boolean isCustomItemNextId(ItemStack is) {
+		if (is == null)
+			return false;
+		List<MaterialStorage> ms = new ArrayList<MaterialStorage>();
+		ms.addAll(QAMain.expansionPacks);
+		ms.addAll(QAMain.gunRegister.keySet());
+		ms.addAll(QAMain.armorRegister.keySet());
+		ms.addAll(QAMain.ammoRegister.keySet());
+		ms.addAll(QAMain.miscRegister.keySet());
+		for (MaterialStorage mat : ms) {
+			if (mat.getMat() == is.getType())
+				if (mat.getData() == (is.getDurability()+1))
+					if (!mat.isVarient())
+						return true;
+		}
+		return false;
+	}
+
 	public static ArmoryBaseObject getCustomItem(ItemStack is) {
 		if (isGun(is))
 			return getGun(is);
@@ -143,8 +162,8 @@ public class QualityArmory {
 			return false;
 		ItemStack itemstack = is.clone();
 		itemstack.setDurability((short) (is.getDurability() + dataOffset));
-		return isArmor(itemstack) || isGunWithAttchments(itemstack) || isAmmo(itemstack) || isMisc(itemstack)
-				|| isGun(itemstack) || isIronSights(itemstack) 
+		return isArmor(itemstack) || isAmmo(itemstack) || isMisc(itemstack)
+				|| isGun(itemstack) || isIronSights(itemstack)
 				|| QAMain.expansionPacks.contains(MaterialStorage.getMS(is));
 	}
 
@@ -157,8 +176,6 @@ public class QualityArmory {
 				&& (QAMain.armorRegister.containsKey(MaterialStorage.getMS(is.getType(), is.getDurability(), var))
 						|| QAMain.armorRegister.containsKey(MaterialStorage.getMS(is.getType(), -1, var))));
 	}
-
-
 
 	@SuppressWarnings("deprecation")
 	public static ArmorObject getArmor(ItemStack is) {
@@ -206,21 +223,27 @@ public class QualityArmory {
 
 	@Deprecated
 	public static AttachmentBase getGunWithAttchments(ItemStack is) {
-		/*int var = MaterialStorage.getVarient(is);
-		if (QAMain.attachmentRegister.containsKey(MaterialStorage.getMS(is.getType(), is.getDurability(), var)))
-			return QAMain.attachmentRegister.get(MaterialStorage.getMS(is.getType(), is.getDurability(), var));
-		return QAMain.attachmentRegister.get(MaterialStorage.getMS(is.getType(), -1, var));*/
+		/*
+		 * int var = MaterialStorage.getVarient(is); if
+		 * (QAMain.attachmentRegister.containsKey(MaterialStorage.getMS(is.getType(),
+		 * is.getDurability(), var))) return
+		 * QAMain.attachmentRegister.get(MaterialStorage.getMS(is.getType(),
+		 * is.getDurability(), var)); return
+		 * QAMain.attachmentRegister.get(MaterialStorage.getMS(is.getType(), -1, var));
+		 */
 		return null;
 	}
 
 	@Deprecated
-	public static boolean isGunWithAttchments(ItemStack is) {/*
-		if (is == null)
-			return false;
-		int var = MaterialStorage.getVarient(is);
-		return (is != null
-				&& (QAMain.attachmentRegister.containsKey(MaterialStorage.getMS(is.getType(), is.getDurability(), var))
-						|| QAMain.attachmentRegister.containsKey(MaterialStorage.getMS(is.getType(), -1, var))));*/
+	public static boolean isGunWithAttchments(
+			ItemStack is) {/*
+							 * if (is == null) return false; int var = MaterialStorage.getVarient(is);
+							 * return (is != null &&
+							 * (QAMain.attachmentRegister.containsKey(MaterialStorage.getMS(is.getType(),
+							 * is.getDurability(), var)) ||
+							 * QAMain.attachmentRegister.containsKey(MaterialStorage.getMS(is.getType(), -1,
+							 * var))));
+							 */
 		return false;
 	}
 
@@ -232,7 +255,8 @@ public class QualityArmory {
 		String temp = SkullHandler.getURL64(is);
 		if (QAMain.ammoRegister
 				.containsKey(MaterialStorage.getMS(is.getType(), is.getDurability(), var, extraData, temp)))
-			return QAMain.ammoRegister.get(MaterialStorage.getMS(is.getType(), is.getDurability(), var, extraData, temp));
+			return QAMain.ammoRegister
+					.get(MaterialStorage.getMS(is.getType(), is.getDurability(), var, extraData, temp));
 		return QAMain.ammoRegister.get(MaterialStorage.getMS(is.getType(), -1, var, extraData, temp));
 	}
 
@@ -245,11 +269,12 @@ public class QualityArmory {
 	}
 
 	@Deprecated
-	public static AttachmentBase getAttachmentByName(String name) {/*
-		for (Entry<MaterialStorage, AttachmentBase> e : QAMain.attachmentRegister.entrySet())
-			if (e.getValue().getName().equalsIgnoreCase(name)) {
-				return e.getValue();
-			}*/
+	public static AttachmentBase getAttachmentByName(
+			String name) {/*
+							 * for (Entry<MaterialStorage, AttachmentBase> e :
+							 * QAMain.attachmentRegister.entrySet()) if
+							 * (e.getValue().getName().equalsIgnoreCase(name)) { return e.getValue(); }
+							 */
 		return null;
 	}
 
@@ -399,12 +424,12 @@ public class QualityArmory {
 				if (j.getMat() == newItemtype && ((j.getData() > safeDurib) == findHighest))
 					idsToWorryAbout.add(j.getData());
 			if (findHighest) {
-				for (int id = safeDurib+1; id < safeDurib + 1000; id++) {
+				for (int id = safeDurib + 1; id < safeDurib + 1000; id++) {
 					if (!idsToWorryAbout.contains(id))
 						return id;
 				}
 			} else {
-				for (int id = safeDurib-1; id > 0; id--) {
+				for (int id = safeDurib - 1; id > 0; id--) {
 					if (!idsToWorryAbout.contains(id))
 						return id;
 				}
@@ -434,6 +459,7 @@ public class QualityArmory {
 				safeDurib = j.getData();
 		return safeDurib;
 	}
+
 	@SuppressWarnings("deprecation")
 	public static int findSafeSpotVariant(ItemStack newItem, boolean findHighest) {
 		return findSafeSpotVariant(newItem.getType(), newItem.getDurability(), findHighest);
@@ -457,10 +483,11 @@ public class QualityArmory {
 			if (j.getMat() == newItemtype && (j.getData() == startingData)
 					&& ((j.getVarient() > safeDurib) == findHighest))
 				safeDurib = j.getVarient();
-		/*for (MaterialStorage j : QAMain.attachmentRegister.keySet())
-			if (j.getMat() == newItemtype && (j.getData() == startingData)
-					&& ((j.getVarient() > safeDurib) == findHighest))
-				safeDurib = j.getVarient();*/
+		/*
+		 * for (MaterialStorage j : QAMain.attachmentRegister.keySet()) if (j.getMat()
+		 * == newItemtype && (j.getData() == startingData) && ((j.getVarient() >
+		 * safeDurib) == findHighest)) safeDurib = j.getVarient();
+		 */
 		for (MaterialStorage j : QAMain.expansionPacks)
 			if (j.getMat() == newItemtype && (j.getData() == startingData)
 					&& ((j.getVarient() > safeDurib) == findHighest))

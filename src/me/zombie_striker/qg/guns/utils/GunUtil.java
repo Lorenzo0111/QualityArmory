@@ -104,6 +104,7 @@ public class GunUtil {
 				if (e instanceof Damageable) {
 					if (QAMain.ignoreArmorStands && e.getType().name().equals("ARMOR_STAND"))
 						continue;
+
 					if (e != p && e != p.getVehicle() && e != p.getPassenger()) {
 						double dis = e.getLocation().distance(start);
 						if (dis > dis2)
@@ -120,15 +121,20 @@ public class GunUtil {
 
 						Location test = start.clone();
 						// If the entity is close to the line of fire.
-						if (QAMain.hasParties && (!QAMain.friendlyFire)) {
-							try {
-								if (e instanceof Player)
+						if (e instanceof Player) {
+							Player player = (Player )e;
+							if(player.getGameMode()==GameMode.SPECTATOR) {
+								continue;
+							}
+							if (QAMain.hasParties && (!QAMain.friendlyFire)) {
+								try {
 									if (com.alessiodp.partiesapi.Parties.getApi().getPartyPlayer(e.getUniqueId())
 											.getPartyName().equalsIgnoreCase(com.alessiodp.partiesapi.Parties.getApi()
 													.getPartyPlayer(p.getUniqueId()).getPartyName()))
 										continue;
-							} catch (Error | Exception e43) {
+								} catch (Error | Exception e43) {
 
+								}
 							}
 						}
 						boolean hit = false;
@@ -192,28 +198,28 @@ public class GunUtil {
 							Player player = (Player) hitTarget;
 							if (QAMain.enableArmorIgnore) {
 								try {
-								// damage = damage * ( 1 - min( 20, max( defensePoints / 5, defensePoints -
-								// damage / ( toughness / 4 + 2 ) ) ) / 25 )
-								double defensePoints = 0;
-								double toughness = 0;
-								for (ItemStack is : new ItemStack[] { player.getInventory().getHelmet(),
-										player.getInventory().getChestplate(), player.getInventory().getLeggings(),
-										player.getInventory().getBoots() }) {
-									if (is != null) {
-										if (!is.getItemMeta().getAttributeModifiers(Attribute.GENERIC_ARMOR).isEmpty())
+									// damage = damage * ( 1 - min( 20, max( defensePoints / 5, defensePoints -
+									// damage / ( toughness / 4 + 2 ) ) ) / 25 )
+									double defensePoints = 0;
+									double toughness = 0;
+									for (ItemStack is : new ItemStack[] { player.getInventory().getHelmet(),
+											player.getInventory().getChestplate(), player.getInventory().getLeggings(),
+											player.getInventory().getBoots() }) {
+										if (is != null) {
+											if (!is.getItemMeta().getAttributeModifiers(Attribute.GENERIC_ARMOR)
+													.isEmpty())
+												for (AttributeModifier a : is.getItemMeta()
+														.getAttributeModifiers(Attribute.GENERIC_ARMOR))
+													defensePoints += a.getAmount();
 											for (AttributeModifier a : is.getItemMeta()
-													.getAttributeModifiers(Attribute.GENERIC_ARMOR))
-												defensePoints += a.getAmount();
-										for (AttributeModifier a : is.getItemMeta()
-												.getAttributeModifiers(Attribute.GENERIC_ARMOR_TOUGHNESS))
-											toughness += a.getAmount();
+													.getAttributeModifiers(Attribute.GENERIC_ARMOR_TOUGHNESS))
+												toughness += a.getAmount();
+										}
 									}
-								}
-								damageMAX = damageMAX * (1 - Math.min(20,
-										Math.max(defensePoints / 5, defensePoints - damageMAX / (toughness / 4 + 2)))
-										/ 25);
-								}catch(Error|Exception e5) {
-									
+									damageMAX = damageMAX * (1 - Math.min(20, Math.max(defensePoints / 5,
+											defensePoints - damageMAX / (toughness / 4 + 2))) / 25);
+								} catch (Error | Exception e5) {
+
 								}
 							}
 
@@ -570,6 +576,7 @@ public class GunUtil {
 			if (g.getReloadingingVal() != null) {
 				seconds = g.getReloadingingVal().reload(player, g, subtractAmount);
 			}
+			QAMain.toggleNightvision(player,g, false);
 
 			im.setLore(ItemFact.getGunLore(g, temp, 0));
 			im.setDisplayName(g.getDisplayName() + QAMain.S_RELOADING_MESSAGE);
@@ -610,7 +617,13 @@ public class GunUtil {
 					temp.setItemMeta(newim);
 					if (QAMain.enableVisibleAmounts)
 						temp.setAmount(reloadAmount);
-					player.getInventory().setItem(slot, temp);
+					if(player.isSneaking() && !QAMain.enableIronSightsON_RIGHT_CLICK) {
+						player.getInventory().setItem(slot, ItemFact.getIronSights());
+						Update19OffhandChecker.setOffhand(player, temp);
+						QAMain.toggleNightvision(player, g, true);
+					}else {
+						player.getInventory().setItem(slot, temp);						
+					}
 					QualityArmory.sendHotbarGunAmmoCount(player, g, temp, false);
 				}
 			}.runTaskLater(QAMain.getInstance(), (long) (20 * seconds));
@@ -647,7 +660,7 @@ public class GunUtil {
 				}.runTaskLater(QAMain.getInstance(), 3);
 			}
 		} else {
-			if (QAMain.hasProtocolLib && QAMain.isVersionHigherThan(1, 12)) {
+			if (QAMain.hasProtocolLib && QAMain.isVersionHigherThan(1, 13)) {
 				addRecoilWithProtocolLib(player, g, false);
 			} else
 				addRecoilWithTeleport(player, g, false);

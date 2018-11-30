@@ -39,7 +39,7 @@ public class MaterialStorage {
 
 	public static boolean matchHeads(MaterialStorage k, String ex1, String ex2) {
 		boolean exb1 = (!k.hasSpecialValue() || k.hasSpecialValue2()
-				|| (ex2 != null && (ex2.equals("-1") || k.getSpecialValue().equals(ex2))));
+				|| (ex1 != null && (ex1.equals("-1") || k.getSpecialValue().equals(ex1))));
 		boolean exb2 = (!k.hasSpecialValue2()
 				|| (ex2 != null && (ex2.equals("-1") || k.getSpecialValue2().equals(ex2))));
 		return exb1 && exb2;
@@ -130,9 +130,17 @@ public class MaterialStorage {
 		if (is != null)
 			if (is.hasItemMeta() && is.getItemMeta().hasLore()) {
 				for (String lore : is.getItemMeta().getLore()) {
-					if (lore.startsWith(QAMain.S_ITEM_VARIENTS)) {
+					if (lore.startsWith(QAMain.S_ITEM_VARIENTS_NEW)) {
 						try {
-							int id = Integer.parseInt(lore.split(":")[1].trim());
+							int id = Integer.parseInt(lore.split(QAMain.S_ITEM_VARIENTS_NEW)[1].trim());
+							return id;
+						} catch (Error | Exception e4) {
+							e4.printStackTrace();
+							return 0;
+						}
+					} else if (lore.startsWith(QAMain.S_ITEM_VARIENTS_LEGACY)) {
+						try {
+							int id = Integer.parseInt(lore.split(QAMain.S_ITEM_VARIENTS_LEGACY)[1].trim());
 							return id;
 						} catch (Error | Exception e4) {
 							e4.printStackTrace();
