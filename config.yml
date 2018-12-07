@@ -44,7 +44,9 @@ ENABLE-DEBUG: false
 useDefaultResourcepack: true
 DefaultResourcepackOverride: false
 DefaultResourcepack: https://www.dropbox.com/s/xipzen3vs2akksp/QualityArmoryv1.0.35.zip?dl=1
-DefaultResourcepack_18: https://www.dropbox.com/s/gx6dhahq6onob4g/QualityArmory1.8v1.0.1.zip?dl=1
+DefaultResourcepack_18: https://www.dropbox.com/s/odvle92e0fz0ezr/QualityArmory1.8v1.0.2.zip?dl=1
+DefaultResourcepack_18_COMPATFOR_19PLUS: https://www.dropbox.com/s/ipza6fod5b2jub6/QualityArmory1.9PLUS%20v1.0.2.zip?dl=1
+ManuallyOverrideTo_1_8_systems: false
 Auto-Detect-Resourcepack: true
 sendOnJoin: true
 sendTitleOnJoin: false

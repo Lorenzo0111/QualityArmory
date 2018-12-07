@@ -87,11 +87,17 @@ public class QualityArmory {
 										&& us.myles.ViaVersion.bukkit.util.ProtocolSupportUtil
 												.getProtocolVersion(player) < QAMain.ID18) {
 									player.setResourcePack(QAMain.url18);
+								} else if (QAMain.MANUALLYSELECT18) {
+									player.setResourcePack(QAMain.url18New);
 								} else {
 									player.setResourcePack(QAMain.url);
 								}
 							} catch (Error | Exception e4) {
-								player.setResourcePack(QAMain.url);
+								if (QAMain.MANUALLYSELECT18) {
+									player.setResourcePack(QAMain.url18New);
+								} else {
+									player.setResourcePack(QAMain.url);
+								}
 							}
 
 							if (!QAMain.isVersionHigherThan(1, 9)) {
@@ -135,7 +141,7 @@ public class QualityArmory {
 		ms.addAll(QAMain.miscRegister.keySet());
 		for (MaterialStorage mat : ms) {
 			if (mat.getMat() == is.getType())
-				if (mat.getData() == (is.getDurability()+1))
+				if (mat.getData() == (is.getDurability() + 1))
 					if (!mat.isVarient())
 						return true;
 		}
@@ -162,9 +168,8 @@ public class QualityArmory {
 			return false;
 		ItemStack itemstack = is.clone();
 		itemstack.setDurability((short) (is.getDurability() + dataOffset));
-		return isArmor(itemstack) || isAmmo(itemstack) || isMisc(itemstack)
-				|| isGun(itemstack) || isIronSights(itemstack)
-				|| QAMain.expansionPacks.contains(MaterialStorage.getMS(is));
+		return isArmor(itemstack) || isAmmo(itemstack) || isMisc(itemstack) || isGun(itemstack)
+				|| isIronSights(itemstack) || QAMain.expansionPacks.contains(MaterialStorage.getMS(is));
 	}
 
 	@SuppressWarnings("deprecation")

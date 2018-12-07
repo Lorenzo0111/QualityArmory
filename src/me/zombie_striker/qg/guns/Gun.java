@@ -661,7 +661,9 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 		QAMain.DEBUG("Dups check");
 		QAMain.getInstance().checkforDups(e.getPlayer(), usedItem);
 
-		boolean offhand = usedItem != e.getPlayer().getItemInHand();
+		
+		ItemStack offhandItem = Update19OffhandChecker.getItemStackOFfhand(e.getPlayer());
+		boolean offhand = offhandItem!=null && offhandItem.equals(usedItem);
 
 		// AttachmentBase attachment =
 		// me.zombie_striker.qg.api.QualityArmory.getGunWithAttchments(usedItem);
@@ -695,8 +697,7 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 				if (isAutomatic() && GunUtil.rapidfireshooters.containsKey(e.getPlayer().getUniqueId())) {
 					GunUtil.rapidfireshooters.remove(e.getPlayer().getUniqueId()).cancel();
 					if (QAMain.enableReloadWhenOutOfAmmo)
-						if (ItemFact.getAmount(offhand ? e.getPlayer().getInventory().getItemInOffHand()
-								: e.getPlayer().getItemInHand()) <= 0) {
+						if (ItemFact.getAmount(usedItem) <= 0) {
 							if (offhand) {
 								e.getPlayer().setItemInHand(e.getPlayer().getInventory().getItemInOffHand());
 								e.getPlayer().getInventory().setItemInOffHand(null);
@@ -723,8 +724,7 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 						}
 				} else {
 					if (QAMain.enableReloadWhenOutOfAmmo)
-						if (ItemFact.getAmount(offhand ? e.getPlayer().getInventory().getItemInOffHand()
-								: e.getPlayer().getItemInHand()) <= 0) {
+						if (ItemFact.getAmount(usedItem) <= 0) {
 							if (offhand) {
 								e.getPlayer().setItemInHand(e.getPlayer().getInventory().getItemInOffHand());
 								e.getPlayer().getInventory().setItemInOffHand(null);
@@ -786,7 +786,7 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 							QAMain.DEBUG("Reloading message 1!");
 							return;
 						}
-						ItemStack offhandItem = Update19OffhandChecker.getItemStackOFfhand(e.getPlayer());
+						//ItemStack offhandItem = Update19OffhandChecker.getItemStackOFfhand(e.getPlayer());
 						if (offhandItem!= null) {
 							e.getPlayer().getInventory()
 									.addItem(offhandItem);

@@ -20,6 +20,7 @@ import me.zombie_striker.qg.miscitems.*;
 import me.zombie_striker.qg.miscitems.ThrowableItems.ThrowableHolder;
 import me.zombie_striker.qg.npcs.Gunner;
 import me.zombie_striker.qg.npcs.GunnerTrait;
+import me.zombie_striker.qg.npcs_sentinel.SentinelQAHandler;
 
 import org.bukkit.*;
 import org.bukkit.command.Command;
@@ -161,7 +162,8 @@ public class QAMain extends JavaPlugin implements Listener {
 	// public static String url19plus =
 	// "https://www.dropbox.com/s/faufrgo7w2zpi3d/QualityArmoryv1.0.10.zip?dl=1";
 	public static String url_newest = "https://www.dropbox.com/s/3mkoulo9tzdte8w/QualityArmoryv1.0.37.zip?dl=1";
-	public static String url18 = "https://www.dropbox.com/s/gx6dhahq6onob4g/QualityArmory1.8v1.0.1.zip?dl=1";
+	public static String url18 = "https://www.dropbox.com/s/odvle92e0fz0ezr/QualityArmory1.8v1.0.2.zip?dl=1";
+	public static String url18New = "https://www.dropbox.com/s/ipza6fod5b2jub6/QualityArmory1.9PLUS%20v1.0.2.zip?dl=1";	
 	public static String url = url_newest;
 
 	public static String S_NOPERM = "&c You do not have permission to do that.";
@@ -261,6 +263,9 @@ public class QAMain extends JavaPlugin implements Listener {
 
 	public static boolean AutoDetectResourcepackVersion = true;
 	public static final int ID18 = 106;
+
+	public static boolean ITEM_enableUnbreakable = false;// TODO :stuufff
+	public static boolean MANUALLYSELECT18 = false;
 
 	private FileConfiguration config;
 	private File configFile;
@@ -435,7 +440,8 @@ public class QAMain extends JavaPlugin implements Listener {
 						// if (p.getItemInHand().containsEnchantment(Enchantment.MENDING)) {
 						if (p.getItemInHand() != null && p.getItemInHand().hasItemMeta())
 							if (QualityArmory.isCustomItem(p.getItemInHand())) {
-								if (!p.getItemInHand().getItemMeta().spigot().isUnbreakable() && !ignoreUnbreaking) {
+								if (ITEM_enableUnbreakable || (!p.getItemInHand().getItemMeta().spigot().isUnbreakable()
+										&& !ignoreUnbreaking)) {
 									ItemStack temp = p.getItemInHand();
 									int j = QualityArmory.findSafeSpot(temp, false, overrideURL);
 									temp.setDurability((short) Math.max(0, j - 1));
@@ -451,8 +457,8 @@ public class QAMain extends JavaPlugin implements Listener {
 							if (p.getInventory().getItemInOffHand() != null
 									&& p.getInventory().getItemInOffHand().hasItemMeta())
 								if (QualityArmory.isCustomItem(p.getInventory().getItemInOffHand())) {
-									if (!p.getInventory().getItemInOffHand().getItemMeta().spigot().isUnbreakable()
-											&& !ignoreUnbreaking) {
+									if (ITEM_enableUnbreakable || (!p.getInventory().getItemInOffHand().getItemMeta()
+											.spigot().isUnbreakable() && !ignoreUnbreaking)) {
 										ItemStack temp = p.getInventory().getItemInOffHand();
 										int j = QualityArmory.findSafeSpot(temp, false, overrideURL);
 										temp.setDurability((short) Math.max(0, j - 1));
@@ -605,9 +611,9 @@ public class QAMain extends JavaPlugin implements Listener {
 				(String) m.a("Medkit-Healing", S_MEDKIT_HEALING));
 		S_MEDKIT_BLEEDING = ChatColor.translateAlternateColorCodes('&',
 				(String) m.a("Medkit-Bleeding", S_MEDKIT_BLEEDING));
-		
+
 		S_MEDKIT_HEAL_AMOUNT = (double) m.a("Medkit-HEALING_HEARTS_AMOUNT", S_MEDKIT_HEAL_AMOUNT);
-		
+
 		S_MEDKIT_HEALDELAY = (double) m.a("Medkit-HEALING_WEAPPING_DELAY_IN_SECONDS", S_MEDKIT_HEALDELAY);
 
 		S_MEDKIT_LORE_INFO = ChatColor.translateAlternateColorCodes('&',
@@ -634,13 +640,19 @@ public class QAMain extends JavaPlugin implements Listener {
 			ProtocolLibHandler.initRemoveArmswing();
 		}
 
+		if (getServer().getPluginManager().isPluginEnabled("Sentinel"))
+			try {
+				org.mcmonkey.sentinel.SentinelPlugin.integrations.add(new SentinelQAHandler());
+			} catch (Error | Exception e4) {
+			}
+
 		DEBUG = (boolean) a("ENABLE-DEBUG", false);
 
 		friendlyFire = (boolean) a("FriendlyFireEnabled", false);
 
 		kickIfDeniedRequest = (boolean) a("KickPlayerIfDeniedResourcepack", false);
 		shouldSend = (boolean) a("useDefaultResourcepack", true);
-		
+
 		enableDurability = (boolean) a("EnableWeaponDurability", false);
 
 		bulletStep = (double) a("BulletDetection.step", 0.10);
@@ -661,20 +673,18 @@ public class QAMain extends JavaPlugin implements Listener {
 
 		enableBulletTrails = (boolean) a("enableBulletTrails", true);
 		smokeSpacing = Double.valueOf(a("BulletTrailsSpacing", 0.5) + "");
-		
-		
 
 		enableArmorIgnore = (boolean) a("enableIgnoreArmorProtection", enableArmorIgnore);
 		ignoreUnbreaking = (boolean) a("enableIgnoreUnbreakingChecks", ignoreUnbreaking);
 		ignoreSkipping = (boolean) a("enableIgnoreSkipForBasegameItems", ignoreSkipping);
-		
-		
 
-		//enableVisibleAmounts = (boolean) a("enableVisibleBulletCounts", false);
+		ITEM_enableUnbreakable = (boolean) a("Items.enableUnbreaking", ITEM_enableUnbreakable);
+
+		// enableVisibleAmounts = (boolean) a("enableVisibleBulletCounts", false);
 		reloadOnF = (boolean) a("enableReloadingWhenSwapToOffhand", true);
 		reloadOnFOnly = (boolean) a("enableReloadOnlyWhenSwapToOffhand", false);
 
-		//showOutOfAmmoOnItem = (boolean) a("showOutOfAmmoOnItem", false);
+		// showOutOfAmmoOnItem = (boolean) a("showOutOfAmmoOnItem", false);
 		showOutOfAmmoOnTitle = (boolean) a("showOutOfAmmoOnTitle", false);
 		showReloadOnTitle = (boolean) a("showReloadingTitle", false);
 
@@ -696,7 +706,8 @@ public class QAMain extends JavaPlugin implements Listener {
 		ENABLE_LORE_INFO = (boolean) a("enable_lore_gun-info_messages", true);
 		ENABLE_LORE_HELP = (boolean) a("enable_lore_control-help_messages", true);
 
-		usedIronSightsMaterial = Material.matchMaterial((String) a("Material_For_IronSightToggle_Item", usedIronSightsMaterial.name()));
+		usedIronSightsMaterial = Material
+				.matchMaterial((String) a("Material_For_IronSightToggle_Item", usedIronSightsMaterial.name()));
 		usedIronSightsData = (int) a("Data_For_IronSightToggle_Item", usedIronSightsData);
 
 		HeadshotOneHit = (boolean) a("Enable_Headshot_Instantkill", HeadshotOneHit);
@@ -710,6 +721,7 @@ public class QAMain extends JavaPlugin implements Listener {
 
 		allowGunReload = (boolean) a("allowGunReload", allowGunReload);
 		AutoDetectResourcepackVersion = (boolean) a("Auto-Detect-Resourcepack", AutoDetectResourcepackVersion);
+		MANUALLYSELECT18 = (boolean) a("ManuallyOverrideTo_1_8_systems", Bukkit.getPluginManager().isPluginEnabled("WetSponge")?true:MANUALLYSELECT18);
 
 		unknownTranslationKeyFixer = (boolean) a("unknownTranslationKeyFixer", false);
 
@@ -750,6 +762,7 @@ public class QAMain extends JavaPlugin implements Listener {
 		if (overrideURL) {
 			url = (String) a("DefaultResourcepack", url);
 			url18 = (String) a("DefaultResourcepack_18", url18);
+			url18New = (String) a("DefaultResourcepack_18_COMPATFOR_19PLUS", url18New);
 		} else {
 			// Make sure the user is always up to date if they don't override
 			// the resoucepack
@@ -757,6 +770,7 @@ public class QAMain extends JavaPlugin implements Listener {
 					|| !url.equals(getConfig().getString("DefaultResourcepack"))) {
 				getConfig().set("DefaultResourcepack", url);
 				getConfig().set("DefaultResourcepack_18", url18);
+				getConfig().set("DefaultResourcepack_18_COMPATFOR_19PLUS", url18New);
 				saveTheConfig = true;
 			}
 		}
@@ -814,7 +828,7 @@ public class QAMain extends JavaPlugin implements Listener {
 
 			List<String> stringsHealer = Arrays.asList(new String[] { getIngString(MultiVersionLookup.getWool(), 0, 6),
 					getIngString(Material.GOLDEN_APPLE, 0, 1) });
-			if (!isVersionHigherThan(1, 9)
+			if (MANUALLYSELECT18|| !isVersionHigherThan(1, 9)
 					|| (AutoDetectResourcepackVersion && Bukkit.getPluginManager().isPluginEnabled("ViaRewind"))) {
 				String additive = AutoDetectResourcepackVersion ? "_18" : "";
 				{
@@ -857,6 +871,47 @@ public class QAMain extends JavaPlugin implements Listener {
 							.setReloadingHandler(ReloadingManager.SINGLERELOAD).setDistance(500)
 							.setParticle("SMOKE_LARGE").done();
 
+					// TODO: New guns for resourcepack
+
+					GunYMLCreator
+							.createNewCustomGun(getDataFolder(), "default_1_8_famas", "famas" + additive, "FAMAS-G2",
+									1, stringsMetalRif, WeaponType.RIFLE, null, false, "556", 3, 30, 4500)
+							.setFullyAutomatic(3).setRecoil(2).setMaterial(Material.PRISMARINE_CRYSTALS).setOn18(true)
+							.done();
+					GunYMLCreator
+							.createNewCustomGun(getDataFolder(), "default_1_8_m79", "m79" + additive,
+									"&6M79 \"Thumper\"", 1, stringsWoodRif, WeaponType.RPG,
+									WeaponSounds.WARHEAD_LAUNCH, false, "40mm", 100, 1, 5000)
+							.setDelayShoot(1).setCustomProjectile(ProjectileManager.EXPLODINGROUND)
+							.setCustomProjectileVelocity(2).setCustomProjectileExplosionRadius(6)// .setChargingHandler(ChargingManager.MININUKELAUNCHER)
+							.setReloadingHandler(ReloadingManager.SINGLERELOAD).setDistance(500)
+							.setParticle(0.001, 0.001, 0.001).setRecoil(10).setMaterial(Material.PRISMARINE_SHARD)
+							.setOn18(true).done();
+					GunYMLCreator
+							.createNewCustomGun(getDataFolder(), "default_1_8_dp27", "dp27" + additive, "DP-27", 1,
+									stringsMetalRif, WeaponType.RIFLE, WeaponSounds.GUN_BIG, false, "762", 3, 47, 3000)
+							.setFullyAutomatic(2).setBulletsPerShot(1).setRecoil(2).setMaterial(Material.QUARTZ)
+							.setOn18(true).done();
+					GunYMLCreator
+							.createNewCustomGun(getDataFolder(), "default_1_8_m40", "m40" + additive, "M40", 1,
+									stringsWoodRif, WeaponType.SNIPER, null, false, "762", 10, 6, 2700)
+							.setZoomLevel(9).setDelayShoot(0.7).setChargingHandler(ChargingManager.BOLT)
+							.setSwayMultiplier(3).setDistance(280).setRecoil(5).setMaterial(Material.NETHER_BRICK)
+							.setOn18(true).done();
+					GunYMLCreator.createNewCustomGun(getDataFolder(), "default_1_8_uzi", "uzi" + additive, "UZI", 1,
+							stringsMetalRif, WeaponType.SMG, WeaponSounds.GUN_SMALL_AUTO, false, "9mm", 2, 25, 2000)
+							.setFullyAutomatic(3).setMaterial(Material.RABBIT_FOOT).setOn18(true).done();
+					GunYMLCreator
+							.createNewCustomGun(getDataFolder(), "default_1_8_aa12", "aa12" + additive, "AA-12", 26, stringsMetalRif, WeaponType.SHOTGUN,
+									null, false, "shell", 2, 32, 4000)
+							.setBulletsPerShot(10).setDistance(80).setFullyAutomatic(2).setRecoil(7)
+							.setMaterial(MultiVersionLookup.getCarrotOnAStick()).setOn18(true).done();
+					GunYMLCreator
+							.createNewCustomGun(getDataFolder(), "default_1_8_spas12", "spas12" + additive, "Spas-12", 1, stringsMetalRif,
+									WeaponType.SHOTGUN, null, false, "shell", 2, 8, 1000)
+							.setBulletsPerShot(20).setDistance(80).setRecoil(10).setMaterial(Material.RABBIT_HIDE).setOn18(true)
+							.done();
+
 				}
 
 				ArmoryYML skullammo = GunYMLCreator.createSkullAmmo(false, getDataFolder(), false, "default18_ammo556",
@@ -874,7 +929,7 @@ public class QAMain extends JavaPlugin implements Listener {
 						"eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYTg3ZmRmNDU4N2E2NDQ5YmZjOGJlMzNhYjJlOTM4ZTM2YmYwNWU0MGY2ZmFhMjc3ZDcxYjUwYmNiMGVhNjgzOCJ9fX0=");
 
 			}
-			if (isVersionHigherThan(1, 9)) {
+			if (!MANUALLYSELECT18 && isVersionHigherThan(1, 9)) {
 				GunYMLCreator.createAmmo(false, getDataFolder(), false, "9mm", "&f9mm", 15, stringsAmmo, 2, 0.7, 50,
 						10);
 				GunYMLCreator.createAmmo(false, getDataFolder(), false, "556", "&f5.56 NATO", 14, stringsAmmo, 4, 1, 50,
@@ -1251,8 +1306,8 @@ public class QAMain extends JavaPlugin implements Listener {
 								WeaponType.SNIPER, null, true, "762", 10, 6, 2500)
 						.setZoomLevel(2).setDelayShoot(0.7).setChargingHandler(ChargingManager.BOLT)
 						.setSwayMultiplier(3).setDistance(280).setRecoil(7).done();
-				GunYMLCreator.createNewDefaultGun(getDataFolder(), "mp40", "MP 40", 107, stringsMetalRif, WeaponType.SMG,
-						WeaponSounds.GUN_SMALL, true, "9mm", 2, 32, 3800).setFullyAutomatic(3).done();
+				GunYMLCreator.createNewDefaultGun(getDataFolder(), "mp40", "MP 40", 107, stringsMetalRif,
+						WeaponType.SMG, WeaponSounds.GUN_SMALL, true, "9mm", 2, 32, 3800).setFullyAutomatic(3).done();
 				GunYMLCreator
 						.createNewDefaultGun(getDataFolder(), "sturmgewehr44", "Sturmgewehr 44", 108, stringsMetalRif,
 								WeaponType.SMG, WeaponSounds.GUN_AUTO, true, "762", 3, 30, 3800)
@@ -1759,8 +1814,19 @@ public class QAMain extends JavaPlugin implements Listener {
 					namesToBypass.add(player.getName());
 					resourcepackwhitelist.set("Names_Of_players_to_bypass", namesToBypass);
 					player.sendMessage(prefix + S_RESOURCEPACK_DOWNLOAD);
-					player.sendMessage(url);
+					if (AutoDetectResourcepackVersion && Bukkit.getPluginManager().isPluginEnabled("ViaRewind")) {
+						if(MANUALLYSELECT18) {
+							player.sendMessage("For 1.9+ : " + url18New);
+							player.sendMessage("For 1.8  : " + url18);							
+						}else {
+						player.sendMessage("For 1.9+ : " + url);
+						player.sendMessage("For 1.8  : " + url18);
+						}
+					} else {
+						player.sendMessage(url);
+					}
 					player.sendMessage(prefix + S_RESOURCEPACK_BYPASS);
+
 					return true;
 				}
 
@@ -1817,6 +1883,7 @@ public class QAMain extends JavaPlugin implements Listener {
 				}
 				if (args[0].equalsIgnoreCase("reload")) {
 					if (sender.hasPermission("qualityarmory.reload")) {
+						reloadConfig();
 						reloadVals();
 						sender.sendMessage(prefix + " Guns and configs have been reloaded.");
 						return true;
@@ -2330,7 +2397,7 @@ public class QAMain extends JavaPlugin implements Listener {
 			if (QualityArmory.isGun(e.getItem().getItemStack())) {
 				Gun g = QualityArmory.getGun(e.getItem().getItemStack());
 				try {
-					if (AutoDetectResourcepackVersion) {
+					if (AutoDetectResourcepackVersion && !MANUALLYSELECT18) {
 						if (us.myles.ViaVersion.bukkit.util.ProtocolSupportUtil
 								.getProtocolVersion(e.getPlayer()) < ID18) {
 							if (g == null)
@@ -2612,7 +2679,7 @@ public class QAMain extends JavaPlugin implements Listener {
 		// Quick bugfix for specifically this item.
 
 		try {
-			if (!ignoreUnbreaking)
+			if (ITEM_enableUnbreakable && !ignoreUnbreaking)
 				if (QualityArmory.isCustomItem(e.getPlayer().getItemInHand())) {
 					if (!e.getPlayer().getItemInHand().getItemMeta().spigot().isUnbreakable()) {
 						QAMain.DEBUG("A player is using a breakable item that reached being a gun!");
@@ -2632,7 +2699,7 @@ public class QAMain extends JavaPlugin implements Listener {
 		}
 
 		try {
-			if (!ignoreUnbreaking)
+			if (ITEM_enableUnbreakable && !ignoreUnbreaking)
 				if (QualityArmory.isCustomItem(e.getPlayer().getInventory().getItemInOffHand())) {
 					if (!e.getPlayer().getInventory().getItemInOffHand().getItemMeta().spigot().isUnbreakable()) {
 						QAMain.DEBUG("A player is using a breakable item that reached being a gun!");
@@ -2705,7 +2772,7 @@ public class QAMain extends JavaPlugin implements Listener {
 			ItemStack usedItem = e.getPlayer().getItemInHand();
 
 			try {
-				if (AutoDetectResourcepackVersion) {
+				if (AutoDetectResourcepackVersion && !MANUALLYSELECT18) {
 					if (us.myles.ViaVersion.bukkit.util.ProtocolSupportUtil.getProtocolVersion(e.getPlayer()) < ID18) {
 						Gun g = QualityArmory.getGun(usedItem);
 						if (g == null)

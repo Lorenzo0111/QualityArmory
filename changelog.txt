@@ -1,3 +1,11 @@
+1.1.127
+	Updated 1.8 to add 7 new guns (AA12, Spas12, DP27, Famas, M40 M79, Uzi)
+	Added SUBGR support (When enabled, QA will try to use the 1.8 systems that get around subgr's item issues)
+	Fixed issue where automatic-reloading could remove items from inventory.
+	Added Sentinel support.
+	QA shop and QA craft are no longer default permissions, making it easier to assign which players can use guns
+	Added two options for getResourcepack when using viarewind
+
 1.1.126
 	Fixed a dozen spelling and grammar mistakes such as "Varient"
 

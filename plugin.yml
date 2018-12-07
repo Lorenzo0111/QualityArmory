@@ -1,18 +1,18 @@
 main: me.zombie_striker.qg.QAMain
-version: 1.1.126
+version: 1.1.128
 api-version: 1.13
 name: QualityArmory
 commands:
   QualityArmory:
-    description: Create images using blocks
+    description: Main command for QA
     aliases: [qa]
 permissions:
   qualityarmory.*:
-    description: Gives access to all PixelPrinter commands
+    description: Gives access to all QualityArmory commands
     children:
       qualityarmory.admin: true
   qualityarmory.admin:
-    description: Gives access to all PixelPrinter commands
+    description: 'Gives access to all admin commands for QA'
     children:
       qualityarmory.give: true
       qualityarmory.create: true
@@ -23,8 +23,7 @@ permissions:
       qualityarmory.default: true
       qualityarmory.debugmessages: true
   qualityarmory.default:
-    default: true
-    description: Gives access to all PixelPrinter commands
+    description: 'Gives access to all QualityArmory default commands such as shooting crafting and shopping'
     children:
       qualityarmory.craft: true
       qualityarmory.shop: true

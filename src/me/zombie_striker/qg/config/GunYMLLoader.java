@@ -1,7 +1,6 @@
 package me.zombie_striker.qg.config;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
@@ -371,6 +370,7 @@ public class GunYMLLoader {
 	}
 
 	public static void loadGuns(QAMain main) {
+		if(new File(main.getDataFolder(), "newGuns").exists())
 		for (File f : new File(main.getDataFolder(), "newGuns").listFiles()) {
 			FileConfiguration f2 = YamlConfiguration.loadConfiguration(f);
 			if (CrackshotLoader.isCrackshotGun(f2)) {
@@ -384,12 +384,7 @@ public class GunYMLLoader {
 	}
 
 	public static void loadAttachments(QAMain main) {
-		if (!new File(main.getDataFolder(), "attachments").exists())
-			try {
-				new File(main.getDataFolder(), "attachments").createNewFile();
-			} catch (IOException e1) {
-				e1.printStackTrace();
-			}
+		if (new File(main.getDataFolder(), "attachments").exists())
 		for (File f : new File(main.getDataFolder(), "attachments").listFiles()) {
 			try {
 				if (f.getName().contains("yml")) {

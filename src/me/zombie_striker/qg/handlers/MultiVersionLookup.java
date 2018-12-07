@@ -17,6 +17,8 @@ public class MultiVersionLookup {
 	private static Material ironshovel;
 	private static Material ink;
 
+	private static Material carrotstick;
+	
 	private static Sound noteHarp;
 	private static Sound woolsound;
 	private static Sound enderdrag;
@@ -94,6 +96,17 @@ public class MultiVersionLookup {
 		return ironshovel;
 	}
 
+	public static Material getCarrotOnAStick() {
+		if (carrotstick == null) {
+			try {
+				carrotstick = Material.matchMaterial("CARROT_STICK");
+			} catch (Error | Exception e) {
+			}
+			if (carrotstick == null)
+				carrotstick = Material.CARROT_ON_A_STICK;
+		}
+		return carrotstick;
+	}
 	public static Material getGoldHoe() {
 		if (goldhoe == null) {
 			try {

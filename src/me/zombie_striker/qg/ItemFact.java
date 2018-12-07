@@ -131,6 +131,11 @@ public class ItemFact {
 			if (g.getAmmoType() != null)
 				lore.add(QAMain.S_ITEM_AMMO + ": " + g.getAmmoType().getDisplayName());
 		}
+		if (QAMain.AutoDetectResourcepackVersion && Bukkit.getPluginManager().isPluginEnabled("ViaRewind")) {
+			if (g.is18Support()) {
+				lore.add(ChatColor.GRAY + "1.8 Weapon");
+			}
+		}
 
 		if (QAMain.enableDurability)
 			if (current == null) {
@@ -225,17 +230,21 @@ public class ItemFact {
 		ItemStack ironsights = new ItemStack(IronSightsToggleItem.getMat(), 1, (short) IronSightsToggleItem.getData());
 		ItemMeta im = ironsights.getItemMeta();
 		im.setDisplayName(IronSightsToggleItem.getItemName());
-		try {
-			im.setUnbreakable(true);
-		} catch (Error | Exception e3423) {
+		if (QAMain.ITEM_enableUnbreakable) {
 			try {
-				im.spigot().setUnbreakable(true);
-			} catch (Error | Exception e342) {
+				//TODO:im.setUnbreakable(true);
+			} catch (Error | Exception e3423) {
+				try {
+					im.spigot().setUnbreakable(true);
+				} catch (Error | Exception e342) {
 
+				}
 			}
 		}
 		try {
-			im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_UNBREAKABLE);
+			if (QAMain.ITEM_enableUnbreakable) {
+				//TODO:	im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_UNBREAKABLE);
+			}
 			im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_ATTRIBUTES);
 			im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_DESTROYS);
 		} catch (Error | Exception e34) {
@@ -262,20 +271,24 @@ public class ItemFact {
 			im.setDisplayName(displayname);
 			List<String> lore = getGunLore(g, null, g.getMaxBullets());
 			im.setLore(lore);
+			if (QAMain.ITEM_enableUnbreakable) {
+				try {
+					//TODO:	im.setUnbreakable(true);
+				} catch (Error | Exception e34) {
+					try {
+						im.spigot().setUnbreakable(true);
+					} catch (Error | Exception e344) {
+					}
+				}
+			}
 			try {
-				im.setUnbreakable(true);
-			} catch (Error | Exception e34) {
-				try {
-					im.spigot().setUnbreakable(true);
-				} catch (Error | Exception e344) {
+				if (QAMain.ITEM_enableUnbreakable) {
+					//TODO:	im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_UNBREAKABLE);
 				}
-				try {
-					im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_UNBREAKABLE);
-					im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_ATTRIBUTES);
-					im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_DESTROYS);
-				} catch (Error e) {
+				im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_ATTRIBUTES);
+				im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_DESTROYS);
+			} catch (Error e) {
 
-				}
 			}
 
 			is.setItemMeta(im);
@@ -303,20 +316,24 @@ public class ItemFact {
 		List<String> lore = getArmorLore(a, is);
 		addVarientData(lore, a);
 		im.setLore(lore);
+		if (QAMain.ITEM_enableUnbreakable) {
+			try {
+			//TODO:	im.setUnbreakable(true);
+			} catch (Error | Exception e34) {
+				try {
+					im.spigot().setUnbreakable(true);
+				} catch (Error | Exception e343) {
+				}
+			}
+		}
 		try {
-			im.setUnbreakable(true);
-		} catch (Error | Exception e34) {
-			try {
-				im.spigot().setUnbreakable(true);
-			} catch (Error | Exception e343) {
+			if (QAMain.ITEM_enableUnbreakable) {
+				//TODO:	im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_UNBREAKABLE);
 			}
-			try {
-				im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_UNBREAKABLE);
-				im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_ATTRIBUTES);
-				im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_DESTROYS);
-			} catch (Error e) {
+			im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_ATTRIBUTES);
+			im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_DESTROYS);
+		} catch (Error e) {
 
-			}
 		}
 
 		is.setItemMeta(im);
@@ -349,17 +366,21 @@ public class ItemFact {
 			is.setDurability((short) 0);
 		ItemMeta im = is.getItemMeta();
 		im.setDisplayName(a.getDisplayName());
-		try {
-			im.setUnbreakable(true);
-		} catch (Error | Exception e34) {
+		if (QAMain.ITEM_enableUnbreakable) {
 			try {
-				im.spigot().setUnbreakable(true);
-			} catch (Error | Exception e343) {
+				//TODO:	im.setUnbreakable(true);
+			} catch (Error | Exception e34) {
+				try {
+					im.spigot().setUnbreakable(true);
+				} catch (Error | Exception e343) {
 
+				}
 			}
 		}
 		try {
-			im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_UNBREAKABLE);
+			if (QAMain.ITEM_enableUnbreakable) {
+				//TODO:	im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_UNBREAKABLE);
+			}
 			im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_ATTRIBUTES);
 			im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_DESTROYS);
 		} catch (Error e) {
@@ -390,17 +411,21 @@ public class ItemFact {
 		ItemMeta im = is.getItemMeta();
 		im.setDisplayName(a.getDisplayName());
 
-		try {
-			im.setUnbreakable(true);
-		} catch (Error | Exception e34) {
+		if (QAMain.ITEM_enableUnbreakable) {
 			try {
-				im.spigot().setUnbreakable(true);
-			} catch (Error | Exception e343) {
+				//TODO:im.setUnbreakable(true);
+			} catch (Error | Exception e34) {
+				try {
+					im.spigot().setUnbreakable(true);
+				} catch (Error | Exception e343) {
 
+				}
 			}
 		}
 		try {
-			im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_UNBREAKABLE);
+			if (QAMain.ITEM_enableUnbreakable) {
+				//TODO:	im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_UNBREAKABLE);
+			}
 			im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_ATTRIBUTES);
 			im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_DESTROYS);
 		} catch (Error e) {
