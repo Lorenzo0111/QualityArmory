@@ -163,7 +163,7 @@ public class QAMain extends JavaPlugin implements Listener {
 	// "https://www.dropbox.com/s/faufrgo7w2zpi3d/QualityArmoryv1.0.10.zip?dl=1";
 	public static String url_newest = "https://www.dropbox.com/s/3mkoulo9tzdte8w/QualityArmoryv1.0.37.zip?dl=1";
 	public static String url18 = "https://www.dropbox.com/s/odvle92e0fz0ezr/QualityArmory1.8v1.0.2.zip?dl=1";
-	public static String url18New = "https://www.dropbox.com/s/ipza6fod5b2jub6/QualityArmory1.9PLUS%20v1.0.2.zip?dl=1";	
+	public static String url18New = "https://www.dropbox.com/s/ipza6fod5b2jub6/QualityArmory1.9PLUS%20v1.0.2.zip?dl=1";
 	public static String url = url_newest;
 
 	public static String S_NOPERM = "&c You do not have permission to do that.";
@@ -440,7 +440,7 @@ public class QAMain extends JavaPlugin implements Listener {
 						// if (p.getItemInHand().containsEnchantment(Enchantment.MENDING)) {
 						if (p.getItemInHand() != null && p.getItemInHand().hasItemMeta())
 							if (QualityArmory.isCustomItem(p.getItemInHand())) {
-								if (ITEM_enableUnbreakable || (!p.getItemInHand().getItemMeta().spigot().isUnbreakable()
+								if (ITEM_enableUnbreakable && (!p.getItemInHand().getItemMeta().spigot().isUnbreakable()
 										&& !ignoreUnbreaking)) {
 									ItemStack temp = p.getItemInHand();
 									int j = QualityArmory.findSafeSpot(temp, false, overrideURL);
@@ -457,7 +457,7 @@ public class QAMain extends JavaPlugin implements Listener {
 							if (p.getInventory().getItemInOffHand() != null
 									&& p.getInventory().getItemInOffHand().hasItemMeta())
 								if (QualityArmory.isCustomItem(p.getInventory().getItemInOffHand())) {
-									if (ITEM_enableUnbreakable || (!p.getInventory().getItemInOffHand().getItemMeta()
+									if (ITEM_enableUnbreakable && (!p.getInventory().getItemInOffHand().getItemMeta()
 											.spigot().isUnbreakable() && !ignoreUnbreaking)) {
 										ItemStack temp = p.getInventory().getItemInOffHand();
 										int j = QualityArmory.findSafeSpot(temp, false, overrideURL);
@@ -721,7 +721,8 @@ public class QAMain extends JavaPlugin implements Listener {
 
 		allowGunReload = (boolean) a("allowGunReload", allowGunReload);
 		AutoDetectResourcepackVersion = (boolean) a("Auto-Detect-Resourcepack", AutoDetectResourcepackVersion);
-		MANUALLYSELECT18 = (boolean) a("ManuallyOverrideTo_1_8_systems", Bukkit.getPluginManager().isPluginEnabled("WetSponge")?true:MANUALLYSELECT18);
+		MANUALLYSELECT18 = (boolean) a("ManuallyOverrideTo_1_8_systems",
+				Bukkit.getPluginManager().isPluginEnabled("WetSponge") ? true : MANUALLYSELECT18);
 
 		unknownTranslationKeyFixer = (boolean) a("unknownTranslationKeyFixer", false);
 
@@ -828,7 +829,7 @@ public class QAMain extends JavaPlugin implements Listener {
 
 			List<String> stringsHealer = Arrays.asList(new String[] { getIngString(MultiVersionLookup.getWool(), 0, 6),
 					getIngString(Material.GOLDEN_APPLE, 0, 1) });
-			if (MANUALLYSELECT18|| !isVersionHigherThan(1, 9)
+			if (MANUALLYSELECT18 || !isVersionHigherThan(1, 9)
 					|| (AutoDetectResourcepackVersion && Bukkit.getPluginManager().isPluginEnabled("ViaRewind"))) {
 				String additive = AutoDetectResourcepackVersion ? "_18" : "";
 				{
@@ -874,14 +875,14 @@ public class QAMain extends JavaPlugin implements Listener {
 					// TODO: New guns for resourcepack
 
 					GunYMLCreator
-							.createNewCustomGun(getDataFolder(), "default_1_8_famas", "famas" + additive, "FAMAS-G2",
-									1, stringsMetalRif, WeaponType.RIFLE, null, false, "556", 3, 30, 4500)
+							.createNewCustomGun(getDataFolder(), "default_1_8_famas", "famas" + additive, "FAMAS-G2", 1,
+									stringsMetalRif, WeaponType.RIFLE, null, false, "556", 3, 30, 4500)
 							.setFullyAutomatic(3).setRecoil(2).setMaterial(Material.PRISMARINE_CRYSTALS).setOn18(true)
 							.done();
 					GunYMLCreator
 							.createNewCustomGun(getDataFolder(), "default_1_8_m79", "m79" + additive,
-									"&6M79 \"Thumper\"", 1, stringsWoodRif, WeaponType.RPG,
-									WeaponSounds.WARHEAD_LAUNCH, false, "40mm", 100, 1, 5000)
+									"&6M79 \"Thumper\"", 1, stringsWoodRif, WeaponType.RPG, WeaponSounds.WARHEAD_LAUNCH,
+									false, "40mm", 100, 1, 5000)
 							.setDelayShoot(1).setCustomProjectile(ProjectileManager.EXPLODINGROUND)
 							.setCustomProjectileVelocity(2).setCustomProjectileExplosionRadius(6)// .setChargingHandler(ChargingManager.MININUKELAUNCHER)
 							.setReloadingHandler(ReloadingManager.SINGLERELOAD).setDistance(500)
@@ -902,15 +903,15 @@ public class QAMain extends JavaPlugin implements Listener {
 							stringsMetalRif, WeaponType.SMG, WeaponSounds.GUN_SMALL_AUTO, false, "9mm", 2, 25, 2000)
 							.setFullyAutomatic(3).setMaterial(Material.RABBIT_FOOT).setOn18(true).done();
 					GunYMLCreator
-							.createNewCustomGun(getDataFolder(), "default_1_8_aa12", "aa12" + additive, "AA-12", 26, stringsMetalRif, WeaponType.SHOTGUN,
-									null, false, "shell", 2, 32, 4000)
+							.createNewCustomGun(getDataFolder(), "default_1_8_aa12", "aa12" + additive, "AA-12", 26,
+									stringsMetalRif, WeaponType.SHOTGUN, null, false, "shell", 2, 32, 4000)
 							.setBulletsPerShot(10).setDistance(80).setFullyAutomatic(2).setRecoil(7)
 							.setMaterial(MultiVersionLookup.getCarrotOnAStick()).setOn18(true).done();
 					GunYMLCreator
-							.createNewCustomGun(getDataFolder(), "default_1_8_spas12", "spas12" + additive, "Spas-12", 1, stringsMetalRif,
-									WeaponType.SHOTGUN, null, false, "shell", 2, 8, 1000)
-							.setBulletsPerShot(20).setDistance(80).setRecoil(10).setMaterial(Material.RABBIT_HIDE).setOn18(true)
-							.done();
+							.createNewCustomGun(getDataFolder(), "default_1_8_spas12", "spas12" + additive, "Spas-12",
+									1, stringsMetalRif, WeaponType.SHOTGUN, null, false, "shell", 2, 8, 1000)
+							.setBulletsPerShot(20).setDistance(80).setRecoil(10).setMaterial(Material.RABBIT_HIDE)
+							.setOn18(true).done();
 
 				}
 
@@ -1815,12 +1816,12 @@ public class QAMain extends JavaPlugin implements Listener {
 					resourcepackwhitelist.set("Names_Of_players_to_bypass", namesToBypass);
 					player.sendMessage(prefix + S_RESOURCEPACK_DOWNLOAD);
 					if (AutoDetectResourcepackVersion && Bukkit.getPluginManager().isPluginEnabled("ViaRewind")) {
-						if(MANUALLYSELECT18) {
+						if (MANUALLYSELECT18) {
 							player.sendMessage("For 1.9+ : " + url18New);
-							player.sendMessage("For 1.8  : " + url18);							
-						}else {
-						player.sendMessage("For 1.9+ : " + url);
-						player.sendMessage("For 1.8  : " + url18);
+							player.sendMessage("For 1.8  : " + url18);
+						} else {
+							player.sendMessage("For 1.9+ : " + url);
+							player.sendMessage("For 1.8  : " + url18);
 						}
 					} else {
 						player.sendMessage(url);

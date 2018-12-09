@@ -1,3 +1,7 @@
+1.1.129 (merged two updates into one, due to version id issue :p)
+	Possible fix for 1.8 servers with textures.
+	Fixed issue for QA items converting to diamond axes
+
 1.1.127
 	Updated 1.8 to add 7 new guns (AA12, Spas12, DP27, Famas, M40 M79, Uzi)
 	Added SUBGR support (When enabled, QA will try to use the 1.8 systems that get around subgr's item issues)

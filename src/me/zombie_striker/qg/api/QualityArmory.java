@@ -93,7 +93,9 @@ public class QualityArmory {
 									player.setResourcePack(QAMain.url);
 								}
 							} catch (Error | Exception e4) {
-								if (QAMain.MANUALLYSELECT18) {
+								if (!QAMain.isVersionHigherThan(1, 9)) {
+									player.setResourcePack(QAMain.url18);
+								} else if (QAMain.MANUALLYSELECT18) {
 									player.setResourcePack(QAMain.url18New);
 								} else {
 									player.setResourcePack(QAMain.url);
