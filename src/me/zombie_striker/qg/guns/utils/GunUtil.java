@@ -122,8 +122,8 @@ public class GunUtil {
 						Location test = start.clone();
 						// If the entity is close to the line of fire.
 						if (e instanceof Player) {
-							Player player = (Player )e;
-							if(player.getGameMode()==GameMode.SPECTATOR) {
+							Player player = (Player) e;
+							if (player.getGameMode() == GameMode.SPECTATOR) {
 								continue;
 							}
 							if (QAMain.hasParties && (!QAMain.friendlyFire)) {
@@ -576,7 +576,7 @@ public class GunUtil {
 			if (g.getReloadingingVal() != null) {
 				seconds = g.getReloadingingVal().reload(player, g, subtractAmount);
 			}
-			QAMain.toggleNightvision(player,g, false);
+			QAMain.toggleNightvision(player, g, false);
 
 			im.setLore(ItemFact.getGunLore(g, temp, 0));
 			im.setDisplayName(g.getDisplayName() + QAMain.S_RELOADING_MESSAGE);
@@ -584,55 +584,8 @@ public class GunUtil {
 			if (QAMain.enableVisibleAmounts)
 				temp.setAmount(1);
 			player.getInventory().setItem(slot, temp);
-			BukkitTask r = new BukkitRunnable() {
-				@Override
-				public void run() {
-					try {
-						/*
-						 * player.getWorld().playSound(player.getLocation(), Sound.BLOCK_LEVER_CLICK, 5,
-						 * 1); player.getWorld().playSound(player.getLocation(),
-						 * Sound.BLOCK_LEVER_CLICK, 5, 1.4f);
-						 */
-
-						player.getWorld().playSound(player.getLocation(), WeaponSounds.RELOAD_MAG_IN.getSoundName(), 1,
-								1f);
-						if (!QAMain.isVersionHigherThan(1, 9)) {
-							try {
-								player.getWorld().playSound(player.getLocation(), Sound.valueOf("CLICK"), 5, 1);
-							} catch (Error | Exception e3) {
-								player.getWorld().playSound(player.getLocation(), Sound.valueOf("BLOCK_LEVER_CLICK"), 5,
-										1);
-							}
-						}
-					} catch (Error e2) {
-						try {
-							player.getWorld().playSound(player.getLocation(), Sound.valueOf("CLICK"), 5, 1);
-						} catch (Error | Exception e3) {
-							player.getWorld().playSound(player.getLocation(), Sound.valueOf("BLOCK_LEVER_CLICK"), 5, 1);
-						}
-					}
-					ItemMeta newim = temp.getItemMeta();
-					newim.setLore(ItemFact.getGunLore(g, temp, reloadAmount));
-					newim.setDisplayName(g.getDisplayName());
-					temp.setItemMeta(newim);
-					if (QAMain.enableVisibleAmounts)
-						temp.setAmount(reloadAmount);
-					if(player.isSneaking() && !QAMain.enableIronSightsON_RIGHT_CLICK) {
-						player.getInventory().setItem(slot, ItemFact.getIronSights());
-						Update19OffhandChecker.setOffhand(player, temp);
-						QAMain.toggleNightvision(player, g, true);
-					}else {
-						player.getInventory().setItem(slot, temp);						
-					}
-					QualityArmory.sendHotbarGunAmmoCount(player, g, temp, false);
-				}
-			}.runTaskLater(QAMain.getInstance(), (long) (20 * seconds));
-			if (!QAMain.reloadingTasks.containsKey(player.getUniqueId())) {
-				QAMain.reloadingTasks.put(player.getUniqueId(), new ArrayList<BukkitTask>());
-			}
-			List<BukkitTask> rr = QAMain.reloadingTasks.get(player.getUniqueId());
-			rr.add(r);
-			QAMain.reloadingTasks.put(player.getUniqueId(), rr);
+			
+			new GunRefillerRunnable(player, temp, g, slot, reloadAmount, seconds);
 
 		}
 

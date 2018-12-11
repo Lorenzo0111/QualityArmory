@@ -9,6 +9,7 @@ import me.zombie_striker.qg.api.QAWeaponPrepareShootEvent;
 import me.zombie_striker.qg.api.QualityArmory;
 import me.zombie_striker.qg.guns.projectiles.ProjectileManager;
 import me.zombie_striker.qg.guns.projectiles.RealtimeCalculationProjectile;
+import me.zombie_striker.qg.guns.utils.GunRefillerRunnable;
 import me.zombie_striker.qg.guns.utils.GunUtil;
 import me.zombie_striker.qg.guns.utils.WeaponSounds;
 import me.zombie_striker.qg.guns.utils.WeaponType;
@@ -27,6 +28,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public class Gun implements ArmoryBaseObject, Comparable<Gun> {
@@ -661,9 +663,8 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 		QAMain.DEBUG("Dups check");
 		QAMain.getInstance().checkforDups(e.getPlayer(), usedItem);
 
-		
 		ItemStack offhandItem = Update19OffhandChecker.getItemStackOFfhand(e.getPlayer());
-		boolean offhand = offhandItem!=null && offhandItem.equals(usedItem);
+		boolean offhand = offhandItem != null && offhandItem.equals(usedItem);
 
 		// AttachmentBase attachment =
 		// me.zombie_striker.qg.api.QualityArmory.getGunWithAttchments(usedItem);
@@ -693,6 +694,27 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 					}
 				} catch (Error | Exception e4) {
 				}
+				
+
+				if (e.getPlayer().getItemInHand().getItemMeta().getDisplayName()
+						.contains(QAMain.S_RELOADING_MESSAGE)) {
+					if (!GunRefillerRunnable.hasItemReloaded(usedItem)) {
+						ItemStack tempused = usedItem.clone();
+						ItemMeta im = tempused.getItemMeta();
+						im.setDisplayName(getDisplayName());
+						tempused.setItemMeta(im);
+						if (offhand) {
+							Update19OffhandChecker.setOffhand(e.getPlayer(), tempused);
+							QAMain.DEBUG("odd. Reloading broke. Removing reloading message from offhand - firing");
+						} else {
+							e.getPlayer().setItemInHand(tempused);
+							QAMain.DEBUG("odd. Reloading broke. Removing reloading message from mainhand - firing");
+						}
+					}
+					QAMain.DEBUG("Reloading message 1!");
+					return;
+				}
+				
 
 				if (isAutomatic() && GunUtil.rapidfireshooters.containsKey(e.getPlayer().getUniqueId())) {
 					GunUtil.rapidfireshooters.remove(e.getPlayer().getUniqueId()).cancel();
@@ -783,13 +805,26 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 
 						if (e.getPlayer().getItemInHand().getItemMeta().getDisplayName()
 								.contains(QAMain.S_RELOADING_MESSAGE)) {
+							if (!GunRefillerRunnable.hasItemReloaded(usedItem)) {
+								ItemStack tempused = usedItem.clone();
+								ItemMeta im = tempused.getItemMeta();
+								im.setDisplayName(getDisplayName());
+								tempused.setItemMeta(im);
+								if (offhand) {
+									Update19OffhandChecker.setOffhand(e.getPlayer(), tempused);
+									QAMain.DEBUG("odd. Reloading broke. Removing reloading message from offhand - reload");
+								} else {
+									e.getPlayer().setItemInHand(tempused);
+									QAMain.DEBUG("odd. Reloading broke. Removing reloading message from mainhand - reload");
+								}
+							}
 							QAMain.DEBUG("Reloading message 1!");
 							return;
 						}
-						//ItemStack offhandItem = Update19OffhandChecker.getItemStackOFfhand(e.getPlayer());
-						if (offhandItem!= null) {
-							e.getPlayer().getInventory()
-									.addItem(offhandItem);
+						// ItemStack offhandItem =
+						// Update19OffhandChecker.getItemStackOFfhand(e.getPlayer());
+						if (offhandItem != null) {
+							e.getPlayer().getInventory().addItem(offhandItem);
 							Update19OffhandChecker.setOffhand(e.getPlayer(), null);
 						}
 

@@ -3008,7 +3008,7 @@ public class QAMain extends JavaPlugin implements Listener {
 				}
 			if ((e.getItemDrop().getItemStack().getItemMeta().hasDisplayName()
 					&& e.getItemDrop().getItemStack().getItemMeta().getDisplayName().contains(S_RELOADING_MESSAGE))) {
-				if (!reloadingTasks.containsKey(e.getPlayer().getUniqueId())) {
+				if (!GunRefillerRunnable.hasItemReloaded(e.getItemDrop().getItemStack())) {
 					if (g != null) {
 						ItemStack fix = e.getItemDrop().getItemStack();
 						ItemMeta temp = fix.getItemMeta();

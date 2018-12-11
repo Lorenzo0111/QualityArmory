@@ -1,3 +1,9 @@
+1.1.130
+	Possible fix for sentinel
+	Fixed guns from being able to be shift-clicked to duplicate guns
+	Fixed reloading when item swap locations
+	Fixed unbreakable not being applied to items.
+
 1.1.129 (merged two updates into one, due to version id issue :p)
 	Possible fix for 1.8 servers with textures.
 	Fixed issue for QA items converting to diamond axes
