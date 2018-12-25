@@ -301,10 +301,8 @@ public class QAMain extends JavaPlugin {
 		}
 
 		int sInt = Integer.parseInt(secondChar.toString());
-		if (sInt < secondVersion)
-			return false;
-		return true;
-	}
+        return sInt >= secondVersion;
+    }
 
 	/**
 	 * GUNLIST:
