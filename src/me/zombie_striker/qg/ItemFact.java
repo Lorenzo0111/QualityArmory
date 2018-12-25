@@ -41,10 +41,10 @@ public class ItemFact {
 		if (!is.hasItemMeta() || !is.getItemMeta().hasLore() || is.getItemMeta().getLore().isEmpty())
 			return -1;
 		List<String> lore = is.getItemMeta().getLore();
-		for (int i = 0; i < lore.size(); i++) {
-			if (lore.get(i).startsWith(CALCTEXT))
-				return Integer.parseInt(lore.get(i).split(CALCTEXT)[1]);
-		}
+        for(String s : lore) {
+            if(s.startsWith(CALCTEXT))
+                return Integer.parseInt(s.split(CALCTEXT)[1]);
+        }
 		return -1;
 	}
 
