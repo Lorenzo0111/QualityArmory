@@ -192,7 +192,7 @@ public class ItemFact {
 
 	@SuppressWarnings("deprecation")
 	public static List<String> getCraftingLore(ArmoryBaseObject a) {
-		List<String> lore = new ArrayList<String>();
+		List<String> lore = new ArrayList<>();
 		lore.add(ChatColor.RED + QAMain.S_ITEM_ING + ": ");
 		for (ItemStack is : a.getIngredients()) {
 			StringBuilder sb = new StringBuilder();
@@ -385,7 +385,7 @@ public class ItemFact {
 			im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_DESTROYS);
 		} catch (Error e) {
 		}
-		List<String> lore = new ArrayList<String>();
+		List<String> lore = new ArrayList<>();
 		lore.addAll(a.getCustomLore());
 		addVarientData(lore, a);
 		im.setLore(lore);
@@ -430,7 +430,7 @@ public class ItemFact {
 			im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_DESTROYS);
 		} catch (Error e) {
 		}
-		List<String> lore = new ArrayList<String>();
+		List<String> lore = new ArrayList<>();
 		if (a instanceof MedKit) {
 			if (QAMain.ENABLE_LORE_HELP) {
 				lore.add(QAMain.S_MEDKIT_LORE_INFO);

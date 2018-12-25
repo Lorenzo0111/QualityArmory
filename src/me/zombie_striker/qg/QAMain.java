@@ -34,7 +34,6 @@ import org.bukkit.configuration.file.*;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
-import org.bukkit.event.*;
 import org.bukkit.event.inventory.*;
 import org.bukkit.inventory.*;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -61,7 +60,7 @@ public class QAMain extends JavaPlugin {
 
 	public static ArrayList<MaterialStorage> expansionPacks = new ArrayList<>();
 
-	public static HashMap<UUID, List<BukkitTask>> reloadingTasks = new HashMap<UUID, List<BukkitTask>>();
+	public static HashMap<UUID, List<BukkitTask>> reloadingTasks = new HashMap<>();
 
 	public static HashMap<UUID, Long> sentResourcepack = new HashMap<>();
 
@@ -69,12 +68,12 @@ public class QAMain extends JavaPlugin {
 
 	public static List<Gunner> gunners = new ArrayList<>();
 
-	public static List<String> namesToBypass = new ArrayList<String>();
+	public static List<String> namesToBypass = new ArrayList<>();
 
 	private static QAMain main;
 
 	public static List<Material> interactableBlocks = new ArrayList<>();
-	public static List<Material> destructableBlocks = new ArrayList<Material>();
+	public static List<Material> destructableBlocks = new ArrayList<>();
 	public static boolean enableInteractChests = false;
 
 	private TreeFellerHandler tfh = null;
@@ -275,7 +274,7 @@ public class QAMain extends JavaPlugin {
 
 	public static boolean enableCreationOfFiles = true;
 
-	public static List<Scoreboard> coloredGunScoreboard = new ArrayList<Scoreboard>();
+	public static List<Scoreboard> coloredGunScoreboard = new ArrayList<>();
 	public static boolean blockBreakTexture = false;
 	public static List<UUID> currentlyScoping = new ArrayList<>();
 
@@ -406,29 +405,7 @@ public class QAMain extends JavaPlugin {
 		} catch (Exception e) {
 		}
 
-		Metrics metrics = new Metrics(this);
-
-		// Optional: Add custom charts
-		metrics.addCustomChart(new Metrics.SimplePie("GunCount", new java.util.concurrent.Callable<String>() {
-			@Override
-			public String call() throws Exception {
-				return gunRegister.size() + "";
-			}
-		}));
-		metrics.addCustomChart(
-				new Metrics.SimplePie("uses_default_resourcepack", new java.util.concurrent.Callable<String>() {
-					@Override
-					public String call() throws Exception {
-						return overrideURL + "";
-					}
-				}));
-		metrics.addCustomChart(
-				new Metrics.SimplePie("has_an_expansion_pack", new java.util.concurrent.Callable<String>() {
-					@Override
-					public String call() throws Exception {
-						return (expansionPacks.size() > 0) + "";
-					}
-				}));
+		setupMetrics();
 
 		new BukkitRunnable() {
 			@SuppressWarnings("deprecation")
@@ -475,6 +452,32 @@ public class QAMain extends JavaPlugin {
 			}
 		}.runTaskTimer(this, 20, 4);
 	}
+
+	private void setupMetrics() {
+        Metrics metrics = new Metrics(this);
+
+        // Optional: Add custom charts
+        metrics.addCustomChart(new Metrics.SimplePie("GunCount", new java.util.concurrent.Callable<String>() {
+            @Override
+            public String call() throws Exception {
+                return gunRegister.size() + "";
+            }
+        }));
+        metrics.addCustomChart(
+                new Metrics.SimplePie("uses_default_resourcepack", new java.util.concurrent.Callable<String>() {
+                    @Override
+                    public String call() throws Exception {
+                        return overrideURL + "";
+                    }
+                }));
+        metrics.addCustomChart(
+                new Metrics.SimplePie("has_an_expansion_pack", new java.util.concurrent.Callable<String>() {
+                    @Override
+                    public String call() throws Exception {
+                        return (expansionPacks.size() > 0) + "";
+                    }
+                }));
+    }
 
 	public static void toggleNightvision(Player player, Gun g, boolean add) {
 		if (add) {
@@ -1460,7 +1463,7 @@ public class QAMain extends JavaPlugin {
 	@Override
 	public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
 		if (args.length == 1) {
-			List<String> s = new ArrayList<String>();
+			List<String> s = new ArrayList<>();
 			if (b("give", args[0]))
 				s.add("give");
 			if (b("getResourcepack", args[0]))
@@ -1490,7 +1493,7 @@ public class QAMain extends JavaPlugin {
 			return s;
 		}
 		if (args.length == 2) {
-			List<String> s = new ArrayList<String>();
+			List<String> s = new ArrayList<>();
 			if (args[0].equalsIgnoreCase("give")) {
 				for (Entry<MaterialStorage, Gun> e : gunRegister.entrySet())
 					if (b(e.getValue().getName(), args[1]))
@@ -2020,7 +2023,7 @@ public class QAMain extends JavaPlugin {
 
 	public static Inventory createCustomInventory(int page, boolean shopping) {
 		Inventory shopMenu = Bukkit.createInventory(null, 9 * 6, (shopping ? S_shopName : S_craftingBenchName) + page);
-		List<Gun> gunslistr = new ArrayList<Gun>(gunRegister.values());
+		List<Gun> gunslistr = new ArrayList<>(gunRegister.values());
 		Collections.sort(gunslistr);
 		int basei = 0;
 		int index = (page * 9 * 5);

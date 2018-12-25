@@ -135,7 +135,7 @@ public class QualityArmory {
 	public static boolean isCustomItemNextId(ItemStack is) {
 		if (is == null)
 			return false;
-		List<MaterialStorage> ms = new ArrayList<MaterialStorage>();
+		List<MaterialStorage> ms = new ArrayList<>();
 		ms.addAll(QAMain.expansionPacks);
 		ms.addAll(QAMain.gunRegister.keySet());
 		ms.addAll(QAMain.armorRegister.keySet());
