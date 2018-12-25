@@ -761,7 +761,7 @@ public class QAMain extends JavaPlugin {
 		}
 		enableIronSightsON_RIGHT_CLICK = (boolean) a("IronSightsOnRightClick", false);
 
-		List<String> destarray = (List<String>) a("DestructableMaterials", Arrays.asList("MATERIAL_NAME_HERE"));
+		List<String> destarray = (List<String>) a("DestructableMaterials", Collections.singletonList("MATERIAL_NAME_HERE"));
 		for (String s : destarray) {
 			try {
 				destructableBlocks.add(Material.getMaterial(s));
@@ -1170,49 +1170,49 @@ public class QAMain extends JavaPlugin {
 						.createNewCustomGun(getDataFolder(), "default_aliensrifle", "m41pulserifle",
 								ChatColor.GOLD + "M41PulseRifle", 64, stringsRifle, WeaponType.RIFLE,
 								WeaponSounds.GUN_MEDIUM, false, "556", 4, 30, 5000)
-						.setLore(Arrays.asList("&fGame over, man. Game over!")).setFullyAutomatic(3)
+						.setLore(Collections.singletonList("&fGame over, man. Game over!")).setFullyAutomatic(3)
 						.setBulletsPerShot(1).setMuzzleSmoke(false).setRecoil(2).done();
 				GunYMLCreator
 						.createNewCustomGun(getDataFolder(), "default_auto9", "auto9", ChatColor.GOLD + "Auto9", 65,
 								stringsPistol, WeaponType.PISTOL, WeaponSounds.GUN_DEAGLE, true, "556", 5, 12, 700)
-						.setLore(Arrays.asList("&fDead or alive, you're coming with me! ")).setZoomLevel(1).setRecoil(2)
+						.setLore(Collections.singletonList("&fDead or alive, you're coming with me! ")).setZoomLevel(1).setRecoil(2)
 						.done();
 				GunYMLCreator
 						.createNewCustomGun(getDataFolder(), "default_arcgun9", "arcgun9",
 								ChatColor.GOLD + "The Arc-Gun-9", 66, strings10mm, WeaponType.LAZER,
 								WeaponSounds.SHOCKWAVE, false, "fusion_cell", 0, 10, 2400)
-						.setLore(Arrays.asList("&fPushy!"))
+						.setLore(Collections.singletonList("&fPushy!"))
 						.setChargingHandler(ChargingManager.getHandler(ChargingManager.PUSHBACK)).done();
 				GunYMLCreator
 						.createNewCustomGun(getDataFolder(), "default_halorifle", "unscassaultrifle",
 								ChatColor.GOLD + "UNSCAssaultRifle", 67, stringsRifle, WeaponType.RIFLE,
 								WeaponSounds.GUN_MEDIUM, true, "556", 3, 32, 3800)
 						.setFullyAutomatic(3).setBulletsPerShot(1)
-						.setLore(Arrays.asList("&fAlso known as the \"MA5B\"")).setRecoil(2).done();
+						.setLore(Collections.singletonList("&fAlso known as the \"MA5B\"")).setRecoil(2).done();
 				GunYMLCreator
 						.createNewCustomGun(getDataFolder(), "default_haloalien", "alienneedler",
 								ChatColor.GOLD + "\"Needler\"", 68, stringsRifle, WeaponType.PISTOL,
 								WeaponSounds.GUN_NEEDLER, true, "fusion_cell", 1, 32, 2000)
-						.setFullyAutomatic(4).setBulletsPerShot(1).setLore(Arrays.asList("&fWarning: Sharp"))
+						.setFullyAutomatic(4).setBulletsPerShot(1).setLore(Collections.singletonList("&fWarning: Sharp"))
 						.setParticle("REDSTONE", 1, 0.1, 1).done();
 				GunYMLCreator
 						.createNewCustomGun(getDataFolder(), "default_thatgun", "thatgun",
 								ChatColor.GOLD + "\"That Gun\"", 69, stringsRifle, WeaponType.PISTOL,
 								WeaponSounds.GUN_DEAGLE, true, "556", 5, 12, 2000)
-						.setLore(Arrays.asList("&fAlso known as the \"LAPD 2019 Detective Special\"")).setRecoil(2)
+						.setLore(Collections.singletonList("&fAlso known as the \"LAPD 2019 Detective Special\"")).setRecoil(2)
 						.done();
 				GunYMLCreator
 						.createNewCustomGun(getDataFolder(), "default_blaster", "blaster",
 								ChatColor.GOLD + "\"Blaster\" Pistol", 72, stringsGoldRif, WeaponType.LAZER,
 								WeaponSounds.GUN_STARWARS, false, "fusion_cell", 4, 20, 1600)
 						.setFullyAutomatic(1).setBulletsPerShot(1).setMuzzleSmoke(false).setParticle(1, 0, 0)
-						.setLore(Arrays.asList("&fMiss all the shots you want!")).setRecoil(0).done();
+						.setLore(Collections.singletonList("&fMiss all the shots you want!")).setRecoil(0).done();
 				GunYMLCreator
 						.createNewCustomGun(getDataFolder(), "default_hl2pulserifle", "pulserifle",
 								ChatColor.GOLD + "Overwatch Pulse Rifle", 73, stringsGoldRif, WeaponType.LAZER,
 								WeaponSounds.GUN_HALOLAZER, true, "fusion_cell", 4, 30, 5000)
 						.setFullyAutomatic(3).setBulletsPerShot(1).setMuzzleSmoke(false)
-						.setLore(Arrays.asList("&fStardard Issue Rifles for Combie solders."))
+						.setLore(Collections.singletonList("&fStardard Issue Rifles for Combie solders."))
 						.setParticle(0.5, 0.99, 0.99).setRecoil(2).done();
 				GunYMLCreator
 						.createNewCustomGun(getDataFolder(), "default_vera", "vera", ChatColor.GOLD + "Vera", 74,
@@ -1384,7 +1384,7 @@ public class QAMain extends JavaPlugin {
 					Arrays.asList("Example", "Lore"), Material.DIAMOND_AXE, 27, stringsAmmo, 1, 1.0, 16);
 
 			GunYMLCreator.createMisc(false, getDataFolder(), true, "example_knife", "ExampleKnife", "&7Example Knife",
-					Arrays.asList("Now, this is a knife!"), Material.IRON_SWORD, 1, stringsMetalRif, 100,
+                    Collections.singletonList("Now, this is a knife!"), Material.IRON_SWORD, 1, stringsMetalRif, 100,
 					WeaponType.MEELEE, 12, 100);
 			GunYMLCreator.createAttachment(false, getDataFolder(), true, "example_attachment", "example_attachment",
 					"Attachment For AK47", null, m(28), stringsMetalRif, 100, "AK47").dontVerify().done();
@@ -1579,7 +1579,7 @@ public class QAMain extends JavaPlugin {
 								return true;
 							}
 							GunYMLCreator.createSkullAmmo(true, getDataFolder(), false, "custom_" + args[1], args[1],
-									args[1], Arrays.asList("Custom_item"), itemInHand.getType(),
+									args[1], Collections.singletonList("Custom_item"), itemInHand.getType(),
 									itemInHand.getDurability(),
 									(itemInHand.getType() == MultiVersionLookup.getSkull()
 											? ((SkullMeta) itemInHand.getItemMeta()).getOwner()
@@ -1653,11 +1653,11 @@ public class QAMain extends JavaPlugin {
 								return true;
 							}
 							GunYMLCreator.createNewGun(false, getDataFolder(), false, "custom_" + args[1], args[1],
-									args[1], Arrays.asList("Custom_item"), itemInHand.getDurability(), null,
+									args[1], Collections.singletonList("Custom_item"), itemInHand.getDurability(), null,
 									WeaponType.RIFLE, false, "9mm", 1, 0.2, itemInHand.getType(), 64, 100, 1.5, 0.2, 1,
 									false, 200, null, 120, 0, (AutoDetectResourcepackVersion), WeaponSounds.GUN_MEDIUM);
 							GunYMLCreator.createSkullAmmo(true, getDataFolder(), true, "custom_" + args[1], args[1],
-									args[1], Arrays.asList("Custom_item"), itemInHand.getType(),
+									args[1], Collections.singletonList("Custom_item"), itemInHand.getType(),
 									itemInHand.getDurability(),
 									(itemInHand.getType() == MultiVersionLookup.getSkull()
 											? ((SkullMeta) itemInHand.getItemMeta()).getOwner()
