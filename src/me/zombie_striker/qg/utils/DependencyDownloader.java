@@ -429,7 +429,7 @@ public class DependencyDownloader {
 				75097), CITIZENS(31073), FACTIONS(31292), DYNMAP(31620);
 		private int id;
 
-		private ProjectID(int i) {
+		ProjectID(int i) {
 			id = i;
 		}
 
