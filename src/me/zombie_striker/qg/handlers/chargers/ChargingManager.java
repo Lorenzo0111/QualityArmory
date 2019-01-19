@@ -10,6 +10,7 @@ public class ChargingManager {
 	public static String PUMPACTION = ("PumpAction");
 	public static String BREAKACTION = ("BreakAction");
 	public static String BURSTFIRE = ("BurstFire");
+	public static String DelayedBURSTFIRE = ("DelayedBurstFire");
 	public static String PUSHBACK = "PushBackCharger";
 	public static String REQUIREAIM = "RequireAimCharger";
 	

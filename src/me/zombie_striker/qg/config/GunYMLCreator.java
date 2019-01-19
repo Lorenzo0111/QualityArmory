@@ -184,53 +184,53 @@ public class GunYMLCreator {
 			new File(dataFolder, "newGuns").mkdirs();
 
 		ArmoryYML h = new ArmoryYML(f2);
-		h.setNoSave(false, "AllowUserModifications",
+		h.setNoSave(invalid, "AllowUserModifications",
 				(h.contains("allowUpdates") ? (!(boolean) h.get("allowUpdates")) : false));
-		h.setNoSave(false, "invalid", invalid);
-		h.setNoSave(false, "name", name);
-		h.setNoSave(false, "displayname", displayname);
-		h.setNoSave(false, "lore", (lore == null ? new ArrayList<String>() : lore));
-		h.setNoSave(false, "material", type.name());
-		h.setNoSave(false, "id", id);
-		h.setNoSave(false, "variant", var);
-		h.setNoSave(false, "craftingRequirements", craftingRequirements);
-		h.setNoSave(false, "weapontype", weapontype.name());
-		h.setNoSave(false, "weaponsounds", ws != null ? ws.getSoundName() : WeaponSounds.getSoundByType(weapontype));
+		h.setNoSave(invalid, "invalid", invalid);
+		h.setNoSave(invalid, "name", name);
+		h.setNoSave(invalid, "displayname", displayname);
+		h.setNoSave(invalid, "lore", (lore == null ? new ArrayList<String>() : lore));
+		h.setNoSave(invalid, "material", type.name());
+		h.setNoSave(invalid, "id", id);
+		h.setNoSave(invalid, "variant", var);
+		h.setNoSave(invalid, "craftingRequirements", craftingRequirements);
+		h.setNoSave(invalid, "weapontype", weapontype.name());
+		h.setNoSave(invalid, "weaponsounds", ws != null ? ws.getSoundName() : WeaponSounds.getSoundByType(weapontype));
 		StringBuilder validGuns = new StringBuilder();
 		for (WeaponType g : WeaponType.values()) {
 			validGuns.append(g.name() + ", ");
 		}
-		h.setNoSave(false, "_VALID_WEAPON_TYPES", validGuns.toString());
-		h.setNoSave(false, "enableIronSights", enableIronSights);
-		h.setNoSave(false, "ammotype", ammotype);
-		h.setNoSave(false, "damage", damage);
-		h.setNoSave(false, "sway", sway);
-		h.setNoSave(false, "maxbullets", maxBullets);
-		h.setNoSave(false, "durability", duribility);
-		h.setNoSave(false, "delayForReload", delayReload);
-		h.setNoSave(false, "delayForShoot", delayShoot);
-		h.setNoSave(false, "bullets-per-shot", bulletspershot);
-		h.setNoSave(false, "isAutomatic", isAutomatic);
-		h.setNoSave(false, "price", cost);
-		h.setNoSave(false, "maxBulletDistance", distance);
-		h.setNoSave(false, "unlimitedAmmo", false);
-		h.setNoSave(false, "LightLeveOnShoot", 14);
+		h.setNoSave(invalid, "_VALID_WEAPON_TYPES", validGuns.toString());
+		h.setNoSave(invalid, "enableIronSights", enableIronSights);
+		h.setNoSave(invalid, "ammotype", ammotype);
+		h.setNoSave(invalid, "damage", damage);
+		h.setNoSave(invalid, "sway", sway);
+		h.setNoSave(invalid, "maxbullets", maxBullets);
+		h.setNoSave(invalid, "durability", duribility);
+		h.setNoSave(invalid, "delayForReload", delayReload);
+		h.setNoSave(invalid, "delayForShoot", delayShoot);
+		h.setNoSave(invalid, "bullets-per-shot", bulletspershot);
+		h.setNoSave(invalid, "isAutomatic", isAutomatic);
+		h.setNoSave(invalid, "price", cost);
+		h.setNoSave(invalid, "maxBulletDistance", distance);
+		h.setNoSave(invalid, "unlimitedAmmo", false);
+		h.setNoSave(invalid, "LightLeveOnShoot", 14);
 
-		h.setNoSave(false, "particles.bullet_particle", particle);
+		h.setNoSave(invalid, "particles.bullet_particle", particle);
 		if (particle.equals("REDSTONE")) {
-			h.setNoSave(false, "particles.bullet_particleR", particleR);
-			h.setNoSave(false, "particles.bullet_particleG", particleG);
-			h.setNoSave(false, "particles.bullet_particleB", particleB);
+			h.setNoSave(invalid, "particles.bullet_particleR", particleR);
+			h.setNoSave(invalid, "particles.bullet_particleG", particleG);
+			h.setNoSave(invalid, "particles.bullet_particleB", particleB);
 		}
 
 		if (version18)
-			h.setNoSave(false, "Version_18_Support", version18);
-		h.setNoSave(false, "ChargingHandler", ch == null ? "null" : ch);
+			h.setNoSave(invalid, "Version_18_Support", version18);
+		h.setNoSave(invalid, "ChargingHandler", ch == null ? "null" : ch);
 		if (addMuzzleSmoke)
-			h.setNoSave(false, "addMuzzleSmoke", addMuzzleSmoke);
+			h.setNoSave(invalid, "addMuzzleSmoke", addMuzzleSmoke);
 
 		if (invalid) {
-			h.setNoSave(false, "drop-glow-color", ChatColor.WHITE.name());
+			h.setNoSave(invalid, "drop-glow-color", ChatColor.WHITE.name());
 		}
 		if (h.saveNow)
 			h.save();
@@ -287,25 +287,25 @@ public class GunYMLCreator {
 
 		ArmoryYML h = new ArmoryYML(f2);
 
-		h.setNoSave(false, "AllowUserModifications",
+		h.setNoSave(invalid, "AllowUserModifications",
 				(h.contains("allowUpdates") ? (!(boolean) h.get("allowUpdates")) : false));
-		h.setNoSave(false, "invalid", invalid);
-		h.setNoSave(false, "name", name);
-		h.setNoSave(false, "displayname", displayname);
-		h.setNoSave(false, "lore", (lore == null ? new ArrayList<String>() : lore));
-		h.setNoSave(false, "id", id);
-		h.setNoSave(false, "craftingRequirements", craftingRequirements);
-		h.setNoSave(false, "craftingReturnAmount", craftingReturn);
-		h.setNoSave(false, "price", cost);
-		h.setNoSave(false, "maxAmount", maxAmount);
-		h.setNoSave(false, "material", type.name());
+		h.setNoSave(invalid, "invalid", invalid);
+		h.setNoSave(invalid, "name", name);
+		h.setNoSave(invalid, "displayname", displayname);
+		h.setNoSave(invalid, "lore", (lore == null ? new ArrayList<String>() : lore));
+		h.setNoSave(invalid, "id", id);
+		h.setNoSave(invalid, "craftingRequirements", craftingRequirements);
+		h.setNoSave(invalid, "craftingReturnAmount", craftingReturn);
+		h.setNoSave(invalid, "price", cost);
+		h.setNoSave(invalid, "maxAmount", maxAmount);
+		h.setNoSave(invalid, "material", type.name());
 
 		if (SKULL_OWNER != null) {
-			h.setNoSave(false, "skull_owner", SKULL_OWNER);
-			h.setNoSave(false, "skull_owner_custom_url", Ammo.NO_SKIN_STRING);
+			h.setNoSave(invalid, "skull_owner", SKULL_OWNER);
+			h.setNoSave(invalid, "skull_owner_custom_url", Ammo.NO_SKIN_STRING);
 		}
 
-		h.setNoSave(false, "piercingSeverity", severity);
+		h.setNoSave(invalid, "piercingSeverity", severity);
 		if (h.saveNow)
 			h.save();
 		return h;
@@ -329,18 +329,18 @@ public class GunYMLCreator {
 			h.setNoSave(false, "HOW_TO_USE",
 					"Below is just the required values to create a new attachment for the 'basegun'. If you want to modify more parts of the gun, copy the value you want to change from the 'base' gun and paste it here with the value you want.");
 
-		h.setNoSave(false, "AllowUserModifications",
+		h.setNoSave(invalid, "AllowUserModifications",
 				(h.contains("allowUpdates") ? (!(boolean) h.get("allowUpdates")) : false));
-		h.setNoSave(false, "invalid", invalid);
-		h.setNoSave(false, "name", name);
-		h.setNoSave(false, "displayname", displayname);
-		h.setNoSave(false, "lore", (lore == null ? new ArrayList<String>() : lore));
-		h.setNoSave(false, "id", ms.getData());
-		h.setNoSave(false, "craftingRequirements", craftingRequirements);
-		h.setNoSave(false, "price", cost);
-		h.setNoSave(false, "material", ms.getMat().name());
+		h.setNoSave(invalid, "invalid", invalid);
+		h.setNoSave(invalid, "name", name);
+		h.setNoSave(invalid, "displayname", displayname);
+		h.setNoSave(invalid, "lore", (lore == null ? new ArrayList<String>() : lore));
+		h.setNoSave(invalid, "id", ms.getData());
+		h.setNoSave(invalid, "craftingRequirements", craftingRequirements);
+		h.setNoSave(invalid, "price", cost);
+		h.setNoSave(invalid, "material", ms.getMat().name());
 
-		h.setNoSave(false, "baseGun", originalGun);
+		h.setNoSave(invalid, "baseGun", originalGun);
 		if (!invalid) {
 
 		}
@@ -364,18 +364,18 @@ public class GunYMLCreator {
 		if (!new File(dataFolder, "armor").exists())
 			new File(dataFolder, "armor").mkdirs();
 		ArmorYML h = new ArmorYML(f2);
-		h.setNoSave(false, "AllowUserModifications",
+		h.setNoSave(invalid, "AllowUserModifications",
 				(h.contains("allowUpdates") ? (!(boolean) h.get("allowUpdates")) : false));
-		h.setNoSave(false, "invalid", invalid);
-		h.setNoSave(false, "name", name);
-		h.setNoSave(false, "displayname", displayname);
-		h.setNoSave(false, "lore", (lore == null ? new ArrayList<String>() : lore));
-		h.setNoSave(false, "id", id);
-		h.setNoSave(false, "craftingRequirements", craftingRequirements);
-		h.setNoSave(false, "price", cost);
+		h.setNoSave(invalid, "invalid", invalid);
+		h.setNoSave(invalid, "name", name);
+		h.setNoSave(invalid, "displayname", displayname);
+		h.setNoSave(invalid, "lore", (lore == null ? new ArrayList<String>() : lore));
+		h.setNoSave(invalid, "id", id);
+		h.setNoSave(invalid, "craftingRequirements", craftingRequirements);
+		h.setNoSave(invalid, "price", cost);
 		// h.setNoSave(false, "material", type.name());
 
-		h.setNoSave(false, "MiscType", misctype.name());
+		h.setNoSave(invalid, "MiscType", misctype.name());
 
 		h.setNoOverride("minProtectionHeight", min);
 		h.setNoOverride("maxProtectionHeight", max);
@@ -399,21 +399,21 @@ public class GunYMLCreator {
 		if (!new File(dataFolder, "misc").exists())
 			new File(dataFolder, "misc").mkdirs();
 		ArmoryYML h = new ArmoryYML(f2);
-		h.setNoSave(false, "AllowUserModifications",
+		h.setNoSave(invalid, "AllowUserModifications",
 				(h.contains("allowUpdates") ? (!(boolean) h.get("allowUpdates")) : false));
-		h.setNoSave(false, "invalid", invalid);
-		h.setNoSave(false, "name", name);
-		h.setNoSave(false, "displayname", displayname);
-		h.setNoSave(false, "lore", (lore == null ? new ArrayList<String>() : lore));
-		h.setNoSave(false, "id", id);
-		h.setNoSave(false, "craftingRequirements", craftingRequirements);
-		h.setNoSave(false, "price", cost);
-		h.setNoSave(false, "material", type.name());
+		h.setNoSave(invalid, "invalid", invalid);
+		h.setNoSave(invalid, "name", name);
+		h.setNoSave(invalid, "displayname", displayname);
+		h.setNoSave(invalid, "lore", (lore == null ? new ArrayList<String>() : lore));
+		h.setNoSave(invalid, "id", id);
+		h.setNoSave(invalid, "craftingRequirements", craftingRequirements);
+		h.setNoSave(invalid, "price", cost);
+		h.setNoSave(invalid, "material", type.name());
 
-		h.setNoSave(false, "damage", damage);
-		h.setNoSave(false, "durability", durability);
+		h.setNoSave(invalid, "damage", damage);
+		h.setNoSave(invalid, "durability", durability);
 
-		h.setNoSave(false, "MiscType", misctype.name());
+		h.setNoSave(invalid, "MiscType", misctype.name());
 		if (h.saveNow)
 			h.save();
 		return h;

@@ -54,7 +54,7 @@ public class ArmoryYML {
 	}
 
 	public void set(boolean force, String name, Object v) {
-		if (contains("invalid") && (boolean) get("invalid"))
+		if (!force && contains("invalid") && (boolean) get("invalid"))
 			return;
 		if (contains("AllowUserModifications") && fileConfig.getBoolean("AllowUserModifications"))
 			return;

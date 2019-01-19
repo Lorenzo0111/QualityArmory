@@ -50,8 +50,14 @@ ManuallyOverrideTo_1_8_systems: false
 Auto-Detect-Resourcepack: true
 sendOnJoin: true
 sendTitleOnJoin: false
+showPossibleCrashHelpMessage: true
 SecondsTillRPIsSent: 0.0
 SecondsTillRPIsSent: 0.0
+
+
+#Item values:
+Items:
+  enableUnbreaking: true
 
 
 #QA Controls
@@ -157,7 +163,8 @@ experimental:
     enableBleeding: false
     
 Order-Shop-By-Price: false
-ignoreArmorStands: false
+impenetrableEntityTypes: 
+- ARROW
 EnableGlowEffects: false
 DestructableMaterials:
 - MATERIAL_NAME_HERE

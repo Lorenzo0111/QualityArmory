@@ -116,6 +116,7 @@ public class CrackshotLoader {
 			int damage = (int) crackshotFile.getDouble(name + ".Shooting.Projectile_Damage");
 			boolean automatic = crackshotFile.getBoolean(name + ".Fully_Automatic.Enable");
 			String loreString = crackshotFile.getString(name + ".Item_Information.Item_Lore");
+			int firerate = -1;
 			if (loreString == null)
 				loreString = "";
 			List<String> lore = Arrays.asList(ChatColor.translateAlternateColorCodes('&', loreString).split("\\|"));
@@ -161,6 +162,7 @@ public class CrackshotLoader {
 			if (crackshotFile.contains(name + ".Burstfire") && crackshotFile.getBoolean(name + ".Burstfire.Enable")) {
 				ch = ChargingManager.getHandler(ChargingManager.BURSTFIRE);
 				projectiles = crackshotFile.getInt(name + ".Burstfire.Shots_Per_Burst");
+				firerate = 3;
 			}
 
 			switch (crackshotFile.getString(name + ".Shooting.Projectile_Type")) {
@@ -204,6 +206,8 @@ public class CrackshotLoader {
 				g.setReloadingHandler(rh);
 			if (projectiles > 1)
 				g.setBulletsPerShot(projectiles);
+			if(firerate > 0)
+				g.setFireRate(firerate);
 			if (automatic && crackshotFile.contains(name + ".Fully_Automatic.Fire_Rate")) {
 				g.setFireRate(crackshotFile.getInt(name + ".Fully_Automatic.Fire_Rate") / 2);
 			}

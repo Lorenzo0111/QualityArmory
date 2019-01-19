@@ -54,7 +54,11 @@ public class ExplodingRoundProjectile implements RealtimeCalculationProjectile {
 							player.getWorld().playSound(s, Sound.ENTITY_GENERIC_EXPLODE, 8, 0.7f);
 						} catch (Error e3) {
 							s.getWorld().playEffect(s, Effect.valueOf("CLOUD"), 0);
+							try {
 							player.getWorld().playSound(s, Sound.valueOf("EXPLODE"), 8, 0.7f);
+							} catch (Error e333) {
+								player.getWorld().playSound(s, Sound.valueOf("ENTITY_GENERIC_EXPLODE"), 8, 0.7f);
+							}
 						}
 						cancel();
 						return;

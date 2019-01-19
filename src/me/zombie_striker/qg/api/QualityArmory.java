@@ -70,14 +70,17 @@ public class QualityArmory {
 					QAMain.resourcepackReq.add(player.getUniqueId());
 					return;
 				}
-				if (warning)
+				if (warning) {
 					try {
 						player.sendTitle(ChatColor.RED + QAMain.S_NORES1, QAMain.S_NORES2);
 					} catch (Error e2) {
 						player.sendMessage(ChatColor.RED + QAMain.S_NORES1);
 						player.sendMessage(ChatColor.RED + QAMain.S_NORES2);
 					}
+				}
+				if(QAMain.showCrashMessage)
 				player.sendMessage(QAMain.prefix + QAMain.S_RESOURCEPACK_HELP);
+				
 				new BukkitRunnable() {
 					@Override
 					public void run() {

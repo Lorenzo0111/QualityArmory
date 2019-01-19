@@ -31,14 +31,13 @@ public class GunRefillerRunnable {
 	private BukkitTask r;
 	private ItemStack reloadedItem;
 
-	public GunRefillerRunnable(final Player player, final ItemStack temp, final Gun g, final int slot,
+	public GunRefillerRunnable(final Player player, final ItemStack modifiedOriginalItem, final Gun g, final int slot,
 			final int reloadAmount, double seconds) {
 		final GunRefillerRunnable gg = this;
 
-		this.reloadedItem = temp;
+		this.reloadedItem = modifiedOriginalItem.clone();
 
 		r = new BukkitRunnable() {
-			@SuppressWarnings("deprecation")
 			@Override
 			public void run() {
 				try {
@@ -58,37 +57,41 @@ public class GunRefillerRunnable {
 						player.getWorld().playSound(player.getLocation(), Sound.valueOf("BLOCK_LEVER_CLICK"), 5, 1);
 					}
 				}
-				ItemMeta newim = temp.getItemMeta();
-				newim.setLore(ItemFact.getGunLore(g, temp, reloadAmount));
+				ItemMeta newim = modifiedOriginalItem.getItemMeta();
+				newim.setLore(ItemFact.getGunLore(g, modifiedOriginalItem, reloadAmount));
 				newim.setDisplayName(g.getDisplayName());
-				temp.setItemMeta(newim);
-				if (QAMain.enableVisibleAmounts)
-					temp.setAmount(reloadAmount);
+				modifiedOriginalItem.setItemMeta(newim);
+				// if (QAMain.enableVisibleAmounts)
+				// temp.setAmount(reloadAmount);
 				ItemStack current = player.getInventory().getItem(slot);
 				int newSlot = slot;
-				if (current == null || current.getType() != temp.getType()
-						|| current.getDurability() != temp.getDurability()) {
+				boolean different = false;
+				if (current == null || !current.equals(reloadedItem)) {
 					newSlot = -8;
+					different = true;
 					for (int i = 0; i < player.getInventory().getSize(); i++) {
 						ItemStack check = player.getInventory().getItem(i);
-						if (check != null && check.getType() == temp.getType()
-								&& check.getDurability() == temp.getDurability()) {
-							newSlot = i;
-							break;
+						if (check != null) {
+							Gun g2 = QualityArmory.getGun(check);
+							if (g2 != null && g2 == g) {
+								if (check.getItemMeta().getDisplayName().contains(QAMain.S_RELOADING_MESSAGE)) {
+									newSlot = i;
+									break;
+								}
+							}
 						}
 					}
 				}
-
+				QAMain.DEBUG("Reloading to slot " + newSlot + "(org=" + slot + ")");
 				if (newSlot > -2) {
-					if (player.isSneaking() && !QAMain.enableIronSightsON_RIGHT_CLICK) {
+					if (!different && player.isSneaking()&& g.hasIronSights() && !QAMain.enableIronSightsON_RIGHT_CLICK) {
 						player.getInventory().setItem(newSlot, ItemFact.getIronSights());
-						Update19OffhandChecker.setOffhand(player, temp);
+						Update19OffhandChecker.setOffhand(player, modifiedOriginalItem);
 						QAMain.toggleNightvision(player, g, true);
 					} else {
-						player.getInventory().setItem(newSlot, temp);
+						player.getInventory().setItem(newSlot, modifiedOriginalItem);
 					}
-
-					QualityArmory.sendHotbarGunAmmoCount(player, g, temp, false);
+					QualityArmory.sendHotbarGunAmmoCount(player, g, modifiedOriginalItem, false);
 				}
 
 				if (!QAMain.reloadingTasks.containsKey(player.getUniqueId())) {

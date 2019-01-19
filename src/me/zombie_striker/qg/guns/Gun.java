@@ -610,18 +610,6 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 
 	@Override
 	public void onLMB(PlayerInteractEvent e, ItemStack usedItem) {
-		// if (((e.getAction() == Action.LEFT_CLICK_AIR
-		// || e.getAction() == Action.LEFT_CLICK_BLOCK) == SWAP_RMB_WITH_LMB)
-		// || (SWAP_RMB_WITH_LMB && g != null && g.isAutomatic() &&
-		// e.getPlayer().isSneaking())) {
-		/*
-		 * if(e.getAction().name().contains("RIGHT") && e.getClickedBlock() != null &&
-		 * interactableBlocks.contains(e.getClickedBlock().getType())) {
-		 * e.setCancelled(false); return; }
-		 */
-		// TODO: Verify If the player is shifting and rightclick, the gun will still
-		// fire. The player has to be standing (non-sneak) in order to interact with
-		// interactable blocks.
 		onClick(e, usedItem, QAMain.SWAP_RMB_WITH_LMB);
 	}
 
@@ -631,37 +619,27 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 
 		if (!e.getPlayer().hasPermission("qualityarmory.usegun")) {
 			e.getPlayer().sendMessage(QAMain.S_NOPERM);
+			e.setCancelled(true);
 			return;
 		}
 
-		if (QAMain.enableVisibleAmounts) {
-			QAMain.DEBUG("UNSUPPORTED - Enable visable ammo amount ID check");
-			boolean validcheck2 = false;
-			try {
-				if (QAMain.isVersionHigherThan(1, 9)) {
-					UUID.fromString(usedItem.getItemMeta().getLocalizedName());
-					QAMain.DEBUG("Gun-Validation check - 1");
-				} else {
-					validcheck2 = true;
-				}
-			} catch (Error | Exception e34) {
-				validcheck2 = true;
-			}
-			if (validcheck2) {
-				if (QAMain.isVersionHigherThan(1, 9)) {
-					if (!usedItem.getItemMeta().hasDisplayName() || !usedItem.getItemMeta().hasLore()) {
-						ItemStack is = ItemFact.getGun(MaterialStorage.getMS(usedItem));
-						e.setCancelled(true);
-						e.getPlayer().setItemInHand(is);
-						QAMain.DEBUG("Gun-Validation check - 2");
-						return;
-					}
-				}
-			}
-		}
+		/*
+		 * if (QAMain.enableVisibleAmounts) {
+		 * QAMain.DEBUG("UNSUPPORTED - Enable visable ammo amount ID check"); boolean
+		 * validcheck2 = false; try { if (QAMain.isVersionHigherThan(1, 9)) {
+		 * UUID.fromString(usedItem.getItemMeta().getLocalizedName());
+		 * QAMain.DEBUG("Gun-Validation check - 1"); } else { validcheck2 = true; } }
+		 * catch (Error | Exception e34) { validcheck2 = true; } if (validcheck2) { if
+		 * (QAMain.isVersionHigherThan(1, 9)) { if
+		 * (!usedItem.getItemMeta().hasDisplayName() ||
+		 * !usedItem.getItemMeta().hasLore()) { ItemStack is =
+		 * ItemFact.getGun(MaterialStorage.getMS(usedItem)); e.setCancelled(true);
+		 * e.getPlayer().setItemInHand(is); QAMain.DEBUG("Gun-Validation check - 2");
+		 * return; } } } }
+		 */
 
 		QAMain.DEBUG("Dups check");
-		QAMain.getInstance().checkforDups(e.getPlayer(), usedItem);
+		QAMain.checkforDups(e.getPlayer(), usedItem);
 
 		ItemStack offhandItem = Update19OffhandChecker.getItemStackOFfhand(e.getPlayer());
 		boolean offhand = offhandItem != null && offhandItem.equals(usedItem);
@@ -675,11 +653,10 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 		QAMain.DEBUG("Made it to gun/attachment check : " + getName());
 		if (QAMain.enableInteractChests) {
 			if (e.getClickedBlock() != null && (e.getClickedBlock().getType() == Material.CHEST
-					|| e.getClickedBlock().getType() == Material.TRAPPED_CHEST)) {
+					|| e.getClickedBlock().getType() == Material.TRAPPED_CHEST) || e.getClickedBlock().getType()==Material.ENDER_CHEST) {
 				QAMain.DEBUG("Chest interactable check has return true!");
 				return;
 			}
-			// Return with no shots if EIC is enabled for chests.
 		}
 
 		e.setCancelled(true);
@@ -694,10 +671,8 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 					}
 				} catch (Error | Exception e4) {
 				}
-				
 
-				if (e.getPlayer().getItemInHand().getItemMeta().getDisplayName()
-						.contains(QAMain.S_RELOADING_MESSAGE)) {
+				if (e.getPlayer().getItemInHand().getItemMeta().getDisplayName().contains(QAMain.S_RELOADING_MESSAGE)) {
 					if (!GunRefillerRunnable.hasItemReloaded(usedItem)) {
 						ItemStack tempused = usedItem.clone();
 						ItemMeta im = tempused.getItemMeta();
@@ -714,7 +689,6 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 					QAMain.DEBUG("Reloading message 1!");
 					return;
 				}
-				
 
 				if (isAutomatic() && GunUtil.rapidfireshooters.containsKey(e.getPlayer().getUniqueId())) {
 					GunUtil.rapidfireshooters.remove(e.getPlayer().getUniqueId()).cancel();
@@ -812,10 +786,12 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 								tempused.setItemMeta(im);
 								if (offhand) {
 									Update19OffhandChecker.setOffhand(e.getPlayer(), tempused);
-									QAMain.DEBUG("odd. Reloading broke. Removing reloading message from offhand - reload");
+									QAMain.DEBUG(
+											"odd. Reloading broke. Removing reloading message from offhand - reload");
 								} else {
 									e.getPlayer().setItemInHand(tempused);
-									QAMain.DEBUG("odd. Reloading broke. Removing reloading message from mainhand - reload");
+									QAMain.DEBUG(
+											"odd. Reloading broke. Removing reloading message from mainhand - reload");
 								}
 							}
 							QAMain.DEBUG("Reloading message 1!");

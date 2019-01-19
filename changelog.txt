@@ -1,3 +1,25 @@
+1.1.134
+	Added /qa drop <item> <x> <y> <z> <optional: world>
+	Added viaversion support for recoil
+	Fixed sound for exploding
+	Fixed potion checks for 1.10.
+	Fixed error with damage if ammo is null.
+
+1.1.133
+	Added ability to specify entities that should be avoided on shot
+	Added M4a1S (Burst). Fires 3 shots
+	Added "DelayedBurstFire" charginghandler. After each shot, the delay between shots will be reduced.
+	Added message to helmet to say that you need to right click to equip.
+	Code cleanup
+
+1.1.132
+	Added config option to disable "possible crash" message for resourcepack
+	Added debug lines to reloading to stop guns disappearing when reloading.
+
+1.1.131
+	Fixed unbreakable automatically going to false
+	Fixed example yml files. Now all example files will automatically update and cannot be changed
+
 1.1.130
 	Possible fix for sentinel
 	Fixed guns from being able to be shift-clicked to duplicate guns

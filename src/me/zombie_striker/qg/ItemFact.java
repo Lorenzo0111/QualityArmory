@@ -2,7 +2,6 @@ package me.zombie_striker.qg;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 import org.bukkit.*;
 import org.bukkit.entity.Player;
@@ -22,9 +21,9 @@ public class ItemFact {
 
 	public static List<String> getArmorLore(ArmorObject a, ItemStack current) {
 		List<String> lore = new ArrayList<>();
+		lore.add(QAMain.S_HELMET_RMB);
 		if (a.getCustomLore() != null)
 			lore.addAll(a.getCustomLore());
-
 		if (current != null && current.hasItemMeta() && current.getItemMeta().hasLore())
 			for (String s : current.getItemMeta().getLore()) {
 				if (ChatColor.stripColor(s).contains("UUID")) {
@@ -297,10 +296,10 @@ public class ItemFact {
 			QAMain.getInstance().getLogger()
 					.warning(QAMain.prefix + " ItemMeta is null for " + g.getName() + ". I have");
 		}
-		if (QAMain.enableVisibleAmounts)
-			is.setAmount(g.getMaxBullets() > 64 ? 64 : g.getMaxBullets());
-		else
-			is.setAmount(1);
+		// if (QAMain.enableVisibleAmounts)
+		// is.setAmount(g.getMaxBullets() > 64 ? 64 : g.getMaxBullets());
+		// else
+		is.setAmount(1);
 
 		is = addGunRegister(is);
 		return is;
@@ -486,33 +485,29 @@ public class ItemFact {
 
 	public static ItemStack addGunRegister(ItemStack base) {
 		ItemMeta im = base.getItemMeta();
-		try {
-			if (QAMain.enableVisibleAmounts)
-				im.setLocalizedName("" + UUID.randomUUID());
-		} catch (Exception | Error e) {
-			List<String> lore = im.getLore();
-			lore.add(ChatColor.DARK_GRAY + "UUID" + UUID.randomUUID().toString());
-			im.setLore(lore);
-		}
+		/*
+		 * try { if (QAMain.enableVisibleAmounts) im.setLocalizedName("" +
+		 * UUID.randomUUID()); } catch (Exception | Error e) { List<String> lore =
+		 * im.getLore(); lore.add(ChatColor.DARK_GRAY + "UUID" +
+		 * UUID.randomUUID().toString()); im.setLore(lore); }
+		 */
 		base.setItemMeta(im);
 		return base;
 	}
 
 	public static boolean sameGun(ItemStack is1, ItemStack is2) {
-		if (!QAMain.enableVisibleAmounts)
-			return false;
-		try {
-			if (is1.hasItemMeta() && is1.getItemMeta().hasLocalizedName())
-				if (is2.hasItemMeta() && is2.getItemMeta().hasLocalizedName())
-					return is1.getItemMeta().getLocalizedName().equals(is2.getItemMeta().getLocalizedName());
-		} catch (Exception | Error e1) {
-			if (is1.hasItemMeta() && is1.getItemMeta().hasLore())
-				if (is2.hasItemMeta() && is2.getItemMeta().hasLore())
-					for (String s : is1.getItemMeta().getLore())
-						if (s.contains("UUID"))
-							return is2.getItemMeta().getLore().contains(s);
-		}
+		// if (!QAMain.enableVisibleAmounts)
 		return false;
+		/*
+		 * try { if (is1.hasItemMeta() && is1.getItemMeta().hasLocalizedName()) if
+		 * (is2.hasItemMeta() && is2.getItemMeta().hasLocalizedName()) return
+		 * is1.getItemMeta().getLocalizedName().equals(is2.getItemMeta().
+		 * getLocalizedName()); } catch (Exception | Error e1) { if (is1.hasItemMeta()
+		 * && is1.getItemMeta().hasLore()) if (is2.hasItemMeta() &&
+		 * is2.getItemMeta().hasLore()) for (String s : is1.getItemMeta().getLore()) if
+		 * (s.contains("UUID")) return is2.getItemMeta().getLore().contains(s); } return
+		 * false;
+		 */
 	}
 
 	public static void addVarientData(List<String> lore, ArmoryBaseObject object) {
@@ -530,8 +525,8 @@ public class ItemFact {
 				}
 				return 0;
 			} else {
-				if (QAMain.enableVisibleAmounts)
-					return is.getAmount();
+				// if (QAMain.enableVisibleAmounts)
+				// return is.getAmount();
 			}
 		}
 		return 0;

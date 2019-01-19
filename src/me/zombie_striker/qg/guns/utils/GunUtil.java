@@ -102,7 +102,7 @@ public class GunUtil {
 			for (Entity e : centerTest.getWorld().getNearbyEntities(centerTest, maxDistance / 2, maxDistance / 2,
 					maxDistance / 2)) {
 				if (e instanceof Damageable) {
-					if (QAMain.ignoreArmorStands && e.getType().name().equals("ARMOR_STAND"))
+					if (QAMain.avoidTypes.contains(e.getType()))
 						continue;
 
 					if (e != p && e != p.getVehicle() && e != p.getPassenger()) {
@@ -224,7 +224,8 @@ public class GunUtil {
 							}
 
 							if (!bulletProtection) {
-								BulletWoundHandler.bulletHit((Player) hitTarget, g.getAmmoType().getPiercingDamage());
+								
+								BulletWoundHandler.bulletHit((Player) hitTarget, g.getAmmoType()==null?1:g.getAmmoType().getPiercingDamage());
 							} else {
 								hitTarget.sendMessage(QAMain.S_BULLETPROOFSTOPPEDBLEEDING);
 							}
@@ -448,9 +449,9 @@ public class GunUtil {
 					if (amount < 0)
 						amount = 0;
 
-					if (QAMain.enableVisibleAmounts) {
-						temp.setAmount(amount > 64 ? 64 : amount == 0 ? 1 : amount);
-					}
+					// if (QAMain.enableVisibleAmounts) {
+					// temp.setAmount(amount > 64 ? 64 : amount == 0 ? 1 : amount);
+					// }
 					ItemMeta im = temp.getItemMeta();
 					int slot;
 					if (offhand) {
@@ -483,9 +484,9 @@ public class GunUtil {
 		if (amount < 0)
 			amount = 0;
 
-		if (QAMain.enableVisibleAmounts) {
-			temp.setAmount(amount > 64 ? 64 : amount == 0 ? 1 : amount);
-		}
+		// if (QAMain.enableVisibleAmounts) {
+		// temp.setAmount(amount > 64 ? 64 : amount == 0 ? 1 : amount);
+		// }
 		int slot;
 		if (offhand) {
 			slot = -1;
@@ -581,10 +582,10 @@ public class GunUtil {
 			im.setLore(ItemFact.getGunLore(g, temp, 0));
 			im.setDisplayName(g.getDisplayName() + QAMain.S_RELOADING_MESSAGE);
 			temp.setItemMeta(im);
-			if (QAMain.enableVisibleAmounts)
-				temp.setAmount(1);
+			// if (QAMain.enableVisibleAmounts)
+			// temp.setAmount(1);
 			player.getInventory().setItem(slot, temp);
-			
+
 			new GunRefillerRunnable(player, temp, g, slot, reloadAmount, seconds);
 
 		}
@@ -605,7 +606,7 @@ public class GunUtil {
 				new BukkitRunnable() {
 					@Override
 					public void run() {
-						if (QAMain.hasProtocolLib && QAMain.isVersionHigherThan(1, 13)) {
+						if (QAMain.hasProtocolLib && QAMain.isVersionHigherThan(1, 13) && !QAMain.hasViaVersion) {
 							addRecoilWithProtocolLib(player, g, true);
 						} else
 							addRecoilWithTeleport(player, g, true);
@@ -662,6 +663,9 @@ public class GunUtil {
 
 	@SuppressWarnings("deprecation")
 	public static boolean isSolid(Block b, Location l) {
+		if (b.getType().name().endsWith("CARPET")) {
+			return false;
+		}
 		if (b.getType() == Material.WATER) {
 			if (QAMain.blockbullet_water)
 				return true;
