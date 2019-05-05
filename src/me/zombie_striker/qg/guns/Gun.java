@@ -18,6 +18,7 @@ import me.zombie_striker.qg.handlers.chargers.ChargingHandler;
 import me.zombie_striker.qg.handlers.reloaders.ReloadingHandler;
 import me.zombie_striker.qg.miscitems.IronSightsToggleItem;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
@@ -56,7 +57,7 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 	private List<String> extralore = null;
 	private String displayname = null;
 
-	private String weaponSounds;
+	private List<String> weaponSounds;
 
 	double cost = 100;
 
@@ -173,7 +174,8 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 		this.durib = durib;
 		this.swaymultiplier = swaymult;
 		this.isAutomatic = isAutomatic;
-		this.weaponSounds = ws;
+		this.weaponSounds = new ArrayList<String>();
+		this.weaponSounds.add(ws);
 
 		this.cost = cost;
 		this.displayname = ChatColor.GOLD + name;
@@ -211,7 +213,8 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 		this.durib = durib;
 		this.swaymultiplier = swaymult;
 		this.isAutomatic = isAutomatic;
-		this.weaponSounds = ws;
+		this.weaponSounds = new ArrayList<String>();
+		this.weaponSounds.add(ws);
 
 		this.cost = cost;
 
@@ -449,6 +452,11 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 	}
 
 	public void setSound(String sound) {
+		this.weaponSounds.clear();
+		this.weaponSounds.add(sound);
+	}
+
+	public void setSounds(List<String> sound) {
 		this.weaponSounds = sound;
 	}
 
@@ -500,7 +508,12 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 		return id;
 	}
 
+	@Deprecated
 	public String getWeaponSound() {
+		return weaponSounds.get(0);
+	}
+
+	public List<String> getWeaponSounds() {
 		return weaponSounds;
 	}
 
@@ -652,8 +665,10 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 		 */
 		QAMain.DEBUG("Made it to gun/attachment check : " + getName());
 		if (QAMain.enableInteractChests) {
-			if (e.getClickedBlock() != null && (e.getClickedBlock().getType() == Material.CHEST
-					|| e.getClickedBlock().getType() == Material.TRAPPED_CHEST) || e.getClickedBlock().getType()==Material.ENDER_CHEST) {
+			if (e.getClickedBlock() != null
+					&& (e.getClickedBlock().getType() == Material.CHEST
+							|| e.getClickedBlock().getType() == Material.TRAPPED_CHEST)
+					|| e.getClickedBlock().getType() == Material.ENDER_CHEST) {
 				QAMain.DEBUG("Chest interactable check has return true!");
 				return;
 			}

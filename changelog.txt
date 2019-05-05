@@ -1,3 +1,18 @@
+1.1.137
+	Updated to 1.14.
+	Added debug messages for bullets top show max health, current health, and damage done.
+
+1.1.136b
+	Added debug line for sending resourcepacks.
+
+1.1.136
+	Fixed Attachements names for /qa give.	
+
+1.1.135
+	Updated bounding box class to now include the shooter.
+	Allowed gun shots in vehicles (for QAV)
+	Allowed multiple sounds to be played for gun shots.
+
 1.1.134
 	Added /qa drop <item> <x> <y> <z> <optional: world>
 	Added viaversion support for recoil

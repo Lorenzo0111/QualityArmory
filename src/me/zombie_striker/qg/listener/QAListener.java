@@ -245,12 +245,20 @@ public class QAListener implements Listener {
 		if (e.isCancelled())
 			return;
 		String name = null;
+		
+		if(e.getView().getTitle().startsWith((QAMain.S_craftingBenchName)) ||e.getView().getTitle().startsWith((QAMain.S_shopName))) {
+			if(e.getClick().isShiftClick()) {
+				e.setCancelled(true);
+				return;
+			}
+		}
+		
 		try {
 			if (e.getClickedInventory() != null)
-				name = e.getClickedInventory().getTitle();
+				name = e.getView().getTitle();
 		} catch (Error | Exception e4) {
 			if (e.getInventory() != null)
-				name = e.getInventory().getTitle();
+				name = e.getView().getTitle();
 		}
 
 		if (name != null && (name.startsWith(QAMain.S_craftingBenchName) || name.startsWith(QAMain.S_shopName))) {
@@ -273,14 +281,14 @@ public class QAListener implements Listener {
 			if (e.getCurrentItem() != null) {
 				if (shop) {
 					if (e.getCurrentItem().isSimilar(QAMain.prevButton)) {
-						int page = Integer.parseInt(e.getInventory().getTitle().split(QAMain.S_shopName)[1]) - 1;
+						int page = Integer.parseInt(e.getView().getTitle().split(QAMain.S_shopName)[1]) - 1;
 						e.getWhoClicked().closeInventory();
 						e.getWhoClicked().openInventory(QAMain.createShop(Math.max(0, page)));
 						DEBUG("Prev_Shop");
 						return;
 					}
 					if (e.getCurrentItem().isSimilar(QAMain.nextButton)) {
-						int page = Integer.parseInt(e.getInventory().getTitle().split(QAMain.S_shopName)[1]) + 1;
+						int page = Integer.parseInt(e.getView().getTitle().split(QAMain.S_shopName)[1]) + 1;
 						e.getWhoClicked().closeInventory();
 						e.getWhoClicked().openInventory(QAMain.createShop(Math.min(QualityArmory.getMaxPages(), page)));
 						DEBUG("next_Shop");
@@ -288,14 +296,14 @@ public class QAListener implements Listener {
 					}
 				} else {
 					if (e.getCurrentItem().isSimilar(QAMain.prevButton)) {
-						int page = Integer.parseInt(e.getInventory().getTitle().split(QAMain.S_craftingBenchName)[1]) - 1;
+						int page = Integer.parseInt(e.getView().getTitle().split(QAMain.S_craftingBenchName)[1]) - 1;
 						e.getWhoClicked().closeInventory();
 						e.getWhoClicked().openInventory(QAMain.createCraft(Math.max(0, page)));
 						DEBUG("Prev_craft");
 						return;
 					}
 					if (e.getCurrentItem().isSimilar(QAMain.nextButton)) {
-						int page = Integer.parseInt(e.getInventory().getTitle().split(QAMain.S_craftingBenchName)[1]) + 1;
+						int page = Integer.parseInt(e.getView().getTitle().split(QAMain.S_craftingBenchName)[1]) + 1;
 						e.getWhoClicked().closeInventory();
 						e.getWhoClicked().openInventory(QAMain.createCraft(Math.min(QualityArmory.getMaxPages(), page)));
 						DEBUG("next_craft");

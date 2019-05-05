@@ -1,6 +1,5 @@
 package me.zombie_striker.qg.attachments;
 
-
 import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.MaterialStorage;
 import me.zombie_striker.qg.guns.Gun;
@@ -9,6 +8,7 @@ public class AttachmentBase extends Gun {
 
 	private MaterialStorage base;
 	private Gun baseGun;
+	private String newName = null;
 
 	/*
 	 * public AttachmentBase(MaterialStorage baseItem, MaterialStorage attachedItem,
@@ -20,7 +20,8 @@ public class AttachmentBase extends Gun {
 		baseGun = QAMain.gunRegister.get(baseItem);
 		copyFrom(baseGun);
 		this.setDisplayName(displayname);
-		//this.ms = attachedItem;
+		this.newName = name;
+		// this.ms = attachedItem;
 	}
 
 	public Gun getBaseGun() {
@@ -29,6 +30,11 @@ public class AttachmentBase extends Gun {
 
 	public MaterialStorage getBase() {
 		return base;
+	}
+
+	@Override
+	public String getName() {
+		return newName;
 	}
 
 }

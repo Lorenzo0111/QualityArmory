@@ -1,6 +1,6 @@
 main: me.zombie_striker.qg.QAMain
-version: 1.1.134
-api-version: 1.13
+version: 1.1.137
+api-version: 1.14
 name: QualityArmory
 commands:
   QualityArmory:

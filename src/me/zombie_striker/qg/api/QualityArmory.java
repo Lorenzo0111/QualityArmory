@@ -78,14 +78,25 @@ public class QualityArmory {
 						player.sendMessage(ChatColor.RED + QAMain.S_NORES2);
 					}
 				}
-				if(QAMain.showCrashMessage)
-				player.sendMessage(QAMain.prefix + QAMain.S_RESOURCEPACK_HELP);
-				
+				if (QAMain.showCrashMessage)
+					player.sendMessage(QAMain.prefix + QAMain.S_RESOURCEPACK_HELP);
+
 				new BukkitRunnable() {
 					@Override
 					public void run() {
 						try {
 							try {
+								QAMain.DEBUG("Sending resourcepack : " + (QAMain.AutoDetectResourcepackVersion) + " || "
+										+ QAMain.MANUALLYSELECT18 + " || " + QAMain.isVersionHigherThan(1, 9) + " || ");
+								try {
+									if (QAMain.hasViaVersion) {
+										QAMain.DEBUG(
+												"Has Viaversion: " + us.myles.ViaVersion.bukkit.util.ProtocolSupportUtil
+														.getProtocolVersion(player) + " 1.8=" + QAMain.ID18);
+
+									}
+								} catch (Error | Exception re4) {
+								}
 								if (QAMain.AutoDetectResourcepackVersion
 										&& us.myles.ViaVersion.bukkit.util.ProtocolSupportUtil
 												.getProtocolVersion(player) < QAMain.ID18) {

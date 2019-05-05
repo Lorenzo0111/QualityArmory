@@ -35,6 +35,7 @@ public class CrackshotLoader {
 
 	public static void createYMLForGuns(List<Gun> guns, File data) {
 		for (Gun g : guns) {
+			@SuppressWarnings("deprecation")
 			WeaponSounds s = WeaponSounds.getByName(g.getWeaponSound());
 			if (s == null)
 				s = WeaponSounds.GUN_MEDIUM;

@@ -32,6 +32,8 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
 
+import io.netty.util.internal.ThreadLocalRandom;
+
 public class GunUtil {
 
 	protected static HashMap<UUID, Location> AF_locs = new HashMap<>();
@@ -141,7 +143,7 @@ public class GunUtil {
 						// Clear this to make sure
 						for (int dist = 0; dist < dis / QAMain.bulletStep; dist++) {
 							test.add(step);
-							if (box.intersects(test, e)) {
+							if (box.intersects(p, test, e)) {
 								hit = true;
 								break;
 							}
@@ -224,8 +226,9 @@ public class GunUtil {
 							}
 
 							if (!bulletProtection) {
-								
-								BulletWoundHandler.bulletHit((Player) hitTarget, g.getAmmoType()==null?1:g.getAmmoType().getPiercingDamage());
+
+								BulletWoundHandler.bulletHit((Player) hitTarget,
+										g.getAmmoType() == null ? 1 : g.getAmmoType().getPiercingDamage());
 							} else {
 								hitTarget.sendMessage(QAMain.S_BULLETPROOFSTOPPEDBLEEDING);
 							}
@@ -234,9 +237,9 @@ public class GunUtil {
 						((Damageable) hitTarget).damage(damageMAX, p);
 						if (hitTarget instanceof LivingEntity)
 							((LivingEntity) hitTarget).setNoDamageTicks(0);
-						QAMain.DEBUG("Damaging entity " + hitTarget.getName());
+						QAMain.DEBUG("Damaging entity " + hitTarget.getName() + " ( "+((LivingEntity) hitTarget).getHealth()+"/"+((LivingEntity) hitTarget).getMaxHealth()+" :" + damageMAX + " DAM)");
 					} else {
-						QAMain.DEBUG("Damaging entity CANCELED " + hitTarget.getName());
+						QAMain.DEBUG("Damaging entity CANCELED " + hitTarget.getName() +" ( "+((LivingEntity) hitTarget).getHealth()+"/"+((LivingEntity) hitTarget).getMaxHealth()+" :" + damageMAX + " DAM)");
 					}
 
 				}
@@ -507,10 +510,18 @@ public class GunUtil {
 
 	public static void playShoot(final Gun g, final Player player) {
 		new BukkitRunnable() {
+			@SuppressWarnings("deprecation")
 			@Override
 			public void run() {
 				try {
-					player.getWorld().playSound(player.getLocation(), g.getWeaponSound(), 4, 1);
+					String soundname = null;
+					if (g.getWeaponSounds().size() > 1) {
+						soundname = g.getWeaponSounds()
+								.get(ThreadLocalRandom.current().nextInt(g.getWeaponSounds().size()));
+					} else {
+						soundname = g.getWeaponSound();
+					}
+					player.getWorld().playSound(player.getLocation(), soundname, 4, 1);
 					if (!QAMain.isVersionHigherThan(1, 9)) {
 						try {
 							player.getWorld().playSound(player.getLocation(), Sound.valueOf("CLICK"), 5, 1);

@@ -8,6 +8,7 @@ import java.util.logging.Level;
 import me.zombie_striker.qg.ammo.*;
 import me.zombie_striker.qg.api.QualityArmory;
 import me.zombie_striker.qg.armor.*;
+import me.zombie_striker.qg.attachments.AttachmentBase;
 import me.zombie_striker.qg.config.*;
 import me.zombie_striker.qg.guns.*;
 import me.zombie_striker.qg.guns.projectiles.*;
@@ -1530,9 +1531,15 @@ public class QAMain extends JavaPlugin {
 		if (args.length == 2) {
 			List<String> s = new ArrayList<String>();
 			if (args[0].equalsIgnoreCase("give")) {
-				for (Entry<MaterialStorage, Gun> e : gunRegister.entrySet())
+				for (Entry<MaterialStorage, Gun> e : gunRegister.entrySet()) {
+					if(e.getValue() instanceof AttachmentBase) {
+						if (b(e.getValue().getName(), args[1]))
+							s.add(e.getValue().getName());
+						
+					}else
 					if (b(e.getValue().getName(), args[1]))
 						s.add(e.getValue().getName());
+				}
 				for (Entry<MaterialStorage, Ammo> e : ammoRegister.entrySet())
 					if (b(e.getValue().getName(), args[1]))
 						s.add(e.getValue().getName());

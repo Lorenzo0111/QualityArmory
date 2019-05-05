@@ -42,7 +42,7 @@ public class FireProjectile implements RealtimeCalculationProjectile {
 			for (Entity e : new ArrayList<>(nearby)) {
 				if (e != player && e != player.getVehicle() && e != player.getPassenger()) {
 					AbstractBoundingBox box = BoundingBoxManager.getBoundingBox(e);
-					if (box.intersects(test, e)) {
+					if (box.intersects(player,test, e)) {
 						if (e instanceof Damageable) {
 							((Damageable) e).damage(g.getDamage(), player);
 							if (e instanceof LivingEntity) {

@@ -12,7 +12,7 @@ public class DefaultBoundingBox implements AbstractBoundingBox{
 	}
 	
 	@Override
-	public boolean intersects(Location check, Entity base) {
+	public boolean intersects(Entity shooter, Location check, Entity base) {
 		return HeadShotUtil.closeEnough(base, check);
 	}
 

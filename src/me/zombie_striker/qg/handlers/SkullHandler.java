@@ -3,13 +3,13 @@ package me.zombie_striker.qg.handlers;
 import java.util.Collection;
 import java.util.UUID;
 
-import org.apache.commons.codec.binary.Base64;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import com.mojang.authlib.properties.PropertyMap;
+import com.sun.org.apache.xml.internal.security.exceptions.Base64DecodingException;
 
 public class SkullHandler {
 
@@ -21,7 +21,7 @@ public class SkullHandler {
 	 * @return itemstack
 	 */
 	public static ItemStack getCustomSkull(String url) {
-		String encodedData = new String(new Base64().encode(String.format("{textures:{SKIN:{url:\"%s\"}}}", url).getBytes()));
+		String encodedData = new String(com.sun.org.apache.xml.internal.security.utils.Base64.encode(String.format("{textures:{SKIN:{url:\"%s\"}}}", url).getBytes()));//new Base64().encode(String.format("{textures:{SKIN:{url:\"%s\"}}}", url).getBytes()));
 		return getCustomSkull64(encodedData);
 	}
 
@@ -65,7 +65,13 @@ public class SkullHandler {
 			}
 		}
 		if (tex64 != null) {
-			String decode = new String(new Base64().decode(tex64));
+			String decode = null;
+			try {
+				decode = new String(com.sun.org.apache.xml.internal.security.utils.Base64.decode(tex64));
+			} catch (Base64DecodingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} //new Base64().decode(tex64));
 			String parsed = decode.split("SKIN:{url:\"")[1].split("\"}}}")[0];
 			return parsed;
 		}

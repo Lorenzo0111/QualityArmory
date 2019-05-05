@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -136,9 +136,9 @@ public class MedKit implements ArmoryBaseObject {
 
 				StringBuilder levelbar = new StringBuilder();
 				levelbar.append(ChatColor.WHITE);
-				levelbar.append(StringUtils.repeat(':', healthBars));
+				levelbar.append(StringUtils.repeat(":", healthBars));
 				levelbar.append(ChatColor.BLACK);
-				levelbar.append(StringUtils.repeat(':', totalBars - healthBars));
+				levelbar.append(StringUtils.repeat(":", totalBars - healthBars));
 				try {
 					HotbarMessager.sendHotBarMessage(healer, ChatColor.RED + "[" + levelbar.toString() + ChatColor.RED
 							+ "] " + new DecimalFormat("##0.#").format((p2 + percent)) + " percent!");
@@ -174,9 +174,9 @@ public class MedKit implements ArmoryBaseObject {
 
 			StringBuilder levelbar = new StringBuilder();
 			levelbar.append(severity);
-			levelbar.append(StringUtils.repeat(':', healthBars));
+			levelbar.append(StringUtils.repeat(":", healthBars));
 			levelbar.append(ChatColor.BLACK);
-			levelbar.append(StringUtils.repeat(':', totalBars - healthBars));
+			levelbar.append(StringUtils.repeat(":", totalBars - healthBars));
 
 			HotbarMessager.sendHotBarMessage(healer,
 					ChatColor.RED + QAMain.S_MEDKIT_HEALING + "[" + levelbar.toString() + ChatColor.RED + "] "
