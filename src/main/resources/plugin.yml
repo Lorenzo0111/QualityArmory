@@ -1,0 +1,34 @@
+main: me.zombie_striker.qg.QAMain
+version: ${project.version}
+api-version: 1.13
+name: QualityArmory
+commands:
+  QualityArmory:
+    description: Main command for QA
+    aliases: [qa]
+permissions:
+  qualityarmory.*:
+    description: Gives access to all QualityArmory commands
+    children:
+      qualityarmory.admin: true
+  qualityarmory.admin:
+    description: 'Gives access to all admin commands for QA'
+    children:
+      qualityarmory.give: true
+      qualityarmory.drop: true
+      qualityarmory.create: true
+      qualityarmory.createnewitem: true
+      qualityarmory.reload: true
+      qualityarmory.getopengunslot: true
+      qualityarmory.getmaterialsused: true
+      qualityarmory.default: true
+      qualityarmory.debugmessages: true
+  qualityarmory.default:
+    description: 'Gives access to all QualityArmory default commands such as shooting crafting and shopping'
+    children:
+      qualityarmory.craft: true
+      qualityarmory.shop: true
+      qualityarmory.usegun: true
+softdepend: [Vault, Parties, WorldGuard, ViaVersion, ViaRewind, LightAPI, Citizens, ProtocolLib]
+author:
+   Zombie_Striker
