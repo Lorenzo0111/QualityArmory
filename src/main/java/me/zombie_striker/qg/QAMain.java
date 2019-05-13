@@ -57,6 +57,7 @@ public class QAMain extends JavaPlugin {
 	public static HashMap<MaterialStorage, Ammo> ammoRegister = new HashMap<>();
 	public static HashMap<MaterialStorage, ArmoryBaseObject> miscRegister = new HashMap<>();
 	public static HashMap<MaterialStorage, ArmorObject> armorRegister = new HashMap<>();
+	public static HashMap<UUID, ItemStack> grenadeItem = new HashMap<>();
 
 	public static Set<EntityType> avoidTypes = new HashSet<>();
 

@@ -107,6 +107,7 @@ public class Grenades implements ThrowableItems {
 
 			throwItems.put(grenade, holder);
 			throwItems.remove(thrower);
+			QAMain.grenadeItem.remove(thrower.getUniqueId());
 			QAMain.DEBUG("Throw grenade");
 		} else {
 			thrower.sendMessage(QAMain.prefix + QAMain.S_GRENADE_PULLPIN);

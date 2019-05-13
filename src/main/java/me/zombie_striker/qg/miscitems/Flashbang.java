@@ -29,6 +29,7 @@ public class Flashbang extends Grenades {
 	@Override
 	public void onLMB(PlayerInteractEvent e, ItemStack usedItem) {
 		Player thrower = e.getPlayer();
+		QAMain.grenadeItem.put(thrower.getUniqueId(), thrower.getInventory().getItemInMainHand());
 		if (throwItems.containsKey(thrower)) {
 			thrower.sendMessage(QAMain.prefix + QAMain.S_GRENADE_PALREADYPULLPIN);
 			thrower.playSound(thrower.getLocation(), WeaponSounds.RELOAD_BULLET.getSoundName(), 1, 1);
@@ -66,7 +67,9 @@ public class Flashbang extends Grenades {
 				if (h.getHolder() instanceof Item) {
 					h.getHolder().remove();
 				}
-
+				if(QAMain.grenadeItem.containsKey(thrower.getUniqueId())) {
+					thrower.getInventory().removeItem(QAMain.grenadeItem.get(thrower.getUniqueId()));
+				}
 				throwItems.remove(h.getHolder());
 			}
 		}.runTaskLater(QAMain.getInstance(), 5 * 20));
