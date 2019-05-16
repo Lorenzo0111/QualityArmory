@@ -61,6 +61,26 @@ public class QualityArmory {
 		QAMain.expansionPacks.add(MaterialStorage.getMS(used, id, var));
 	}
 
+	public static ArmoryBaseObject getCustomItemByName(String name) {
+		for (Entry<MaterialStorage, Gun> e : QAMain.gunRegister.entrySet())
+			if (e.getValue().getName().equalsIgnoreCase(name)) {
+				return e.getValue();
+			}
+		for (Entry<MaterialStorage, Ammo> e : QAMain.ammoRegister.entrySet())
+			if (e.getValue().getName().equalsIgnoreCase(name)) {
+				return e.getValue();
+			}
+		for (Entry<MaterialStorage, ArmoryBaseObject> e : QAMain.miscRegister.entrySet())
+			if (e.getValue().getName().equalsIgnoreCase(name)) {
+				return e.getValue();
+			}
+		for (Entry<MaterialStorage, ArmorObject> e : QAMain.armorRegister.entrySet())
+			if (e.getValue().getName().equalsIgnoreCase(name)) {
+				return e.getValue();
+			}
+		return null;
+	}
+
 	@SuppressWarnings("deprecation")
 	public static void sendResourcepack(final Player player, final boolean warning) {
 		new BukkitRunnable() {

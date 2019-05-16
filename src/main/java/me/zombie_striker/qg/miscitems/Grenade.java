@@ -1,6 +1,5 @@
 package me.zombie_striker.qg.miscitems;
 
-import java.util.HashMap;
 import java.util.List;
 
 import org.bukkit.Bukkit;
@@ -15,22 +14,18 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import me.zombie_striker.qg.ArmoryBaseObject;
 import me.zombie_striker.qg.ItemFact;
 import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.MaterialStorage;
 import me.zombie_striker.qg.guns.utils.WeaponSounds;
 import me.zombie_striker.qg.handlers.ExplosionHandler;
-import me.zombie_striker.qg.miscitems.ThrowableItems.ThrowableHolder;
 
-public class GrenadeBase implements ArmoryBaseObject {
+public class Grenade implements ThrowableItems {
 
 	private ItemStack[] ing = null;
 
 	double dmageLevel = 10;
 	double radius = 5;
-
-	public HashMap<Entity, ThrowableHolder> grenadeHolder = new HashMap<>();
 
 	double cost;
 
@@ -40,7 +35,7 @@ public class GrenadeBase implements ArmoryBaseObject {
 	List<String> lore;
 	MaterialStorage ms;
 
-	public GrenadeBase(ItemStack[] ingg, double cost, double damage, double explosionreadius, String name,
+	public Grenade(ItemStack[] ingg, double cost, double damage, double explosionreadius, String name,
 			String displayname, List<String> lore, MaterialStorage ms) {
 		this.ing = ingg;
 		this.cost = cost;
@@ -91,21 +86,29 @@ public class GrenadeBase implements ArmoryBaseObject {
 	@Override
 	public void onRMB(PlayerInteractEvent e, ItemStack usedItem) {
 		Player thrower = e.getPlayer();
-		if (grenadeHolder.containsKey(thrower)) {
-			ThrowableHolder holder = grenadeHolder.get(thrower);
-			ItemStack g = thrower.getItemInHand();
+		if (throwItems.containsKey(thrower)) {
+			ThrowableHolder holder = throwItems.get(thrower);
+			ItemStack grenadeStack = thrower.getItemInHand();
+			ItemStack temp = grenadeStack.clone();
+			temp.setAmount(1);
 			if (thrower.getGameMode() != GameMode.CREATIVE) {
-				thrower.setItemInHand(null);
+				if (grenadeStack.getAmount() > 1) {
+					grenadeStack.setAmount(grenadeStack.getAmount() - 1);
+				} else {
+					grenadeStack = null;
+				}
+				thrower.setItemInHand(grenadeStack);
 			}
-			g.setAmount(1);
-			Item grenade = holder.getHolder().getWorld().dropItem(holder.getHolder().getLocation().add(0, 1.5, 0), g);
+			Item grenade = holder.getHolder().getWorld().dropItem(holder.getHolder().getLocation().add(0, 1.5, 0),
+					temp);
 			grenade.setPickupDelay(Integer.MAX_VALUE);
 			grenade.setVelocity(thrower.getLocation().getDirection().normalize().multiply(1.2));
 			holder.setHolder(grenade);
 			thrower.getWorld().playSound(thrower.getLocation(), Sound.ENTITY_ARROW_SHOOT, 1, 1.5f);
 
-			grenadeHolder.put(grenade, holder);
-			grenadeHolder.remove(thrower);
+			throwItems.put(grenade, holder);
+			throwItems.remove(thrower);
+			QAMain.DEBUG("Throw grenade");
 		} else {
 			thrower.sendMessage(QAMain.prefix + QAMain.S_GRENADE_PULLPIN);
 		}
@@ -114,24 +117,29 @@ public class GrenadeBase implements ArmoryBaseObject {
 	@Override
 	public void onLMB(PlayerInteractEvent e, ItemStack usedItem) {
 		Player thrower = e.getPlayer();
-		if (grenadeHolder.containsKey(thrower)) {
+		if (throwItems.containsKey(thrower)) {
 			thrower.sendMessage(QAMain.prefix + QAMain.S_GRENADE_PALREADYPULLPIN);
 			thrower.playSound(thrower.getLocation(), WeaponSounds.RELOAD_BULLET.getSoundName(), 1, 1);
+			QAMain.DEBUG("Already pin out");
 			return;
 		}
+
 		thrower.getWorld().playSound(thrower.getLocation(), WeaponSounds.RELOAD_MAG_IN.getSoundName(), 2, 1);
 		final ThrowableHolder h = new ThrowableHolder(thrower.getUniqueId(), thrower);
 		h.setTimer(new BukkitRunnable() {
 			@Override
 			public void run() {
 				if (h.getHolder() instanceof Player) {
-					((Player) h.getHolder()).damage(100);
+					QAMain.DEBUG("Player did not throw. Damaged for " + dmageLevel);
+					removeGrenade(((Player) h.getHolder()));
+					((Player) h.getHolder()).damage(dmageLevel);
 				}
 				if (h.getHolder() instanceof Item) {
 					h.getHolder().remove();
 				}
 				if (QAMain.enableExplosionDamage) {
 					ExplosionHandler.handleExplosion(h.getHolder().getLocation(), 3, 1);
+					QAMain.DEBUG("Using default explosions");
 				}
 				try {
 					h.getHolder().getWorld().spawnParticle(org.bukkit.Particle.EXPLOSION_HUGE,
@@ -144,24 +152,26 @@ public class GrenadeBase implements ArmoryBaseObject {
 				}
 				Player thro = Bukkit.getPlayer(h.getOwner());
 				try {
+					Bukkit.broadcastMessage(
+							"rad " + radius + " " + h.getHolder().getNearbyEntities(radius, radius, radius).size());
 					for (Entity e : h.getHolder().getNearbyEntities(radius, radius, radius)) {
 						if (e instanceof LivingEntity) {
+							double dam = (dmageLevel / e.getLocation().distance(h.getHolder().getLocation()));
+							QAMain.DEBUG("Grenade-Damaging " + e.getName() + " : " + dam + " DAM.");
 							if (thro == null)
-								((LivingEntity) e).damage(
-										(dmageLevel * radius / e.getLocation().distance(h.getHolder().getLocation())));
+								((LivingEntity) e).damage(dam);
 							else
-								((LivingEntity) e).damage(
-										(dmageLevel * radius / e.getLocation().distance(h.getHolder().getLocation())),
-										thro);
+								((LivingEntity) e).damage(dam, thro);
 						}
 					}
 				} catch (Error e) {
 					h.getHolder().getWorld().createExplosion(h.getHolder().getLocation(), 1);
+					QAMain.DEBUG("Failed. Created default explosion");
 				}
-				grenadeHolder.remove(h.getHolder());
+				throwItems.remove(h.getHolder());
 			}
 		}.runTaskLater(QAMain.getInstance(), 5 * 20));
-		grenadeHolder.put(thrower, h);
+		throwItems.put(thrower, h);
 
 	}
 
@@ -173,10 +183,30 @@ public class GrenadeBase implements ArmoryBaseObject {
 	@Override
 	public void set18Supported(boolean b) {
 	}
+
 	@Override
 	public ItemStack getItemStack() {
-		return ItemFact.getObject(this,1);
+		return ItemFact.getObject(this, 1);
 	}
 
-
+	public void removeGrenade(Player player) {
+		if (player.getGameMode() != GameMode.CREATIVE) {
+			int slot = -56;
+			ItemStack stack = null;
+			for (int i = 0; i < player.getInventory().getContents().length; i++) {
+				if ((stack = player.getInventory().getItem(i)) != null && MaterialStorage.getMS(stack) == ms) {
+					slot = i;
+					break;
+				}
+			}
+			if (slot >= -1) {
+				if (stack.getAmount() > 1) {
+					stack.setAmount(stack.getAmount() - 1);
+				} else {
+					stack = null;
+				}
+				player.getInventory().setItem(slot, stack);
+			}
+		}
+	}
 }

@@ -16,7 +16,7 @@ import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.MaterialStorage;
 import me.zombie_striker.qg.guns.utils.WeaponSounds;
 
-public class IncendaryGrenades extends Grenades {
+public class IncendaryGrenades extends Grenade {
 
 	public IncendaryGrenades(ItemStack[] ingg, double cost, double damage, double explosionreadius, String name,
 			String displayname, List<String> lore, MaterialStorage ms) {
@@ -58,6 +58,7 @@ public class IncendaryGrenades extends Grenades {
 				if (k == 1) {
 					if (h.getHolder() instanceof Player) {
 						((LivingEntity) h.getHolder()).setFireTicks(h.getHolder().getMaxFireTicks()/5);
+						removeGrenade(((Player) h.getHolder()));
 					}
 				} else if (k == 40) {
 					if (h.getHolder() instanceof Item) {

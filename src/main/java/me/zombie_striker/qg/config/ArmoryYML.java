@@ -49,19 +49,20 @@ public class ArmoryYML {
 		}
 	}
 
-	public void setNoSave(boolean force, String name, Object v) {
-		set(force, name, v);
+	public ArmoryYML setNoSave(boolean force, String name, Object v) {
+		return set(force, name, v);
 	}
 
-	public void set(boolean force, String name, Object v) {
+	public ArmoryYML set(boolean force, String name, Object v) {
 		if (!force && contains("invalid") && (boolean) get("invalid"))
-			return;
+			return this;
 		if (contains("AllowUserModifications") && fileConfig.getBoolean("AllowUserModifications"))
-			return;
+			return this;
 		if (!contains(name) || !get(name).equals(v)) {
 			fileConfig.set(name, v);
 			saveNow = true;
 		}
+		return this;
 	}
 
 	public ArmoryYML dontVerify() {

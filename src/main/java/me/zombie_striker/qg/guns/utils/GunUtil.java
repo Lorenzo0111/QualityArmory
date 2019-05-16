@@ -154,6 +154,11 @@ public class GunUtil {
 							hitTarget = e;
 							headShot = box.allowsHeadshots() ? box.isHeadShot(test, e) : false;
 							if (headShot) {
+								QAHeadShotEvent headshotevent = new QAHeadShotEvent(e, p, g);
+								Bukkit.getPluginManager().callEvent(headshotevent);
+								headShot = !headshotevent.isCanceled();
+							}
+							if (headShot) {
 								QAMain.DEBUG("Headshot!");
 								if (QAMain.headshotPling) {
 									try {
@@ -237,9 +242,13 @@ public class GunUtil {
 						((Damageable) hitTarget).damage(damageMAX, p);
 						if (hitTarget instanceof LivingEntity)
 							((LivingEntity) hitTarget).setNoDamageTicks(0);
-						QAMain.DEBUG("Damaging entity " + hitTarget.getName() + " ( "+((LivingEntity) hitTarget).getHealth()+"/"+((LivingEntity) hitTarget).getMaxHealth()+" :" + damageMAX + " DAM)");
+						QAMain.DEBUG("Damaging entity " + hitTarget.getName() + " ( "
+								+ ((LivingEntity) hitTarget).getHealth() + "/"
+								+ ((LivingEntity) hitTarget).getMaxHealth() + " :" + damageMAX + " DAM)");
 					} else {
-						QAMain.DEBUG("Damaging entity CANCELED " + hitTarget.getName() +" ( "+((LivingEntity) hitTarget).getHealth()+"/"+((LivingEntity) hitTarget).getMaxHealth()+" :" + damageMAX + " DAM)");
+						QAMain.DEBUG("Damaging entity CANCELED " + hitTarget.getName() + " ( "
+								+ ((LivingEntity) hitTarget).getHealth() + "/"
+								+ ((LivingEntity) hitTarget).getMaxHealth() + " :" + damageMAX + " DAM)");
 					}
 
 				}

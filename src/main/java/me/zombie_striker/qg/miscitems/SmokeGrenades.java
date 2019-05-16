@@ -17,7 +17,7 @@ import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.MaterialStorage;
 import me.zombie_striker.qg.guns.utils.WeaponSounds;
 
-public class SmokeGrenades extends Grenades {
+public class SmokeGrenades extends Grenade {
 
 	public SmokeGrenades(ItemStack[] ingg, double cost, double damage, double explosionreadius, String name,
 			String displayname, List<String> lore, MaterialStorage ms) {
@@ -56,6 +56,7 @@ public class SmokeGrenades extends Grenades {
 						QAMain.DEBUG("Blinded player");
 						((LivingEntity) h.getHolder())
 								.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 20 * 10, 2));
+						removeGrenade(((Player) h.getHolder()));
 					}
 				} else if (k == 80) {
 					if (h.getHolder() instanceof Item) {

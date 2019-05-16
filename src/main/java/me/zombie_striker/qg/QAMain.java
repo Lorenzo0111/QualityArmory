@@ -1036,14 +1036,12 @@ public class QAMain extends JavaPlugin {
 								WeaponType.PISTOL, null, true, "9mm", 3, 12, 700)
 						.setSwayMultiplier(3).setIsSecondaryWeapon(true).done();
 
-				ArmoryYML grenade = GunYMLCreator.createMisc(false, getDataFolder(), false, "default_grenade",
-						"grenade", "&7Grenade",
+				GunYMLCreator.createMisc(false, getDataFolder(), false, "default_grenade", "grenade", "&7Grenade",
 						Arrays.asList(ChatColor.DARK_GRAY + "[LMB] to pull pin", ChatColor.DARK_GRAY + "[RMB] to throw",
 								ChatColor.DARK_GRAY + "Grenades wait " + ChatColor.GRAY + "FIVE seconds"
 										+ ChatColor.DARK_GRAY + " before exploding.",
 								ChatColor.DARK_RED + "<!>Will Explode Even If Not Thrown<!>"),
-						m(22), stringsGrenades, 100, WeaponType.GRENADES, 100, 1);
-				grenade.set(false, "radius", 10);
+						m(22), stringsGrenades, 100, WeaponType.GRENADES, 100, 1).set(false, "radius", 10).done();
 				GunYMLCreator
 						.createNewDefaultGun(getDataFolder(), "dragunov", "Dragunov", 23, stringsMetalRif,
 								WeaponType.SNIPER, null, true, "762", 7, 12, 2100)
@@ -1073,22 +1071,19 @@ public class QAMain extends JavaPlugin {
 								WeaponSounds.GUN_BIG, true, "762", 10, 12, 3000)
 						.setDelayShoot(0.8).setZoomLevel(9).setSwayMultiplier(3).setRecoil(5).done();
 
-				ArmoryYML smokegrenade = GunYMLCreator.createMisc(false, getDataFolder(), false, "default_smokegrenade",
-						"smokegrenade", "&7Smoke Grenade",
+				GunYMLCreator.createMisc(false, getDataFolder(), false, "default_smokegrenade", "smokegrenade",
+						"&7Smoke Grenade",
 						Arrays.asList(ChatColor.DARK_GRAY + "[LMB] to pull pin", ChatColor.DARK_GRAY + "[RMB] to throw",
 								ChatColor.DARK_GRAY + "Smoke Grenades wait " + ChatColor.GRAY + "FIVE seconds"
 										+ ChatColor.DARK_GRAY + " before exploding.",
 								ChatColor.DARK_RED + "<!>Will Explode Even If Not Thrown<!>"),
-						m(40), stringsGrenades, 100, WeaponType.SMOKE_GRENADES, 100, 1);
-				smokegrenade.set(false, "radius", 5);
-				ArmoryYML flashbanggrenade = GunYMLCreator.createMisc(false, getDataFolder(), false,
-						"default_flashbang", "flashbang", "&7FlashBang",
+						m(40), stringsGrenades, 100, WeaponType.SMOKE_GRENADES, 100, 1).set(false, "radius", 5).done();
+				GunYMLCreator.createMisc(false, getDataFolder(), false, "default_flashbang", "flashbang", "&7FlashBang",
 						Arrays.asList(ChatColor.DARK_GRAY + "[LMB] to pull pin", ChatColor.DARK_GRAY + "[RMB] to throw",
 								ChatColor.DARK_GRAY + "Flashbangs wait " + ChatColor.GRAY + "FIVE seconds"
 										+ ChatColor.DARK_GRAY + " before exploding.",
 								ChatColor.DARK_RED + "<!>Will Explode Even If Not Thrown<!>"),
-						m(41), stringsGrenades, 100, WeaponType.FLASHBANGS, 100, 1);
-				flashbanggrenade.set(false, "radius", 5);
+						m(41), stringsGrenades, 100, WeaponType.FLASHBANGS, 100, 1).set(false, "radius", 5).done();
 
 				GunYMLCreator
 						.createAttachment(false, getDataFolder(), false, "default_p30_silencer", "p30silenced",
@@ -1121,14 +1116,16 @@ public class QAMain extends JavaPlugin {
 								WeaponSounds.GUN_BIG, true, "762", 3, 47, 3000)
 						.setFullyAutomatic(2).setBulletsPerShot(1).setRecoil(2).done();
 
-				ArmoryYML incedarygrenade = GunYMLCreator.createMisc(false, getDataFolder(), false,
-						"default_incendarygrenade", "incendarygrenade", "&7Incendary Grenade",
-						Arrays.asList(ChatColor.DARK_GRAY + "[LMB] to pull pin", ChatColor.DARK_GRAY + "[RMB] to throw",
-								ChatColor.DARK_GRAY + "Incendary Grenades wait " + ChatColor.GRAY + "FIVE seconds"
-										+ ChatColor.DARK_GRAY + " before exploding.",
-								ChatColor.DARK_RED + "<!>Will Explode Even If Not Thrown<!>"),
-						m(49), stringsGrenades, 100, WeaponType.INCENDARY_GRENADES, 100, 1);
-				incedarygrenade.set(false, "radius", 5);
+				GunYMLCreator
+						.createMisc(false, getDataFolder(), false, "default_incendarygrenade", "incendarygrenade",
+								"&7Incendary Grenade",
+								Arrays.asList(ChatColor.DARK_GRAY + "[LMB] to pull pin",
+										ChatColor.DARK_GRAY + "[RMB] to throw",
+										ChatColor.DARK_GRAY + "Incendary Grenades wait " + ChatColor.GRAY
+												+ "FIVE seconds" + ChatColor.DARK_GRAY + " before exploding.",
+										ChatColor.DARK_RED + "<!>Will Explode Even If Not Thrown<!>"),
+								m(49), stringsGrenades, 100, WeaponType.INCENDARY_GRENADES, 100, 1)
+						.set(false, "radius", 5).done();
 				GunYMLCreator
 						.createNewDefaultGun(getDataFolder(), "homingrpg", "&6Homing RPG Launcher", 50, stringsMetalRif,
 								WeaponType.RPG, null, false, "rocket", 100, 1, 5000)
@@ -1508,6 +1505,8 @@ public class QAMain extends JavaPlugin {
 			List<String> s = new ArrayList<String>();
 			if (b("give", args[0]))
 				s.add("give");
+			if (b("drop", args[0]))
+				s.add("drop");
 			if (b("getResourcepack", args[0]))
 				s.add("getResourcepack");
 			if (b("sendResourcepack", args[0]))
@@ -1536,14 +1535,13 @@ public class QAMain extends JavaPlugin {
 		}
 		if (args.length == 2) {
 			List<String> s = new ArrayList<String>();
-			if (args[0].equalsIgnoreCase("give")) {
+			if (args[0].equalsIgnoreCase("give") || args[0].equalsIgnoreCase("drop")) {
 				for (Entry<MaterialStorage, Gun> e : gunRegister.entrySet()) {
-					if(e.getValue() instanceof AttachmentBase) {
+					if (e.getValue() instanceof AttachmentBase) {
 						if (b(e.getValue().getName(), args[1]))
 							s.add(e.getValue().getName());
-						
-					}else
-					if (b(e.getValue().getName(), args[1]))
+
+					} else if (b(e.getValue().getName(), args[1]))
 						s.add(e.getValue().getName());
 				}
 				for (Entry<MaterialStorage, Ammo> e : ammoRegister.entrySet())
@@ -1555,14 +1553,16 @@ public class QAMain extends JavaPlugin {
 				for (Entry<MaterialStorage, ArmorObject> e : armorRegister.entrySet())
 					if (b(e.getValue().getName(), args[1]))
 						s.add(e.getValue().getName());
-				/*
-				 * for (Entry<MaterialStorage, AttachmentBase> e :
-				 * attachmentRegister.entrySet()) if (b(e.getValue().getAttachmentName(),
-				 * args[1])) s.add(e.getValue().getAttachmentName());
-				 */
-
 			}
 			return s;
+		}
+		if (args[0].equalsIgnoreCase("give")) {
+			if (args.length > 2) {
+				List<String> s = new ArrayList<String>();
+				if (b("~", args[0]))
+					s.add("~");
+				return s;
+			}
 		}
 		return null;
 	}
@@ -1766,96 +1766,83 @@ public class QAMain extends JavaPlugin {
 						StringBuilder sb = new StringBuilder();
 						sb.append("Valid items: ");
 						for (Gun g : gunRegister.values()) {
-							sb.append(g.getName() + ",");
+							sb.append(g.getName() + ", ");
 						}
 						sb.append(ChatColor.GRAY);
 						for (Ammo g : ammoRegister.values()) {
-							sb.append(g.getName() + ",");
+							sb.append(g.getName() + ", ");
 						}
 						sb.append(ChatColor.WHITE);
 						for (ArmoryBaseObject g : miscRegister.values()) {
-							sb.append(g.getName() + ",");
+							sb.append(g.getName() + ", ");
 						}
 						sb.append(ChatColor.GRAY);
 						for (ArmorObject g : armorRegister.values()) {
-							sb.append(g.getName() + ",");
+							sb.append(g.getName() + ", ");
 						}
 						sb.append(ChatColor.WHITE);
-						// for (AttachmentBase g : attachmentRegister.values()) {
-						// sb.append(g.getAttachmentName() + ",");
-						// }
 						sender.sendMessage(prefix + sb.toString());
 						return true;
 					}
 
-					ArmoryBaseObject g = null;
-					// for (int j = 1; j < args.length; j++) {
-					// gunName.append(args[j]);
-					// if (j != args.length - 1)
-					// gunName.append(" ");
-					// }
-					// Check if it is a gun, then if it is ammo, then if it is misc
-					for (Entry<MaterialStorage, Gun> e : gunRegister.entrySet())
-						if (e.getValue().getName().equalsIgnoreCase(args[1])) {
-							g = e.getValue();
-							break;
-						}
-					if (g == null)
-						for (Entry<MaterialStorage, Ammo> e : ammoRegister.entrySet())
-							if (e.getValue().getName().equalsIgnoreCase(args[1])) {
-								g = e.getValue();
-								break;
-							}
-					if (g == null)
-						for (Entry<MaterialStorage, ArmoryBaseObject> e : miscRegister.entrySet())
-							if (e.getValue().getName().equalsIgnoreCase(args[1])) {
-								g = e.getValue();
-								break;
-							}
-					if (g == null)
-						for (Entry<MaterialStorage, ArmorObject> e : armorRegister.entrySet())
-							if (e.getValue().getName().equalsIgnoreCase(args[1])) {
-								g = e.getValue();
-								break;
-							}
-					/*
-					 * if (g == null) for (Entry<MaterialStorage, AttachmentBase> e :
-					 * attachmentRegister.entrySet()) if
-					 * (e.getValue().getAttachmentName().equalsIgnoreCase(args[1])) { // g =
-					 * e.getValue().getBase(); attachment = e.getValue(); g =
-					 * gunRegister.get(attachment.getBase()); break; }
-					 */
+					ArmoryBaseObject g = QualityArmory.getCustomItemByName(args[1]);
 					if (g != null) {
 						Location loc = null;
+						Location relLoc = null;
 						if (args.length >= 5) {
 							World w = null;
-							if (args.length >= 6) {
-								w = Bukkit.getWorld(args[5]);
-							} else {
-								if (sender instanceof Player) {
-									loc = ((Player) sender).getLocation();
-								} else if (sender instanceof BlockCommandSender) {
-									loc = ((BlockCommandSender) sender).getBlock().getLocation();
-								}
+							if (sender instanceof Player) {
+								relLoc = (loc = ((Player) sender).getLocation());
+							} else if (sender instanceof BlockCommandSender) {
+								relLoc = (loc = ((BlockCommandSender) sender).getBlock().getLocation());
 							}
-							loc = new Location(w, Double.parseDouble(args[2]), Double.parseDouble(args[3]),
-									Double.parseDouble(args[4]));
-						}
 
+							if (args.length >= 6) {
+								if (args[2].equals("~"))
+									w = relLoc.getWorld();
+								else
+									w = Bukkit.getWorld(args[5]);
+							}else {
+								w=relLoc.getWorld();
+							}
+
+							double x = 0;
+							double y = 0;
+							double z = 0;
+							if (args[2].equals("~"))
+								x = relLoc.getX();
+							else
+								x= Double.parseDouble(args[2]);
+							if (args[3].equals("~"))
+								y = relLoc.getY();
+							else
+								y= Double.parseDouble(args[3]);
+							if (args[4].equals("~"))
+								z = relLoc.getZ();
+							else
+								z= Double.parseDouble(args[4]);
+							loc = new Location(w, x, y, z);
+						}
+						if (loc == null) {
+							sender.sendMessage(prefix + " A valid location is required");
+							return true;
+						}
 						ItemStack temp = null;
 
 						if (g instanceof Gun) {
 							temp = ItemFact.getGun((Gun) g);
 						} else if (g instanceof Ammo) {
-							ItemFact.getAmmo((Ammo) g);
+							temp = ItemFact.getAmmo((Ammo) g);
 						} else {
 							temp = ItemFact.getObject(g);
 							temp.setAmount(g.getCraftingReturn());
 						}
 						if (temp != null) {
 							loc.getWorld().dropItem(loc, temp);
+							sender.sendMessage(prefix + " Dropping item " + g.getName() + " at that location");
+						} else {
+							sender.sendMessage(prefix + " Failed to drop item " + g.getName() + " at that location");
 						}
-						sender.sendMessage(prefix + " Dropping item " + g.getName() + " at that location");
 					} else {
 						sender.sendMessage(prefix + " Could not find item \"" + args[1] + "\"");
 					}
@@ -1872,19 +1859,19 @@ public class QAMain extends JavaPlugin {
 						StringBuilder sb = new StringBuilder();
 						sb.append("Valid items: ");
 						for (Gun g : gunRegister.values()) {
-							sb.append(g.getName() + ",");
+							sb.append(g.getName() + ", ");
 						}
 						sb.append(ChatColor.GRAY);
 						for (Ammo g : ammoRegister.values()) {
-							sb.append(g.getName() + ",");
+							sb.append(g.getName() + ", ");
 						}
 						sb.append(ChatColor.WHITE);
 						for (ArmoryBaseObject g : miscRegister.values()) {
-							sb.append(g.getName() + ",");
+							sb.append(g.getName() + ", ");
 						}
 						sb.append(ChatColor.GRAY);
 						for (ArmorObject g : armorRegister.values()) {
-							sb.append(g.getName() + ",");
+							sb.append(g.getName() + ", ");
 						}
 						sb.append(ChatColor.WHITE);
 						// for (AttachmentBase g : attachmentRegister.values()) {
@@ -1894,43 +1881,7 @@ public class QAMain extends JavaPlugin {
 						return true;
 					}
 
-					ArmoryBaseObject g = null;
-					// for (int j = 1; j < args.length; j++) {
-					// gunName.append(args[j]);
-					// if (j != args.length - 1)
-					// gunName.append(" ");
-					// }
-					// Check if it is a gun, then if it is ammo, then if it is misc
-					for (Entry<MaterialStorage, Gun> e : gunRegister.entrySet())
-						if (e.getValue().getName().equalsIgnoreCase(args[1])) {
-							g = e.getValue();
-							break;
-						}
-					if (g == null)
-						for (Entry<MaterialStorage, Ammo> e : ammoRegister.entrySet())
-							if (e.getValue().getName().equalsIgnoreCase(args[1])) {
-								g = e.getValue();
-								break;
-							}
-					if (g == null)
-						for (Entry<MaterialStorage, ArmoryBaseObject> e : miscRegister.entrySet())
-							if (e.getValue().getName().equalsIgnoreCase(args[1])) {
-								g = e.getValue();
-								break;
-							}
-					if (g == null)
-						for (Entry<MaterialStorage, ArmorObject> e : armorRegister.entrySet())
-							if (e.getValue().getName().equalsIgnoreCase(args[1])) {
-								g = e.getValue();
-								break;
-							}
-					/*
-					 * if (g == null) for (Entry<MaterialStorage, AttachmentBase> e :
-					 * attachmentRegister.entrySet()) if
-					 * (e.getValue().getAttachmentName().equalsIgnoreCase(args[1])) { // g =
-					 * e.getValue().getBase(); attachment = e.getValue(); g =
-					 * gunRegister.get(attachment.getBase()); break; }
-					 */
+					ArmoryBaseObject g = QualityArmory.getCustomItemByName(args[1]);
 					if (g != null) {
 						Player who = null;
 						if (args.length > 2)

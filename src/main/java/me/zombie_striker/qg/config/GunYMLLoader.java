@@ -24,7 +24,7 @@ import me.zombie_striker.qg.guns.utils.WeaponType;
 import me.zombie_striker.qg.handlers.chargers.ChargingManager;
 import me.zombie_striker.qg.handlers.reloaders.ReloadingManager;
 import me.zombie_striker.qg.miscitems.Flashbang;
-import me.zombie_striker.qg.miscitems.Grenades;
+import me.zombie_striker.qg.miscitems.Grenade;
 import me.zombie_striker.qg.miscitems.IncendaryGrenades;
 import me.zombie_striker.qg.miscitems.MedKit;
 import me.zombie_striker.qg.miscitems.MeleeItems;
@@ -179,7 +179,7 @@ public class GunYMLLoader {
 
 							WeaponType wt = WeaponType.getByName(f2.getString("MiscType"));
 
-							int radius = f2.contains("radius") ? f2.getInt("radius") : 0;
+							double radius = f2.contains("radius") ? f2.getDouble("radius") : 0;
 
 							if (wt == WeaponType.MEDKIT)
 								QAMain.miscRegister.put(ms, new MedKit(ms, name, displayname, materails, price));
@@ -188,7 +188,7 @@ public class GunYMLLoader {
 										new MeleeItems(ms, name, displayname, materails, price, damage));
 							if (wt == WeaponType.GRENADES)
 								QAMain.miscRegister.put(ms,
-										new Grenades(materails, price, damage, radius, name, displayname, lore, ms));
+										new Grenade(materails, price, damage, radius, name, displayname, lore, ms));
 							if (wt == WeaponType.SMOKE_GRENADES)
 								QAMain.miscRegister.put(ms, new SmokeGrenades(materails, price, damage, radius, name,
 										displayname, lore, ms));
