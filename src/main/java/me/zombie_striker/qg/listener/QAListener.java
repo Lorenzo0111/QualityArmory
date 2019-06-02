@@ -33,7 +33,6 @@ import me.zombie_striker.qg.ItemFact;
 import me.zombie_striker.qg.MaterialStorage;
 import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.ammo.Ammo;
-import me.zombie_striker.qg.ammo.AmmoUtil;
 import me.zombie_striker.qg.api.QualityArmory;
 import me.zombie_striker.qg.armor.ArmorObject;
 import me.zombie_striker.qg.attachments.AttachmentBase;
@@ -376,7 +375,7 @@ public class QAListener implements Listener {
 							EconHandler.pay(g, (Player) e.getWhoClicked());
 						} else
 							QAMain.removeForIngre((Player) e.getWhoClicked(), g);
-						AmmoUtil.addAmmo((Player) e.getWhoClicked(), g, g.getCraftingReturn());
+						QualityArmory.	addAmmoToInventory((Player) e.getWhoClicked(), g, g.getCraftingReturn());
 						QAMain.	shopsSounds(e, shop);
 						DEBUG("Buy-ammo");
 					} else {
@@ -621,7 +620,7 @@ public class QAListener implements Listener {
 			}
 
 			if (QualityArmory.isAmmo(e.getItem().getItemStack())) {
-				AmmoUtil.addAmmo(e.getPlayer(), QAMain.ammoRegister.get(MaterialStorage.getMS(e.getItem().getItemStack())),
+				QualityArmory.	addAmmoToInventory(e.getPlayer(), QAMain.ammoRegister.get(MaterialStorage.getMS(e.getItem().getItemStack())),
 						e.getItem().getItemStack().getAmount());
 				e.setCancelled(true);
 				e.getItem().remove();

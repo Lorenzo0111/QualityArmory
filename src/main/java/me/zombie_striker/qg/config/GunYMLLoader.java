@@ -1,19 +1,7 @@
 package me.zombie_striker.qg.config;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map.Entry;
-
-import org.bukkit.ChatColor;
-import org.bukkit.Material;
-import org.bukkit.Particle;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.inventory.ItemStack;
-
-import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.MaterialStorage;
+import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.ammo.Ammo;
 import me.zombie_striker.qg.ammo.AmmoType;
 import me.zombie_striker.qg.armor.Helmet;
@@ -23,18 +11,25 @@ import me.zombie_striker.qg.guns.utils.WeaponSounds;
 import me.zombie_striker.qg.guns.utils.WeaponType;
 import me.zombie_striker.qg.handlers.chargers.ChargingManager;
 import me.zombie_striker.qg.handlers.reloaders.ReloadingManager;
-import me.zombie_striker.qg.miscitems.Flashbang;
-import me.zombie_striker.qg.miscitems.Grenade;
-import me.zombie_striker.qg.miscitems.IncendaryGrenades;
-import me.zombie_striker.qg.miscitems.MedKit;
-import me.zombie_striker.qg.miscitems.MeleeItems;
-import me.zombie_striker.qg.miscitems.SmokeGrenades;
+import me.zombie_striker.qg.miscitems.*;
+import org.bukkit.ChatColor;
+import org.bukkit.Material;
+import org.bukkit.Particle;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.inventory.ItemStack;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map.Entry;
 
 public class GunYMLLoader {
 
 	public static void loadAmmo(QAMain main) {
 
-		if (new File(main.getDataFolder(), "ammo").exists())
+		if (new File(main.getDataFolder(), "ammo").exists()) {
+			int items = 0;
 			for (File f : new File(main.getDataFolder(), "ammo").listFiles()) {
 				try {
 					if (f.getName().contains("yml")) {
@@ -44,6 +39,7 @@ public class GunYMLLoader {
 									: Material.DIAMOND_AXE;
 							int variant = f2.contains("variant") ? f2.getInt("variant") : 0;
 							final String name = f2.getString("name");
+							if(QAMain.verboseLoadingLogging)
 							main.getLogger().info("-Loading AmmoType: " + name);
 
 							String extraData = null;
@@ -82,6 +78,7 @@ public class GunYMLLoader {
 									piercing);
 
 							QAMain.ammoRegister.put(ms, da);
+							items++;
 
 							if (extraData != null) {
 								da.setSkullOwner(extraData);
@@ -99,16 +96,24 @@ public class GunYMLLoader {
 					e.printStackTrace();
 				}
 			}
+			if(!QAMain.verboseLoadingLogging)
+				main.getLogger().info("-Loaded "+items+" Ammo types.");
+
+
+		}
 	}
 
 	public static void loadArmor(QAMain main) {
-		if (new File(main.getDataFolder(), "armor").exists())
+		if (new File(main.getDataFolder(), "armor").exists()) {
+			int items = 0;
+
 			for (File f : new File(main.getDataFolder(), "armor").listFiles()) {
 				try {
 					if (f.getName().contains("yml")) {
 						FileConfiguration f2 = YamlConfiguration.loadConfiguration(f);
 						if ((!f2.contains("invalid")) || !f2.getBoolean("invalid")) {
 							final String name = f2.getString("name");
+							if(QAMain.verboseLoadingLogging)
 							main.getLogger().info("-Loading Armor: " + name);
 
 							Material m = f2.contains("material") ? Material.matchMaterial(f2.getString("material"))
@@ -135,6 +140,7 @@ public class GunYMLLoader {
 
 							if (wt == WeaponType.HELMET) {
 								QAMain.armorRegister.put(ms, new Helmet(name, displayname, lore, materails, ms, price));
+								items++;
 							}
 						}
 					}
@@ -142,17 +148,22 @@ public class GunYMLLoader {
 					e.printStackTrace();
 				}
 			}
+			if(!QAMain.verboseLoadingLogging)
+				main.getLogger().info("-Loaded "+items+" Armor types.");
+		}
 	}
 
 	public static void loadMisc(QAMain main) {
-		if (new File(main.getDataFolder(), "misc").exists())
+		if (new File(main.getDataFolder(), "misc").exists()) {
+			int items = 0;
 			for (File f : new File(main.getDataFolder(), "misc").listFiles()) {
 				try {
 					if (f.getName().contains("yml")) {
 						FileConfiguration f2 = YamlConfiguration.loadConfiguration(f);
 						if ((!f2.contains("invalid")) || !f2.getBoolean("invalid")) {
 							final String name = f2.getString("name");
-							main.getLogger().info("-Loading Misc: " + name);
+							if (QAMain.verboseLoadingLogging)
+								main.getLogger().info("-Loading Misc: " + name);
 
 							Material m = f2.contains("material") ? Material.matchMaterial(f2.getString("material"))
 									: Material.DIAMOND_AXE;
@@ -180,7 +191,7 @@ public class GunYMLLoader {
 							WeaponType wt = WeaponType.getByName(f2.getString("MiscType"));
 
 							double radius = f2.contains("radius") ? f2.getDouble("radius") : 0;
-
+							items++;
 							if (wt == WeaponType.MEDKIT)
 								QAMain.miscRegister.put(ms, new MedKit(ms, name, displayname, materails, price));
 							if (wt == WeaponType.MEELEE)
@@ -204,6 +215,9 @@ public class GunYMLLoader {
 					e.printStackTrace();
 				}
 			}
+			if(!QAMain.verboseLoadingLogging)
+				main.getLogger().info("-Loaded "+items+" Misc.");
+		}
 	}
 
 	public static void loadGuns(QAMain main, File f) {
@@ -212,6 +226,7 @@ public class GunYMLLoader {
 				FileConfiguration f2 = YamlConfiguration.loadConfiguration(f);
 				if ((!f2.contains("invalid")) || !f2.getBoolean("invalid")) {
 					final String name = f2.getString("name");
+					if(QAMain.verboseLoadingLogging)
 					main.getLogger().info("-Loading Gun: " + name);
 
 					Material m = f2.contains("material") ? Material.matchMaterial(f2.getString("material"))
@@ -374,7 +389,8 @@ public class GunYMLLoader {
 	}
 
 	public static void loadGuns(QAMain main) {
-		if (new File(main.getDataFolder(), "newGuns").exists())
+		if (new File(main.getDataFolder(), "newGuns").exists()) {
+			int items = 0;
 			for (File f : new File(main.getDataFolder(), "newGuns").listFiles()) {
 				FileConfiguration f2 = YamlConfiguration.loadConfiguration(f);
 				if (CrackshotLoader.isCrackshotGun(f2)) {
@@ -384,11 +400,16 @@ public class GunYMLLoader {
 					continue;
 				}
 				loadGuns(main, f);
+				items++;
 			}
+			if(!QAMain.verboseLoadingLogging)
+				main.getLogger().info("-Loaded "+items+" Gun types.");
+		}
 	}
 
 	public static void loadAttachments(QAMain main) {
-		if (new File(main.getDataFolder(), "attachments").exists())
+		if (new File(main.getDataFolder(), "attachments").exists()) {
+			int items = 0;
 			for (File f : new File(main.getDataFolder(), "attachments").listFiles()) {
 				try {
 					if (f.getName().contains("yml")) {
@@ -425,6 +446,7 @@ public class GunYMLLoader {
 
 							AttachmentBase attach = new AttachmentBase(baseGunM, ms, name, displayname);
 							QAMain.gunRegister.put(ms, attach);
+							items++;
 
 							final ItemStack[] materails = main
 									.convertIngredients(f2.getStringList("craftingRequirements"));
@@ -439,5 +461,8 @@ public class GunYMLLoader {
 					e.printStackTrace();
 				}
 			}
+			if(!QAMain.verboseLoadingLogging)
+				main.getLogger().info("-Loaded "+items+" Attachment types.");
+		}
 	}
 }

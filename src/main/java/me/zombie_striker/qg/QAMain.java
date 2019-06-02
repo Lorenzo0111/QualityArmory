@@ -100,6 +100,8 @@ public class QAMain extends JavaPlugin {
 	public static boolean ignoreUnbreaking = false;
 	public static boolean ignoreSkipping = false;
 
+	public static boolean verboseLoadingLogging = false;
+
 	public static boolean enableDurability = false;
 
 	public static boolean enableArmorIgnore = false;
@@ -380,14 +382,16 @@ public class QAMain extends JavaPlugin {
 
 		// check if Citizens is present and enabled.
 
-		if (getServer().getPluginManager().getPlugin("Citizens") == null
-				|| getServer().getPluginManager().getPlugin("Citizens").isEnabled() == false) {
-			getLogger().log(Level.SEVERE, "Citizens 2.0 not found or not enabled");
-			// getServer().getPluginManager().disablePlugin(this);
+		if (getServer().getPluginManager().getPlugin("Citizens") == null) {
+			getLogger().log(Level.SEVERE, "Citizens 2.0 not found or not enabled (Ignore this.)");
 		} else {
-			// Register your trait with Citizens.
-			net.citizensnpcs.api.CitizensAPI.getTraitFactory()
-					.registerTrait(net.citizensnpcs.api.trait.TraitInfo.create(GunnerTrait.class));
+	try {
+		// Register your trait with Citizens.
+		net.citizensnpcs.api.CitizensAPI.getTraitFactory()
+				.registerTrait(net.citizensnpcs.api.trait.TraitInfo.create(GunnerTrait.class));
+	}catch(Error|Exception e4){
+		getLogger().log(Level.SEVERE, "Citizens 2.0 failed to register gunner trait (Ignore this.)");
+	}
 		}
 
 		Bukkit.getPluginManager().registerEvents(new QAListener(), this);
@@ -675,6 +679,8 @@ public class QAMain extends JavaPlugin {
 		overrideAnvil = (boolean) a("overrideAnvil", false);
 
 		showCrashMessage = (boolean) a("showPossibleCrashHelpMessage", showCrashMessage);
+
+		verboseLoadingLogging = (boolean) a("verboseItemLogging", verboseLoadingLogging);
 
 		sendOnJoin = (boolean) a("sendOnJoin", true);
 		sendTitleOnJoin = (boolean) a("sendTitleOnJoin", false);
@@ -1903,7 +1909,7 @@ public class QAMain extends JavaPlugin {
 							who.getInventory().addItem(temp);
 						} else if (g instanceof Ammo) {
 							// temp = ItemFact.getAmmo((Ammo) g);
-							AmmoUtil.addAmmo(who, (Ammo) g, ((Ammo) g).getMaxAmount());
+							QualityArmory.addAmmoToInventory(who, (Ammo) g, ((Ammo) g).getMaxAmount());
 						} else {
 							temp = ItemFact.getObject(g);
 							temp.setAmount(g.getCraftingReturn());

@@ -1,23 +1,16 @@
 package me.zombie_striker.qg.guns.utils;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
-
 import me.zombie_striker.qg.ItemFact;
 import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.ammo.Ammo;
-import me.zombie_striker.qg.ammo.AmmoUtil;
-import me.zombie_striker.qg.api.*;
+import me.zombie_striker.qg.api.QAHeadShotEvent;
+import me.zombie_striker.qg.api.QAWeaponDamageEntityEvent;
+import me.zombie_striker.qg.api.QualityArmory;
 import me.zombie_striker.qg.armor.BulletProtectionUtil;
 import me.zombie_striker.qg.boundingbox.AbstractBoundingBox;
 import me.zombie_striker.qg.boundingbox.BoundingBoxManager;
 import me.zombie_striker.qg.guns.Gun;
 import me.zombie_striker.qg.handlers.*;
-import ru.beykerykt.lightapi.LightAPI;
-import ru.beykerykt.lightapi.chunks.ChunkInfo;
-
 import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
@@ -31,8 +24,14 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
+import ru.beykerykt.lightapi.LightAPI;
+import ru.beykerykt.lightapi.chunks.ChunkInfo;
 
-import io.netty.util.internal.ThreadLocalRandom;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class GunUtil {
 
@@ -187,7 +186,7 @@ public class GunUtil {
 
 					double damageMAX = damage * (bulletProtection ? 0.1 : 1)
 							* ((headShot && !negateHeadshot) ? (QAMain.HeadshotOneHit ? 50 : g.getHeadshotMultiplier())
-									: 1);
+							: 1);
 
 					if (hitTarget instanceof Player) {
 						bulletProtection = BulletProtectionUtil.stoppedBullet(p, bulletHitLoc, normalizedDirection);
@@ -209,9 +208,9 @@ public class GunUtil {
 									// damage / ( toughness / 4 + 2 ) ) ) / 25 )
 									double defensePoints = 0;
 									double toughness = 0;
-									for (ItemStack is : new ItemStack[] { player.getInventory().getHelmet(),
+									for (ItemStack is : new ItemStack[]{player.getInventory().getHelmet(),
 											player.getInventory().getChestplate(), player.getInventory().getLeggings(),
-											player.getInventory().getBoots() }) {
+											player.getInventory().getBoots()}) {
 										if (is != null) {
 											if (!is.getItemMeta().getAttributeModifiers(Attribute.GENERIC_ARMOR)
 													.isEmpty())
@@ -348,20 +347,20 @@ public class GunUtil {
 			// Breaking texture
 			if (QAMain.blockBreakTexture)
 				for (@SuppressWarnings("unused")
-				Location l : blocksThatWillPLAYBreak) {
+						Location l : blocksThatWillPLAYBreak) {
 					start.getWorld().playSound(start, SoundHandler.getSoundWhenShot(start.getBlock()), 2, 1);
 					try {/*
-							 * for (Player p2 : l.getWorld().getPlayers()) {
-							 * com.comphenix.protocol.events.PacketContainer packet = new
-							 * com.comphenix.protocol.events.PacketContainer(
-							 * com.comphenix.protocol.Packets.Server.BLOCK_BREAK_ANIMATION);
-							 * packet.getIntegers().write(0, p2.getEntityId());
-							 * packet.getBlockPositionModifier().write(1, new
-							 * com.comphenix.protocol.wrappers.BlockPosition(l.getBlockX(), l.getBlockY(),
-							 * l.getBlockZ())); packet.getBytes().write(2, (byte) 4);
-							 * com.comphenix.protocol.ProtocolLibrary.getProtocolManager().sendServerPacket(
-							 * p2, packet); }
-							 */
+					 * for (Player p2 : l.getWorld().getPlayers()) {
+					 * com.comphenix.protocol.events.PacketContainer packet = new
+					 * com.comphenix.protocol.events.PacketContainer(
+					 * com.comphenix.protocol.Packets.Server.BLOCK_BREAK_ANIMATION);
+					 * packet.getIntegers().write(0, p2.getEntityId());
+					 * packet.getBlockPositionModifier().write(1, new
+					 * com.comphenix.protocol.wrappers.BlockPosition(l.getBlockX(), l.getBlockY(),
+					 * l.getBlockZ())); packet.getBytes().write(2, (byte) 4);
+					 * com.comphenix.protocol.ProtocolLibrary.getProtocolManager().sendServerPacket(
+					 * p2, packet); }
+					 */
 					} catch (Error | Exception e4) {
 					}
 				}
@@ -553,7 +552,7 @@ public class GunUtil {
 	}
 
 	public static boolean hasAmmo(Player player, Gun g) {
-		return AmmoUtil.getAmmoAmount(player, g.getAmmoType()) > 0;
+		return QualityArmory.getAmmoInInventory(player, g.getAmmoType()) > 0;
 	}
 
 	public static void basicReload(final Gun g, final Player player, boolean doNotRemoveAmmo) {
@@ -589,10 +588,10 @@ public class GunUtil {
 
 			final int initialAmount = ItemFact.getAmount(temp);
 			final int reloadAmount = doNotRemoveAmmo ? g.getMaxBullets()
-					: Math.min(g.getMaxBullets(), initialAmount + AmmoUtil.getAmmoAmount(player, ammo));
+					: Math.min(g.getMaxBullets(), initialAmount + QualityArmory.getAmmoInInventory(player, ammo));
 			final int subtractAmount = reloadAmount - initialAmount;
 			if (!doNotRemoveAmmo)
-				AmmoUtil.removeAmmo(player, ammo, subtractAmount);
+				QualityArmory.removeAmmoFromInventory(player, ammo, subtractAmount);
 
 			if (g.getReloadingingVal() != null) {
 				seconds = g.getReloadingingVal().reload(player, g, subtractAmount);
@@ -683,65 +682,6 @@ public class GunUtil {
 
 	@SuppressWarnings("deprecation")
 	public static boolean isSolid(Block b, Location l) {
-		if (b.getType().name().endsWith("CARPET")) {
-			return false;
-		}
-		if (b.getType() == Material.WATER) {
-			if (QAMain.blockbullet_water)
-				return true;
-		}
-		if (b.getType().name().contains("LEAVE")) {
-			if (QAMain.blockbullet_leaves)
-				return true;
-		}
-		if (b.getType().name().contains("SLAB") || b.getType().name().contains("STEP")) {
-			if (!QAMain.blockbullet_halfslabs && ((l.getY() - l.getBlockY() > 0.5 && b.getData() == 0)
-					|| (l.getY() - l.getBlockY() <= 0.5 && b.getData() == 1)))
-				return false;
-			return true;
-		}
-		if (b.getType().name().contains("BED_") || b.getType().name().contains("_BED")
-				|| b.getType().name().contains("DAYLIGHT_DETECTOR")) {
-			if (!QAMain.blockbullet_halfslabs && (l.getY() - l.getBlockY() > 0.5))
-				return false;
-			return true;
-		}
-		if (b.getType().name().contains("DOOR")) {
-			if (QAMain.blockbullet_door)
-				return true;
-			return false;
-		}
-		if (b.getType().name().contains("GLASS")) {
-			if (QAMain.blockbullet_glass)
-				return true;
-			return false;
-		}
-
-		if (b.getType().isOccluding()) {
-			return true;
-		}
-		if (b.getType().name().contains("STAIR")) {
-			if (b.getData() < 4 && (l.getY() - l.getBlockY() < 0.5))
-				return true;
-			if (b.getData() >= 4 && (l.getY() - l.getBlockY() > 0.5))
-				return true;
-			switch (b.getData()) {
-			case 0:
-			case 4:
-				return l.getX() - (0.5 + l.getBlockX()) > 0;
-			case 1:
-			case 5:
-				return l.getX() - (0.5 + l.getBlockX()) < 0;
-			case 2:
-			case 6:
-				return l.getZ() - (0.5 + l.getBlockZ()) > 0;
-			case 3:
-			case 7:
-				return l.getZ() - (0.5 + l.getBlockZ()) < 0;
-
-			}
-		}
-
-		return false;
+		return BlockCollisionUtil.isSolid(b,l);
 	}
 }

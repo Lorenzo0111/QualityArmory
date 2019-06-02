@@ -7,6 +7,7 @@ import java.util.Map.Entry;
 
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -17,7 +18,6 @@ import org.bukkit.scheduler.BukkitRunnable;
 import me.zombie_striker.pluginconstructor.HotbarMessager;
 import me.zombie_striker.qg.*;
 import me.zombie_striker.qg.ammo.Ammo;
-import me.zombie_striker.qg.ammo.AmmoUtil;
 import me.zombie_striker.qg.armor.ArmorObject;
 import me.zombie_striker.qg.attachments.AttachmentBase;
 import me.zombie_striker.qg.config.GunYML;
@@ -377,7 +377,7 @@ public class QualityArmory {
 
 	public static void sendHotbarGunAmmoCount(final Player p, final Gun g, AttachmentBase attachmentBase,
 			ItemStack usedItem, boolean reloading) {
-		int ammoamount = AmmoUtil.getAmmoAmount(p, g.getAmmoType());
+		int ammoamount = getAmmoInInventory(p, g.getAmmoType());
 
 		if (QAMain.showOutOfAmmoOnTitle && ammoamount <= 0 && ItemFact.getAmount(usedItem) < 1) {
 			p.sendTitle(" ", QAMain.S_OUT_OF_AMMO, 0, 20, 1);
@@ -600,4 +600,70 @@ public class QualityArmory {
 		return ItemFact.getIronSights();
 	}
 
+	
+
+
+	public static int getAmmoInInventory(Player player, Ammo a) {
+		int amount = 0;
+		if(player.getGameMode()==GameMode.CREATIVE)
+			return 99999;
+		for (ItemStack is : player.getInventory().getContents()) {
+			if (is != null && me.zombie_striker.qg.api.QualityArmory.isAmmo(is)&&QualityArmory.getAmmo(is).equals(a)) {
+				amount += is.getAmount();
+			}
+		}
+		return amount;
+	}
+
+	public static boolean addAmmoToInventory(Player player, Ammo a, int amount) {
+		int remaining = amount;
+		for (int i = 0; i < player.getInventory().getSize(); i++) {
+			ItemStack is = player.getInventory().getItem(i);
+			if (is != null && QualityArmory.isAmmo(is) && QualityArmory.getAmmo(is).equals(a)) {
+				if (is.getAmount() + remaining <= a.getMaxAmount()) {
+					is.setAmount(is.getAmount() + remaining);
+					remaining = 0;
+				} else {
+					remaining -= a.getMaxAmount() - is.getAmount();
+					is.setAmount(a.getMaxAmount());
+				}
+				player.getInventory().setItem(i, is);
+				if (remaining <= 0)
+					break;
+			}
+		}
+		if (remaining > 0) {
+			if (player.getInventory().firstEmpty() >= 0) {
+				ItemStack is = ItemFact.getAmmo(a);
+				is.setAmount(remaining);
+				player.getInventory().addItem(is);
+				remaining = 0;
+			}
+		}
+		return remaining <= 0;
+	}
+
+	public static boolean removeAmmoFromInventory(Player player, Ammo a, int amount) {
+		int remaining = amount;
+		if(player.getGameMode()==GameMode.CREATIVE)
+			return true;
+		for (int i = 0; i < player.getInventory().getSize(); i++) {
+			ItemStack is = player.getInventory().getItem(i);
+			if (is != null && QualityArmory.isAmmo(is)&&QualityArmory.getAmmo(is).equals(a)) {
+				int temp = is.getAmount();
+				if (remaining < is.getAmount()) {
+					is.setAmount(is.getAmount() - remaining);
+				} else {
+					is.setType(Material.AIR);
+				}
+				remaining -= temp;
+				player.getInventory().setItem(i, is);
+				if (remaining <= 0)
+					break;
+
+			}
+		}
+		return remaining <= 0;
+	}
+	
 }

@@ -3,7 +3,6 @@ package me.zombie_striker.qg.handlers.chargers;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import me.zombie_striker.qg.ammo.AmmoUtil;
 import me.zombie_striker.qg.api.QualityArmory;
 import me.zombie_striker.qg.guns.Gun;
 
@@ -23,7 +22,7 @@ public RequireAimCharger() {
 		if(QualityArmory.isIronSights(player.getItemInHand())) {
 			return true;
 		}
-		AmmoUtil.addAmmo(player, g.getAmmoType(), 1);
+		QualityArmory.addAmmoToInventory(player, g.getAmmoType(), 1);
 		return false;
 	}
 

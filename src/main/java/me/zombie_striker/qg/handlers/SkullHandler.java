@@ -34,6 +34,7 @@ public class SkullHandler {
 	 */
 	@SuppressWarnings("deprecation")
 	public static ItemStack getCustomSkull64(byte[] url64) {
+
 		GameProfile profile = new GameProfile(UUID.randomUUID(), null);
 		PropertyMap propertyMap = profile.getProperties();
 		if (propertyMap == null) {

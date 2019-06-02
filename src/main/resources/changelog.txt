@@ -1,3 +1,8 @@
+1.1.139
+	Moved AmmoUtil to QualityArmory API class
+	Fixed updater class to allow letters
+	Added option to disable verbose item loading logging
+
 1.1.138
 	Added QAHeadShotEvent to detect when an entity recieved a headshot
 	Updated to Maven
