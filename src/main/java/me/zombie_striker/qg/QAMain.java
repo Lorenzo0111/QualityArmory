@@ -912,7 +912,7 @@ public class QAMain extends JavaPlugin {
 							.setDelayShoot(1).setCustomProjectile(ProjectileManager.EXPLODINGROUND)
 							.setCustomProjectileVelocity(2).setCustomProjectileExplosionRadius(6)// .setChargingHandler(ChargingManager.MININUKELAUNCHER)
 							.setReloadingHandler(ReloadingManager.SINGLERELOAD).setDistance(500)
-							.setParticle(0.001, 0.001, 0.001).setRecoil(10).setMaterial(Material.PRISMARINE_SHARD)
+							.setParticle(0.001, 0.001, 0.001, Material.COAL_BLOCK).setRecoil(10).setMaterial(Material.PRISMARINE_SHARD)
 							.setOn18(true).done();
 					GunYMLCreator
 							.createNewCustomGun(getDataFolder(), "default_1_8_dp27", "dp27" + additive, "DP-27", 1,
@@ -1173,14 +1173,14 @@ public class QAMain extends JavaPlugin {
 				GunYMLCreator
 						.createNewDefaultGun(getDataFolder(), "lazerrifle", "&6Lazer Rifle", 54, stringsMetalRif,
 								WeaponType.LAZER, WeaponSounds.LAZERSHOOT, false, "fusion_cell", 4, 20, 2000)
-						.setAutomatic(true).setParticle(1, 0, 0).setDistance(150).setSwayMultiplier(3).setSway(0.2)
+						.setAutomatic(true).setParticle(1, 0, 0, Material.REDSTONE_BLOCK).setDistance(150).setSwayMultiplier(3).setSway(0.2)
 						.setRecoil(0).done();
 				GunYMLCreator
 						.createNewDefaultGun(getDataFolder(), "fatman", "&6Fatman", 55, stringsFatman, WeaponType.RPG,
 								WeaponSounds.WARHEAD_LAUNCH, false, "mininuke", 500, 1, 6000)
 						.setDelayShoot(1).setCustomProjectile(ProjectileManager.MINI_NUKE)
 						.setCustomProjectileExplosionRadius(10).setCustomProjectileVelocity(3)// .setChargingHandler(ChargingManager.MININUKELAUNCHER)
-						.setReloadingHandler(ReloadingManager.SINGLERELOAD).setDistance(500).setParticle(0.3, 0.9, 0.3)
+						.setReloadingHandler(ReloadingManager.SINGLERELOAD).setDistance(500).setParticle(0.3, 0.9, 0.3, Material.COAL_BLOCK)
 						.setRecoil(5).done();
 				GunYMLCreator.createAmmo(true, getDataFolder(), false, "default_mininuke", "mininuke", "MiniNuke", 56,
 						stringsMini, 3000, 100, 1);
@@ -1192,7 +1192,7 @@ public class QAMain extends JavaPlugin {
 						.createNewDefaultGun(getDataFolder(), "instituterifle", "&6Institute Rifle", 58,
 								stringsMetalRif, WeaponType.LAZER, WeaponSounds.LAZERSHOOT, false, "fusion_cell", 4, 20,
 								2000)
-						.setAutomatic(true).setParticle(0.5, 0.9, 0.9).setDistance(150).setSwayMultiplier(3)
+						.setAutomatic(true).setParticle(0.5, 0.9, 0.9, Material.LAPIS_BLOCK).setDistance(150).setSwayMultiplier(3)
 						.setSway(0.2).setRecoil(0).done();
 
 				GunYMLCreator
@@ -1233,7 +1233,7 @@ public class QAMain extends JavaPlugin {
 								ChatColor.GOLD + "\"Needler\"", 68, stringsRifle, WeaponType.PISTOL,
 								WeaponSounds.GUN_NEEDLER, true, "fusion_cell", 1, 32, 2000)
 						.setFullyAutomatic(4).setBulletsPerShot(1)
-						.setLore(Collections.singletonList("&fWarning: Sharp")).setParticle("REDSTONE", 1, 0.1, 1)
+						.setLore(Collections.singletonList("&fWarning: Sharp")).setParticle("REDSTONE", 1, 0.1, 1, Material.DIAMOND_BLOCK)
 						.done();
 				GunYMLCreator
 						.createNewCustomGun(getDataFolder(), "default_thatgun", "thatgun",
@@ -1245,7 +1245,7 @@ public class QAMain extends JavaPlugin {
 						.createNewCustomGun(getDataFolder(), "default_blaster", "blaster",
 								ChatColor.GOLD + "\"Blaster\" Pistol", 72, stringsGoldRif, WeaponType.LAZER,
 								WeaponSounds.GUN_STARWARS, false, "fusion_cell", 4, 20, 1600)
-						.setFullyAutomatic(1).setBulletsPerShot(1).setMuzzleSmoke(false).setParticle(1, 0, 0)
+						.setFullyAutomatic(1).setBulletsPerShot(1).setMuzzleSmoke(false).setParticle(1, 0, 0, Material.REDSTONE_BLOCK)
 						.setLore(Collections.singletonList("&fMiss all the shots you want!")).setRecoil(0).done();
 				GunYMLCreator
 						.createNewCustomGun(getDataFolder(), "default_hl2pulserifle", "pulserifle",
@@ -1253,7 +1253,7 @@ public class QAMain extends JavaPlugin {
 								WeaponSounds.GUN_HALOLAZER, true, "fusion_cell", 4, 30, 5000)
 						.setFullyAutomatic(3).setBulletsPerShot(1).setMuzzleSmoke(false)
 						.setLore(Collections.singletonList("&fStardard Issue Rifles for Combie solders."))
-						.setParticle(0.5, 0.99, 0.99).setRecoil(2).done();
+						.setParticle(0.5, 0.99, 0.99, Material.GOLD_BLOCK).setRecoil(2).done();
 				GunYMLCreator
 						.createNewCustomGun(getDataFolder(), "default_vera", "vera", ChatColor.GOLD + "Vera", 74,
 								stringsGoldRif, WeaponType.RIFLE, WeaponSounds.GUN_DEAGLE, true, "556", 3, 30, 3000)
@@ -1305,19 +1305,19 @@ public class QAMain extends JavaPlugin {
 						.setDelayShoot(1).setCustomProjectile(ProjectileManager.EXPLODINGROUND)
 						.setCustomProjectileVelocity(2).setCustomProjectileExplosionRadius(6)// .setChargingHandler(ChargingManager.MININUKELAUNCHER)
 						.setReloadingHandler(ReloadingManager.SINGLERELOAD).setDistance(500)
-						.setParticle(0.001, 0.001, 0.001).setRecoil(10).done();
+						.setParticle(0.001, 0.001, 0.001, Material.COAL_BLOCK).setRecoil(10).done();
 				GunYMLCreator
 						.createNewDefaultGun(getDataFolder(), "minigun", "Minigun", 101, stringsMetalRif,
 								WeaponType.BIG_GUN, WeaponSounds.GUN_BIG, true, "556", 2, 200, 15000)
 						.setFullyAutomatic(5).setBulletsPerShot(1).setChargingHandler(ChargingManager.REQUIREAIM)
-						.setSway(0.5).setSwayMultiplier(2.4).setParticle(0.9, 0.9, 0.9).done();
+						.setSway(0.5).setSwayMultiplier(2.4).setParticle(0.9, 0.9, 0.9, Material.STONE).done();
 				GunYMLCreator// TODO: MINIGUN RECOIL
 						.createNewDefaultGun(getDataFolder(), "mk19", "Mk-19", 102, stringsMetalRif, WeaponType.BIG_GUN,
 								WeaponSounds.WARHEAD_LAUNCH, true, "40mm", 50, 50, 20000)
 						.setFullyAutomatic(1).setCustomProjectile(ProjectileManager.EXPLODINGROUND)
 						.setCustomProjectileVelocity(4).setCustomProjectileExplosionRadius(5)
 						.setChargingHandler(ChargingManager.REQUIREAIM).setSway(0.5).setSwayMultiplier(2.4)
-						.setParticle(0.001, 0.001, 0.001).setRecoil(7).done();
+						.setParticle(0.001, 0.001, 0.001, Material.COAL_BLOCK).setRecoil(7).done();
 				GunYMLCreator
 						.createNewDefaultGun(getDataFolder(), "asval", "AS-Val", 103, stringsMetalRif, WeaponType.RIFLE,
 								WeaponSounds.SILENCEDSHOT, true, "762", 3, 30, 7000)

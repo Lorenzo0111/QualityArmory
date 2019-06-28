@@ -3,7 +3,9 @@ package me.zombie_striker.qg.handlers;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.Particle;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -120,6 +122,8 @@ public class ParticleHandlers {
 			if (g.getParticle() != null)
 			if (g.getParticle() == Particle.REDSTONE) {
 				spawnParticle(g.getParticleR(), g.getParticleG(), g.getParticleB(), loc);
+			} else if (g.getParticle() == Particle.BLOCK_CRACK || g.getParticle() == Particle.BLOCK_DUST || g.getParticle() == Particle.FALLING_DUST) {
+				loc.getWorld().spawnParticle(g.getParticle(), loc, 1, g.getParticleMaterial().createBlockData());
 			} else {
 				loc.getWorld().spawnParticle(g.getParticle(), loc, 1);
 			}
