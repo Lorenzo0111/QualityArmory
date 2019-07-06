@@ -77,6 +77,7 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 	private double particle_r = 1;
 	private double particle_g = 1;
 	private double particle_b = 1;
+	private Material particle_material = Material.COAL_BLOCK;
 
 	private int lightl = 20;
 
@@ -127,6 +128,7 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 		this.particle_r = g.particle_r;
 		this.particle_g = g.particle_g;
 		this.particle_b = g.particle_b;
+		this.particle_material = g.particle_material;
 		this.lightl = g.lightl;
 		this.enableMuzzleSmoke = g.enableMuzzleSmoke;
 		this.glowEffect = g.glowEffect;
@@ -589,15 +591,20 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 		return particle_b;
 	}
 
-	public void setParticles(Particle p) {
-		this.setParticles(p, 1, 1, 1);
+	public Material getParticleMaterial() {
+		return this.particle_material;
 	}
 
-	public void setParticles(Particle p, double r, double g, double b) {
+	public void setParticles(Particle p) {
+		this.setParticles(p, 1, 1, 1, Material.COAL_BLOCK);
+	}
+
+	public void setParticles(Particle p, double r, double g, double b, Material m) {
 		particle = p;
 		this.particle_r = r;
 		this.particle_g = g;
 		this.particle_b = b;
+		this.particle_material = m;
 	}
 
 	public boolean useMuzzleSmoke() {

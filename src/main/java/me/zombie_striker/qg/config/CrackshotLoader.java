@@ -51,7 +51,7 @@ public class CrackshotLoader {
 			yml.setMaterial(g.getItemData().getMat());
 			yml.setZoomLevel(g.getZoomWhenIronSights());
 			yml.setNightVisionOnScope(g.hasnightVision());
-			yml.setParticle(g.getParticleR(), g.getParticleB(), g.getParticleG());
+			yml.setParticle(g.getParticleR(), g.getParticleB(), g.getParticleG(), g.getParticleMaterial());
 			if (g.getChargingVal() != null)
 				yml.setChargingHandler(g.getChargingVal());
 			yml.verifyAllTagsExist();
@@ -219,8 +219,11 @@ public class CrackshotLoader {
 				if (crackshotFile.contains(name + ".Scope.Night_Vision"))
 					g.setNightVision(crackshotFile.getBoolean(name + ".Scope.Night_Vision"));
 			}
+
 			double rP = 1, gP = 1, bP = 1;
 			String particleName = "REDSTONE";
+			Material mP = Material.COAL_BLOCK;
+
 			if (crackshotFile.contains(name + ".Particles")) {
 				if (crackshotFile.contains(name + ".Particles.bullet_particle"))
 					particleName = crackshotFile.getString(name + ".Particles.bullet_particle");
@@ -230,8 +233,15 @@ public class CrackshotLoader {
 					gP = crackshotFile.getDouble(name + ".Particles.bullet_particleG");
 				if (crackshotFile.contains(name + ".Particles.bullet_particleB"))
 					bP = crackshotFile.getDouble(name + ".Particles.bullet_particleB");
+				if (crackshotFile.contains(name + ".Particles.bullet_particleMaterial"))
+					mP = Material.matchMaterial(crackshotFile.getString(name + ".Particles.bullet_particleMaterial", "COAL_BLOCK"));
 			}
-			g.setParticles(Particle.valueOf(particleName), rP, gP, bP);
+
+			if (mP == null) {
+				mP = Material.COAL_BLOCK;
+			}
+
+			g.setParticles(Particle.valueOf(particleName), rP, gP, bP, mP);
 
 			g.setReloadingTimeInSeconds(reloadDelayInTicks / 20);
 			guns4.add(g);

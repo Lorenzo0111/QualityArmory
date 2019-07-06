@@ -42,6 +42,7 @@ public class GunYML extends ArmoryYML {
 		setNoOverride("particles.bullet_particleR", 1);
 		setNoOverride("particles.bullet_particleG", 1);
 		setNoOverride("particles.bullet_particleB", 1);
+		setNoOverride("particles.bullet_particleMaterial", "COAL_BLOCK");
 
 		setNoOverride("Version_18_Support", !QAMain.isVersionHigherThan(1, 9));
 		setNoOverride("ChargingHandler", "none");
@@ -210,15 +211,16 @@ public class GunYML extends ArmoryYML {
 		set(false,"particles.bullet_particle", particle);
 		return this;
 	}
-	public GunYML setParticle(double r, double g, double b) {
-		return setParticle("REDSTONE", r, g, b);
+	public GunYML setParticle(double r, double g, double b, Material m) {
+		return setParticle("REDSTONE", r, g, b, m);
 	}
 
-	public GunYML setParticle(String particle, double r, double g, double b) {
+	public GunYML setParticle(String particle, double r, double g, double b, Material m) {
 		set(false,"particles.bullet_particle", particle);
 		set(false,"particles.bullet_particleR", r);
 		set(false,"particles.bullet_particleG", g);
 		set(false,"particles.bullet_particleB", b);
+		set(false, "particles.bullet_particleMaterial", m.toString());
 		return this;
 	}
 

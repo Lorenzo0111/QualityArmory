@@ -319,9 +319,14 @@ public class GunYMLLoader {
 		}
 		g.setSounds(sounds);
 
-		double partr = f2.contains("particles.bullet_particleR") ? f2.getDouble("particles.bullet_particleR") : 1.0;
-		double partg = f2.contains("particles.bullet_particleG") ? f2.getDouble("particles.bullet_particleG") : 1.0;
-		double partb = f2.contains("particles.bullet_particleB") ? f2.getDouble("particles.bullet_particleB") : 1.0;
+		double partr = f2.getDouble("particles.bullet_particleR", 1.0D);
+		double partg = f2.getDouble("particles.bullet_particleG", 1.0D);
+		double partb = f2.getDouble("particles.bullet_particleB", 1.0D);
+		Material partm = Material.matchMaterial(f2.getString("particles.bullet_particleMaterial", "COAL_BLOCK"));
+
+		if (partm == null) {
+			partm = Material.COAL_BLOCK;
+		}
 
 		if (f2.contains("addMuzzleSmoke")) {
 			boolean addMuzzleSmoke = f2.contains("addMuzzleSmoke") ? f2.getBoolean("addMuzzleSmoke") : false;
@@ -382,7 +387,7 @@ public class GunYMLLoader {
 				Particle particle = (Particle) (f2.contains("particles.bullet_particle")
 						? Particle.valueOf(f2.getString("particles.bullet_particle"))
 						: QAMain.bulletTrail);
-				g.setParticles(particle, partr, partg, partb);
+				g.setParticles(particle, partr, partg, partb, partm);
 			} catch (Error | Exception er5) {
 			}
 		}
