@@ -1,3 +1,8 @@
+1.1.140
+    Fixed gun duping by aiming down sights and pressing F
+    Fixed chest error
+    Fixed some minor bugs.
+
 1.1.139
 	Moved AmmoUtil to QualityArmory API class
 	Fixed updater class to allow letters

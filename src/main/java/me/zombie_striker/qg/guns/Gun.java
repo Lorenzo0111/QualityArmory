@@ -670,16 +670,17 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 		 * Gun g = QualityArmory.getGun(usedItem); if (g == null) g =
 		 * attachment.getBaseGun();
 		 */
-		QAMain.DEBUG("Made it to gun/attachment check : " + getName());
-		if (QAMain.enableInteractChests) {
-			if (e.getClickedBlock() != null
-					&& (e.getClickedBlock().getType() == Material.CHEST
-							|| e.getClickedBlock().getType() == Material.TRAPPED_CHEST)
-					|| e.getClickedBlock().getType() == Material.ENDER_CHEST) {
-				QAMain.DEBUG("Chest interactable check has return true!");
-				return;
+		QAMain.DEBUG("Made it to gun/attachment check : " + getName());try {
+			if (QAMain.enableInteractChests) {
+				if (e.getClickedBlock() != null
+						&& (e.getClickedBlock().getType() == Material.CHEST
+						|| e.getClickedBlock().getType() == Material.TRAPPED_CHEST)
+						|| e.getClickedBlock().getType() == Material.ENDER_CHEST) {
+					QAMain.DEBUG("Chest interactable check has return true!");
+					return;
+				}
 			}
-		}
+		}catch (Error|Exception e4){}
 
 		e.setCancelled(true);
 		if (fire) {

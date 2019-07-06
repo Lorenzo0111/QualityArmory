@@ -70,6 +70,13 @@ public class Update19Events implements Listener {
 			}
 
 		} else {
+			Gun g = null;
+			if(((g=QualityArmory.getGun(e.getOffHandItem()))!=null) || (g= QualityArmory.getGun(e.getMainHandItem()))!=null){
+				if(g.hasIronSights() && e.getPlayer().isSneaking()){
+					e.setCancelled(true);
+					return;
+				}
+			}
 			if (QualityArmory.isGun(e.getOffHandItem())) {
 				e.setCancelled(true);
 				return;
