@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>me.zombie_striker</groupId>
     <artifactId>qg</artifactId>
-    <version>1.1.140</version>
+    <version>1.1.141</version>
     <name>QualityArmory</name>
 
     <repositories>

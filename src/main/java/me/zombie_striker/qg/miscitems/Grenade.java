@@ -152,8 +152,6 @@ public class Grenade implements ThrowableItems {
 				}
 				Player thro = Bukkit.getPlayer(h.getOwner());
 				try {
-					Bukkit.broadcastMessage(
-							"rad " + radius + " " + h.getHolder().getNearbyEntities(radius, radius, radius).size());
 					for (Entity e : h.getHolder().getNearbyEntities(radius, radius, radius)) {
 						if (e instanceof LivingEntity) {
 							double dam = (dmageLevel / e.getLocation().distance(h.getHolder().getLocation()));

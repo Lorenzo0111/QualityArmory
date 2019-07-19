@@ -529,7 +529,7 @@ public class GunUtil {
 					} else {
 						soundname = g.getWeaponSound();
 					}
-					player.getWorld().playSound(player.getLocation(), soundname, 4, 1);
+					player.getWorld().playSound(player.getLocation(), soundname, (float)g.getVolume(), 1);
 					if (!QAMain.isVersionHigherThan(1, 9)) {
 						try {
 							player.getWorld().playSound(player.getLocation(), Sound.valueOf("CLICK"), 5, 1);

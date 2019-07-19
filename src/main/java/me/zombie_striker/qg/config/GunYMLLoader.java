@@ -319,6 +319,9 @@ public class GunYMLLoader {
 		}
 		g.setSounds(sounds);
 
+		if(f2.contains("weaponsounds_volume"))
+		g.setVolume(f2.getDouble("weaponsounds_volume"));
+
 		double partr = f2.getDouble("particles.bullet_particleR", 1.0D);
 		double partg = f2.getDouble("particles.bullet_particleG", 1.0D);
 		double partb = f2.getDouble("particles.bullet_particleB", 1.0D);

@@ -3,9 +3,11 @@
   <component name="ChangeListManager">
     <list default="true" id="3a75e4d7-6f9a-4a9b-ac5e-112a5a655666" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/config/GunYML.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/config/GunYML.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/config/GunYMLLoader.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/config/GunYMLLoader.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/guns/Gun.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/guns/Gun.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/handlers/Update19Events.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/handlers/Update19Events.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/guns/utils/GunUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/guns/utils/GunUtil.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/miscitems/Grenade.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/miscitems/Grenade.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/resources/changelog.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/changelog.txt" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
@@ -21,29 +23,29 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/pom.xml">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="119">
-              <caret line="7" column="20" selection-start-line="7" selection-start-column="20" selection-end-line="7" selection-end-column="20" />
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/resources/changelog.txt">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="374">
-              <caret line="22" column="8" lean-forward="true" selection-end-line="1023" />
+            <state relative-caret-position="17">
+              <caret line="1" column="10" selection-start-line="1" selection-start-column="10" selection-end-line="1" selection-end-column="10" />
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/QAMain.java">
+        <entry file="file://$PROJECT_DIR$/src/main/resources/plugin.yml">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="780">
-              <caret line="803" column="76" selection-start-line="803" selection-start-column="54" selection-end-line="803" selection-end-column="76" />
+            <state relative-caret-position="425">
+              <caret line="25" column="2" lean-forward="true" selection-start-line="25" selection-start-column="2" selection-end-line="25" selection-end-column="23" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/handlers/ProtocolLibHandler.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="792">
+              <caret line="76" column="54" selection-start-line="76" selection-start-column="54" selection-end-line="76" selection-end-column="54" />
             </state>
           </provider>
         </entry>
@@ -51,9 +53,10 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/guns/Gun.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="425">
-              <caret line="670" column="35" selection-start-line="670" selection-start-column="35" selection-end-line="670" selection-end-column="35" />
+            <state relative-caret-position="290">
+              <caret line="298" column="17" selection-start-line="298" selection-start-column="17" selection-end-line="298" selection-end-column="17" />
               <folding>
+                <element signature="e#26602#26603#0" expanded="true" />
                 <element signature="e#26637#26638#0" expanded="true" />
               </folding>
             </state>
@@ -61,51 +64,63 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/resources/plugin.yml">
-          <provider selected="true" editor-type-id="text-editor" />
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/listener/QAListener.java">
+        <entry file="file://$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/miscitems/Grenade.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="3126">
-              <caret line="941" column="93" selection-start-line="941" selection-start-column="89" selection-end-line="941" selection-end-column="93" />
+            <state relative-caret-position="304">
+              <caret line="153" column="21" selection-start-line="153" selection-start-column="21" selection-end-line="153" selection-end-column="21" />
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/handlers/Update19OffhandChecker.java">
+        <entry file="file://$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/miscitems/IncendaryGrenades.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="119">
-              <caret line="11" column="13" selection-start-line="11" selection-start-column="13" selection-end-line="11" selection-end-column="13" />
+            <state relative-caret-position="493">
+              <caret line="43" column="58" selection-start-line="43" selection-start-column="58" selection-end-line="43" selection-end-column="58" />
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/handlers/Update19Events.java">
+        <entry file="file://$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/config/GunYMLCreator.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="578">
-              <caret line="77" column="17" selection-start-line="77" selection-start-column="17" selection-end-line="77" selection-end-column="17" />
+            <state relative-caret-position="-4818">
+              <caret line="55" column="42" selection-start-line="55" selection-start-column="42" selection-end-line="55" selection-end-column="42" />
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/handlers/EconHandler.java">
+        <entry file="file://$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/config/GunYMLLoader.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="272">
-              <caret line="21" column="26" selection-start-line="21" selection-start-column="26" selection-end-line="21" selection-end-column="26" />
+            <state relative-caret-position="627">
+              <caret line="321" column="46" lean-forward="true" selection-start-line="321" selection-start-column="46" selection-end-line="321" selection-end-column="46" />
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/handlers/SkullHandler.java">
+        <entry file="file://$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/guns/utils/GunUtil.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="34">
-              <caret line="2" column="24" selection-start-line="2" selection-start-column="24" selection-end-line="3" selection-end-column="28" />
+            <state relative-caret-position="352">
+              <caret line="531" column="94" selection-start-line="531" selection-start-column="94" selection-end-line="531" selection-end-column="94" />
+              <folding>
+                <element signature="imports" expanded="true" />
+                <element signature="e#24349#24350#0" expanded="true" />
+                <element signature="e#24394#24395#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/config/GunYML.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="250">
+              <caret line="54" column="45" selection-start-line="54" selection-start-column="45" selection-end-line="54" selection-end-column="45" />
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -127,6 +142,12 @@
       <find>swap</find>
       <find>onjoin</find>
       <find>right</find>
+      <find>v</find>
+      <find>volume</find>
+      <find>sound</find>
+      <find>playsou</find>
+      <find>messa</find>
+      <find>broa</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -137,13 +158,16 @@
       <list>
         <option value="$USER_HOME$/.m2/settings.xml" />
         <option value="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/handlers/SkullHandler.java" />
-        <option value="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/guns/utils/GunUtil.java" />
         <option value="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/handlers/BlockCollisionUtil.java" />
-        <option value="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/config/GunYMLLoader.java" />
         <option value="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/QAMain.java" />
         <option value="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/handlers/Update19Events.java" />
-        <option value="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/guns/Gun.java" />
         <option value="$PROJECT_DIR$/pom.xml" />
+        <option value="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/config/GunYMLCreator.java" />
+        <option value="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/config/GunYMLLoader.java" />
+        <option value="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/guns/utils/GunUtil.java" />
+        <option value="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/config/GunYML.java" />
+        <option value="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/guns/Gun.java" />
+        <option value="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/miscitems/Grenade.java" />
         <option value="$PROJECT_DIR$/src/main/resources/changelog.txt" />
       </list>
     </option>
@@ -277,6 +301,15 @@
               <item name="QualityArmory" type="462c0819:PsiDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
               <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+              <item name="qg" type="462c0819:PsiDirectoryNode" />
+              <item name="miscitems" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="QualityArmory" type="b2602c69:ProjectViewProjectNode" />
+              <item name="QualityArmory" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
               <item name="resources" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
@@ -389,7 +422,7 @@
     <frame x="-8" y="-8" width="1936" height="1176" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.26599148" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.26865673" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Designer" order="2" />
       <window_info id="Image Layers" order="3" />
@@ -399,7 +432,7 @@
       <window_info id="Favorites" order="7" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
-      <window_info anchor="bottom" id="Run" order="2" visible="true" weight="0.32950193" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.32950193" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -428,18 +461,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/guns/utils/GunUtil.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="11084">
-          <caret line="684" column="45" selection-start-line="684" selection-start-column="45" selection-end-line="684" selection-end-column="45" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#24349#24350#0" expanded="true" />
-            <element signature="e#24394#24395#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/handlers/BlockCollisionUtil.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="425">
@@ -447,17 +468,38 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/config/GunYML.java">
+    <entry file="file://$PROJECT_DIR$/pom.xml">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="187">
-          <caret line="11" column="56" selection-start-line="11" selection-start-column="49" selection-end-line="11" selection-end-column="56" />
+        <state relative-caret-position="119">
+          <caret line="7" column="20" selection-start-line="7" selection-start-column="20" selection-end-line="7" selection-end-column="20" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/config/GunYMLLoader.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/QAMain.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="7514">
-          <caret line="469" column="67" selection-start-line="469" selection-start-column="67" selection-end-line="469" selection-end-column="67" />
+        <state relative-caret-position="12784">
+          <caret line="803" column="76" selection-start-line="803" selection-start-column="54" selection-end-line="803" selection-end-column="76" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/listener/QAListener.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="15232">
+          <caret line="941" column="93" selection-start-line="941" selection-start-column="89" selection-end-line="941" selection-end-column="93" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/handlers/Update19OffhandChecker.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="119">
+          <caret line="11" column="13" selection-start-line="11" selection-start-column="13" selection-end-line="11" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/handlers/Update19Events.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1139">
+          <caret line="77" column="17" selection-start-line="77" selection-start-column="17" selection-end-line="77" selection-end-column="17" />
         </state>
       </provider>
     </entry>
@@ -475,58 +517,85 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/listener/QAListener.java">
+    <entry file="file://$PROJECT_DIR$/src/main/resources/plugin.yml">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3126">
-          <caret line="941" column="93" selection-start-line="941" selection-start-column="89" selection-end-line="941" selection-end-column="93" />
+        <state relative-caret-position="425">
+          <caret line="25" column="2" lean-forward="true" selection-start-line="25" selection-start-column="2" selection-end-line="25" selection-end-column="23" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/handlers/Update19OffhandChecker.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/handlers/ProtocolLibHandler.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="119">
-          <caret line="11" column="13" selection-start-line="11" selection-start-column="13" selection-end-line="11" selection-end-column="13" />
+        <state relative-caret-position="792">
+          <caret line="76" column="54" selection-start-line="76" selection-start-column="54" selection-end-line="76" selection-end-column="54" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/handlers/Update19Events.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/config/GunYMLCreator.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="578">
-          <caret line="77" column="17" selection-start-line="77" selection-start-column="17" selection-end-line="77" selection-end-column="17" />
+        <state relative-caret-position="-4818">
+          <caret line="55" column="42" selection-start-line="55" selection-start-column="42" selection-end-line="55" selection-end-column="42" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/config/GunYMLLoader.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="627">
+          <caret line="321" column="46" lean-forward="true" selection-start-line="321" selection-start-column="46" selection-end-line="321" selection-end-column="46" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/guns/utils/GunUtil.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="352">
+          <caret line="531" column="94" selection-start-line="531" selection-start-column="94" selection-end-line="531" selection-end-column="94" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#24349#24350#0" expanded="true" />
+            <element signature="e#24394#24395#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/config/GunYML.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="250">
+          <caret line="54" column="45" selection-start-line="54" selection-start-column="45" selection-end-line="54" selection-end-column="45" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/guns/Gun.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="425">
-          <caret line="670" column="35" selection-start-line="670" selection-start-column="35" selection-end-line="670" selection-end-column="35" />
+        <state relative-caret-position="290">
+          <caret line="298" column="17" selection-start-line="298" selection-start-column="17" selection-end-line="298" selection-end-column="17" />
           <folding>
+            <element signature="e#26602#26603#0" expanded="true" />
             <element signature="e#26637#26638#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/resources/plugin.yml">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/QAMain.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/miscitems/Grenade.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="780">
-          <caret line="803" column="76" selection-start-line="803" selection-start-column="54" selection-end-line="803" selection-end-column="76" />
+        <state relative-caret-position="304">
+          <caret line="153" column="21" selection-start-line="153" selection-start-column="21" selection-end-line="153" selection-end-column="21" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/pom.xml">
+    <entry file="file://$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/miscitems/IncendaryGrenades.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="119">
-          <caret line="7" column="20" selection-start-line="7" selection-start-column="20" selection-end-line="7" selection-end-column="20" />
+        <state relative-caret-position="493">
+          <caret line="43" column="58" selection-start-line="43" selection-start-column="58" selection-end-line="43" selection-end-column="58" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/resources/changelog.txt">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="374">
-          <caret line="22" column="8" lean-forward="true" selection-end-line="1023" />
+        <state relative-caret-position="17">
+          <caret line="1" column="10" selection-start-line="1" selection-start-column="10" selection-end-line="1" selection-end-column="10" />
         </state>
       </provider>
     </entry>

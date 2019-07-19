@@ -58,6 +58,7 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 	private String displayname = null;
 
 	private List<String> weaponSounds;
+	private double volume = 4;
 
 	double cost = 100;
 
@@ -292,6 +293,10 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 	public void setRecoil(double d) {
 		this.recoil = d;
 	}
+
+	public void setVolume(double f){this.volume = f;}
+
+	public double getVolume(){return volume;}
 
 	/**
 	 * Sets the glow for the item. Null to disable the glow.

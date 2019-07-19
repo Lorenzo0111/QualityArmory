@@ -51,6 +51,8 @@ public class GunYML extends ArmoryYML {
 		setNoOverride("drop-glow-color", "none");
 		setNoOverride("headshotMultiplier", 2);
 		setNoOverride("swayMultiplier", 2);
+
+		setNoOverride("weaponsounds_volume",4);
 	}
 	public GunYML setRecoil(double recoil) {
 		set(false, "recoil", recoil);
@@ -67,6 +69,11 @@ public class GunYML extends ArmoryYML {
 	}
 	public GunYML setNightVisionOnScope(boolean b) {
 		set(false, "hasNightVisionOnScope", b);
+		return this;
+	}
+
+	public GunYML setVolume(float volume){
+		set(false,"weaponsounds_volume",volume);
 		return this;
 	}
 

@@ -1,3 +1,8 @@
+1.1.141
+    Fixed protocol lib hand;er
+    Added option to customize volume of guns
+    Fixed grenade broadcast message
+
 1.1.140
     Fixed gun duping by aiming down sights and pressing F
     Fixed chest error
