@@ -7,7 +7,7 @@ import java.util.List;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 
-import me.zombie_striker.qg.MaterialStorage;
+import me.zombie_striker.customitemmanager.MaterialStorage;
 import me.zombie_striker.qg.ammo.Ammo;
 import me.zombie_striker.qg.guns.Gun;
 import me.zombie_striker.qg.guns.utils.WeaponSounds;

@@ -2,6 +2,7 @@ package me.zombie_striker.qg.ammo;
 
 import java.util.List;
 
+import me.zombie_striker.customitemmanager.CustomItemManager;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.event.block.Action;
@@ -9,9 +10,8 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
 import me.zombie_striker.qg.ArmoryBaseObject;
-import me.zombie_striker.qg.ItemFact;
 import me.zombie_striker.qg.QAMain;
-import me.zombie_striker.qg.MaterialStorage;
+import me.zombie_striker.customitemmanager.MaterialStorage;
 import me.zombie_striker.qg.handlers.MultiVersionLookup;
 
 public class Ammo implements ArmoryBaseObject{
@@ -171,6 +171,7 @@ public class Ammo implements ArmoryBaseObject{
 	}
 	@Override
 	public ItemStack getItemStack() {
-		return ItemFact.getAmmo(this,1);
+
+		return CustomItemManager.getItemFact("gun").getItem(this.getItemData(),1);
 	}
 }

@@ -1,5 +1,33 @@
+1.1.142
+    ****   MASSIVE UPDATE  ****
+    This update changes the models used for weapons. In order to make it easier
+    to integrate QA with other plugins, models now use Custom Model data tags.
+    This means all user-made custom models used in previous versions will need to be upgraded
+    Also, the base-item for 1.14+ has been changed to the crossbow, so the player's hand
+    model will hold the gun. This does not affect 1.8-1.13, but should be noted for
+    newer servers on 1.14.
+
+    Also, because of this change, all weapons on 1.14 servers will no longer work.
+    I recommend updating only if you wish remove all weapons from the server
+
+    If you wish to use the old 1.13 system on 1.14 still, set "ManuallyOverrideTo_1_13_systems" to true in the config.
+
+    If you wish to use the old 1.8 system on newer updates, set "ManuallyOverrideTo_1_8_systems" to true in the config.
+    ****   MASSIVE UPDATE  ****
+
+    Added M32A1
+    Added better holding animation to weapons on 1.14+
+    Fixed no-damage-ticks when shooting an entity.
+    Changed material system to use new CustomItemManager system
+    Changed base materials for items for 1.14+
+    Changed data system to use CustomModelData instead of durability in 1.14+
+    Rewrote item registering system.
+    Rewrote Aiming system.
+    Fixed guns being deleted after shift-clicking them
+    Fixed models when placed in item frames
+
 1.1.141
-    Fixed protocol lib hand;er
+    Fixed protocol lib handler
     Added option to customize volume of guns
     Fixed grenade broadcast message
 
@@ -14,7 +42,7 @@
 	Added option to disable verbose item loading logging
 
 1.1.138
-	Added QAHeadShotEvent to detect when an entity recieved a headshot
+	Added QAHeadShotEvent to detect when an entity received a headshot
 	Updated to Maven
 	Fixed grenades not doing damage because radius = 0
 	Fixed grenade radius in yml

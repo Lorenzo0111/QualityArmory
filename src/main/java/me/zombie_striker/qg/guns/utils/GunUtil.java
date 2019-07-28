@@ -1,6 +1,5 @@
 package me.zombie_striker.qg.guns.utils;
 
-import me.zombie_striker.qg.ItemFact;
 import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.ammo.Ammo;
 import me.zombie_striker.qg.api.QAHeadShotEvent;
@@ -238,9 +237,9 @@ public class GunUtil {
 							}
 						}
 
-						((Damageable) hitTarget).damage(damageMAX, p);
 						if (hitTarget instanceof LivingEntity)
 							((LivingEntity) hitTarget).setNoDamageTicks(0);
+						((Damageable) hitTarget).damage(damageMAX, p);
 						QAMain.DEBUG("Damaging entity " + hitTarget.getName() + " ( "
 								+ ((LivingEntity) hitTarget).getHealth() + "/"
 								+ ((LivingEntity) hitTarget).getMaxHealth() + " :" + damageMAX + " DAM)");
@@ -427,7 +426,7 @@ public class GunUtil {
 
 					// final AttachmentBase attach = QualityArmory.getGunWithAttchments(temp);
 
-					int amount = ItemFact.getAmount(temp);
+					int amount = Gun.getAmount(temp);
 					if (!player.isSneaking() || slotUsed != player.getInventory().getHeldItemSlot() || amount <= 0) {
 						rapidfireshooters.remove(player.getUniqueId()).cancel();
 						return;
@@ -470,7 +469,7 @@ public class GunUtil {
 					} else {
 						slot = player.getInventory().getHeldItemSlot();
 					}
-					im.setLore(ItemFact.getGunLore(g, temp, amount));
+					im.setLore(Gun.getGunLore(g, temp, amount));
 					temp.setItemMeta(im);
 					if (slot == -1) {
 						try {
@@ -490,7 +489,7 @@ public class GunUtil {
 			}.runTaskTimer(QAMain.getInstance(), 10 / g.getFireRate(), 10 / g.getFireRate()));
 		}
 
-		int amount = ItemFact.getAmount(temp) - 1;
+		int amount = Gun.getAmount(temp) - 1;
 
 		if (amount < 0)
 			amount = 0;
@@ -504,7 +503,7 @@ public class GunUtil {
 		} else {
 			slot = player.getInventory().getHeldItemSlot();
 		}
-		im.setLore(ItemFact.getGunLore(g, temp, amount));
+		im.setLore(Gun.getGunLore(g, temp, amount));
 		temp.setItemMeta(im);
 		if (slot == -1) {
 			try {
@@ -565,7 +564,7 @@ public class GunUtil {
 		final ItemStack temp = player.getInventory().getItemInHand();
 		ItemMeta im = temp.getItemMeta();
 
-		if (ItemFact.getAmount(temp) == g.getMaxBullets()) {
+		if (Gun.getAmount(temp) == g.getMaxBullets()) {
 			return;
 		}
 		if (im == null || !im.hasDisplayName())
@@ -586,7 +585,7 @@ public class GunUtil {
 
 			Ammo ammo = g.getAmmoType();
 
-			final int initialAmount = ItemFact.getAmount(temp);
+			final int initialAmount = Gun.getAmount(temp);
 			final int reloadAmount = doNotRemoveAmmo ? g.getMaxBullets()
 					: Math.min(g.getMaxBullets(), initialAmount + QualityArmory.getAmmoInInventory(player, ammo));
 			final int subtractAmount = reloadAmount - initialAmount;
@@ -598,7 +597,7 @@ public class GunUtil {
 			}
 			QAMain.toggleNightvision(player, g, false);
 
-			im.setLore(ItemFact.getGunLore(g, temp, 0));
+			im.setLore(Gun.getGunLore(g, temp, 0));
 			im.setDisplayName(g.getDisplayName() + QAMain.S_RELOADING_MESSAGE);
 			temp.setItemMeta(im);
 			// if (QAMain.enableVisibleAmounts)

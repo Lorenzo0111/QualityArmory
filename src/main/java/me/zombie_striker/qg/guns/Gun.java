@@ -1,9 +1,10 @@
 package me.zombie_striker.qg.guns;
 
+import me.zombie_striker.customitemmanager.CustomItemManager;
+import me.zombie_striker.customitemmanager.OLD_ItemFact;
 import me.zombie_striker.qg.ArmoryBaseObject;
-import me.zombie_striker.qg.ItemFact;
 import me.zombie_striker.qg.QAMain;
-import me.zombie_striker.qg.MaterialStorage;
+import me.zombie_striker.customitemmanager.MaterialStorage;
 import me.zombie_striker.qg.ammo.*;
 import me.zombie_striker.qg.api.QAWeaponPrepareShootEvent;
 import me.zombie_striker.qg.api.QualityArmory;
@@ -13,10 +14,10 @@ import me.zombie_striker.qg.guns.utils.GunRefillerRunnable;
 import me.zombie_striker.qg.guns.utils.GunUtil;
 import me.zombie_striker.qg.guns.utils.WeaponSounds;
 import me.zombie_striker.qg.guns.utils.WeaponType;
+import me.zombie_striker.qg.handlers.IronsightsHandler;
 import me.zombie_striker.qg.handlers.Update19OffhandChecker;
 import me.zombie_striker.qg.handlers.chargers.ChargingHandler;
 import me.zombie_striker.qg.handlers.reloaders.ReloadingHandler;
-import me.zombie_striker.qg.miscitems.IronSightsToggleItem;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -53,6 +54,8 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 	private double headshotMultiplier = 2;
 
 	private boolean isPrimaryWeapon = true;
+
+	private boolean useOffhandOverride = false;
 
 	private List<String> extralore = null;
 	private String displayname = null;
@@ -294,6 +297,9 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 		this.recoil = d;
 	}
 
+	public void setOffhandOverride(boolean b){useOffhandOverride=b;}
+	public boolean isOffhandOverride(){return useOffhandOverride;}
+
 	public void setVolume(double f){this.volume = f;}
 
 	public double getVolume(){return volume;}
@@ -427,8 +433,8 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 
 	@SuppressWarnings("deprecation")
 	public static boolean USE_THIS_INSTEAD_OF_INDEVIDUAL_SHOOT_METHODS(Gun g, Player player, double acc) {
-		boolean offhand = player.getInventory().getItemInHand().getDurability() == IronSightsToggleItem.getData();
-		if ((!offhand && ItemFact.getAmount(player.getInventory().getItemInHand()) > 0)
+		boolean offhand = QualityArmory.isIronSights(player.getInventory().getItemInHand());
+		if ((!offhand && getAmount(player.getInventory().getItemInHand()) > 0)
 				|| (offhand && Update19OffhandChecker.hasAmountOFfhandGreaterthan(player, 0))) {
 			QAWeaponPrepareShootEvent shootevent = new QAWeaponPrepareShootEvent(player, g);
 			Bukkit.getPluginManager().callEvent(shootevent);
@@ -690,7 +696,7 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 		e.setCancelled(true);
 		if (fire) {
 			QAMain.DEBUG("Fire mode called");
-			if (!QAMain.enableDurability || ItemFact.getDamage(usedItem) > 0) {
+			if (!QAMain.enableDurability /*|| OLD_ItemFact.getDamage(usedItem) > 0*/||true) {
 				// if (allowGunsInRegion(e.getPlayer().getLocation())) {
 				try {
 					if (e.getHand() == EquipmentSlot.OFF_HAND) {
@@ -721,7 +727,7 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 				if (isAutomatic() && GunUtil.rapidfireshooters.containsKey(e.getPlayer().getUniqueId())) {
 					GunUtil.rapidfireshooters.remove(e.getPlayer().getUniqueId()).cancel();
 					if (QAMain.enableReloadWhenOutOfAmmo)
-						if (ItemFact.getAmount(usedItem) <= 0) {
+						if (getAmount(usedItem) <= 0) {
 							if (offhand) {
 								e.getPlayer().setItemInHand(e.getPlayer().getInventory().getItemInOffHand());
 								e.getPlayer().getInventory().setItemInOffHand(null);
@@ -730,7 +736,7 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 							}
 							if (QAMain.allowGunReload) {
 								QualityArmory.sendHotbarGunAmmoCount(e.getPlayer(), this, usedItem,
-										((getMaxBullets() != ItemFact.getAmount(usedItem))
+										((getMaxBullets() != getAmount(usedItem))
 												&& GunUtil.hasAmmo(e.getPlayer(), this)));
 								if (playerHasAmmo(e.getPlayer())) {
 									QAMain.DEBUG("Trying to reload WITH AUTORELOAD. player has ammo");
@@ -748,7 +754,7 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 						}
 				} else {
 					if (QAMain.enableReloadWhenOutOfAmmo)
-						if (ItemFact.getAmount(usedItem) <= 0) {
+						if (getAmount(usedItem) <= 0) {
 							if (offhand) {
 								e.getPlayer().setItemInHand(e.getPlayer().getInventory().getItemInOffHand());
 								e.getPlayer().getInventory().setItemInOffHand(null);
@@ -757,7 +763,7 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 							}
 							if (QAMain.allowGunReload) {
 								QualityArmory.sendHotbarGunAmmoCount(e.getPlayer(), this, usedItem,
-										((getMaxBullets() != ItemFact.getAmount(usedItem))
+										((getMaxBullets() != getAmount(usedItem))
 												&& GunUtil.hasAmmo(e.getPlayer(), this)));
 								if (playerHasAmmo(e.getPlayer())) {
 									QAMain.DEBUG("Trying to reload WITH AUTORELOAD. player has ammo");
@@ -772,9 +778,9 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 					shoot(e.getPlayer());
 					if (QAMain.enableDurability) {
 						if (QualityArmory.isIronSights(e.getPlayer().getItemInHand())) {
-							Update19OffhandChecker.setOffhand(e.getPlayer(), ItemFact.damage(this, usedItem));
+							//Update19OffhandChecker.setOffhand(e.getPlayer(), OLD_ItemFact.damage(this, usedItem));
 						} else {
-							e.getPlayer().setItemInHand(ItemFact.damage(this, usedItem));
+							//e.getPlayer().setItemInHand(OLD_ItemFact.damage(this, usedItem));
 						}
 					}
 
@@ -899,7 +905,7 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 				} else {
 					if (QAMain.allowGunReload) {
 						QualityArmory.sendHotbarGunAmmoCount(e.getPlayer(), this, usedItem,
-								((getMaxBullets() != ItemFact.getAmount(usedItem))
+								((getMaxBullets() != getAmount(usedItem))
 										&& GunUtil.hasAmmo(e.getPlayer(), this)));
 						if (playerHasAmmo(e.getPlayer())) {
 							QAMain.DEBUG("Trying to reload. player has ammo");
@@ -917,7 +923,170 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 
 	@Override
 	public ItemStack getItemStack() {
-		return ItemFact.getGun(this);
+		return CustomItemManager.getItemFact("gun").getItem(this.getItemData(),1);
 	}
+
+
+	public static int getAmount(ItemStack is) {
+		if (is != null) {
+			if (is.hasItemMeta() && is.getItemMeta().hasLore()) {
+				for (String lore : is.getItemMeta().getLore()) {
+					if (lore.contains(QAMain.S_ITEM_BULLETS)) {
+						return Integer.parseInt(lore.split(":")[1].split("/")[0].trim());
+					}
+				}
+				return 0;
+			}
+		}
+		return 0;
+	}
+
+
+
+	public static List<String> getGunLore(Gun g, ItemStack current, int amount) {
+		List<String> lore = new ArrayList<>();
+		if (g.getCustomLore() != null)
+			lore.addAll(g.getCustomLore());
+		OLD_ItemFact.addVariantData(null, lore, g);
+		lore.add(QAMain.S_ITEM_BULLETS + ": " + (amount) + "/" + (g.getMaxBullets()));
+		if (QAMain.ENABLE_LORE_INFO) {
+			lore.add(QAMain.S_ITEM_DAMAGE + ": " + g.getDamage());
+			lore.add(QAMain.S_ITEM_DPS + ": "
+					+ (g.isAutomatic()
+					? (2 * g.getFireRate() * g.getDamage()) + ""
+					+ (g.getBulletsPerShot() > 1 ? "x" + g.getBulletsPerShot() : "")
+					: "" + ((int) (1.0 / g.getDelayBetweenShotsInSeconds()) * g.getDamage())
+					+ (g.getBulletsPerShot() > 1 ? "x" + g.getBulletsPerShot() : "")));
+			if (g.getAmmoType() != null)
+				lore.add(QAMain.S_ITEM_AMMO + ": " + g.getAmmoType().getDisplayName());
+		}
+		if (QAMain.AutoDetectResourcepackVersion && Bukkit.getPluginManager().isPluginEnabled("ViaRewind")) {
+			if (g.is18Support()) {
+				lore.add(ChatColor.GRAY + "1.8 Weapon");
+			}
+		}
+
+		if (QAMain.enableDurability)
+			if (current == null) {
+				lore.add(QAMain.S_ITEM_DURIB + ":" + g.getDurability() + "/" + g.getDurability());
+			} else {
+				lore = setDamage(g, lore, getDamage(current));
+			}
+		if (QAMain.ENABLE_LORE_HELP) {
+			if (g.isAutomatic()) {
+				lore.add(QAMain.S_LMB_SINGLE);
+				lore.add(QAMain.S_LMB_FULLAUTO);
+				lore.add(QAMain.S_RMB_RELOAD);
+			} else {
+				lore.add(QAMain.S_LMB_SINGLE);
+				lore.add(QAMain.enableIronSightsON_RIGHT_CLICK ? QAMain.S_RMB_R1 : QAMain.S_RMB_R2);
+				if (g.hasIronSights())
+					lore.add(QAMain.enableIronSightsON_RIGHT_CLICK ? QAMain.S_RMB_A1 : QAMain.S_RMB_A2);
+			}
+		}
+
+		if (current != null && current.hasItemMeta() && current.getItemMeta().hasLore())
+			for (String s : current.getItemMeta().getLore()) {
+				if (ChatColor.stripColor(s).contains("UUID")) {
+					lore.add(s);
+					break;
+				}
+			}
+		return lore;
+	}
+
+
+	public static int getDamage(ItemStack is) {
+		for (String lore : is.getItemMeta().getLore()) {
+			if (ChatColor.stripColor(lore).startsWith(QAMain.S_ITEM_DURIB)) {
+				return Integer.parseInt(lore.split(":")[1].split("/")[0].trim());
+			}
+		}
+		return -1;
+	}
+
+	public static ItemStack damage(Gun g, ItemStack is) {
+		return setDamage(g, is, getDamage(is) - 1);
+	}
+
+	public static ItemStack setDamage(Gun g, ItemStack is, int damage) {
+		ItemMeta im = is.getItemMeta();
+		im.setLore(setDamage(g, im.getLore(), damage));
+		is.setItemMeta(im);
+		return is;
+	}
+
+	public static List<String> setDamage(Gun g, List<String> lore, int damage) {
+		boolean foundLine = false;
+		double k = ((double) damage) / g.getDurability();
+		ChatColor c = k > 0.5 ? ChatColor.DARK_GREEN : k > 0.25 ? ChatColor.GOLD : ChatColor.DARK_RED;
+		for (int j = 0; j < lore.size(); j++) {
+			if (ChatColor.stripColor(lore.get(j)).contains(QAMain.S_ITEM_DURIB)) {
+				lore.set(j, c + QAMain.S_ITEM_DURIB + ":" + damage + "/" + g.getDurability());
+				foundLine = true;
+				break;
+			}
+		}
+		if (!foundLine) {
+			lore.add(c + QAMain.S_ITEM_DURIB + ":" + damage + "/" + g.getDurability());
+		}
+		return lore;
+	}
+
+	private static final String CALCTEXT = ChatColor.BLACK + "useddata:";
+
+	public static int getCalculatedExtraDurib(ItemStack is) {
+		if (!is.hasItemMeta() || !is.getItemMeta().hasLore() || is.getItemMeta().getLore().isEmpty())
+			return -1;
+		List<String> lore = is.getItemMeta().getLore();
+		for (int i = 0; i < lore.size(); i++) {
+			if (lore.get(i).startsWith(CALCTEXT))
+				return Integer.parseInt(lore.get(i).split(CALCTEXT)[1]);
+		}
+		return -1;
+	}
+
+	public static ItemStack addCalulatedExtraDurib(ItemStack is, int number) {
+		ItemMeta im = is.getItemMeta();
+		List<String> lore = im.getLore();
+		if (lore == null) {
+			lore = new ArrayList<>();
+		} else {
+			if (getCalculatedExtraDurib(is) != -1)
+				is = removeCalculatedExtra(is);
+		}
+		lore.add(CALCTEXT + number);
+		im.setLore(lore);
+		is.setItemMeta(im);
+		return is;
+	}
+
+	public static ItemStack decrementCalculatedExtra(ItemStack is) {
+		ItemMeta im = is.getItemMeta();
+		List<String> lore = is.getItemMeta().getLore();
+		for (int i = 0; i < lore.size(); i++) {
+			if (lore.get(i).startsWith(CALCTEXT)) {
+				lore.set(i, CALCTEXT + "" + (Integer.parseInt(lore.get(i).split(CALCTEXT)[1]) - 1));
+			}
+		}
+		im.setLore(lore);
+		is.setItemMeta(im);
+		return is;
+	}
+	public static ItemStack removeCalculatedExtra(ItemStack is) {
+		if (is.hasItemMeta() && is.getItemMeta().hasLore()) {
+			ItemMeta im = is.getItemMeta();
+			List<String> lore = is.getItemMeta().getLore();
+			for (int i = 0; i < lore.size(); i++) {
+				if (lore.get(i).startsWith(CALCTEXT)) {
+					lore.remove(i);
+				}
+			}
+			im.setLore(lore);
+			is.setItemMeta(im);
+		}
+		return is;
+	}
+
 
 }

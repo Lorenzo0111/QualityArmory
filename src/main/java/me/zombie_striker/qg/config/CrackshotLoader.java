@@ -10,11 +10,9 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.inventory.ItemStack;
 
 import me.zombie_striker.qg.QAMain;
-import me.zombie_striker.qg.MaterialStorage;
+import me.zombie_striker.customitemmanager.MaterialStorage;
 import me.zombie_striker.qg.ammo.AmmoType;
 import me.zombie_striker.qg.api.QualityArmory;
-import me.zombie_striker.qg.config.GunYML;
-import me.zombie_striker.qg.config.GunYMLCreator;
 import me.zombie_striker.qg.guns.Gun;
 import me.zombie_striker.qg.guns.projectiles.ProjectileManager;
 import me.zombie_striker.qg.guns.utils.WeaponSounds;
@@ -47,7 +45,7 @@ public class CrackshotLoader {
 			yml.setAutomatic(g.isAutomatic());
 			yml.setBulletsPerShot(g.getBulletsPerShot());
 			yml.setDelayReload(g.getReloadTime());
-			yml.setVariant(g.getItemData().getVarient());
+			yml.setVariant(g.getItemData().getVariant());
 			yml.setMaterial(g.getItemData().getMat());
 			yml.setZoomLevel(g.getZoomWhenIronSights());
 			yml.setNightVisionOnScope(g.hasnightVision());

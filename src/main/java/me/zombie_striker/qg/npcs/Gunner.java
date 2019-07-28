@@ -1,11 +1,12 @@
 package me.zombie_striker.qg.npcs;
 
+import me.zombie_striker.customitemmanager.CustomItemManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
-import me.zombie_striker.qg.ItemFact;
+import me.zombie_striker.customitemmanager.OLD_ItemFact;
 import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.guns.Gun;
 import me.zombie_striker.qg.npcs.goals.Gunnergoal;
@@ -33,7 +34,7 @@ public class Gunner {
 		if (g == null) {
 			Bukkit.broadcastMessage("gun is null");
 		} else {
-			((Player) gunner.gunner.getEntity()).setItemInHand(ItemFact.getGun(g));
+			((Player) gunner.gunner.getEntity()).setItemInHand(CustomItemManager.getItemFact("gun").getItem(g.getItemData(),1));
 		}
 		gunner.gunner.getDefaultGoalController().addGoal(new Gunnergoal(gunner, g), 1);
 		

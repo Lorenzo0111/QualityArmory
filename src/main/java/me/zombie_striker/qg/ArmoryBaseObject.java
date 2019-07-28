@@ -2,6 +2,7 @@ package me.zombie_striker.qg;
 
 import java.util.List;
 
+import me.zombie_striker.customitemmanager.MaterialStorage;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 

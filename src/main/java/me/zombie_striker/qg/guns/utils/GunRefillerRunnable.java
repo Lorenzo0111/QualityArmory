@@ -10,7 +10,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
-import me.zombie_striker.qg.ItemFact;
+import me.zombie_striker.customitemmanager.OLD_ItemFact;
 import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.api.QualityArmory;
 import me.zombie_striker.qg.guns.Gun;
@@ -58,7 +58,7 @@ public class GunRefillerRunnable {
 					}
 				}
 				ItemMeta newim = modifiedOriginalItem.getItemMeta();
-				newim.setLore(ItemFact.getGunLore(g, modifiedOriginalItem, reloadAmount));
+				newim.setLore(Gun.getGunLore(g, modifiedOriginalItem, reloadAmount));
 				newim.setDisplayName(g.getDisplayName());
 				modifiedOriginalItem.setItemMeta(newim);
 				// if (QAMain.enableVisibleAmounts)
@@ -85,7 +85,7 @@ public class GunRefillerRunnable {
 				QAMain.DEBUG("Reloading to slot " + newSlot + "(org=" + slot + ")");
 				if (newSlot > -2) {
 					if (!different && player.isSneaking()&& g.hasIronSights() && !QAMain.enableIronSightsON_RIGHT_CLICK) {
-						player.getInventory().setItem(newSlot, ItemFact.getIronSights());
+						player.getInventory().setItem(newSlot, OLD_ItemFact.getIronSights());
 						Update19OffhandChecker.setOffhand(player, modifiedOriginalItem);
 						QAMain.toggleNightvision(player, g, true);
 					} else {

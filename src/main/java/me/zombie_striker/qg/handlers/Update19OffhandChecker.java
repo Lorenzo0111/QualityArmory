@@ -1,7 +1,8 @@
 package me.zombie_striker.qg.handlers;
 
-import me.zombie_striker.qg.ItemFact;
+import me.zombie_striker.customitemmanager.OLD_ItemFact;
 
+import me.zombie_striker.qg.guns.Gun;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -10,7 +11,7 @@ public class Update19OffhandChecker {
 
 	public static boolean hasAmountOFfhandGreaterthan(Player p, int amount) {
 		try {
-			return ItemFact.getAmount(p.getInventory().getItemInOffHand()) > amount;
+			return Gun.getAmount(p.getInventory().getItemInOffHand()) > amount;
 		} catch (Error e) {
 			return false;
 		}

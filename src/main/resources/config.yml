@@ -52,7 +52,6 @@ sendOnJoin: true
 sendTitleOnJoin: false
 showPossibleCrashHelpMessage: true
 SecondsTillRPIsSent: 0.0
-SecondsTillRPIsSent: 0.0
 
 
 #Item values:
@@ -65,6 +64,7 @@ Swap-Reload-and-Shooting-Controls: false
 enableReloadingWhenSwapToOffhand: true
 enableReloadOnlyWhenSwapToOffhand: false
 IronSightsOnRightClick: false
+SwapSneakToSingleFile: false
 automaticallyReloadGunWhenOutOfAmmo: false
 allowGunReload: true
 

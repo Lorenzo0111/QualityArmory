@@ -208,6 +208,10 @@ public class GunYML extends ArmoryYML {
 		set(false, "isAutomatic", automatic);
 		return this;
 	}
+	public GunYML setUseOffhand(boolean offhand) {
+		set(false, "enableBetterModelScopes", offhand);
+		return this;
+	}
 
 	public GunYML setUnlimitedAmmo(boolean unlim) {
 		set(false, "unlimitedAmmo", unlim);

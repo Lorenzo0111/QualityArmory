@@ -9,13 +9,11 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
-import me.zombie_striker.qg.ItemFact;
+import me.zombie_striker.customitemmanager.OLD_ItemFact;
 import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.api.QualityArmory;
 import me.zombie_striker.qg.guns.Gun;
 import me.zombie_striker.qg.guns.utils.GunUtil;
-import me.zombie_striker.qg.handlers.chargers.ChargingHandler;
-import me.zombie_striker.qg.handlers.chargers.ChargingManager;
 
 public class DelayedBurstFireCharger implements ChargingHandler {
 
@@ -54,7 +52,7 @@ public class DelayedBurstFireCharger implements ChargingHandler {
 					skippedTicks++;
 					return;
 				}
-				int amount = ItemFact.getAmount(stack);
+				int amount = Gun.getAmount(stack);
 				if (shotCurrently >= g.getBulletsPerShot() || slotUsed != player.getInventory().getHeldItemSlot()
 						|| amount <= 0) {
 					if (shooters.containsKey(player.getUniqueId()))
@@ -83,7 +81,7 @@ public class DelayedBurstFireCharger implements ChargingHandler {
 				} else {
 					slot = player.getInventory().getHeldItemSlot();
 				}
-				im.setLore(ItemFact.getGunLore(g, stack, amount));
+				im.setLore(Gun.getGunLore(g, stack, amount));
 				stack.setItemMeta(im);
 				if (slot == -1) {
 					try {

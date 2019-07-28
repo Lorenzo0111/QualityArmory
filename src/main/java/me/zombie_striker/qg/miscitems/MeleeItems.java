@@ -5,12 +5,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
+import me.zombie_striker.customitemmanager.CustomItemManager;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
 import me.zombie_striker.qg.ArmoryBaseObject;
-import me.zombie_striker.qg.ItemFact;
-import me.zombie_striker.qg.MaterialStorage;
+import me.zombie_striker.customitemmanager.OLD_ItemFact;
+import me.zombie_striker.customitemmanager.MaterialStorage;
 
 public class MeleeItems implements ArmoryBaseObject{
 	MaterialStorage ms;
@@ -94,6 +95,6 @@ public class MeleeItems implements ArmoryBaseObject{
 	}
 	@Override
 	public ItemStack getItemStack() {
-		return ItemFact.getObject(this,1);
+		return CustomItemManager.getItemFact("gun").getItem(this.getItemData(),1);
 	}
 }

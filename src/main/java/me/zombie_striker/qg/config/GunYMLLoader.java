@@ -1,6 +1,6 @@
 package me.zombie_striker.qg.config;
 
-import me.zombie_striker.qg.MaterialStorage;
+import me.zombie_striker.customitemmanager.MaterialStorage;
 import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.ammo.Ammo;
 import me.zombie_striker.qg.ammo.AmmoType;
@@ -119,7 +119,7 @@ public class GunYMLLoader {
 							Material m = f2.contains("material") ? Material.matchMaterial(f2.getString("material"))
 									: Material.DIAMOND_AXE;
 							int variant = f2.contains("variant") ? f2.getInt("variant") : 0;
-							final MaterialStorage ms = MaterialStorage.getMS(m, f2.getInt("id"), variant, null);
+							final MaterialStorage ms = MaterialStorage.getMS(m, f2.getInt("id"), variant);
 							final ItemStack[] materails = main
 									.convertIngredients(f2.getStringList("craftingRequirements"));
 							final String displayname = f2.contains("displayname")
@@ -168,7 +168,7 @@ public class GunYMLLoader {
 							Material m = f2.contains("material") ? Material.matchMaterial(f2.getString("material"))
 									: Material.DIAMOND_AXE;
 							int variant = f2.contains("variant") ? f2.getInt("variant") : 0;
-							final MaterialStorage ms = MaterialStorage.getMS(m, f2.getInt("id"), variant, null);
+							final MaterialStorage ms = MaterialStorage.getMS(m, f2.getInt("id"), variant);
 							final ItemStack[] materails = main
 									.convertIngredients(f2.getStringList("craftingRequirements"));
 							final String displayname = f2.contains("displayname")
@@ -232,7 +232,7 @@ public class GunYMLLoader {
 					Material m = f2.contains("material") ? Material.matchMaterial(f2.getString("material"))
 							: Material.DIAMOND_AXE;
 					int variant = f2.contains("variant") ? f2.getInt("variant") : 0;
-					final MaterialStorage ms = MaterialStorage.getMS(m, f2.getInt("id"), variant, null);
+					final MaterialStorage ms = MaterialStorage.getMS(m, f2.getInt("id"), variant);
 					WeaponType weatype = f2.contains("guntype") ? WeaponType.valueOf(f2.getString("guntype"))
 							: WeaponType.valueOf(f2.getString("weapontype"));
 					final ItemStack[] materails = main.convertIngredients(f2.getStringList("craftingRequirements"));
@@ -292,6 +292,8 @@ public class GunYMLLoader {
 			g.setPrice(f2.getDouble("price"));
 		if (f2.contains("isAutomatic"))
 			g.setAutomatic(f2.getBoolean("isAutomatic"));
+		if(f2.contains("enableBetterModelScopes"))
+			g.setOffhandOverride(f2.getBoolean("enableBetterModelScopes"));
 
 		List<String> sounds = null;
 
@@ -433,7 +435,7 @@ public class GunYMLLoader {
 							Material m = f2.contains("material") ? Material.matchMaterial(f2.getString("material"))
 									: Material.DIAMOND_AXE;
 							int variant = f2.contains("variant") ? f2.getInt("variant") : 0;
-							final MaterialStorage ms = MaterialStorage.getMS(m, f2.getInt("id"), variant, null);
+							final MaterialStorage ms = MaterialStorage.getMS(m, f2.getInt("id"), variant);
 
 							// Gun baseGun = null;
 							MaterialStorage baseGunM = null;
