@@ -1,3 +1,8 @@
+1.1.143
+    Bugfix: Lore for variant data on 1.13 and lower
+    Bugfix: Right_Click_Ironsights still used old system
+    Bugfix: Delay between shots could be spammed to shoot more than auto-firing
+
 1.1.142
     ****   MASSIVE UPDATE  ****
     This update changes the models used for weapons. In order to make it easier

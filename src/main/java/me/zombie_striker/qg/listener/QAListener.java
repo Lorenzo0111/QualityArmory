@@ -314,7 +314,7 @@ public class QAListener implements Listener {
 					Gun g = QualityArmory.getGun(e.getCurrentItem());
 					if ((shop && EconHandler.hasEnough(g, (Player) e.getWhoClicked()))
 							|| (!shop && QAMain.lookForIngre((Player) e.getWhoClicked(), g))
-							|| e.getWhoClicked().getGameMode() == GameMode.CREATIVE) {
+							|| (!shop && e.getWhoClicked().getGameMode() == GameMode.CREATIVE)) {
 						if (shop) {
 							EconHandler.pay(g, (Player) e.getWhoClicked());
 							e.getWhoClicked().sendMessage(
@@ -342,32 +342,12 @@ public class QAListener implements Listener {
 									Sound.valueOf("ANVIL_BREAK"), 1, 1);
 						}
 					}
-				} /*
-					 * else if (QualityArmory.isGunWithAttchments(e.getCurrentItem())) {
-					 * AttachmentBase g = QualityArmory.getGunWithAttchments(e.getCurrentItem());
-					 * Gun g2 = gunRegister.get(g.getBase()); if ((shop && EconHandler.hasEnough(g2,
-					 * (Player) e.getWhoClicked())) || (!shop && lookForIngre((Player)
-					 * e.getWhoClicked(), g)) || e.getWhoClicked().getGameMode() ==
-					 * GameMode.CREATIVE) { if (shop) { EconHandler.pay(g2, (Player)
-					 * e.getWhoClicked()); e.getWhoClicked().sendMessage(
-					 * S_BUYCONFIRM.replaceAll("%item%", ChatColor.stripColor(g.getDisplayName()))
-					 * .replaceAll("%cost%", "" + g2.cost())); } else removeForIngre((Player)
-					 * e.getWhoClicked(), g); ItemStack s = ItemFact.getGun(g);
-					 * s.setAmount(g2.getCraftingReturn());
-					 * e.getWhoClicked().getInventory().addItem(s); shopsSounds(e, shop);
-					 * DEBUG("Buy-attachment"); } else { DEBUG("Failed to buy/craft attachment");
-					 * e.getWhoClicked().closeInventory(); if (shop)
-					 * e.getWhoClicked().sendMessage(prefix + S_noMoney); else
-					 * e.getWhoClicked().sendMessage(prefix + S_missingIngredients); try { ((Player)
-					 * e.getWhoClicked()).playSound(e.getWhoClicked().getLocation(),
-					 * Sound.BLOCK_ANVIL_BREAK, 1, 1); } catch (Error e2) { ((Player)
-					 * e.getWhoClicked()).playSound(e.getWhoClicked().getLocation(),
-					 * Sound.valueOf("ANVIL_BREAK"), 1, 1); } } }
-					 */else if (QualityArmory.isAmmo(e.getCurrentItem())) {
+				}
+					 else if (QualityArmory.isAmmo(e.getCurrentItem())) {
 					Ammo g = QualityArmory.getAmmo(e.getCurrentItem());
 					if ((shop && EconHandler.hasEnough(g, (Player) e.getWhoClicked()))
 							|| (!shop &&QAMain. lookForIngre((Player) e.getWhoClicked(), g))
-							|| e.getWhoClicked().getGameMode() == GameMode.CREATIVE) {
+							|| (!shop && e.getWhoClicked().getGameMode() == GameMode.CREATIVE)) {
 						if (shop) {
 							e.getWhoClicked().sendMessage(
 									QAMain.S_BUYCONFIRM.replaceAll("%item%", ChatColor.stripColor(g.getDisplayName()))
@@ -397,7 +377,7 @@ public class QAListener implements Listener {
 					ArmoryBaseObject g = QualityArmory.getMisc(e.getCurrentItem());
 					if ((shop && EconHandler.hasEnough(g, (Player) e.getWhoClicked()))
 							|| (!shop && QAMain.lookForIngre((Player) e.getWhoClicked(), g))
-							|| e.getWhoClicked().getGameMode() == GameMode.CREATIVE) {
+							|| (!shop &&e.getWhoClicked().getGameMode() == GameMode.CREATIVE)) {
 						if (shop) {
 							EconHandler.pay(g, (Player) e.getWhoClicked());
 							e.getWhoClicked().sendMessage(
@@ -430,7 +410,7 @@ public class QAListener implements Listener {
 						ArmorObject g = QualityArmory.getArmor(e.getCurrentItem());
 						if ((shop && EconHandler.hasEnough(g, (Player) e.getWhoClicked()))
 								|| (!shop && QAMain.lookForIngre((Player) e.getWhoClicked(), g))
-								|| e.getWhoClicked().getGameMode() == GameMode.CREATIVE) {
+								|| (!shop && e.getWhoClicked().getGameMode() == GameMode.CREATIVE)) {
 							if (shop) {
 								e.getWhoClicked()
 										.sendMessage(QAMain.S_BUYCONFIRM
@@ -940,38 +920,31 @@ public class QAListener implements Listener {
 				QualityArmory.sendResourcepack(e.getPlayer(), true);
 			}
 
-			if (QualityArmory.isIronSights(usedItem)) {
-				if (Update19OffhandChecker.supportOffhand(e.getPlayer())) {
+			if (IronsightsHandler.isAiming(e.getPlayer())) {
 					try {
 						if ((e.getAction() == Action.RIGHT_CLICK_AIR
 								|| e.getAction() == Action.RIGHT_CLICK_BLOCK) == (QAMain.SWAP_RMB_WITH_LMB)) {
 							e.setCancelled(true);
-							Gun g = QualityArmory.getGun(Update19OffhandChecker.getItemStackOFfhand(e.getPlayer()));
+							Gun g = IronsightsHandler.getGunUsed(e.getPlayer());
 							if (!QAMain.enableIronSightsON_RIGHT_CLICK) {
 								if (!e.getPlayer().isSneaking() || (g != null && !g.isAutomatic())) {
 									QAMain.DEBUG("Swapping " + g.getName() + " from offhand to main hand to reload!");
-									e.getPlayer().getInventory()
-											.setItemInMainHand(e.getPlayer().getInventory().getItemInOffHand());
-									e.getPlayer().getInventory().setItemInOffHand(null);
-									usedItem = e.getPlayer().getInventory().getItemInMainHand();
+									IronsightsHandler.unAim(e.getPlayer());
+									usedItem = e.getPlayer().getItemInHand();
 								}
 							} else {
 								QAMain.DEBUG("Swapping " + g.getName() + " from offhand to main hand!");
-								e.getPlayer().getInventory()
-										.setItemInMainHand(e.getPlayer().getInventory().getItemInOffHand());
-								e.getPlayer().getInventory().setItemInOffHand(null);
+								IronsightsHandler.unAim(e.getPlayer());
 								QAMain.toggleNightvision(e.getPlayer(), g, false);
 							}
 						}
 					} catch (Error e2) {
 					}
-				}
 				if (((e.getAction() == Action.LEFT_CLICK_AIR
 						|| e.getAction() == Action.LEFT_CLICK_BLOCK) ==QAMain. SWAP_RMB_WITH_LMB)) {
 					usedItem = e.getPlayer().getInventory().getItemInOffHand();
 				}
 			}
-
 			ArmoryBaseObject qaItem = QualityArmory.getCustomItem(usedItem);
 			if (qaItem != null) {
 				QAMain.DEBUG(qaItem.getClass().getName() + " item is being used!");
@@ -1022,14 +995,6 @@ public class QAListener implements Listener {
 				Bukkit.broadcastMessage(QAMain.prefix + ChatColor.RED + " Disabling resourcepack.");
 			}
 		}
-		/*
-		 * if (guntype == Material.DIAMOND_HOE && !hideTextureWarnings) {
-		 * Bukkit.broadcastMessage(prefix +
-		 * " QA is now moving all items to a new Diamond_Axe system to prevent conflicts with other plugins."
-		 * ); Bukkit.broadcastMessage(prefix +
-		 * " Please delete the \"gunMaterialType\"value in the config or hide these warnings by setting \"hideTextureWarnings\" to true."
-		 * ); }
-		 */
 		if (QAMain.addGlowEffects) {
 			new BukkitRunnable() {
 
@@ -1130,7 +1095,6 @@ public class QAListener implements Listener {
 						boolean dealtWithDrop = false;
 						if (QualityArmory.isIronSights(e.getItemDrop().getItemStack())) {
 							e.getItemDrop().setItemStack(e.getPlayer().getInventory().getItemInOffHand());
-							// e.getPlayer().setItemInHand(e.getPlayer().getInventory().getItemInOffHand());
 							e.getPlayer().getInventory().setItemInOffHand(null);
 							dealtWithDrop = true;
 						}

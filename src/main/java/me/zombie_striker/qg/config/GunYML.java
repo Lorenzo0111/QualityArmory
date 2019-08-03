@@ -27,15 +27,15 @@ public class GunYML extends ArmoryYML {
 		setNoOverride("setZoomLevel", 0);
 		setNoOverride("ammotype", "556");
 		setNoOverride("sway", 0.2);
+		setNoOverride("firerate", 1);
 		setNoOverride("maxbullets", 0);
 		setNoOverride("delayForReload", 1.5);
-		setNoOverride("delayForShoot", 0.3);
+		setNoOverride("delayForShoot", (contains("isAutomatic") && (boolean)get("isAutomatic")) ? (contains("firerate")? 9/((int)get("firerate")):0.2):0.3);
 		setNoOverride("bullets-per-shot", 1);
 		setNoOverride("isAutomatic", false);
 		setNoOverride("maxBulletDistance", 200);
 		setNoOverride("unlimitedAmmo", false);
 		setNoOverride("LightLeveOnShoot", 14);
-		setNoOverride("firerate", 1);
 		setNoOverride("recoil", 1);
 
 		setNoOverride("particles.bullet_particle", "REDSTONE");

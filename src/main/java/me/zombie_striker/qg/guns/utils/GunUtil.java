@@ -184,7 +184,7 @@ public class GunUtil {
 					boolean bulletProtection = false;
 
 					double damageMAX = damage * (bulletProtection ? 0.1 : 1)
-							* ((headShot && !negateHeadshot) ? (QAMain.HeadshotOneHit ? 50 : g.getHeadshotMultiplier())
+							* ((headShot && !negateHeadshot) ? (QAMain.HeadshotOneHit ? 50*g.getHeadshotMultiplier() : g.getHeadshotMultiplier())
 							: 1);
 
 					if (hitTarget instanceof Player) {

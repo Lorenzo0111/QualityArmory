@@ -24,7 +24,7 @@ public class EconHandler {
 	}
 	
 	public static boolean hasEnough(ArmoryBaseObject base, Player player) {
-		return (econ.getBalance(player) >=base.cost());
+		return (econ.getBalance(player) >= base.cost());
 	}
 	public static void pay(ArmoryBaseObject base, Player player) {
 		econ.withdrawPlayer(player, base.cost());

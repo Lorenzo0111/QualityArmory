@@ -428,7 +428,7 @@ public class CustomGunItem extends AbstractItem {
 		GunYMLCreator
 				.createNewDefaultGun(dataFolder, "barrett", "Barrett-M82", 52, stringsWoodRif,
 						WeaponType.SNIPER, WeaponSounds.GUN_BIG, true, "50bmg", 17, 10, 4000)
-				.setDelayShoot(1).setZoomLevel(6).setDistance(350).setDelayReload(2.5).setSwayMultiplier(3).setMaterial(Material.CROSSBOW)
+				.setDelayShoot(1).setZoomLevel(6).setDistance(350).setDelayReload(2.5).setSwayMultiplier(3).setMaterial(Material.CROSSBOW).setUseOffhand(true)
 				.setNightVisionOnScope(true).setRecoil(15).done();
 
 		GunYMLCreator

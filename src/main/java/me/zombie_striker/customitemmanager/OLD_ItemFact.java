@@ -146,7 +146,14 @@ public class OLD_ItemFact {
 		try {
 			im.setCustomModelData(var);
 		} catch (Error | Exception e4) {
+			boolean b = false;
+			if(lore == null){
+				b=  true;
+				lore = new ArrayList<>();
+			}
 			lore.add(QAMain.S_ITEM_VARIANTS_NEW + " " + var);
+			if(b)
+				im.setLore(lore);
 		}
 	}
 

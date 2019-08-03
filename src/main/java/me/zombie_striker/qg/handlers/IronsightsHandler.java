@@ -105,5 +105,8 @@ public class IronsightsHandler {
 			}
 		}
 	}
+	public static Gun getGunUsed(Player player){
+		return QualityArmory.getGun(getItemAiming(player));
+	}
 	public static void setItemAiming(Player player){}
 }

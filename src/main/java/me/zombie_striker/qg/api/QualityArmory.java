@@ -207,7 +207,9 @@ public class QualityArmory {
 		ItemStack is = new ItemStack(material);
 		if(variant!=0) {
 			ItemMeta im = is.getItemMeta();
-			OLD_ItemFact.addVariantData(im, im.getLore(), variant);
+			List<String> lore = im.getLore();
+			OLD_ItemFact.addVariantData(im, lore, variant);
+			im.setLore(lore);
 			is.setItemMeta(im);
 		}
 		try{
