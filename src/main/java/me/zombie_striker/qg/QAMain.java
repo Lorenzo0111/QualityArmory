@@ -55,10 +55,11 @@ import com.google.common.base.Charsets;
 
 public class QAMain extends JavaPlugin {
 
-	public static HashMap<MaterialStorage, Gun> gunRegister = new HashMap<>();
-	public static HashMap<MaterialStorage, Ammo> ammoRegister = new HashMap<>();
-	public static HashMap<MaterialStorage, ArmoryBaseObject> miscRegister = new HashMap<>();
-	public static HashMap<MaterialStorage, ArmorObject> armorRegister = new HashMap<>();
+	// Chris: change to LinkedHashMap let the Items can sort by FileName.
+	public static HashMap<MaterialStorage, Gun> gunRegister = new LinkedHashMap<>();
+	public static HashMap<MaterialStorage, Ammo> ammoRegister = new LinkedHashMap<>();
+	public static HashMap<MaterialStorage, ArmoryBaseObject> miscRegister = new LinkedHashMap<>();
+	public static HashMap<MaterialStorage, ArmorObject> armorRegister = new LinkedHashMap<>();
 
 	public static Set<EntityType> avoidTypes = new HashSet<>();
 
@@ -531,6 +532,8 @@ public class QAMain extends JavaPlugin {
 	@SuppressWarnings({ "unchecked", "deprecation" })
 	public void reloadVals() {
 
+		DEBUG = (boolean) a("ENABLE-DEBUG", false);
+
 		Material glass = null;
 		try {
 			glass = Material.matchMaterial("STAINED_GLASS_PANE");
@@ -652,13 +655,12 @@ public class QAMain extends JavaPlugin {
 			ProtocolLibHandler.initRemoveArmswing();
 		}
 
-		if (getServer().getPluginManager().isPluginEnabled("Sentinel"))
+		if (getServer().getPluginManager().isPluginEnabled("Sentinel")) {
 			try {
 				org.mcmonkey.sentinel.SentinelPlugin.integrations.add(new SentinelQAHandler());
 			} catch (Error | Exception e4) {
 			}
-
-		DEBUG = (boolean) a("ENABLE-DEBUG", false);
+		}
 
 		friendlyFire = (boolean) a("FriendlyFireEnabled", false);
 
@@ -806,63 +808,67 @@ public class QAMain extends JavaPlugin {
 						|| m.name().contains("LEVER"))
 					interactableBlocks.add(m);
 
-		if (enableCreationOfFiles) {
-			if(MANUALLYSELECT18 || !isVersionHigherThan(1, 9)){
-				//1.8
-				CustomItemManager.registerItemType(getDataFolder(),"gun", new me.zombie_striker.customitemmanager.versions.V1_8.CustomGunItem());
-			}else if(!isVersionHigherThan(1, 14) || MANUALLYSELECT113){
-				//1.9 to 1.13
-				CustomItemManager.registerItemType(getDataFolder(),"gun", new me.zombie_striker.customitemmanager.versions.V1_13.CustomGunItem());
-				//Make sure vehicles are safe
-				if (!overrideURL) {
-					expansionPacks.add(MaterialStorage.getMS(Material.DIAMOND_AXE, 80, 0));
-					expansionPacks.add(MaterialStorage.getMS(Material.DIAMOND_AXE, 81, 0));
-					expansionPacks.add(MaterialStorage.getMS(Material.DIAMOND_AXE, 82, 0));
-					expansionPacks.add(MaterialStorage.getMS(Material.DIAMOND_AXE, 83, 0));
-					expansionPacks.add(MaterialStorage.getMS(Material.DIAMOND_AXE, 84, 0));
-					expansionPacks.add(MaterialStorage.getMS(Material.DIAMOND_AXE, 85, 0));
-					expansionPacks.add(MaterialStorage.getMS(Material.DIAMOND_AXE, 86, 0));
-					expansionPacks.add(MaterialStorage.getMS(Material.DIAMOND_AXE, 87, 0));
-					expansionPacks.add(MaterialStorage.getMS(Material.DIAMOND_AXE, 88, 0));
-					expansionPacks.add(MaterialStorage.getMS(Material.DIAMOND_AXE, 89, 0));
-					expansionPacks.add(MaterialStorage.getMS(Material.DIAMOND_AXE, 92, 0));
-					expansionPacks.add(MaterialStorage.getMS(Material.DIAMOND_AXE, 94, 0));
-					expansionPacks.add(MaterialStorage.getMS(Material.DIAMOND_AXE, 95, 0));
-					expansionPacks.add(MaterialStorage.getMS(Material.DIAMOND_AXE, 96, 0));
-					expansionPacks.add(MaterialStorage.getMS(Material.DIAMOND_AXE, 97, 0));
-					expansionPacks.add(MaterialStorage.getMS(Material.DIAMOND_AXE, 104, 0));
-					expansionPacks.add(MaterialStorage.getMS(Material.DIAMOND_AXE, 111, 0));
-					expansionPacks.add(MaterialStorage.getMS(Material.DIAMOND_AXE, 112, 0));
-					expansionPacks.add(MaterialStorage.getMS(Material.DIAMOND_AXE, 114, 0));
-					expansionPacks.add(MaterialStorage.getMS(Material.DIAMOND_AXE, 115, 0));
-					expansionPacks.add(MaterialStorage.getMS(Material.DIAMOND_AXE, 116, 0));
-				}
-			}else{
-				//1.14. Use crossbows
-				CustomItemManager.registerItemType(getDataFolder(),"gun", new me.zombie_striker.customitemmanager.versions.V1_14.CustomGunItem());
+
+		// Chris: default has 1.14 ItemType
+		if(MANUALLYSELECT18 || !isVersionHigherThan(1, 9)){
+			//1.8
+			CustomItemManager.registerItemType(getDataFolder(),"gun", new me.zombie_striker.customitemmanager.versions.V1_8.CustomGunItem());
+		}else if(!isVersionHigherThan(1, 14) || MANUALLYSELECT113){
+			//1.9 to 1.13
+			CustomItemManager.registerItemType(getDataFolder(),"gun", new me.zombie_striker.customitemmanager.versions.V1_13.CustomGunItem());
+			//Make sure vehicles are safe
+			if (!overrideURL) {
+				expansionPacks.add(MaterialStorage.getMS(Material.DIAMOND_AXE, 80, 0));
+				expansionPacks.add(MaterialStorage.getMS(Material.DIAMOND_AXE, 81, 0));
+				expansionPacks.add(MaterialStorage.getMS(Material.DIAMOND_AXE, 82, 0));
+				expansionPacks.add(MaterialStorage.getMS(Material.DIAMOND_AXE, 83, 0));
+				expansionPacks.add(MaterialStorage.getMS(Material.DIAMOND_AXE, 84, 0));
+				expansionPacks.add(MaterialStorage.getMS(Material.DIAMOND_AXE, 85, 0));
+				expansionPacks.add(MaterialStorage.getMS(Material.DIAMOND_AXE, 86, 0));
+				expansionPacks.add(MaterialStorage.getMS(Material.DIAMOND_AXE, 87, 0));
+				expansionPacks.add(MaterialStorage.getMS(Material.DIAMOND_AXE, 88, 0));
+				expansionPacks.add(MaterialStorage.getMS(Material.DIAMOND_AXE, 89, 0));
+				expansionPacks.add(MaterialStorage.getMS(Material.DIAMOND_AXE, 92, 0));
+				expansionPacks.add(MaterialStorage.getMS(Material.DIAMOND_AXE, 94, 0));
+				expansionPacks.add(MaterialStorage.getMS(Material.DIAMOND_AXE, 95, 0));
+				expansionPacks.add(MaterialStorage.getMS(Material.DIAMOND_AXE, 96, 0));
+				expansionPacks.add(MaterialStorage.getMS(Material.DIAMOND_AXE, 97, 0));
+				expansionPacks.add(MaterialStorage.getMS(Material.DIAMOND_AXE, 104, 0));
+				expansionPacks.add(MaterialStorage.getMS(Material.DIAMOND_AXE, 111, 0));
+				expansionPacks.add(MaterialStorage.getMS(Material.DIAMOND_AXE, 112, 0));
+				expansionPacks.add(MaterialStorage.getMS(Material.DIAMOND_AXE, 114, 0));
+				expansionPacks.add(MaterialStorage.getMS(Material.DIAMOND_AXE, 115, 0));
+				expansionPacks.add(MaterialStorage.getMS(Material.DIAMOND_AXE, 116, 0));
 			}
-
-
-
-
-
-			if (overrideURL) {
-				CustomItemManager.setResourcepack((String) a("DefaultResourcepack", CustomItemManager.getResourcepack()));
-			} else {
-				if (!getConfig().contains("DefaultResourcepack")
-						|| !CustomItemManager.getResourcepack().equals(getConfig().getString("DefaultResourcepack"))) {
-					getConfig().set("DefaultResourcepack", CustomItemManager.getResourcepack());
-					saveTheConfig = true;
-				}
-			}
-
-
-			if (saveTheConfig) {
-				DEBUG(prefix + " Needed to save config: code=2");
-				saveConfig();
-			}
-
+		}else{
+			//1.14. Use crossbows
+			CustomItemManager.registerItemType(getDataFolder(),"gun", new me.zombie_striker.customitemmanager.versions.V1_14.CustomGunItem());
 		}
+
+		// Chris: if switch on, create default items.
+		if (enableCreationOfFiles) {
+			CustomItemManager.getItemType("gun").initItems(getDataFolder());
+		}
+
+
+		// Chirs: fix bug
+		if (overrideURL) {
+			CustomItemManager.setResourcepack((String) a("DefaultResourcepack", CustomItemManager.getResourcepack()));
+		} else {
+			if (!getConfig().contains("DefaultResourcepack")
+					|| !getConfig().getString("DefaultResourcepack").equals(CustomItemManager.getResourcepack())) {
+				getConfig().set("DefaultResourcepack", CustomItemManager.getResourcepack());
+				saveTheConfig = true;
+			}
+		}
+
+
+		if (saveTheConfig) {
+			DEBUG(prefix + " Needed to save config: code=2");
+			saveConfig();
+		}
+
+
 		// Skull texture
 		GunYMLLoader.loadAmmo(this);
 		GunYMLLoader.loadMisc(this);
