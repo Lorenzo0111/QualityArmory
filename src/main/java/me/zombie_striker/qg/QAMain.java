@@ -5,6 +5,7 @@ import java.util.*;
 import java.util.Map.Entry;
 import java.util.logging.Level;
 
+import me.zombie_striker.customitemmanager.AbstractItem;
 import me.zombie_striker.customitemmanager.CustomItemManager;
 import me.zombie_striker.customitemmanager.MaterialStorage;
 import me.zombie_striker.customitemmanager.OLD_ItemFact;
@@ -52,6 +53,7 @@ import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
 
 import com.google.common.base.Charsets;
+import org.graalvm.compiler.core.common.type.ArithmeticOpTable;
 
 public class QAMain extends JavaPlugin {
 
@@ -60,6 +62,8 @@ public class QAMain extends JavaPlugin {
 	public static HashMap<MaterialStorage, Ammo> ammoRegister = new LinkedHashMap<>();
 	public static HashMap<MaterialStorage, ArmoryBaseObject> miscRegister = new LinkedHashMap<>();
 	public static HashMap<MaterialStorage, ArmorObject> armorRegister = new LinkedHashMap<>();
+
+	public static HashMap<String, String> craftingEntityNames = new HashMap<>();
 
 	public static Set<EntityType> avoidTypes = new HashSet<>();
 
@@ -189,6 +193,9 @@ public class QAMain extends JavaPlugin {
 	public static String S_ITEM_VARIANTS_NEW = "&7Varient:";
 	public static String S_ITEM_DPS = "&2DPS";
 	public static String S_ITEM_COST = "&" + ChatColor.GOLD.getChar() + "Price: ";
+	// Chris: add message
+	public static String S_ITEM_CRAFTS = "Crafts";
+	public static String S_ITEM_RETURNS = "Returns";
 
 	public static String S_KICKED_FOR_RESOURCEPACK = "&c You have been kicked because you did not accept the resourcepack. \n&f If you want to rejoin the server, edit the server entry and set \"Resourcepack Prompts\" to \"Accept\" or \"Prompt\"'";
 
@@ -255,6 +262,7 @@ public class QAMain extends JavaPlugin {
 
 	public static MessagesYML m;
 	public static MessagesYML resourcepackwhitelist;
+	public static String language = "en";
 
 	public static boolean hasParties = false;
 	public static boolean friendlyFire = false;
@@ -568,10 +576,20 @@ public class QAMain extends JavaPlugin {
 		miscRegister.clear();
 		armorRegister.clear();
 		interactableBlocks.clear();
+		craftingEntityNames.clear();
 
 		// attachmentRegister.clear();
 
-		m = new MessagesYML(new File(getDataFolder(), "messages.yml"));
+		//Chris: Support more language file lang/message_xx.yml
+		language = (String) a("language", "en");
+		File langFolder = new File(getDataFolder(), "lang");
+		if (null == langFolder) {
+			if (langFolder.exists() && !langFolder.isDirectory()) {
+				langFolder.delete();
+			}
+			langFolder.mkdir();
+		}
+		m = new MessagesYML(new File(langFolder, "message_" + language + ".yml"));
 		S_ANVIL = ChatColor.translateAlternateColorCodes('&', (String) m.a("NoPermAnvilMessage", S_ANVIL));
 		S_NOPERM = ChatColor.translateAlternateColorCodes('&', (String) m.a("NoPerm", S_NOPERM));
 		S_shopName = (String) m.a("ShopName", S_shopName);
@@ -591,6 +609,9 @@ public class QAMain extends JavaPlugin {
 				(String) m.a("Lore_Variants", S_ITEM_VARIANTS_NEW));
 		S_ITEM_COST = ChatColor.translateAlternateColorCodes('&', (String) m.a("Lore_Price", S_ITEM_COST));
 		S_ITEM_DPS = ChatColor.translateAlternateColorCodes('&', (String) m.a("Lore_DamagePerSecond", S_ITEM_DPS));
+		// Chris: add message Crafts
+		S_ITEM_CRAFTS = ChatColor.translateAlternateColorCodes('&', (String) m.a("Lore_Crafts", S_ITEM_CRAFTS));
+		S_ITEM_RETURNS = ChatColor.translateAlternateColorCodes('&', (String) m.a("Lore_Returns", S_ITEM_RETURNS));
 
 		S_RELOADING_MESSAGE = ChatColor.translateAlternateColorCodes('&',
 				(String) m.a("Reloading_Message", S_RELOADING_MESSAGE));
@@ -850,7 +871,6 @@ public class QAMain extends JavaPlugin {
 			CustomItemManager.getItemType("gun").initItems(getDataFolder());
 		}
 
-
 		// Chirs: fix bug
 		if (overrideURL) {
 			CustomItemManager.setResourcepack((String) a("DefaultResourcepack", CustomItemManager.getResourcepack()));
@@ -886,7 +906,38 @@ public class QAMain extends JavaPlugin {
 			coloredGunScoreboard = new ArrayList<>();
 			coloredGunScoreboard.add(registerGlowTeams(Bukkit.getScoreboardManager().getMainScoreboard()));
 		}
+		//Chris: Find and reg craft entity name
+		registerCraftEntityNames(gunRegister);
+		registerCraftEntityNames(ammoRegister);
+		registerCraftEntityNames(miscRegister);
+		registerCraftEntityNames(armorRegister);
+	}
 
+	public static void registerCraftEntityNames(HashMap<MaterialStorage, ?> regMaps) {
+		if (null != regMaps && !regMaps.isEmpty()) {
+			for (Object item: regMaps.values()) {
+				try {
+					ItemStack[] itemStacks = ((ArmoryBaseObject) item).getIngredients();
+					if (null != itemStacks && itemStacks.length > 0) {
+						for (ItemStack itemStack: itemStacks) {
+							String itemName = itemStack.getType().name();
+							String showName = ChatColor.translateAlternateColorCodes('&', (String) QAMain.m.a("EntityType." + itemName, itemName));
+							craftingEntityNames.put(itemName, showName);
+						}
+					}
+				} catch (Exception e) {
+					//
+				}
+			}
+		}
+	}
+
+	public static String findCraftEntityName(String itemName, String defaultName) {
+		String value = craftingEntityNames.get(itemName);
+		if (null == value || value.trim().length() <= 0) {
+			value = craftingEntityNames.put(itemName, defaultName);
+		}
+		return value;
 	}
 
 	public static Scoreboard registerGlowTeams(Scoreboard sb) {

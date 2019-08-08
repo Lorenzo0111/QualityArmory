@@ -1,0 +1,62 @@
+NoPermAnvilMessage: ' &a You do not have permission to use this armory bench. Shift+Click
+  to access anvil.'
+NoPerm: '&c You do not have permission to do that.'
+ShopName: 'Weapons Shop Page:'
+CraftingBenchName: 'Armory Crafting-Bench Page:'
+Missing_Ingredients: You do not have all the materials needed to craft this.
+NoResourcepackMessage1: ' &c&l Downloading Resourcepack...'
+NoResourcepackMessage2: ' &f Accept the resourcepack to see the custom items'
+Lore_Ammo: '&aAmmo'
+lore_bullets: '&aBullets'
+Lore_Damage: '&aDamage'
+Lore_Durib: Durability
+Lore_ingredients: Ingredients
+Lore_Variants: '&7Varient:'
+Lore_Price: '&6Price: '
+Lore_DamagePerSecond: '&2DPS'
+Lore_Crafts: Crafts
+Lore_Returns: Returns
+Reloading_Message: '[Reloading...]'
+State_AmmoCount: '[%total%]'
+State_OutOfAmmo: '[Out of Ammo]'
+HotbarMessage: '%name% = %amount%/%max% %state%'
+Kick_message_if_player_denied_request: "&c You have been kicked because you did not\
+  \ accept the resourcepack. \n&f If you want to rejoin the server, edit the server\
+  \ entry and set \"Resourcepack Prompts\" to \"Accept\" or \"Prompt\"'"
+Lore-LMB-Single: §8[LMB] to use Single-fire mode
+Lore-LMB-FullAuto: §8[Sneak]+[LMB] to use Automatic-fire
+Lore-RMB-Reload: §8[RMB] to reload
+Lore-Ironsights-RMB: §8[RMB] to open ironsights
+Lore-Ironsights-Sneak: §8[Sneak] to open ironsights
+Lore-Reload-Dropitem: §8[DropItem] to reload
+Lore-Reload-RMB: §8[RMB] to reload
+Lore-Helmet-RMB: §8[RMB] to equip helmet.
+Shop_Confirm: '&aYour have purchased %item% for $%cost%!'
+Resourcepack_InCaseOfCrash: In case the resourcepack crashes your client, reject the
+  request and use /qa getResourcepack to get the resourcepack.
+Resourcepack_Download: Download this resourcepack and enable it to see the custom
+  items (Note that it may take some time to load)
+Resourcepack_NowBypass: By issuing this command, you are now added to a whitelist
+  for the resourcepack. You should no longer see the prompt
+Resourcepack_NowOptIn: By issuing this command, you have been removed from the whitelist.
+  You will now recieve the resourcepack prompt
+Medkit-FullyHealed: '&fYou are fully healed. No need for this right now!'
+Medkit-Healing: Healing
+Medkit-Bleeding: 'Blood-Loss Rate:'
+Medkit-HEALING_HEARTS_AMOUNT: 1.0
+Medkit-HEALING_WEAPPING_DELAY_IN_SECONDS: 6.0
+Medkit-Lore_RMB: '&f[RMB] to heal yourself!'
+Bleeding:
+  Losingconsciousness: '&cYOU ARE LOSING CONSCIOUSNESS DUE TO BLOODLOSS!'
+  StartBleeding: '&cYOU ARE BLEEDING! FIND A MEDKIT TO STOP THE BLEEDING!'
+  ProtectedByKevlar: '&aYour Kevlar vest protected you from that bullet!'
+EntityType:
+  IRON_INGOT: IRON_INGOT
+  REDSTONE: REDSTONE
+  OAK_PLANKS: OAK_PLANKS
+  BLAZE_POWDER: BLAZE_POWDER
+  GOLD_INGOT: GOLD_INGOT
+  GUNPOWDER: GUNPOWDER
+  NETHER_STAR: NETHER_STAR
+  BLAZE_ROD: BLAZE_ROD
+  TNT: TNT
