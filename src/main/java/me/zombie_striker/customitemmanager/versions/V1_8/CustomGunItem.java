@@ -173,6 +173,11 @@ public class CustomGunItem extends AbstractItem {
 
 	}
 
+	@Override
+	public void initIronSights(File dataFolder) {
+
+	}
+
 	private AbstractItemFact fact = new ItemFactory();
 
 	@Override

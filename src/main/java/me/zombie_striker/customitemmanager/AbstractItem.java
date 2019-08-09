@@ -13,6 +13,8 @@ public abstract class AbstractItem {
 
 	public abstract void initItems(File dataFolder);
 
+	public abstract void initIronSights(File dataFolder);
+
 	public abstract AbstractItemFact getItemFactory();
 
 

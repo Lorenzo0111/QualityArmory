@@ -24,6 +24,7 @@ public class CustomItemManager {
 	public static void registerItemType(File dataFolder, String key, AbstractItem item){
 		customItemTypes.put(key,item);
 		// item.initItems(dataFolder);
+		item.initIronSights(dataFolder);
 	}
 	public static AbstractItem getItemType(String key){
 		return customItemTypes.get(key);
