@@ -304,7 +304,8 @@ public class GunUtil {
 				}
 				if (overrideocculde || !isSolid(start.getBlock(), start)) {
 					if (QAMain.enableBulletTrails)
-						if (smokeDistance >= QAMain.smokeSpacing * i) {
+						// Chris: how many step to show a particles
+						if (smokeDistance >= QAMain.smokeSpacing * QAMain.bulletStep) {
 							ParticleHandlers.spawnGunParticles(g, start);
 							smokeDistance = 0;
 						} else {
