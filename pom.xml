@@ -181,10 +181,11 @@
         <resources>
             <resource>
                 <directory>${basedir}/src/main/resources</directory>
-                <filtering>true</filtering>
+                <filtering>false</filtering>
                 <includes>
                     <include>plugin.yml</include>
                     <include>config.yml</include>
+                    <include>lang/*.yml</include>
                 </includes>
             </resource>
             <resource>
@@ -207,6 +208,16 @@
                     <source>1.8</source>
                     <target>1.8</target>
                 </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.4</version>
+                <configuration>
+                    <outputDirectory>D:\Tools\Minecraft\PagerSpigot-1.14\plugins</outputDirectory>
+                </configuration>
+
             </plugin>
 
             <plugin>

@@ -54,6 +54,7 @@ import org.bukkit.scoreboard.Team;
 
 import com.google.common.base.Charsets;
 import org.graalvm.compiler.core.common.type.ArithmeticOpTable;
+import org.jetbrains.annotations.NotNull;
 
 public class QAMain extends JavaPlugin {
 
@@ -260,8 +261,11 @@ public class QAMain extends JavaPlugin {
 	public static ItemStack prevButton;
 	public static ItemStack nextButton;
 
+	private BaseYML newConfig;
+	private File configFile;
+
 	public static MessagesYML m;
-	public static MessagesYML resourcepackwhitelist;
+	public static BaseYML resourcepackwhitelist;
 	public static String language = "en";
 
 	public static boolean hasParties = false;
@@ -287,9 +291,6 @@ public class QAMain extends JavaPlugin {
 	public static boolean ITEM_enableUnbreakable = true;// TODO :stuufff
 	public static boolean MANUALLYSELECT18 = false;
 	public static boolean MANUALLYSELECT113 = false;
-
-	private FileConfiguration config;
-	private File configFile;
 
 	public static boolean unknownTranslationKeyFixer = false;
 
@@ -359,13 +360,17 @@ public class QAMain extends JavaPlugin {
 	private boolean saveTheConfig = false;
 
 	public Object a(String path, Object def) {
-		if (getConfig().contains(path)) {
-			return getConfig().get(path);
-		}
-		getConfig().set(path, def);
-		saveConfig();
-		return def;
+		return ((BaseYML) getConfig()).a(path, def);
 	}
+
+//	public Object a(String path, Object def) {
+//		if (getConfig().contains(path)) {
+//			return getConfig().get(path);
+//		}
+//		getConfig().set(path, def);
+//		saveConfig();
+//		return def;
+//	}
 
 	@Override
 	public void onEnable() {
@@ -540,6 +545,8 @@ public class QAMain extends JavaPlugin {
 	@SuppressWarnings({ "unchecked", "deprecation" })
 	public void reloadVals() {
 
+		reloadConfig();
+
 		DEBUG = (boolean) a("ENABLE-DEBUG", false);
 
 		Material glass = null;
@@ -582,14 +589,16 @@ public class QAMain extends JavaPlugin {
 
 		//Chris: Support more language file lang/message_xx.yml
 		language = (String) a("language", "en");
-		File langFolder = new File(getDataFolder(), "lang");
-		if (null == langFolder) {
-			if (langFolder.exists() && !langFolder.isDirectory()) {
-				langFolder.delete();
-			}
-			langFolder.mkdir();
-		}
-		m = new MessagesYML(new File(langFolder, "message_" + language + ".yml"));
+//		File langFolder = new File(getDataFolder(), "lang");
+//		if (null == langFolder) {
+//			if (langFolder.exists() && !langFolder.isDirectory()) {
+//				langFolder.delete();
+//			}
+//			langFolder.mkdirs();
+//		}
+//		File messageConfig = new File(langFolder, "message_" + language + ".yml");
+		// Chris: Load new Message File.
+		m = new MessagesYML(getDataFolder(), language);
 		S_ANVIL = ChatColor.translateAlternateColorCodes('&', (String) m.a("NoPermAnvilMessage", S_ANVIL));
 		S_NOPERM = ChatColor.translateAlternateColorCodes('&', (String) m.a("NoPerm", S_NOPERM));
 		S_shopName = (String) m.a("ShopName", S_shopName);
@@ -602,7 +611,7 @@ public class QAMain extends JavaPlugin {
 		S_ITEM_DAMAGE = ChatColor.translateAlternateColorCodes('&', (String) m.a("Lore_Damage", S_ITEM_DAMAGE));
 		S_ITEM_DURIB = ChatColor.translateAlternateColorCodes('&', (String) m.a("Lore_Durib", S_ITEM_DURIB));
 		S_ITEM_ING = ChatColor.translateAlternateColorCodes('&', (String) m.a("Lore_ingredients", S_ITEM_ING));
-		if (m.getConfig().contains("Lore_Varients"))
+		if (m.contains("Lore_Varients"))
 			S_ITEM_VARIANTS_LEGACY = ChatColor.translateAlternateColorCodes('&',
 					(String) m.a("Lore_Varients", S_ITEM_VARIANTS_LEGACY));
 		S_ITEM_VARIANTS_NEW = ChatColor.translateAlternateColorCodes('&',
@@ -658,12 +667,9 @@ public class QAMain extends JavaPlugin {
 		S_BULLETPROOFSTOPPEDBLEEDING = ChatColor.translateAlternateColorCodes('&',
 				(String) m.a("Bleeding.ProtectedByKevlar", S_BULLETPROOFSTOPPEDBLEEDING));
 
-		resourcepackwhitelist = new MessagesYML(new File(getDataFolder(), "resourcepackwhitelist.yml"));
+		resourcepackwhitelist = new BaseYML(getDataFolder(), "resourcepackwhitelist.yml");
 		namesToBypass = (List<String>) resourcepackwhitelist.a("Names_Of_players_to_bypass", namesToBypass);
 
-		if (!new File(getDataFolder(), "config.yml").exists())
-			saveDefaultConfig();
-		reloadConfig();
 
 		if (getServer().getPluginManager().isPluginEnabled("Parties"))
 			hasParties = true;
@@ -717,7 +723,7 @@ public class QAMain extends JavaPlugin {
 		ignoreUnbreaking = (boolean) a("enableIgnoreUnbreakingChecks", ignoreUnbreaking);
 		ignoreSkipping = (boolean) a("enableIgnoreSkipForBasegameItems", ignoreSkipping);
 
-		ITEM_enableUnbreakable = (boolean) a("Items.enable_Unbreaking", ITEM_enableUnbreakable);
+		ITEM_enableUnbreakable = (boolean) a("Items.enableUnbreaking", ITEM_enableUnbreakable);
 
 		// enableVisibleAmounts = (boolean) a("enableVisibleBulletCounts", false);
 		reloadOnF = (boolean) a("enableReloadingWhenSwapToOffhand", true);
@@ -1581,23 +1587,23 @@ public class QAMain extends JavaPlugin {
 
 	@Override
 	public void reloadConfig() {
-		if (configFile == null) {
-			configFile = new File(this.getDataFolder(), "config.yml");
+		if (null == configFile) {
+			configFile = new File(getDataFolder(), "config.yml");
 		}
-		config = CommentYamlConfiguration.loadConfiguration(configFile);
-		InputStream defConfigStream = this.getResource("config.yml");
-		if (defConfigStream != null) {
-			config.setDefaults(
-					YamlConfiguration.loadConfiguration(new InputStreamReader(defConfigStream, Charsets.UTF_8)));
+		if (!configFile.exists()) {
+			saveResource("config.yml", false);
 		}
+//		super.reloadConfig();
+
+		newConfig = BaseYML.loadConfiguration(configFile);
 	}
 
 	@Override
 	public FileConfiguration getConfig() {
-		if (this.config == null) {
+		if (this.newConfig == null) {
 			this.reloadConfig();
 		}
-		return this.config;
+		return this.newConfig;
 	}
 
 	public static Inventory createShop(int page) {

@@ -2,38 +2,32 @@ package me.zombie_striker.qg.config;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.logging.Level;
 
+import me.zombie_striker.qg.QAMain;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 
-public class MessagesYML {
+public class MessagesYML extends BaseYML {
 
-	private FileConfiguration c;
-	private File s;
-	public MessagesYML(File f) {
-		s = f;
-		c = CommentYamlConfiguration.loadConfiguration(s);
-	}
-	public Object a(String path, Object val){
-		if(!c.contains(path)){
-			c.set(path, val);
-			save();
-			return val;
+	public MessagesYML(File dataFolder, String language) {
+		super(null);
+		String fileName = "lang/message_" + language + ".yml";
+		File file = new File(dataFolder, fileName);
+		if (!file.exists()) {
+			// save default file.
+			try {
+				QAMain.getInstance().saveResource(fileName, true);
+			} catch (IllegalArgumentException e) {
+				// if the language can't find, copy an default config and change file name to that language.
+				QAMain.getInstance().getLogger().log(Level.SEVERE, e.getMessage());
+				String resourcePath = "lang/message_en.yml";
+				QAMain.getInstance().saveResource(resourcePath, true);
+				File newFile = new File(dataFolder, resourcePath);
+				newFile.renameTo(file);
+			}
 		}
-		return c.get(path);
+		super.init(file);
 	}
-	public void set(String path, Object val) {
-		c.set(path, val);
-		save();
-	}
-	public void save(){
-		try {
-			c.save(s);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-	
-	public FileConfiguration getConfig() {
-		return c;
-	}
+
 }
