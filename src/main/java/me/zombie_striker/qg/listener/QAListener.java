@@ -677,7 +677,6 @@ public class QAListener implements Listener {
 			return;
 
 		if(!CustomItemManager.isUsingCustomData()) {
-
 			if (e.getPlayer().getItemInHand() != null && !QualityArmory.isCustomItem(e.getPlayer().getItemInHand())) {
 				QAMain.DEBUG("Item is not any valid item - mainhand");
 				if (QualityArmory.isCustomItemNextId(e.getPlayer().getItemInHand())) {
@@ -748,6 +747,7 @@ public class QAListener implements Listener {
 		// Quick bugfix for specifically this item.
 
 		if(!CustomItemManager.isUsingCustomData()) {
+			QAMain.DEBUG("Custom Data Check");
 			try {
 				if (QAMain.ITEM_enableUnbreakable && !QAMain.ignoreUnbreaking)
 					if (QualityArmory.isCustomItem(e.getPlayer().getItemInHand())) {
@@ -793,12 +793,14 @@ public class QAListener implements Listener {
 			if (offhand == null || !QualityArmory.isCustomItem(offhand))
 				return;
 		}
+		QAMain.DEBUG("It Is a custom item!");
 
 		if (QAMain.kickIfDeniedRequest && QAMain.sentResourcepack.containsKey(e.getPlayer().getUniqueId())
 				&& System.currentTimeMillis() - QAMain.sentResourcepack.get(e.getPlayer().getUniqueId()) >= 3000) {
 			// the player did not accept resourcepack, and got away with it
 			e.setCancelled(true);
 			e.getPlayer().kickPlayer(QAMain.S_KICKED_FOR_RESOURCEPACK);
+			QAMain.DEBUG("Kick for custom resourcepack");
 			return;
 		}
 
@@ -806,6 +808,7 @@ public class QAListener implements Listener {
 			final ItemStack origin = e.getItem();
 			final int slot = e.getPlayer().getInventory().getHeldItemSlot();
 			if (!QAMain.isVersionHigherThan(1, 9)) {
+				QAMain.DEBUG("1.8 item damage check");
 				ItemStack temp1 = null;
 				try {
 					temp1 = e.getPlayer().getInventory().getItemInOffHand();
@@ -839,10 +842,13 @@ public class QAListener implements Listener {
 				}.runTaskLater(QAMain.getInstance(), 0);
 			}
 
-			ItemStack usedItem = e.getPlayer().getItemInHand();
+			ItemStack usedItem = IronsightsHandler.getItemAiming(e.getPlayer());
 
+			//I never liked this hack for viaversion plugins, so I am removing it.
+/*
 			try {
 				if (QAMain.AutoDetectResourcepackVersion && !QAMain.MANUALLYSELECT18) {
+					QAMain.DEBUG("AutoDetectResourcepack.");
 					if (us.myles.ViaVersion.bukkit.util.ProtocolSupportUtil.getProtocolVersion(e.getPlayer()) < QAMain.ID18) {
 						Gun g = QualityArmory.getGun(usedItem);
 						if (g == null)
@@ -902,7 +908,7 @@ public class QAListener implements Listener {
 					}
 				}
 			} catch (Error | Exception e4) {
-			}
+			}*/
 
 			/*
 			 * try {
@@ -921,6 +927,7 @@ public class QAListener implements Listener {
 			}
 
 			if (IronsightsHandler.isAiming(e.getPlayer())) {
+				QAMain.DEBUG("Player is aiming!");
 					try {
 						if ((e.getAction() == Action.RIGHT_CLICK_AIR
 								|| e.getAction() == Action.RIGHT_CLICK_BLOCK) == (QAMain.SWAP_RMB_WITH_LMB)) {
@@ -940,10 +947,10 @@ public class QAListener implements Listener {
 						}
 					} catch (Error e2) {
 					}
-				if (((e.getAction() == Action.LEFT_CLICK_AIR
-						|| e.getAction() == Action.LEFT_CLICK_BLOCK) ==QAMain. SWAP_RMB_WITH_LMB)) {
+				/*if ((e.getAction() == Action.LEFT_CLICK_AIR
+						|| e.getAction() == Action.LEFT_CLICK_BLOCK) ==QAMain. SWAP_RMB_WITH_LMB) {
 					usedItem = e.getPlayer().getInventory().getItemInOffHand();
-				}
+				}*/
 			}
 			ArmoryBaseObject qaItem = QualityArmory.getCustomItem(usedItem);
 			if (qaItem != null) {

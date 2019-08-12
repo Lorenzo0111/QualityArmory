@@ -59,13 +59,15 @@ public class OLD_ItemFact {
 		ItemMeta meta = current.getItemMeta();
 		List<String> lore = meta.getLore();
 		for (String loreS : new ArrayList<>(lore)) {
-			if (loreS.startsWith(ChatColor.DARK_RED + "Crafts") || loreS.startsWith(ChatColor.RED + QAMain.S_ITEM_ING)
-					|| loreS.startsWith(ChatColor.RED + "-"))
-				lore.remove(loreS);
+			if (loreS.startsWith(ChatColor.DARK_RED + QAMain.S_ITEM_CRAFTS) || loreS.startsWith(ChatColor.RED + QAMain.S_ITEM_ING)
+				|| loreS.startsWith(ChatColor.RED + "-"))
+
+
+			lore.remove(loreS);
 
 		}
 		if (obj.getCraftingReturn() > 1)
-			lore.add(ChatColor.DARK_RED + "Returns: " + obj.getCraftingReturn());
+			lore.add(ChatColor.DARK_RED + QAMain.S_ITEM_RETURNS + " " + obj.getCraftingReturn());
 		lore.add(QAMain.S_ITEM_COST + (obj.cost()));
 		meta.setLore(lore);
 		ItemStack is = current;
@@ -85,13 +87,15 @@ public class OLD_ItemFact {
 		lore.add(ChatColor.RED + QAMain.S_ITEM_ING + ": ");
 		for (ItemStack is : a.getIngredients()) {
 			StringBuilder sb = new StringBuilder();
-			sb.append(ChatColor.RED + "-" + is.getAmount() + " " + is.getType().name());
+			// Chris: itemName from message.yml
+			String itemName = is.getType().name();
+			sb.append(ChatColor.RED + "- " + QAMain.findCraftEntityName(itemName, itemName) + " x " + is.getAmount());
 			if (is.getDurability() != 0)
 				sb.append(":" + is.getDurability());
 			lore.add(sb.toString());
 		}
-		if (a.getCraftingReturn() > 1) {
-			lore.add(ChatColor.DARK_RED + "Crafts " + a.getCraftingReturn());
+		if (a.getCraftingReturn() > 1) {lore.add(ChatColor.DARK_RED + QAMain.S_ITEM_CRAFTS + " " + a.getCraftingReturn());
+
 		}
 		return lore;
 	}

@@ -523,7 +523,9 @@ public class CustomGunItem extends AbstractItem {
 				.setCustomProjectileVelocity(2).setCustomProjectileExplosionRadius(6)// .setChargingHandler(ChargingManager.MININUKELAUNCHER)
 				.setReloadingHandler(ReloadingManager.SINGLERELOAD).setDelayReload(5).setDistance(500)
 				.setParticle(0.001, 0.001, 0.001, Material.COAL_BLOCK).setRecoil(8).done();
-
+	}
+	@Override
+	public void initIronSights(File dataFolder) {
 
 		File ironsights = new File(dataFolder,"default_ironsightstoggleitem.yml");
 		YamlConfiguration ironconfig = YamlConfiguration.loadConfiguration(ironsights);

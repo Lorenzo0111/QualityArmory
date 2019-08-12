@@ -28,6 +28,7 @@ public class IronsightsHandler {
 					CrossbowMeta im = (CrossbowMeta) is.getItemMeta();
 					im.addChargedProjectile(new ItemStack(Material.ARROW));
 					is.setItemMeta(im);
+					if(is!=null)
 					player.setItemInHand(is);
 					swap = false;
 					return;

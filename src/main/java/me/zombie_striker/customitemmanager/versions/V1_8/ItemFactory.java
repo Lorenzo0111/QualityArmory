@@ -19,9 +19,9 @@ import java.util.List;
 public class ItemFactory extends AbstractItemFact {
 	@Override
 	public ItemStack getItem(MaterialStorage materialStorage, int amount) {
-		ArmoryBaseObject base = QualityArmory.getCustomItem(materialStorage.getMat(),materialStorage.getData(),materialStorage.getVariant());
+		ArmoryBaseObject base = QualityArmory.getCustomItem(materialStorage);
 
-		MaterialStorage ms = base.getItemData();
+		MaterialStorage ms = materialStorage;
 		String displayname = base.getDisplayName();
 		if (ms == null || ms.getMat() == null)
 			return new ItemStack(Material.AIR);

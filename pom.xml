@@ -5,21 +5,11 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>me.zombie_striker</groupId>
     <artifactId>qg</artifactId>
-    <version>1.1.143</version>
+    <version>1.1.144</version>
     <name>QualityArmory</name>
 
     <repositories>
 
-
-        <!---<repository>
-            <id>spigot-repo</id>
-            <url>https://hub.spigotmc.org/nexus/content/groups/public/</url>
-        </repository> -
-
-        <repository>
-            <id>spigot-repo</id>
-            <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
-        </repository> -->
 
         <repository>
             <id>spigot-repo</id>
@@ -65,12 +55,21 @@
     <dependencies>
 
 
+        <!-- MCAPI -->
+        <dependency>
+            <groupId>com.mojang</groupId>
+            <artifactId>authlib</artifactId>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/libs/authlib-1.5.25.jar</systemPath>
+            <version>1.5.25</version>
+        </dependency>
+
         <!--Spigot API-->
         <!--You only need one of the two, don't put both. Spigot is recommended.-->
         <dependency>
             <groupId>org.spigotmc</groupId>
-            <artifactId>spigot</artifactId>
-            <version>1.14.2-R0.1-SNAPSHOT</version>
+            <artifactId>spigot-api</artifactId>
+            <version>1.14.4-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
 
@@ -155,17 +154,6 @@
 
     </dependencies>
 
-    <distributionManagement>
-        <repository>
-            <id>internal.repo</id>
-            <name>Temporary Staging Repository</name>
-            <url>file://${project.build.directory}/mvn-repo</url>
-        </repository>
-    </distributionManagement>
-    <!--<properties>
-        <!- github server corresponds to entry in ~/.m2/settings.xml - ->
-        <github.global.server>github</github.global.server>
-    </properties>-->
     <build>
         <finalName>${project.name}</finalName>
         <defaultGoal>install</defaultGoal>
@@ -209,32 +197,6 @@
                 </configuration>
             </plugin>
 
-            <plugin>
-                <groupId>com.github.github</groupId>
-                <artifactId>site-maven-plugin</artifactId>
-                <version>0.11</version>
-                <configuration>
-                    <message>Maven artifacts for ${project.version}</message>  <!-- git commit message -->
-                    <noJekyll>true</noJekyll>                                  <!-- disable webpage processing -->
-                    <outputDirectory>${project.build.directory}/mvn-repo
-                    </outputDirectory> <!-- matches distribution management repository url above -->
-                    <branch>refs/heads/mvn-repo</branch>                       <!-- remote branch name -->
-                    <includes>
-                        <include>**/*</include>
-                    </includes>
-                    <repositoryName>QualityArmory</repositoryName>      <!-- github repo name -->
-                    <repositoryOwner>ZombieStriker</repositoryOwner>    <!-- github username  -->
-                </configuration>
-                <executions>
-                    <!-- run site-maven-plugin's 'site' target as part of the build's normal 'deploy' phase -->
-                    <execution>
-                        <goals>
-                            <goal>site</goal>
-                        </goals>
-                        <phase>deploy</phase>
-                    </execution>
-                </executions>
-            </plugin>
         </plugins>
     </build>
 </project>

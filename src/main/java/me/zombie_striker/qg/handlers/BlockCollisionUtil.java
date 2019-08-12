@@ -90,9 +90,6 @@ public class BlockCollisionUtil {
 			return false;
 		}
 
-		if (b.getType().isOccluding()) {
-			return true;
-		}
 		if (b.getType().name().contains("STAIR")) {
 			if (b.getData() < 4 && (l.getY() - l.getBlockY() < 0.5))
 				return true;
@@ -115,6 +112,12 @@ public class BlockCollisionUtil {
 			}
 		}
 
+		if (b.getType().name().endsWith("FERN")) {
+			return false;
+		}
+		if (b.getType().isOccluding()) {
+			return true;
+		}
 		return false;
 	}
 }

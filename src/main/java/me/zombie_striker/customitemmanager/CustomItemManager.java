@@ -37,7 +37,7 @@ public class CustomItemManager {
 
 	public static boolean isUsingCustomData(){
 		try{
-			new ItemStack(Material.AIR).getItemMeta().getCustomModelData();
+			new ItemStack(Material.DIAMOND_BLOCK).getItemMeta().hasCustomModelData();
 			return true;
 		}catch (Error|Exception e4){
 

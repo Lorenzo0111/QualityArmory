@@ -1,3 +1,15 @@
+1.1.144
+    Added aiming view for players holding guns, even if not scoped.
+    Fixed "useddata" tag for phantom membrane for 1.14
+    Fixed rapid fire for guns on 1.14
+    Removed old ViaVersion conversion system: The server now uses the same items, regardless of which update the user uses
+    ChrisLv-CN: Changed itemRegister to LinkedHaskMap
+    ChrisLv-CN: Fix enableCreationOfFiles can't disable.
+    ChrisLv-CN: Now will auto create Folder "lang" and create "message_en.yum", support more language in this folder create like "message_cn.yum".
+    ChrisLv-CN: message_xx.yum add new Key "EntityType:" to set the craft ingredients name.
+    ChrisLv-CN: Separate IronSights initialization from create Defaut Item files.
+    Fixed FN Five Seven Five
+
 1.1.143
     Bugfix: Lore for variant data on 1.13 and lower
     Bugfix: Right_Click_Ironsights still used old system

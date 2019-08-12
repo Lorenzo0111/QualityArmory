@@ -34,10 +34,10 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class GunUtil {
 
+	public static HashMap<UUID, BukkitTask> rapidfireshooters = new HashMap<>();
+	public static HashMap<UUID, Double> highRecoilCounter = new HashMap<>();
 	protected static HashMap<UUID, Location> AF_locs = new HashMap<>();
 	protected static HashMap<UUID, BukkitTask> AF_tasks = new HashMap<>();
-
-	public static HashMap<UUID, BukkitTask> rapidfireshooters = new HashMap<>();
 
 	public static void shootHandler(Gun g, Player p) {
 		double sway = g.getSway() * AimManager.getSway(g, p.getUniqueId());
@@ -184,7 +184,7 @@ public class GunUtil {
 					boolean bulletProtection = false;
 
 					double damageMAX = damage * (bulletProtection ? 0.1 : 1)
-							* ((headShot && !negateHeadshot) ? (QAMain.HeadshotOneHit ? 50*g.getHeadshotMultiplier() : g.getHeadshotMultiplier())
+							* ((headShot && !negateHeadshot) ? (QAMain.HeadshotOneHit ? 50 * g.getHeadshotMultiplier() : g.getHeadshotMultiplier())
 							: 1);
 
 					if (hitTarget instanceof Player) {
@@ -380,25 +380,25 @@ public class GunUtil {
 			return;
 
 		if (g.getLastShotForGun().containsKey(player.getUniqueId())
-				&& (System.currentTimeMillis() - g.getLastShotForGun().get(player.getUniqueId()) <= showdelay)) {
+				&& (System.currentTimeMillis() - g.getLastShotForGun().get(player.getUniqueId()) < showdelay)) {
 			QAMain.DEBUG("Shooting canceled due to last shot being too soon.");
 			return;
 		}
 		g.getLastShotForGun().put(player.getUniqueId(), System.currentTimeMillis());
 
-		final ItemStack temp = offhand ? Update19OffhandChecker.getItemStackOFfhand(player)
-				: player.getInventory().getItemInHand();
-		ItemMeta im = temp.getItemMeta();
+
 
 		if (rapidfireshooters.containsKey(player.getUniqueId())) {
 			QAMain.DEBUG("Shooting canceled due to rapid fire being enabled.");
 			return;
 		}
 
+		ItemStack firstGunInstance = IronsightsHandler.getItemAiming(player);
+
 		boolean regularshoot = true;
 		if (g.getChargingVal() != null && (!g.getChargingVal().isCharging(player)
 				&& (g.getReloadingingVal() == null || !g.getReloadingingVal().isReloading(player)))) {
-			regularshoot = g.getChargingVal().shoot(g, player, temp);
+			regularshoot = g.getChargingVal().shoot(g, player, firstGunInstance );
 			QAMain.DEBUG("Charging shoot debug: " + g.getName() + " = " + g.getChargingVal() == null ? "null"
 					: g.getChargingVal().getName());
 		}
@@ -412,19 +412,17 @@ public class GunUtil {
 		if (g.isAutomatic()) {
 			rapidfireshooters.put(player.getUniqueId(), new BukkitRunnable() {
 				int slotUsed = player.getInventory().getHeldItemSlot();
-				boolean offhand = QualityArmory.isIronSights(player.getItemInHand());
+				//boolean offhand = QualityArmory.isIronSights(player.getItemInHand());
 
 				@Override
 				public void run() {
-					if (offhand) {
-						if (!QualityArmory.isIronSights(player.getItemInHand())) {
-							cancel();
-							rapidfireshooters.remove(player.getUniqueId());
-							return;
-						}
+					if (!IronsightsHandler.isAiming(player)) {
+						cancel();
+						rapidfireshooters.remove(player.getUniqueId());
+						return;
 					}
 
-					// final AttachmentBase attach = QualityArmory.getGunWithAttchments(temp);
+					ItemStack temp = IronsightsHandler.getItemAiming(player);
 
 					int amount = Gun.getAmount(temp);
 					if (!player.isSneaking() || slotUsed != player.getInventory().getHeldItemSlot() || amount <= 0) {
@@ -449,19 +447,11 @@ public class GunUtil {
 							addRecoil(player, g);
 						// TODO: recoil
 					}
-
-					// GunUtil.shoot(g, player, g.getSway() * AimManager.getSway(g,
-					// player.getUniqueId()), g.getDamage(), 1,
-					// g.getMaxDistance());
-					// GunUtil.playShoot(g, attach, player);
 					amount--;
 
 					if (amount < 0)
 						amount = 0;
 
-					// if (QAMain.enableVisibleAmounts) {
-					// temp.setAmount(amount > 64 ? 64 : amount == 0 ? 1 : amount);
-					// }
 					ItemMeta im = temp.getItemMeta();
 					int slot;
 					if (offhand) {
@@ -489,29 +479,27 @@ public class GunUtil {
 			}.runTaskTimer(QAMain.getInstance(), 10 / g.getFireRate(), 10 / g.getFireRate()));
 		}
 
-		int amount = Gun.getAmount(temp) - 1;
+		int amount = Gun.getAmount(firstGunInstance) - 1;
 
 		if (amount < 0)
 			amount = 0;
 
-		// if (QAMain.enableVisibleAmounts) {
-		// temp.setAmount(amount > 64 ? 64 : amount == 0 ? 1 : amount);
-		// }
 		int slot;
 		if (offhand) {
 			slot = -1;
 		} else {
 			slot = player.getInventory().getHeldItemSlot();
 		}
-		im.setLore(Gun.getGunLore(g, temp, amount));
-		temp.setItemMeta(im);
+		ItemMeta im = firstGunInstance.getItemMeta();
+		im.setLore(Gun.getGunLore(g, firstGunInstance, amount));
+		firstGunInstance.setItemMeta(im);
 		if (slot == -1) {
 			try {
-				player.getInventory().setItemInOffHand(temp);
+				player.getInventory().setItemInOffHand(firstGunInstance);
 			} catch (Error e) {
 			}
 		} else {
-			player.getInventory().setItem(slot, temp);
+			player.getInventory().setItem(slot, firstGunInstance);
 		}
 	}
 
@@ -528,7 +516,7 @@ public class GunUtil {
 					} else {
 						soundname = g.getWeaponSound();
 					}
-					player.getWorld().playSound(player.getLocation(), soundname, (float)g.getVolume(), 1);
+					player.getWorld().playSound(player.getLocation(), soundname, (float) g.getVolume(), 1);
 					if (!QAMain.isVersionHigherThan(1, 9)) {
 						try {
 							player.getWorld().playSound(player.getLocation(), Sound.valueOf("CLICK"), 5, 1);
@@ -610,8 +598,6 @@ public class GunUtil {
 
 	}
 
-	public static HashMap<UUID, Double> highRecoilCounter = new HashMap<>();
-
 	public static void addRecoil(final Player player, final Gun g) {
 		if (g.getRecoil() == 0)
 			return;
@@ -681,6 +667,6 @@ public class GunUtil {
 
 	@SuppressWarnings("deprecation")
 	public static boolean isSolid(Block b, Location l) {
-		return BlockCollisionUtil.isSolid(b,l);
+		return BlockCollisionUtil.isSolid(b, l);
 	}
 }

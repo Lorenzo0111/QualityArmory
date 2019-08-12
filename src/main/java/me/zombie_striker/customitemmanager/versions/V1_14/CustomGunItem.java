@@ -27,10 +27,16 @@ import java.util.List;
 
 public class CustomGunItem extends AbstractItem {
 
+	private AbstractItemFact fact = new ItemFactory();
+
+	public static MaterialStorage m(int d) {
+		return MaterialStorage.getMS(Material.CROSSBOW, d, 0);
+	}
+
 	@Override
 	public ItemStack getItem(Material material, int data, int variant) {
-		ItemStack is = QualityArmory.getCustomItem(QualityArmory.getCustomItem(material,data,variant));
-		if(is.getType()==Material.CROSSBOW){
+		ItemStack is = QualityArmory.getCustomItem(QualityArmory.getCustomItem(material, data, variant));
+		if (is.getType() == Material.CROSSBOW) {
 			//Now the player will hold the crossbow like a gun
 			CrossbowMeta im = (CrossbowMeta) is.getItemMeta();
 			im.addChargedProjectile(new ItemStack(Material.VOID_AIR));
@@ -39,7 +45,6 @@ public class CustomGunItem extends AbstractItem {
 		return is;
 	}
 
-
 	@Override
 	public boolean isCustomItem(ItemStack is) {
 		return QualityArmory.isCustomItem(is);
@@ -47,10 +52,7 @@ public class CustomGunItem extends AbstractItem {
 
 	@Override
 	public void initItems(File dataFolder) {
-		CustomItemManager.setResourcepack("https://www.dropbox.com/s/wh495z84cndyeji/QualityArmoryV2.0.0.zip?dl=1");
-
-
-
+		CustomItemManager.setResourcepack("https://www.dropbox.com/s/atugf32ggp3rd69/QualityArmoryV2.0.1.zip?dl=1");
 
 
 		List<String> stringsWoodRif = Arrays.asList(new String[]{getIngString(Material.IRON_INGOT, 0, 12),
@@ -82,20 +84,17 @@ public class CustomGunItem extends AbstractItem {
 		List<String> stringsHealer = Arrays.asList(new String[]{getIngString(MultiVersionLookup.getWool(), 0, 6),
 				getIngString(Material.GOLDEN_APPLE, 0, 1)});
 		List<String> stringsMini = Arrays.asList(
-				new String[] { getIngString(Material.IRON_INGOT, 0, 10), getIngString(Material.TNT, 0, 16) });
+				new String[]{getIngString(Material.IRON_INGOT, 0, 10), getIngString(Material.TNT, 0, 16)});
 
-		List<String> strings10mm = Arrays.asList(new String[] { getIngString(Material.IRON_INGOT, 0, 10),
-				getIngString(Material.REDSTONE, 0, 4) });
-
-
-
+		List<String> strings10mm = Arrays.asList(new String[]{getIngString(Material.IRON_INGOT, 0, 10),
+				getIngString(Material.REDSTONE, 0, 4)});
 
 
 		GunYMLCreator.createAmmo(false, dataFolder, false, "9mm", "&f9mm", 1, stringsAmmo, 2, 0.7, 50,
 				10).setMaterial(Material.PHANTOM_MEMBRANE).done();
 		GunYMLCreator.createAmmo(false, dataFolder, false, "556", "&f5.56 NATO", 2, stringsAmmo, 4, 1, 50,
 				5).setMaterial(Material.PHANTOM_MEMBRANE).done();
-		GunYMLCreator.createAmmo(false,dataFolder, false, "762", "&f7.62x39mm", 3, stringsAmmo, 5, 1.2,
+		GunYMLCreator.createAmmo(false, dataFolder, false, "762", "&f7.62x39mm", 3, stringsAmmo, 5, 1.2,
 				50, 5).setMaterial(Material.PHANTOM_MEMBRANE).done();
 		GunYMLCreator.createAmmo(false, dataFolder, false, "shell", "&fBuckshot", 4, stringsAmmo, 10, 0.5,
 				8, 4).setMaterial(Material.PHANTOM_MEMBRANE).done();
@@ -110,20 +109,15 @@ public class CustomGunItem extends AbstractItem {
 		GunYMLCreator
 				.createAmmo(false, dataFolder, false, "default_flamerfuel", "fuel", "&fFlamerFuel", null,
 						Material.BLAZE_POWDER, 0,
-						Arrays.asList(new String[] { getIngString(Material.BLAZE_ROD, 0, 1), }), 1, 1, 64, 2)
+						Arrays.asList(new String[]{getIngString(Material.BLAZE_ROD, 0, 1),}), 1, 1, 64, 2)
 				.setVariant(1).done();
 
 
-
-		GunYMLCreator.createAmmo(true,dataFolder, false, "default_mininuke", "mininuke", "MiniNuke", 9,
+		GunYMLCreator.createAmmo(true, dataFolder, false, "default_mininuke", "mininuke", "MiniNuke", 9,
 				stringsMini, 3000, 100, 1).setMaterial(Material.PHANTOM_MEMBRANE).done();
 
 		GunYMLCreator.createAmmo(true, dataFolder, false, "default_fusion_cell", "fusion_cell",
 				"Fusion Cell", 10, strings10mm, 60, 0.2, 30).setMaterial(Material.PHANTOM_MEMBRANE).done();
-
-
-
-
 
 
 		GunYMLCreator.createNewDefaultGun(dataFolder, "p30", "P30", 1, stringsPistol, WeaponType.PISTOL,
@@ -198,7 +192,7 @@ public class CustomGunItem extends AbstractItem {
 		GunYMLCreator
 				.createNewDefaultGun(dataFolder, "dragunov", "Dragunov", 16, stringsMetalRif,
 						WeaponType.SNIPER, null, true, "762", 7, 12, 2100).setMaterial(Material.CROSSBOW)
-			.setUseOffhand(true)	.setDelayShoot(0.4).setZoomLevel(9).setSwayMultiplier(3).setRecoil(5).done();
+				.setUseOffhand(true).setDelayShoot(0.4).setZoomLevel(9).setSwayMultiplier(3).setRecoil(5).done();
 		GunYMLCreator
 				.createNewDefaultGun(dataFolder, "spas12", "Spas-12", 17, stringsMetalRif,
 						WeaponType.SHOTGUN, null, false, "shell", 2, 8, 1000).setMaterial(Material.CROSSBOW)
@@ -211,8 +205,8 @@ public class CustomGunItem extends AbstractItem {
 		/**
 		 * 27 - 36 taken for custom weapons
 		 */
-	//	GunYMLCreator.createMisc(false,dataFolder, false, "default_Medkit_camo", "medkitcamo", "&5Medkit",
-	//			null, m(37), stringsHealer, 300, WeaponType.MEDKIT, 1, 1000).setMaterial(Material.CROSSBOW).done();
+		//	GunYMLCreator.createMisc(false,dataFolder, false, "default_Medkit_camo", "medkitcamo", "&5Medkit",
+		//			null, m(37), stringsHealer, 300, WeaponType.MEDKIT, 1, 1000).setMaterial(Material.CROSSBOW).done();
 //TODO: The medical bag is unneeded. The systems broken, so we can delete it.
 		GunYMLCreator
 				.createNewDefaultGun(dataFolder, "magnum", "Magnum", 19, stringsPistol, WeaponType.PISTOL,
@@ -222,7 +216,7 @@ public class CustomGunItem extends AbstractItem {
 		GunYMLCreator
 				.createNewDefaultGun(dataFolder, "awp", "AWP", 20, stringsMetalRif, WeaponType.SNIPER,
 						WeaponSounds.GUN_BIG, true, "762", 10, 12, 3000)
-			.setUseOffhand(true)	.setDelayShoot(0.8).setZoomLevel(9).setSwayMultiplier(3).setRecoil(5).setMaterial(Material.CROSSBOW).done();
+				.setUseOffhand(true).setDelayShoot(0.8).setZoomLevel(9).setSwayMultiplier(3).setRecoil(5).setMaterial(Material.CROSSBOW).done();
 
 		GunYMLCreator.createMisc(false, dataFolder, false, "default_smokegrenade", "smokegrenade",
 				"&7Smoke Grenade",
@@ -261,7 +255,7 @@ public class CustomGunItem extends AbstractItem {
 				.createNewDefaultGun(dataFolder, "sg553", "SG-553", 27, stringsMetalRif, WeaponType.RIFLE,
 						null, true, "556", 3, 40, 3200)
 				.setFullyAutomatic(2).setBulletsPerShot(1).setRecoil(2).setMaterial(Material.CROSSBOW).done();
-		GunYMLCreator.createNewDefaultGun(dataFolder, "fnfiveseven", "FN-Five-Seven", 47, stringsPistol,
+		GunYMLCreator.createNewDefaultGun(dataFolder, "fnfiveseven", "FN-Five-Seven", 69, stringsPistol,
 				WeaponType.PISTOL, null, true, "9mm", 3, 12, 700).setMaterial(Material.CROSSBOW).setIsSecondaryWeapon(true).done();
 
 		GunYMLCreator
@@ -308,8 +302,8 @@ public class CustomGunItem extends AbstractItem {
 		 */
 
 
-		List<String> stringsFatman = Arrays.asList(new String[] { getIngString(Material.IRON_INGOT, 0, 32),
-				getIngString(Material.REDSTONE, 0, 16), getIngString(Material.BLAZE_POWDER, 0, 8) });
+		List<String> stringsFatman = Arrays.asList(new String[]{getIngString(Material.IRON_INGOT, 0, 32),
+				getIngString(Material.REDSTONE, 0, 16), getIngString(Material.BLAZE_POWDER, 0, 8)});
 
 		GunYMLCreator
 				.createNewDefaultGun(dataFolder, "lazerrifle", "&6Lazer Rifle", 32, stringsMetalRif,
@@ -339,10 +333,10 @@ public class CustomGunItem extends AbstractItem {
 						WeaponType.RIFLE, WeaponSounds.GUN_AUTO, true, "musketball", 10, 1, 100)
 				.setSway(0.3).setDelayReload(5).setDelayShoot(1).setSwayMultiplier(3).setRecoil(3).setMaterial(Material.CROSSBOW).done();
 
-		List<String> stringsRifle = Arrays.asList(new String[] { getIngString(Material.IRON_INGOT, 0, 8),
-				getIngString(Material.REDSTONE, 0, 3) });
-		List<String> stringsLight = Arrays.asList(new String[] { getIngString(Material.IRON_INGOT, 0, 8),
-				getIngString(Material.NETHER_STAR, 0, 1) });
+		List<String> stringsRifle = Arrays.asList(new String[]{getIngString(Material.IRON_INGOT, 0, 8),
+				getIngString(Material.REDSTONE, 0, 3)});
+		List<String> stringsLight = Arrays.asList(new String[]{getIngString(Material.IRON_INGOT, 0, 8),
+				getIngString(Material.NETHER_STAR, 0, 1)});
 
 		GunYMLCreator
 				.createNewCustomGun(dataFolder, "default_aliensrifle", "m41pulserifle",
@@ -423,7 +417,7 @@ public class CustomGunItem extends AbstractItem {
 		GunYMLCreator
 				.createNewDefaultGun(dataFolder, "sks", "SKS-45", 51, stringsWoodRif, WeaponType.SNIPER,
 						null, true, "762", 7, 10, 2000).setMaterial(Material.CROSSBOW)
-			.setUseOffhand(true)	.setDelayShoot(0.6).setZoomLevel(6).setDistance(290).setSwayMultiplier(3).setRecoil(8).done();
+				.setUseOffhand(true).setDelayShoot(0.6).setZoomLevel(6).setDistance(290).setSwayMultiplier(3).setRecoil(8).done();
 
 		GunYMLCreator
 				.createNewDefaultGun(dataFolder, "barrett", "Barrett-M82", 52, stringsWoodRif,
@@ -455,7 +449,7 @@ public class CustomGunItem extends AbstractItem {
 						WeaponSounds.WARHEAD_LAUNCH, true, "40mm", 50, 50, 20000)
 				.setFullyAutomatic(1).setCustomProjectile(ProjectileManager.EXPLODINGROUND)
 				.setCustomProjectileVelocity(4).setCustomProjectileExplosionRadius(5)
-			.setUseOffhand(true)	.setChargingHandler(ChargingManager.REQUIREAIM).setSway(0.5).setSwayMultiplier(2.4).setMaterial(Material.CROSSBOW)
+				.setUseOffhand(true).setChargingHandler(ChargingManager.REQUIREAIM).setSway(0.5).setSwayMultiplier(2.4).setMaterial(Material.CROSSBOW)
 				.setParticle(0.001, 0.001, 0.001, Material.COAL_BLOCK).setRecoil(7).done();
 		GunYMLCreator
 				.createNewDefaultGun(dataFolder, "asval", "AS-Val", 58, stringsMetalRif, WeaponType.RIFLE,
@@ -468,7 +462,7 @@ public class CustomGunItem extends AbstractItem {
 		GunYMLCreator
 				.createNewDefaultGun(dataFolder, "kar98k", "Kar-98K", 60, stringsWoodRif,
 						WeaponType.SNIPER, null, true, "762", 10, 6, 2500).setMaterial(Material.CROSSBOW)
-			.setUseOffhand(true)	.setZoomLevel(2).setDelayShoot(0.7).setChargingHandler(ChargingManager.BOLT)
+				.setUseOffhand(true).setZoomLevel(2).setDelayShoot(0.7).setChargingHandler(ChargingManager.BOLT)
 				.setSwayMultiplier(3).setDistance(280).setRecoil(7).done();
 		GunYMLCreator.createNewDefaultGun(dataFolder, "mp40", "MP 40", 61, stringsMetalRif,
 				WeaponType.SMG, WeaponSounds.GUN_SMALL, true, "9mm", 2, 32, 3800).setFullyAutomatic(3).setMaterial(Material.CROSSBOW).done();
@@ -535,12 +529,15 @@ public class CustomGunItem extends AbstractItem {
 				.setReloadingHandler(ReloadingManager.SINGLERELOAD).setDelayReload(5).setDistance(500).setMaterial(Material.CROSSBOW)
 				.setParticle(0.001, 0.001, 0.001, Material.COAL_BLOCK).setRecoil(8).done();
 
+	}
 
-		File ironsights = new File(dataFolder,"default_ironsightstoggleitem.yml");
+	@Override
+	public void initIronSights(File dataFolder) {
+		File ironsights = new File(dataFolder, "default_ironsightstoggleitem.yml");
 		YamlConfiguration ironconfig = YamlConfiguration.loadConfiguration(ironsights);
-		if(!ironconfig.contains("material")){
-			ironconfig.set("material",Material.CROSSBOW.name());
-			ironconfig.set("id",68);
+		if (!ironconfig.contains("material")) {
+			ironconfig.set("material", Material.CROSSBOW.name());
+			ironconfig.set("id", 68);
 			try {
 				ironconfig.save(ironsights);
 			} catch (IOException e) {
@@ -553,16 +550,9 @@ public class CustomGunItem extends AbstractItem {
 
 	}
 
-
 	public String getIngString(Material m, int durability, int amount) {
 		return m.toString() + "," + durability + "," + amount;
 	}
-	public static MaterialStorage m(int d) {
-		return MaterialStorage.getMS(Material.CROSSBOW, d, 0);
-	}
-
-
-	private AbstractItemFact fact = new ItemFactory();
 
 	@Override
 	public AbstractItemFact getItemFactory() {

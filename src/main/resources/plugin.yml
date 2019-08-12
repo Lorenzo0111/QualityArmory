@@ -29,6 +29,6 @@ permissions:
       qualityarmory.craft: true
       qualityarmory.shop: true
       qualityarmory.usegun: true
-softdepend: [Vault, Parties, WorldGuard, ViaVersion, ViaRewind, LightAPI, Citizens, ProtocolLib]
+softdepend: [Vault, Parties, WorldGuard, ViaVersion, ViaRewind, LightAPI, Citizens, ProtocolLib, SunLight-Core]
 author:
    Zombie_Striker
