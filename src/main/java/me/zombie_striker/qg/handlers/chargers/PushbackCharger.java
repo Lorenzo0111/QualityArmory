@@ -29,9 +29,19 @@ public class PushbackCharger implements ChargingHandler {
 		return false;
 	}
 
+	@Override
+	public boolean isReadyToFire(Gun g, Player player, ItemStack stack) {
+		return true;
+	}
+
+	@Override
+	public boolean useChargingShoot() {
+		return true;
+	}
+
 	@SuppressWarnings("deprecation")
 	@Override
-	public boolean shoot(Gun g, Player p, ItemStack i) {
+	public void shoot(Gun g, Player p, ItemStack i) {
 
 		Location start = p.getEyeLocation().clone();
 		Vector go = p.getLocation().getDirection().normalize();
@@ -67,7 +77,7 @@ public class PushbackCharger implements ChargingHandler {
 					}
 				}
 		}
-		return false;
+//		return false;
 	}
 
 }

@@ -2,6 +2,7 @@ package me.zombie_striker.qg.api;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
 
@@ -677,7 +678,14 @@ public class QualityArmory {
 			if (player.getInventory().firstEmpty() >= 0) {
 				ItemStack is = CustomItemManager.getItemFact("gun").getItem(a.getItemData(),1);
 				is.setAmount(remaining);
-				player.getInventory().addItem(is);
+//				player.getInventory().addItem(is);
+				HashMap<Integer, ItemStack> overflowItems = player.getInventory().addItem(is);
+				if (!overflowItems.isEmpty()) {
+					// package full, drop on ground.
+					for (ItemStack itemStack: overflowItems.values()) {
+						player.getWorld().dropItemNaturally(player.getLocation(), itemStack);
+					}
+				}
 				remaining = 0;
 			}
 		}

@@ -5,7 +5,6 @@ import java.util.*;
 import java.util.Map.Entry;
 import java.util.logging.Level;
 
-import me.zombie_striker.customitemmanager.AbstractItem;
 import me.zombie_striker.customitemmanager.CustomItemManager;
 import me.zombie_striker.customitemmanager.MaterialStorage;
 import me.zombie_striker.customitemmanager.OLD_ItemFact;
@@ -51,10 +50,6 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.*;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
-
-import com.google.common.base.Charsets;
-import org.graalvm.compiler.core.common.type.ArithmeticOpTable;
-import org.jetbrains.annotations.NotNull;
 
 public class QAMain extends JavaPlugin {
 
@@ -200,14 +195,18 @@ public class QAMain extends JavaPlugin {
 
 	public static String S_KICKED_FOR_RESOURCEPACK = "&c You have been kicked because you did not accept the resourcepack. \n&f If you want to rejoin the server, edit the server entry and set \"Resourcepack Prompts\" to \"Accept\" or \"Prompt\"'";
 
-	public static String S_LMB_SINGLE = ChatColor.DARK_GRAY + "[LMB] to use Single-fire mode";
-	public static String S_LMB_FULLAUTO = ChatColor.DARK_GRAY + "[Sneak]+[LMB] to use Automatic-fire";
-	public static String S_RMB_RELOAD = ChatColor.DARK_GRAY + "[RMB] to reload";
-	public static String S_RMB_R1 = ChatColor.DARK_GRAY + "[DropItem] to reload";
-	public static String S_RMB_R2 = ChatColor.DARK_GRAY + "[RMB] to reload";
+	public static String S_SINGLE_LMB = ChatColor.DARK_GRAY + "[LMB] to use Single-fire mode";
+	public static String S_SINGLE_RMB = ChatColor.DARK_GRAY + "[RMB] to use Single-fire mode"; // add
+	public static String S_FULLAUTO_LMB = ChatColor.DARK_GRAY + "[Sneak]+[LMB] to use Automatic-fire";
+	public static String S_FULLAUTO_RMB = ChatColor.DARK_GRAY + "[Sneak]+[RMB] to use Automatic-fire"; // add
+	public static String S_RELOAD_LMB = ChatColor.DARK_GRAY + "[LMB] to reload"; // add
+	public static String S_RELOAD_RMB = ChatColor.DARK_GRAY + "[RMB] to reload";
+	public static String S_RELOAD_F = ChatColor.DARK_GRAY + "[SwapHand] to reload"; // modify
+//	public static String S_RMB_R2 = ChatColor.DARK_GRAY + "[RMB] to reload"; // delete
 
-	public static String S_RMB_A1 = ChatColor.DARK_GRAY + "[RMB] to open ironsights";
-	public static String S_RMB_A2 = ChatColor.DARK_GRAY + "[Sneak] to open ironsights";
+	public static String S_Aiming_LMB = ChatColor.DARK_GRAY + "[LMB] to open IronSights"; //  add
+	public static String S_Aiming_RMB = ChatColor.DARK_GRAY + "[RMB] to open IronSights"; // modify
+	public static String S_Aiming_Shift = ChatColor.DARK_GRAY + "[Sneak] to open IronSights"; // modify
 
 	public static String S_HELMET_RMB = ChatColor.DARK_GRAY + "[RMB] to equip helmet.";
 
@@ -238,7 +237,9 @@ public class QAMain extends JavaPlugin {
 	public static String S_GRENADE_PALREADYPULLPIN = "You already pulled the pin!";
 
 	public static boolean enableCrafting = true;
+	public static boolean isEnableCraftingIgnoreBackpack = true;
 	public static boolean enableShop = true;
+	public static boolean enableShopIgnoreBackpack = true;
 
 	public static double smokeSpacing = 0.5;
 
@@ -631,13 +632,17 @@ public class QAMain extends JavaPlugin {
 		S_KICKED_FOR_RESOURCEPACK = ChatColor.translateAlternateColorCodes('&',
 				(String) m.a("Kick_message_if_player_denied_request", S_KICKED_FOR_RESOURCEPACK));
 
-		S_LMB_SINGLE = (String) m.a("Lore-LMB-Single", S_LMB_SINGLE);
-		S_LMB_FULLAUTO = (String) m.a("Lore-LMB-FullAuto", S_LMB_FULLAUTO);
-		S_RMB_RELOAD = (String) m.a("Lore-RMB-Reload", S_RMB_RELOAD);
-		S_RMB_A1 = (String) m.a("Lore-Ironsights-RMB", S_RMB_A1);
-		S_RMB_A2 = (String) m.a("Lore-Ironsights-Sneak", S_RMB_A2);
-		S_RMB_R1 = (String) m.a("Lore-Reload-Dropitem", S_RMB_R1);
-		S_RMB_R2 = (String) m.a("Lore-Reload-RMB", S_RMB_R2);
+		S_SINGLE_LMB = (String) m.a("Lore-LMB-Single", S_SINGLE_LMB);
+		S_SINGLE_RMB = (String) m.a("Lore-RMB-Single", S_SINGLE_RMB); // add
+		S_FULLAUTO_LMB = (String) m.a("Lore-LMB-FullAuto", S_FULLAUTO_LMB);
+		S_FULLAUTO_RMB = (String) m.a("Lore-RMB-FullAuto", S_FULLAUTO_RMB); // add
+		S_RELOAD_LMB = (String) m.a("Lore-LMB-Reload", S_RELOAD_LMB); // add
+		S_RELOAD_RMB = (String) m.a("Lore-RMB-Reload", S_RELOAD_RMB);
+		S_Aiming_LMB = (String) m.a("Lore-LMB-IronSights", S_Aiming_RMB); // modify
+		S_Aiming_RMB = (String) m.a("Lore-RMB-IronSights", S_Aiming_RMB); // modify
+		S_Aiming_Shift = (String) m.a("Lore-Sneak-IronSights", S_Aiming_Shift); // modify
+		S_RELOAD_F = (String) m.a("Lore-SwapHand-Reload", S_RELOAD_F); // modify
+//		S_RMB_R2 = (String) m.a("Lore-Reload-RMB", S_RMB_R2);
 		S_HELMET_RMB = ChatColor.translateAlternateColorCodes('&', (String) m.a("Lore-Helmet-RMB", S_HELMET_RMB));
 
 		S_BUYCONFIRM = ChatColor.translateAlternateColorCodes('&', (String) m.a("Shop_Confirm", S_BUYCONFIRM));
@@ -741,7 +746,9 @@ public class QAMain extends JavaPlugin {
 		secondaryWeaponLimit = (int) a("weaponlimiter_secondaries", secondaryWeaponLimit);
 
 		enableCrafting = (boolean) a("enableCrafting", true);
+		isEnableCraftingIgnoreBackpack = (boolean) a("enableCraftingIgnoreBackpack", true);
 		enableShop = (boolean) a("enableShop", true);
+		enableShopIgnoreBackpack = (boolean) a("enableShopIgnoreBackpack", true);
 
 		AUTOUPDATE = (boolean) a("AUTO-UPDATE", true);
 		SWAP_RMB_WITH_LMB = !(boolean) a("Swap-Reload-and-Shooting-Controls", false);

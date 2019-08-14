@@ -14,9 +14,9 @@ import me.zombie_striker.qg.guns.utils.GunRefillerRunnable;
 import me.zombie_striker.qg.guns.utils.GunUtil;
 import me.zombie_striker.qg.guns.utils.WeaponSounds;
 import me.zombie_striker.qg.guns.utils.WeaponType;
-import me.zombie_striker.qg.handlers.IronsightsHandler;
 import me.zombie_striker.qg.handlers.Update19OffhandChecker;
 import me.zombie_striker.qg.handlers.chargers.ChargingHandler;
+import me.zombie_striker.qg.handlers.chargers.ChargingManager;
 import me.zombie_striker.qg.handlers.reloaders.ReloadingHandler;
 
 import java.util.ArrayList;
@@ -31,7 +31,6 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.scheduler.BukkitRunnable;
 
 public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 
@@ -427,20 +426,21 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 		this.unlimitedAmmo = b;
 	}
 
-	public boolean shoot(Player player) {
-		return Gun.USE_THIS_INSTEAD_OF_INDEVIDUAL_SHOOT_METHODS(this, player, getSway());
+	public boolean shoot(Player player, boolean onLMB) {
+		return Gun.USE_THIS_INSTEAD_OF_INDIVIDUAL_SHOOT_METHODS(this, player, onLMB, getSway());
 	}
 
 	@SuppressWarnings("deprecation")
-	public static boolean USE_THIS_INSTEAD_OF_INDEVIDUAL_SHOOT_METHODS(Gun g, Player player, double acc) {
+	public static boolean USE_THIS_INSTEAD_OF_INDIVIDUAL_SHOOT_METHODS(Gun g, Player player, boolean onLMB, double acc) {
 		boolean offhand = QualityArmory.isIronSights(player.getInventory().getItemInHand());
 		if ((!offhand && getAmount(player.getInventory().getItemInHand()) > 0)
 				|| (offhand && Update19OffhandChecker.hasAmountOFfhandGreaterthan(player, 0))) {
 			QAWeaponPrepareShootEvent shootevent = new QAWeaponPrepareShootEvent(player, g);
 			Bukkit.getPluginManager().callEvent(shootevent);
-			if (shootevent.isCanceled())
+			if (shootevent.isCanceled()) {
 				return false;
-			GunUtil.basicShoot(offhand, g, player, acc);
+			}
+			GunUtil.basicShoot(offhand, g, player, onLMB, acc);
 			return true;
 		}
 		return false;
@@ -636,16 +636,24 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 
 	@Override
 	public void onRMB(PlayerInteractEvent e, ItemStack usedItem) {
-		onClick(e, usedItem, (QAMain.reloadOnFOnly || !QAMain.SWAP_RMB_WITH_LMB));
+		// right click is default to reload. only IronSightsON_RIGHT_CLICK switch off can fire.
+		// SWAP_RMB_WITH_LMB default is true? Contrary to Swap-Reload-and-Shooting-Controls?
+		// The SWAP_RMB_WITH_LMB is true mean LMB-Fire RMB-Reload.
+		boolean flag = (QAMain.reloadOnFOnly || !QAMain.SWAP_RMB_WITH_LMB) && !QAMain.enableIronSightsON_RIGHT_CLICK;
+		QAMain.DEBUG("Gun's RMB click called, fire_flag is " + flag + " Swap R2L " + !QAMain.SWAP_RMB_WITH_LMB);
+		onClick(e, usedItem, !QAMain.SWAP_RMB_WITH_LMB, flag);
 	}
 
 	@Override
 	public void onLMB(PlayerInteractEvent e, ItemStack usedItem) {
-		onClick(e, usedItem, QAMain.SWAP_RMB_WITH_LMB);
+		// The SWAP_RMB_WITH_LMB is true mean LMB click.
+		boolean flag = QAMain.SWAP_RMB_WITH_LMB;
+		QAMain.DEBUG("Gun's LMB click called, fire_flag is " + flag + " Swap R2L " + !QAMain.SWAP_RMB_WITH_LMB);
+		onClick(e, usedItem, QAMain.SWAP_RMB_WITH_LMB, flag);
 	}
 
 	@SuppressWarnings("deprecation")
-	public void onClick(final PlayerInteractEvent e, ItemStack usedItem, boolean fire) {
+	public void onClick(final PlayerInteractEvent e, ItemStack usedItem, boolean onLMB, boolean fire) {
 		QAMain.DEBUG("CLICKED GUN " + getName());
 
 		if (!e.getPlayer().hasPermission("qualityarmory.usegun")) {
@@ -681,7 +689,8 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 		 * Gun g = QualityArmory.getGun(usedItem); if (g == null) g =
 		 * attachment.getBaseGun();
 		 */
-		QAMain.DEBUG("Made it to gun/attachment check : " + getName());try {
+		QAMain.DEBUG("Made it to gun/attachment check : " + getName());
+		try {
 			if (QAMain.enableInteractChests) {
 				if (e.getClickedBlock() != null
 						&& (e.getClickedBlock().getType() == Material.CHEST
@@ -705,7 +714,7 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 					}
 				} catch (Error | Exception e4) {
 				}
-
+				// check reloading
 				if (e.getPlayer().getItemInHand().getItemMeta().getDisplayName().contains(QAMain.S_RELOADING_MESSAGE)) {
 					if (!GunRefillerRunnable.hasItemReloaded(usedItem)) {
 						ItemStack tempused = usedItem.clone();
@@ -721,61 +730,77 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 						}
 					}
 					QAMain.DEBUG("Reloading message 1!");
+					// the gun is reloading, not ready to FIRE.
 					return;
 				}
-
+				// Fast gunman's Machine gun, check the Ammo.
 				if (isAutomatic() && GunUtil.rapidfireshooters.containsKey(e.getPlayer().getUniqueId())) {
+					QAMain.DEBUG("Fast gunman holding a machine gun, check the Ammo.");
 					GunUtil.rapidfireshooters.remove(e.getPlayer().getUniqueId()).cancel();
-					if (QAMain.enableReloadWhenOutOfAmmo)
+					if (QAMain.enableReloadWhenOutOfAmmo) {
+						// Check the Ammo
 						if (getAmount(usedItem) <= 0) {
+							// no Ammo in this gun
 							if (offhand) {
+								// take off the gun ready to reload the ammo.
 								e.getPlayer().setItemInHand(e.getPlayer().getInventory().getItemInOffHand());
 								e.getPlayer().getInventory().setItemInOffHand(null);
 								usedItem = e.getPlayer().getItemInHand();
 								offhand = false;
 							}
 							if (QAMain.allowGunReload) {
+								// Auto reloading
 								QualityArmory.sendHotbarGunAmmoCount(e.getPlayer(), this, usedItem,
 										((getMaxBullets() != getAmount(usedItem))
 												&& GunUtil.hasAmmo(e.getPlayer(), this)));
 								if (playerHasAmmo(e.getPlayer())) {
-									QAMain.DEBUG("Trying to reload WITH AUTORELOAD. player has ammo");
+									QAMain.DEBUG("Trying to reload Machine gun WITH AUTORELOAD. player has ammo, calling reload mode.");
 									reload(e.getPlayer());
-
 								} else {
 									if (QAMain.showOutOfAmmoOnItem) {
 										// ItemFact.addOutOfAmmoToDisplayname(g, e.getPlayer(), usedItem, slot);
 										QAMain.DEBUG("UNSUPPORTED: Out of ammo displayed on item");
 									}
-									QAMain.DEBUG("Trying to reload WITH AUTORELOAD. player DOES NOT have ammo");
+									QAMain.DEBUG("Trying to reload Machine gun WITH AUTORELOAD. player DOES NOT have ammo");
 								}
 							}
+							// the gun is empty.
 							return;
 						}
+						// machine gun has Ammo
+						QAMain.DEBUG("Fastman's Machine gun has enough ammo.");
+					}
 				} else {
-					if (QAMain.enableReloadWhenOutOfAmmo)
+					// Normal gunman's normal gun, check the Ammo.
+					if (QAMain.enableReloadWhenOutOfAmmo) {
 						if (getAmount(usedItem) <= 0) {
+							// no Ammo in this rifle
 							if (offhand) {
+								// take off the gun ready to reload the ammo.
 								e.getPlayer().setItemInHand(e.getPlayer().getInventory().getItemInOffHand());
 								e.getPlayer().getInventory().setItemInOffHand(null);
 								usedItem = e.getPlayer().getItemInHand();
 								offhand = false;
 							}
 							if (QAMain.allowGunReload) {
+								// Auto reloading
 								QualityArmory.sendHotbarGunAmmoCount(e.getPlayer(), this, usedItem,
 										((getMaxBullets() != getAmount(usedItem))
 												&& GunUtil.hasAmmo(e.getPlayer(), this)));
 								if (playerHasAmmo(e.getPlayer())) {
-									QAMain.DEBUG("Trying to reload WITH AUTORELOAD. player has ammo");
+									QAMain.DEBUG("Trying to reload WITH AUTORELOAD. player has ammo, calling reload mode.");
 									reload(e.getPlayer());
-
 								} else {
 									QAMain.DEBUG("Trying to reload WITH AUTORELOAD. player DOES NOT have ammo");
 								}
 							}
+							// The gun is empty.
 							return;
 						}
-					shoot(e.getPlayer());
+						// The gun has Ammo.
+					}
+					QAMain.DEBUG("Normalman's gun has enough ammo and calling shoot.");
+					shoot(e.getPlayer(), onLMB);
 					if (QAMain.enableDurability) {
 						if (QualityArmory.isIronSights(e.getPlayer().getItemInHand())) {
 							//Update19OffhandChecker.setOffhand(e.getPlayer(), OLD_ItemFact.damage(this, usedItem));
@@ -800,105 +825,11 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 
 		} else {
 			QAMain.DEBUG("Non-Fire mode activated");
-
-			if (QAMain.enableIronSightsON_RIGHT_CLICK) {
-				if (!Update19OffhandChecker.supportOffhand(e.getPlayer())) {
-					QAMain.enableIronSightsON_RIGHT_CLICK = false;
-					QAMain.DEBUG("Offhand checker returned false for the player. Disabling ironsights");
-					return;
-				}
-				// Rest should be okay
-				if (hasIronSights()) {
-					try {
-
-						if (e.getPlayer().getItemInHand().getItemMeta().getDisplayName()
-								.contains(QAMain.S_RELOADING_MESSAGE)) {
-							if (!GunRefillerRunnable.hasItemReloaded(usedItem)) {
-								ItemStack tempused = usedItem.clone();
-								ItemMeta im = tempused.getItemMeta();
-								im.setDisplayName(getDisplayName());
-								tempused.setItemMeta(im);
-								if (offhand) {
-									Update19OffhandChecker.setOffhand(e.getPlayer(), tempused);
-									QAMain.DEBUG(
-											"odd. Reloading broke. Removing reloading message from offhand - reload");
-								} else {
-									e.getPlayer().setItemInHand(tempused);
-									QAMain.DEBUG(
-											"odd. Reloading broke. Removing reloading message from mainhand - reload");
-								}
-							}
-							QAMain.DEBUG("Reloading message 1!");
-							return;
-						}
-						// ItemStack offhandItem =
-						// Update19OffhandChecker.getItemStackOFfhand(e.getPlayer());
-						if (offhandItem != null) {
-							e.getPlayer().getInventory().addItem(offhandItem);
-							Update19OffhandChecker.setOffhand(e.getPlayer(), null);
-						}
-
-						ItemStack tempremove = null;
-						if (e.getPlayer().getInventory().getItemInOffHand() != null)
-							tempremove = e.getPlayer().getInventory().getItemInOffHand();
-						e.getPlayer().getInventory().setItemInOffHand(e.getPlayer().getInventory().getItemInMainHand());
-						if (tempremove != null) {
-							e.getPlayer().getInventory().setItemInMainHand(QualityArmory.getIronSightsItemStack());
-
-							QAMain.toggleNightvision(e.getPlayer(), this, true);
-							QAMain.DEBUG("Toggle Night vision on right click");
-							final Gun checkTo = QualityArmory
-									.getGun(Update19OffhandChecker.getItemStackOFfhand(e.getPlayer()));
-							new BukkitRunnable() {
-
-								@Override
-								public void run() {
-									if (!e.getPlayer().isOnline()) {
-										QAMain.DEBUG("Canceling since player is offline");
-										cancel();
-										return;
-									}
-									Gun g = null;
-									if (!QualityArmory.isIronSights(e.getPlayer().getItemInHand())
-											|| (g = QualityArmory.getGun(
-													Update19OffhandChecker.getItemStackOFfhand(e.getPlayer()))) == null
-											|| g != checkTo) {
-										QAMain.toggleNightvision(e.getPlayer(), checkTo, false);
-										QAMain.DEBUG(
-												"Removing nightvision since either the main hand is not ironsights/ offhand gun is null. : "
-														+ (!QualityArmory.isIronSights(e.getPlayer().getItemInHand()))
-														+ " "
-														+ ((g = QualityArmory.getGun(Update19OffhandChecker
-																.getItemStackOFfhand(e.getPlayer()))) == null)
-														+ " " + (g != checkTo));
-										cancel();
-										return;
-									}
-
-								}
-							}.runTaskTimer(QAMain.getInstance(), 20, 20);
-						}
-
-						QualityArmory.sendHotbarGunAmmoCount(e.getPlayer(), this, usedItem, false);
-					} catch (Error e2) {
-						Bukkit.broadcastMessage(QAMain.prefix
-								+ "Ironsights not compatible for versions lower than 1.8. The server owner should set EnableIronSights to false in the plugin's config");
-					}
-				} else {
-					/*
-					 * if (!Main.enableDurability || ItemFact.getDamage(usedItem) > 0) { // if
-					 * (allowGunsInRegion(e.getPlayer().getLocation())) { g.shoot(e.getPlayer(),
-					 * attachment); if (Main.enableDurability) if (offhand) {
-					 * e.getPlayer().getInventory().setItemInOffHand(ItemFact.damage(g, usedItem));
-					 * } else { e.getPlayer().setItemInHand(ItemFact.damage(g, usedItem)); } // }
-					 * QualityArmory.sendHotbarGunAmmoCount(e.getPlayer(), g, attachment, usedItem,
-					 * false); // TODO: Verify that the gun is in the main // hand. // Shouldn't
-					 * work for offhand, but it should // still // be checked later. }
-					 */
-				}
-
-				QAMain.DEBUG("Ironsights on RMB finished");
-			} else {
+			// just reloading
+			// Check if the gun is reloading
+			if (usedItem.hasItemMeta()
+					&& usedItem.getItemMeta().hasDisplayName()
+					&& !usedItem.getItemMeta().getDisplayName().contains(QAMain.S_RELOADING_MESSAGE)) {
 				QAMain.DEBUG("Reload called");
 				if (e.getClickedBlock() != null && QAMain.interactableBlocks.contains(e.getClickedBlock().getType())) {
 					e.setCancelled(false);
@@ -917,6 +848,122 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 				}
 			}
 
+
+//			if (QAMain.enableIronSightsON_RIGHT_CLICK) {
+//				if (!Update19OffhandChecker.supportOffhand(e.getPlayer())) {
+//					QAMain.enableIronSightsON_RIGHT_CLICK = false;
+//					QAMain.DEBUG("Offhand checker returned false for the player. Disabling ironsights");
+//					return;
+//				}
+//				// Rest should be okay
+//				if (hasIronSights()) {
+//					try {
+//
+//						if (e.getPlayer().getItemInHand().getItemMeta().getDisplayName()
+//								.contains(QAMain.S_RELOADING_MESSAGE)) {
+//							if (!GunRefillerRunnable.hasItemReloaded(usedItem)) {
+//								ItemStack tempused = usedItem.clone();
+//								ItemMeta im = tempused.getItemMeta();
+//								im.setDisplayName(getDisplayName());
+//								tempused.setItemMeta(im);
+//								if (offhand) {
+//									Update19OffhandChecker.setOffhand(e.getPlayer(), tempused);
+//									QAMain.DEBUG(
+//											"odd. Reloading broke. Removing reloading message from offhand - reload");
+//								} else {
+//									e.getPlayer().setItemInHand(tempused);
+//									QAMain.DEBUG(
+//											"odd. Reloading broke. Removing reloading message from mainhand - reload");
+//								}
+//							}
+//							QAMain.DEBUG("Reloading message 1!");
+//							return;
+//						}
+//						// ItemStack offhandItem =
+//						// Update19OffhandChecker.getItemStackOFfhand(e.getPlayer());
+//						if (offhandItem != null) {
+//							e.getPlayer().getInventory().addItem(offhandItem);
+//							Update19OffhandChecker.setOffhand(e.getPlayer(), null);
+//						}
+//
+//						ItemStack tempremove = null;
+//						if (e.getPlayer().getInventory().getItemInOffHand() != null)
+//							tempremove = e.getPlayer().getInventory().getItemInOffHand();
+//						e.getPlayer().getInventory().setItemInOffHand(e.getPlayer().getInventory().getItemInMainHand());
+//						if (tempremove != null) {
+//							e.getPlayer().getInventory().setItemInMainHand(QualityArmory.getIronSightsItemStack());
+//
+//							QAMain.toggleNightvision(e.getPlayer(), this, true);
+//							QAMain.DEBUG("Toggle Night vision on right click");
+//							final Gun checkTo = QualityArmory
+//									.getGun(Update19OffhandChecker.getItemStackOFfhand(e.getPlayer()));
+//							new BukkitRunnable() {
+//
+//								@Override
+//								public void run() {
+//									if (!e.getPlayer().isOnline()) {
+//										QAMain.DEBUG("Canceling since player is offline");
+//										cancel();
+//										return;
+//									}
+//									Gun g = null;
+//									if (!QualityArmory.isIronSights(e.getPlayer().getItemInHand())
+//											|| (g = QualityArmory.getGun(
+//													Update19OffhandChecker.getItemStackOFfhand(e.getPlayer()))) == null
+//											|| g != checkTo) {
+//										QAMain.toggleNightvision(e.getPlayer(), checkTo, false);
+//										QAMain.DEBUG(
+//												"Removing nightvision since either the main hand is not ironsights/ offhand gun is null. : "
+//														+ (!QualityArmory.isIronSights(e.getPlayer().getItemInHand()))
+//														+ " "
+//														+ ((g = QualityArmory.getGun(Update19OffhandChecker
+//																.getItemStackOFfhand(e.getPlayer()))) == null)
+//														+ " " + (g != checkTo));
+//										cancel();
+//										return;
+//									}
+//
+//								}
+//							}.runTaskTimer(QAMain.getInstance(), 20, 20);
+//						}
+//
+//						QualityArmory.sendHotbarGunAmmoCount(e.getPlayer(), this, usedItem, false);
+//					} catch (Error e2) {
+//						Bukkit.broadcastMessage(QAMain.prefix
+//								+ "Ironsights not compatible for versions lower than 1.8. The server owner should set EnableIronSights to false in the plugin's config");
+//					}
+//				} else {
+//					/*
+//					 * if (!Main.enableDurability || ItemFact.getDamage(usedItem) > 0) { // if
+//					 * (allowGunsInRegion(e.getPlayer().getLocation())) { g.shoot(e.getPlayer(),
+//					 * attachment); if (Main.enableDurability) if (offhand) {
+//					 * e.getPlayer().getInventory().setItemInOffHand(ItemFact.damage(g, usedItem));
+//					 * } else { e.getPlayer().setItemInHand(ItemFact.damage(g, usedItem)); } // }
+//					 * QualityArmory.sendHotbarGunAmmoCount(e.getPlayer(), g, attachment, usedItem,
+//					 * false); // TODO: Verify that the gun is in the main // hand. // Shouldn't
+//					 * work for offhand, but it should // still // be checked later. }
+//					 */
+//				}
+//
+//				QAMain.DEBUG("Ironsights on RMB finished");
+//			} else {
+//				QAMain.DEBUG("Reload called");
+//				if (e.getClickedBlock() != null && QAMain.interactableBlocks.contains(e.getClickedBlock().getType())) {
+//					e.setCancelled(false);
+//				} else {
+//					if (QAMain.allowGunReload) {
+//						QualityArmory.sendHotbarGunAmmoCount(e.getPlayer(), this, usedItem,
+//								((getMaxBullets() != getAmount(usedItem))
+//										&& GunUtil.hasAmmo(e.getPlayer(), this)));
+//						if (playerHasAmmo(e.getPlayer())) {
+//							QAMain.DEBUG("Trying to reload. player has ammo");
+//							reload(e.getPlayer());
+//						} else {
+//							QAMain.DEBUG("Trying to reload. player DOES NOT have ammo");
+//						}
+//					}
+//				}
+//			}
 		}
 		QAMain.DEBUG("Reached end for gun-check!");
 	}
@@ -941,12 +988,19 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 		return 0;
 	}
 
-
-
 	public static List<String> getGunLore(Gun g, ItemStack current, int amount) {
 		List<String> lore = new ArrayList<>();
-		if (g.getCustomLore() != null)
+		if (g.getCustomLore() != null) {
 			lore.addAll(g.getCustomLore());
+		}
+		// Charging
+		ChargingHandler chargingHandler = g.getChargingVal();
+		if (null != g.getChargingVal()) {
+			String chargingLore = ChargingManager.getChargingLore(chargingHandler.getName(), "none");
+			if (!"none".equals(chargingLore)) {
+				lore.add(chargingLore);
+			}
+		}
 		OLD_ItemFact.addVariantData(null, lore, g);
 		lore.add(QAMain.S_ITEM_BULLETS + ": " + (amount) + "/" + (g.getMaxBullets()));
 		if (QAMain.ENABLE_LORE_INFO) {
@@ -973,16 +1027,60 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 				lore = setDamage(g, lore, getDamage(current));
 			}
 		if (QAMain.ENABLE_LORE_HELP) {
-			if (g.isAutomatic()) {
-				lore.add(QAMain.S_LMB_SINGLE);
-				lore.add(QAMain.S_LMB_FULLAUTO);
-				lore.add(QAMain.S_RMB_RELOAD);
+			// Swapping RMB to LMB
+			if (QAMain.SWAP_RMB_WITH_LMB) {
+				// LMB to shoot, RMB to special
+				lore.add(QAMain.S_SINGLE_LMB);
+				// AutoFire mode
+				if (g.isAutomatic()) {
+					lore.add(QAMain.S_FULLAUTO_LMB);
+				}
+				// Aiming
+				if (g.hasIronSights()) {
+					if (QAMain.enableIronSightsON_RIGHT_CLICK) {
+						lore.add(QAMain.S_Aiming_RMB);
+					} else {
+						lore.add(QAMain.S_Aiming_Shift);
+					}
+				}
+				// reload
+				if (QAMain.reloadOnFOnly) {
+					lore.add(QAMain.S_RELOAD_F);
+				} else {
+					lore.add(QAMain.S_RELOAD_RMB);
+				}
 			} else {
-				lore.add(QAMain.S_LMB_SINGLE);
-				lore.add(QAMain.enableIronSightsON_RIGHT_CLICK ? QAMain.S_RMB_R1 : QAMain.S_RMB_R2);
-				if (g.hasIronSights())
-					lore.add(QAMain.enableIronSightsON_RIGHT_CLICK ? QAMain.S_RMB_A1 : QAMain.S_RMB_A2);
+				// RMB to shoot, LMB to special
+				lore.add(QAMain.S_SINGLE_RMB);
+				// AutoFire mode
+				if (g.isAutomatic()) {
+					lore.add(QAMain.S_FULLAUTO_RMB);
+				}
+				// Aiming
+				if (g.hasIronSights()) {
+					if (QAMain.enableIronSightsON_RIGHT_CLICK) {
+						lore.add(QAMain.S_Aiming_LMB);
+					} else {
+						lore.add(QAMain.S_Aiming_Shift);
+					}
+				}
+				// reload
+				if (QAMain.reloadOnFOnly) {
+					lore.add(QAMain.S_RELOAD_F);
+				} else {
+					lore.add(QAMain.S_RELOAD_LMB);
+				}
 			}
+//			if (g.isAutomatic()) {
+//				lore.add(QAMain.S_SINGLE_LMB);
+//				lore.add(QAMain.S_FULLAUTO_LMB);
+//				lore.add(QAMain.S_RELOAD_RMB);
+//			} else {
+//				lore.add(QAMain.S_SINGLE_LMB);
+//				lore.add(QAMain.enableIronSightsON_RIGHT_CLICK ? QAMain.S_RELOAD_F : QAMain.S_RMB_R2);
+//				if (g.hasIronSights())
+//					lore.add(QAMain.enableIronSightsON_RIGHT_CLICK ? QAMain.S_Aiming_RMB : QAMain.S_Aiming_Shift);
+//			}
 		}
 
 		if (current != null && current.hasItemMeta() && current.getItemMeta().hasLore())

@@ -20,7 +20,12 @@ public class BreakactionCharger implements ChargingHandler {
 	public BreakactionCharger() {
 		ChargingManager.add(this);
 	}
-	
+
+	@Override
+	public String getName() {
+		return ChargingManager.BREAKACTION;
+	}
+
 	@Override
 	public boolean isCharging(Player player) {
 		return timeC.contains(player.getUniqueId());
@@ -28,7 +33,7 @@ public class BreakactionCharger implements ChargingHandler {
 
 
 	@Override
-	public boolean shoot(Gun g, final Player player, ItemStack stack) {
+	public boolean isReadyToFire(Gun g, final Player player, ItemStack stack) {
 		timeC.add(player.getUniqueId());
 		new BukkitRunnable() {
 			@Override
@@ -53,10 +58,14 @@ public class BreakactionCharger implements ChargingHandler {
 		return true;
 	}
 
+	@Override
+	public boolean useChargingShoot() {
+		return false;
+	}
 
 	@Override
-	public String getName() {
-		return ChargingManager.BREAKACTION;
+	public void shoot(Gun g, Player player, ItemStack stack) {
+
 	}
 
 }

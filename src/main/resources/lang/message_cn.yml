@@ -15,18 +15,31 @@ Lore_Price: '&6价格: '
 Lore_DamagePerSecond: '&2每秒伤害'
 Lore_Crafts: 制造数量
 Lore_Returns: 获得数量
+Lore_Charger:
+  BoltAction: 栓动步枪
+  Revolver: 左轮
+  BurstFire: 爆发模式
+  DelayedBurstFire: 无延迟爆发模式
+  PumpAction: 泵动式
+  BreakAction: 破坏模式
+  PushBackCharger: 强力冲击波
+  RequireAimCharger: 瞄准开火
+  PartyCharger: Party Time!
 Reloading_Message: '[装填中...]'
 State_AmmoCount: '[%total%]'
 State_OutOfAmmo: '[弹药已耗尽]'
 HotbarMessage: '%name% = %amount%/%max% %state%'
 Kick_message_if_player_denied_request: '&c 你被踢出服务器，因为你没有接受安装材质包'
-Lore-LMB-Single: §8[左键] 点射
-Lore-LMB-FullAuto: §8[Shift]+[左键] 连续射击
+Lore-LMB-Single: §8[左键] 单发
+Lore-RMB-Single: §8[右键] 单发
+Lore-LMB-FullAuto: §8[Shift]+[左键] 全自动
+Lore-RMB-FullAuto: §8[Shift]+[右键] 全自动
+Lore-LMB-Reload: §8[左键] 装填弹药
 Lore-RMB-Reload: §8[右键] 装填弹药
-Lore-Ironsights-RMB: §8[右键] 瞄准
-Lore-Ironsights-Sneak: §8[Shift] 瞄准
-Lore-Reload-Dropitem: §8[F] 换弹
-Lore-Reload-RMB: §8[右键] 换弹
+Lore-LMB-IronSights: §8[左键] 瞄准
+Lore-RMB-IronSights: §8[右键] 瞄准
+Lore-Sneak-IronSights: §8[Shift] 瞄准
+Lore-SwapHand-Reload: §8[F] 装填弹药
 Lore-Helmet-RMB: §8[右键] 装备头盔
 Shop_Confirm: '&a花费了 $%cost% 购买了 %item% ！'
 Resourcepack_InCaseOfCrash: 如果自动下载材质包时造成客户端崩溃,请拒绝材质包下载请求,并输入指令/qa getResourcepack来下载材质包.

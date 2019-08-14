@@ -16,6 +16,16 @@ Lore_Price: '&6Price: '
 Lore_DamagePerSecond: '&2DPS'
 Lore_Crafts: Crafts
 Lore_Returns: Returns
+Lore_Charger:
+  BoltAction: Bolt-Action Rifle
+  Revolver: Revolver
+  BurstFire: Burst-Mode
+  DelayedBurstFire: Delayed Burst-Mode
+  PumpAction: Pump-Action Shutgun
+  BreakAction: Break-Action
+  PushBackCharger: Powerful Shock Wave
+  RequireAimCharger: Need Aiming to Fire
+  PartyCharger: Party Time!
 Reloading_Message: '[Reloading...]'
 State_AmmoCount: '[%total%]'
 State_OutOfAmmo: '[Out of Ammo]'
@@ -24,12 +34,15 @@ Kick_message_if_player_denied_request: "&c You have been kicked because you did 
   \ accept the resourcepack. \n&f If you want to rejoin the server, edit the server\
   \ entry and set \"Resourcepack Prompts\" to \"Accept\" or \"Prompt\"'"
 Lore-LMB-Single: §8[LMB] to use Single-fire mode
+Lore-RMB-Single: §8[RMB] to use Single-fire mode
 Lore-LMB-FullAuto: §8[Sneak]+[LMB] to use Automatic-fire
+Lore-RMB-FullAuto: §8[Sneak]+[RMB] to use Automatic-fire
+Lore-LMB-Reload: §8[LMB] to reload
 Lore-RMB-Reload: §8[RMB] to reload
-Lore-Ironsights-RMB: §8[RMB] to open ironsights
-Lore-Ironsights-Sneak: §8[Sneak] to open ironsights
-Lore-Reload-Dropitem: §8[DropItem] to reload
-Lore-Reload-RMB: §8[RMB] to reload
+Lore-LMB-IronSights: §8[LMB] to open IronSights
+Lore-RMB-IronSights: §8[RMB] to open IronSights
+Lore-Sneak-IronSights: §8[Sneak] to open ironsights
+Lore-SwapHand-Reload: §8[SwapHand] to reload
 Lore-Helmet-RMB: §8[RMB] to equip helmet.
 Shop_Confirm: '&aYour have purchased %item% for $%cost%!'
 Resourcepack_InCaseOfCrash: In case the resourcepack crashes your client, reject the

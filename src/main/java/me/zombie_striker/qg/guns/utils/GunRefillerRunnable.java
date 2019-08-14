@@ -3,6 +3,7 @@ package me.zombie_striker.qg.guns.utils;
 import java.util.ArrayList;
 import java.util.List;
 
+import me.zombie_striker.qg.handlers.IronsightsHandler;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -84,14 +85,24 @@ public class GunRefillerRunnable {
 				}
 				QAMain.DEBUG("Reloading to slot " + newSlot + "(org=" + slot + ")");
 				if (newSlot > -2) {
-					if (!different && player.isSneaking()&& g.hasIronSights() && !QAMain.enableIronSightsON_RIGHT_CLICK) {
-						player.getInventory().setItem(newSlot, OLD_ItemFact.getIronSights());
-						Update19OffhandChecker.setOffhand(player, modifiedOriginalItem);
-						QAMain.toggleNightvision(player, g, true);
-					} else {
-						player.getInventory().setItem(newSlot, modifiedOriginalItem);
-					}
+					player.getInventory().setItem(newSlot, modifiedOriginalItem);
 					QualityArmory.sendHotbarGunAmmoCount(player, g, modifiedOriginalItem, false);
+
+					if (!different && player.isSneaking() && g.hasIronSights() && !QAMain.enableIronSightsON_RIGHT_CLICK) {
+						// if gun has enableBetterModelScopes set false(default),
+						// they will not use IronSights in enableIronSightsON_RIGHT_CLICK is false
+						QAMain.DEBUG("Back to Aiming.");
+						IronsightsHandler.aim(player);
+					}
+
+//					if (!different && player.isSneaking() && g.hasIronSights() && !QAMain.enableIronSightsON_RIGHT_CLICK) {
+//						player.getInventory().setItem(newSlot, OLD_ItemFact.getIronSights());
+//						Update19OffhandChecker.setOffhand(player, modifiedOriginalItem);
+//						QAMain.toggleNightvision(player, g, true);
+//					} else {
+//						player.getInventory().setItem(newSlot, modifiedOriginalItem);
+//					}
+//					QualityArmory.sendHotbarGunAmmoCount(player, g, modifiedOriginalItem, false);
 				}
 
 				if (!QAMain.reloadingTasks.containsKey(player.getUniqueId())) {

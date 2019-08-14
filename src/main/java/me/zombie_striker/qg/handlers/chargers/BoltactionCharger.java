@@ -23,13 +23,18 @@ public class BoltactionCharger implements ChargingHandler {
 	}
 
 	@Override
+	public String getName() {
+		return ChargingManager.BOLT;
+	}
+
+	@Override
 	public boolean isCharging(Player player) {
 		return timeC.contains(player.getUniqueId());
 	}
 
 
 	@Override
-	public boolean shoot(Gun g, final Player player, ItemStack stack) {
+	public boolean isReadyToFire(Gun g, final Player player, ItemStack stack) {
 		timeR.add(player.getUniqueId());
 		new BukkitRunnable() {
 			@Override
@@ -68,8 +73,13 @@ public class BoltactionCharger implements ChargingHandler {
 	}
 
 	@Override
-	public String getName() {
-		return ChargingManager.BOLT;
+	public boolean useChargingShoot() {
+		return false;
+	}
+
+	@Override
+	public void shoot(Gun g, Player player, ItemStack stack) {
+
 	}
 
 }

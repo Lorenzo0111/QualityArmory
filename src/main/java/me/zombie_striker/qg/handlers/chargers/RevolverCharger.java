@@ -15,16 +15,23 @@ import me.zombie_striker.qg.guns.utils.WeaponSounds;
 public class RevolverCharger implements ChargingHandler {
 
 	List<UUID> timeC = new ArrayList<>();
-public RevolverCharger() {
-	ChargingManager.add(this);
-}
+
+	public RevolverCharger() {
+		ChargingManager.add(this);
+	}
+
+	@Override
+	public String getName() {
+		return ChargingManager.REVOLVER;
+	}
+
 	@Override
 	public boolean isCharging(Player player) {
 		return timeC.contains(player.getUniqueId());
 	}
 
 	@Override
-	public boolean shoot(Gun g, final Player player, ItemStack stack) {
+	public boolean isReadyToFire(Gun g, final Player player, ItemStack stack) {
 		timeC.add(player.getUniqueId());
 		new BukkitRunnable() {
 			
@@ -46,9 +53,14 @@ public RevolverCharger() {
 	}
 
 	@Override
-	public String getName() {
-
-		return ChargingManager.REVOLVER;
+	public boolean useChargingShoot() {
+		return false;
 	}
+
+	@Override
+	public void shoot(Gun g, Player player, ItemStack stack) {
+
+	}
+
 
 }

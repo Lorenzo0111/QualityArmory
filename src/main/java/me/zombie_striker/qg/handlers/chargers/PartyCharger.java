@@ -13,23 +13,33 @@ public class PartyCharger implements ChargingHandler {
 	}
 
 	@Override
+	public String getName() {
+		return ChargingManager.PARTY;
+	}
+
+	@Override
 	public boolean isCharging(Player player) {
 		return false;
 		// represents if the code is currently active.
 	}
 
+	@Override
+	public boolean isReadyToFire(Gun g, Player player, ItemStack stack) {
+		return true;
+	}
+
+	@Override
+	public boolean useChargingShoot() {
+		return true;
+	}
+
 	@SuppressWarnings("deprecation")
 	@Override
-	public boolean shoot(Gun g, final Player player, ItemStack stack) {
+	public void shoot(Gun g, final Player player, ItemStack stack) {
 		player.playEffect(player.getEyeLocation(), Effect.FIREWORK_SHOOT, 0);
-		return false;
 		// This return false represents if the code should use the default shooting
 		// system. If set to true, QA will not use the default shooting system.
 	}
 
-	@Override
-	public String getName() {
-		return "PartyCharger";
-	}
 
 }

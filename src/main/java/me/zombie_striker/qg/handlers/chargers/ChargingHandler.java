@@ -8,7 +8,12 @@ import me.zombie_striker.qg.guns.Gun;
 public interface ChargingHandler {
 
 	public boolean isCharging(Player player);
-	public boolean shoot(Gun g, Player player, ItemStack stack);
+
+	public boolean isReadyToFire(final Gun g, final Player player, ItemStack stack);
+
+	public boolean useChargingShoot();
+
+	public void shoot(final Gun g, final Player player, ItemStack stack);
 	
 	public String getName();
 }

@@ -129,7 +129,9 @@ enableExplosionDamageDrop: false
 
 # Enables the shop and crafting menu.
 enableCrafting: true
+enableCraftingIgnoreBackpack: true
 enableShop: true
+enableShopIgnoreBackpack: true
 
 # Determines if the plugin should auto-update. Disable this if you need a specific version of QA.
 AUTO-UPDATE: true

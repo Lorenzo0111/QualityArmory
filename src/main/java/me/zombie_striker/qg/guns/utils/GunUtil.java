@@ -10,6 +10,7 @@ import me.zombie_striker.qg.boundingbox.AbstractBoundingBox;
 import me.zombie_striker.qg.boundingbox.BoundingBoxManager;
 import me.zombie_striker.qg.guns.Gun;
 import me.zombie_striker.qg.handlers.*;
+import me.zombie_striker.qg.handlers.chargers.ChargingHandler;
 import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
@@ -39,7 +40,8 @@ public class GunUtil {
 
 	public static HashMap<UUID, BukkitTask> rapidfireshooters = new HashMap<>();
 
-	public static void shootHandler(Gun g, Player p) {
+
+	public static void shootHandler(Gun g, Player p, int bulletsPerShot) {
 		double sway = g.getSway() * AimManager.getSway(g, p.getUniqueId());
 		if (g.usesCustomProjctiles()) {
 			for (int i = 0; i < g.getBulletsPerShot(); i++) {
@@ -50,7 +52,7 @@ public class GunUtil {
 				g.getCustomProjectile().spawn(g, p.getEyeLocation(), p, two);
 			}
 		} else {
-			shootInstantVector(g, p, sway, g.getDamage(), g.getBulletsPerShot(), g.getMaxDistance());
+			shootInstantVector(g, p, sway, g.getDamage(), bulletsPerShot, g.getMaxDistance());
 		}
 	}
 
@@ -367,13 +369,14 @@ public class GunUtil {
 		}
 	}
 
-	public static void basicShoot(boolean offhand, Gun g, Player player, double acc) {
-		basicShoot(offhand, g, player, acc, 1);
+	public static void basicShoot(boolean offhand, Gun g, Player player, boolean onLMB, double acc) {
+		basicShoot(offhand, g, player, onLMB, acc, 1);
 	}
 
 	@SuppressWarnings("deprecation")
-	public static void basicShoot(boolean offhand, final Gun g, final Player player, final double acc, int times) {
-		long showdelay = ((int) (g.getDelayBetweenShotsInSeconds() * 1000));
+	public static void basicShoot(boolean offhand, final Gun g, final Player player, final boolean onLMB, final double acc, int times) {
+		// Let's shoot something
+		long showDelay = ((int) (g.getDelayBetweenShotsInSeconds() * 1000));
 		QAMain.DEBUG("About to shoot!");
 
 		if (g.getChargingVal() != null && (g.getChargingVal().isCharging(player)
@@ -381,7 +384,7 @@ public class GunUtil {
 			return;
 
 		if (g.getLastShotForGun().containsKey(player.getUniqueId())
-				&& (System.currentTimeMillis() - g.getLastShotForGun().get(player.getUniqueId()) <= showdelay)) {
+				&& (System.currentTimeMillis() - g.getLastShotForGun().get(player.getUniqueId()) <= showDelay)) {
 			QAMain.DEBUG("Shooting canceled due to last shot being too soon.");
 			return;
 		}
@@ -389,38 +392,101 @@ public class GunUtil {
 
 		final ItemStack temp = offhand ? Update19OffhandChecker.getItemStackOFfhand(player)
 				: player.getInventory().getItemInHand();
-		ItemMeta im = temp.getItemMeta();
 
 		if (rapidfireshooters.containsKey(player.getUniqueId())) {
 			QAMain.DEBUG("Shooting canceled due to rapid fire being enabled.");
 			return;
 		}
 
-		boolean regularshoot = true;
-		if (g.getChargingVal() != null && (!g.getChargingVal().isCharging(player)
-				&& (g.getReloadingingVal() == null || !g.getReloadingingVal().isReloading(player)))) {
-			regularshoot = g.getChargingVal().shoot(g, player, temp);
-			QAMain.DEBUG("Charging shoot debug: " + g.getName() + " = " + g.getChargingVal() == null ? "null"
-					: g.getChargingVal().getName());
-		}
-		if (regularshoot) {
-			GunUtil.shootHandler(g, player);
-			playShoot(g, player);
-			if (QAMain.enableRecoil)
-				addRecoil(player, g);
+//		boolean regularShoot = true;
+//		if (g.getChargingVal() != null && (!g.getChargingVal().isCharging(player)
+//				&& (g.getReloadingingVal() == null || !g.getReloadingingVal().isReloading(player)))) {
+//			// ChargingHandle shoot.
+//			regularShoot = g.getChargingVal().shoot(g, player, temp);
+//			QAMain.DEBUG("Charging shoot debug: " + g.getName() + " = " + g.getChargingVal() == null ? "null"
+//					: g.getChargingVal().getName());
+//		}
 
-		}
+		// ALL READY to shoot.
+		boolean autoFire = false;
 		if (g.isAutomatic()) {
+			// in here QAMain.reloadOnFOnly is always true.
+			// QAMain.enableIronSightsON_RIGHT_CLICK fire check in up step
+			// there use to determine the difference between Shift+LMB/RMB.
+			// QAMain.enableSwapSingleShotOnAim does not used.
+			// There are several situations in which you can shoot continuously:
+			// - enableSwapSingleShotOnAim is false. (default)
+			// - holding shift in sneaking.
+			// - LMB click.
+			// OR
+			// - enableSwapSingleShotOnAim is true.
+			// - don't holding shift.
+			// - LMB click.
+			// else ALL Single Fire.
+			autoFire  = (!QAMain.enableSwapSingleShotOnAim && player.isSneaking() && onLMB) ||
+					(QAMain.enableSwapSingleShotOnAim && !player.isSneaking() && onLMB);
+		}
+		boolean hasChargingMode = (null != g.getChargingVal() && (!g.getChargingVal().isCharging(player)
+				&& (null == g.getReloadingingVal() || !g.getReloadingingVal().isReloading(player))));
+		if (!autoFire) {
+			// Already check the Ammo at least ONE in up step.
+			// A single shoot.
+			if (hasChargingMode) {
+				// Boltaction
+				if (g.getChargingVal().isReadyToFire(g, player, temp)) {
+					if (g.getChargingVal().useChargingShoot()) {
+						// Burst shoot
+						g.getChargingVal().shoot(g, player, temp);
+					} else {
+						QAMain.DEBUG("A single shoot after charging " + g.getChargingVal().getName());
+						GunUtil.shootHandler(g, player, g.getBulletsPerShot());
+						playShoot(g, player);
+						if (QAMain.enableRecoil) {
+							addRecoil(player, g);
+						}
+						reduceOneAmmo(player, temp, offhand, g);
+					}
+				} else {
+					QAMain.DEBUG("Charging " + g.getChargingVal().getName() + " no ready to fire");
+				}
+			} else {
+				QAMain.DEBUG("A single shoot.");
+				GunUtil.shootHandler(g, player, g.getBulletsPerShot());
+				playShoot(g, player);
+				if (QAMain.enableRecoil) {
+					addRecoil(player, g);
+				}
+				reduceOneAmmo(player, temp, offhand, g);
+			}
+		} else if (autoFire) {
+			// Machine gun
+			long period = 10 / g.getFireRate();
+			if (hasChargingMode) {
+				// for burst fire
+				period *= g.getBulletsPerShot();
+			} else {
+				// fireRate minimum is 1.
+				// so Period maximum is 10 ticks.
+				// too fast for MK-19 Grenade launcher.
+				// - firerate: 1
+				// - delayForShoot: 9.0
+				// Maybe just delayForShoot is too big.
+				//TODO Add some delay to AutoFire here.
+			}
+			QAMain.DEBUG("Start Auto Machine");
 			rapidfireshooters.put(player.getUniqueId(), new BukkitRunnable() {
 				int slotUsed = player.getInventory().getHeldItemSlot();
 				boolean offhand = QualityArmory.isIronSights(player.getItemInHand());
 
 				@Override
 				public void run() {
+//					QAMain.DEBUG("====== Auto Fire Mission Start ======");
 					if (offhand) {
 						if (!QualityArmory.isIronSights(player.getItemInHand())) {
+							QAMain.DEBUG("Player disable the IronSight, stop auto shooting");
 							cancel();
 							rapidfireshooters.remove(player.getUniqueId());
+							cancel();
 							return;
 						}
 					}
@@ -429,91 +495,91 @@ public class GunUtil {
 
 					int amount = Gun.getAmount(temp);
 					if (!player.isSneaking() || slotUsed != player.getInventory().getHeldItemSlot() || amount <= 0) {
+						QAMain.DEBUG("Stop sneak / Out of ammo, stop auto shooting");
 						rapidfireshooters.remove(player.getUniqueId()).cancel();
+						cancel();
 						return;
 					}
 
-					boolean regularshoot = true;
-					if (g.getChargingVal() != null && (!g.getChargingVal().isCharging(player)
-							&& (g.getReloadingingVal() == null || !g.getReloadingingVal().isReloading(player)))) {
-						regularshoot = g.getChargingVal().shoot(g, player, temp);
-						QAMain.DEBUG(
-								"Charging (rapidfire) shoot debug: " + g.getName() + " = " + g.getChargingVal() == null
-										? "null"
-										: g.getChargingVal().getName());
-					}
-
-					if (regularshoot) {
-						GunUtil.shootHandler(g, player);
-						playShoot(g, player);
-						if (QAMain.enableRecoil)
-							addRecoil(player, g);
-						// TODO: recoil
-					}
-
-					// GunUtil.shoot(g, player, g.getSway() * AimManager.getSway(g,
-					// player.getUniqueId()), g.getDamage(), 1,
-					// g.getMaxDistance());
-					// GunUtil.playShoot(g, attach, player);
-					amount--;
-
-					if (amount < 0)
-						amount = 0;
-
-					// if (QAMain.enableVisibleAmounts) {
-					// temp.setAmount(amount > 64 ? 64 : amount == 0 ? 1 : amount);
-					// }
-					ItemMeta im = temp.getItemMeta();
-					int slot;
-					if (offhand) {
-						slot = -1;
-					} else {
-						slot = player.getInventory().getHeldItemSlot();
-					}
-					im.setLore(Gun.getGunLore(g, temp, amount));
-					temp.setItemMeta(im);
-					if (slot == -1) {
-						try {
-							if (QualityArmory.isIronSights(player.getItemInHand())) {
-								player.getInventory().setItemInOffHand(temp);
+//					boolean regularShoot = true;
+//					if (g.getChargingVal() != null && (!g.getChargingVal().isCharging(player)
+//							&& (g.getReloadingingVal() == null || !g.getReloadingingVal().isReloading(player)))) {
+//						regularShoot = g.getChargingVal().shoot(g, player, temp);
+//						QAMain.DEBUG(
+//								"Charging (rapidfire) shoot debug: " + g.getName() + " = " + g.getChargingVal() == null
+//										? "null"
+//										: g.getChargingVal().getName());
+//					}
+					if (hasChargingMode) {
+						// Boltaction
+						if (g.getChargingVal().isReadyToFire(g, player, temp)) {
+							if (g.getChargingVal().useChargingShoot()) {
+								// Burst shoot
+								g.getChargingVal().shoot(g, player, temp);
 							} else {
-								player.getInventory().setItemInHand(temp);
+								QAMain.DEBUG("A single shoot in Auto Mode after charging " + g.getChargingVal().getName());
+								GunUtil.shootHandler(g, player, g.getBulletsPerShot());
+								playShoot(g, player);
+								if (QAMain.enableRecoil) {
+									addRecoil(player, g);
+								}
+								reduceOneAmmo(player, temp, offhand, g);
 							}
-
-						} catch (Error e) {
+						} else {
+							QAMain.DEBUG("Charging " + g.getChargingVal().getName() + " no ready to fire");
 						}
 					} else {
-						player.getInventory().setItem(slot, temp);
+						// A single shoot.
+						QAMain.DEBUG("A single shoot in Auto Mode. amount " + amount);
+						GunUtil.shootHandler(g, player, g.getBulletsPerShot());
+						playShoot(g, player);
+						if (QAMain.enableRecoil) {
+							addRecoil(player, g);
+						}
+						reduceOneAmmo(player, temp, offhand, g);
+
+//
+//						// GunUtil.shoot(g, player, g.getSway() * AimManager.getSway(g,
+//						// player.getUniqueId()), g.getDamage(), 1,
+//						// g.getMaxDistance());
+//						// GunUtil.playShoot(g, attach, player);
+//						amount--;
+//
+//						if (amount < 0)
+//							amount = 0;
+//
+//						// if (QAMain.enableVisibleAmounts) {
+//						// temp.setAmount(amount > 64 ? 64 : amount == 0 ? 1 : amount);
+//						// }
+//						ItemMeta im = temp.getItemMeta();
+//						int slot;
+//						if (offhand) {
+//							slot = -1;
+//						} else {
+//							slot = player.getInventory().getHeldItemSlot();
+//						}
+//						im.setLore(Gun.getGunLore(g, temp, amount));
+//						temp.setItemMeta(im);
+//						if (slot == -1) {
+//							try {
+//								if (QualityArmory.isIronSights(player.getItemInHand())) {
+//									player.getInventory().setItemInOffHand(temp);
+//								} else {
+//									player.getInventory().setItemInHand(temp);
+//								}
+//
+//							} catch (Error e) {
+//							}
+//						} else {
+//							player.getInventory().setItem(slot, temp);
+//						}
+//						QualityArmory.sendHotbarGunAmmoCount(player, g, temp, false);
 					}
-					QualityArmory.sendHotbarGunAmmoCount(player, g, temp, false);
+//					QAMain.DEBUG("====== Auto Fire Mission End ======");
 				}
-			}.runTaskTimer(QAMain.getInstance(), 10 / g.getFireRate(), 10 / g.getFireRate()));
+			}.runTaskTimer(QAMain.getInstance(), 10 / g.getFireRate(), period));
 		}
 
-		int amount = Gun.getAmount(temp) - 1;
-
-		if (amount < 0)
-			amount = 0;
-
-		// if (QAMain.enableVisibleAmounts) {
-		// temp.setAmount(amount > 64 ? 64 : amount == 0 ? 1 : amount);
-		// }
-		int slot;
-		if (offhand) {
-			slot = -1;
-		} else {
-			slot = player.getInventory().getHeldItemSlot();
-		}
-		im.setLore(Gun.getGunLore(g, temp, amount));
-		temp.setItemMeta(im);
-		if (slot == -1) {
-			try {
-				player.getInventory().setItemInOffHand(temp);
-			} catch (Error e) {
-			}
-		} else {
-			player.getInventory().setItem(slot, temp);
-		}
 	}
 
 	public static void playShoot(final Gun g, final Player player) {
@@ -549,6 +615,45 @@ public class GunUtil {
 		}.runTaskLater(QAMain.getInstance(), 1);
 		// Simply delaying the sound by 1/20th of a second makes shooting so much more
 		// immersive
+	}
+
+	/**
+	 * Cut ammo number reset in gun's meta
+	 * @param player
+	 * @param temp
+	 * @param offhand
+	 * @param g
+	 */
+	public synchronized static void reduceOneAmmo(Player player, ItemStack temp, boolean offhand, Gun g) {
+		// count ammo
+		int amount = Gun.getAmount(temp) - 1;
+		if (amount < 0) {
+			amount = 0;
+		}
+
+		// if (QAMain.enableVisibleAmounts) {
+		// temp.setAmount(amount > 64 ? 64 : amount == 0 ? 1 : amount);
+		// }
+		ItemMeta im = temp.getItemMeta();
+		int slot = -1;
+		if (!offhand) {
+			slot = player.getInventory().getHeldItemSlot();
+		}
+		im.setLore(Gun.getGunLore(g, temp, amount));
+		temp.setItemMeta(im);
+		if (slot == -1) {
+			try {
+				if (offhand) {
+					player.getInventory().setItemInOffHand(temp);
+				} else {
+					player.getInventory().setItemInMainHand(temp);
+				}
+			} catch (Exception e) {
+			}
+		} else {
+			player.getInventory().setItem(slot, temp);
+		}
+		QualityArmory.sendHotbarGunAmmoCount(player, g, temp, false);
 	}
 
 	public static boolean hasAmmo(Player player, Gun g) {

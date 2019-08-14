@@ -17,16 +17,22 @@ public class PumpactionCharger implements ChargingHandler {
 
 	List<UUID> timeC = new ArrayList<>();
 	List<UUID> timeR = new ArrayList<>();
-public PumpactionCharger() {
-	ChargingManager.add(this);
-}
+	public PumpactionCharger() {
+		ChargingManager.add(this);
+	}
+
+	@Override
+	public String getName() {
+		return ChargingManager.PUMPACTION;
+	}
+
 	@Override
 	public boolean isCharging(Player player) {
 		return timeC.contains(player.getUniqueId());
 	}
 
 	@Override
-	public boolean shoot(Gun g, final Player player, ItemStack stack) {
+	public boolean isReadyToFire(Gun g, Player player, ItemStack stack) {
 		timeC.add(player.getUniqueId());
 
 		new BukkitRunnable() {
@@ -41,8 +47,8 @@ public PumpactionCharger() {
 					player.getWorld().playSound(player.getLocation(), WeaponSounds.RELOAD_BULLET.getSoundName(), 1, 1f);
 				} catch (Error e) {
 					try {
-					player.getWorld().playSound(player.getLocation(), Sound.valueOf("CLICK"), 8, 1.4f);
-					player.getWorld().playSound(player.getLocation(), Sound.valueOf("DIG_SAND"), 8, 1.4f);
+						player.getWorld().playSound(player.getLocation(), Sound.valueOf("CLICK"), 8, 1.4f);
+						player.getWorld().playSound(player.getLocation(), Sound.valueOf("DIG_SAND"), 8, 1.4f);
 					}catch(Error|Exception e43) {}
 				}
 			}
@@ -53,10 +59,10 @@ public PumpactionCharger() {
 				try {
 					player.getWorld().playSound(player.getLocation(), WeaponSounds.RELOAD_BOLT.getSoundName(), 1,
 							1f);/*
-								 * player.getWorld().playSound(player.getLocation(), Sound.BLOCK_SAND_BREAK, 8,
-								 * 1.4f); player.getWorld().playSound(player.getLocation(),
-								 * Sound.BLOCK_LEVER_CLICK, 8, 1);
-								 */
+					 * player.getWorld().playSound(player.getLocation(), Sound.BLOCK_SAND_BREAK, 8,
+					 * 1.4f); player.getWorld().playSound(player.getLocation(),
+					 * Sound.BLOCK_LEVER_CLICK, 8, 1);
+					 */
 				} catch (Error e) {try {
 					player.getWorld().playSound(player.getLocation(), Sound.valueOf("DIG_SAND"), 8, 1.4f);
 					player.getWorld().playSound(player.getLocation(), Sound.valueOf("CLICK"), 8, 1);
@@ -74,11 +80,15 @@ public PumpactionCharger() {
 		return true;
 	}
 
+	@Override
+	public boolean useChargingShoot() {
+		return false;
+	}
 
 	@Override
-	public String getName() {
+	public void shoot(Gun g, final Player player, ItemStack stack) {
 
-		return ChargingManager.PUMPACTION;
 	}
+
 
 }
