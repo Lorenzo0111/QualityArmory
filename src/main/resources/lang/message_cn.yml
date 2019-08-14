@@ -21,10 +21,10 @@ Lore_Charger:
   BurstFire: 爆发模式
   DelayedBurstFire: 无延迟爆发模式
   PumpAction: 泵动式
-  BreakAction: 破坏模式
+  BreakAction: 杠杆式
   PushBackCharger: 强力冲击波
   RequireAimCharger: 瞄准开火
-  PartyCharger: Party Time!
+  PartyCharger: 欢乐时光!
 Reloading_Message: '[装填中...]'
 State_AmmoCount: '[%total%]'
 State_OutOfAmmo: '[弹药已耗尽]'
