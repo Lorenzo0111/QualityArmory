@@ -988,11 +988,15 @@ public class QAListener implements Listener {
 				// RMB Click
 				if (IronsightsHandler.isAiming(player)) {
 					QAMain.DEBUG("Right click in aiming.");
-					if (QAMain.reloadOnFOnly && !QAMain.enableIronSightsON_RIGHT_CLICK) {
-						usedItem = player.getInventory().getItemInOffHand();
-					} else {
-						// Disable IronSights to Reload
+					if (QAMain.enableIronSightsON_RIGHT_CLICK) {
+						// RMB Click unAiming.
 						usedItem = IronsightsHandler.unAim(player);
+						if (QAMain.reloadOnFOnly) {
+							justAiming = true;
+						}
+					} else {
+						// RMB Click to unAiming and reload.
+						usedItem = player.getInventory().getItemInOffHand();
 					}
 				} else {
 					// Hold a gun, Enable IronSights
