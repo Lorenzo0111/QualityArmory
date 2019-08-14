@@ -996,7 +996,9 @@ public class QAListener implements Listener {
 						}
 					} else {
 						// RMB Click to unAiming and reload.
-						usedItem = player.getInventory().getItemInOffHand();
+                        if (QualityArmory.isIronSights(usedItem)) {
+                            usedItem = player.getInventory().getItemInOffHand();
+                        }
 					}
 				} else {
 					// Hold a gun, Enable IronSights
