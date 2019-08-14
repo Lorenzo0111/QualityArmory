@@ -634,22 +634,32 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 		return this.displayname.compareTo(arg0.displayname);
 	}
 
+	// ================= Brain stuck  @o@" =======================
+	// Swap left and right button click events should be done in the listener.
+	//
+	// Left click is always fire the weapon.
+	// Right click in the aiming state has the following special circumstances:
+	//
+	// Fire the weapon:
+	// - enableIronSightsON_RIGHT_CLICK = false
+	// - reloadOnFOnly = true;
+	//
+	// ============================================================
+
 	@Override
 	public void onRMB(PlayerInteractEvent e, ItemStack usedItem) {
-		// right click is default to reload. only IronSightsON_RIGHT_CLICK switch off can fire.
-		// SWAP_RMB_WITH_LMB default is true? Contrary to Swap-Reload-and-Shooting-Controls?
-		// The SWAP_RMB_WITH_LMB is true mean LMB-Fire RMB-Reload.
-		boolean flag = (QAMain.reloadOnFOnly || !QAMain.SWAP_RMB_WITH_LMB) && !QAMain.enableIronSightsON_RIGHT_CLICK;
+		// right click is default to reload.
+		boolean flag = (QAMain.reloadOnFOnly && !QAMain.enableIronSightsON_RIGHT_CLICK);
 		QAMain.DEBUG("Gun's RMB click called, fire_flag is " + flag + " Swap R2L " + !QAMain.SWAP_RMB_WITH_LMB);
-		onClick(e, usedItem, !QAMain.SWAP_RMB_WITH_LMB, flag);
+		onClick(e, usedItem, false, flag);
 	}
 
 	@Override
 	public void onLMB(PlayerInteractEvent e, ItemStack usedItem) {
-		// The SWAP_RMB_WITH_LMB is true mean LMB click.
-		boolean flag = QAMain.SWAP_RMB_WITH_LMB;
+		// Left click always fire the gun.
+		boolean flag = true;
 		QAMain.DEBUG("Gun's LMB click called, fire_flag is " + flag + " Swap R2L " + !QAMain.SWAP_RMB_WITH_LMB);
-		onClick(e, usedItem, QAMain.SWAP_RMB_WITH_LMB, flag);
+		onClick(e, usedItem, true, flag);
 	}
 
 	@SuppressWarnings("deprecation")

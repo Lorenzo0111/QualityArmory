@@ -983,22 +983,39 @@ public class QAListener implements Listener {
 			// Toggle IronSights
 			Player player = e.getPlayer();
 			boolean justAiming = false;
+			boolean rightClick = false;
 			if ((e.getAction() == Action.RIGHT_CLICK_AIR
 					|| e.getAction() == Action.RIGHT_CLICK_BLOCK) == (QAMain.SWAP_RMB_WITH_LMB)) {
+				rightClick = true;
 				// RMB Click
 				if (IronsightsHandler.isAiming(player)) {
 					QAMain.DEBUG("Right click in aiming.");
-					if (QAMain.enableIronSightsON_RIGHT_CLICK) {
-						// RMB Click unAiming.
+					// ================= Brain stuck  @o@" =======================
+					// Default is Disable IronSight an Reload (useItem = weapon).
+					// Right click in the aiming state has the following special circumstances:
+					//
+					// Do not disable IronSight and Fire the weapon: (useItem = weapon)
+					// - enableIronSightsON_RIGHT_CLICK = false
+					// - reloadOnFOnly = true;
+					//
+					// Just disable IronSight: (useItem = weapon)
+					// - enableIronSightsON_RIGHT_CLICK = true
+					// - reloadOnFOnly = true
+					//
+					// UseItem is IronSight or Gun will cancel the event. (don't shoot a ARROW)
+					// ============================================================
+
+					if (QAMain.enableIronSightsON_RIGHT_CLICK || !QAMain.reloadOnFOnly) {
 						usedItem = IronsightsHandler.unAim(player);
 						if (QAMain.reloadOnFOnly) {
 							justAiming = true;
 						}
 					} else {
-						// RMB Click to unAiming and reload.
-                        if (QualityArmory.isIronSights(usedItem)) {
-                            usedItem = player.getInventory().getItemInOffHand();
-                        }
+						// don't disable IronSight
+					}
+					// reset the useItem
+					if (QualityArmory.isIronSights(usedItem)) {
+						usedItem = player.getInventory().getItemInOffHand();
 					}
 				} else {
 					// Hold a gun, Enable IronSights
@@ -1088,7 +1105,7 @@ public class QAListener implements Listener {
 			ArmoryBaseObject qaItem = QualityArmory.getCustomItem(usedItem);
 			if (!justAiming && qaItem != null) {
 				QAMain.DEBUG("Type \"" + qaItem.getClass().getSimpleName() + "\" item is being used!");
-				if (e.getAction() == Action.LEFT_CLICK_AIR || e.getAction() == Action.LEFT_CLICK_BLOCK) {
+				if (!rightClick) {
 					qaItem.onLMB(e, usedItem);
 				} else {
 					qaItem.onRMB(e, usedItem);
