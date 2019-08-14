@@ -474,6 +474,13 @@ public class GunUtil {
 				//TODO Add some delay to AutoFire here.
 			}
 			QAMain.DEBUG("Start Auto Machine");
+			// Shoot once, then start the loop
+			GunUtil.shootHandler(g, player, g.getBulletsPerShot());
+			playShoot(g, player);
+			if (QAMain.enableRecoil) {
+				addRecoil(player, g);
+			}
+			reduceOneAmmo(player, temp, offhand, g);
 			rapidfireshooters.put(player.getUniqueId(), new BukkitRunnable() {
 				int slotUsed = player.getInventory().getHeldItemSlot();
 				boolean offhand = QualityArmory.isIronSights(player.getItemInHand());
