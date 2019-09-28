@@ -115,21 +115,6 @@ public class QAListener implements Listener {
 										return;
 
 									IronsightsHandler.aim(e.getPlayer());
-									/*
-									if (Update19OffhandChecker.supportOffhand(e.getPlayer())) {
-										ItemStack tempremove = null;
-										if (e.getPlayer().getInventory().getItemInOffHand() != null)
-											tempremove = e.getPlayer().getInventory().getItemInOffHand();
-										e.getPlayer().getInventory()
-												.setItemInOffHand(e.getPlayer().getInventory().getItemInMainHand());
-										ItemStack ironsights = OLD_ItemFact.getIronSights();
-										e.getPlayer().getInventory().setItemInMainHand(ironsights);
-										DEBUG("Swap gun  to off hand");
-										if (tempremove != null && !QualityArmory.isGun(tempremove)) {
-											e.getPlayer().getInventory().addItem(tempremove);
-											DEBUG("Added offhand back to inventory");
-										}*/
-
 										new BukkitRunnable() {
 											@Override
 											public void run() {
@@ -140,8 +125,7 @@ public class QAListener implements Listener {
 														DEBUG("Item Duped. Got Rid of using offhand override (code=1)");
 													}
 											}
-										};//.runTaskLater(QAMain.getInstance(), 5);
-								//	}
+										}.runTaskLater(QAMain.getInstance(),1);
 								} catch (Error e2) {
 									Bukkit.broadcastMessage(QAMain.prefix
 											+ "Ironsights not compatible for versions lower than 1.8. The server owner should set EnableIronSights to false in the plugin's config");
@@ -155,7 +139,6 @@ public class QAListener implements Listener {
 
 							@Override
 							public void run() {
-
 								MaterialStorage ms1 = MaterialStorage.getMS(e.getPlayer().getItemInHand());
 								MaterialStorage ms2 = MaterialStorage.getMS(e.getPlayer().getInventory().getItemInOffHand());
 
@@ -165,9 +148,6 @@ public class QAListener implements Listener {
 									}
 							}
 						}.runTaskLater(QAMain.getInstance(), 5);
-
-						//e.getPlayer().getInventory().setItemInMainHand(e.getPlayer().getInventory().getItemInOffHand());
-					//	e.getPlayer().getInventory().setItemInOffHand(null);
 
 						IronsightsHandler.unAim(e.getPlayer());
 						QAMain.DEBUG("Swap gun back to main hand");
@@ -197,6 +177,8 @@ public class QAListener implements Listener {
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onBlockBreakMonitor(final BlockBreakEvent e) {
 		if (e.isCancelled())
+			return;
+		if(CustomItemManager.isUsingCustomData())
 			return;
 		int k = 0;
 		if (e.getPlayer().getItemInHand() != null)
@@ -620,7 +602,7 @@ public class QAListener implements Listener {
 
 	@EventHandler
 	public void onHeadPlace(BlockPlaceEvent e) {
-		if (QualityArmory.isAmmo(e.getItemInHand()) || QualityArmory.isGun(e.getItemInHand()))
+		if (QualityArmory.isCustomItem(e.getItemInHand()))
 			e.setCancelled(true);
 	}
 
@@ -642,10 +624,10 @@ public class QAListener implements Listener {
 			}
 		}
 
-		if (e.getDeathMessage() != null && IronsightsHandler.ironsightsDisplay != null
-				&& e.getDeathMessage().contains(IronsightsHandler.ironsightsDisplay)) {
+		if (e.getDeathMessage() != null
+				&& e.getDeathMessage().contains(QualityArmory.getIronSightsItemStack().getItemMeta().getDisplayName())) {
 			try {
-				e.setDeathMessage(e.getDeathMessage().replace(IronsightsHandler.ironsightsDisplay,
+				e.setDeathMessage(e.getDeathMessage().replace(QualityArmory.getIronSightsItemStack().getItemMeta().getDisplayName(),
 						e.getEntity().getKiller().getInventory().getItemInOffHand().getItemMeta().getDisplayName()));
 				DEBUG("Removing ironsights from death message and replaced with gun's name");
 			} catch (Error | Exception e34) {
@@ -675,6 +657,13 @@ public class QAListener implements Listener {
 	public void onClickMONITOR(final PlayerInteractEvent e) {
 		if (QAMain.ignoreSkipping)
 			return;
+
+		try{
+			if(e.getHand() == org.bukkit.inventory.EquipmentSlot.OFF_HAND)
+				return;
+		}catch (Error|Exception e4){
+
+		}
 
 		if(!CustomItemManager.isUsingCustomData()) {
 			if (e.getPlayer().getItemInHand() != null && !QualityArmory.isCustomItem(e.getPlayer().getItemInHand())) {
@@ -743,7 +732,7 @@ public class QAListener implements Listener {
 	@SuppressWarnings({ "deprecation" })
 	@EventHandler
 	public void onClick(final PlayerInteractEvent e) {
-		QAMain.DEBUG("InteractEvent Called");
+		QAMain.DEBUG("InteractEvent Called. Custom item used = "+(CustomItemManager.getItemFact("gun").getItem(MaterialStorage.getMS(e.getItem()),1)!=null));
 		// Quick bugfix for specifically this item.
 
 		if(!CustomItemManager.isUsingCustomData()) {
@@ -788,12 +777,21 @@ public class QAListener implements Listener {
 			} catch (Error | Exception e45) {
 			}
 		}
+		ArmoryBaseObject object = null;
 		if (!QualityArmory.isCustomItem(e.getPlayer().getItemInHand())) {
 			ItemStack offhand = Update19OffhandChecker.getItemStackOFfhand(e.getPlayer());
-			if (offhand == null || !QualityArmory.isCustomItem(offhand))
+			if (offhand == null || !QualityArmory.isCustomItem(offhand)) {
 				return;
+			}else{
+				object = QualityArmory.getCustomItem(offhand);
+			}
+		}else{
+			object = QualityArmory.getCustomItem(e.getPlayer().getItemInHand());
 		}
-		QAMain.DEBUG("It Is a custom item!");
+
+		if(object == null)
+			return;
+		QAMain.DEBUG("It Is a custom item! = "+object.getName());
 
 		if (QAMain.kickIfDeniedRequest && QAMain.sentResourcepack.containsKey(e.getPlayer().getUniqueId())
 				&& System.currentTimeMillis() - QAMain.sentResourcepack.get(e.getPlayer().getUniqueId()) >= 3000) {
@@ -844,83 +842,7 @@ public class QAListener implements Listener {
 
 			ItemStack usedItem = IronsightsHandler.getItemAiming(e.getPlayer());
 
-			//I never liked this hack for viaversion plugins, so I am removing it.
-/*
-			try {
-				if (QAMain.AutoDetectResourcepackVersion && !QAMain.MANUALLYSELECT18) {
-					QAMain.DEBUG("AutoDetectResourcepack.");
-					if (us.myles.ViaVersion.bukkit.util.ProtocolSupportUtil.getProtocolVersion(e.getPlayer()) < QAMain.ID18) {
-						Gun g = QualityArmory.getGun(usedItem);
-						if (g == null)
-							g = QAMain.gunRegister.get(QualityArmory.getGunWithAttchments(usedItem).getBase());
-
-						if (!g.is18Support()) {
-							for (Gun g2 :QAMain.gunRegister.values()) {
-								if (g2.is18Support()) {
-									if (g2.getDisplayName().equals(g.getDisplayName())) {
-										e.getPlayer().setItemInHand(CustomItemManager.getItemFact("gun").getItem(g2.getItemData(),1));
-										QAMain.DEBUG("Custom-validation check 1");
-										return;
-									}
-								}
-							}
-							// If there is no exact match for 1.8, get the closest gun that uses the same
-							// ammo type.
-							for (Gun g2 : QAMain.gunRegister.values()) {
-								if (g2.is18Support()) {
-									if (g2.getAmmoType().equals(g.getAmmoType())) {
-										e.getPlayer().setItemInHand(CustomItemManager.getItemFact("gun").getItem(g2.getItemData(),1));
-										QAMain.DEBUG("Custom-validation check 2");
-										return;
-									}
-								}
-							}
-						}
-					} else {
-						if (us.myles.ViaVersion.bukkit.util.ProtocolSupportUtil
-								.getProtocolVersion(e.getPlayer()) >=QAMain. ID18) {
-							Gun g = QualityArmory.getGun(usedItem);
-							if (g == null)
-								g =QAMain.gunRegister.get(QualityArmory.getGunWithAttchments(usedItem).getBase());
-							if (g.is18Support()) {
-								for (Gun g2 :QAMain. gunRegister.values()) {
-									if (!g2.is18Support()) {
-										if (g2.getDisplayName().equals(g.getDisplayName())) {
-											e.getPlayer().setItemInHand(CustomItemManager.getItemFact("gun").getItem(g2.getItemData(),1));
-											QAMain.DEBUG("Custom-validation check 3");
-											return;
-										}
-									}
-								}
-								// If there is no exact match for 1.8, get the closest gun that uses the same
-								// ammo type.
-								for (Gun g2 :QAMain. gunRegister.values()) {
-									if (!g2.is18Support()) {
-										if (g2.getAmmoType().equals(g.getAmmoType())) {
-											e.getPlayer().setItemInHand( CustomItemManager.getItemFact("gun").getItem(g2.getItemData(),1));
-											QAMain.DEBUG("Custom-validation check 4");
-											return;
-										}
-									}
-								}
-							}
-						}
-					}
-				}
-			} catch (Error | Exception e4) {
-			}*/
-
-			/*
-			 * try {
-			 * 
-			 * if (us.myles.ViaVersion.bukkit.util.ProtocolSupportUtil.getProtocolVersion(e.
-			 * getPlayer()) > ID18) { if (isIS(usedItem)) { try { usedItem =
-			 * e.getPlayer().getInventory().getItemInOffHand(); } catch (Error | Exception
-			 * e4) { } } if (getCustomItem(usedItem).is18Support()) { return; } } } catch
-			 * (Error | Exception e3) { }
-			 */
-
-			// Sedn the resourcepack if the player does not have it.
+			// Send the resourcepack if the player does not have it.
 			if (QAMain.shouldSend && !QAMain.resourcepackReq.contains(e.getPlayer().getUniqueId())) {
 				QAMain.DEBUG("Player does not have resourcepack!");
 				QualityArmory.sendResourcepack(e.getPlayer(), true);
@@ -947,10 +869,6 @@ public class QAListener implements Listener {
 						}
 					} catch (Error e2) {
 					}
-				/*if ((e.getAction() == Action.LEFT_CLICK_AIR
-						|| e.getAction() == Action.LEFT_CLICK_BLOCK) ==QAMain. SWAP_RMB_WITH_LMB) {
-					usedItem = e.getPlayer().getInventory().getItemInOffHand();
-				}*/
 			}
 			ArmoryBaseObject qaItem = QualityArmory.getCustomItem(usedItem);
 			if (qaItem != null) {

@@ -1033,9 +1033,11 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 		return lore;
 	}
 
-	private static final String CALCTEXT = ChatColor.BLACK + "useddata:";
+	private static final String CALCTEXT = ChatColor.DARK_GRAY + "qadata:";
 
 	public static int getCalculatedExtraDurib(ItemStack is) {
+		if(CustomItemManager.isUsingCustomData())
+			return -1;
 		if (!is.hasItemMeta() || !is.getItemMeta().hasLore() || is.getItemMeta().getLore().isEmpty())
 			return -1;
 		List<String> lore = is.getItemMeta().getLore();
@@ -1047,6 +1049,8 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 	}
 
 	public static ItemStack addCalulatedExtraDurib(ItemStack is, int number) {
+		if(CustomItemManager.isUsingCustomData())
+			return is;
 		ItemMeta im = is.getItemMeta();
 		List<String> lore = im.getLore();
 		if (lore == null) {
@@ -1062,6 +1066,8 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 	}
 
 	public static ItemStack decrementCalculatedExtra(ItemStack is) {
+		if(CustomItemManager.isUsingCustomData())
+			return is;
 		ItemMeta im = is.getItemMeta();
 		List<String> lore = is.getItemMeta().getLore();
 		for (int i = 0; i < lore.size(); i++) {
@@ -1073,6 +1079,7 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 		is.setItemMeta(im);
 		return is;
 	}
+
 	public static ItemStack removeCalculatedExtra(ItemStack is) {
 		if (is.hasItemMeta() && is.getItemMeta().hasLore()) {
 			ItemMeta im = is.getItemMeta();

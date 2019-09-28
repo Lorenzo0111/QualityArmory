@@ -13,6 +13,8 @@ import java.util.List;
 
 public class MaterialStorage {
 
+	private static final MaterialStorage EMPTY = new MaterialStorage(null, 0, 0);
+
 	private static List<MaterialStorage> store = new ArrayList<MaterialStorage>();
 	private int d;
 	private Material m;
@@ -32,6 +34,7 @@ public class MaterialStorage {
 	private MaterialStorage(Material m, int d, int var, String extraData) {
 		this(m, d, var, extraData, null);
 	}
+
 	private MaterialStorage(Material m, int d, int var, String extraData, String ed2) {
 		this.m = m;
 		this.d = d;
@@ -63,7 +66,7 @@ public class MaterialStorage {
 	}
 
 	public static boolean matchVariants(MaterialStorage k, int var) {
-		return (k.variant == var || var == -1) || (!k.hasVariant()&&var==0);
+		return (k.variant == var || var == -1) || (!k.hasVariant() && var == 0);
 	}
 
 	public static boolean matchHeads(MaterialStorage k, String ex1, String ex2) {
@@ -75,21 +78,28 @@ public class MaterialStorage {
 	}
 
 	public static MaterialStorage getMS(ItemStack is) {
-		return getMS(is,getVariant(is));
+		return getMS(is, getVariant(is));
 	}
+
 	public static MaterialStorage getMS(ItemStack is, int variant) {
+
+		if (is == null) {
+			return EMPTY;
+		}
+
 		String extraData = is.getType() == MultiVersionLookup.getSkull() ? ((SkullMeta) is.getItemMeta()).getOwner()
 				: null;
-		String temp=null;
-		if(extraData!=null)
+		String temp = null;
+		if (extraData != null)
 			temp = SkullHandler.getURL64(is);
-		try{
-			return getMS(is.getType(), is.getItemMeta().hasCustomModelData()?is.getItemMeta().getCustomModelData():0, variant,
-					is.getType() == MultiVersionLookup.getSkull() ? ((SkullMeta) is.getItemMeta()).getOwner() : null,temp);
+		try {
+			return getMS(is.getType(), is.getItemMeta().hasCustomModelData() ? is.getItemMeta().getCustomModelData() : 0, variant,
+					is.getType() == MultiVersionLookup.getSkull() ? ((SkullMeta) is.getItemMeta()).getOwner() : null, temp);
 
-		}catch (Error|Exception e4){}
+		} catch (Error | Exception e4) {
+		}
 		return getMS(is.getType(), is.getDurability(), variant,
-				is.getType() == MultiVersionLookup.getSkull() ? ((SkullMeta) is.getItemMeta()).getOwner() : null,temp);
+				is.getType() == MultiVersionLookup.getSkull() ? ((SkullMeta) is.getItemMeta()).getOwner() : null, temp);
 	}
 
 	public static int getVariant(ItemStack is) {

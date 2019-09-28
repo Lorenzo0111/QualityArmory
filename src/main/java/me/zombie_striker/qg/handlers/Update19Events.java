@@ -1,5 +1,6 @@
 package me.zombie_striker.qg.handlers;
 
+import me.zombie_striker.customitemmanager.CustomItemManager;
 import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.api.QualityArmory;
 import me.zombie_striker.qg.guns.Gun;
@@ -17,6 +18,8 @@ public class Update19Events implements Listener {
 	@EventHandler
 	@SuppressWarnings("deprecation")
 	public void onAnvil(PrepareAnvilEvent e) {
+		if(CustomItemManager.isUsingCustomData())
+			return;
 		if (QualityArmory.isCustomItem(e.getResult())) {
 			ItemStack newi = e.getResult();
 			newi.setDurability((short) QualityArmory.findSafeSpot(e.getResult(), false,QAMain.overrideURL));

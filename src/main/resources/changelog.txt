@@ -1,3 +1,13 @@
+1.1.146
+    Code cleanup
+    Fixed some minor bugs.
+
+1.1.145
+    Fixed diamond axes disappearing at ID 21 for 1.14
+    Fixed auto-firing for non-ironsight guns.
+    Fixed a few listener issues.
+    Fixed model data errors.
+
 1.1.144
     Added aiming view for players holding guns, even if not scoped.
     Fixed "useddata" tag for phantom membrane for 1.14

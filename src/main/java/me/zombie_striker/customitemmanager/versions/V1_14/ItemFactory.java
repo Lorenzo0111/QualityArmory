@@ -20,9 +20,18 @@ import java.util.List;
 
 
 public class ItemFactory extends AbstractItemFact {
+
+	@Override
+	public boolean isCustomItem(ItemStack is) {
+		return false;
+	}
+
 	@Override
 	public ItemStack getItem(MaterialStorage materialStorage, int amount) {
 		ArmoryBaseObject base = QualityArmory.getCustomItem(materialStorage);
+
+		if(base==null)
+			return null;
 
 
 		MaterialStorage ms = base.getItemData();
@@ -82,21 +91,15 @@ public class ItemFactory extends AbstractItemFact {
 			} catch (Error e) {
 
 			}
-
+	if(ms.getData()>=0)
 			im.setCustomModelData(ms.getData());
-			/*if(is.getType()==Material.CROSSBOW){
-				//Now the player will hold the crossbow like a gun
-				CrossbowMeta im2 = (CrossbowMeta) im;
-				im2.addChargedProjectile(new ItemStack(Material.ARROW));
-			}*/
 
 			is.setItemMeta(im);
 		} else {
-			// Item meta is still null. Catch and report.
 			QAMain.getInstance().getLogger()
 					.warning(QAMain.prefix + " ItemMeta is null for " + base.getName() + ". I have");
 		}
-		is.setAmount(1);
+		is.setAmount(amount);
 		return is;
 	}
 }

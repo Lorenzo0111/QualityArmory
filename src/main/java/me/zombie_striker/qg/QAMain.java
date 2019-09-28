@@ -636,13 +636,6 @@ public class QAMain extends JavaPlugin {
 		}
 
 		try {
-			/* final Updater updater = */// new Updater(this, 278412, true);
-			/*
-			 * new BukkitRunnable() { public void run() { // TODO: Works well. Make changes
-			 * for the updaters of // PixelPrinter and Music later. if
-			 * (updater.updaterActive) updater.download(false); }
-			 * }.runTaskTimerAsynchronously(this, 20 /* * 60 *, 20 * 60 * 5);
-			 */
 			if (AUTOUPDATE)
 				GithubUpdater.autoUpdate(this, "ZombieStriker", "QualityArmory", "QualityArmory.jar");
 		} catch (Exception e) {
@@ -671,7 +664,7 @@ public class QAMain extends JavaPlugin {
 						return (expansionPacks.size() > 0) + "";
 					}
 				}));
-
+	if(!CustomItemManager.isUsingCustomData()) {
 		new BukkitRunnable() {
 			@SuppressWarnings("deprecation")
 			public void run() {
@@ -715,7 +708,8 @@ public class QAMain extends JavaPlugin {
 
 				}
 			}
-		}.runTaskTimer(this, 20, 4);
+		}.runTaskTimer(this, 20, 15);
+	}
 	}
 
 	@SuppressWarnings({"unchecked", "deprecation"})

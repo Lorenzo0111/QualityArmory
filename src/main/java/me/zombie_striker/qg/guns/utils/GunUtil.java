@@ -416,7 +416,7 @@ public class GunUtil {
 
 				@Override
 				public void run() {
-					if (!IronsightsHandler.isAiming(player)) {
+					if ((g.hasIronSights() && !IronsightsHandler.isAiming(player) )|| (!g.hasIronSights() && !player.isSneaking())) {
 						cancel();
 						rapidfireshooters.remove(player.getUniqueId());
 						return;

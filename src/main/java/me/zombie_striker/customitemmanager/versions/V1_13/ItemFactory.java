@@ -21,6 +21,9 @@ public class ItemFactory extends AbstractItemFact {
 	public ItemStack getItem(MaterialStorage materialStorage, int amount) {
 		ArmoryBaseObject base = QualityArmory.getCustomItem(materialStorage);
 
+		if(base==null)
+			return null;
+
 		MaterialStorage ms = base.getItemData();
 		String displayname = base.getDisplayName();
 		if (ms == null || ms.getMat() == null)
@@ -73,6 +76,11 @@ public class ItemFactory extends AbstractItemFact {
 		}
 		is.setAmount(1);
 		return is;
+	}
+
+	@Override
+	public boolean isCustomItem(ItemStack is) {
+		return false;
 	}
 
 }

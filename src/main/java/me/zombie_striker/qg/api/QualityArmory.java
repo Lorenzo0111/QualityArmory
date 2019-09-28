@@ -222,7 +222,6 @@ public class QualityArmory {
 		return getCustomItem(is);
 	}
 	public static ArmoryBaseObject getCustomItem(ItemStack is) {
-
 		if (isGun(is))
 			return getGun(is);
 		if (isAmmo(is))
@@ -231,8 +230,6 @@ public class QualityArmory {
 			return getArmor(is);
 		if (isMisc(is))
 			return getMisc(is);
-		if (isGunWithAttchments(is))
-			return QAMain.gunRegister.get(getGunWithAttchments(is).getBase());
 		return null;
 	}
 
@@ -244,7 +241,10 @@ public class QualityArmory {
 		if(dataOffset!=0) {
 			try {
 				ItemMeta im = itemstack.getItemMeta();
-				im.setCustomModelData(im.getCustomModelData() + dataOffset);
+				int modeldata = 0;
+				if(im.hasCustomModelData())
+					modeldata = im.getCustomModelData();
+				im.setCustomModelData(modeldata + dataOffset);
 				itemstack.setItemMeta(im);
 			} catch (Error | Exception ed4) {
 				itemstack.setDurability((short) (is.getDurability() + dataOffset));
@@ -302,23 +302,13 @@ public class QualityArmory {
 
 	@Deprecated
 	public static boolean isGunWithAttchments(
-			ItemStack is) {/*
-							 * if (is == null) return false; int var = MaterialStorage.getVarient(is);
-							 * return (is != null &&
-							 * (QAMain.attachmentRegister.containsKey(MaterialStorage.getMS(is.getType(),
-							 * is.getDurability(), var)) ||
-							 * QAMain.attachmentRegister.containsKey(MaterialStorage.getMS(is.getType(), -1,
-							 * var))));
-							 */
+			ItemStack is) {
 		return false;
 	}
 
 	@SuppressWarnings("deprecation")
 	public static Ammo getAmmo(ItemStack is) {
 		int var = MaterialStorage.getVariant(is);
-		//String extraData = is.getType() == MultiVersionLookup.getSkull() ? ((SkullMeta) is.getItemMeta()).getOwner()
-		//		: null;
-		//String temp = SkullHandler.getURL64(is);
 		if (QAMain.ammoRegister
 				.containsKey(MaterialStorage.getMS(is,var)))
 			return QAMain.ammoRegister
@@ -336,11 +326,7 @@ public class QualityArmory {
 
 	@Deprecated
 	public static AttachmentBase getAttachmentByName(
-			String name) {/*
-							 * for (Entry<MaterialStorage, AttachmentBase> e :
-							 * QAMain.attachmentRegister.entrySet()) if
-							 * (e.getValue().getName().equalsIgnoreCase(name)) { return e.getValue(); }
-							 */
+			String name) {
 		return null;
 	}
 
@@ -349,13 +335,6 @@ public class QualityArmory {
 		if (is == null)
 			return false;
 		int var = MaterialStorage.getVariant(is);
-	//	String extraData = is.getType() == MultiVersionLookup.getSkull() ? ((SkullMeta) is.getItemMeta()).getOwner()
-	//			: null;
-	//	String temp = null;
-	//	try {
-	//		temp = SkullHandler.getURL64(is);
-	//	} catch (Error | Exception e4) {
-	//	}
 		boolean k = (is != null && (QAMain.ammoRegister
 				.containsKey(MaterialStorage.getMS(is,var))
 				|| QAMain.ammoRegister.containsKey(MaterialStorage.getMS(is,var))));
@@ -366,9 +345,10 @@ public class QualityArmory {
 	public static boolean isIronSights(ItemStack is) {
 		if (is == null)
 			return false;
-		if (is != null && is.getType() == IronsightsHandler.ironsightsMaterial
-				)
+		if (is != null && is.getType() == IronsightsHandler.ironsightsMaterial	)
 			try{
+				if(!is.hasItemMeta() || !is.getItemMeta().hasCustomModelData())
+					return false;
 				if(is.getItemMeta().getCustomModelData() == IronsightsHandler
 				.ironsightsData)
 					return true;
@@ -414,7 +394,6 @@ public class QualityArmory {
 		if (QAMain.showOutOfAmmoOnTitle && ammoamount <= 0 && Gun.getAmount(usedItem) < 1) {
 			p.sendTitle(" ", QAMain.S_OUT_OF_AMMO, 0, 20, 1);
 		} else if (QAMain.showReloadOnTitle && reloading) {
-			// p.sendTitle(Main.S_RELOADING_MESSAGE,,0,2,1);
 			for (int i = 1; i < g.getReloadTime() * 20; i += 2) {
 				final int id = i;
 				new BukkitRunnable() {
@@ -458,9 +437,6 @@ public class QualityArmory {
 				if (message.contains("%total%"))
 					message = message.replace("%total%", "" + ammoamount);
 
-				// (attachmentBase != null ? attachmentBase.getDisplayName() :
-				// g.getDisplayName()) + " = "
-				// + ItemFact.getAmount(usedItem) + "/" + (g.getMaxBullets()) + "";
 				if (QAMain.unknownTranslationKeyFixer) {
 					message = ChatColor.stripColor(message);
 				} else {
@@ -474,8 +450,9 @@ public class QualityArmory {
 
 	@SuppressWarnings("deprecation")
 	public static int findSafeSpot(ItemStack newItem, boolean findHighest, boolean allowPockets) {
+		if(CustomItemManager.isUsingCustomData())
+			return -1;
 		try{
-
 			return findSafeSpot(newItem.getType(), newItem.getItemMeta().getCustomModelData(), findHighest, allowPockets);
 		}catch (Error|Exception e534){}
 		return findSafeSpot(newItem.getType(), newItem.getDurability(), findHighest, allowPockets);

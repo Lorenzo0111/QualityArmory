@@ -2,13 +2,10 @@ package me.zombie_striker.qg.handlers;
 
 import me.zombie_striker.qg.api.QualityArmory;
 import me.zombie_striker.qg.guns.Gun;
-import org.bukkit.Bukkit;
-import org.bukkit.Material;
+import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.CrossbowMeta;
-
-import java.util.ArrayList;
 
 public class IronsightsHandler {
 
@@ -73,11 +70,12 @@ public class IronsightsHandler {
 		try {
 			if(player.getItemInHand()!=null && player.getItemInHand().getType().name().equals("CROSSBOW")){
 				Gun g = QualityArmory.getGun(player.getItemInHand());
-				if(!g.isOffhandOverride()) {
+				if(g!=null && !g.isOffhandOverride()) {
 					ItemStack is = player.getItemInHand();
 					CrossbowMeta im = (CrossbowMeta) is.getItemMeta();
 					return im.hasChargedProjectiles();
 				}
+				return false;
 			}
 		}catch (Error|Exception e4){
 

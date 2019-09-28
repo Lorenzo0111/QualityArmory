@@ -8,4 +8,6 @@ import java.util.List;
 public abstract class AbstractItemFact {
 
 	public abstract ItemStack getItem(MaterialStorage materialStorage, int amount);
+
+	public abstract  boolean isCustomItem(ItemStack is);
 }
