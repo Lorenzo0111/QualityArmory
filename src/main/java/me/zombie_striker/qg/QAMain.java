@@ -55,7 +55,7 @@ import com.google.common.base.Charsets;
 
 public class QAMain extends JavaPlugin {
 
-	public static final int ID18 = 106;
+	public static final int ViaVersionIdfor_1_8 = 106;
 	private static final String SERVER_VERSION;
 	// Chris: change to LinkedHashMap let the Items can sort by FileName.
 	public static HashMap<MaterialStorage, Gun> gunRegister = new LinkedHashMap<>();
@@ -79,10 +79,12 @@ public class QAMain extends JavaPlugin {
 	public static boolean enableInteractChests = false;
 	public static boolean DEBUG = false;
 	public static Object bulletTrail;
+
 	public static boolean shouldSend = true;
 	public static boolean sendOnJoin = false;
 	public static boolean sendTitleOnJoin = false;
 	public static double secondsTilSend = 0.0;
+
 	public static boolean orderShopByPrice = false;
 	public static boolean ignoreUnbreaking = false;
 	public static boolean ignoreSkipping = false;
@@ -107,7 +109,6 @@ public class QAMain extends JavaPlugin {
 	public static boolean enableIronSightsON_RIGHT_CLICK = false;
 	public static boolean enableSwapSingleShotOnAim = false;
 	public static boolean enableBulletTrails = true;
-	// public static boolean enableVisibleAmounts = false;
 	public static boolean reloadOnF = true;
 	public static boolean reloadOnFOnly = true;
 	public static boolean disableHotBarMessageOnShoot = false;
@@ -134,12 +135,7 @@ public class QAMain extends JavaPlugin {
 	public static boolean overrideURL = false;
 	public static boolean kickIfDeniedRequest = false;
 	public static String S_NOPERM = "&c You do not have permission to do that.";
-	// public static String url19plus =
-	// "https://www.dropbox.com/s/faufrgo7w2zpi3d/QualityArmoryv1.0.10.zip?dl=1";
-	//public static String url_newest = "https://www.dropbox.com/s/3mkoulo9tzdte8w/QualityArmoryv1.0.37.zip?dl=1";
-	//public static String url18 = "https://www.dropbox.com/s/odvle92e0fz0ezr/QualityArmory1.8v1.0.2.zip?dl=1";
-	//public static String url18New = "https://www.dropbox.com/s/ipza6fod5b2jub6/QualityArmory1.9PLUS%20v1.0.2.zip?dl=1";
-	//public static String url = url_newest;
+
 	public static String S_NORES1 = " &c&l Downloading Resourcepack...";
 	public static String S_NORES2 = " &f Accept the resourcepack to see the custom items";
 	public static String S_ANVIL = " &a You do not have permission to use this armory bench. Shift+Click to access anvil.";
@@ -1045,6 +1041,9 @@ public class QAMain extends JavaPlugin {
 		// Chris: if switch on, create default items.
 		if (enableCreationOfFiles) {
 			CustomItemManager.getItemType("gun").initItems(getDataFolder());
+		}
+		if(CustomItemManager.getItemType("gun") !=null){
+			CustomItemManager.getItemType("gun").initIronSights(getDataFolder());
 		}
 
 

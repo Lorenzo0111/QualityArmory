@@ -293,7 +293,7 @@ public class GunYMLLoader {
 		if (f2.contains("isAutomatic"))
 			g.setAutomatic(f2.getBoolean("isAutomatic"));
 		if(f2.contains("enableBetterModelScopes"))
-			g.setOffhandOverride(f2.getBoolean("enableBetterModelScopes"));
+			g.enableBetterAimingAnimations(f2.getBoolean("enableBetterModelScopes"));
 
 		List<String> sounds = null;
 

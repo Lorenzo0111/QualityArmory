@@ -113,7 +113,7 @@ public class QualityArmory {
 									if (QAMain.hasViaVersion) {
 										QAMain.DEBUG(
 												"Has Viaversion: " + us.myles.ViaVersion.bukkit.util.ProtocolSupportUtil
-														.getProtocolVersion(player) + " 1.8=" + QAMain.ID18);
+														.getProtocolVersion(player) + " 1.8=" + QAMain.ViaVersionIdfor_1_8);
 
 									}
 								} catch (Error | Exception re4) {

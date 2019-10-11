@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>me.zombie_striker</groupId>
     <artifactId>qg</artifactId>
-    <version>1.1.146</version>
+    <version>1.1.147</version>
     <name>QualityArmory</name>
 
     <repositories>
@@ -68,11 +68,10 @@
         <!--You only need one of the two, don't put both. Spigot is recommended.-->
         <dependency>
             <groupId>org.spigotmc</groupId>
-            <artifactId>spigot-api</artifactId>
+            <artifactId>spigot</artifactId>
             <version>1.14.4-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
-
 
         <!-- Vault API -->
         <dependency>

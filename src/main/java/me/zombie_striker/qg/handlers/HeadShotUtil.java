@@ -8,57 +8,62 @@ public class HeadShotUtil {
 
 	public static boolean isHeadShot(Entity e, Location shot) {
 		double modifier = 1;
-		if(e instanceof Ageable) {
-			modifier = ((Ageable)e).isAdult()?1:0.5;
+		if (e instanceof Ageable) {
+			modifier = ((Ageable) e).isAdult() ? 1 : 0.5;
 		}
 		switch (e.getType().name()) {
 
-		case "CHICKEN":
-		case "SILVERFISH":
-		case "OCELOT":
-		case "ENDERMITE":
-		case "BAT":
-		case "RABBIT":
-		case "PARROT":
-		case "CAVE_SPIDER":
-			return shot.getY() - e.getLocation().getY() > 0.6*modifier;
-		case "PIG":
-		case "WOLF":
-		case "SQUID":
-		case "SPIDER":
-			return shot.getY() - e.getLocation().getY() > 0.3*modifier;
+			case "CHICKEN":
+			case "SILVERFISH":
+			case "OCELOT":
+			case "ENDERMITE":
+			case "BAT":
+			case "RABBIT":
+			case "PARROT":
+			case "CAVE_SPIDER":
+			case "VEX":
+				return shot.getY() - e.getLocation().getY() > 0.6 * modifier;
+			case "PIG":
+			case "WOLF":
+			case "SQUID":
+			case "SPIDER":
+			case "FOX":
+			case "CAT":
+				return shot.getY() - e.getLocation().getY() > 0.3 * modifier;
 
-		case "COW":
-		case "SHEEP":
-		case "MUSHROOM_COW":
-		case "POLAR_BEAR":
-			return shot.getY() - e.getLocation().getY() > 1.0*modifier;
+			case "COW":
+			case "SHEEP":
+			case "MUSHROOM_COW":
+			case "POLAR_BEAR":
+				return shot.getY() - e.getLocation().getY() > 1.0 * modifier;
 
-		case "ENDERMAN":
-			return shot.getY() - e.getLocation().getY() > 2.2*modifier;
+			case "ENDERMAN":
+				return shot.getY() - e.getLocation().getY() > 2.2 * modifier;
 
-		case "GIANT":
-			return shot.getY() - e.getLocation().getY() > 12*modifier;
+			case "GIANT":
+				return shot.getY() - e.getLocation().getY() > 12 * modifier;
 
-		case "IRON_GOLEM":
-		case "WITHER":
-		case "HORSE":
-		case "LLAMA":
-		case "SKELETON_HORSE":
-		case "MULE":
-		case "DONKEY":
-		case "ZOMBIE_HORSE":
-			return shot.getY() - e.getLocation().getY() > 2.0*modifier;
+			case "IRON_GOLEM":
+			case "WITHER":
+			case "HORSE":
+			case "LLAMA":
+			case "SKELETON_HORSE":
+			case "MULE":
+			case "DONKEY":
+			case "ZOMBIE_HORSE":
+			case "PANDA":
+				return shot.getY() - e.getLocation().getY() > 2.0 * modifier;
 
-		case "MAGMA_CUBE":
-		case "SLIME":
-		case "GUARDIAN":
-			return false;
+			case "MAGMA_CUBE":
+			case "SLIME":
+			case "GUARDIAN":
+			case "RAVAGER":
+				return false;
 
-		case "GHAST":
-			return false;
+			case "GHAST":
+				return false;
 		}
-		return shot.getY() - e.getLocation().getY() > 1.3*modifier;
+		return shot.getY() - e.getLocation().getY() > 1.3 * modifier;
 
 		/*
 		 * case "CHICKEN": case "PIG": case "SILVERFISH": case "ENDERMITE": case "BAT":
@@ -74,65 +79,70 @@ public class HeadShotUtil {
 	public static boolean closeEnough(Entity e, Location closest) {
 		switch (e.getType().name()) {
 
-		/**
-		 * 
-		 * case "CHICKEN": case "PIG": case "SILVERFISH": case "ENDERMITE": case "BAT":
-		 * case "WOLF": case "RABBIT": case "PARROT": case "SQUID": case "SPIDER": case
-		 * "CAVE_SPIDER": return closest.distance(e.getLocation().clone().add(0, 0.5,
-		 * 0)) < 0.7; case "ENDERMAN": case "IRON_GOLEM": return
-		 * closest.distance(e.getLocation().clone().add(0, 1.5, 0)) < 1.5; case
-		 * "MAGMA_CUBE": case "SLIME": case "GUARDIAN": return
-		 * closest.distance(e.getLocation().clone().add(0, 1.5, 0)) < 2; case "GHAST":
-		 * return closest.distance(e.getLocation().clone().add(0, 1, 0)) < 3;
-		 */
+			/**
+			 *
+			 * case "CHICKEN": case "PIG": case "SILVERFISH": case "ENDERMITE": case "BAT":
+			 * case "WOLF": case "RABBIT": case "PARROT": case "SQUID": case "SPIDER": case
+			 * "CAVE_SPIDER": return closest.distance(e.getLocation().clone().add(0, 0.5,
+			 * 0)) < 0.7; case "ENDERMAN": case "IRON_GOLEM": return
+			 * closest.distance(e.getLocation().clone().add(0, 1.5, 0)) < 1.5; case
+			 * "MAGMA_CUBE": case "SLIME": case "GUARDIAN": return
+			 * closest.distance(e.getLocation().clone().add(0, 1.5, 0)) < 2; case "GHAST":
+			 * return closest.distance(e.getLocation().clone().add(0, 1, 0)) < 3;
+			 */
 
-		case "CHICKEN":
-		case "SILVERFISH":
-		case "OCELOT":
-		case "ENDERMITE":
-		case "BAT":
-		case "RABBIT":
-		case "PARROT":
-		case "CAVE_SPIDER":
-			return within2D(e, closest, 0.45, 1);
-		case "PIG":
-		case "WOLF":
-		case "SQUID":
-		case "SPIDER":
-			return within2D(e, closest, 1, 1);
+			case "CHICKEN":
+			case "SILVERFISH":
+			case "OCELOT":
+			case "ENDERMITE":
+			case "BAT":
+			case "RABBIT":
+			case "PARROT":
+			case "CAVE_SPIDER":
+			case "VEX":
+				return within2D(e, closest, 0.45, 1);
+			case "PIG":
+			case "WOLF":
+			case "SQUID":
+			case "SPIDER":
+			case "CAT":
+			case "FOX":
+				return within2D(e, closest, 1, 1);
 
-		case "COW":
-		case "SHEEP":
-		case "MUSHROOM_COW":
-		case "POLAR_BEAR":
-			return within2D(e, closest, 1, 1);
+			case "COW":
+			case "SHEEP":
+			case "MUSHROOM_COW":
+			case "POLAR_BEAR":
+				return within2D(e, closest, 1, 1);
 
-		case "PHANTOM":
-			return within2D(e, closest, 1, 0.5);
-			
-		case "ENDERMAN":
-			return within2D(e, closest, 0.5, 3);
+			case "PHANTOM":
+				return within2D(e, closest, 1, 0.5);
 
-		case "GIANT":
-			return within2D(e, closest, 2, 16);
+			case "ENDERMAN":
+				return within2D(e, closest, 0.5, 3);
 
-		case "IRON_GOLEM":
-		case "WITHER":
-		case "HORSE":
-		case "LLAMA":
-		case "SKELETON_HORSE":
-		case "MULE":
-		case "DONKEY":
-		case "ZOMBIE_HORSE":
-			return within2D(e, closest, 1, 3);
+			case "GIANT":
+				return within2D(e, closest, 2, 16);
 
-		case "MAGMA_CUBE":
-		case "SLIME":
-		case "GUARDIAN":
-			return within2D(e, closest, 1, 2);
+			case "IRON_GOLEM":
+			case "WITHER":
+			case "HORSE":
+			case "LLAMA":
+			case "SKELETON_HORSE":
+			case "MULE":
+			case "DONKEY":
+			case "ZOMBIE_HORSE":
+			case "PANDA":
+				return within2D(e, closest, 1, 3);
 
-		case "GHAST":
-			return within2D(e, closest, 3, 3);
+			case "MAGMA_CUBE":
+			case "SLIME":
+			case "GUARDIAN":
+			case "RAVAGER":
+				return within2D(e, closest, 1, 2);
+
+			case "GHAST":
+				return within2D(e, closest, 3, 3);
 		}
 		// return closest.distance(e.getLocation().clone().add(0, 1, 0)) < 1;
 		return within2D(e, closest, 0.5, 2);

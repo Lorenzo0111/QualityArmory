@@ -1,11 +1,12 @@
 package me.zombie_striker.qg.handlers;
 
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 import com.comphenix.protocol.*;
@@ -21,6 +22,9 @@ public class ProtocolLibHandler {
 
 	private static Object enumArgumentAnchor_EYES = null;
 	private static Class<?> class_ArgumentAnchor = null;
+	// org.bukkit.craftbukkit.v1_14_R1.inventory.CraftItemStack;
+	private static Class nbtFactClass = null;
+	private static Method nbtFactmethod = null;
 
 	public static void initRemoveArmswing() {
 		if (protocolManager == null)
@@ -62,7 +66,6 @@ public class ProtocolLibHandler {
 
 	}
 
-
 	public static void initAimBow() {
 		if (protocolManager == null)
 			protocolManager = ProtocolLibrary.getProtocolManager();
@@ -72,32 +75,43 @@ public class ProtocolLibHandler {
 					public void onPacketSending(PacketEvent event) {
 						final Player sender = event.getPlayer();
 						//for(Object o : event.getPacket().getModifier().getValues())
-						Object id = event.getPacket().getModifier().read(0);
+						int id = (int) event.getPacket().getModifier().read(0);
 						Object slot = event.getPacket().getModifier().read(1);
-						Object is = event.getPacket().getModifier().read(2);
-						if(((int)id)==sender.getEntityId()){
-							Bukkit.broadcastMessage("Same entity");
+						final Object ironsights = event.getPacket().getModifier().read(2);
+						if ((id) == sender.getEntityId()) {
 							return;
 						}
 						Player who = null;
-						for(Player player : sender.getWorld().getPlayers()){
-							if(player.getEntityId() == (int)id){
+						for (Player player : sender.getWorld().getPlayers()) {
+							if (player.getEntityId() == (int) id) {
 								who = player;
 								break;
 							}
 						}
-						if(who==null)
+						if (who == null)
 							return;
-						if(!slot.toString().equals("MAINHAND"))
+						if (!slot.toString().equals("MAINHAND")) {
+							if (QualityArmory.isIronSights(who.getInventory().getItemInMainHand())) {
+								event.setCancelled(true);
+							}
 							return;
-						if(who.getItemInHand()!=null && who.getItemInHand().getType().name().equals("CROSSBOW") &&
-								QualityArmory.isGun(who.getItemInHand())&&
-								is.toString().contains("crossbow")) {
+						}
+						if (who.getItemInHand() != null && who.getItemInHand().getType().name().equals("CROSSBOW") &&
+								QualityArmory.isIronSights(who.getItemInHand()) &&
+								ironsights.toString().contains("crossbow")) {
 
+							Object is = null;
 							try {
-								Object nbtTag = is.getClass().getMethod("getOrCreateTag").invoke(is,new Object[0]);
-								nbtTag.getClass().getMethod("setBoolean",String.class,Boolean.class).invoke(nbtTag,"Charged",true);
-								is.getClass().getMethod("setTag",nbtTag.getClass()).invoke(is,nbtTag);
+								if (!QualityArmory.getGun(who.getInventory().getItemInOffHand()).hasBetterAimingAnimations())
+									return;
+								is = getCraftItemStack(who.getInventory().getItemInOffHand());
+								Object nbtTag = is.getClass().getMethod("getOrCreateTag").invoke(is, new Object[0]);
+								//new NBTTagCompound().
+								Class[] args = new Class[2];
+								args[0] = String.class;
+								args[1] = boolean.class;
+								nbtTag.getClass().getMethod("setBoolean", args).invoke(nbtTag, "Charged", true);
+								is.getClass().getMethod("setTag", nbtTag.getClass()).invoke(is, nbtTag);
 							} catch (IllegalAccessException e) {
 								e.printStackTrace();
 							} catch (InvocationTargetException e) {
@@ -106,14 +120,61 @@ public class ProtocolLibHandler {
 								e.printStackTrace();
 							}
 
-						//	NBTTagCompound nbt = is.getOrCreateTag();//new NBTTagCompound();
-						//	nbt.setBoolean("Charged", true);
-						//	is.setTag(nbt);
+							/*try{
+								ironsights = ironsights.getClass().getMethod("cloneItemStack", new Class[0]).invoke(is,new Class[0]);
+							}catch (Error|Exception e43){
+								e43.printStackTrace();
+							}*/
+
 							event.getPacket().getModifier().write(2, is);
+
+							new BukkitRunnable() {
+								public void run() {
+									try {
+										PacketContainer pc2 = protocolManager
+												.createPacket(PacketType.Play.Server.ENTITY_EQUIPMENT);
+
+										//EnumItemSlot e = EnumItemSlot.OFFHAND;
+
+										Object neededSlot = null;
+										Object[] enums = slot.getClass().getEnumConstants();
+										for (Object k : enums) {
+											String name = (String) k.getClass().getMethod("name").invoke(k, new Class[0]);
+											if (name.equals("OFFHAND")) {
+												neededSlot = k;
+												break;
+											}
+										}
+										pc2.getModifier().write(0, id)
+												.write(1, neededSlot)
+												.write(2, ironsights);
+
+										protocolManager.sendServerPacket(event.getPlayer(), pc2);
+									} catch (Exception e) {
+										e.printStackTrace();
+									}
+
+
+								}
+							}.runTaskLater(QAMain.getInstance(), 1);
 						}
 					}
 				});
 
+	}
+
+	private static Object getCraftItemStack(ItemStack is) throws NoSuchMethodException {
+		if (nbtFactClass == null) {
+			nbtFactClass = ReflectionsUtil.getCraftBukkitClass("inventory.CraftItemStack");
+			Class[] c = new Class[1];
+			c[0] = ItemStack.class;
+			nbtFactmethod = nbtFactClass.getMethod("asNMSCopy", c);
+		}
+		try {
+			return nbtFactmethod.invoke(nbtFactClass, is);
+		} catch (InvocationTargetException | IllegalAccessException e) {
+			return null;
+		}
 	}
 
 

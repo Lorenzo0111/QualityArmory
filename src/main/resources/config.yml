@@ -27,17 +27,15 @@
 #
 #Q: I want to add new guns/ammo to the plugin
 #A: Follow this tutoiral: https://www.spigotmc.org/wiki/how-to-create-new-guns-with-quality-armory/
-
+language: en
 unknownTranslationKeyFixer: false
 Enable_Creation_Of_Default_Files: true
 KickPlayerIfDeniedResourcepack: false
 enableIgnoreArmorProtection: false
+verboseItemLogging: false
 
 #Use this if you are expierincing a problem. 
 ENABLE-DEBUG: false
-
-
-
 
 
 #Resourcepack values
@@ -47,11 +45,14 @@ DefaultResourcepack: https://www.dropbox.com/s/xipzen3vs2akksp/QualityArmoryv1.0
 DefaultResourcepack_18: https://www.dropbox.com/s/odvle92e0fz0ezr/QualityArmory1.8v1.0.2.zip?dl=1
 DefaultResourcepack_18_COMPATFOR_19PLUS: https://www.dropbox.com/s/ipza6fod5b2jub6/QualityArmory1.9PLUS%20v1.0.2.zip?dl=1
 ManuallyOverrideTo_1_8_systems: false
+ManuallyOverrideTo_1_13_systems: false
 Auto-Detect-Resourcepack: true
 sendOnJoin: true
 sendTitleOnJoin: false
 showPossibleCrashHelpMessage: true
 SecondsTillRPIsSent: 0.0
+showOutOfAmmoOnTitle: false
+showReloadingTitle: false
 
 
 #Item values:
@@ -67,7 +68,6 @@ IronSightsOnRightClick: false
 SwapSneakToSingleFile: false
 automaticallyReloadGunWhenOutOfAmmo: false
 allowGunReload: true
-
 
 
 
@@ -101,7 +101,7 @@ generalModifiers:
 FriendlyFireEnabled: false
 
 #Experminetal: Headshots will have more features in the future
-Enable_Headshot_Instantkill: true
+Enable_Headshot_Instantkill: false
 Enable_Headshot_Notification_Sound: true
 Enable_Headshot_Sounds: true
 Headshot_Notification_Sound: 'entity.experience_orb.pickup'

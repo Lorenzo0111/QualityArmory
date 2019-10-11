@@ -513,7 +513,7 @@ public class QAListener implements Listener {
 				try {
 					if (QAMain.AutoDetectResourcepackVersion && !QAMain.MANUALLYSELECT18) {
 						if (us.myles.ViaVersion.bukkit.util.ProtocolSupportUtil
-								.getProtocolVersion(e.getPlayer()) <QAMain. ID18) {
+								.getProtocolVersion(e.getPlayer()) <QAMain.ViaVersionIdfor_1_8) {
 							if (g == null)
 								g =QAMain. gunRegister
 										.get(QualityArmory.getGunWithAttchments(e.getItem().getItemStack()).getBase());
@@ -542,7 +542,7 @@ public class QAListener implements Listener {
 							}
 						} else {
 							if (us.myles.ViaVersion.bukkit.util.ProtocolSupportUtil
-									.getProtocolVersion(e.getPlayer()) >= QAMain.ID18) {
+									.getProtocolVersion(e.getPlayer()) >= QAMain.ViaVersionIdfor_1_8) {
 								if (g == null)
 									g = QAMain.gunRegister.get(
 											QualityArmory.getGunWithAttchments(e.getItem().getItemStack()).getBase());
@@ -777,6 +777,8 @@ public class QAListener implements Listener {
 			} catch (Error | Exception e45) {
 			}
 		}
+
+
 		ArmoryBaseObject object = null;
 		if (!QualityArmory.isCustomItem(e.getPlayer().getItemInHand())) {
 			ItemStack offhand = Update19OffhandChecker.getItemStackOFfhand(e.getPlayer());
@@ -786,7 +788,11 @@ public class QAListener implements Listener {
 				object = QualityArmory.getCustomItem(offhand);
 			}
 		}else{
-			object = QualityArmory.getCustomItem(e.getPlayer().getItemInHand());
+			if(QualityArmory.isIronSights(e.getPlayer().getItemInHand())){
+				object = QualityArmory.getCustomItem(e.getPlayer().getInventory().getItemInOffHand());
+			}else {
+				object = QualityArmory.getCustomItem(e.getPlayer().getItemInHand());
+			}
 		}
 
 		if(object == null)
@@ -856,11 +862,12 @@ public class QAListener implements Listener {
 							e.setCancelled(true);
 							Gun g = IronsightsHandler.getGunUsed(e.getPlayer());
 							if (!QAMain.enableIronSightsON_RIGHT_CLICK) {
-								if (!e.getPlayer().isSneaking() || (g != null && !g.isAutomatic())) {
+								//if (!e.getPlayer().isSneaking() || (g != null && !g.isAutomatic())) {
 									QAMain.DEBUG("Swapping " + g.getName() + " from offhand to main hand to reload!");
+									if(GunUtil.rapidfireshooters.containsKey(e.getPlayer().getUniqueId()))
+										GunUtil.rapidfireshooters.remove(e.getPlayer().getUniqueId()).cancel();
 									IronsightsHandler.unAim(e.getPlayer());
-									usedItem = e.getPlayer().getItemInHand();
-								}
+								//}
 							} else {
 								QAMain.DEBUG("Swapping " + g.getName() + " from offhand to main hand!");
 								IronsightsHandler.unAim(e.getPlayer());

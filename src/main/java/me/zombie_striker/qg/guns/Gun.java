@@ -14,7 +14,6 @@ import me.zombie_striker.qg.guns.utils.GunRefillerRunnable;
 import me.zombie_striker.qg.guns.utils.GunUtil;
 import me.zombie_striker.qg.guns.utils.WeaponSounds;
 import me.zombie_striker.qg.guns.utils.WeaponType;
-import me.zombie_striker.qg.handlers.IronsightsHandler;
 import me.zombie_striker.qg.handlers.Update19OffhandChecker;
 import me.zombie_striker.qg.handlers.chargers.ChargingHandler;
 import me.zombie_striker.qg.handlers.reloaders.ReloadingHandler;
@@ -55,7 +54,7 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 
 	private boolean isPrimaryWeapon = true;
 
-	private boolean useOffhandOverride = false;
+	private boolean useOffhandOverride = true;
 
 	private List<String> extralore = null;
 	private String displayname = null;
@@ -297,8 +296,8 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 		this.recoil = d;
 	}
 
-	public void setOffhandOverride(boolean b){useOffhandOverride=b;}
-	public boolean isOffhandOverride(){return useOffhandOverride;}
+	public void enableBetterAimingAnimations(boolean b){useOffhandOverride=b;}
+	public boolean hasBetterAimingAnimations(){return useOffhandOverride;}
 
 	public void setVolume(double f){this.volume = f;}
 
@@ -654,20 +653,6 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 			return;
 		}
 
-		/*
-		 * if (QAMain.enableVisibleAmounts) {
-		 * QAMain.DEBUG("UNSUPPORTED - Enable visable ammo amount ID check"); boolean
-		 * validcheck2 = false; try { if (QAMain.isVersionHigherThan(1, 9)) {
-		 * UUID.fromString(usedItem.getItemMeta().getLocalizedName());
-		 * QAMain.DEBUG("Gun-Validation check - 1"); } else { validcheck2 = true; } }
-		 * catch (Error | Exception e34) { validcheck2 = true; } if (validcheck2) { if
-		 * (QAMain.isVersionHigherThan(1, 9)) { if
-		 * (!usedItem.getItemMeta().hasDisplayName() ||
-		 * !usedItem.getItemMeta().hasLore()) { ItemStack is =
-		 * ItemFact.getGun(MaterialStorage.getMS(usedItem)); e.setCancelled(true);
-		 * e.getPlayer().setItemInHand(is); QAMain.DEBUG("Gun-Validation check - 2");
-		 * return; } } } }
-		 */
 
 		QAMain.DEBUG("Dups check");
 		QAMain.checkforDups(e.getPlayer(), usedItem);
@@ -675,12 +660,6 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 		ItemStack offhandItem = Update19OffhandChecker.getItemStackOFfhand(e.getPlayer());
 		boolean offhand = offhandItem != null && offhandItem.equals(usedItem);
 
-		// AttachmentBase attachment =
-		// me.zombie_striker.qg.api.QualityArmory.getGunWithAttchments(usedItem);
-		/*
-		 * Gun g = QualityArmory.getGun(usedItem); if (g == null) g =
-		 * attachment.getBaseGun();
-		 */
 		QAMain.DEBUG("Made it to gun/attachment check : " + getName());try {
 			if (QAMain.enableInteractChests) {
 				if (e.getClickedBlock() != null
@@ -735,10 +714,11 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 								offhand = false;
 							}
 							if (QAMain.allowGunReload) {
-								QualityArmory.sendHotbarGunAmmoCount(e.getPlayer(), this, usedItem,
-										((getMaxBullets() != getAmount(usedItem))
+								QualityArmory.sendHotbarGunAmmoCount(e.getPlayer(), this, usedItem,	((getMaxBullets() != getAmount(usedItem))
 												&& GunUtil.hasAmmo(e.getPlayer(), this)));
-								if (playerHasAmmo(e.getPlayer())) {
+								if((getMaxBullets() != getAmount(usedItem))){
+									QAMain.DEBUG("Ammo full");
+								}else if (playerHasAmmo(e.getPlayer())) {
 									QAMain.DEBUG("Trying to reload WITH AUTORELOAD. player has ammo");
 									reload(e.getPlayer());
 

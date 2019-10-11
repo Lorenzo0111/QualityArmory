@@ -52,7 +52,7 @@ public class CustomGunItem extends AbstractItem {
 
 	@Override
 	public void initItems(File dataFolder) {
-		CustomItemManager.setResourcepack("https://www.dropbox.com/s/atugf32ggp3rd69/QualityArmoryV2.0.1.zip?dl=1");
+		CustomItemManager.setResourcepack("https://www.dropbox.com/s/g5rkfdcmlax9w6a/QualityArmoryV2.0.2.zip?dl=1");
 
 
 		List<String> stringsWoodRif = Arrays.asList(new String[]{getIngString(Material.IRON_INGOT, 0, 12),
@@ -192,7 +192,7 @@ public class CustomGunItem extends AbstractItem {
 		GunYMLCreator
 				.createNewDefaultGun(dataFolder, "dragunov", "Dragunov", 16, stringsMetalRif,
 						WeaponType.SNIPER, null, true, "762", 7, 12, 2100).setMaterial(Material.CROSSBOW)
-				.setUseOffhand(true).setDelayShoot(0.4).setZoomLevel(9).setSwayMultiplier(3).setRecoil(5).done();
+				.setUseOffhand(false).setDelayShoot(0.4).setZoomLevel(9).setSwayMultiplier(3).setRecoil(5).done();
 		GunYMLCreator
 				.createNewDefaultGun(dataFolder, "spas12", "Spas-12", 17, stringsMetalRif,
 						WeaponType.SHOTGUN, null, false, "shell", 2, 8, 1000).setMaterial(Material.CROSSBOW)
@@ -216,7 +216,7 @@ public class CustomGunItem extends AbstractItem {
 		GunYMLCreator
 				.createNewDefaultGun(dataFolder, "awp", "AWP", 20, stringsMetalRif, WeaponType.SNIPER,
 						WeaponSounds.GUN_BIG, true, "762", 10, 12, 3000)
-				.setUseOffhand(true).setDelayShoot(0.8).setZoomLevel(9).setSwayMultiplier(3).setRecoil(5).setMaterial(Material.CROSSBOW).done();
+				.setUseOffhand(false).setDelayShoot(0.8).setZoomLevel(9).setSwayMultiplier(3).setRecoil(5).setMaterial(Material.CROSSBOW).done();
 
 		GunYMLCreator.createMisc(false, dataFolder, false, "default_smokegrenade", "smokegrenade",
 				"&7Smoke Grenade",
@@ -239,7 +239,7 @@ public class CustomGunItem extends AbstractItem {
 		GunYMLCreator
 				.createAttachment(false, dataFolder, false, "default_awp_asiimov", "awpasiimov",
 						ChatColor.GOLD + "AWP[Asiimov-skin]", null, m(24), stringsMetalRif, 1000, "awp").setMaterial(Material.CROSSBOW)
-				.setUseOffhand(true).dontVerify().done();
+				.setUseOffhand(false).dontVerify().done();
 
 		GunYMLCreator
 				.createNewDefaultGun(dataFolder, "m4a1s", "M4A1s", 25, stringsMetalRif, WeaponType.RIFLE,
@@ -390,7 +390,7 @@ public class CustomGunItem extends AbstractItem {
 		GunYMLCreator
 				.createNewCustomGun(dataFolder, "default_vera", "vera", ChatColor.GOLD + "Vera", 45,
 						stringsGoldRif, WeaponType.RIFLE, WeaponSounds.GUN_DEAGLE, true, "556", 3, 30, 3000)
-				.setUseOffhand(true).setNightVisionOnScope(true).setZoomLevel(5).setMaterial(Material.CROSSBOW)
+				.setUseOffhand(false).setNightVisionOnScope(true).setZoomLevel(5).setMaterial(Material.CROSSBOW)
 				.setLore(Arrays.asList("&fThe Callahan Full-bore Auto-lock.", "&7\"Customized trigger, �",
 						"&7double cartridge thorough gauge.", "&7It is my very favorite gun ",
 						"&7This is the best gun made by man.", "&7 It has extreme sentimental value ",
@@ -417,12 +417,12 @@ public class CustomGunItem extends AbstractItem {
 		GunYMLCreator
 				.createNewDefaultGun(dataFolder, "sks", "SKS-45", 51, stringsWoodRif, WeaponType.SNIPER,
 						null, true, "762", 7, 10, 2000).setMaterial(Material.CROSSBOW)
-				.setUseOffhand(true).setDelayShoot(0.6).setZoomLevel(6).setDistance(290).setSwayMultiplier(3).setRecoil(8).done();
+				.setUseOffhand(false).setDelayShoot(0.6).setZoomLevel(6).setDistance(290).setSwayMultiplier(3).setRecoil(8).done();
 
 		GunYMLCreator
 				.createNewDefaultGun(dataFolder, "barrett", "Barrett-M82", 52, stringsWoodRif,
 						WeaponType.SNIPER, WeaponSounds.GUN_BIG, true, "50bmg", 17, 10, 4000)
-				.setDelayShoot(1).setZoomLevel(6).setDistance(350).setDelayReload(2.5).setSwayMultiplier(3).setMaterial(Material.CROSSBOW).setUseOffhand(true)
+				.setDelayShoot(1).setZoomLevel(6).setDistance(350).setDelayReload(2.5).setSwayMultiplier(3).setMaterial(Material.CROSSBOW).setUseOffhand(false)
 				.setNightVisionOnScope(true).setRecoil(15).done();
 
 		GunYMLCreator
@@ -443,18 +443,18 @@ public class CustomGunItem extends AbstractItem {
 				.createNewDefaultGun(dataFolder, "minigun", "Minigun", 56, stringsMetalRif,
 						WeaponType.BIG_GUN, WeaponSounds.GUN_BIG, true, "556", 2, 200, 15000)
 				.setFullyAutomatic(5).setBulletsPerShot(1).setChargingHandler(ChargingManager.REQUIREAIM).setMaterial(Material.CROSSBOW)
-				.setSway(0.5).setSwayMultiplier(2.4).setUseOffhand(true).setParticle(0.9, 0.9, 0.9, Material.STONE).done();
+				.setSway(0.5).setSwayMultiplier(2.4).setUseOffhand(false).setParticle(0.9, 0.9, 0.9, Material.STONE).done();
 		GunYMLCreator// TODO: MINIGUN RECOIL
 				.createNewDefaultGun(dataFolder, "mk19", "Mk-19", 57, stringsMetalRif, WeaponType.BIG_GUN,
 						WeaponSounds.WARHEAD_LAUNCH, true, "40mm", 50, 50, 20000)
 				.setFullyAutomatic(1).setCustomProjectile(ProjectileManager.EXPLODINGROUND)
 				.setCustomProjectileVelocity(4).setCustomProjectileExplosionRadius(5)
-				.setUseOffhand(true).setChargingHandler(ChargingManager.REQUIREAIM).setSway(0.5).setSwayMultiplier(2.4).setMaterial(Material.CROSSBOW)
+				.setUseOffhand(false).setChargingHandler(ChargingManager.REQUIREAIM).setSway(0.5).setSwayMultiplier(2.4).setMaterial(Material.CROSSBOW)
 				.setParticle(0.001, 0.001, 0.001, Material.COAL_BLOCK).setRecoil(7).done();
 		GunYMLCreator
 				.createNewDefaultGun(dataFolder, "asval", "AS-Val", 58, stringsMetalRif, WeaponType.RIFLE,
 						WeaponSounds.SILENCEDSHOT, true, "762", 3, 30, 7000).setMaterial(Material.CROSSBOW)
-				.setUseOffhand(true).setSway(0.2).setFullyAutomatic(3).setRecoil(2).done();
+				.setUseOffhand(false).setSway(0.2).setFullyAutomatic(3).setRecoil(2).done();
 		GunYMLCreator
 				.createNewDefaultGun(dataFolder, "fnp90", "FN-P90", 59, stringsMetalRif, WeaponType.SMG,
 						WeaponSounds.SILENCEDSHOT, true, "556", 2, 50, 3000).setMaterial(Material.CROSSBOW)
@@ -462,7 +462,7 @@ public class CustomGunItem extends AbstractItem {
 		GunYMLCreator
 				.createNewDefaultGun(dataFolder, "kar98k", "Kar-98K", 60, stringsWoodRif,
 						WeaponType.SNIPER, null, true, "762", 10, 6, 2500).setMaterial(Material.CROSSBOW)
-				.setUseOffhand(true).setZoomLevel(2).setDelayShoot(0.7).setChargingHandler(ChargingManager.BOLT)
+				.setUseOffhand(false).setZoomLevel(2).setDelayShoot(0.7).setChargingHandler(ChargingManager.BOLT)
 				.setSwayMultiplier(3).setDistance(280).setRecoil(7).done();
 		GunYMLCreator.createNewDefaultGun(dataFolder, "mp40", "MP 40", 61, stringsMetalRif,
 				WeaponType.SMG, WeaponSounds.GUN_SMALL, true, "9mm", 2, 32, 3800).setFullyAutomatic(3).setMaterial(Material.CROSSBOW).done();
@@ -546,8 +546,6 @@ public class CustomGunItem extends AbstractItem {
 		}
 		IronsightsHandler.ironsightsMaterial = Material.matchMaterial(ironconfig.getString("material"));
 		IronsightsHandler.ironsightsData = ironconfig.getInt("id");
-
-
 	}
 
 	public String getIngString(Material m, int durability, int amount) {

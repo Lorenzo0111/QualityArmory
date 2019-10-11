@@ -30,7 +30,7 @@ public class GunYML extends ArmoryYML {
 		setNoOverride("firerate", 1);
 		setNoOverride("maxbullets", 0);
 		setNoOverride("delayForReload", 1.5);
-		setNoOverride("delayForShoot", (contains("isAutomatic") && (boolean)get("isAutomatic")) ? (contains("firerate")? 9/(((int)get("firerate"))*2):0.15):0.2);
+		setNoOverride("delayForShoot", 0.3);
 		setNoOverride("bullets-per-shot", 1);
 		setNoOverride("isAutomatic", false);
 		setNoOverride("maxBulletDistance", 200);
@@ -49,7 +49,7 @@ public class GunYML extends ArmoryYML {
 		setNoOverride("addMuzzleSmoke", true);
 
 		setNoOverride("drop-glow-color", "none");
-		setNoOverride("headshotMultiplier", 2);
+		setNoOverride("headshotMultiplier", 3.5);
 		setNoOverride("swayMultiplier", 2);
 
 		setNoOverride("weaponsounds_volume",4);

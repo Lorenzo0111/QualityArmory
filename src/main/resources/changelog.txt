@@ -1,3 +1,12 @@
+1.1.147
+    Fixed ironsights for 1.14+
+    Fixed resourcepack for 1.14+.
+    Fixed bug that stops guns from firing when aiming. (Sorry for this being broken for too long)
+    Fixed aiming animation
+    Disabled headshot instantkill in the config. Now a headshot with a bad pistol is non-lethal (Yay?)
+    Fixed long delay between shots if not using automatic shooting
+    Fixed headshots for ravagers, pandas, foxes, and vexes
+
 1.1.146
     Code cleanup
     Fixed some minor bugs.
