@@ -1,3 +1,7 @@
+1.1.148
+   Fixed config reloading.
+   Possibly fixed issue with delayed hits.
+
 1.1.147
     Fixed ironsights for 1.14+
     Fixed resourcepack for 1.14+.

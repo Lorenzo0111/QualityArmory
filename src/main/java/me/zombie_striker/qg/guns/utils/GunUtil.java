@@ -237,16 +237,34 @@ public class GunUtil {
 							}
 						}
 
-						if (hitTarget instanceof LivingEntity)
+						if (hitTarget instanceof LivingEntity) {
 							((LivingEntity) hitTarget).setNoDamageTicks(0);
-						((Damageable) hitTarget).damage(damageMAX, p);
-						QAMain.DEBUG("Damaging entity " + hitTarget.getName() + " ( "
-								+ ((LivingEntity) hitTarget).getHealth() + "/"
-								+ ((LivingEntity) hitTarget).getMaxHealth() + " :" + damageMAX + " DAM)");
+							QAMain.DEBUG("Damaging entity " + hitTarget.getName() + " ( "
+									+ ((LivingEntity) hitTarget).getHealth() + "/"
+									+ ((LivingEntity) hitTarget).getMaxHealth() + " :" + damageMAX + " DAM)");
+						}
+						if(hitTarget instanceof Damageable)
+							((Damageable) hitTarget).damage(damageMAX, p);
+
+
+						if (hitTarget instanceof LivingEntity) {
+							((LivingEntity) hitTarget).setNoDamageTicks(0);
+							final LivingEntity le = (LivingEntity) hitTarget;
+							new BukkitRunnable() {
+								public void run() {
+									if(le.getNoDamageTicks()>0)
+									le.setNoDamageTicks(0);
+								}
+							}.runTaskLater(QAMain.getInstance(),1);
+						}
 					} else {
-						QAMain.DEBUG("Damaging entity CANCELED " + hitTarget.getName() + " ( "
-								+ ((LivingEntity) hitTarget).getHealth() + "/"
-								+ ((LivingEntity) hitTarget).getMaxHealth() + " :" + damageMAX + " DAM)");
+						if (hitTarget instanceof LivingEntity) {
+							QAMain.DEBUG("Damaging entity CANCELED " + hitTarget.getName() + " ( "
+									+ ((LivingEntity) hitTarget).getHealth() + "/"
+									+ ((LivingEntity) hitTarget).getMaxHealth() + " :" + damageMAX + " DAM)");
+						}else{
+							QAMain.DEBUG("Damaging entity CANCELED " + hitTarget.getType()+".");
+						}
 					}
 
 				}

@@ -710,7 +710,7 @@ public class QAMain extends JavaPlugin {
 
 	@SuppressWarnings({"unchecked", "deprecation"})
 	public void reloadVals() {
-
+		reloadConfig();
 		DEBUG = (boolean) a("ENABLE-DEBUG", false);
 
 		Material glass = null;
@@ -1325,17 +1325,7 @@ public class QAMain extends JavaPlugin {
 					namesToBypass.add(player.getName());
 					resourcepackwhitelist.set("Names_Of_players_to_bypass", namesToBypass);
 					player.sendMessage(prefix + S_RESOURCEPACK_DOWNLOAD);
-					/*if (AutoDetectResourcepackVersion && Bukkit.getPluginManager().isPluginEnabled("ViaRewind")) {
-						if (MANUALLYSELECT18) {
-							player.sendMessage("For 1.9+ : " + url18New);
-							player.sendMessage("For 1.8  : " + url18);
-						} else {
-							player.sendMessage("For 1.9+ : " + url);
-							player.sendMessage("For 1.8  : " + url18);
-						}
-					} else {*/
 					player.sendMessage(CustomItemManager.getResourcepack());
-					//}
 					player.sendMessage(prefix + S_RESOURCEPACK_BYPASS);
 
 					return true;
