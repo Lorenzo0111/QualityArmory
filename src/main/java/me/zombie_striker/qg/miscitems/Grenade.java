@@ -36,6 +36,10 @@ public class Grenade implements ThrowableItems {
 	List<String> lore;
 	MaterialStorage ms;
 
+	@Override
+	public void setCustomLore(List<String> lore) {
+		this.lore=lore;
+	}
 	public Grenade(ItemStack[] ingg, double cost, double damage, double explosionreadius, String name,
 			String displayname, List<String> lore, MaterialStorage ms) {
 		this.ing = ingg;
@@ -85,8 +89,7 @@ public class Grenade implements ThrowableItems {
 
 	@SuppressWarnings("deprecation")
 	@Override
-	public void onRMB(PlayerInteractEvent e, ItemStack usedItem) {
-		Player thrower = e.getPlayer();
+	public boolean onRMB(Player thrower, ItemStack usedItem) {
 		if (throwItems.containsKey(thrower)) {
 			ThrowableHolder holder = throwItems.get(thrower);
 			ItemStack grenadeStack = thrower.getItemInHand();
@@ -113,16 +116,17 @@ public class Grenade implements ThrowableItems {
 		} else {
 			thrower.sendMessage(QAMain.prefix + QAMain.S_GRENADE_PULLPIN);
 		}
+		return true;
 	}
 
 	@Override
-	public void onLMB(PlayerInteractEvent e, ItemStack usedItem) {
+	public boolean onLMB(Player e, ItemStack usedItem) {
 		Player thrower = e.getPlayer();
 		if (throwItems.containsKey(thrower)) {
 			thrower.sendMessage(QAMain.prefix + QAMain.S_GRENADE_PALREADYPULLPIN);
 			thrower.playSound(thrower.getLocation(), WeaponSounds.RELOAD_BULLET.getSoundName(), 1, 1);
 			QAMain.DEBUG("Already pin out");
-			return;
+			return true;
 		}
 
 		thrower.getWorld().playSound(thrower.getLocation(), WeaponSounds.RELOAD_MAG_IN.getSoundName(), 2, 1);
@@ -171,7 +175,7 @@ public class Grenade implements ThrowableItems {
 			}
 		}.runTaskLater(QAMain.getInstance(), 5 * 20));
 		throwItems.put(thrower, h);
-
+		return true;
 	}
 
 	@Override

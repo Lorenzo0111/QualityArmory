@@ -5,6 +5,8 @@ import java.util.List;
 import me.zombie_striker.customitemmanager.CustomItemManager;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
@@ -152,22 +154,28 @@ public class Ammo implements ArmoryBaseObject{
 	@Override
 	public void set18Supported(boolean b) {		
 	}
-	
 
 	@Override
-	public void onRMB(PlayerInteractEvent e, ItemStack usedItem) {
-		QAMain.DEBUG("The item being click is ammo!");
-		if (usedItem.getType() == Material.DIAMOND_HOE && e.getAction() == Action.RIGHT_CLICK_BLOCK
-				&& (e.getClickedBlock().getType() == Material.DIRT
-						|| e.getClickedBlock().getType() == Material.GRASS
-						|| e.getClickedBlock().getType() == Material.GRASS_PATH
-						|| e.getClickedBlock().getType() == MultiVersionLookup.getMycil()))
-			e.setCancelled(true);
+	public void setCustomLore(List<String> lore) {
+		this.lore=lore;
 	}
 
 	@Override
-	public void onLMB(PlayerInteractEvent e, ItemStack usedItem) {
-		
+	public boolean onRMB(Player e, ItemStack usedItem) {
+		QAMain.DEBUG("The item being click is ammo!");
+		Block b = e.getTargetBlock(null,6);
+		if (usedItem.getType() == Material.DIAMOND_HOE
+				&& (b.getType() == Material.DIRT
+						||b.getType() == Material.GRASS
+						|| b.getType() == Material.GRASS_PATH
+						|| b.getType() == MultiVersionLookup.getMycil()))
+			return true;
+		return false;
+	}
+
+	@Override
+	public boolean onLMB(Player e, ItemStack usedItem) {
+		return false;
 	}
 	@Override
 	public ItemStack getItemStack() {

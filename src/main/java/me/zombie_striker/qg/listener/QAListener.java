@@ -1,14 +1,19 @@
 package me.zombie_striker.qg.listener;
 
-import java.util.ArrayList;
-
 import me.zombie_striker.customitemmanager.CustomItemManager;
-import me.zombie_striker.qg.handlers.IronsightsHandler;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.GameMode;
-import org.bukkit.Material;
-import org.bukkit.Sound;
+import me.zombie_striker.customitemmanager.MaterialStorage;
+import me.zombie_striker.qg.ArmoryBaseObject;
+import me.zombie_striker.qg.QAMain;
+import me.zombie_striker.qg.ammo.Ammo;
+import me.zombie_striker.qg.api.QualityArmory;
+import me.zombie_striker.qg.armor.ArmorObject;
+import me.zombie_striker.qg.attachments.AttachmentBase;
+import me.zombie_striker.qg.guns.Gun;
+import me.zombie_striker.qg.guns.utils.GunRefillerRunnable;
+import me.zombie_striker.qg.guns.utils.GunUtil;
+import me.zombie_striker.qg.handlers.*;
+import me.zombie_striker.qg.miscitems.MeleeItems;
+import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -17,8 +22,8 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryMoveItemEvent;
 import org.bukkit.event.inventory.InventoryPickupItemEvent;
@@ -30,20 +35,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.scoreboard.Scoreboard;
 
-import me.zombie_striker.qg.ArmoryBaseObject;
-import me.zombie_striker.customitemmanager.MaterialStorage;
-import me.zombie_striker.qg.QAMain;
-import me.zombie_striker.qg.ammo.Ammo;
-import me.zombie_striker.qg.api.QualityArmory;
-import me.zombie_striker.qg.armor.ArmorObject;
-import me.zombie_striker.qg.attachments.AttachmentBase;
-import me.zombie_striker.qg.guns.Gun;
-import me.zombie_striker.qg.guns.utils.GunRefillerRunnable;
-import me.zombie_striker.qg.guns.utils.GunUtil;
-import me.zombie_striker.qg.handlers.BulletWoundHandler;
-import me.zombie_striker.qg.handlers.EconHandler;
-import me.zombie_striker.qg.handlers.Update19OffhandChecker;
-import me.zombie_striker.qg.miscitems.MeleeItems;
+import java.util.ArrayList;
 
 public class QAListener implements Listener {
 
@@ -54,18 +46,25 @@ public class QAListener implements Listener {
 			return;
 		if (e.getDamager() instanceof Player) {
 			Player d = (Player) e.getDamager();
-			if ((e.getCause() == DamageCause.ENTITY_ATTACK || e.getCause() == DamageCause.ENTITY_SWEEP_ATTACK)
-					&& QualityArmory.isMisc(d.getItemInHand())) {
-				ArmoryBaseObject aa = QualityArmory.getMisc(d.getItemInHand());
-				if (aa instanceof MeleeItems) {
-					DEBUG("Setting damage for " + aa.getName() + " to be equal to " + ((MeleeItems) aa).getDamage()
-							+ ". was " + e.getDamage());
-					e.setDamage(((MeleeItems) aa).getDamage());
-				}
+			if ((e.getCause() == DamageCause.ENTITY_ATTACK || e.getCause() == DamageCause.ENTITY_SWEEP_ATTACK)) {
+				if (QualityArmory.isMisc(d.getItemInHand())) {
+					ArmoryBaseObject aa = QualityArmory.getMisc(d.getItemInHand());
+					if (aa instanceof MeleeItems) {
+						DEBUG("Setting damage for " + aa.getName() + " to be equal to " + ((MeleeItems) aa).getDamage()
+								+ ". was " + e.getDamage());
+						e.setDamage(((MeleeItems) aa).getDamage());
+					}
+				}/*else if (QualityArmory.isGun(d.getItemInHand()) || QualityArmory.isIronSights(d.getItemInHand()) && d.getLocation().distanceSquared(e.getEntity().getLocation()) < (5.5*5.5)){
+					if(!QAMain.allowGunHitEntities) {
+						e.setCancelled(true);
+						Gun g = IronsightsHandler.getGunUsed(d);
+						g.onLMB(d, IronsightsHandler.getItemAiming(d));
+					}
+				}*/
 			}
 			if (QualityArmory.isGun(d.getItemInHand()) || QualityArmory.isGunWithAttchments(d.getItemInHand())
 					|| QualityArmory.isIronSights(d.getItemInHand()))
-				DEBUG("The player " + e.getEntity().getName() + " was shot with a gun! Damage=" + e.getDamage());
+				DEBUG("The player " + e.getEntity().getName() + " was Hit with a gun! Damage=" + e.getDamage());
 		}
 	}
 
@@ -99,7 +98,7 @@ public class QAListener implements Listener {
 				if (e.isSneaking()) {
 					if (QualityArmory.isGun(e.getPlayer().getItemInHand())
 							|| QualityArmory.isGunWithAttchments(e.getPlayer().getItemInHand())
-									&& (!QualityArmory.isCustomItem(e.getPlayer().getInventory().getItemInOffHand()))) {
+							&& (!QualityArmory.isCustomItem(e.getPlayer().getInventory().getItemInOffHand()))) {
 						DEBUG("Sneak Swapping start!");
 						Gun g = QualityArmory.getGun(e.getPlayer().getItemInHand());
 						if (g != null) {
@@ -111,21 +110,21 @@ public class QAListener implements Listener {
 									if (!e.getPlayer().getItemInHand().hasItemMeta()
 											|| !e.getPlayer().getItemInHand().getItemMeta().hasDisplayName()
 											|| e.getPlayer().getItemInHand().getItemMeta().getDisplayName()
-													.contains(QAMain.S_RELOADING_MESSAGE))
+											.contains(QAMain.S_RELOADING_MESSAGE))
 										return;
 
 									IronsightsHandler.aim(e.getPlayer());
-										new BukkitRunnable() {
-											@Override
-											public void run() {
-												MaterialStorage ms1 = MaterialStorage.getMS(e.getPlayer().getItemInHand());
-												MaterialStorage ms2 = MaterialStorage.getMS(e.getPlayer().getInventory().getItemInOffHand());
-													if (ms2 == ms1) {
-														e.getPlayer().getInventory().setItemInOffHand(null);
-														DEBUG("Item Duped. Got Rid of using offhand override (code=1)");
-													}
+									new BukkitRunnable() {
+										@Override
+										public void run() {
+											MaterialStorage ms1 = MaterialStorage.getMS(e.getPlayer().getItemInHand());
+											MaterialStorage ms2 = MaterialStorage.getMS(e.getPlayer().getInventory().getItemInOffHand());
+											if (ms2 == ms1) {
+												e.getPlayer().getInventory().setItemInOffHand(null);
+												DEBUG("Item Duped. Got Rid of using offhand override (code=1)");
 											}
-										}.runTaskLater(QAMain.getInstance(),1);
+										}
+									}.runTaskLater(QAMain.getInstance(), 1);
 								} catch (Error e2) {
 									Bukkit.broadcastMessage(QAMain.prefix
 											+ "Ironsights not compatible for versions lower than 1.8. The server owner should set EnableIronSights to false in the plugin's config");
@@ -143,9 +142,9 @@ public class QAListener implements Listener {
 								MaterialStorage ms2 = MaterialStorage.getMS(e.getPlayer().getInventory().getItemInOffHand());
 
 								if (ms2 == ms1) {
-										e.getPlayer().getInventory().setItemInOffHand(null);
-										DEBUG("Item Duped. Got Rid of using offhand override (code=2)");
-									}
+									e.getPlayer().getInventory().setItemInOffHand(null);
+									DEBUG("Item Duped. Got Rid of using offhand override (code=2)");
+								}
 							}
 						}.runTaskLater(QAMain.getInstance(), 5);
 
@@ -178,7 +177,7 @@ public class QAListener implements Listener {
 	public void onBlockBreakMonitor(final BlockBreakEvent e) {
 		if (e.isCancelled())
 			return;
-		if(CustomItemManager.isUsingCustomData())
+		if (CustomItemManager.isUsingCustomData())
 			return;
 		int k = 0;
 		if (e.getPlayer().getItemInHand() != null)
@@ -226,21 +225,15 @@ public class QAListener implements Listener {
 		if (e.isCancelled())
 			return;
 		String name = null;
-		
-		if(e.getView().getTitle().startsWith((QAMain.S_craftingBenchName)) ||e.getView().getTitle().startsWith((QAMain.S_shopName))) {
-			if(e.getClick().isShiftClick()) {
+
+		if (e.getView().getTitle().startsWith((QAMain.S_craftingBenchName)) || e.getView().getTitle().startsWith((QAMain.S_shopName))) {
+			if (e.getClick().isShiftClick()) {
 				e.setCancelled(true);
 				return;
 			}
 		}
-		
-		try {
-			if (e.getClickedInventory() != null)
-				name = e.getView().getTitle();
-		} catch (Error | Exception e4) {
-			if (e.getInventory() != null)
-				name = e.getView().getTitle();
-		}
+
+		name = e.getView().getTitle();
 
 		if (name != null && (name.startsWith(QAMain.S_craftingBenchName) || name.startsWith(QAMain.S_shopName))) {
 			DEBUG("ClickedShop");
@@ -294,17 +287,19 @@ public class QAListener implements Listener {
 
 				if (QualityArmory.isGun(e.getCurrentItem())) {
 					Gun g = QualityArmory.getGun(e.getCurrentItem());
+					if (g.cost() < 0)
+						return;
 					if ((shop && EconHandler.hasEnough(g, (Player) e.getWhoClicked()))
 							|| (!shop && QAMain.lookForIngre((Player) e.getWhoClicked(), g))
 							|| (!shop && e.getWhoClicked().getGameMode() == GameMode.CREATIVE)) {
 						if (shop) {
 							EconHandler.pay(g, (Player) e.getWhoClicked());
 							e.getWhoClicked().sendMessage(
-									QAMain.	S_BUYCONFIRM.replaceAll("%item%", ChatColor.stripColor(g.getDisplayName()))
+									QAMain.S_BUYCONFIRM.replaceAll("%item%", ChatColor.stripColor(g.getDisplayName()))
 											.replaceAll("%cost%", "" + g.cost()));
 						} else
 							QAMain.removeForIngre((Player) e.getWhoClicked(), g);
-						ItemStack s = CustomItemManager.getItemFact("gun").getItem(g.getItemData(),1);
+						ItemStack s = CustomItemManager.getItemFact("gun").getItem(g.getItemData(), 1);
 						s.setAmount(g.getCraftingReturn());
 						e.getWhoClicked().getInventory().addItem(s);
 						QAMain.shopsSounds(e, shop);
@@ -313,7 +308,7 @@ public class QAListener implements Listener {
 						DEBUG("Failed to buy/craft gun");
 						e.getWhoClicked().closeInventory();
 						if (shop)
-							e.getWhoClicked().sendMessage(QAMain.prefix +QAMain. S_noMoney);
+							e.getWhoClicked().sendMessage(QAMain.prefix + QAMain.S_noMoney);
 						else
 							e.getWhoClicked().sendMessage(QAMain.prefix + QAMain.S_missingIngredients);
 						try {
@@ -324,11 +319,12 @@ public class QAListener implements Listener {
 									Sound.valueOf("ANVIL_BREAK"), 1, 1);
 						}
 					}
-				}
-					 else if (QualityArmory.isAmmo(e.getCurrentItem())) {
+				} else if (QualityArmory.isAmmo(e.getCurrentItem())) {
 					Ammo g = QualityArmory.getAmmo(e.getCurrentItem());
+					if (g.cost() < 0)
+						return;
 					if ((shop && EconHandler.hasEnough(g, (Player) e.getWhoClicked()))
-							|| (!shop &&QAMain. lookForIngre((Player) e.getWhoClicked(), g))
+							|| (!shop && QAMain.lookForIngre((Player) e.getWhoClicked(), g))
 							|| (!shop && e.getWhoClicked().getGameMode() == GameMode.CREATIVE)) {
 						if (shop) {
 							e.getWhoClicked().sendMessage(
@@ -337,16 +333,16 @@ public class QAListener implements Listener {
 							EconHandler.pay(g, (Player) e.getWhoClicked());
 						} else
 							QAMain.removeForIngre((Player) e.getWhoClicked(), g);
-						QualityArmory.	addAmmoToInventory((Player) e.getWhoClicked(), g, g.getCraftingReturn());
-						QAMain.	shopsSounds(e, shop);
+						QualityArmory.addAmmoToInventory((Player) e.getWhoClicked(), g, g.getCraftingReturn());
+						QAMain.shopsSounds(e, shop);
 						DEBUG("Buy-ammo");
 					} else {
 						e.getWhoClicked().closeInventory();
 						DEBUG("Failed to buy/craft ammo");
 						if (shop)
-							e.getWhoClicked().sendMessage(QAMain.prefix +QAMain. S_noMoney);
+							e.getWhoClicked().sendMessage(QAMain.prefix + QAMain.S_noMoney);
 						else
-							e.getWhoClicked().sendMessage(QAMain.prefix +QAMain. S_missingIngredients);
+							e.getWhoClicked().sendMessage(QAMain.prefix + QAMain.S_missingIngredients);
 						try {
 							((Player) e.getWhoClicked()).playSound(e.getWhoClicked().getLocation(),
 									Sound.BLOCK_ANVIL_BREAK, 1, 1);
@@ -357,9 +353,11 @@ public class QAListener implements Listener {
 					}
 				} else if (QualityArmory.isMisc(e.getCurrentItem())) {
 					ArmoryBaseObject g = QualityArmory.getMisc(e.getCurrentItem());
+					if (g.cost() < 0)
+						return;
 					if ((shop && EconHandler.hasEnough(g, (Player) e.getWhoClicked()))
 							|| (!shop && QAMain.lookForIngre((Player) e.getWhoClicked(), g))
-							|| (!shop &&e.getWhoClicked().getGameMode() == GameMode.CREATIVE)) {
+							|| (!shop && e.getWhoClicked().getGameMode() == GameMode.CREATIVE)) {
 						if (shop) {
 							EconHandler.pay(g, (Player) e.getWhoClicked());
 							e.getWhoClicked().sendMessage(
@@ -367,18 +365,18 @@ public class QAListener implements Listener {
 											.replaceAll("%cost%", "" + g.cost()));
 						} else
 							QAMain.removeForIngre((Player) e.getWhoClicked(), g);
-						ItemStack s = CustomItemManager.getItemFact("gun").getItem(g.getItemData(),1);
+						ItemStack s = CustomItemManager.getItemFact("gun").getItem(g.getItemData(), 1);
 						s.setAmount(g.getCraftingReturn());
 						e.getWhoClicked().getInventory().addItem(s);
-						QAMain.	shopsSounds(e, shop);
+						QAMain.shopsSounds(e, shop);
 						DEBUG("Buy-Misc");
 					} else {
 						DEBUG("Failed to buy/craft misc");
 						e.getWhoClicked().closeInventory();
 						if (shop)
-							e.getWhoClicked().sendMessage(QAMain.prefix +QAMain. S_noMoney);
+							e.getWhoClicked().sendMessage(QAMain.prefix + QAMain.S_noMoney);
 						else
-							e.getWhoClicked().sendMessage(QAMain.prefix +QAMain. S_missingIngredients);
+							e.getWhoClicked().sendMessage(QAMain.prefix + QAMain.S_missingIngredients);
 						try {
 							((Player) e.getWhoClicked()).playSound(e.getWhoClicked().getLocation(),
 									Sound.BLOCK_ANVIL_BREAK, 1, 1);
@@ -390,6 +388,8 @@ public class QAListener implements Listener {
 				} else if (QualityArmory.isArmor(e.getCurrentItem())) {
 					{
 						ArmorObject g = QualityArmory.getArmor(e.getCurrentItem());
+						if (g.cost() < 0)
+							return;
 						if ((shop && EconHandler.hasEnough(g, (Player) e.getWhoClicked()))
 								|| (!shop && QAMain.lookForIngre((Player) e.getWhoClicked(), g))
 								|| (!shop && e.getWhoClicked().getGameMode() == GameMode.CREATIVE)) {
@@ -401,10 +401,10 @@ public class QAListener implements Listener {
 								EconHandler.pay(g, (Player) e.getWhoClicked());
 							} else
 								QAMain.removeForIngre((Player) e.getWhoClicked(), g);
-							ItemStack s = CustomItemManager.getItemFact("gun").getItem(g.getItemData(),1);
+							ItemStack s = CustomItemManager.getItemFact("gun").getItem(g.getItemData(), 1);
 							s.setAmount(g.getCraftingReturn());
 							e.getWhoClicked().getInventory().addItem(s);
-							QAMain.	shopsSounds(e, shop);
+							QAMain.shopsSounds(e, shop);
 							DEBUG("Buy-armor");
 						} else {
 							DEBUG("Failed to buy/craft armor");
@@ -412,7 +412,7 @@ public class QAListener implements Listener {
 							if (shop)
 								e.getWhoClicked().sendMessage(QAMain.prefix + QAMain.S_noMoney);
 							else
-								e.getWhoClicked().sendMessage(QAMain.prefix +QAMain. S_missingIngredients);
+								e.getWhoClicked().sendMessage(QAMain.prefix + QAMain.S_missingIngredients);
 							try {
 								((Player) e.getWhoClicked()).playSound(e.getWhoClicked().getLocation(),
 										Sound.BLOCK_ANVIL_BREAK, 1, 1);
@@ -513,16 +513,16 @@ public class QAListener implements Listener {
 				try {
 					if (QAMain.AutoDetectResourcepackVersion && !QAMain.MANUALLYSELECT18) {
 						if (us.myles.ViaVersion.bukkit.util.ProtocolSupportUtil
-								.getProtocolVersion(e.getPlayer()) <QAMain.ViaVersionIdfor_1_8) {
+								.getProtocolVersion(e.getPlayer()) < QAMain.ViaVersionIdfor_1_8) {
 							if (g == null)
-								g =QAMain. gunRegister
+								g = QAMain.gunRegister
 										.get(QualityArmory.getGunWithAttchments(e.getItem().getItemStack()).getBase());
 
 							if (!g.is18Support()) {
 								for (Gun g2 : QAMain.gunRegister.values()) {
 									if (g2.is18Support()) {
 										if (g2.getDisplayName().equals(g.getDisplayName())) {
-											e.getItem().setItemStack(CustomItemManager.getItemFact("gun").getItem(g2.getItemData(),1));
+											e.getItem().setItemStack(CustomItemManager.getItemFact("gun").getItem(g2.getItemData(), 1));
 											QAMain.DEBUG("Custom-validation check 1");
 											return;
 										}
@@ -533,7 +533,7 @@ public class QAListener implements Listener {
 								for (Gun g2 : QAMain.gunRegister.values()) {
 									if (g2.is18Support()) {
 										if (g2.getAmmoType().equals(g.getAmmoType())) {
-											e.getItem().setItemStack(CustomItemManager.getItemFact("gun").getItem(g2.getItemData(),1));
+											e.getItem().setItemStack(CustomItemManager.getItemFact("gun").getItem(g2.getItemData(), 1));
 											QAMain.DEBUG("Custom-validation check 2");
 											return;
 										}
@@ -547,10 +547,10 @@ public class QAListener implements Listener {
 									g = QAMain.gunRegister.get(
 											QualityArmory.getGunWithAttchments(e.getItem().getItemStack()).getBase());
 								if (g.is18Support()) {
-									for (Gun g2 :QAMain. gunRegister.values()) {
+									for (Gun g2 : QAMain.gunRegister.values()) {
 										if (!g2.is18Support()) {
 											if (g2.getDisplayName().equals(g.getDisplayName())) {
-												e.getItem().setItemStack(CustomItemManager.getItemFact("gun").getItem(g2.getItemData(),1));
+												e.getItem().setItemStack(CustomItemManager.getItemFact("gun").getItem(g2.getItemData(), 1));
 												QAMain.DEBUG("Custom-validation check 3");
 												return;
 											}
@@ -558,10 +558,10 @@ public class QAListener implements Listener {
 									}
 									// If there is no exact match for 1.8, get the closest gun that uses the same
 									// ammo type.
-									for (Gun g2 :QAMain. gunRegister.values()) {
+									for (Gun g2 : QAMain.gunRegister.values()) {
 										if (!g2.is18Support()) {
 											if (g2.getAmmoType().equals(g.getAmmoType())) {
-												e.getItem().setItemStack(CustomItemManager.getItemFact("gun").getItem(g2.getItemData(),1));
+												e.getItem().setItemStack(CustomItemManager.getItemFact("gun").getItem(g2.getItemData(), 1));
 												QAMain.DEBUG("Custom-validation check 4");
 												return;
 											}
@@ -582,7 +582,7 @@ public class QAListener implements Listener {
 			}
 
 			if (QualityArmory.isAmmo(e.getItem().getItemStack())) {
-				QualityArmory.	addAmmoToInventory(e.getPlayer(), QAMain.ammoRegister.get(MaterialStorage.getMS(e.getItem().getItemStack())),
+				QualityArmory.addAmmoToInventory(e.getPlayer(), QAMain.ammoRegister.get(MaterialStorage.getMS(e.getItem().getItemStack())),
 						e.getItem().getItemStack().getAmount());
 				e.setCancelled(true);
 				e.getItem().remove();
@@ -597,7 +597,7 @@ public class QAListener implements Listener {
 
 	@EventHandler
 	public void onMove(PlayerMoveEvent e) {
-		QAMain.	recoilHelperMovedLocation.put(e.getPlayer().getUniqueId(), e.getTo());
+		QAMain.recoilHelperMovedLocation.put(e.getPlayer().getUniqueId(), e.getTo());
 	}
 
 	@EventHandler
@@ -658,14 +658,14 @@ public class QAListener implements Listener {
 		if (QAMain.ignoreSkipping)
 			return;
 
-		try{
-			if(e.getHand() == org.bukkit.inventory.EquipmentSlot.OFF_HAND)
+		try {
+			if (e.getHand() == org.bukkit.inventory.EquipmentSlot.OFF_HAND)
 				return;
-		}catch (Error|Exception e4){
+		} catch (Error | Exception e4) {
 
 		}
 
-		if(!CustomItemManager.isUsingCustomData()) {
+		if (!CustomItemManager.isUsingCustomData()) {
 			if (e.getPlayer().getItemInHand() != null && !QualityArmory.isCustomItem(e.getPlayer().getItemInHand())) {
 				QAMain.DEBUG("Item is not any valid item - mainhand");
 				if (QualityArmory.isCustomItemNextId(e.getPlayer().getItemInHand())) {
@@ -729,18 +729,18 @@ public class QAListener implements Listener {
 		}
 	}
 
-	@SuppressWarnings({ "deprecation" })
+	@SuppressWarnings({"deprecation"})
 	@EventHandler
 	public void onClick(final PlayerInteractEvent e) {
-		QAMain.DEBUG("InteractEvent Called. Custom item used = "+(CustomItemManager.getItemFact("gun").getItem(MaterialStorage.getMS(e.getItem()),1)!=null));
+		QAMain.DEBUG("InteractEvent Called. Custom item used = " + (CustomItemManager.getItemFact("gun").getItem(MaterialStorage.getMS(e.getItem()), 1) != null));
 		// Quick bugfix for specifically this item.
 
-		if(!CustomItemManager.isUsingCustomData()) {
+		if (!CustomItemManager.isUsingCustomData()) {
 			QAMain.DEBUG("Custom Data Check");
 			try {
 				if (QAMain.ITEM_enableUnbreakable && !QAMain.ignoreUnbreaking)
 					if (QualityArmory.isCustomItem(e.getPlayer().getItemInHand())) {
-						if (!e.getPlayer().getItemInHand().getItemMeta().spigot().isUnbreakable()) {
+						if (!e.getPlayer().getItemInHand().getItemMeta().isUnbreakable()) {
 							QAMain.DEBUG("A player is using a breakable item that reached being a gun!");
 							// If the item is not a gun, but the item below it is
 							int safeDurib = QualityArmory.findSafeSpot(e.getPlayer().getItemInHand(), true, QAMain.overrideURL)
@@ -760,7 +760,7 @@ public class QAListener implements Listener {
 			try {
 				if (QAMain.ITEM_enableUnbreakable && !QAMain.ignoreUnbreaking)
 					if (QualityArmory.isCustomItem(e.getPlayer().getInventory().getItemInOffHand())) {
-						if (!e.getPlayer().getInventory().getItemInOffHand().getItemMeta().spigot().isUnbreakable()) {
+						if (!e.getPlayer().getInventory().getItemInOffHand().getItemMeta().isUnbreakable()) {
 							QAMain.DEBUG("A player is using a breakable item that reached being a gun!");
 							// If the item is not a gun, but the item below it is
 							int safeDurib = QualityArmory.findSafeSpot(e.getPlayer().getInventory().getItemInOffHand(),
@@ -784,20 +784,20 @@ public class QAListener implements Listener {
 			ItemStack offhand = Update19OffhandChecker.getItemStackOFfhand(e.getPlayer());
 			if (offhand == null || !QualityArmory.isCustomItem(offhand)) {
 				return;
-			}else{
+			} else {
 				object = QualityArmory.getCustomItem(offhand);
 			}
-		}else{
-			if(QualityArmory.isIronSights(e.getPlayer().getItemInHand())){
+		} else {
+			if (QualityArmory.isIronSights(e.getPlayer().getItemInHand())) {
 				object = QualityArmory.getCustomItem(e.getPlayer().getInventory().getItemInOffHand());
-			}else {
+			} else {
 				object = QualityArmory.getCustomItem(e.getPlayer().getItemInHand());
 			}
 		}
 
-		if(object == null)
+		if (object == null)
 			return;
-		QAMain.DEBUG("It Is a custom item! = "+object.getName());
+		QAMain.DEBUG("It Is a custom item! = " + object.getName());
 
 		if (QAMain.kickIfDeniedRequest && QAMain.sentResourcepack.containsKey(e.getPlayer().getUniqueId())
 				&& System.currentTimeMillis() - QAMain.sentResourcepack.get(e.getPlayer().getUniqueId()) >= 3000) {
@@ -826,11 +826,11 @@ public class QAListener implements Listener {
 						if (origin.getDurability() != e.getPlayer().getItemInHand().getDurability()
 								&& slot == e.getPlayer().getInventory().getHeldItemSlot()
 								&& (e.getPlayer().getItemInHand() != null
-										&& e.getPlayer().getItemInHand().getType() == origin.getType())) {
+								&& e.getPlayer().getItemInHand().getType() == origin.getType())) {
 							try {
 								if (QualityArmory.isIronSights(e.getPlayer().getItemInHand())
 										&& origin.getDurability() == e.getPlayer().getInventory().getItemInOffHand()
-												.getDurability())
+										.getDurability())
 									return;
 								if (temp2 != null
 										&& temp2.getDurability() == e.getPlayer().getItemInHand().getDurability())
@@ -856,34 +856,32 @@ public class QAListener implements Listener {
 
 			if (IronsightsHandler.isAiming(e.getPlayer())) {
 				QAMain.DEBUG("Player is aiming!");
-					try {
-						if ((e.getAction() == Action.RIGHT_CLICK_AIR
-								|| e.getAction() == Action.RIGHT_CLICK_BLOCK) == (QAMain.SWAP_RMB_WITH_LMB)) {
-							e.setCancelled(true);
-							Gun g = IronsightsHandler.getGunUsed(e.getPlayer());
-							if (!QAMain.enableIronSightsON_RIGHT_CLICK) {
-								//if (!e.getPlayer().isSneaking() || (g != null && !g.isAutomatic())) {
-									QAMain.DEBUG("Swapping " + g.getName() + " from offhand to main hand to reload!");
-									if(GunUtil.rapidfireshooters.containsKey(e.getPlayer().getUniqueId()))
-										GunUtil.rapidfireshooters.remove(e.getPlayer().getUniqueId()).cancel();
-									IronsightsHandler.unAim(e.getPlayer());
-								//}
-							} else {
-								QAMain.DEBUG("Swapping " + g.getName() + " from offhand to main hand!");
-								IronsightsHandler.unAim(e.getPlayer());
-								QAMain.toggleNightvision(e.getPlayer(), g, false);
-							}
+				try {
+					if ((e.getAction() == Action.RIGHT_CLICK_AIR
+							|| e.getAction() == Action.RIGHT_CLICK_BLOCK) == (QAMain.SWAP_RMB_WITH_LMB)) {
+						e.setCancelled(true);
+						Gun g = IronsightsHandler.getGunUsed(e.getPlayer());
+						QAMain.DEBUG("Swapping " + g.getName() + " from offhand to main hand to reload!");
+						if (GunUtil.rapidfireshooters.containsKey(e.getPlayer().getUniqueId()))
+							GunUtil.rapidfireshooters.remove(e.getPlayer().getUniqueId()).cancel();
+						IronsightsHandler.unAim(e.getPlayer());
+						if (QAMain.enableIronSightsON_RIGHT_CLICK || !e.getPlayer().isSneaking()) {
+							QAMain.toggleNightvision(e.getPlayer(), g, false);
 						}
-					} catch (Error e2) {
+						if (QAMain.enableIronSightsON_RIGHT_CLICK)
+							return;
 					}
+				} catch (Error e2) {
+				}
 			}
 			ArmoryBaseObject qaItem = QualityArmory.getCustomItem(usedItem);
 			if (qaItem != null) {
 				QAMain.DEBUG(qaItem.getClass().getName() + " item is being used!");
 				if (e.getAction() == Action.LEFT_CLICK_AIR || e.getAction() == Action.LEFT_CLICK_BLOCK) {
-					qaItem.onLMB(e, usedItem);
+
+					e.setCancelled(qaItem.onLMB(e.getPlayer(), usedItem));
 				} else {
-					qaItem.onRMB(e, usedItem);
+					e.setCancelled(qaItem.onRMB(e.getPlayer(), usedItem));
 				}
 			}
 		}
@@ -934,7 +932,7 @@ public class QAListener implements Listener {
 				public void run() {
 					if (e.getPlayer().getScoreboard() != null
 							&& !QAMain.coloredGunScoreboard.contains(e.getPlayer().getScoreboard())) {
-						QAMain.	coloredGunScoreboard.add(QAMain.registerGlowTeams(e.getPlayer().getScoreboard()));
+						QAMain.coloredGunScoreboard.add(QAMain.registerGlowTeams(e.getPlayer().getScoreboard()));
 					}
 				}
 			}.runTaskLater(QAMain.getInstance(), 20 * 15);
@@ -1032,7 +1030,7 @@ public class QAListener implements Listener {
 						}
 						if (e.getPlayer().getItemInHand().getType() != e.getItemDrop().getItemStack().getType()
 								|| e.getPlayer().getItemInHand().getDurability() != e.getItemDrop().getItemStack()
-										.getDurability()) {
+								.getDurability()) {
 							return;
 						}
 						Gun g = QualityArmory.getGun(e.getItemDrop().getItemStack());

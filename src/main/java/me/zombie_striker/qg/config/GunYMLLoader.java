@@ -1,6 +1,7 @@
 package me.zombie_striker.qg.config;
 
 import me.zombie_striker.customitemmanager.MaterialStorage;
+import me.zombie_striker.qg.ArmoryBaseObject;
 import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.ammo.Ammo;
 import me.zombie_striker.qg.ammo.AmmoType;
@@ -76,6 +77,8 @@ public class GunYMLLoader {
 
 							Ammo da = new Ammo(name, displayname, extraLore, ms, amountA, false, 1, price, materails,
 									piercing);
+
+							da.setCustomLore(extraLore);
 
 							QAMain.ammoRegister.put(ms, da);
 							items++;
@@ -192,23 +195,29 @@ public class GunYMLLoader {
 
 							double radius = f2.contains("radius") ? f2.getDouble("radius") : 0;
 							items++;
+
+							ArmoryBaseObject base = null;
+
 							if (wt == WeaponType.MEDKIT)
-								QAMain.miscRegister.put(ms, new MedKit(ms, name, displayname, materails, price));
+								QAMain.miscRegister.put(ms, base=new MedKit(ms, name, displayname, materails, price));
 							if (wt == WeaponType.MEELEE)
 								QAMain.miscRegister.put(ms,
-										new MeleeItems(ms, name, displayname, materails, price, damage));
+										base=	new MeleeItems(ms, name, displayname, materails, price, damage));
 							if (wt == WeaponType.GRENADES)
 								QAMain.miscRegister.put(ms,
-										new Grenade(materails, price, damage, radius, name, displayname, lore, ms));
+										base=new Grenade(materails, price, damage, radius, name, displayname, lore, ms));
 							if (wt == WeaponType.SMOKE_GRENADES)
-								QAMain.miscRegister.put(ms, new SmokeGrenades(materails, price, damage, radius, name,
+								QAMain.miscRegister.put(ms, base=new SmokeGrenades(materails, price, damage, radius, name,
 										displayname, lore, ms));
 							if (wt == WeaponType.INCENDARY_GRENADES)
-								QAMain.miscRegister.put(ms, new IncendaryGrenades(materails, price, damage, radius,
+								QAMain.miscRegister.put(ms, base=new IncendaryGrenades(materails, price, damage, radius,
 										name, displayname, lore, ms));
 							if (wt == WeaponType.FLASHBANGS)
 								QAMain.miscRegister.put(ms,
-										new Flashbang(materails, price, damage, radius, name, displayname, lore, ms));
+										base=new Flashbang(materails, price, damage, radius, name, displayname, lore, ms));
+
+							if(base!=null)
+								base.setCustomLore(lore);
 						}
 					}
 				} catch (Exception e) {
@@ -258,6 +267,7 @@ public class GunYMLLoader {
 
 						Gun g = new Gun(name, ms);
 						g.setDisplayName(displayname);
+						g.setCustomLore(extraLore);
 						g.setIngredients(materails);
 						QAMain.gunRegister.put(ms, g);
 						loadGunSettings(g, f2);
@@ -457,6 +467,8 @@ public class GunYMLLoader {
 							AttachmentBase attach = new AttachmentBase(baseGunM, ms, name, displayname);
 							QAMain.gunRegister.put(ms, attach);
 							items++;
+
+							attach.setCustomLore(extraLore);
 
 							final ItemStack[] materails = main
 									.convertIngredients(f2.getStringList("craftingRequirements"));

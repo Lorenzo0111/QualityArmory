@@ -134,6 +134,9 @@ public class QAMain extends JavaPlugin {
 	public static boolean enableReloadWhenOutOfAmmo = false;
 	public static boolean overrideURL = false;
 	public static boolean kickIfDeniedRequest = false;
+
+	public static boolean allowGunHitEntities = false;
+
 	public static String S_NOPERM = "&c You do not have permission to do that.";
 
 	public static String S_NORES1 = " &c&l Downloading Resourcepack...";
@@ -447,8 +450,6 @@ public class QAMain extends JavaPlugin {
 					List<String> lore = OLD_ItemFact.getCraftingGunLore(g);
 					im.setLore(lore);
 					is.setItemMeta(im);
-					// if (enableVisibleAmounts)
-					// is.setAmount(g.getCraftingReturn());
 					if (shopping)
 						is = OLD_ItemFact.addShopLore(g, is.clone());
 					shopMenu.addItem(is);
@@ -670,7 +671,7 @@ public class QAMain extends JavaPlugin {
 						// if (p.getItemInHand().containsEnchantment(Enchantment.MENDING)) {
 						if (p.getItemInHand() != null && p.getItemInHand().hasItemMeta())
 							if (QualityArmory.isCustomItem(p.getItemInHand())) {
-								if (ITEM_enableUnbreakable && (!p.getItemInHand().getItemMeta().spigot().isUnbreakable()
+								if (ITEM_enableUnbreakable && (!p.getItemInHand().getItemMeta().isUnbreakable()
 										&& !ignoreUnbreaking)) {
 									ItemStack temp = p.getItemInHand();
 									int j = QualityArmory.findSafeSpot(temp, false, overrideURL);
@@ -688,7 +689,7 @@ public class QAMain extends JavaPlugin {
 									&& p.getInventory().getItemInOffHand().hasItemMeta())
 								if (QualityArmory.isCustomItem(p.getInventory().getItemInOffHand())) {
 									if (ITEM_enableUnbreakable && (!p.getInventory().getItemInOffHand().getItemMeta()
-											.spigot().isUnbreakable() && !ignoreUnbreaking)) {
+											.isUnbreakable() && !ignoreUnbreaking)) {
 										ItemStack temp = p.getInventory().getItemInOffHand();
 										int j = QualityArmory.findSafeSpot(temp, false, overrideURL);
 										temp.setDurability((short) Math.max(0, j - 1));
@@ -896,6 +897,9 @@ public class QAMain extends JavaPlugin {
 		// enableVisibleAmounts = (boolean) a("enableVisibleBulletCounts", false);
 		reloadOnF = (boolean) a("enableReloadingWhenSwapToOffhand", true);
 		reloadOnFOnly = (boolean) a("enableReloadOnlyWhenSwapToOffhand", false);
+
+		allowGunHitEntities = (boolean) a("allowGunHitEntities", false);
+
 
 		// showOutOfAmmoOnItem = (boolean) a("showOutOfAmmoOnItem", false);
 		showOutOfAmmoOnTitle = (boolean) a("showOutOfAmmoOnTitle", false);
@@ -1331,36 +1335,7 @@ public class QAMain extends JavaPlugin {
 					return true;
 				}
 
-				if (args[0].equalsIgnoreCase("createNewGun")) {
-					if (sender.hasPermission("qualityarmory.createnewitem")) {
-						if (args.length >= 2) {
-							ItemStack itemInHand = ((Player) sender).getItemInHand();
-							if (itemInHand == null) {
-								sender.sendMessage(prefix + " You need to hold an item that will be used as gun");
-								return true;
-							}
-							GunYMLCreator.createNewGun(false, getDataFolder(), false, "custom_" + args[1], args[1],
-									args[1], Collections.singletonList("Custom_item"), itemInHand.getDurability(), null,
-									WeaponType.RIFLE, false, "9mm", 1, 0.2, itemInHand.getType(), 64, 100, 1.5, 0.2, 1,
-									false, 200, null, 120, 0, (AutoDetectResourcepackVersion), WeaponSounds.GUN_MEDIUM);
-							GunYMLCreator.createSkullAmmo(true, getDataFolder(), true, "custom_" + args[1], args[1],
-									args[1], Collections.singletonList("Custom_item"), itemInHand.getType(),
-									itemInHand.getDurability(),
-									(itemInHand.getType() == MultiVersionLookup.getSkull()
-											? ((SkullMeta) itemInHand.getItemMeta()).getOwner()
-											: null),
-									null, 100, 1, 64);
-							sender.sendMessage(prefix + " A new gun has been created.");
-							sender.sendMessage(prefix + " You will need to use /qa reload for the new gun to appear.");
-						} else {
-							sendHelp(sender);
-						}
-					} else {
-						sender.sendMessage(prefix + ChatColor.RED + S_NOPERM);
-						return true;
-					}
-					return true;
-				}
+
 
 				if (args[0].equalsIgnoreCase("listItemIds")) {
 					if (sender.hasPermission("qualityarmory.getmaterialsused")) {
@@ -1615,8 +1590,6 @@ public class QAMain extends JavaPlugin {
 		if (sender.hasPermission("qualityarmory.reload"))
 			sender.sendMessage(ChatColor.GOLD + "/QA reload: " + ChatColor.GRAY + "reloads all values in QA.");
 		if (sender.hasPermission("qualityarmory.createnewitem")) {
-			sender.sendMessage(ChatColor.GOLD + "/QA createNewGun <name>: " + ChatColor.GRAY
-					+ "Creats a new gun using the item in your hand as a template.");
 			sender.sendMessage(ChatColor.GOLD + "/QA createNewAmmo <name>: " + ChatColor.GRAY
 					+ "Creats a new ammo type using the item in your hand as a template");
 		}

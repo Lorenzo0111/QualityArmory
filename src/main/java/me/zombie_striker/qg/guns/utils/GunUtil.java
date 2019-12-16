@@ -198,7 +198,6 @@ public class GunUtil {
 							damage, bulletProtection);
 					Bukkit.getPluginManager().callEvent(shootevent);
 					if (!shootevent.isCanceled()) {
-
 						if (hitTarget instanceof Player) {
 							Player player = (Player) hitTarget;
 							if (QAMain.enableArmorIgnore) {
@@ -243,20 +242,11 @@ public class GunUtil {
 									+ ((LivingEntity) hitTarget).getHealth() + "/"
 									+ ((LivingEntity) hitTarget).getMaxHealth() + " :" + damageMAX + " DAM)");
 						}
-						if(hitTarget instanceof Damageable)
+						if(hitTarget instanceof Damageable) {
 							((Damageable) hitTarget).damage(damageMAX, p);
-
-
-						if (hitTarget instanceof LivingEntity) {
-							((LivingEntity) hitTarget).setNoDamageTicks(0);
-							final LivingEntity le = (LivingEntity) hitTarget;
-							new BukkitRunnable() {
-								public void run() {
-									if(le.getNoDamageTicks()>0)
-									le.setNoDamageTicks(0);
-								}
-							}.runTaskLater(QAMain.getInstance(),1);
 						}
+
+
 					} else {
 						if (hitTarget instanceof LivingEntity) {
 							QAMain.DEBUG("Damaging entity CANCELED " + hitTarget.getName() + " ( "

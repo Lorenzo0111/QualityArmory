@@ -51,10 +51,11 @@ public class ItemFactory extends AbstractItemFact {
 				try {
 					im.setUnbreakable(true);
 				} catch (Error | Exception e34) {
-					try {
+					/*try {
 						im.spigot().setUnbreakable(true);
 					} catch (Error | Exception e344) {
-					}
+					}*/
+					//TODO: Readd Unbreakable support for 1.9
 				}
 			}
 			try {

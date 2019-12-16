@@ -25,6 +25,7 @@ import java.util.Map.Entry;
 import java.util.UUID;
 
 import org.bukkit.*;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
@@ -430,6 +431,11 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 		return Gun.USE_THIS_INSTEAD_OF_INDEVIDUAL_SHOOT_METHODS(this, player, getSway());
 	}
 
+	@Override
+	public void setCustomLore(List<String> lore) {
+		this.extralore=lore;
+	}
+
 	@SuppressWarnings("deprecation")
 	public static boolean USE_THIS_INSTEAD_OF_INDEVIDUAL_SHOOT_METHODS(Gun g, Player player, double acc) {
 		boolean offhand = QualityArmory.isIronSights(player.getInventory().getItemInHand());
@@ -634,23 +640,22 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 	}
 
 	@Override
-	public void onRMB(PlayerInteractEvent e, ItemStack usedItem) {
-		onClick(e, usedItem, (QAMain.reloadOnFOnly || !QAMain.SWAP_RMB_WITH_LMB));
+	public boolean onRMB(Player e, ItemStack usedItem) {
+		return onClick(e, usedItem, (QAMain.reloadOnFOnly || !QAMain.SWAP_RMB_WITH_LMB));
 	}
 
 	@Override
-	public void onLMB(PlayerInteractEvent e, ItemStack usedItem) {
-		onClick(e, usedItem, QAMain.SWAP_RMB_WITH_LMB);
+	public boolean onLMB(Player e, ItemStack usedItem) {
+		return onClick(e, usedItem, QAMain.SWAP_RMB_WITH_LMB);
 	}
 
 	@SuppressWarnings("deprecation")
-	public void onClick(final PlayerInteractEvent e, ItemStack usedItem, boolean fire) {
+	public boolean onClick(final Player e, ItemStack usedItem, boolean fire) {
 		QAMain.DEBUG("CLICKED GUN " + getName());
 
 		if (!e.getPlayer().hasPermission("qualityarmory.usegun")) {
 			e.getPlayer().sendMessage(QAMain.S_NOPERM);
-			e.setCancelled(true);
-			return;
+			return true;
 		}
 
 
@@ -662,29 +667,19 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 
 		QAMain.DEBUG("Made it to gun/attachment check : " + getName());try {
 			if (QAMain.enableInteractChests) {
-				if (e.getClickedBlock() != null
-						&& (e.getClickedBlock().getType() == Material.CHEST
-						|| e.getClickedBlock().getType() == Material.TRAPPED_CHEST)
-						|| e.getClickedBlock().getType() == Material.ENDER_CHEST) {
+				Block b = e.getTargetBlock(null,6);
+				if (b != null
+						&& (b.getType() == Material.CHEST
+						|| b.getType() == Material.TRAPPED_CHEST)
+						|| b.getType() == Material.ENDER_CHEST) {
 					QAMain.DEBUG("Chest interactable check has return true!");
-					return;
+					return true;
 				}
 			}
 		}catch (Error|Exception e4){}
 
-		e.setCancelled(true);
 		if (fire) {
 			QAMain.DEBUG("Fire mode called");
-			if (!QAMain.enableDurability /*|| OLD_ItemFact.getDamage(usedItem) > 0*/||true) {
-				// if (allowGunsInRegion(e.getPlayer().getLocation())) {
-				try {
-					if (e.getHand() == EquipmentSlot.OFF_HAND) {
-						QAMain.DEBUG("OffHandChecker was disabled for shooting!");
-						return;
-					}
-				} catch (Error | Exception e4) {
-				}
-
 				if (e.getPlayer().getItemInHand().getItemMeta().getDisplayName().contains(QAMain.S_RELOADING_MESSAGE)) {
 					if (!GunRefillerRunnable.hasItemReloaded(usedItem)) {
 						ItemStack tempused = usedItem.clone();
@@ -700,7 +695,7 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 						}
 					}
 					QAMain.DEBUG("Reloading message 1!");
-					return;
+					return true;
 				}
 
 				if (isAutomatic() && GunUtil.rapidfireshooters.containsKey(e.getPlayer().getUniqueId())) {
@@ -724,13 +719,12 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 
 								} else {
 									if (QAMain.showOutOfAmmoOnItem) {
-										// ItemFact.addOutOfAmmoToDisplayname(g, e.getPlayer(), usedItem, slot);
 										QAMain.DEBUG("UNSUPPORTED: Out of ammo displayed on item");
 									}
 									QAMain.DEBUG("Trying to reload WITH AUTORELOAD. player DOES NOT have ammo");
 								}
 							}
-							return;
+							return true;
 						}
 				} else {
 					if (QAMain.enableReloadWhenOutOfAmmo)
@@ -753,7 +747,7 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 									QAMain.DEBUG("Trying to reload WITH AUTORELOAD. player DOES NOT have ammo");
 								}
 							}
-							return;
+							return true;
 						}
 					shoot(e.getPlayer());
 					if (QAMain.enableDurability) {
@@ -767,16 +761,7 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 				}
 
 				QualityArmory.sendHotbarGunAmmoCount(e.getPlayer(), this, usedItem, false);
-				return;
-				/*
-				 * } else { Main.DEBUG("Worldguard region canceled the event"); }
-				 */
-				// sendHotbarGunAmmoCount(e.getPlayer(), g, attachment, usedItem, false);
-				// TODO: Verify that the gun is in the main hand.
-				// Shouldn't work for offhand, but it should still
-				// be checked later.
-			}
-			QAMain.DEBUG("End of fire mode check called");
+				return true;
 
 		} else {
 			QAMain.DEBUG("Non-Fire mode activated");
@@ -785,7 +770,7 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 				if (!Update19OffhandChecker.supportOffhand(e.getPlayer())) {
 					QAMain.enableIronSightsON_RIGHT_CLICK = false;
 					QAMain.DEBUG("Offhand checker returned false for the player. Disabling ironsights");
-					return;
+					return true;
 				}
 				// Rest should be okay
 				if (hasIronSights()) {
@@ -809,7 +794,7 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 								}
 							}
 							QAMain.DEBUG("Reloading message 1!");
-							return;
+							return true;
 						}
 						// ItemStack offhandItem =
 						// Update19OffhandChecker.getItemStackOFfhand(e.getPlayer());
@@ -880,8 +865,9 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 				QAMain.DEBUG("Ironsights on RMB finished");
 			} else {
 				QAMain.DEBUG("Reload called");
-				if (e.getClickedBlock() != null && QAMain.interactableBlocks.contains(e.getClickedBlock().getType())) {
-					e.setCancelled(false);
+				Block targetblock = e.getTargetBlock(null,6);
+				if (targetblock!= null && QAMain.interactableBlocks.contains(targetblock.getType())) {
+					return false;
 				} else {
 					if (QAMain.allowGunReload) {
 						QualityArmory.sendHotbarGunAmmoCount(e.getPlayer(), this, usedItem,
@@ -899,6 +885,7 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 
 		}
 		QAMain.DEBUG("Reached end for gun-check!");
+		return true;
 	}
 
 	@Override

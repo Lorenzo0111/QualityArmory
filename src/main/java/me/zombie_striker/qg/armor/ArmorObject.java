@@ -4,6 +4,7 @@ import java.util.List;
 
 import me.zombie_striker.customitemmanager.CustomItemManager;
 import org.bukkit.Sound;
+import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
@@ -103,23 +104,27 @@ public class ArmorObject implements ArmoryBaseObject {
 
 	@SuppressWarnings("deprecation")
 	@Override
-	public void onRMB(PlayerInteractEvent e, ItemStack usedItem) {
+	public boolean onRMB(Player e, ItemStack usedItem) {
 			QAMain.DEBUG("A Player is about to put on armor!");
-			ItemStack helm = e.getPlayer().getInventory().getHelmet();
-			e.getPlayer().setItemInHand(helm);
-			e.getPlayer().getInventory().setHelmet(usedItem);
+			ItemStack helm = e.getInventory().getHelmet();
+			e.setItemInHand(helm);
+			e.getInventory().setHelmet(usedItem);
 			try {
-				e.getPlayer().playSound(e.getPlayer().getLocation(), Sound.ITEM_ARMOR_EQUIP_IRON, 2, 1);
+				e.getPlayer().playSound(e.getLocation(), Sound.ITEM_ARMOR_EQUIP_IRON, 2, 1);
 			} catch (Error | Exception e3) {
 			}
-			e.setCancelled(true);
-			return;
+			return true;
 		
 	}
 
 	@Override
-	public void onLMB(PlayerInteractEvent e, ItemStack usedItem) {
+	public void setCustomLore(List<String> lore) {
+		this.lore=lore;
+	}
+	@Override
+	public boolean onLMB(Player e, ItemStack usedItem) {
 		// TODO Auto-generated method stub
+		return false;
 		
 	}
 	@Override

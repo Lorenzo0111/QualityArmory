@@ -57,7 +57,7 @@ public class GunYMLCreator {
 
 		return h;
 	}
-
+	/*
 	public static ArmoryYML createNewGun(boolean forceUpdate, File dataFolder, String name, String displayname, int id,
 			List<String> craftingRequirements, WeaponType weapontype, boolean enableIronSights, String ammotype,
 			int damage, double sway, int maxBullets, int duribility, double delayReload, double delayShoot,
@@ -171,7 +171,7 @@ public class GunYMLCreator {
 				craftingRequirements, weapontype, enableIronSights, ammotype, damage, sway, type, maxBullets,
 				duribility, delayReload, delayShoot, bulletspershot, isAutomatic, cost, ch, distance, var, version18,
 				ws, particle, particleR, particleG, particleB, false);
-	}
+	}*/
 
 	public static ArmoryYML createNewGun(boolean forceUpdate, File dataFolder, boolean invalid, String filename,
 			String name, String displayname, List<String> lore, int id, List<String> craftingRequirements,

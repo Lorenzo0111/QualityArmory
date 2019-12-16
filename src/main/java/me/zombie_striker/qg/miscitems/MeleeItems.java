@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.UUID;
 
 import me.zombie_striker.customitemmanager.CustomItemManager;
+import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
@@ -19,6 +20,8 @@ public class MeleeItems implements ArmoryBaseObject{
 	int cost;
 	String name;
 
+	List<String> lore = null;
+
 	List<UUID> medkitHeartUsage = new ArrayList<>();
 	HashMap<UUID, Long> lastTimeHealed = new HashMap<>();
 	HashMap<UUID, Double> PercentTimeHealed = new HashMap<>();
@@ -26,7 +29,11 @@ public class MeleeItems implements ArmoryBaseObject{
 	ItemStack[] ing = null;
 
 	int damage = 1;
-	
+
+	@Override
+	public void setCustomLore(List<String> lore) {
+		this.lore=lore;
+	}
 	public MeleeItems(MaterialStorage ms, String name, String displayname, ItemStack[] ings, int cost, int damage) {
 		this.ms = ms;
 		this.displayname = displayname;
@@ -58,7 +65,7 @@ public class MeleeItems implements ArmoryBaseObject{
 
 	@Override
 	public List<String> getCustomLore() {
-		return null;
+		return lore;
 	}
 
 	@Override
@@ -83,15 +90,16 @@ public class MeleeItems implements ArmoryBaseObject{
 	}
 
 	@Override
-	public void onRMB(PlayerInteractEvent e, ItemStack usedItem) {
+	public boolean onRMB(Player e, ItemStack usedItem) {
 		// TODO Auto-generated method stub
+		return false;
 		
 	}
 
 	@Override
-	public void onLMB(PlayerInteractEvent e, ItemStack usedItem) {
+	public boolean onLMB(Player e, ItemStack usedItem) {
 		// TODO Auto-generated method stub
-		
+		return false;
 	}
 	@Override
 	public ItemStack getItemStack() {

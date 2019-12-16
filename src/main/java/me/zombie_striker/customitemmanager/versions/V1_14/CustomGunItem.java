@@ -329,7 +329,7 @@ public class CustomGunItem extends AbstractItem {
 				.setSway(0.2).setRecoil(0).done();
 
 		GunYMLCreator
-				.createNewDefaultGun(dataFolder, "musket", "\"Brown Bess\" Musket", 37, stringsMetalRif,
+				.createNewDefaultGun(dataFolder, "musket", "\"Brown Bess\" Musket", 36, stringsMetalRif,
 						WeaponType.RIFLE, WeaponSounds.GUN_AUTO, true, "musketball", 10, 1, 100)
 				.setSway(0.3).setDelayReload(5).setDelayShoot(1).setSwayMultiplier(3).setRecoil(3).setMaterial(Material.CROSSBOW).done();
 

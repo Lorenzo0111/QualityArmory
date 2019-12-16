@@ -1,9 +1,9 @@
 package me.zombie_striker.customitemmanager.versions.V1_14;
 
 import me.zombie_striker.customitemmanager.AbstractItemFact;
+import me.zombie_striker.customitemmanager.MaterialStorage;
 import me.zombie_striker.customitemmanager.OLD_ItemFact;
 import me.zombie_striker.qg.ArmoryBaseObject;
-import me.zombie_striker.customitemmanager.MaterialStorage;
 import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.ammo.Ammo;
 import me.zombie_striker.qg.api.QualityArmory;
@@ -30,7 +30,7 @@ public class ItemFactory extends AbstractItemFact {
 	public ItemStack getItem(MaterialStorage materialStorage, int amount) {
 		ArmoryBaseObject base = QualityArmory.getCustomItem(materialStorage);
 
-		if(base==null)
+		if (base == null)
 			return null;
 
 
@@ -44,9 +44,6 @@ public class ItemFactory extends AbstractItemFact {
 			is.setDurability((short) 0);
 
 
-
-
-
 		ItemMeta im = is.getItemMeta();
 		if (im == null)
 			im = Bukkit.getServer().getItemFactory().getItemMeta(ms.getMat());
@@ -54,21 +51,21 @@ public class ItemFactory extends AbstractItemFact {
 			im.setDisplayName(displayname);
 			List<String> lore = null;
 
-			if(base instanceof  Ammo){
+			if (base instanceof Ammo) {
 				boolean setSkull = false;
-				if (((Ammo)base).isSkull() && ((Ammo)base).hasCustomSkin()) {
+				if (((Ammo) base).isSkull() && ((Ammo) base).hasCustomSkin()) {
 					setSkull = true;
-					is = SkullHandler.getCustomSkull64(((Ammo)base).getCustomSkin().getBytes());
+					is = SkullHandler.getCustomSkull64(((Ammo) base).getCustomSkin().getBytes());
 				}
-				if (((Ammo)base).isSkull() && !setSkull) {
-					((SkullMeta) im).setOwner(((Ammo)base).getSkullOwner());
+				if (((Ammo) base).isSkull() && !setSkull) {
+					((SkullMeta) im).setOwner(((Ammo) base).getSkullOwner());
 				}
 			}
 
 			if (base instanceof Gun)
 				lore = Gun.getGunLore((Gun) base, null, ((Gun) base).getMaxBullets());
 			if (base instanceof ArmorObject)
-				lore = OLD_ItemFact.getArmorLore((ArmorObject) base,is);
+				lore = OLD_ItemFact.getArmorLore((ArmorObject) base, is);
 
 
 			im.setLore(lore);
@@ -76,10 +73,10 @@ public class ItemFactory extends AbstractItemFact {
 				try {
 					im.setUnbreakable(true);
 				} catch (Error | Exception e34) {
-					try {
-						im.spigot().setUnbreakable(true);
+					/*try {
+						im.setUnbreakable(true);
 					} catch (Error | Exception e344) {
-					}
+					}*/
 				}
 			}
 			try {
@@ -91,8 +88,8 @@ public class ItemFactory extends AbstractItemFact {
 			} catch (Error e) {
 
 			}
-	if(ms.getData()>=0)
-			im.setCustomModelData(ms.getData());
+			if (ms.getData() >= 0)
+				im.setCustomModelData(ms.getData());
 
 			is.setItemMeta(im);
 		} else {

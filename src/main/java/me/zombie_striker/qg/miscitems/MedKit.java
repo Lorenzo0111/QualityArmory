@@ -32,6 +32,12 @@ public class MedKit implements ArmoryBaseObject {
 	HashMap<UUID, Double> PercentTimeHealed = new HashMap<>();
 
 	ItemStack[] ing = null;
+	List<String> lore = null;
+
+	@Override
+	public void setCustomLore(List<String> lore) {
+		this.lore=lore;
+	}
 
 	public MedKit(MaterialStorage ms, String name, String displayname, ItemStack[] ings, int cost) {
 		this.ms = ms;
@@ -63,7 +69,7 @@ public class MedKit implements ArmoryBaseObject {
 
 	@Override
 	public List<String> getCustomLore() {
-		return null;
+		return lore;
 	}
 
 	@Override
@@ -87,16 +93,9 @@ public class MedKit implements ArmoryBaseObject {
 
 	@SuppressWarnings("deprecation")
 	@Override
-	public void onRMB(PlayerInteractEvent e, ItemStack usedItem) {
+	public boolean onRMB(Player e, ItemStack usedItem) {
 		Player healer = e.getPlayer();
 		if (!BulletWoundHandler.bloodLevel.containsKey(healer.getUniqueId())) {
-			/*
-			 * if (medkitHeartUsage.contains(healer.getUniqueId())) { try {
-			 * HotbarMessager.sendHotBarMessage(healer,
-			 * Main.S_MEDKIT_WAIT.replaceAll("%seconds%",""+(Main.S_MEDKIT_HEARTDELAY-((
-			 * System.currentTimeMillis()-lastTimeHealed.get(healer.getUniqueId()))/1000))))
-			 * ; } catch (Error | Exception e5) { } return; }
-			 */
 
 			if (healer.getHealth() < healer.getMaxHealth()) {
 
@@ -152,7 +151,7 @@ public class MedKit implements ArmoryBaseObject {
 				} catch (Error | Exception e5) {
 				}
 			}
-			return;
+			return true;
 		}
 		double bloodlevel = BulletWoundHandler.bloodLevel.get(healer.getUniqueId());
 		double percentBlood = Math.max(0, bloodlevel / QAMain.bulletWound_initialbloodamount);
@@ -186,10 +185,12 @@ public class MedKit implements ArmoryBaseObject {
 							+ QAMain.bulletWound_BloodIncreasePerSecond);
 		} catch (Error | Exception e5) {
 		}
+		return true;
 	}
 
 	@Override
-	public void onLMB(PlayerInteractEvent e, ItemStack usedItem) {
+	public boolean onLMB(Player e, ItemStack usedItem) {
+		return false;
 		// TODO Auto-generated method stub
 
 	}

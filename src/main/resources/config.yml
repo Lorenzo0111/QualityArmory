@@ -129,6 +129,8 @@ enableInteract:
 #If set to true, overrideAnvil will let the anvil turn into a gun-crafting station.
 overrideAnvil: false
 
+#Allows players to damage other players by hitting them.
+allowGunHitEntities: false
 
 
 #EXPERIMENTAL: Explosion damage

@@ -117,13 +117,7 @@ public class OLD_ItemFact {
 		if (QAMain.ITEM_enableUnbreakable) {
 			try {
 				im.setUnbreakable(true);
-			} catch (Error | Exception e3423) {
-				try {
-					im.spigot().setUnbreakable(true);
-				} catch (Error | Exception e342) {
-
-				}
-			}
+			} catch (Error | Exception e3423) {			}
 		}
 		try {
 			if (QAMain.ITEM_enableUnbreakable) {
@@ -148,6 +142,7 @@ public class OLD_ItemFact {
 
 	public static void addVariantData(ItemMeta im, List<String> lore, int var) {
 		try {
+			if(im!=null)
 			im.setCustomModelData(var);
 		} catch (Error | Exception e4) {
 			boolean b = false;
@@ -157,6 +152,7 @@ public class OLD_ItemFact {
 			}
 			lore.add(QAMain.S_ITEM_VARIANTS_NEW + " " + var);
 			if(b)
+				if(im!=null)
 				im.setLore(lore);
 		}
 	}
