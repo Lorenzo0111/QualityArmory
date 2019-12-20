@@ -4,28 +4,8 @@
     <list default="true" id="3a75e4d7-6f9a-4a9b-ac5e-112a5a655666" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/zombie_striker/customitemmanager/OLD_ItemFact.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/zombie_striker/customitemmanager/OLD_ItemFact.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/zombie_striker/customitemmanager/versions/V1_13/ItemFactory.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/zombie_striker/customitemmanager/versions/V1_13/ItemFactory.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/zombie_striker/customitemmanager/versions/V1_14/CustomGunItem.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/zombie_striker/customitemmanager/versions/V1_14/CustomGunItem.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/zombie_striker/customitemmanager/versions/V1_14/ItemFactory.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/zombie_striker/customitemmanager/versions/V1_14/ItemFactory.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/zombie_striker/customitemmanager/versions/V1_8/ItemFactory.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/zombie_striker/customitemmanager/versions/V1_8/ItemFactory.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/ArmoryBaseObject.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/ArmoryBaseObject.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/QAMain.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/QAMain.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/ammo/Ammo.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/ammo/Ammo.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/armor/ArmorObject.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/armor/ArmorObject.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/config/GunYMLCreator.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/config/GunYMLCreator.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/config/GunYMLLoader.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/config/GunYMLLoader.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/guns/Gun.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/guns/Gun.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/guns/utils/GunUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/guns/utils/GunUtil.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/listener/QAListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/listener/QAListener.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/miscitems/Flashbang.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/miscitems/Flashbang.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/miscitems/Grenade.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/miscitems/Grenade.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/miscitems/IncendaryGrenades.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/miscitems/IncendaryGrenades.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/miscitems/MedKit.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/miscitems/MedKit.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/miscitems/MeleeItems.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/miscitems/MeleeItems.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/miscitems/SmokeGrenades.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/miscitems/SmokeGrenades.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/api/QualityArmory.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/api/QualityArmory.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/resources/changelog.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/changelog.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/config.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/config.yml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

@@ -1,3 +1,6 @@
+1.1.152
+    Drastically improved performance when checking for custom items.
+
 1.1.151
     Fixed gun damage
     Updated to 1.15

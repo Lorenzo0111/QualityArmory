@@ -242,16 +242,30 @@ public class QualityArmory {
 			try {
 				ItemMeta im = itemstack.getItemMeta();
 				int modeldata = 0;
-				if(im.hasCustomModelData())
+				if(im.hasCustomModelData()) {
 					modeldata = im.getCustomModelData();
+				}else if (modeldata+dataOffset >0){
+					return false;
+				}
 				im.setCustomModelData(modeldata + dataOffset);
 				itemstack.setItemMeta(im);
 			} catch (Error | Exception ed4) {
 				itemstack.setDurability((short) (is.getDurability() + dataOffset));
 			}
 		}
-		return isArmor(itemstack) || isAmmo(itemstack) || isMisc(itemstack) || isGun(itemstack)
-				|| isIronSights(itemstack) || QAMain.expansionPacks.contains(MaterialStorage.getMS(is));
+		if(isIronSights(itemstack))
+			return true;
+		if(isGun(itemstack))
+			return true;
+		if(isAmmo(itemstack))
+			return true;
+		if(isMisc(itemstack))
+			return true;
+		if(isArmor(itemstack))
+			return true;
+		if(QAMain.expansionPacks.contains(MaterialStorage.getMS(is)))
+			return true;
+		return false;
 	}
 
 	@SuppressWarnings("deprecation")
