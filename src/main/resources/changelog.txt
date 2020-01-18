@@ -1,3 +1,8 @@
+1.1.153
+    Fixed glitch for reloaded weapons on death
+    Fixed config not always containing all values needed
+    Updated config.yml.
+
 1.1.152
     Drastically improved performance when checking for custom items.
 

@@ -682,7 +682,7 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 			QAMain.DEBUG("Fire mode called");
 				if (e.getPlayer().getItemInHand().getItemMeta().getDisplayName().contains(QAMain.S_RELOADING_MESSAGE)) {
 					if (!GunRefillerRunnable.hasItemReloaded(usedItem)) {
-						ItemStack tempused = usedItem.clone();
+						ItemStack tempused = usedItem;
 						ItemMeta im = tempused.getItemMeta();
 						im.setDisplayName(getDisplayName());
 						tempused.setItemMeta(im);

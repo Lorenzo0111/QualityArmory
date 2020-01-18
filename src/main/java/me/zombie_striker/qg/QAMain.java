@@ -578,7 +578,7 @@ public class QAMain extends JavaPlugin {
 			return getConfig().get(path);
 		}
 		getConfig().set(path, def);
-		saveConfig();
+		saveTheConfig=true;
 		return def;
 	}
 
@@ -835,9 +835,11 @@ public class QAMain extends JavaPlugin {
 		resourcepackwhitelist = new MessagesYML(new File(getDataFolder(), "resourcepackwhitelist.yml"));
 		namesToBypass = (List<String>) resourcepackwhitelist.a("Names_Of_players_to_bypass", namesToBypass);
 
-		if (!new File(getDataFolder(), "config.yml").exists())
+
+		if (!new File(getDataFolder(), "config.yml").exists()) {
 			saveDefaultConfig();
-		reloadConfig();
+			reloadConfig();
+		}
 
 		if (getServer().getPluginManager().isPluginEnabled("Parties"))
 			hasParties = true;
@@ -968,7 +970,7 @@ public class QAMain extends JavaPlugin {
 		swayModifier_Sneak = (double) a("generalModifiers.sway.Sneak", swayModifier_Sneak);
 
 		List<String> avoidTypes = (List<String>) a("impenetrableEntityTypes",
-				Collections.singleton(EntityType.ARROW.name()));
+				Collections.singletonList(EntityType.ARROW.name()));
 		if (getConfig().getBoolean("ignoreArmorStands"))
 			QAMain.avoidTypes.add(EntityType.ARMOR_STAND);
 		for (String s : avoidTypes) {
@@ -1051,7 +1053,6 @@ public class QAMain extends JavaPlugin {
 		}
 
 
-// Chirs: fix bug
 		if (overrideURL) {
 			CustomItemManager.setResourcepack((String) a("DefaultResourcepack", CustomItemManager.getResourcepack()));
 		} else {
@@ -1061,6 +1062,8 @@ public class QAMain extends JavaPlugin {
 				saveTheConfig = true;
 			}
 		}
+
+
 		if (saveTheConfig) {
 			DEBUG(prefix + " Needed to save config: code=2");
 			saveConfig();
@@ -1609,13 +1612,20 @@ public class QAMain extends JavaPlugin {
 	public void reloadConfig() {
 		if (configFile == null) {
 			configFile = new File(this.getDataFolder(), "config.yml");
+			if(!configFile.exists()) {
+				try {
+					configFile.createNewFile();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 		config = CommentYamlConfiguration.loadConfiguration(configFile);
-		InputStream defConfigStream = this.getResource("config.yml");
+		/*InputStream defConfigStream = this.getResource("config.yml");
 		if (defConfigStream != null) {
 			config.setDefaults(
 					YamlConfiguration.loadConfiguration(new InputStreamReader(defConfigStream, Charsets.UTF_8)));
-		}
+		}*/
 	}
 
 	@Override
@@ -1624,5 +1634,17 @@ public class QAMain extends JavaPlugin {
 			this.reloadConfig();
 		}
 		return this.config;
+	}
+
+	@Override
+	public void saveConfig() {
+		if (this.config == null) {
+			this.reloadConfig();
+		}
+		try {
+			this.config.save(configFile);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 }

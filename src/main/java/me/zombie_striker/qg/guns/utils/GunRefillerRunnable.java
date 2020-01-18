@@ -22,7 +22,7 @@ public class GunRefillerRunnable {
 
 	public static boolean hasItemReloaded(ItemStack is) {
 		for (GunRefillerRunnable s : allGunRefillers) {
-			if (is.equals(s.reloadedItem))
+			if (is.isSimilar(s.reloadedItem))
 				return true;
 		}
 		return false;
