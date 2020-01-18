@@ -2,7 +2,7 @@
 A quality gun plugin similar to CrackShot.
 
 ## For Developers
-#Maven
+### Maven
 To add QA to your project using maven, copy the following into the POM.xml.
 
     <repository>
