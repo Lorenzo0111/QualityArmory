@@ -39,7 +39,7 @@ public class CrackshotLoader {
 				s = WeaponSounds.GUN_MEDIUM;
 			GunYML yml = GunYMLCreator.createNewCustomGun(data, "crackshot_" + g.getName(), g.getName(),
 					g.getDisplayName(), g.getItemData().getData(), null, g.getWeaponType(), s, g.hasIronSights(),
-					g.getAmmoType().getName(), (int) g.getDamage(), g.getMaxBullets(), (int) g.cost());
+					g.getAmmoType().getName(), (int) g.getDamage(), g.getMaxBullets(), (int) g.getPrice());
 			yml.setLore(g.getCustomLore());
 			yml.setSway(g.getSway());
 			yml.setAutomatic(g.isAutomatic());
@@ -198,7 +198,7 @@ public class CrackshotLoader {
 			}
 			
 			
-			g.setDisplayName(displayname);
+			g.setDisplayname(displayname);
 			if (ch != null)
 				g.setChargingHandler(ch);
 			if (rh != null)

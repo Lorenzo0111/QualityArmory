@@ -1,3 +1,23 @@
+1.1.154
+    #Beautification update#
+    Rewrote bullet code to improve performance
+    Rewrote boundingbox code to better reflect mob bounding boxes.
+    Fixed headshots for animals
+    Fixed bounding box for players sneaking
+    Updated models textures
+    Added Lightsaber (Green)
+    Added Lightsaber (Orange)
+    Added Lightsaber (Purple)
+    Added Lightsaber (Black)
+    Added Lightsaber (White)
+    Added Lightsaber Sounds
+    Added DebugGun (No sway. Good for bounding box checks)
+    Re-factored Custom item storage
+    Fixed way configs are created
+    Changed "AllowUserModifications" tag to "LastTimeModifiedByQA" to help with users who want to change settings without reading every other value.
+    Fixed 1.14+ items turning into diamond axes instead of custom items
+    Added config option to disable requiring permissions to shoot
+
 1.1.153
     Fixed glitch for reloaded weapons on death
     Fixed config not always containing all values needed

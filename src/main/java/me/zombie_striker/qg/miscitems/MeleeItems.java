@@ -5,22 +5,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
+import me.zombie_striker.customitemmanager.CustomBaseObject;
 import me.zombie_striker.customitemmanager.CustomItemManager;
 import org.bukkit.entity.Player;
-import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
-import me.zombie_striker.qg.ArmoryBaseObject;
-import me.zombie_striker.customitemmanager.OLD_ItemFact;
+import me.zombie_striker.customitemmanager.ArmoryBaseObject;
 import me.zombie_striker.customitemmanager.MaterialStorage;
 
-public class MeleeItems implements ArmoryBaseObject{
-	MaterialStorage ms;
-	String displayname;
-	int cost;
-	String name;
-
-	List<String> lore = null;
+public class MeleeItems extends CustomBaseObject implements ArmoryBaseObject{
 
 	List<UUID> medkitHeartUsage = new ArrayList<>();
 	HashMap<UUID, Long> lastTimeHealed = new HashMap<>();
@@ -30,23 +23,13 @@ public class MeleeItems implements ArmoryBaseObject{
 
 	int damage = 1;
 
-	@Override
-	public void setCustomLore(List<String> lore) {
-		this.lore=lore;
-	}
 	public MeleeItems(MaterialStorage ms, String name, String displayname, ItemStack[] ings, int cost, int damage) {
-		this.ms = ms;
-		this.displayname = displayname;
-		this.cost = cost;
-		this.name = name;
+		super(name,ms,displayname,null,false);
+		this.setPrice(cost);
 		this.ing = ings;
 		this.damage = damage;
 	}
 
-	@Override
-	public String getName() {
-		return name;
-	}
 
 	@Override
 	public ItemStack[] getIngredients() {
@@ -58,25 +41,7 @@ public class MeleeItems implements ArmoryBaseObject{
 		return 1;
 	}
 
-	@Override
-	public MaterialStorage getItemData() {
-		return ms;
-	}
 
-	@Override
-	public List<String> getCustomLore() {
-		return lore;
-	}
-
-	@Override
-	public String getDisplayName() {
-		return displayname;
-	}
-
-	@Override
-	public double cost() {
-		return cost;
-	}
 	public int getDamage() {
 		return damage;
 	}

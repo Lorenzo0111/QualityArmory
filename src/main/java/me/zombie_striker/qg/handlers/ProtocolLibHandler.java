@@ -74,7 +74,6 @@ public class ProtocolLibHandler {
 					@Override
 					public void onPacketSending(PacketEvent event) {
 						final Player sender = event.getPlayer();
-						//for(Object o : event.getPacket().getModifier().getValues())
 						int id = (int) event.getPacket().getModifier().read(0);
 						Object slot = event.getPacket().getModifier().read(1);
 						final Object ironsights = event.getPacket().getModifier().read(2);

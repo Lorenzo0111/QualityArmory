@@ -19,7 +19,7 @@ public class AttachmentBase extends Gun {
 		this.base = baseItem;
 		baseGun = QAMain.gunRegister.get(baseItem);
 		copyFrom(baseGun);
-		this.setDisplayName(displayname);
+		this.setDisplayname(displayname);
 		this.newName = name;
 		// this.ms = attachedItem;
 	}

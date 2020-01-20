@@ -11,6 +11,13 @@ public class MessagesYML {
 	private File s;
 	public MessagesYML(File f) {
 		s = f;
+		if(!s.exists()) {
+			try {
+				s.createNewFile();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 		c = CommentYamlConfiguration.loadConfiguration(s);
 	}
 	public Object a(String path, Object val){

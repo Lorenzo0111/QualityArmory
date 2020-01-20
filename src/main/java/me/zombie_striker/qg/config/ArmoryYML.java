@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 
@@ -18,8 +19,6 @@ public class ArmoryYML {
 	FileConfiguration fileConfig;
 	File save;
 	public boolean saveNow = false;
-	
-	boolean overrideVerify = false;
 
 	public ArmoryYML(File file) {
 		save = file;
@@ -42,42 +41,44 @@ public class ArmoryYML {
 		return fileConfig.contains(path);
 	}
 
-	protected void setNoOverride(String name, Object v) {
-		if (!fileConfig.contains(name)) {
-			fileConfig.set(name, v);
-			saveNow = true;
-		}
+	public ArmoryYML set(String name, Object v) {
+		return set(false, name,v);
 	}
-
-	public ArmoryYML setNoSave(boolean force, String name, Object v) {
-		return set(force, name, v);
-	}
-
 	public ArmoryYML set(boolean force, String name, Object v) {
-		if (!force && contains("invalid") && (boolean) get("invalid"))
-			return this;
-		if (contains("AllowUserModifications") && fileConfig.getBoolean("AllowUserModifications"))
-			return this;
+		long lastmodifiedFile = save.lastModified();
+		long lastmodifiedInternal = contains("lastModifiedByQA") ? (long) get("lastModifiedByQA") :  (  contains("AllowUserModifications") && fileConfig.getBoolean("AllowUserModifications") ? 0 : System.currentTimeMillis());
+		if(!force && lastmodifiedFile-lastmodifiedInternal > 5000) {
+			return this; //The file has been changed sometime after QA made any changes.
+		}
 		if (!contains(name) || !get(name).equals(v)) {
 			fileConfig.set(name, v);
 			saveNow = true;
 		}
 		return this;
 	}
-
-	public ArmoryYML dontVerify() {
-		this.overrideVerify = true;
+	public ArmoryYML verify(String name, Object v) {
+		long lastmodifiedFile = save.lastModified();
+		long lastmodifiedInternal = contains("lastModifiedByQA") ? (long) get("lastModifiedByQA") :  (  contains("AllowUserModifications") && fileConfig.getBoolean("AllowUserModifications") ? 0 : System.currentTimeMillis());
+		if(lastmodifiedFile-lastmodifiedInternal > 5000) {
+			return this; //The file has been changed sometime after QA made any changes.
+		}
+		if (!contains(name)) {
+			fileConfig.set(name, v);
+			saveNow = true;
+		}
 		return this;
 	}
 	
 	public void done() {
 		verifyAllTagsExist();
-		if (saveNow)
+		if (saveNow) {
 			save();
+		}
 	}
 
 	public void save() {
 		try {
+			putTimeStamp();
 			fileConfig.save(save);
 			saveNow = false;
 		} catch (IOException e) {
@@ -87,62 +88,81 @@ public class ArmoryYML {
 
 	@SuppressWarnings("deprecation")
 	public ArmoryYML setSkullType(String skullowner) {
-		set(false, "id", org.bukkit.SkullType.PLAYER.ordinal());
-		set(false, "material", MultiVersionLookup.getSkull().name());
-		set(false, "skull_owner", skullowner);
-		set(false, "skull_owner_custom_url", Ammo.NO_SKIN_STRING);
+		set("id", org.bukkit.SkullType.PLAYER.ordinal());
+		set( "material", MultiVersionLookup.getSkull().name());
+		set( "skull_owner", skullowner);
+		set( "skull_owner_custom_url", Ammo.NO_SKIN_STRING);
 		return this;
 	}
 
 	public ArmoryYML setInvalid(boolean invalid) {
-		set(false, "invalid", invalid);
+		set( "invalid", invalid);
 		return this;
 	}
 
 	public ArmoryYML setLore(List<String> lore) {
-		set(false, "lore", lore);
+		set( "lore", lore);
+		return this;
+	}
+	public ArmoryYML setLore(String... lore) {
+		set( "lore", lore);
 		return this;
 	}
 
 	public ArmoryYML setVariant(int var) {
-		set(false, "variant", var);
+		set( "variant", var);
 		return this;
 	}
 
 	public ArmoryYML setDurability(int durib) {
-		set(false, "durability", durib);
+		set( "durability", durib);
 		return this;
 	}
 
 	public ArmoryYML setPrice(int cost) {
-		set(false, "price", cost);
+		set( "price", cost);
+		return this;
+	}
+	public ArmoryYML setSoundOnEquip(String sound) {
+		set( "sound_equip", sound);
+		return this;
+	}
+	public ArmoryYML setSoundOnHit(String sound) {
+		set( "sound_meleehit", sound);
 		return this;
 	}
 
 	public ArmoryYML setMaterial(Material mat) {
-		set(false, "material", mat.name());
+		set( "material", mat.name());
 		return this;
 	}
 	public ArmoryYML setWeaponSound(WeaponSounds sound) {
-		set(false, "weaponsounds", sound.getSoundName());
+		set( "weaponsounds", sound.getSoundName());
 		return this;
 	}
 
 	public void verifyAllTagsExist() {
-		if(overrideVerify)
-			return;
-		setNoOverride("AllowUserModifications", (contains("allowUpdates") ? (!(boolean) get("allowUpdates")) : false));
-		setNoOverride("allowUpdates", null);
-		setNoOverride("invalid", false);
-		setNoOverride("lore", new ArrayList<String>());
-		setNoOverride("material", Material.DIAMOND_AXE.name());
-		setNoOverride("variant", 0);
-		//setNoOverride("weapontype", WeaponType.RIFLE.name());
-		setNoOverride("weaponsounds", WeaponSounds.getSoundByType(WeaponType.RIFLE));
-		setNoOverride("damage", 3);
+		boolean isOverride = false;
+		if(contains("AllowUserModifications")){
+			isOverride = (boolean) get("AllowUserModifications");
+			set(true,"AllowUserModifications",null);
+		}
+		if(!isOverride)
+			putTimeStamp();
+		verify("invalid", false);
+		verify("weaponsounds", WeaponSounds.getSoundByType(WeaponType.RIFLE));
+		verify("damage", 3);
 
-		setNoOverride("durability", 1000);
+		verify("durability", 1000);
 
-		setNoOverride("price", 1000);
+		verify("price", 1000);
 	}
+
+	public ArmoryYML putTimeStamp(){
+			fileConfig.set("lastModifiedByQA", System.currentTimeMillis()+5000);
+			saveNow = true;
+		return this;
+	}
+
+
 }

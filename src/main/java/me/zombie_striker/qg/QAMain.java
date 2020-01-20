@@ -5,13 +5,12 @@ import java.util.*;
 import java.util.Map.Entry;
 import java.util.logging.Level;
 
-import me.zombie_striker.customitemmanager.CustomItemManager;
-import me.zombie_striker.customitemmanager.MaterialStorage;
-import me.zombie_striker.customitemmanager.OLD_ItemFact;
+import me.zombie_striker.customitemmanager.*;
 import me.zombie_striker.qg.ammo.*;
 import me.zombie_striker.qg.api.QualityArmory;
 import me.zombie_striker.qg.armor.*;
 import me.zombie_striker.qg.attachments.AttachmentBase;
+import me.zombie_striker.qg.boundingbox.BoundingBoxManager;
 import me.zombie_striker.qg.config.*;
 import me.zombie_striker.qg.guns.*;
 import me.zombie_striker.qg.guns.projectiles.ExplodingRoundProjectile;
@@ -20,7 +19,6 @@ import me.zombie_striker.qg.guns.projectiles.HomingRocketProjectile;
 import me.zombie_striker.qg.guns.projectiles.MiniNukeProjectile;
 import me.zombie_striker.qg.guns.projectiles.RocketProjectile;
 import me.zombie_striker.qg.guns.utils.WeaponSounds;
-import me.zombie_striker.qg.guns.utils.WeaponType;
 import me.zombie_striker.qg.handlers.*;
 import me.zombie_striker.qg.handlers.chargers.*;
 import me.zombie_striker.qg.handlers.reloaders.*;
@@ -51,8 +49,6 @@ import org.bukkit.scheduler.*;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
 
-import com.google.common.base.Charsets;
-
 public class QAMain extends JavaPlugin {
 
 	public static final int ViaVersionIdfor_1_8 = 106;
@@ -60,7 +56,7 @@ public class QAMain extends JavaPlugin {
 	// Chris: change to LinkedHashMap let the Items can sort by FileName.
 	public static HashMap<MaterialStorage, Gun> gunRegister = new LinkedHashMap<>();
 	public static HashMap<MaterialStorage, Ammo> ammoRegister = new LinkedHashMap<>();
-	public static HashMap<MaterialStorage, ArmoryBaseObject> miscRegister = new LinkedHashMap<>();
+	public static HashMap<MaterialStorage, CustomBaseObject> miscRegister = new LinkedHashMap<>();
 	public static HashMap<MaterialStorage, ArmorObject> armorRegister = new LinkedHashMap<>();
 
 
@@ -116,7 +112,7 @@ public class QAMain extends JavaPlugin {
 	public static boolean disableHotBarMessageOnOutOfAmmo = false;
 	public static boolean enableExplosionDamage = false;
 	public static boolean enableExplosionDamageDrop = false;
-	public static boolean hideTextureWarnings = false;
+	public static boolean requirePermsToShoot = false;
 	public static boolean enableEconomy = false;
 	public static boolean allowGunReload = true;
 	public static boolean enableBleeding = false;
@@ -328,7 +324,7 @@ public class QAMain extends JavaPlugin {
 		}
 	}
 
-	public static boolean lookForIngre(Player player, ArmoryBaseObject a) {
+	public static boolean lookForIngre(Player player, CustomBaseObject a) {
 		return lookForIngre(player, a.getIngredients());
 	}
 
@@ -358,7 +354,7 @@ public class QAMain extends JavaPlugin {
 		return true;
 	}
 
-	public static boolean removeForIngre(Player player, ArmoryBaseObject a) {
+	public static boolean removeForIngre(Player player, CustomBaseObject a) {
 		return removeForIngre(player, a.getIngredients());
 	}
 
@@ -419,6 +415,32 @@ public class QAMain extends JavaPlugin {
 		return createCustomInventory(page, false);
 	}
 
+
+	private static boolean addToGUI(CustomBaseObject obj, Inventory gui, boolean shop){
+		if (shop && obj.getPrice() < 0)
+			return false;
+		if (!shop && obj.getIngredients()==null)
+			return false;
+		try {
+			ItemStack is = CustomItemManager.getItemFact("gun").getItem(obj.getItemData(), obj.getCraftingReturn());
+			ItemMeta im = is.getItemMeta();
+			List<String> lore = im.hasLore()? im.getLore(): new ArrayList<>();
+			if (shop) {
+				lore.addAll(OLD_ItemFact.addShopLore(obj));
+			}else{
+				lore.addAll(OLD_ItemFact.getCraftingLore(obj));
+			}
+			im.setLore(lore);
+			is.setItemMeta(im);
+			gui.addItem(is);
+			return true;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	return false;
+	}
+
+
 	public static Inventory createCustomInventory(int page, boolean shopping) {
 		Inventory shopMenu = Bukkit.createInventory(null, 9 * 6, (shopping ? S_shopName : S_craftingBenchName) + page);
 		List<Gun> gunslistr = new ArrayList<Gun>(gunRegister.values());
@@ -434,8 +456,6 @@ public class QAMain extends JavaPlugin {
 			basei += gunslistr.size();
 		else
 			for (Gun g : gunslistr) {
-				if (shopping && g.cost() < 0)
-					continue;
 				if (basei < index) {
 					basei++;
 					continue;
@@ -443,26 +463,13 @@ public class QAMain extends JavaPlugin {
 				basei++;
 				if (index >= maxIndex)
 					break;
+				if(addToGUI(g,shopMenu,shopping))
 				index++;
-				try {
-					ItemStack is = CustomItemManager.getItemFact("gun").getItem(g.getItemData(), 1);
-					ItemMeta im = is.getItemMeta();
-					List<String> lore = OLD_ItemFact.getCraftingGunLore(g);
-					im.setLore(lore);
-					is.setItemMeta(im);
-					if (shopping)
-						is = OLD_ItemFact.addShopLore(g, is.clone());
-					shopMenu.addItem(is);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
 			}
 		if (basei + gunslistr.size() < index)
 			basei += gunslistr.size();
 		else
-			for (ArmoryBaseObject abo : miscRegister.values()) {
-				if (shopping && abo.cost() < 0)
-					continue;
+			for (CustomBaseObject abo : miscRegister.values()) {
 				if (basei < index) {
 					basei++;
 					continue;
@@ -470,26 +477,13 @@ public class QAMain extends JavaPlugin {
 				basei++;
 				if (index >= maxIndex)
 					break;
+				if(addToGUI(abo,shopMenu,shopping))
 				index++;
-				try {
-					ItemStack is = CustomItemManager.getItemFact("gun").getItem(abo.getItemData(), 1);
-					ItemMeta im = is.getItemMeta();
-					List<String> lore = OLD_ItemFact.getCraftingLore(abo);
-					im.setLore(lore);
-					is.setItemMeta(im);
-					if (shopping)
-						is = OLD_ItemFact.addShopLore(abo, is.clone());
-					shopMenu.addItem(is);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
 			}
 		if (basei + gunslistr.size() < index)
 			basei += gunslistr.size();
 		else
-			for (Ammo ammo : ammoRegister.values()) {
-				if (shopping && ammo.cost() < 0)
-					continue;
+			for (CustomBaseObject ammo : ammoRegister.values()) {
 				if (basei < index) {
 					basei++;
 					continue;
@@ -497,27 +491,13 @@ public class QAMain extends JavaPlugin {
 				basei++;
 				if (index >= maxIndex)
 					break;
+				if(addToGUI(ammo,shopMenu,shopping))
 				index++;
-				try {
-					ItemStack is = CustomItemManager.getItemFact("gun").getItem(ammo.getItemData(), ammo.getCraftingReturn());
-					ItemMeta im = is.getItemMeta();
-					List<String> lore = OLD_ItemFact.getCraftingLore(ammo);
-					im.setLore(lore);
-					is.setItemMeta(im);
-					is.setAmount(ammo.getCraftingReturn());
-					if (shopping)
-						is = OLD_ItemFact.addShopLore(ammo, is.clone());
-					shopMenu.addItem(is);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
 			}
 		if (basei + gunslistr.size() < index)
 			basei += gunslistr.size();
 		else
 			for (ArmorObject armor : armorRegister.values()) {
-				if (shopping && armor.cost() < 0)
-					continue;
 				if (basei < index) {
 					basei++;
 					continue;
@@ -525,20 +505,8 @@ public class QAMain extends JavaPlugin {
 				basei++;
 				if (index >= maxIndex)
 					break;
+				if(addToGUI(armor,shopMenu,shopping))
 				index++;
-				try {
-					ItemStack is = CustomItemManager.getItemFact("gun").getItem(armor.getItemData(), 1);
-					ItemMeta im = is.getItemMeta();
-					List<String> lore = OLD_ItemFact.getCraftingLore(armor);
-					im.setLore(lore);
-					is.setItemMeta(im);
-					is.setAmount(armor.getCraftingReturn());
-					if (shopping)
-						is = OLD_ItemFact.addShopLore(armor, is.clone());
-					shopMenu.addItem(is);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
 			}
 		return shopMenu;
 	}
@@ -555,7 +523,7 @@ public class QAMain extends JavaPlugin {
 
 	@Override
 	public void onDisable() {
-		for (Entry<MaterialStorage, ArmoryBaseObject> misc : miscRegister.entrySet()) {
+		for (Entry<MaterialStorage, CustomBaseObject> misc : miscRegister.entrySet()) {
 			if (misc instanceof ThrowableItems) {
 				for (Entry<Entity, ThrowableHolder> e : ThrowableItems.throwItems.entrySet()) {
 					if (e.getKey() instanceof Item)
@@ -883,6 +851,8 @@ public class QAMain extends JavaPlugin {
 
 		verboseLoadingLogging = (boolean) a("verboseItemLogging", verboseLoadingLogging);
 
+		requirePermsToShoot = (boolean) a("enable_permssionsToShoot", requirePermsToShoot);
+
 		sendOnJoin = (boolean) a("sendOnJoin", true);
 		sendTitleOnJoin = (boolean) a("sendTitleOnJoin", false);
 		secondsTilSend = Double.valueOf(a("SecondsTillRPIsSent", 5.0) + "");
@@ -1093,6 +1063,8 @@ public class QAMain extends JavaPlugin {
 		registerCraftEntityNames(ammoRegister);
 		registerCraftEntityNames(miscRegister);
 		registerCraftEntityNames(armorRegister);
+
+		BoundingBoxManager.initEntityTypeBoundingBoxes();
 	}
 
 
@@ -1100,7 +1072,7 @@ public class QAMain extends JavaPlugin {
 		if (null != regMaps && !regMaps.isEmpty()) {
 			for (Object item: regMaps.values()) {
 				try {
-					ItemStack[] itemStacks = ((ArmoryBaseObject) item).getIngredients();
+					ItemStack[] itemStacks = ((CustomBaseObject)item).getIngredients();
 					if (null != itemStacks && itemStacks.length > 0) {
 						for (ItemStack itemStack: itemStacks) {
 							String itemName = itemStack.getType().name();
@@ -1202,7 +1174,7 @@ public class QAMain extends JavaPlugin {
 				for (Entry<MaterialStorage, Ammo> e : ammoRegister.entrySet())
 					if (b(e.getValue().getName(), args[1]))
 						s.add(e.getValue().getName());
-				for (Entry<MaterialStorage, ArmoryBaseObject> e : miscRegister.entrySet())
+				for (Entry<MaterialStorage, CustomBaseObject> e : miscRegister.entrySet())
 					if (b(e.getValue().getName(), args[1]))
 						s.add(e.getValue().getName());
 				for (Entry<MaterialStorage, ArmorObject> e : armorRegister.entrySet())
@@ -1259,20 +1231,6 @@ public class QAMain extends JavaPlugin {
 					}
 					return true;
 				}
-				/*
-				 * if (args[0].equalsIgnoreCase("getOpenGunSlot")) { if
-				 * (sender.hasPermission("qualityarmory.getopengunslot")) {
-				 * List<MaterialStorage> getAllKeys = new ArrayList<>();
-				 * getAllKeys.addAll(gunRegister.keySet());
-				 * getAllKeys.addAll(ammoRegister.keySet());
-				 * getAllKeys.addAll(miscRegister.keySet());
-				 * getAllKeys.addAll(armorRegister.keySet()); int openID = 1; for
-				 * (MaterialStorage i : getAllKeys) { if (i.getMat() == guntype) if (i.getData()
-				 * > openID) openID = i.getData(); } sender.sendMessage(prefix +
-				 * " The next open slot for \"" + guntype.name() + "\"-base-guns is " + (openID
-				 * + 1)); return true; } else { sender.sendMessage(prefix + ChatColor.RED +
-				 * S_NOPERM); return true; } }
-				 */
 				if (args[0].equalsIgnoreCase("createNewAmmo")) {
 					if (sender.hasPermission("qualityarmory.createnewitem")) {
 						if (args.length >= 2) {
@@ -1342,7 +1300,7 @@ public class QAMain extends JavaPlugin {
 
 				if (args[0].equalsIgnoreCase("listItemIds")) {
 					if (sender.hasPermission("qualityarmory.getmaterialsused")) {
-						for (ArmoryBaseObject g : miscRegister.values())
+						for (CustomBaseObject g : miscRegister.values())
 							sender.sendMessage(ChatColor.GREEN + g.getName() + ": " + ChatColor.WHITE
 									+ g.getItemData().getMat().name() + " : " + g.getItemData().getData());
 						for (Gun g : gunRegister.values())
@@ -1389,7 +1347,7 @@ public class QAMain extends JavaPlugin {
 							sb.append(g.getName() + ", ");
 						}
 						sb.append(ChatColor.WHITE);
-						for (ArmoryBaseObject g : miscRegister.values()) {
+						for (CustomBaseObject g : miscRegister.values()) {
 							sb.append(g.getName() + ", ");
 						}
 						sb.append(ChatColor.GRAY);
@@ -1401,7 +1359,7 @@ public class QAMain extends JavaPlugin {
 						return true;
 					}
 
-					ArmoryBaseObject g = QualityArmory.getCustomItemByName(args[1]);
+					CustomBaseObject g = QualityArmory.getCustomItemByName(args[1]);
 					if (g != null) {
 						Location loc = null;
 						Location relLoc = null;
@@ -1482,7 +1440,7 @@ public class QAMain extends JavaPlugin {
 							sb.append(g.getName() + ", ");
 						}
 						sb.append(ChatColor.WHITE);
-						for (ArmoryBaseObject g : miscRegister.values()) {
+						for (CustomBaseObject g : miscRegister.values()) {
 							sb.append(g.getName() + ", ");
 						}
 						sb.append(ChatColor.GRAY);
@@ -1497,7 +1455,7 @@ public class QAMain extends JavaPlugin {
 						return true;
 					}
 
-					ArmoryBaseObject g = QualityArmory.getCustomItemByName(args[1]);
+					CustomBaseObject g = QualityArmory.getCustomItemByName(args[1]);
 					if (g != null) {
 						Player who = null;
 						if (args.length > 2)

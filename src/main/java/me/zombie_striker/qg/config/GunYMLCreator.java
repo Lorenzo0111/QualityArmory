@@ -31,147 +31,30 @@ public class GunYMLCreator {
 			new File(dataFolder, "newGuns").mkdirs();
 
 		GunYML h = new GunYML(f2);
-				
-		h.setNoSave(false, "AllowUserModifications",
-				(h.contains("allowUpdates") ? (!(boolean) h.get("allowUpdates")) : false));
-		
-		h.setNoSave(false, "name", name);
-		h.setNoSave(false, "displayname", displayname.startsWith("&") ? displayname : "&6" + displayname);
 
-		h.setNoSave(false, "id", id);
-		h.setNoSave(false, "variant", 0);
-		h.setNoSave(false, "craftingRequirements", craftingRequirements);
-		h.setNoSave(false, "weapontype", weapontype.name());
-		h.setNoSave(false, "weaponsounds", ws != null ? ws.getSoundName() : WeaponSounds.getSoundByType(weapontype));
+		
+		h.set(false, "name", name);
+		h.set(false, "displayname", displayname.startsWith("&") ? displayname : "&6" + displayname);
+
+		h.set(false, "id", id);
+		h.set(false, "variant", 0);
+		h.set(false, "craftingRequirements", craftingRequirements);
+		h.set(false, "weapontype", weapontype.name());
+		h.set(false, "weaponsounds", ws != null ? ws.getSoundName() : WeaponSounds.getSoundByType(weapontype));
 		StringBuilder validGuns = new StringBuilder();
 		for (WeaponType g : WeaponType.values()) {
 			validGuns.append(g.name() + ", ");
 		}
-		h.setNoSave(false, "_VALID_WEAPON_TYPES", validGuns.toString());
-		h.setNoSave(false, "enableIronSights", enableIronSights);
-		h.setNoSave(false, "ammotype", ammotype);
-		h.setNoSave(false, "damage", damage);
-		h.setNoSave(false, "maxbullets", maxBullets);
+		h.set(false, "_VALID_WEAPON_TYPES", validGuns.toString());
+		h.set(false, "enableIronSights", enableIronSights);
+		h.set(false, "ammotype", ammotype);
+		h.set(false, "damage", damage);
+		h.set(false, "maxbullets", maxBullets);
 
-		h.setNoSave(false, "price", cost);
+		h.set(false, "price", cost);
 
 		return h;
 	}
-	/*
-	public static ArmoryYML createNewGun(boolean forceUpdate, File dataFolder, String name, String displayname, int id,
-			List<String> craftingRequirements, WeaponType weapontype, boolean enableIronSights, String ammotype,
-			int damage, double sway, int maxBullets, int duribility, double delayReload, double delayShoot,
-			int bulletspershot, boolean isAutomatic, int cost, String ch, int distance, WeaponSounds ws) {
-		return createNewGun(forceUpdate, dataFolder, false, name, name, displayname, null, id, craftingRequirements,
-				weapontype, enableIronSights, ammotype, damage, sway, Material.DIAMOND_AXE, maxBullets, duribility,
-				delayReload, delayShoot, bulletspershot, isAutomatic, cost, ch, distance, false, ws);
-	}
-
-	public static ArmoryYML createNewGun(boolean forceUpdate, File dataFolder, String name, String displayname, int id,
-			List<String> craftingRequirements, WeaponType weapontype, boolean enableIronSights, String ammotype,
-			int damage, double sway, int maxBullets, int duribility, int bulletspershot, boolean isAutomatic, int cost,
-			String ch, int distance, WeaponSounds ws) {
-		return createNewGun(forceUpdate, dataFolder, name, displayname, id, craftingRequirements, weapontype,
-				enableIronSights, ammotype, damage, sway, maxBullets, duribility, 1.5, 0.25, bulletspershot,
-				isAutomatic, cost, ch, distance, ws);
-	}
-
-	public static ArmoryYML createNewGun(boolean forceUpdate, File dataFolder, String name, String displayname, int id,
-			List<String> craftingRequirements, WeaponType weapontype, boolean enableIronSights, String ammotype,
-			int damage, double sway, int maxBullets, int duribility, boolean isAutomatic, int cost, String ch,
-			int distance, WeaponSounds ws) {
-		return createNewGun(forceUpdate, dataFolder, name, displayname, id, craftingRequirements, weapontype,
-				enableIronSights, ammotype, damage, sway, maxBullets, duribility, 1, isAutomatic, cost, ch, distance,
-				ws);
-	}
-
-	// Displaynames above
-	// non- below
-	public static ArmoryYML createNewGun(boolean forceUpdate, File dataFolder, String name, int id,
-			List<String> craftingRequirements, WeaponType weapontype, boolean enableIronSights, String ammotype,
-			int damage, double sway, int maxBullets, int duribility, double delayReload, double delayShoot,
-			int bulletspershot, boolean isAutomatic, int cost, String ch, int distance, WeaponSounds ws) {
-		return createNewGun(forceUpdate, dataFolder, false, "default_" + name, name,
-				"&" + ChatColor.GOLD.getChar() + name, null, id, craftingRequirements, weapontype, enableIronSights,
-				ammotype, damage, sway, Material.DIAMOND_AXE, maxBullets, duribility, delayReload, delayShoot,
-				bulletspershot, isAutomatic, cost, ch, distance, false, ws);
-	}
-
-	public static ArmoryYML createNewGun(boolean forceUpdate, File dataFolder, String name, int id,
-			List<String> craftingRequirements, WeaponType weapontype, boolean enableIronSights, String ammotype,
-			int damage, double sway, int maxBullets, int duribility, int bulletspershot, boolean isAutomatic, int cost,
-			String ch, int distance, WeaponSounds ws) {
-		return createNewGun(forceUpdate, dataFolder, name, id, craftingRequirements, weapontype, enableIronSights,
-				ammotype, damage, sway, maxBullets, duribility, 1.5, 0.25, bulletspershot, isAutomatic, cost, ch,
-				distance, ws);
-	}
-
-	public static ArmoryYML createNewGun(boolean forceUpdate, File dataFolder, String name, int id,
-			List<String> craftingRequirements, WeaponType weapontype, boolean enableIronSights, String ammotype,
-			int damage, double sway, int maxBullets, int duribility, boolean isAutomatic, int cost, String ch,
-			int distance, WeaponSounds ws) {
-		return createNewGun(forceUpdate, dataFolder, name, id, craftingRequirements, weapontype, enableIronSights,
-				ammotype, damage, sway, maxBullets, duribility, 1, isAutomatic, cost, ch, distance, ws);
-	}
-
-	public static ArmoryYML createNewGun(boolean forceUpdate, File dataFolder, boolean invalid, String filename,
-			String name, String displayname, List<String> lore, int id, List<String> craftingRequirements,
-			WeaponType weapontype, boolean enableIronSights, String ammotype, int damage, double sway, Material type,
-			int maxBullets, int duribility, double delayReload, double delayShoot, int bulletspershot,
-			boolean isAutomatic, int cost, String ch, int distance, boolean version18, WeaponSounds ws) {
-		return createNewGun(forceUpdate, dataFolder, invalid, filename, name, displayname, lore, id,
-				craftingRequirements, weapontype, enableIronSights, ammotype, damage, sway, type, maxBullets,
-				duribility, delayReload, delayShoot, bulletspershot, isAutomatic, cost, ch, distance, 0, version18, ws);
-	}
-
-	public static ArmoryYML createNewGun(boolean forceUpdate, File dataFolder, boolean invalid, String filename,
-			String name, String displayname, List<String> lore, int id, List<String> craftingRequirements,
-			WeaponType weapontype, boolean enableIronSights, String ammotype, int damage, double sway, Material type,
-			int maxBullets, int duribility, double delayReload, double delayShoot, int bulletspershot,
-			boolean isAutomatic, int cost, String ch, int distance, int var, boolean version18, WeaponSounds ws) {
-
-		double particlecolorGB = weapontype == WeaponType.LAZER ? 0.0 : 1.0;
-
-		return createNewGun(forceUpdate, dataFolder, invalid, filename, name, displayname, lore, id,
-				craftingRequirements, weapontype, enableIronSights, ammotype, damage, sway, type, maxBullets,
-				duribility, delayReload, delayShoot, bulletspershot, isAutomatic, cost, ch, distance, var, version18,
-				ws, "REDSTONE", 1.0, particlecolorGB, particlecolorGB);
-	}
-
-	public static ArmoryYML createNewGun(boolean forceUpdate, File dataFolder, boolean invalid, String filename,
-			String name, String displayname, List<String> lore, int id, List<String> craftingRequirements,
-			WeaponType weapontype, boolean enableIronSights, String ammotype, int damage, double sway, Material type,
-			int maxBullets, int duribility, double delayReload, double delayShoot, int bulletspershot,
-			boolean isAutomatic, int cost, String ch, int distance, int var, boolean version18, WeaponSounds ws,
-			String particle, double particleR, double particleG, double particleB) {
-		return createNewGun(forceUpdate, dataFolder, invalid, filename, name, displayname, lore, id,
-				craftingRequirements, weapontype, enableIronSights, ammotype, damage, sway, type, maxBullets,
-				duribility, delayReload, delayShoot, bulletspershot, isAutomatic, cost, ch, distance, var, version18,
-				ws, particle, particleR, particleG, particleB, false);
-	}
-
-	public static ArmoryYML createNewGun(boolean forceUpdate, File dataFolder, boolean invalid, String name,
-			String displayname, List<String> lore, int id, List<String> craftingRequirements, WeaponType weapontype,
-			boolean enableIronSights, String ammotype, int damage, double sway, Material type, int maxBullets,
-			int duribility, boolean isAutomatic, int cost, String ch, int distance, int var, boolean version18,
-			WeaponSounds ws, String particle, double particleR, double particleG, double particleB) {
-		return createNewGun(forceUpdate, dataFolder, invalid, "default_" + name, name, displayname, lore, id,
-				craftingRequirements, weapontype, enableIronSights, ammotype, damage, sway, type, maxBullets,
-				duribility, 1.5, 0.3, 1, isAutomatic, cost, ch, distance, var, version18, ws, particle, particleR,
-				particleG, particleB, false);
-	}
-
-	public static ArmoryYML createNewGun(boolean forceUpdate, File dataFolder, boolean invalid, String name,
-			String displayname, List<String> lore, int id, List<String> craftingRequirements, WeaponType weapontype,
-			boolean enableIronSights, String ammotype, int damage, double sway, Material type, int maxBullets,
-			int duribility, double delayReload, double delayShoot, int bulletspershot, boolean isAutomatic, int cost,
-			String ch, int distance, int var, boolean version18, WeaponSounds ws, String particle, double particleR,
-			double particleG, double particleB) {
-		return createNewGun(forceUpdate, dataFolder, invalid, "default_" + name, name, displayname, lore, id,
-				craftingRequirements, weapontype, enableIronSights, ammotype, damage, sway, type, maxBullets,
-				duribility, delayReload, delayShoot, bulletspershot, isAutomatic, cost, ch, distance, var, version18,
-				ws, particle, particleR, particleG, particleB, false);
-	}*/
 
 	public static ArmoryYML createNewGun(boolean forceUpdate, File dataFolder, boolean invalid, String filename,
 			String name, String displayname, List<String> lore, int id, List<String> craftingRequirements,
@@ -184,53 +67,51 @@ public class GunYMLCreator {
 			new File(dataFolder, "newGuns").mkdirs();
 
 		ArmoryYML h = new ArmoryYML(f2);
-		h.setNoSave(invalid, "AllowUserModifications",
-				(h.contains("allowUpdates") ? (!(boolean) h.get("allowUpdates")) : false));
-		h.setNoSave(invalid, "invalid", invalid);
-		h.setNoSave(invalid, "name", name);
-		h.setNoSave(invalid, "displayname", displayname);
-		h.setNoSave(invalid, "lore", (lore == null ? new ArrayList<String>() : lore));
-		h.setNoSave(invalid, "material", type.name());
-		h.setNoSave(invalid, "id", id);
-		h.setNoSave(invalid, "variant", var);
-		h.setNoSave(invalid, "craftingRequirements", craftingRequirements);
-		h.setNoSave(invalid, "weapontype", weapontype.name());
-		h.setNoSave(invalid, "weaponsounds", ws != null ? ws.getSoundName() : WeaponSounds.getSoundByType(weapontype));
+		h.set(invalid, "invalid", invalid);
+		h.set(invalid, "name", name);
+		h.set(invalid, "displayname", displayname);
+		h.set(invalid, "lore", (lore == null ? new ArrayList<String>() : lore));
+		h.set(invalid, "material", type.name());
+		h.set(invalid, "id", id);
+		h.set(invalid, "variant", var);
+		h.set(invalid, "craftingRequirements", craftingRequirements);
+		h.set(invalid, "weapontype", weapontype.name());
+		h.set(invalid, "weaponsounds", ws != null ? ws.getSoundName() : WeaponSounds.getSoundByType(weapontype));
 		StringBuilder validGuns = new StringBuilder();
 		for (WeaponType g : WeaponType.values()) {
 			validGuns.append(g.name() + ", ");
 		}
-		h.setNoSave(invalid, "_VALID_WEAPON_TYPES", validGuns.toString());
-		h.setNoSave(invalid, "enableIronSights", enableIronSights);
-		h.setNoSave(invalid, "ammotype", ammotype);
-		h.setNoSave(invalid, "damage", damage);
-		h.setNoSave(invalid, "sway", sway);
-		h.setNoSave(invalid, "maxbullets", maxBullets);
-		h.setNoSave(invalid, "durability", duribility);
-		h.setNoSave(invalid, "delayForReload", delayReload);
-		h.setNoSave(invalid, "delayForShoot", delayShoot);
-		h.setNoSave(invalid, "bullets-per-shot", bulletspershot);
-		h.setNoSave(invalid, "isAutomatic", isAutomatic);
-		h.setNoSave(invalid, "price", cost);
-		h.setNoSave(invalid, "maxBulletDistance", distance);
-		h.setNoSave(invalid, "unlimitedAmmo", false);
-		h.setNoSave(invalid, "LightLeveOnShoot", 14);
+		h.set(invalid, "_VALID_WEAPON_TYPES", validGuns.toString());
+		h.set(invalid, "enableIronSights", enableIronSights);
+		h.set(invalid, "ammotype", ammotype);
+		h.set(invalid, "damage", damage);
+		h.set(invalid, "sway", sway);
+		h.set(invalid, "maxbullets", maxBullets);
+		h.set(invalid, "durability", duribility);
+		h.set(invalid, "delayForReload", delayReload);
+		h.set(invalid, "delayForShoot", delayShoot);
+		h.set(invalid, "bullets-per-shot", bulletspershot);
+		h.set(invalid, "isAutomatic", isAutomatic);
+		h.set(invalid, "price", cost);
+		h.set(invalid, "maxBulletDistance", distance);
+		h.set(invalid, "unlimitedAmmo", false);
+		h.set(invalid, "LightLeveOnShoot", 14);
 
-		h.setNoSave(invalid, "particles.bullet_particle", particle);
+		h.set(invalid, "particles.bullet_particle", particle);
 		if (particle.equals("REDSTONE")) {
-			h.setNoSave(invalid, "particles.bullet_particleR", particleR);
-			h.setNoSave(invalid, "particles.bullet_particleG", particleG);
-			h.setNoSave(invalid, "particles.bullet_particleB", particleB);
+			h.set(invalid, "particles.bullet_particleR", particleR);
+			h.set(invalid, "particles.bullet_particleG", particleG);
+			h.set(invalid, "particles.bullet_particleB", particleB);
 		}
 
 		if (version18)
-			h.setNoSave(invalid, "Version_18_Support", version18);
-		h.setNoSave(invalid, "ChargingHandler", ch == null ? "null" : ch);
+			h.set(invalid, "Version_18_Support", version18);
+		h.set(invalid, "ChargingHandler", ch == null ? "null" : ch);
 		if (addMuzzleSmoke)
-			h.setNoSave(invalid, "addMuzzleSmoke", addMuzzleSmoke);
+			h.set(invalid, "addMuzzleSmoke", addMuzzleSmoke);
 
 		if (invalid) {
-			h.setNoSave(invalid, "drop-glow-color", ChatColor.WHITE.name());
+			h.set(invalid, "drop-glow-color", ChatColor.WHITE.name());
 		}
 		if (h.saveNow)
 			h.save();
@@ -238,24 +119,24 @@ public class GunYMLCreator {
 	}
 
 	public static ArmoryYML createAmmo(boolean forceUpdate, File dataFolder, boolean invalid, String name,
-			String displayname, int id, List<String> craftingRequirements, int cost, double severity, int maxAmount) {
+			String displayname,  Material type, int id, List<String> craftingRequirements, int cost, double severity, int maxAmount) {
 		return createAmmo(forceUpdate, dataFolder, invalid, "default_" + name, name, displayname, null,
-				Material.DIAMOND_AXE, id, craftingRequirements, cost, severity, maxAmount);
+				type, id, craftingRequirements, cost, severity, maxAmount);
 	}
 
 	public static ArmoryYML createAmmo(boolean forceUpdate, File dataFolder, boolean invalid, String name,
-			String displayname, int id, List<String> craftingRequirements, int cost, double severity, int maxAmount,
+			String displayname,  Material type, int id, List<String> craftingRequirements, int cost, double severity, int maxAmount,
 			int returnamount) {
 		return createAmmo(forceUpdate, dataFolder, invalid, "default_" + name, name, displayname, null,
-				Material.DIAMOND_AXE, id, craftingRequirements, cost, severity, maxAmount, returnamount);
+			type, id, craftingRequirements, cost, severity, maxAmount, returnamount);
 	}
 
-	public static ArmoryYML createAmmo(boolean forceUpdate, File dataFolder, boolean invalid, String filename,
+	/*public static ArmoryYML createAmmo(boolean forceUpdate, File dataFolder, boolean invalid, String filename,
 			String name, String displayname, int id, List<String> craftingRequirements, int cost, double severity,
 			int maxAmount) {
 		return createAmmo(forceUpdate, dataFolder, invalid, filename, name, displayname, null, Material.DIAMOND_AXE, id,
 				craftingRequirements, cost, severity, maxAmount);
-	}
+	}*/
 
 	public static ArmoryYML createAmmo(boolean forceUpdate, File dataFolder, boolean invalid, String filename,
 			String name, String displayname, List<String> lore, Material type, int id,
@@ -287,25 +168,23 @@ public class GunYMLCreator {
 
 		ArmoryYML h = new ArmoryYML(f2);
 
-		h.setNoSave(invalid, "AllowUserModifications",
-				(h.contains("allowUpdates") ? (!(boolean) h.get("allowUpdates")) : false));
-		h.setNoSave(invalid, "invalid", invalid);
-		h.setNoSave(invalid, "name", name);
-		h.setNoSave(invalid, "displayname", displayname);
-		h.setNoSave(invalid, "lore", (lore == null ? new ArrayList<String>() : lore));
-		h.setNoSave(invalid, "id", id);
-		h.setNoSave(invalid, "craftingRequirements", craftingRequirements);
-		h.setNoSave(invalid, "craftingReturnAmount", craftingReturn);
-		h.setNoSave(invalid, "price", cost);
-		h.setNoSave(invalid, "maxAmount", maxAmount);
-		h.setNoSave(invalid, "material", type.name());
+		h.set(invalid, "invalid", invalid);
+		h.set(invalid, "name", name);
+		h.set(invalid, "displayname", displayname);
+		h.set(invalid, "lore", (lore == null ? new ArrayList<String>() : lore));
+		h.set(invalid, "id", id);
+		h.set(invalid, "craftingRequirements", craftingRequirements);
+		h.set(invalid, "craftingReturnAmount", craftingReturn);
+		h.set(invalid, "price", cost);
+		h.set(invalid, "maxAmount", maxAmount);
+		h.set(invalid, "material", type.name());
 
 		if (SKULL_OWNER != null) {
-			h.setNoSave(invalid, "skull_owner", SKULL_OWNER);
-			h.setNoSave(invalid, "skull_owner_custom_url", Ammo.NO_SKIN_STRING);
+			h.set(invalid, "skull_owner", SKULL_OWNER);
+			h.set(invalid, "skull_owner_custom_url", Ammo.NO_SKIN_STRING);
 		}
 
-		h.setNoSave(invalid, "piercingSeverity", severity);
+		h.set(invalid, "piercingSeverity", severity);
 		if (h.saveNow)
 			h.save();
 		return h;
@@ -326,21 +205,19 @@ public class GunYMLCreator {
 			new File(dataFolder, "attachments").mkdirs();
 		GunYML h = new GunYML(f2);
 		if (invalid)
-			h.setNoSave(false, "HOW_TO_USE",
+			h.set(false, "HOW_TO_USE",
 					"Below is just the required values to create a new attachment for the 'basegun'. If you want to modify more parts of the gun, copy the value you want to change from the 'base' gun and paste it here with the value you want.");
 
-		h.setNoSave(invalid, "AllowUserModifications",
-				(h.contains("allowUpdates") ? (!(boolean) h.get("allowUpdates")) : false));
-		h.setNoSave(invalid, "invalid", invalid);
-		h.setNoSave(invalid, "name", name);
-		h.setNoSave(invalid, "displayname", displayname);
-		h.setNoSave(invalid, "lore", (lore == null ? new ArrayList<String>() : lore));
-		h.setNoSave(invalid, "id", ms.getData());
-		h.setNoSave(invalid, "craftingRequirements", craftingRequirements);
-		h.setNoSave(invalid, "price", cost);
-		h.setNoSave(invalid, "material", ms.getMat().name());
+		h.set(invalid, "invalid", invalid);
+		h.set(invalid, "name", name);
+		h.set(invalid, "displayname", displayname);
+		h.set(invalid, "lore", (lore == null ? new ArrayList<String>() : lore));
+		h.set(invalid, "id", ms.getData());
+		h.set(invalid, "craftingRequirements", craftingRequirements);
+		h.set(invalid, "price", cost);
+		h.set(invalid, "material", ms.getMat().name());
 
-		h.setNoSave(invalid, "baseGun", originalGun);
+		h.set(invalid, "baseGun", originalGun);
 		if (!invalid) {
 
 		}
@@ -364,22 +241,21 @@ public class GunYMLCreator {
 		if (!new File(dataFolder, "armor").exists())
 			new File(dataFolder, "armor").mkdirs();
 		ArmorYML h = new ArmorYML(f2);
-		h.setNoSave(invalid, "AllowUserModifications",
-				(h.contains("allowUpdates") ? (!(boolean) h.get("allowUpdates")) : false));
-		h.setNoSave(invalid, "invalid", invalid);
-		h.setNoSave(invalid, "name", name);
-		h.setNoSave(invalid, "displayname", displayname);
-		h.setNoSave(invalid, "lore", (lore == null ? new ArrayList<String>() : lore));
-		h.setNoSave(invalid, "id", id);
-		h.setNoSave(invalid, "craftingRequirements", craftingRequirements);
-		h.setNoSave(invalid, "price", cost);
+
+		h.set(invalid, "invalid", invalid);
+		h.set(invalid, "name", name);
+		h.set(invalid, "displayname", displayname);
+		h.set(invalid, "lore", (lore == null ? new ArrayList<String>() : lore));
+		h.set(invalid, "id", id);
+		h.set(invalid, "craftingRequirements", craftingRequirements);
+		h.set(invalid, "price", cost);
 		// h.setNoSave(false, "material", type.name());
 
-		h.setNoSave(invalid, "MiscType", misctype.name());
+		h.set(invalid, "MiscType", misctype.name());
 
-		h.setNoOverride("minProtectionHeight", min);
-		h.setNoOverride("maxProtectionHeight", max);
-		h.setNoOverride("stopsHeadshots", stopHeadshots);
+		h.set("minProtectionHeight", min);
+		h.set("maxProtectionHeight", max);
+		h.set("stopsHeadshots", stopHeadshots);
 		if (h.saveNow)
 			h.save();
 		return h;
@@ -399,21 +275,19 @@ public class GunYMLCreator {
 		if (!new File(dataFolder, "misc").exists())
 			new File(dataFolder, "misc").mkdirs();
 		ArmoryYML h = new ArmoryYML(f2);
-		h.setNoSave(invalid, "AllowUserModifications",
-				(h.contains("allowUpdates") ? (!(boolean) h.get("allowUpdates")) : false));
-		h.setNoSave(invalid, "invalid", invalid);
-		h.setNoSave(invalid, "name", name);
-		h.setNoSave(invalid, "displayname", displayname);
-		h.setNoSave(invalid, "lore", (lore == null ? new ArrayList<String>() : lore));
-		h.setNoSave(invalid, "id", id);
-		h.setNoSave(invalid, "craftingRequirements", craftingRequirements);
-		h.setNoSave(invalid, "price", cost);
-		h.setNoSave(invalid, "material", type.name());
+		h.set(invalid, "invalid", invalid);
+		h.set(invalid, "name", name);
+		h.set(invalid, "displayname", displayname);
+		h.set(invalid, "lore", (lore == null ? new ArrayList<String>() : lore));
+		h.set(invalid, "id", id);
+		h.set(invalid, "craftingRequirements", craftingRequirements);
+		h.set(invalid, "price", cost);
+		h.set(invalid, "material", type.name());
 
-		h.setNoSave(invalid, "damage", damage);
-		h.setNoSave(invalid, "durability", durability);
+		h.set(invalid, "damage", damage);
+		h.set(invalid, "durability", durability);
 
-		h.setNoSave(invalid, "MiscType", misctype.name());
+		h.set(invalid, "MiscType", misctype.name());
 		if (h.saveNow)
 			h.save();
 		return h;

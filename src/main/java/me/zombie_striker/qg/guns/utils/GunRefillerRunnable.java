@@ -58,7 +58,7 @@ public class GunRefillerRunnable {
 					}
 				}
 				ItemMeta newim = modifiedOriginalItem.getItemMeta();
-				newim.setLore(Gun.getGunLore(g, modifiedOriginalItem, reloadAmount));
+				Gun.updateAmmo(g, newim, reloadAmount);
 				newim.setDisplayName(g.getDisplayName());
 				modifiedOriginalItem.setItemMeta(newim);
 				// if (QAMain.enableVisibleAmounts)

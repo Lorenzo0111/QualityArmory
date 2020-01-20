@@ -52,7 +52,7 @@ public class CustomGunItem extends AbstractItem {
 
 	@Override
 	public void initItems(File dataFolder) {
-		CustomItemManager.setResourcepack("https://www.dropbox.com/s/g5rkfdcmlax9w6a/QualityArmoryV2.0.2.zip?dl=1");
+		CustomItemManager.setResourcepack("https://www.dropbox.com/s/xfbnzu02hudhvc5/QualityArmoryV2.0.3.zip?dl=1");
 
 
 		List<String> stringsWoodRif = Arrays.asList(new String[]{getIngString(Material.IRON_INGOT, 0, 12),
@@ -90,22 +90,22 @@ public class CustomGunItem extends AbstractItem {
 				getIngString(Material.REDSTONE, 0, 4)});
 
 
-		GunYMLCreator.createAmmo(false, dataFolder, false, "9mm", "&f9mm", 1, stringsAmmo, 2, 0.7, 50,
-				10).setMaterial(Material.PHANTOM_MEMBRANE).done();
-		GunYMLCreator.createAmmo(false, dataFolder, false, "556", "&f5.56 NATO", 2, stringsAmmo, 4, 1, 50,
-				5).setMaterial(Material.PHANTOM_MEMBRANE).done();
-		GunYMLCreator.createAmmo(false, dataFolder, false, "762", "&f7.62x39mm", 3, stringsAmmo, 5, 1.2,
-				50, 5).setMaterial(Material.PHANTOM_MEMBRANE).done();
-		GunYMLCreator.createAmmo(false, dataFolder, false, "shell", "&fBuckshot", 4, stringsAmmo, 10, 0.5,
-				8, 4).setMaterial(Material.PHANTOM_MEMBRANE).done();
-		GunYMLCreator.createAmmo(false, dataFolder, false, "rocket", "&fRocket", 5, stringsAmmoRPG, 100,
-				1000, 1).setMaterial(Material.PHANTOM_MEMBRANE).done();
-		GunYMLCreator.createAmmo(false, dataFolder, false, "musketball", "&fMusket Ball", 6,
-				stringsAmmoMusket, 1, 0.7, 32, 8).setMaterial(Material.PHANTOM_MEMBRANE).done();
-		GunYMLCreator.createAmmo(false, dataFolder, false, "50bmg", "&f.50BMG", 7, stringsAmmo, 10, 3, 30,
-				1).setMaterial(Material.PHANTOM_MEMBRANE).done();
-		GunYMLCreator.createAmmo(false, dataFolder, false, "40mm", "&f40x46mm", 8, stringsAmmo, 30, 10,
-				10, 1).setMaterial(Material.PHANTOM_MEMBRANE).done();
+		GunYMLCreator.createAmmo(false, dataFolder, false, "9mm", "&f9mm", Material.PHANTOM_MEMBRANE, 1, stringsAmmo, 2, 0.7, 50,
+				10).done();
+		GunYMLCreator.createAmmo(false, dataFolder, false, "556", "&f5.56 NATO", Material.PHANTOM_MEMBRANE, 2, stringsAmmo, 4, 1, 50,
+				5).done();
+		GunYMLCreator.createAmmo(false, dataFolder, false, "762", "&f7.62x39mm", Material.PHANTOM_MEMBRANE, 3, stringsAmmo, 5, 1.2,
+				50, 5).done();
+		GunYMLCreator.createAmmo(false, dataFolder, false, "shell", "&fBuckshot", Material.PHANTOM_MEMBRANE, 4, stringsAmmo, 10, 0.5,
+				8, 4).done();
+		GunYMLCreator.createAmmo(false, dataFolder, false, "rocket", "&fRocket", Material.PHANTOM_MEMBRANE, 5, stringsAmmoRPG, 100,
+				1000, 1).done();
+		GunYMLCreator.createAmmo(false, dataFolder, false, "musketball", "&fMusket Ball", Material.PHANTOM_MEMBRANE, 6,
+				stringsAmmoMusket, 1, 0.7, 32, 8).done();
+		GunYMLCreator.createAmmo(false, dataFolder, false, "50bmg", "&f.50BMG", Material.PHANTOM_MEMBRANE, 7, stringsAmmo, 10, 3, 30,
+				1).done();
+		GunYMLCreator.createAmmo(false, dataFolder, false, "40mm", "&f40x46mm", Material.PHANTOM_MEMBRANE, 8, stringsAmmo, 30, 10,
+				10, 1).done();
 		GunYMLCreator
 				.createAmmo(false, dataFolder, false, "default_flamerfuel", "fuel", "&fFlamerFuel", null,
 						Material.BLAZE_POWDER, 0,
@@ -113,11 +113,11 @@ public class CustomGunItem extends AbstractItem {
 				.setVariant(1).done();
 
 
-		GunYMLCreator.createAmmo(true, dataFolder, false, "default_mininuke", "mininuke", "MiniNuke", 9,
-				stringsMini, 3000, 100, 1).setMaterial(Material.PHANTOM_MEMBRANE).done();
+		GunYMLCreator.createAmmo(true, dataFolder, false, "mininuke", "MiniNuke", Material.PHANTOM_MEMBRANE, 9,
+				stringsMini, 3000, 100, 1).done();
 
-		GunYMLCreator.createAmmo(true, dataFolder, false, "default_fusion_cell", "fusion_cell",
-				"Fusion Cell", 10, strings10mm, 60, 0.2, 30).setMaterial(Material.PHANTOM_MEMBRANE).done();
+		GunYMLCreator.createAmmo(true, dataFolder, false, "fusion_cell",
+				"Fusion Cell", Material.PHANTOM_MEMBRANE, 10, strings10mm, 60, 0.2, 30).done();
 
 
 		GunYMLCreator.createNewDefaultGun(dataFolder, "p30", "P30", 1, stringsPistol, WeaponType.PISTOL,
@@ -234,12 +234,12 @@ public class CustomGunItem extends AbstractItem {
 
 		GunYMLCreator
 				.createAttachment(false, dataFolder, false, "default_p30_silencer", "p30silenced",
-						ChatColor.GOLD + "P30[Silenced]", null, m(23), stringsPistol, 1000, "p30")
-				.setWeaponSound(WeaponSounds.SILENCEDSHOT).setMaterial(Material.CROSSBOW).dontVerify().done();
+						"P30[Silenced]", null, m(23), stringsPistol, 1000, "p30")
+				.setWeaponSound(WeaponSounds.SILENCEDSHOT).setMaterial(Material.CROSSBOW).done();
 		GunYMLCreator
 				.createAttachment(false, dataFolder, false, "default_awp_asiimov", "awpasiimov",
-						ChatColor.GOLD + "AWP[Asiimov-skin]", null, m(24), stringsMetalRif, 1000, "awp").setMaterial(Material.CROSSBOW)
-				.setUseOffhand(false).dontVerify().done();
+						"AWP[Asiimov-skin]", null, m(24), stringsMetalRif, 1000, "awp").setMaterial(Material.CROSSBOW)
+				.setUseOffhand(false).done();
 
 		GunYMLCreator
 				.createNewDefaultGun(dataFolder, "m4a1s", "M4A1s", 25, stringsMetalRif, WeaponType.RIFLE,
@@ -274,7 +274,7 @@ public class CustomGunItem extends AbstractItem {
 						m(29), stringsGrenades, 100, WeaponType.INCENDARY_GRENADES, 100, 1)
 				.set(false, "radius", 5).done();
 		GunYMLCreator
-				.createNewDefaultGun(dataFolder, "homingrpg", "&6Homing RPG Launcher", 30, stringsMetalRif,
+				.createNewDefaultGun(dataFolder, "homingrpg", "Homing RPG Launcher", 30, stringsMetalRif,
 						WeaponType.RPG, null, false, "rocket", 100, 1, 5000)
 				.setDelayShoot(1).setCustomProjectile(ProjectileManager.HOMING_RPG)
 				.setCustomProjectileExplosionRadius(10).setCustomProjectileVelocity(2)// .setChargingHandler(ChargingManager.HOMINGRPG)
@@ -306,23 +306,23 @@ public class CustomGunItem extends AbstractItem {
 				getIngString(Material.REDSTONE, 0, 16), getIngString(Material.BLAZE_POWDER, 0, 8)});
 
 		GunYMLCreator
-				.createNewDefaultGun(dataFolder, "lazerrifle", "&6Lazer Rifle", 32, stringsMetalRif,
+				.createNewDefaultGun(dataFolder, "lazerrifle", "Lazer Rifle", 32, stringsMetalRif,
 						WeaponType.LAZER, WeaponSounds.LAZERSHOOT, false, "fusion_cell", 4, 20, 2000)
 				.setAutomatic(true).setParticle(1, 0, 0, Material.REDSTONE_BLOCK).setDistance(150).setSwayMultiplier(3).setSway(0.2)
 				.setRecoil(0).setMaterial(Material.CROSSBOW).done();
 		GunYMLCreator
-				.createNewDefaultGun(dataFolder, "fatman", "&6Fatman", 33, stringsFatman, WeaponType.RPG,
+				.createNewDefaultGun(dataFolder, "fatman", "Fatman", 33, stringsFatman, WeaponType.RPG,
 						WeaponSounds.WARHEAD_LAUNCH, false, "mininuke", 500, 1, 6000)
 				.setDelayShoot(1).setCustomProjectile(ProjectileManager.MINI_NUKE)
 				.setCustomProjectileExplosionRadius(10).setCustomProjectileVelocity(3)// .setChargingHandler(ChargingManager.MININUKELAUNCHER)
 				.setReloadingHandler(ReloadingManager.SINGLERELOAD).setDistance(500).setParticle(0.3, 0.9, 0.3, Material.COAL_BLOCK).setMaterial(Material.CROSSBOW)
 				.setRecoil(5).done();
 
-		GunYMLCreator.createNewDefaultGun(dataFolder, "10mmpistol", "&610mm Pistol", 34, strings10mm,
+		GunYMLCreator.createNewDefaultGun(dataFolder, "10mmpistol", "10mm Pistol", 34, strings10mm,
 				WeaponType.PISTOL, null, true, "9mm", 3, 12, 700).setIsSecondaryWeapon(true).setMaterial(Material.CROSSBOW).done();
 
 		GunYMLCreator
-				.createNewDefaultGun(dataFolder, "instituterifle", "&6Institute Rifle", 35,
+				.createNewDefaultGun(dataFolder, "instituterifle", "Institute Rifle", 35,
 						stringsMetalRif, WeaponType.LAZER, WeaponSounds.LAZERSHOOT, false, "fusion_cell", 4, 20,
 						2000).setMaterial(Material.CROSSBOW)
 				.setAutomatic(true).setParticle(0.5, 0.9, 0.9, Material.LAPIS_BLOCK).setDistance(150).setSwayMultiplier(3)
@@ -340,55 +340,55 @@ public class CustomGunItem extends AbstractItem {
 
 		GunYMLCreator
 				.createNewCustomGun(dataFolder, "default_aliensrifle", "m41pulserifle",
-						ChatColor.GOLD + "M41PulseRifle", 37, stringsRifle, WeaponType.RIFLE,
+						"M41PulseRifle", 37, stringsRifle, WeaponType.RIFLE,
 						WeaponSounds.GUN_MEDIUM, false, "556", 4, 30, 5000)
 				.setLore(Collections.singletonList("&fGame over, man. Game over!")).setFullyAutomatic(3)
 				.setBulletsPerShot(1).setMuzzleSmoke(false).setRecoil(2).setMaterial(Material.CROSSBOW).done();
 		GunYMLCreator
-				.createNewCustomGun(dataFolder, "default_auto9", "auto9", ChatColor.GOLD + "Auto9", 38,
+				.createNewCustomGun(dataFolder, "default_auto9", "auto9", "Auto9", 38,
 						stringsPistol, WeaponType.PISTOL, WeaponSounds.GUN_DEAGLE, true, "556", 5, 12, 700)
 				.setLore(Collections.singletonList("&fDead or alive, you're coming with me! ")).setMaterial(Material.CROSSBOW).setZoomLevel(1)
 				.setRecoil(2).done();
 		GunYMLCreator
 				.createNewCustomGun(dataFolder, "default_arcgun9", "arcgun9",
-						ChatColor.GOLD + "The Arc-Gun-9", 39, strings10mm, WeaponType.LAZER,
+						"The Arc-Gun-9", 39, strings10mm, WeaponType.LAZER,
 						WeaponSounds.SHOCKWAVE, false, "fusion_cell", 0, 10, 2400)
 				.setLore(Collections.singletonList("&fPushy!")).setMaterial(Material.CROSSBOW)
 				.setChargingHandler(ChargingManager.getHandler(ChargingManager.PUSHBACK)).done();
 		GunYMLCreator
 				.createNewCustomGun(dataFolder, "default_halorifle", "unscassaultrifle",
-						ChatColor.GOLD + "UNSCAssaultRifle", 40, stringsRifle, WeaponType.RIFLE,
+						"UNSCAssaultRifle", 40, stringsRifle, WeaponType.RIFLE,
 						WeaponSounds.GUN_MEDIUM, true, "556", 3, 32, 3800)
 				.setFullyAutomatic(3).setBulletsPerShot(1).setMaterial(Material.CROSSBOW)
 				.setLore(Collections.singletonList("&fAlso known as the \"MA5B\"")).setRecoil(2).done();
 		GunYMLCreator
 				.createNewCustomGun(dataFolder, "default_haloalien", "alienneedler",
-						ChatColor.GOLD + "\"Needler\"", 41, stringsRifle, WeaponType.PISTOL,
+						"\"Needler\"", 41, stringsRifle, WeaponType.PISTOL,
 						WeaponSounds.GUN_NEEDLER, true, "fusion_cell", 1, 32, 2000)
 				.setFullyAutomatic(4).setBulletsPerShot(1).setMaterial(Material.CROSSBOW)
 				.setLore(Collections.singletonList("&fWarning: Sharp")).setParticle("REDSTONE", 1, 0.1, 1, Material.DIAMOND_BLOCK)
 				.done();
 		GunYMLCreator
 				.createNewCustomGun(dataFolder, "default_thatgun", "thatgun",
-						ChatColor.GOLD + "\"That Gun\"", 42, stringsRifle, WeaponType.PISTOL,
+						"\"That Gun\"", 42, stringsRifle, WeaponType.PISTOL,
 						WeaponSounds.GUN_DEAGLE, true, "556", 5, 12, 2000)
 				.setLore(Collections.singletonList("&fAlso known as the \"LAPD 2019 Detective Special\"")).setMaterial(Material.CROSSBOW)
 				.setRecoil(2).done();
 		GunYMLCreator
 				.createNewCustomGun(dataFolder, "default_blaster", "blaster",
-						ChatColor.GOLD + "\"Blaster\" Pistol", 43, stringsGoldRif, WeaponType.LAZER,
+						"\"Blaster\" Pistol", 43, stringsGoldRif, WeaponType.LAZER,
 						WeaponSounds.GUN_STARWARS, false, "fusion_cell", 4, 20, 1600)
 				.setFullyAutomatic(1).setBulletsPerShot(1).setMuzzleSmoke(false).setParticle(1, 0, 0, Material.REDSTONE_BLOCK)
 				.setLore(Collections.singletonList("&fMiss all the shots you want!")).setRecoil(0).setMaterial(Material.CROSSBOW).done();
 		GunYMLCreator
 				.createNewCustomGun(dataFolder, "default_hl2pulserifle", "pulserifle",
-						ChatColor.GOLD + "Overwatch Pulse Rifle", 44, stringsGoldRif, WeaponType.LAZER,
+						"Overwatch Pulse Rifle", 44, stringsGoldRif, WeaponType.LAZER,
 						WeaponSounds.GUN_HALOLAZER, true, "fusion_cell", 4, 30, 5000)
 				.setFullyAutomatic(3).setBulletsPerShot(1).setMuzzleSmoke(false).setMaterial(Material.CROSSBOW)
 				.setLore(Collections.singletonList("&fStardard Issue Rifles for Combie solders."))
 				.setParticle(0.5, 0.99, 0.99, Material.GOLD_BLOCK).setRecoil(2).done();
 		GunYMLCreator
-				.createNewCustomGun(dataFolder, "default_vera", "vera", ChatColor.GOLD + "Vera", 45,
+				.createNewCustomGun(dataFolder, "default_vera", "vera", "Vera", 45,
 						stringsGoldRif, WeaponType.RIFLE, WeaponSounds.GUN_DEAGLE, true, "556", 3, 30, 3000)
 				.setUseOffhand(false).setNightVisionOnScope(true).setZoomLevel(5).setMaterial(Material.CROSSBOW)
 				.setLore(Arrays.asList("&fThe Callahan Full-bore Auto-lock.", "&7\"Customized trigger, �",
@@ -398,11 +398,11 @@ public class CustomGunItem extends AbstractItem {
 				.setFullyAutomatic(2).setBulletsPerShot(1).setRecoil(2).done();
 
 		GunYMLCreator.createMisc(false, dataFolder, false, "default_lightsaberblue", "LightSaberBlue",
-				ChatColor.GOLD + "(Blue)LightSaber", Arrays.asList("&fMay The Force be with you", "&fAlways"),
-				Material.CROSSBOW, 46, stringsLight, 10000, WeaponType.MEELEE, 9, 1000);
+				"LightSaber (Blue)", Arrays.asList("&fMay The Force be with you", "&fAlways"),
+				Material.CROSSBOW, 46, stringsLight, 10000, WeaponType.MELEE, 9, 1000).setSoundOnEquip(WeaponSounds.LIGHTSABER_LIGHT_START.getSoundName()).setSoundOnHit(WeaponSounds.LIGHTSABER_HIT.getSoundName()).done();
 		GunYMLCreator.createMisc(false, dataFolder, false, "default_lightsaberred", "LightSaberRed",
-				ChatColor.GOLD + "(Red)LightSaber", Arrays.asList("&fMay The Force be with you", "&fAlways"),
-				Material.CROSSBOW, 47, stringsLight, 10000, WeaponType.MEELEE, 9, 1000);
+				"LightSaber (Red)", Arrays.asList("&fNo, I am your father.","&fSearch your feelings. You know it to be true."),
+				Material.CROSSBOW, 47, stringsLight, 10000, WeaponType.MELEE, 9, 1000).setSoundOnEquip(WeaponSounds.LIGHTSABER_SITH_START.getSoundName()).setSoundOnHit(WeaponSounds.LIGHTSABER_HIT.getSoundName()).done();
 
 		GunYMLCreator.createNewDefaultGun(dataFolder, "mac10", "Mac-10", 48, stringsMetalRif,
 				WeaponType.SMG, WeaponSounds.GUN_SMALL_AUTO, true, "9mm", 2, 32, 2500).setFullyAutomatic(3)
@@ -433,7 +433,7 @@ public class CustomGunItem extends AbstractItem {
 		GunYMLCreator.createNewDefaultGun(dataFolder, "ppsh41", "PPSh-41", 54, stringsWoodRif,
 				WeaponType.RIFLE, null, true, "762", 3, 71, 7000).setFullyAutomatic(3).setRecoil(2).setMaterial(Material.CROSSBOW).done();
 		GunYMLCreator
-				.createNewDefaultGun(dataFolder, "m79", "&6M79 \"Thumper\"", 55, stringsFatman,
+				.createNewDefaultGun(dataFolder, "m79", "M79 \"Thumper\"", 55, stringsFatman,
 						WeaponType.RPG, WeaponSounds.WARHEAD_LAUNCH, true, "40mm", 100, 1, 5000)
 				.setDelayShoot(1).setCustomProjectile(ProjectileManager.EXPLODINGROUND)
 				.setCustomProjectileVelocity(2).setCustomProjectileExplosionRadius(6)// .setChargingHandler(ChargingManager.MININUKELAUNCHER)
@@ -522,12 +522,37 @@ public class CustomGunItem extends AbstractItem {
 				.setRecoil(1).done();
 
 		GunYMLCreator
-				.createNewDefaultGun(dataFolder, "m32a1", "&6M32A1", 67, stringsFatman,
+				.createNewDefaultGun(dataFolder, "m32a1", "M32A1", 67, stringsFatman,
 						WeaponType.RPG, WeaponSounds.WARHEAD_LAUNCH, true, "40mm", 100, 6, 60000)
 				.setDelayShoot(0.7).setCustomProjectile(ProjectileManager.EXPLODINGROUND)
 				.setCustomProjectileVelocity(2).setCustomProjectileExplosionRadius(6)// .setChargingHandler(ChargingManager.MININUKELAUNCHER)
 				.setReloadingHandler(ReloadingManager.SINGLERELOAD).setDelayReload(5).setDistance(500).setMaterial(Material.CROSSBOW)
 				.setParticle(0.001, 0.001, 0.001, Material.COAL_BLOCK).setRecoil(8).done();
+
+		GunYMLCreator.createMisc(false, dataFolder, false, "default_lightsaberblack", "LightSaberBlack",
+				"LightSaber (Black)", Arrays.asList("&fAnyone can hold the Darksaber.","&fThe trick is keeping it, along with your head."),
+				Material.CROSSBOW, 70, stringsLight, 10000, WeaponType.MELEE, 9, 1000).setSoundOnEquip(WeaponSounds.LIGHTSABER_SITH_START.getSoundName()).setSoundOnHit(WeaponSounds.LIGHTSABER_HIT.getSoundName()).done();
+
+		GunYMLCreator.createMisc(false, dataFolder, false, "default_lightsaberwhite", "LightSaberWhite",
+				"LightSaber (White)", Arrays.asList("&fThey used to be red. When the creature had them,","&fthey were red.", "&fBut I heard them before I ever saw him on Radaa,","&f and knew that they were meant for me."),
+				Material.CROSSBOW, 71, stringsLight, 10000, WeaponType.MELEE, 9, 1000).setSoundOnEquip(WeaponSounds.LIGHTSABER_LIGHT_START.getSoundName()).setSoundOnHit(WeaponSounds.LIGHTSABER_HIT.getSoundName()).done();
+
+		GunYMLCreator.createMisc(false, dataFolder, false, "default_lightsabergreen", "LightSaberGreen",
+				"LightSaber (Green)", Arrays.asList("&fI see you have constructed a new lightsaber.","&fYour skills are complete.", "&fIndeed you are powerful, as the Emperor has foreseen."),
+				Material.CROSSBOW, 72, stringsLight, 10000, WeaponType.MELEE, 9, 1000).setSoundOnEquip(WeaponSounds.LIGHTSABER_LIGHT_START.getSoundName()).setSoundOnHit(WeaponSounds.LIGHTSABER_HIT.getSoundName()).done();
+
+		GunYMLCreator.createMisc(false, dataFolder, false, "default_lightsaberPurple", "LightSaberPurple",
+				"LightSaber (Purple)", Arrays.asList("&fIn the name of the Galactic Senate of the Republic,","&fyou're under arrest, Chancellor."),
+				Material.CROSSBOW, 73, stringsLight, 10000, WeaponType.MELEE, 9, 1000).setSoundOnEquip(WeaponSounds.LIGHTSABER_SITH_START.getSoundName()).setSoundOnHit(WeaponSounds.LIGHTSABER_HIT.getSoundName()).done();
+
+		GunYMLCreator.createMisc(false, dataFolder, false, "default_lightsaberorange", "LightSaberOrange",
+				"LightSaber (Orange)", Arrays.asList("&fAn extremely rare saber."),
+				Material.CROSSBOW, 74, stringsLight, 10000, WeaponType.MELEE, 9, 1000).setSoundOnEquip(WeaponSounds.LIGHTSABER_SITH_START.getSoundName()).setSoundOnHit(WeaponSounds.LIGHTSABER_HIT.getSoundName()).done();
+
+
+		GunYMLCreator.createNewDefaultGun(dataFolder, "debuggun", "Debug Gun", 34, strings10mm,
+				WeaponType.PISTOL, WeaponSounds.LAZERSHOOT, true, null, 5, 69420, -1).setLore("&3No sway. Perfect for detecting bounding boxes.").setIsSecondaryWeapon(true).setDelayShoot(0).setRecoil(0).setFullyAutomatic(12).setSway(0).setSwayMultiplier(0).setHeadShotMultiplier(12).setVariant(12).setMaterial(Material.CROSSBOW).done();
+
 
 	}
 

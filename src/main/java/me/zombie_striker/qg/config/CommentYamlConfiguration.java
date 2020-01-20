@@ -23,7 +23,7 @@ public class CommentYamlConfiguration extends YamlConfiguration {
         try (BufferedReader input = reader instanceof BufferedReader ? (BufferedReader) reader : new BufferedReader(reader)) {
             int index = 0;
             while ((line = input.readLine()) != null) {
-                if (line.startsWith("#") || line.isEmpty()) {
+                if (line.startsWith("#") || line.trim().isEmpty()) {
                     comments.put(index, line);
                 }
                 builder.append(line);

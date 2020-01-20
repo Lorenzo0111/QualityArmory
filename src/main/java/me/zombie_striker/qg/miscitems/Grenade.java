@@ -2,6 +2,7 @@ package me.zombie_striker.qg.miscitems;
 
 import java.util.List;
 
+import me.zombie_striker.customitemmanager.CustomBaseObject;
 import me.zombie_striker.customitemmanager.CustomItemManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Effect;
@@ -21,45 +22,22 @@ import me.zombie_striker.customitemmanager.MaterialStorage;
 import me.zombie_striker.qg.guns.utils.WeaponSounds;
 import me.zombie_striker.qg.handlers.ExplosionHandler;
 
-public class Grenade implements ThrowableItems {
+public class Grenade extends CustomBaseObject implements ThrowableItems {
 
 	private ItemStack[] ing = null;
 
 	double dmageLevel = 10;
 	double radius = 5;
 
-	double cost;
-
-	String name;
-	String displayname;
 	int craftingReturn;
-	List<String> lore;
-	MaterialStorage ms;
 
-	@Override
-	public void setCustomLore(List<String> lore) {
-		this.lore=lore;
-	}
 	public Grenade(ItemStack[] ingg, double cost, double damage, double explosionreadius, String name,
 			String displayname, List<String> lore, MaterialStorage ms) {
+		super(name,ms,displayname,lore,false);
 		this.ing = ingg;
-		this.cost = cost;
+		this.setPrice(cost);
 		this.radius = explosionreadius;
 		this.dmageLevel = damage;
-		this.name = name;
-		this.displayname = displayname;
-		this.lore = lore;
-		this.ms = ms;
-	}
-
-	@Override
-	public double cost() {
-		return cost;
-	}
-
-	@Override
-	public String getName() {
-		return name;
 	}
 
 	@Override
@@ -70,21 +48,6 @@ public class Grenade implements ThrowableItems {
 	@Override
 	public int getCraftingReturn() {
 		return 1;
-	}
-
-	@Override
-	public MaterialStorage getItemData() {
-		return ms;
-	}
-
-	@Override
-	public List<String> getCustomLore() {
-		return lore;
-	}
-
-	@Override
-	public String getDisplayName() {
-		return displayname;
 	}
 
 	@SuppressWarnings("deprecation")
@@ -197,7 +160,7 @@ public class Grenade implements ThrowableItems {
 			int slot = -56;
 			ItemStack stack = null;
 			for (int i = 0; i < player.getInventory().getContents().length; i++) {
-				if ((stack = player.getInventory().getItem(i)) != null && MaterialStorage.getMS(stack) == ms) {
+				if ((stack = player.getInventory().getItem(i)) != null && MaterialStorage.getMS(stack) == getItemData()) {
 					slot = i;
 					break;
 				}

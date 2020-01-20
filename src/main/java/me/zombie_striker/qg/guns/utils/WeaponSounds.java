@@ -20,6 +20,8 @@ public enum WeaponSounds {
 
 	HISS("block.lava.extinguish"), XP_ORG_PICKUP("entity.experience_orb.pickup"),
 
+	LIGHTSABER_SITH_START("sithsaberstart"),LIGHTSABER_LIGHT_START("lightsaberstart"),LIGHTSABER_HIT("saberhit"),
+
 	DEFAULT("hurt");
 
 	private String soundname;

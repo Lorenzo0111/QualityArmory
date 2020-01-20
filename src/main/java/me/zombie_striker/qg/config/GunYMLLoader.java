@@ -1,7 +1,7 @@
 package me.zombie_striker.qg.config;
 
+import me.zombie_striker.customitemmanager.CustomBaseObject;
 import me.zombie_striker.customitemmanager.MaterialStorage;
-import me.zombie_striker.qg.ArmoryBaseObject;
 import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.ammo.Ammo;
 import me.zombie_striker.qg.ammo.AmmoType;
@@ -196,13 +196,21 @@ public class GunYMLLoader {
 							double radius = f2.contains("radius") ? f2.getDouble("radius") : 0;
 							items++;
 
-							ArmoryBaseObject base = null;
+							CustomBaseObject base = null;
+
+
+							String soundEquip =  f2.contains("sound_equip")? f2.getString("sound_equip"):null;
+							String soundHit =  f2.contains("sound_meleehit")? f2.getString("sound_meleehit"):null;
 
 							if (wt == WeaponType.MEDKIT)
 								QAMain.miscRegister.put(ms, base=new MedKit(ms, name, displayname, materails, price));
-							if (wt == WeaponType.MEELEE)
+							if (wt == WeaponType.MELEE) {
 								QAMain.miscRegister.put(ms,
-										base=	new MeleeItems(ms, name, displayname, materails, price, damage));
+										base = new MeleeItems(ms, name, displayname, materails, price, damage));
+								base.setSoundOnEquip(soundEquip);
+								base.setSoundOnHit(soundHit);
+								base.setCustomLore(lore);
+							}
 							if (wt == WeaponType.GRENADES)
 								QAMain.miscRegister.put(ms,
 										base=new Grenade(materails, price, damage, radius, name, displayname, lore, ms));
@@ -230,7 +238,6 @@ public class GunYMLLoader {
 	}
 
 	public static void loadGuns(QAMain main, File f) {
-		try {
 			if (f.getName().contains("yml")) {
 				FileConfiguration f2 = YamlConfiguration.loadConfiguration(f);
 				if ((!f2.contains("invalid")) || !f2.getBoolean("invalid")) {
@@ -258,15 +265,9 @@ public class GunYMLLoader {
 						}
 					} catch (Error | Exception re52) {
 					}
-
-					// final double price = f2.contains("price") ? f2.getDouble("price") : 100;
-
 					if (weatype.isGun()) {
-						// boolean isAutomatic = f2.contains("isAutomatic") ?
-						// f2.getBoolean("isAutomatic") : false;
-
 						Gun g = new Gun(name, ms);
-						g.setDisplayName(displayname);
+						g.setDisplayname(displayname);
 						g.setCustomLore(extraLore);
 						g.setIngredients(materails);
 						QAMain.gunRegister.put(ms, g);
@@ -275,8 +276,6 @@ public class GunYMLLoader {
 
 				}
 			}
-		} catch (Exception e) {
-		}
 
 	}
 

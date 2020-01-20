@@ -12,7 +12,7 @@ import org.bukkit.util.Vector;
 
 import me.zombie_striker.qg.guns.Gun;
 import me.zombie_striker.qg.guns.utils.GunUtil;
-import me.zombie_striker.qg.handlers.HeadShotUtil;
+import me.zombie_striker.qg.handlers.BoundingBoxUtil;
 import me.zombie_striker.qg.npcs.Gunner;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.ai.Goal;
@@ -70,18 +70,18 @@ public class Gunnergoal implements Goal {
 		Location test = ((Player) npc.getEntity()).getEyeLocation().clone();
 		int stepi = 4;
 		Vector step = npc.getEntity().getLocation().getDirection().normalize().multiply(1.0 / stepi);
-		for (int dist = 0; dist < diste * stepi; dist++) {
+		/*for (int dist = 0; dist < diste * stepi; dist++) {
 			test.add(step);
-			if (HeadShotUtil.closeEnough(target, test)) {
+			if (BoundingBoxUtil.closeEnough(target, test)) {
 				break;
 			}
 			boolean solid = GunUtil.isSolid(test.getBlock(), test);
-			if (solid /* || GunUtil.isBreakable(test.getBlock(), test) */) {
+			if (solid /* || GunUtil.isBreakable(test.getBlock(), test) * /) {
 				if (setTargetNullifSolid)
 					target = null;
 				return false;
 			}
-		}
+		}*/
 
 		return true;
 	}

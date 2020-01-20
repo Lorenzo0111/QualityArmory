@@ -1,9 +1,6 @@
 package me.zombie_striker.customitemmanager.versions.V1_14;
 
-import me.zombie_striker.customitemmanager.AbstractItemFact;
-import me.zombie_striker.customitemmanager.MaterialStorage;
-import me.zombie_striker.customitemmanager.OLD_ItemFact;
-import me.zombie_striker.qg.ArmoryBaseObject;
+import me.zombie_striker.customitemmanager.*;
 import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.ammo.Ammo;
 import me.zombie_striker.qg.api.QualityArmory;
@@ -16,6 +13,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -28,7 +26,7 @@ public class ItemFactory extends AbstractItemFact {
 
 	@Override
 	public ItemStack getItem(MaterialStorage materialStorage, int amount) {
-		ArmoryBaseObject base = QualityArmory.getCustomItem(materialStorage);
+		CustomBaseObject base = QualityArmory.getCustomItem(materialStorage);
 
 		if (base == null)
 			return null;
@@ -49,7 +47,7 @@ public class ItemFactory extends AbstractItemFact {
 			im = Bukkit.getServer().getItemFactory().getItemMeta(ms.getMat());
 		if (im != null) {
 			im.setDisplayName(displayname);
-			List<String> lore = null;
+			List<String> lore = base.getCustomLore()!=null?new ArrayList<>(base.getCustomLore()):new ArrayList<>();
 
 			if (base instanceof Ammo) {
 				boolean setSkull = false;
@@ -62,11 +60,11 @@ public class ItemFactory extends AbstractItemFact {
 				}
 			}
 
-			if (base instanceof Gun)
-				lore = Gun.getGunLore((Gun) base, null, ((Gun) base).getMaxBullets());
-			if (base instanceof ArmorObject)
-				lore = OLD_ItemFact.getArmorLore((ArmorObject) base, is);
 
+			if(base instanceof  Gun)
+				lore.addAll(Gun.getGunLore((Gun) base, null, ((Gun) base).getMaxBullets()));
+			if (base instanceof ArmorObject)
+				lore.addAll(OLD_ItemFact.getArmorLore((ArmorObject) base));
 
 			im.setLore(lore);
 			if (QAMain.ITEM_enableUnbreakable) {

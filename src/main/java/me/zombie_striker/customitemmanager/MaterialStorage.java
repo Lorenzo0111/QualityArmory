@@ -53,7 +53,7 @@ public class MaterialStorage {
 
 	public static MaterialStorage getMS(Material m, int d, int var, String extraValue, String ev2) {
 		for (MaterialStorage k : store) {
-			if (matchesMaterials(k, m, d) && matchVariants(k, var) && matchHeads(k, extraValue, ev2))
+			if (matchesMaterials(k, m, d)) if (matchVariants(k, var)) if (matchHeads(k, extraValue, ev2))
 				return k;
 		}
 		MaterialStorage mm = new MaterialStorage(m, d, var, extraValue, ev2);
@@ -66,7 +66,7 @@ public class MaterialStorage {
 	}
 
 	public static boolean matchVariants(MaterialStorage k, int var) {
-		return (k.variant == var || var == -1) || (!k.hasVariant() && var == 0);
+		return (!k.hasVariant() && var == 0) || (k.variant == var);
 	}
 
 	public static boolean matchHeads(MaterialStorage k, String ex1, String ex2) {

@@ -8,20 +8,22 @@ public class ArmorYML extends ArmoryYML {
 
 	public ArmorYML(File file) {
 		super(file);
-	}@Override
+	}
+
+	@Override
 	public void verifyAllTagsExist() {
-		if(overrideVerify)
-			return;
 		super.verifyAllTagsExist();
-		setNoOverride("Version_18_Support", !QAMain.isVersionHigherThan(1, 9));
-		setNoOverride("minProtectionHeight", 1);
-		setNoOverride("maxProtectionHeight", 2);
-		setNoOverride("stopsHeadshots", false);
+		verify("Version_18_Support", !QAMain.isVersionHigherThan(1, 9));
+		verify("minProtectionHeight", 1);
+		verify("maxProtectionHeight", 2);
+		verify("stopsHeadshots", false);
 	}
+
 	public ArmorYML setStopsHeadshots(boolean b) {
-		setNoOverride("stopsHeadshots", b);
-		return this;		
+		set("stopsHeadshots", b);
+		return this;
 	}
+
 	public ArmorYML setProtectionRegion(double min, double max) {
 		set(false, "minProtectionHeight", min);
 		set(false, "maxProtectionHeight", max);

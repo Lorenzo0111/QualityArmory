@@ -1,10 +1,7 @@
 package me.zombie_striker.qg.guns;
 
-import me.zombie_striker.customitemmanager.CustomItemManager;
-import me.zombie_striker.customitemmanager.OLD_ItemFact;
-import me.zombie_striker.qg.ArmoryBaseObject;
+import me.zombie_striker.customitemmanager.*;
 import me.zombie_striker.qg.QAMain;
-import me.zombie_striker.customitemmanager.MaterialStorage;
 import me.zombie_striker.qg.ammo.*;
 import me.zombie_striker.qg.api.QAWeaponPrepareShootEvent;
 import me.zombie_striker.qg.api.QualityArmory;
@@ -21,23 +18,17 @@ import me.zombie_striker.qg.handlers.reloaders.ReloadingHandler;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map.Entry;
 import java.util.UUID;
 
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
-import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 
-public class Gun implements ArmoryBaseObject, Comparable<Gun> {
+public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparable<Gun> {
 
-	private String name;
-	private MaterialStorage id;
-	private ItemStack[] ing;
 	private WeaponType type;
 	private boolean hasIronSights;
 	private int zoomLevel = 0;
@@ -57,13 +48,8 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 
 	private boolean useOffhandOverride = true;
 
-	private List<String> extralore = null;
-	private String displayname = null;
-
 	private List<String> weaponSounds;
 	private double volume = 4;
-
-	double cost = 100;
 
 	private double delayBetweenShots = 0.25;
 
@@ -102,7 +88,7 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 	public HashMap<UUID, Long> lastshot = new HashMap<>();
 
 	public void copyFrom(Gun g) {
-		this.ing = g.ing;
+		this.setIngredients(g.getIngredients());
 		this.type = g.type;
 		this.hasIronSights = g.hasIronSights;
 		this.zoomLevel = g.zoomLevel;
@@ -118,10 +104,9 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 		this.headshotMultiplier = g.headshotMultiplier;
 		this.isPrimaryWeapon = g.isPrimaryWeapon;
 		this.explosionRadius = g.explosionRadius;
-		this.extralore = g.extralore;
-		// this.displayname = displayname;
+		this.setCustomLore(g.getCustomLore());
 		this.weaponSounds = g.weaponSounds;
-		this.cost = g.cost;
+		this.setPrice(g.getPrice());
 		this.delayBetweenShots = g.delayBetweenShots;
 		this.shotsPerBullet = g.shotsPerBullet;
 		this.firerate = g.firerate;
@@ -143,50 +128,13 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 
 	}
 
-	/*
-	 * @Deprecated public Gun(String name, MaterialStorage id, WeaponType type,
-	 * boolean h, Ammo am, double acc, double swaymult, int maxBullets, float
-	 * damage, boolean isAutomatic, int durib, WeaponSounds ws, double cost) {
-	 * this(name, id, type, h, am, acc, swaymult, maxBullets, damage, isAutomatic,
-	 * durib, ws, null, ChatColor.GOLD + name, cost, null); this.ing =
-	 * Main.getInstance().getIngredients(name);
-	 * 
-	 * }
-	 * 
-	 * @Deprecated public Gun(String name, WeaponType type, boolean h, Ammo am,
-	 * double acc, double swaymult, int maxBullets, float damage, boolean
-	 * isAutomatic, int durib, WeaponSounds ws, double cost) { this(name, type, h,
-	 * am, acc, swaymult, maxBullets, damage, isAutomatic, durib, ws, cost,
-	 * Main.getInstance().getIngredients(name)); }
-	 */
-
 	@Deprecated
-	public Gun(String name, WeaponType type, boolean h, Ammo am, double acc, double swaymult, int maxBullets,
-			float damage, boolean isAutomatic, int durib, WeaponSounds ws, double cost, ItemStack[] ing) {
-		this(name, type, h, am, acc, swaymult, maxBullets, damage, isAutomatic, durib, ws.getSoundName(), cost, ing);
+	public Gun(String name, MaterialStorage id, WeaponType type, boolean h, Ammo am, double acc, double swaymult,
+			   int maxBullets, float damage, boolean isAutomatic, int durib, String ws, double cost,
+			   ItemStack[] ing) {
+		this(name, id, type, h, am, acc, swaymult, maxBullets, damage, isAutomatic, durib, ws,
+				null, ChatColor.GOLD + name, cost, ing);
 	}
-
-	@Deprecated
-	public Gun(String name, WeaponType type, boolean h, Ammo am, double acc, double swaymult, int maxBullets,
-			float damage, boolean isAutomatic, int durib, String ws, double cost, ItemStack[] ing) {
-		this.name = name;
-		this.type = type;
-		this.hasIronSights = h;
-		this.ammotype = am;
-		this.ing = ing;
-		this.acc = acc;
-		this.maxbull = maxBullets;
-		this.damage = damage;
-		this.durib = durib;
-		this.swaymultiplier = swaymult;
-		this.isAutomatic = isAutomatic;
-		this.weaponSounds = new ArrayList<String>();
-		this.weaponSounds.add(ws);
-
-		this.cost = cost;
-		this.displayname = ChatColor.GOLD + name;
-	}
-
 	@Deprecated
 	public Gun(String name, MaterialStorage id, WeaponType type, boolean h, Ammo am, double acc, double swaymult,
 			int maxBullets, float damage, boolean isAutomatic, int durib, WeaponSounds ws, double cost,
@@ -207,12 +155,11 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 	public Gun(String name, MaterialStorage id, WeaponType type, boolean h, Ammo am, double acc, double swaymult,
 			int maxBullets, float damage, boolean isAutomatic, int durib, String ws, List<String> extralore,
 			String displayname, double cost, ItemStack[] ing) {
-		this.name = name;
-		this.id = id;
+		super(name,id,ChatColor.translateAlternateColorCodes('&', displayname),extralore,true);
 		this.type = type;
 		this.hasIronSights = h;
 		this.ammotype = am;
-		this.ing = ing;
+		this.setIngredients(ing);
 		this.acc = acc;
 		this.maxbull = maxBullets;
 		this.damage = damage;
@@ -222,20 +169,16 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 		this.weaponSounds = new ArrayList<String>();
 		this.weaponSounds.add(ws);
 
-		this.cost = cost;
+		this.setPrice(cost);
 
-		this.extralore = extralore;
-		this.displayname = ChatColor.translateAlternateColorCodes('&', displayname);
+		//this.extralore = extralore;
+		//this.displayname = ChatColor.translateAlternateColorCodes('&', displayname);
 	}
 
 	public Gun(String name, MaterialStorage id) {
-		this.name = name;
-		this.id = id;
+		super(name,id,name,null,true);
 	}
 
-	public void setIngredients(ItemStack[] ing) {
-		this.ing = ing;
-	}
 
 	public void setAutomatic(boolean automatic) {
 		this.isAutomatic = automatic;
@@ -247,10 +190,6 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 
 	public void setDamage(float damage) {
 		this.damage = damage;
-	}
-
-	public void setPrice(double price) {
-		this.cost = price;
 	}
 
 	public void setDuribility(int durib) {
@@ -296,7 +235,6 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 	public void setRecoil(double d) {
 		this.recoil = d;
 	}
-
 	public void enableBetterAimingAnimations(boolean b){useOffhandOverride=b;}
 	public boolean hasBetterAimingAnimations(){return useOffhandOverride;}
 
@@ -383,9 +321,6 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 		return firerate;
 	}
 
-	public void setDisplayName(String displayname) {
-		this.displayname = displayname;
-	}
 
 	public WeaponType getWeaponType() {
 		return type;
@@ -399,29 +334,10 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 		this.isPrimaryWeapon = isPrimary;
 	}
 
-	@Override
-	public double cost() {
-		return cost;
-	}
-
 	public boolean isAutomatic() {
 		return isAutomatic;
 	}
 
-	@Override
-	public String getName() {
-		return name;
-	}
-
-	@Override
-	public ItemStack[] getIngredients() {
-		return ing;
-	}
-
-	@Override
-	public int getCraftingReturn() {
-		return 1;
-	}
 
 	public void setUnlimitedAmmo(boolean b) {
 		this.unlimitedAmmo = b;
@@ -431,10 +347,6 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 		return Gun.USE_THIS_INSTEAD_OF_INDEVIDUAL_SHOOT_METHODS(this, player, getSway());
 	}
 
-	@Override
-	public void setCustomLore(List<String> lore) {
-		this.extralore=lore;
-	}
 
 	@SuppressWarnings("deprecation")
 	public static boolean USE_THIS_INSTEAD_OF_INDEVIDUAL_SHOOT_METHODS(Gun g, Player player, double acc) {
@@ -515,17 +427,6 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 		return swaymultiplier;
 	}
 
-	@Override
-	public MaterialStorage getItemData() {
-		if (id == null) {
-			for (Entry<MaterialStorage, Gun> e : QAMain.gunRegister.entrySet()) {
-				if (e.getValue() == this)
-					return id = e.getKey();
-			}
-		}
-		return id;
-	}
-
 	@Deprecated
 	public String getWeaponSound() {
 		return weaponSounds.get(0);
@@ -533,16 +434,6 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 
 	public List<String> getWeaponSounds() {
 		return weaponSounds;
-	}
-
-	@Override
-	public List<String> getCustomLore() {
-		return extralore;
-	}
-
-	@Override
-	public String getDisplayName() {
-		return displayname;
 	}
 
 	public double getDelayBetweenShotsInSeconds() {
@@ -634,9 +525,9 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 	@Override
 	public int compareTo(Gun arg0) {
 		if (QAMain.orderShopByPrice) {
-			return (int) (this.cost - arg0.cost);
+			return (int) (this.getPrice() - arg0.getPrice());
 		}
-		return this.displayname.compareTo(arg0.displayname);
+		return this.getDisplayName().compareTo(arg0.getDisplayName());
 	}
 
 	@Override
@@ -649,11 +540,21 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 		return onClick(e, usedItem, QAMain.SWAP_RMB_WITH_LMB);
 	}
 
+	@Override
+	public String getSoundOnEquip() {
+		return null;
+	}
+
+	@Override
+	public String getSoundOnHit() {
+		return null;
+	}
+
 	@SuppressWarnings("deprecation")
 	public boolean onClick(final Player e, ItemStack usedItem, boolean fire) {
 		QAMain.DEBUG("CLICKED GUN " + getName());
 
-		if (!e.getPlayer().hasPermission("qualityarmory.usegun")) {
+		if (QAMain.requirePermsToShoot && !e.getPlayer().hasPermission("qualityarmory.usegun")) {
 			e.getPlayer().sendMessage(QAMain.S_NOPERM);
 			return true;
 		}
@@ -908,12 +809,27 @@ public class Gun implements ArmoryBaseObject, Comparable<Gun> {
 		return 0;
 	}
 
+	public static void updateAmmo(Gun g, ItemMeta current, int amount) {
+		if(( (current==null ||   !current.hasLore()) ))
+			return;
+		List<String> lore = current.getLore();
+		updateAmmo(g,lore,amount);
+		current.setLore(lore);
+		return;
+	}
+	public static void updateAmmo(Gun g, List<String> lore, int amount) {
+		for(int i = 0; i < lore.size(); i++){
+			if(lore.get(i).startsWith(QAMain.S_ITEM_BULLETS)){
+				lore.set(i,QAMain.S_ITEM_BULLETS + ": " + (amount) + "/" + (g.getMaxBullets()));
+				break;
+			}
+		}
+		return;
+	}
 
 
 	public static List<String> getGunLore(Gun g, ItemStack current, int amount) {
-		List<String> lore = new ArrayList<>();
-		if (g.getCustomLore() != null)
-			lore.addAll(g.getCustomLore());
+		List<String> lore = (current!=null && current.hasItemMeta() && current.getItemMeta().hasLore()) ? current.getItemMeta().getLore() : new ArrayList<>();
 		OLD_ItemFact.addVariantData(null, lore, g);
 		lore.add(QAMain.S_ITEM_BULLETS + ": " + (amount) + "/" + (g.getMaxBullets()));
 		if (QAMain.ENABLE_LORE_INFO) {

@@ -85,21 +85,21 @@ public class CustomGunItem extends AbstractItem {
 
 
 
-		GunYMLCreator.createAmmo(false, dataFolder, false, "9mm", "&f9mm", 15, stringsAmmo, 2, 0.7, 50,
+		GunYMLCreator.createAmmo(false, dataFolder, false, "9mm", "&f9mm", Material.DIAMOND_AXE, 15, stringsAmmo, 2, 0.7, 50,
 				10);
-		GunYMLCreator.createAmmo(false, dataFolder, false, "556", "&f5.56 NATO", 14, stringsAmmo, 4, 1, 50,
+		GunYMLCreator.createAmmo(false, dataFolder, false, "556", "&f5.56 NATO", Material.DIAMOND_AXE, 14, stringsAmmo, 4, 1, 50,
 				5);
-		GunYMLCreator.createAmmo(false,dataFolder, false, "762", "&f7.62x39mm", 79, stringsAmmo, 5, 1.2,
+		GunYMLCreator.createAmmo(false,dataFolder, false, "762", "&f7.62x39mm", Material.DIAMOND_AXE, 79, stringsAmmo, 5, 1.2,
 				50, 5);
-		GunYMLCreator.createAmmo(false, dataFolder, false, "shell", "&fBuckshot", 16, stringsAmmo, 10, 0.5,
+		GunYMLCreator.createAmmo(false, dataFolder, false, "shell", "&fBuckshot", Material.DIAMOND_AXE, 16, stringsAmmo, 10, 0.5,
 				8, 4);
-		GunYMLCreator.createAmmo(false, dataFolder, false, "rocket", "&fRocket", 17, stringsAmmoRPG, 100,
+		GunYMLCreator.createAmmo(false, dataFolder, false, "rocket", "&fRocket", Material.DIAMOND_AXE, 17, stringsAmmoRPG, 100,
 				1000, 1);
-		GunYMLCreator.createAmmo(false, dataFolder, false, "musketball", "&fMusket Ball", 51,
+		GunYMLCreator.createAmmo(false, dataFolder, false, "musketball", "&fMusket Ball",Material.DIAMOND_AXE,  51,
 				stringsAmmoMusket, 1, 0.7, 32, 8);
-		GunYMLCreator.createAmmo(false, dataFolder, false, "50bmg", "&f.50BMG", 90, stringsAmmo, 10, 3, 30,
+		GunYMLCreator.createAmmo(false, dataFolder, false, "50bmg", "&f.50BMG", Material.DIAMOND_AXE, 90, stringsAmmo, 10, 3, 30,
 				1);
-		GunYMLCreator.createAmmo(false, dataFolder, false, "40mm", "&f40x46mm", 99, stringsAmmo, 30, 10,
+		GunYMLCreator.createAmmo(false, dataFolder, false, "40mm", "&f40x46mm", Material.DIAMOND_AXE, 99, stringsAmmo, 30, 10,
 				10, 1);
 		GunYMLCreator
 				.createAmmo(false, dataFolder, false, "default_flamerfuel", "fuel", "&fFlamerFuel", null,
@@ -222,11 +222,11 @@ public class CustomGunItem extends AbstractItem {
 		GunYMLCreator
 				.createAttachment(false, dataFolder, false, "default_p30_silencer", "p30silenced",
 						ChatColor.GOLD + "P30[Silenced]", null, m(42), stringsPistol, 1000, "p30")
-				.setWeaponSound(WeaponSounds.SILENCEDSHOT).dontVerify().done();
+				.setWeaponSound(WeaponSounds.SILENCEDSHOT).done();
 		GunYMLCreator
 				.createAttachment(false, dataFolder, false, "default_awp_asiimov", "awpasiimov",
 						ChatColor.GOLD + "AWP[Asiimov-skin]", null, m(43), stringsMetalRif, 1000, "awp")
-				.dontVerify().done();
+				.done();
 
 		GunYMLCreator
 				.createNewDefaultGun(dataFolder, "m4a1s", "M4A1s", 44, stringsMetalRif, WeaponType.RIFLE,
@@ -296,8 +296,8 @@ public class CustomGunItem extends AbstractItem {
 		List<String> stringsFatman = Arrays.asList(new String[] { getIngString(Material.IRON_INGOT, 0, 32),
 				getIngString(Material.REDSTONE, 0, 16), getIngString(Material.BLAZE_POWDER, 0, 8) });
 
-		GunYMLCreator.createAmmo(true, dataFolder, false, "default_fusion_cell", "fusion_cell",
-				"Fusion Cell", 53, strings10mm, 60, 0.2, 30);
+		GunYMLCreator.createAmmo(true, dataFolder, false, "fusion_cell",
+				"Fusion Cell", Material.DIAMOND_AXE, 53, strings10mm, 60, 0.2, 30);
 		GunYMLCreator
 				.createNewDefaultGun(dataFolder, "lazerrifle", "&6Lazer Rifle", 54, stringsMetalRif,
 						WeaponType.LAZER, WeaponSounds.LAZERSHOOT, false, "fusion_cell", 4, 20, 2000)
@@ -310,7 +310,7 @@ public class CustomGunItem extends AbstractItem {
 				.setCustomProjectileExplosionRadius(10).setCustomProjectileVelocity(3)// .setChargingHandler(ChargingManager.MININUKELAUNCHER)
 				.setReloadingHandler(ReloadingManager.SINGLERELOAD).setDistance(500).setParticle(0.3, 0.9, 0.3, Material.COAL_BLOCK)
 				.setRecoil(5).done();
-		GunYMLCreator.createAmmo(true,dataFolder, false, "default_mininuke", "mininuke", "MiniNuke", 56,
+		GunYMLCreator.createAmmo(true,dataFolder, false, "mininuke", "MiniNuke",Material.DIAMOND_AXE, 56,
 				stringsMini, 3000, 100, 1);
 
 		GunYMLCreator.createNewDefaultGun(dataFolder, "10mm", "&610mm Pistol", 57, strings10mm,
@@ -394,10 +394,10 @@ public class CustomGunItem extends AbstractItem {
 
 		GunYMLCreator.createMisc(false, dataFolder, false, "default_lightsaberblue", "LightSaberBlue",
 				ChatColor.GOLD + "(Blue)LightSaber", Arrays.asList("&fMay The Force be with you", "&fAlways"),
-				Material.DIAMOND_AXE, 70, stringsLight, 10000, WeaponType.MEELEE, 9, 1000);
+				Material.DIAMOND_AXE, 70, stringsLight, 10000, WeaponType.MELEE, 9, 1000);
 		GunYMLCreator.createMisc(false, dataFolder, false, "default_lightsaberred", "LightSaberRed",
 				ChatColor.GOLD + "(Red)LightSaber", Arrays.asList("&fMay The Force be with you", "&fAlways"),
-				Material.DIAMOND_AXE, 71, stringsLight, 10000, WeaponType.MEELEE, 9, 1000);
+				Material.DIAMOND_AXE, 71, stringsLight, 10000, WeaponType.MELEE, 9, 1000);
 
 		GunYMLCreator.createNewDefaultGun(dataFolder, "mac10", "Mac-10", 75, stringsMetalRif,
 				WeaponType.SMG, WeaponSounds.GUN_SMALL_AUTO, true, "9mm", 2, 32, 2500).setFullyAutomatic(3)

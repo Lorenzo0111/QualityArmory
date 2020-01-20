@@ -2,37 +2,29 @@ package me.zombie_striker.qg.ammo;
 
 import java.util.List;
 
+import me.zombie_striker.customitemmanager.CustomBaseObject;
 import me.zombie_striker.customitemmanager.CustomItemManager;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
-import org.bukkit.event.block.Action;
-import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
-import me.zombie_striker.qg.ArmoryBaseObject;
+import me.zombie_striker.customitemmanager.ArmoryBaseObject;
 import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.customitemmanager.MaterialStorage;
 import me.zombie_striker.qg.handlers.MultiVersionLookup;
 
-public class Ammo implements ArmoryBaseObject{
+public class Ammo extends CustomBaseObject implements ArmoryBaseObject{
 
-
-	String name;
-	String disName;
 	int maxAmount;
 	boolean indiDrop;
 
-	MaterialStorage ms;
 
 	int returnAmount;
 
 	ItemStack[] ingredients;
 
-	List<String> lore;
-
-	private double cost;
 
 	private double piercingDamage = 1;
 
@@ -59,25 +51,19 @@ public class Ammo implements ArmoryBaseObject{
 
 	public Ammo(String name, String displayName, List<String> lore, MaterialStorage ms, int maxAmount,
 			boolean indiDrop, int returnamount, double cost, ItemStack[] ingredients, double piercing) {
-		this.name = name;
-		this.disName = displayName;
-		this.ms = ms;
+		super(name,ms,displayName,lore,false);
 		this.maxAmount = maxAmount;
 		this.indiDrop = indiDrop;
 		this.ingredients = ingredients;
 		this.returnAmount = returnamount;
-		this.lore = lore;
 
-		this.cost = cost;
+		this.setPrice(cost);
 
 		this.piercingDamage = piercing;
 
 		AmmoType.addAmmo(this, name);
 	}
-	
-	public void setCraftingReturn(int i) {
-		returnAmount = i;
-	}
+
 	
 	public boolean hasCustomSkin() {
 		return ! NO_SKIN_STRING.equals(base64SkinURL);
@@ -104,15 +90,6 @@ public class Ammo implements ArmoryBaseObject{
 		return piercingDamage;
 	}
 
-	@Override
-	public double cost() {
-		return cost;
-	}
-
-	@Override
-	public String getName() {
-		return name;
-	}
 
 	public int getMaxAmount() {
 		return maxAmount;
@@ -122,30 +99,7 @@ public class Ammo implements ArmoryBaseObject{
 		return indiDrop;
 	}
 
-	@Override
-	public MaterialStorage getItemData() {
-		return ms;
-	}
 
-	@Override
-	public int getCraftingReturn() {
-		return returnAmount;
-	}
-
-	@Override
-	public ItemStack[] getIngredients() {
-		return ingredients;
-	}
-
-	@Override
-	public List<String> getCustomLore() {
-		return lore;
-	}
-
-	@Override
-	public String getDisplayName() {
-		return disName;
-	}
 	@Override
 	public boolean is18Support() {
 		return false;
@@ -155,10 +109,6 @@ public class Ammo implements ArmoryBaseObject{
 	public void set18Supported(boolean b) {		
 	}
 
-	@Override
-	public void setCustomLore(List<String> lore) {
-		this.lore=lore;
-	}
 
 	@Override
 	public boolean onRMB(Player e, ItemStack usedItem) {

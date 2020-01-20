@@ -7,6 +7,7 @@ FriendlyFireEnabled: false
 showPossibleCrashHelpMessage: true
 Enable_Creation_Of_Default_Files: true
 unknownTranslationKeyFixer: false
+enable_permssionsToShoot: false
 
 
 #Resourcepack settings.
@@ -17,7 +18,7 @@ DefaultResourcepack: https://www.dropbox.com/s/g5rkfdcmlax9w6a/QualityArmoryV2.0
 KickPlayerIfDeniedResourcepack: false
 sendOnJoin: true
 sendTitleOnJoin: false
-SecondsTillRPIsSent: 5.0
+SecondsTillRPIsSent: 0.0
 Auto-Detect-Resourcepack: true
 ManuallyOverrideTo_1_8_systems: false
 ManuallyOverrideTo_1_13_systems: false
@@ -85,8 +86,8 @@ Swap-Reload-and-Shooting-Controls: false
 Order-Shop-By-Price: false
 enable_lore_gun-info_messages: true
 enable_lore_control-help_messages: true
-Enable_Headshot_Instantkill: true
-Enable_Headshot_Notification_Sound: true
+Enable_Headshot_Instantkill: false
+Enable_Headshot_Notification_Sound: false
 Headshot_Notification_Sound: entity.experience_orb.pickup
 Enable_Headshot_Sounds: true
 gravityConstantForDropoffCalculations: 0.05

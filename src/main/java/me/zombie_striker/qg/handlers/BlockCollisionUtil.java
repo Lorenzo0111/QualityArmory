@@ -54,6 +54,8 @@ public class BlockCollisionUtil {
 
 
 	public static boolean isSolid(Block b, Location l) {
+		if(b.getType().name().equals("SNOW"))
+			return false;
 		if(b.getType().name().contains("SIGN"))
 			return false;
 		if (b.getType().name().endsWith("CARPET")) {

@@ -1,24 +1,14 @@
-package me.zombie_striker.qg;
+package me.zombie_striker.customitemmanager;
 
 import java.util.List;
 
 import me.zombie_striker.customitemmanager.MaterialStorage;
+import me.zombie_striker.qg.guns.utils.WeaponSounds;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
 public interface ArmoryBaseObject {
-
-	 String getName();
-	 ItemStack[] getIngredients();
-	 int getCraftingReturn();
-	 MaterialStorage getItemData();
-	
-	 List<String> getCustomLore();
-	 void setCustomLore(List<String> lore);
-	 String getDisplayName();
-	
-	 double cost();
 	
 	 ItemStack getItemStack();
 	

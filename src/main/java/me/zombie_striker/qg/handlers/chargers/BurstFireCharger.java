@@ -73,7 +73,7 @@ public class BurstFireCharger implements ChargingHandler {
 				} else {
 					slot = player.getInventory().getHeldItemSlot();
 				}
-				im.setLore(Gun.getGunLore(g, stack, amount));
+				Gun.updateAmmo(g, im, amount);
 				stack.setItemMeta(im);
 				if (slot == -1) {
 					try {

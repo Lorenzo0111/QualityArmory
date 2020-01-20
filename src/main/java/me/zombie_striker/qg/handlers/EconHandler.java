@@ -1,10 +1,10 @@
 package me.zombie_striker.qg.handlers;
 
+import me.zombie_striker.customitemmanager.CustomBaseObject;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
-import me.zombie_striker.qg.ArmoryBaseObject;
 import net.milkbowl.vault.economy.Economy;
 
 public class EconHandler {
@@ -23,11 +23,11 @@ public class EconHandler {
 		return econ != null;
 	}
 	
-	public static boolean hasEnough(ArmoryBaseObject base, Player player) {
-		return (econ.getBalance(player) >= base.cost());
+	public static boolean hasEnough(CustomBaseObject base, Player player) {
+		return (econ.getBalance(player) >= base.getPrice());
 	}
-	public static void pay(ArmoryBaseObject base, Player player) {
-		econ.withdrawPlayer(player, base.cost());
+	public static void pay(CustomBaseObject base, Player player) {
+		econ.withdrawPlayer(player, base.getPrice());
 	}
 	public static boolean hasEnough(int cost, Player player) {
 		return (econ.getBalance(player) >= cost);

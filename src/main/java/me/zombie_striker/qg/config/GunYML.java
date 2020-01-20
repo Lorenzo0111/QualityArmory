@@ -19,40 +19,38 @@ public class GunYML extends ArmoryYML {
 
 	@Override
 	public void verifyAllTagsExist() {
-		if(overrideVerify)
-			return;
 		super.verifyAllTagsExist();
-		setNoOverride("weapontype", WeaponType.RIFLE.name());
-		setNoOverride("enableIronSights", false);
-		setNoOverride("setZoomLevel", 0);
-		setNoOverride("ammotype", "556");
-		setNoOverride("sway", 0.2);
-		setNoOverride("firerate", 1);
-		setNoOverride("maxbullets", 0);
-		setNoOverride("delayForReload", 1.5);
-		setNoOverride("delayForShoot", 0.3);
-		setNoOverride("bullets-per-shot", 1);
-		setNoOverride("isAutomatic", false);
-		setNoOverride("maxBulletDistance", 200);
-		setNoOverride("unlimitedAmmo", false);
-		setNoOverride("LightLeveOnShoot", 14);
-		setNoOverride("recoil", 1);
+		verify("weapontype", WeaponType.RIFLE.name());
+		verify("enableIronSights", false);
+		verify("setZoomLevel", 0);
+		verify("ammotype", "556");
+		verify("sway", 0.2);
+		verify("firerate", 1);
+		verify("maxbullets", 0);
+		verify("delayForReload", 1.5);
+		verify("delayForShoot", 0.3);
+		verify("bullets-per-shot", 1);
+		verify("isAutomatic", false);
+		verify("maxBulletDistance", 200);
+		verify("unlimitedAmmo", false);
+		verify("LightLeveOnShoot", 14);
+		verify("recoil", 1);
 
-		setNoOverride("particles.bullet_particle", "REDSTONE");
-		setNoOverride("particles.bullet_particleR", 1);
-		setNoOverride("particles.bullet_particleG", 1);
-		setNoOverride("particles.bullet_particleB", 1);
-		setNoOverride("particles.bullet_particleMaterial", "COAL_BLOCK");
+		verify("particles.bullet_particle", "REDSTONE");
+		verify("particles.bullet_particleR", 1);
+		verify("particles.bullet_particleG", 1);
+		verify("particles.bullet_particleB", 1);
+		verify("particles.bullet_particleMaterial", "COAL_BLOCK");
 
-		setNoOverride("Version_18_Support", !QAMain.isVersionHigherThan(1, 9));
-		setNoOverride("ChargingHandler", "none");
-		setNoOverride("addMuzzleSmoke", true);
+		verify("Version_18_Support", !QAMain.isVersionHigherThan(1, 9));
+		verify("ChargingHandler", "none");
+		verify("addMuzzleSmoke", true);
 
-		setNoOverride("drop-glow-color", "none");
-		setNoOverride("headshotMultiplier", 3.5);
-		setNoOverride("swayMultiplier", 2);
+		verify("drop-glow-color", "none");
+		verify("headshotMultiplier", 3.5);
+		verify("swayMultiplier", 2);
 
-		setNoOverride("weaponsounds_volume",4);
+		verify("weaponsounds_volume",4);
 	}
 	public GunYML setRecoil(double recoil) {
 		set(false, "recoil", recoil);
@@ -103,6 +101,12 @@ public class GunYML extends ArmoryYML {
 	@Override
 	public GunYML setLore(List<String> lore) {
 		set(false, "lore", lore);
+		return this;
+	}
+
+	@Override
+	public GunYML setLore(String... lore) {
+		set( "lore", lore);
 		return this;
 	}
 

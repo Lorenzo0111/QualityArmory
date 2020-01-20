@@ -6,50 +6,31 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
+import me.zombie_striker.customitemmanager.CustomBaseObject;
 import me.zombie_striker.customitemmanager.CustomItemManager;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
-import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
 import me.zombie_striker.pluginconstructor.HotbarMessager;
-import me.zombie_striker.qg.ArmoryBaseObject;
-import me.zombie_striker.customitemmanager.OLD_ItemFact;
+import me.zombie_striker.customitemmanager.ArmoryBaseObject;
 import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.customitemmanager.MaterialStorage;
 import me.zombie_striker.qg.handlers.BulletWoundHandler;
 
-public class MedKit implements ArmoryBaseObject {
-
-	MaterialStorage ms;
-	String displayname;
-	int cost;
-	String name;
+public class MedKit extends CustomBaseObject implements ArmoryBaseObject {
 
 	List<UUID> medkitHeartUsage = new ArrayList<>();
 	HashMap<UUID, Long> lastTimeHealed = new HashMap<>();
 	HashMap<UUID, Double> PercentTimeHealed = new HashMap<>();
 
 	ItemStack[] ing = null;
-	List<String> lore = null;
 
-	@Override
-	public void setCustomLore(List<String> lore) {
-		this.lore=lore;
-	}
 
 	public MedKit(MaterialStorage ms, String name, String displayname, ItemStack[] ings, int cost) {
-		this.ms = ms;
-		this.displayname = displayname;
-		this.cost = cost;
-		this.name = name;
+		super(name,ms,displayname,null,false);
 		this.ing = ings;
-	}
-
-	@Override
-	public String getName() {
-		return name;
 	}
 
 	@Override
@@ -62,25 +43,6 @@ public class MedKit implements ArmoryBaseObject {
 		return 1;
 	}
 
-	@Override
-	public MaterialStorage getItemData() {
-		return ms;
-	}
-
-	@Override
-	public List<String> getCustomLore() {
-		return lore;
-	}
-
-	@Override
-	public String getDisplayName() {
-		return displayname;
-	}
-
-	@Override
-	public double cost() {
-		return cost;
-	}
 
 	@Override
 	public boolean is18Support() {

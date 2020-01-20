@@ -120,13 +120,13 @@ public class ParticleHandlers {
 	public static void spawnGunParticles(Gun g, Location loc) {
 		try {
 			if (g.getParticle() != null)
-			if (g.getParticle() == Particle.REDSTONE) {
-				spawnParticle(g.getParticleR(), g.getParticleG(), g.getParticleB(), loc);
-			} else if (g.getParticle() == Particle.BLOCK_CRACK || g.getParticle() == Particle.BLOCK_DUST || g.getParticle() == Particle.FALLING_DUST) {
-				loc.getWorld().spawnParticle(g.getParticle(), loc, 1, g.getParticleMaterial().createBlockData());
-			} else {
-				loc.getWorld().spawnParticle(g.getParticle(), loc, 1);
-			}
+				if (g.getParticle() == Particle.REDSTONE) {
+					spawnParticle(g.getParticleR(), g.getParticleG(), g.getParticleB(), loc);
+				} else if (g.getParticle() == Particle.BLOCK_CRACK || g.getParticle() == Particle.BLOCK_DUST || g.getParticle() == Particle.FALLING_DUST) {
+					loc.getWorld().spawnParticle(g.getParticle(), loc, 1, g.getParticleMaterial().createBlockData());
+				} else {
+					loc.getWorld().spawnParticle(g.getParticle(), loc, 1);
+				}
 		} catch (Error | Exception e4) {
 		}
 	}
@@ -136,9 +136,20 @@ public class ParticleHandlers {
 			if (is13) {
 				Particle.DustOptions dust = new Particle.DustOptions(
 						Color.fromRGB((int) (r * 255), (int) (g * 255), (int) (b * 255)), 1);
-				loc.getWorld().spawnParticle(Particle.REDSTONE, loc.getX(), loc.getY(), loc.getZ(), 0, 0, 0, 0, dust);
+				for(Player player : loc.getWorld().getPlayers()) {
+					if(player.getLocation().distanceSquared(loc) < 60*60)
+					player.spawnParticle(Particle.REDSTONE, loc.getX(), loc.getY(), loc.getZ(), 0, 0, 0, 0, dust);
+				}
+				/*Particle.DustOptions dust = new Particle.DustOptions(
+						Color.fromRGB((int) (r * 255), (int) (g * 255), (int) (b * 255)), 1);
+				loc.getWorld().spawnParticle(Particle.REDSTONE, loc.getX(), loc.getY(), loc.getZ(), 0, 0, 0, 0, dust);*/
 			} else {
-				loc.getWorld().spawnParticle(Particle.REDSTONE, loc.getX(), loc.getY(), loc.getZ(), 0, r, g, b, 1);
+
+				for(Player player : loc.getWorld().getPlayers()) {
+					if(player.getLocation().distanceSquared(loc) < 60*60)
+						player.spawnParticle(Particle.REDSTONE, loc.getX(), loc.getY(), loc.getZ(), 0, r, g, b, 1);
+				}
+				//loc.getWorld().spawnParticle(Particle.REDSTONE, loc.getX(), loc.getY(), loc.getZ(), 0, r, g, b, 1);
 			}
 		} catch (Error | Exception e45) {
 			e45.printStackTrace();
