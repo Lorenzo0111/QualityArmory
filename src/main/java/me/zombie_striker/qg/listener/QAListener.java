@@ -899,9 +899,11 @@ public class QAListener implements Listener {
 		}
 		if (QualityArmory.isIronSights(prev)) {
 			try {
+
 				e.getPlayer().getInventory().setItem(e.getPreviousSlot(),
 						e.getPlayer().getInventory().getItemInOffHand());
-				e.getPlayer().getInventory().setItemInOffHand(null);
+				e.getPlayer().getInventory().setItemInOffHand(IronsightsHandler.offHandStorage.get(e.getPlayer()));
+				IronsightsHandler.offHandStorage.remove(e.getPlayer());
 			} catch (Error e2) {
 			}
 		}
@@ -916,6 +918,16 @@ public class QAListener implements Listener {
 			}
 		}
 		QAMain.reloadingTasks.remove(e.getPlayer().getUniqueId());
+
+		if (QualityArmory.isIronSights(e.getPlayer().getInventory().getItemInMainHand())) {
+			try {
+
+				e.getPlayer().getInventory().setItemInMainHand(e.getPlayer().getInventory().getItemInOffHand());
+				e.getPlayer().getInventory().setItemInOffHand(IronsightsHandler.offHandStorage.get(e.getPlayer()));
+				IronsightsHandler.offHandStorage.remove(e.getPlayer());
+			} catch (Error e2) {
+			}
+		}
 	}
 
 	@EventHandler
