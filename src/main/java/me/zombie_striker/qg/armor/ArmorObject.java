@@ -14,8 +14,6 @@ import me.zombie_striker.customitemmanager.MaterialStorage;
 
 public class ArmorObject extends CustomBaseObject implements ArmoryBaseObject {
 
-	private ItemStack[] ing;
-
 	// TODO: Refine max heights
 	private double heightMin = 1;
 	private double heightMax = 1.5;
@@ -26,7 +24,7 @@ public class ArmorObject extends CustomBaseObject implements ArmoryBaseObject {
 	public ArmorObject(String name, String displayname, List<String> lore, ItemStack[] ing, MaterialStorage st,
 			double cost) {
 		super(name,st,displayname,lore,false);
-		this.ing = ing;
+		super.setIngredients(ing);
 		this.setPrice(cost);
 	}
 

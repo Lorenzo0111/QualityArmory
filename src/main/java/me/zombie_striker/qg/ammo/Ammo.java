@@ -23,8 +23,6 @@ public class Ammo extends CustomBaseObject implements ArmoryBaseObject{
 
 	int returnAmount;
 
-	ItemStack[] ingredients;
-
 
 	private double piercingDamage = 1;
 
@@ -54,7 +52,7 @@ public class Ammo extends CustomBaseObject implements ArmoryBaseObject{
 		super(name,ms,displayName,lore,false);
 		this.maxAmount = maxAmount;
 		this.indiDrop = indiDrop;
-		this.ingredients = ingredients;
+		super.setIngredients(ingredients);
 		this.returnAmount = returnamount;
 
 		this.setPrice(cost);

@@ -1,5 +1,7 @@
 1.1.155
     Fixed error where files cannot be edited.
+    Ghost-chu: Fix bug for delete item in offhand when aiming
+    Fixed ammo loading issue for crafting gui
 
 1.1.154
     #Beautification update#

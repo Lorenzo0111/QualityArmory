@@ -2,12 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="3a75e4d7-6f9a-4a9b-ac5e-112a5a655666" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/config/ArmoryYML.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/config/ArmoryYML.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/listener/QAListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/listener/QAListener.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/npcs_sentinel/SentinelQAHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/npcs_sentinel/SentinelQAHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/QAMain.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/QAMain.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/ammo/Ammo.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/ammo/Ammo.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/armor/ArmorObject.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/armor/ArmorObject.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/resources/changelog.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/changelog.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -183,10 +181,10 @@
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
     <state x="690" y="334" key="#com.intellij.codeInsight.editorActions.RestoreReferencesDialog/0.0.1920.1160@0.0.1920.1160" timestamp="1579397266527" />
-    <state x="765" y="288" key="#com.intellij.ide.util.MemberChooser" timestamp="1579481319209">
+    <state x="765" y="288" key="#com.intellij.ide.util.MemberChooser" timestamp="1580346550181">
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
-    <state x="765" y="288" key="#com.intellij.ide.util.MemberChooser/0.0.1920.1160@0.0.1920.1160" timestamp="1579481319209" />
+    <state x="765" y="288" key="#com.intellij.ide.util.MemberChooser/0.0.1920.1160@0.0.1920.1160" timestamp="1580346550181" />
     <state x="640" y="315" key="#com.intellij.openapi.updateSettings.impl.PluginUpdateInfoDialog" timestamp="1578027404238">
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
@@ -199,22 +197,22 @@
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
     <state x="301" y="0" key="#com.intellij.refactoring.rename.AutomaticRenamingDialog/0.0.1920.1160@0.0.1920.1160" timestamp="1579423917960" />
-    <state width="1876" height="181" key="GridCell.Tab.0.bottom" timestamp="1580343443091">
+    <state width="1876" height="181" key="GridCell.Tab.0.bottom" timestamp="1580353014989">
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
-    <state width="1876" height="181" key="GridCell.Tab.0.bottom/0.0.1920.1160@0.0.1920.1160" timestamp="1580343443091" />
-    <state width="1876" height="181" key="GridCell.Tab.0.center" timestamp="1580343443091">
+    <state width="1876" height="181" key="GridCell.Tab.0.bottom/0.0.1920.1160@0.0.1920.1160" timestamp="1580353014989" />
+    <state width="1876" height="181" key="GridCell.Tab.0.center" timestamp="1580353014989">
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
-    <state width="1876" height="181" key="GridCell.Tab.0.center/0.0.1920.1160@0.0.1920.1160" timestamp="1580343443091" />
-    <state width="1876" height="181" key="GridCell.Tab.0.left" timestamp="1580343443091">
+    <state width="1876" height="181" key="GridCell.Tab.0.center/0.0.1920.1160@0.0.1920.1160" timestamp="1580353014989" />
+    <state width="1876" height="181" key="GridCell.Tab.0.left" timestamp="1580353014989">
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
-    <state width="1876" height="181" key="GridCell.Tab.0.left/0.0.1920.1160@0.0.1920.1160" timestamp="1580343443091" />
-    <state width="1876" height="181" key="GridCell.Tab.0.right" timestamp="1580343443091">
+    <state width="1876" height="181" key="GridCell.Tab.0.left/0.0.1920.1160@0.0.1920.1160" timestamp="1580353014989" />
+    <state width="1876" height="181" key="GridCell.Tab.0.right" timestamp="1580353014989">
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
-    <state width="1876" height="181" key="GridCell.Tab.0.right/0.0.1920.1160@0.0.1920.1160" timestamp="1580343443091" />
+    <state width="1876" height="181" key="GridCell.Tab.0.right/0.0.1920.1160@0.0.1920.1160" timestamp="1580353014989" />
     <state x="666" y="207" key="refactoring.ChangeSignatureDialog" timestamp="1579399149763">
       <screen x="0" y="0" width="1920" height="1160" />
     </state>

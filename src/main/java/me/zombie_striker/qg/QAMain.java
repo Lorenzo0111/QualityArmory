@@ -452,9 +452,9 @@ public class QAMain extends JavaPlugin {
 		shopMenu.setItem((9 * 6) - 1 - 8, prevButton);
 		shopMenu.setItem((9 * 6) - 1, nextButton);
 
-		if (basei + gunslistr.size() < index)
+		if (basei + gunslistr.size() < index) {
 			basei += gunslistr.size();
-		else
+		}else {
 			for (Gun g : gunslistr) {
 				if (basei < index) {
 					basei++;
@@ -463,26 +463,13 @@ public class QAMain extends JavaPlugin {
 				basei++;
 				if (index >= maxIndex)
 					break;
-				if(addToGUI(g,shopMenu,shopping))
-				index++;
+				if (addToGUI(g, shopMenu, shopping))
+					index++;
 			}
-		if (basei + gunslistr.size() < index)
-			basei += gunslistr.size();
-		else
-			for (CustomBaseObject abo : miscRegister.values()) {
-				if (basei < index) {
-					basei++;
-					continue;
-				}
-				basei++;
-				if (index >= maxIndex)
-					break;
-				if(addToGUI(abo,shopMenu,shopping))
-				index++;
-			}
-		if (basei + gunslistr.size() < index)
-			basei += gunslistr.size();
-		else
+		}
+		if (basei + ammoRegister.values().size() < index) {
+			basei += ammoRegister.values().size();
+		}else {
 			for (CustomBaseObject ammo : ammoRegister.values()) {
 				if (basei < index) {
 					basei++;
@@ -491,12 +478,28 @@ public class QAMain extends JavaPlugin {
 				basei++;
 				if (index >= maxIndex)
 					break;
-				if(addToGUI(ammo,shopMenu,shopping))
-				index++;
+				if (addToGUI(ammo, shopMenu, shopping))
+					index++;
 			}
-		if (basei + gunslistr.size() < index)
-			basei += gunslistr.size();
-		else
+		}
+		if (basei + miscRegister.values().size() < index) {
+			basei += miscRegister.values().size();
+		}else {
+			for (CustomBaseObject abo : miscRegister.values()) {
+				if (basei < index) {
+					basei++;
+					continue;
+				}
+				basei++;
+				if (index >= maxIndex)
+					break;
+				if (addToGUI(abo, shopMenu, shopping))
+					index++;
+			}
+		}
+		if (basei + armorRegister.values().size() < index) {
+			basei += armorRegister.values().size();
+		}else{
 			for (ArmorObject armor : armorRegister.values()) {
 				if (basei < index) {
 					basei++;
@@ -508,6 +511,7 @@ public class QAMain extends JavaPlugin {
 				if(addToGUI(armor,shopMenu,shopping))
 				index++;
 			}
+		}
 		return shopMenu;
 	}
 
@@ -683,15 +687,23 @@ public class QAMain extends JavaPlugin {
 		DEBUG = (boolean) a("ENABLE-DEBUG", false);
 
 		Material glass = null;
+		Material glass2 = null;
 		try {
-			glass = Material.matchMaterial("STAINED_GLASS_PANE");
-		} catch (Error | Exception e45) {
-		}
-		if (glass == null)
 			glass = Material.matchMaterial("BLUE_STAINED_GLASS_PANE");
-
-		prevButton = new ItemStack(glass, 1, (short) 14);
-		nextButton = new ItemStack(glass, 1, (short) 5);
+			glass2 = Material.matchMaterial("RED_STAINED_GLASS_PANE");
+			prevButton = new ItemStack(glass, 1);
+			nextButton = new ItemStack(glass2, 1);
+			ItemMeta nextButtonMeta = nextButton.getItemMeta();
+			nextButtonMeta.setDisplayName(ChatColor.GOLD+" Next Page:");
+			nextButton.setItemMeta(nextButtonMeta);
+			ItemMeta prevButtonMeta = prevButton.getItemMeta();
+			prevButtonMeta.setDisplayName(ChatColor.GOLD+" Previous Page:");
+			prevButton.setItemMeta(prevButtonMeta);
+		} catch (Error | Exception e45) {
+			glass = Material.matchMaterial("STAINED_GLASS_PANE");
+			prevButton = new ItemStack(glass, 1, (short) 14);
+			nextButton = new ItemStack(glass, 1, (short) 5);
+		}
 
 		new BoltactionCharger();
 		new BreakactionCharger();
