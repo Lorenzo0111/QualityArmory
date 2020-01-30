@@ -297,8 +297,7 @@ public class QAListener implements Listener {
 											.replaceAll("%cost%", "" + g.getPrice()));
 						} else
 							QAMain.removeForIngre((Player) e.getWhoClicked(), g);
-						ItemStack s = CustomItemManager.getItemFact("gun").getItem(g.getItemData(), 1);
-						s.setAmount(g.getCraftingReturn());
+						ItemStack s = CustomItemManager.getItemFact("gun").getItem(g.getItemData(), g.getCraftingReturn());
 						e.getWhoClicked().getInventory().addItem(s);
 						QAMain.shopsSounds(e, shop);
 						DEBUG("Buy-gun");
@@ -363,8 +362,7 @@ public class QAListener implements Listener {
 											.replaceAll("%cost%", "" + g.getPrice()));
 						} else
 							QAMain.removeForIngre((Player) e.getWhoClicked(), g);
-						ItemStack s = CustomItemManager.getItemFact("gun").getItem(g.getItemData(), 1);
-						s.setAmount(g.getCraftingReturn());
+						ItemStack s = CustomItemManager.getItemFact("gun").getItem(g.getItemData(), g.getCraftingReturn());
 						e.getWhoClicked().getInventory().addItem(s);
 						QAMain.shopsSounds(e, shop);
 						DEBUG("Buy-Misc");
@@ -399,8 +397,7 @@ public class QAListener implements Listener {
 								EconHandler.pay(g, (Player) e.getWhoClicked());
 							} else
 								QAMain.removeForIngre((Player) e.getWhoClicked(), g);
-							ItemStack s = CustomItemManager.getItemFact("gun").getItem(g.getItemData(), 1);
-							s.setAmount(g.getCraftingReturn());
+							ItemStack s = CustomItemManager.getItemFact("gun").getItem(g.getItemData(), g.getCraftingReturn());
 							e.getWhoClicked().getInventory().addItem(s);
 							QAMain.shopsSounds(e, shop);
 							DEBUG("Buy-armor");
@@ -730,7 +727,7 @@ public class QAListener implements Listener {
 	@SuppressWarnings({"deprecation"})
 	@EventHandler
 	public void onClick(final PlayerInteractEvent e) {
-		QAMain.DEBUG("InteractEvent Called. Custom item used = " + (CustomItemManager.getItemFact("gun").getItem(MaterialStorage.getMS(e.getItem()), 1) != null));
+		QAMain.DEBUG("InteractEvent Called. Custom item used = " + (CustomItemManager.getItemFact("gun").isCustomItem(e.getPlayer().getItemInHand())));
 		// Quick bugfix for specifically this item.
 
 		if (!CustomItemManager.isUsingCustomData()) {

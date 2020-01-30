@@ -19,6 +19,8 @@ public class SentinelQAHandler extends SentinelIntegration {
 		return "";
 	}
 
+
+
 	@SuppressWarnings("deprecation")
 	@Override
 	public boolean tryAttack(SentinelTrait st, LivingEntity ent) {

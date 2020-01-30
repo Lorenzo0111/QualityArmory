@@ -47,6 +47,7 @@ public class ArmoryYML {
 	public ArmoryYML set(boolean force, String name, Object v) {
 		long lastmodifiedFile = save.lastModified();
 		long lastmodifiedInternal = contains("lastModifiedByQA") ? (long) get("lastModifiedByQA") :  (  contains("AllowUserModifications") && fileConfig.getBoolean("AllowUserModifications") ? 0 : System.currentTimeMillis());
+
 		if(!force && lastmodifiedFile-lastmodifiedInternal > 5000) {
 			return this; //The file has been changed sometime after QA made any changes.
 		}
@@ -57,11 +58,6 @@ public class ArmoryYML {
 		return this;
 	}
 	public ArmoryYML verify(String name, Object v) {
-		long lastmodifiedFile = save.lastModified();
-		long lastmodifiedInternal = contains("lastModifiedByQA") ? (long) get("lastModifiedByQA") :  (  contains("AllowUserModifications") && fileConfig.getBoolean("AllowUserModifications") ? 0 : System.currentTimeMillis());
-		if(lastmodifiedFile-lastmodifiedInternal > 5000) {
-			return this; //The file has been changed sometime after QA made any changes.
-		}
 		if (!contains(name)) {
 			fileConfig.set(name, v);
 			saveNow = true;
@@ -142,13 +138,12 @@ public class ArmoryYML {
 	}
 
 	public void verifyAllTagsExist() {
-		boolean isOverride = false;
 		if(contains("AllowUserModifications")){
-			isOverride = (boolean) get("AllowUserModifications");
+			boolean allowChanges = (boolean) get("AllowUserModifications");
 			set(true,"AllowUserModifications",null);
-		}
-		if(!isOverride)
+			if(!allowChanges)
 			putTimeStamp();
+		}
 		verify("invalid", false);
 		verify("weaponsounds", WeaponSounds.getSoundByType(WeaponType.RIFLE));
 		verify("damage", 3);
@@ -159,9 +154,12 @@ public class ArmoryYML {
 	}
 
 	public ArmoryYML putTimeStamp(){
-			fileConfig.set("lastModifiedByQA", System.currentTimeMillis()+5000);
+			fileConfig.set("lastModifiedByQA", System.currentTimeMillis());
 			saveNow = true;
 		return this;
+	}
+	public long getTimestamp(){
+		return contains("lastModifiedByQA") ? (long) get("lastModifiedByQA"): 0;
 	}
 
 
