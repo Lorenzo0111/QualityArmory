@@ -34,7 +34,7 @@ public class ItemFactory extends AbstractItemFact {
 			im = Bukkit.getServer().getItemFactory().getItemMeta(ms.getMat());
 		if (im != null) {
 			im.setDisplayName(displayname);
-			List<String> lore = base.getCustomLore()!=null?base.getCustomLore():new ArrayList<>();
+			List<String> lore = base.getCustomLore()!=null?new ArrayList<>(base.getCustomLore()):new ArrayList<>();
 
 			if(base instanceof  Gun)
 				lore.addAll(Gun.getGunLore((Gun) base, null, ((Gun) base).getMaxBullets()));

@@ -1,10 +1,8 @@
 package me.zombie_striker.customitemmanager;
 
-import me.zombie_striker.customitemmanager.MaterialStorage;
-import org.bukkit.ChatColor;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class CustomBaseObject {
@@ -40,7 +38,7 @@ public class CustomBaseObject {
 	}
 
 	public List<String> getCustomLore() {
-		return lore;
+		return new ArrayList<>(lore);
 	}
 
 	public void setCustomLore(List<String> lore) {

@@ -60,7 +60,7 @@ public class QAListener implements Listener {
 					}
 				}
 			}
-			if (QualityArmory.isGun(d.getItemInHand()) || QualityArmory.isGunWithAttchments(d.getItemInHand())
+			if (QualityArmory.isGun(d.getItemInHand())
 					|| QualityArmory.isIronSights(d.getItemInHand()))
 				DEBUG("The player " + e.getEntity().getName() + " was Hit with a gun! Damage=" + e.getDamage());
 		}
@@ -95,7 +95,6 @@ public class QAListener implements Listener {
 			try {
 				if (e.isSneaking()) {
 					if (QualityArmory.isGun(e.getPlayer().getItemInHand())
-							|| QualityArmory.isGunWithAttchments(e.getPlayer().getItemInHand())
 							&& (!QualityArmory.isCustomItem(e.getPlayer().getInventory().getItemInOffHand()))) {
 						DEBUG("Sneak Swapping start!");
 						Gun g = QualityArmory.getGun(e.getPlayer().getItemInHand());
@@ -262,7 +261,7 @@ public class QAListener implements Listener {
 					if (e.getCurrentItem().isSimilar(QAMain.nextButton)) {
 						int page = Integer.parseInt(e.getView().getTitle().split(QAMain.S_shopName)[1]) + 1;
 						e.getWhoClicked().closeInventory();
-						e.getWhoClicked().openInventory(QAMain.createShop(Math.min(QualityArmory.getMaxPages(), page)));
+						e.getWhoClicked().openInventory(QAMain.createShop(Math.min(QualityArmory.getMaxPagesForGUI(), page)));
 						DEBUG("next_Shop");
 						return;
 					}
@@ -277,7 +276,7 @@ public class QAListener implements Listener {
 					if (e.getCurrentItem().isSimilar(QAMain.nextButton)) {
 						int page = Integer.parseInt(e.getView().getTitle().split(QAMain.S_craftingBenchName)[1]) + 1;
 						e.getWhoClicked().closeInventory();
-						e.getWhoClicked().openInventory(QAMain.createCraft(Math.min(QualityArmory.getMaxPages(), page)));
+						e.getWhoClicked().openInventory(QAMain.createCraft(Math.min(QualityArmory.getMaxPagesForGUI(), page)));
 						DEBUG("next_craft");
 						return;
 					}
@@ -509,10 +508,6 @@ public class QAListener implements Listener {
 					if (QAMain.AutoDetectResourcepackVersion && !QAMain.MANUALLYSELECT18) {
 						if (us.myles.ViaVersion.bukkit.util.ProtocolSupportUtil
 								.getProtocolVersion(e.getPlayer()) < QAMain.ViaVersionIdfor_1_8) {
-							if (g == null)
-								g = QAMain.gunRegister
-										.get(QualityArmory.getGunWithAttchments(e.getItem().getItemStack()).getBase());
-
 							if (!g.is18Support()) {
 								for (Gun g2 : QAMain.gunRegister.values()) {
 									if (g2.is18Support()) {
@@ -538,9 +533,6 @@ public class QAListener implements Listener {
 						} else {
 							if (us.myles.ViaVersion.bukkit.util.ProtocolSupportUtil
 									.getProtocolVersion(e.getPlayer()) >= QAMain.ViaVersionIdfor_1_8) {
-								if (g == null)
-									g = QAMain.gunRegister.get(
-											QualityArmory.getGunWithAttchments(e.getItem().getItemStack()).getBase());
 								if (g.is18Support()) {
 									for (Gun g2 : QAMain.gunRegister.values()) {
 										if (!g2.is18Support()) {
@@ -890,9 +882,11 @@ public class QAListener implements Listener {
 		ItemStack newslot = e.getPlayer().getInventory().getItem(e.getNewSlot());
 		if(QualityArmory.isCustomItem(newslot)){
 			CustomBaseObject customBase = QualityArmory.getCustomItem(newslot);
-			if(customBase.getSoundOnEquip()!=null){
-				e.getPlayer().getWorld().playSound(e.getPlayer().getLocation(),customBase.getSoundOnEquip(),1,1);
-			}
+			try {
+				if (customBase.getSoundOnEquip() != null) {
+					e.getPlayer().getWorld().playSound(e.getPlayer().getLocation(), customBase.getSoundOnEquip(), 1, 1);
+				}
+			}catch(Error|Exception e4){}
 		}
 		if (QualityArmory.isIronSights(prev)) {
 			try {

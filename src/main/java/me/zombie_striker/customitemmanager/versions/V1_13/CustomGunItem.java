@@ -35,7 +35,7 @@ public class CustomGunItem extends AbstractItem {
 			ItemMeta im = is.getItemMeta();
 			OLD_ItemFact.addVariantData(im, im.getLore(), variant);
 		}
-		return QualityArmory.getCustomItem(QualityArmory.getCustomItem(is));
+		return QualityArmory.getCustomItemAsItemStack(QualityArmory.getCustomItem(is));
 	}
 
 

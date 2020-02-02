@@ -2,6 +2,7 @@ package me.zombie_striker.qg.api;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
 
@@ -60,25 +61,27 @@ public class QualityArmory {
 		QAMain.expansionPacks.add(MaterialStorage.getMS(used, id, var));
 	}
 
-	public static CustomBaseObject getCustomItemByName(String name) {
-		for (Entry<MaterialStorage, Gun> e : QAMain.gunRegister.entrySet())
-			if (e.getValue().getName().equalsIgnoreCase(name)) {
-				return e.getValue();
-			}
-		for (Entry<MaterialStorage, Ammo> e : QAMain.ammoRegister.entrySet())
-			if (e.getValue().getName().equalsIgnoreCase(name)) {
-				return e.getValue();
-			}
-		for (Entry<MaterialStorage, CustomBaseObject> e : QAMain.miscRegister.entrySet())
-			if (e.getValue().getName().equalsIgnoreCase(name)) {
-				return e.getValue();
-			}
-		for (Entry<MaterialStorage, ArmorObject> e : QAMain.armorRegister.entrySet())
-			if (e.getValue().getName().equalsIgnoreCase(name)) {
-				return e.getValue();
-			}
-		return null;
+	public static Iterator<Gun> getGuns(){
+		return QAMain.gunRegister.values().iterator();
 	}
+	public static Iterator<Ammo> getAmmo(){
+		return QAMain.ammoRegister.values().iterator();
+	}
+	public static Iterator<CustomBaseObject> getMisc(){
+		return QAMain.miscRegister.values().iterator();
+	}
+	public static Iterator<ArmorObject> getArmor(){
+		return QAMain.armorRegister.values().iterator();
+	}
+	public static Iterator<CustomBaseObject> getCustomItems(){
+		List<CustomBaseObject> list = new ArrayList<>();
+		list.addAll(QAMain.gunRegister.values());
+		list.addAll(QAMain.ammoRegister.values());
+		list.addAll(QAMain.armorRegister.values());
+		list.addAll(QAMain.miscRegister.values());
+		return list.iterator();
+	}
+
 
 	@SuppressWarnings("deprecation")
 	public static void sendResourcepack(final Player player, final boolean warning) {
@@ -117,23 +120,9 @@ public class QualityArmory {
 								} catch (Error | Exception re4) {
 								}
 								player.setResourcePack(CustomItemManager.getResourcepack());
-								/*if (QAMain.AutoDetectResourcepackVersion
-										&& us.myles.ViaVersion.bukkit.util.ProtocolSupportUtil
-												.getProtocolVersion(player) < QAMain.ID18) {
-									player.setResourcePack(QAMain.url18);
-								} else if (QAMain.MANUALLYSELECT18) {
-									player.setResourcePack(QAMain.url18New);
-								} else {
-									player.setResourcePack(QAMain.url);
-								}*/
+
 							} catch (Error | Exception e4) {
-								/*if (!QAMain.isVersionHigherThan(1, 9)) {
-									player.setResourcePack(QAMain.url18);
-								} else if (QAMain.MANUALLYSELECT18) {
-									player.setResourcePack(QAMain.url18New);
-								} else {
-									player.setResourcePack(QAMain.url);
-								}*/
+
 								player.setResourcePack(CustomItemManager.getResourcepack());
 							}
 
@@ -292,30 +281,16 @@ public class QualityArmory {
 						|| QAMain.miscRegister.containsKey(MaterialStorage.getMS(is,var))));
 	}
 
-	@SuppressWarnings("deprecation")
 	public static CustomBaseObject getMisc(ItemStack is) {
 		return QAMain.miscRegister.get(MaterialStorage.getMS(is));
 	}
 
-	@SuppressWarnings("deprecation")
 	public static Gun getGun(ItemStack is) {
 		return QAMain.gunRegister.get(MaterialStorage.getMS(is));
 	}
 
-	@SuppressWarnings("deprecation")
 	public static boolean isGun(ItemStack is) {
 		return (is != null && QAMain.gunRegister.containsKey(MaterialStorage.getMS(is)));
-	}
-
-	@Deprecated
-	public static AttachmentBase getGunWithAttchments(ItemStack is) {
-		return null;
-	}
-
-	@Deprecated
-	public static boolean isGunWithAttchments(
-			ItemStack is) {
-		return false;
 	}
 
 	@SuppressWarnings("deprecation")
@@ -336,11 +311,19 @@ public class QualityArmory {
 		return null;
 	}
 
-	@Deprecated
-	public static AttachmentBase getAttachmentByName(
-			String name) {
+	public static CustomBaseObject getCustomItemByName(String name){
+		CustomBaseObject b = null;
+		if((b=getAmmoByName(name))!=null)
+			return b;
+		if((b=getGunByName(name))!=null)
+			return b;
+		if((b=getArmorByName(name))!=null)
+			return b;
+		if((b=getMiscByName(name))!=null)
+			return b;
 		return null;
 	}
+
 
 	@SuppressWarnings("deprecation")
 	public static boolean isAmmo(ItemStack is) {
@@ -515,11 +498,6 @@ public class QualityArmory {
 		for (MaterialStorage j : QAMain.armorRegister.keySet())
 			if (j.getMat() == newItemtype && (j.getData() > safeDurib) == findHighest)
 				safeDurib = j.getData();
-		/*
-		 * for (MaterialStorage j : QAMain.attachmentRegister.keySet()) if (j.getMat()
-		 * == newItemtype && (j.getData() > safeDurib) == findHighest) safeDurib =
-		 * j.getData();
-		 */
 		for (MaterialStorage j : QAMain.expansionPacks)
 			if (j.getMat() == newItemtype && (j.getData() > safeDurib) == findHighest)
 				safeDurib = j.getData();
@@ -554,11 +532,6 @@ public class QualityArmory {
 			if (j.getMat() == newItemtype && (j.getData() == startingData)
 					&& ((j.getVariant() > safeDurib) == findHighest))
 				safeDurib = j.getVariant();
-		/*
-		 * for (MaterialStorage j : QAMain.attachmentRegister.keySet()) if (j.getMat()
-		 * == newItemtype && (j.getData() == startingData) && ((j.getVarient() >
-		 * safeDurib) == findHighest)) safeDurib = j.getVarient();
-		 */
 		for (MaterialStorage j : QAMain.expansionPacks)
 			if (j.getMat() == newItemtype && (j.getData() == startingData)
 					&& ((j.getVariant() > safeDurib) == findHighest))
@@ -566,7 +539,7 @@ public class QualityArmory {
 		return safeDurib;
 	}
 
-	public static int getMaxPages() {
+	public static int getMaxPagesForGUI() {
 		return (QAMain.armorRegister.size() + QAMain.ammoRegister.size() + QAMain.miscRegister.size()
 				+ QAMain.gunRegister.size()) / (9 * 5);
 	}
@@ -583,46 +556,11 @@ public class QualityArmory {
 		return count >= (g.isPrimaryWeapon() ? QAMain.primaryWeaponLimit : QAMain.secondaryWeaponLimit);
 	}
 
-	public static ItemStack getCustomItem(CustomBaseObject customItem) {
-		if (customItem instanceof Gun) {
-			return getGunItemStack((Gun) customItem);
-		} else if (customItem instanceof AttachmentBase) {
-			return getGunItemStack((AttachmentBase) customItem);
-		} else if (customItem instanceof Ammo) {
-			return getAmmoItemStack((Ammo) customItem);
-		} else {
-			return getMiscObject(customItem);
-		}
+	public static ItemStack getCustomItemAsItemStack(String name) {
+		return CustomItemManager.getItemFact("gun").getItem(getCustomItemByName(name).getItemData(),1);
 	}
 
-	public static ItemStack getGunItemStack(String name) {
-		AttachmentBase a = getAttachmentByName(name);
-		if (name != null)
-			return getGunItemStack(a);
-		return getGunItemStack(getGunByName(name));
-	}
-
-	public static ItemStack getAmmoItemStack(String name) {
-		return getAmmoItemStack(getAmmoByName(name));
-	}
-
-	public static ItemStack getGunItemStack(Gun g) {
-		return CustomItemManager.getItemFact("gun").getItem(g.getItemData(),1);
-	}
-
-	public static ItemStack getGunItemStack(AttachmentBase g) {
-		return CustomItemManager.getItemFact("gun").getItem(g.getItemData(),1);
-	}
-
-	public static ItemStack getAmmoItemStack(Ammo g) {
-		return CustomItemManager.getItemFact("gun").getItem(g.getItemData(),1);
-	}
-
-	public static ItemStack getMiscObject(String name) {
-		return CustomItemManager.getItemFact("gun").getItem(getMiscByName(name).getItemData(),1);
-	}
-
-	public static ItemStack getMiscObject(CustomBaseObject obj) {
+	public static ItemStack getCustomItemAsItemStack(CustomBaseObject obj) {
 		return CustomItemManager.getItemFact("gun").getItem(obj.getItemData(),1);
 	}
 

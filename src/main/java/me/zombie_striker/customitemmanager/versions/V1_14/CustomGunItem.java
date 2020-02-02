@@ -35,7 +35,7 @@ public class CustomGunItem extends AbstractItem {
 
 	@Override
 	public ItemStack getItem(Material material, int data, int variant) {
-		ItemStack is = QualityArmory.getCustomItem(QualityArmory.getCustomItem(material, data, variant));
+		ItemStack is = QualityArmory.getCustomItemAsItemStack(QualityArmory.getCustomItem(material, data, variant));
 		if (is.getType() == Material.CROSSBOW) {
 			//Now the player will hold the crossbow like a gun
 			CrossbowMeta im = (CrossbowMeta) is.getItemMeta();

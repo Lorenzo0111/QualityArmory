@@ -1,3 +1,11 @@
+1.1.156
+    Fixed swap item error
+    Code cleanup
+    Removed broken API methods.
+    Added API methods to get an iterable of all custom items.
+    Fixed lore for 1.8-1.13 guns.
+    Made gun lore immutable
+
 1.1.155
     Fixed error where files cannot be edited.
     Ghost-chu: Fix bug for delete item in offhand when aiming
