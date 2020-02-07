@@ -55,8 +55,8 @@ public class QAListener implements Listener {
 								+ ". was " + e.getDamage());
 						e.setDamage(((MeleeItems) aa).getDamage());
 					}
-					if(aa.getSoundOnHit() != null){
-						e.getEntity().getWorld().playSound(e.getEntity().getLocation(),aa.getSoundOnHit(),1,1);
+					if (aa.getSoundOnHit() != null) {
+						e.getEntity().getWorld().playSound(e.getEntity().getLocation(), aa.getSoundOnHit(), 1, 1);
 					}
 				}
 			}
@@ -94,38 +94,45 @@ public class QAListener implements Listener {
 			DEBUG("Sneak Toggle Called");
 			try {
 				if (e.isSneaking()) {
-					if (QualityArmory.isGun(e.getPlayer().getItemInHand())
-							&& (!QualityArmory.isCustomItem(e.getPlayer().getInventory().getItemInOffHand()))) {
-						DEBUG("Sneak Swapping start!");
-						Gun g = QualityArmory.getGun(e.getPlayer().getItemInHand());
-						if (g != null) {
-							DEBUG("Gun used " + g.getName() + " attach?= " + (g instanceof AttachmentBase));
-							if (g.hasIronSights()) {
-								DEBUG("Gun has ironsights");
-								try {
+					if (QualityArmory.isGun(e.getPlayer().getItemInHand())) {
+						DEBUG("Is Sneaking with gun in main hand");
+						if ((QualityArmory.isCustomItem(e.getPlayer().getInventory().getItemInOffHand())) && !QualityArmory.isIronSights(e.getPlayer().getInventory().getItemInOffHand())) {
+							Gun g = QualityArmory.getGun(e.getPlayer().getItemInHand());
+							CustomBaseObject offhandObj = QualityArmory.getCustomItem(e.getPlayer().getInventory().getItemInOffHand());
+							if (g != offhandObj)
+								e.getPlayer().getInventory().addItem(e.getPlayer().getInventory().getItemInOffHand());
+						}
+						e.getPlayer().getInventory().setItemInOffHand(null);
+						DEBUG("Removing ustom item from offhand when it shouldn't be there");
+					}
+					Gun g = QualityArmory.getGun(e.getPlayer().getItemInHand());
+					if (g != null) {
+						DEBUG("Gun used " + g.getName() + " attach?= " + (g instanceof AttachmentBase));
+						if (g.hasIronSights()) {
+							DEBUG("Gun has ironsights");
+							try {
 
-									if (!e.getPlayer().getItemInHand().hasItemMeta()
-											|| !e.getPlayer().getItemInHand().getItemMeta().hasDisplayName()
-											|| e.getPlayer().getItemInHand().getItemMeta().getDisplayName()
-											.contains(QAMain.S_RELOADING_MESSAGE))
-										return;
+								if (!e.getPlayer().getItemInHand().hasItemMeta()
+										|| !e.getPlayer().getItemInHand().getItemMeta().hasDisplayName()
+										|| e.getPlayer().getItemInHand().getItemMeta().getDisplayName()
+										.contains(QAMain.S_RELOADING_MESSAGE))
+									return;
 
-									IronsightsHandler.aim(e.getPlayer());
-									new BukkitRunnable() {
-										@Override
-										public void run() {
-											MaterialStorage ms1 = MaterialStorage.getMS(e.getPlayer().getItemInHand());
-											MaterialStorage ms2 = MaterialStorage.getMS(e.getPlayer().getInventory().getItemInOffHand());
-											if (ms2 == ms1) {
-												e.getPlayer().getInventory().setItemInOffHand(null);
-												DEBUG("Item Duped. Got Rid of using offhand override (code=1)");
-											}
+								IronsightsHandler.aim(e.getPlayer());
+								new BukkitRunnable() {
+									@Override
+									public void run() {
+										MaterialStorage ms1 = MaterialStorage.getMS(e.getPlayer().getItemInHand());
+										MaterialStorage ms2 = MaterialStorage.getMS(e.getPlayer().getInventory().getItemInOffHand());
+										if (ms2 == ms1) {
+											e.getPlayer().getInventory().setItemInOffHand(null);
+											DEBUG("Item Duped. Got Rid of using offhand override (code=1)");
 										}
-									}.runTaskLater(QAMain.getInstance(), 1);
-								} catch (Error e2) {
-									Bukkit.broadcastMessage(QAMain.prefix
-											+ "Ironsights not compatible for versions lower than 1.8. The server owner should set EnableIronSights to false in the plugin's config");
-								}
+									}
+								}.runTaskLater(QAMain.getInstance(), 1);
+							} catch (Error e2) {
+								Bukkit.broadcastMessage(QAMain.prefix
+										+ "Ironsights not compatible for versions lower than 1.8. The server owner should set EnableIronSights to false in the plugin's config");
 							}
 						}
 					}
@@ -597,9 +604,20 @@ public class QAListener implements Listener {
 	@EventHandler(priority = EventPriority.HIGH)
 	public void onDeath(PlayerDeathEvent e) {
 		if (QAMain.reloadingTasks.containsKey(e.getEntity().getUniqueId())) {
-			for (BukkitTask r : QAMain.reloadingTasks.get(e.getEntity().getUniqueId())) {
-				r.cancel();
-				DEBUG("Canceling reload task " + r.getTaskId());
+			for (GunRefillerRunnable r : QAMain.reloadingTasks.get(e.getEntity().getUniqueId())) {
+				if(e.getEntity().getGameMode()!=GameMode.CREATIVE){
+					Gun gun = QualityArmory.getGun(r.getItem());
+					if(gun != null){
+						Ammo ammotype = gun.getAmmoType();
+						if(ammotype !=null){
+							ItemStack ammo = QualityArmory.getCustomItemAsItemStack(ammotype);
+							ammo.setAmount(r.getAddedAmount());
+							e.getDrops().add(ammo);
+						}
+					}
+				}
+				r.getTask().cancel();
+				DEBUG("Canceling reload task " + r.getTask().getTaskId());
 			}
 		}
 		QAMain.reloadingTasks.remove(e.getEntity().getUniqueId());
@@ -608,6 +626,12 @@ public class QAListener implements Listener {
 			if (QualityArmory.isIronSights(is)) {
 				e.getDrops().remove(is);
 				DEBUG("Removing IronSights");
+			}else if (is.hasItemMeta() && is.getItemMeta().hasDisplayName() && is.getItemMeta().getDisplayName().endsWith(QAMain.S_RELOADING_MESSAGE)) {
+				Gun g = QualityArmory.getGun(is);
+				ItemMeta im = is.getItemMeta();
+				im.setDisplayName(g.getDisplayName());
+				is.setItemMeta(im);
+				DEBUG("Removed Reloading suffix");
 			}
 		}
 
@@ -719,9 +743,7 @@ public class QAListener implements Listener {
 	@SuppressWarnings({"deprecation"})
 	@EventHandler
 	public void onClick(final PlayerInteractEvent e) {
-		QAMain.DEBUG("InteractEvent Called. Custom item used = " + (CustomItemManager.getItemFact("gun").isCustomItem(e.getPlayer().getItemInHand())));
-		// Quick bugfix for specifically this item.
-
+		QAMain.DEBUG("InteractEvent Called. Custom item used = " + QualityArmory.isCustomItem(e.getPlayer().getItemInHand()));
 		if (!CustomItemManager.isUsingCustomData()) {
 			QAMain.DEBUG("Custom Data Check");
 			try {
@@ -764,7 +786,6 @@ public class QAListener implements Listener {
 			} catch (Error | Exception e45) {
 			}
 		}
-
 
 		CustomBaseObject object = null;
 		if (!QualityArmory.isCustomItem(e.getPlayer().getItemInHand())) {
@@ -863,12 +884,11 @@ public class QAListener implements Listener {
 			}
 			CustomBaseObject qaItem = QualityArmory.getCustomItem(usedItem);
 			if (qaItem != null) {
-				QAMain.DEBUG(qaItem.getClass().getName() + " item is being used!");
+				QAMain.DEBUG(qaItem.getName() + " item is being used!");
 				if (e.getAction() == Action.LEFT_CLICK_AIR || e.getAction() == Action.LEFT_CLICK_BLOCK) {
-
-					e.setCancelled(((ArmoryBaseObject)qaItem).onLMB(e.getPlayer(), usedItem));
+					e.setCancelled(((ArmoryBaseObject) qaItem).onLMB(e.getPlayer(), usedItem));
 				} else {
-					e.setCancelled(((ArmoryBaseObject)qaItem).onRMB(e.getPlayer(), usedItem));
+					e.setCancelled(((ArmoryBaseObject) qaItem).onRMB(e.getPlayer(), usedItem));
 				}
 			}
 		}
@@ -880,13 +900,14 @@ public class QAListener implements Listener {
 			return;
 		ItemStack prev = e.getPlayer().getInventory().getItem(e.getPreviousSlot());
 		ItemStack newslot = e.getPlayer().getInventory().getItem(e.getNewSlot());
-		if(QualityArmory.isCustomItem(newslot)){
+		if (QualityArmory.isCustomItem(newslot)) {
 			CustomBaseObject customBase = QualityArmory.getCustomItem(newslot);
 			try {
 				if (customBase.getSoundOnEquip() != null) {
 					e.getPlayer().getWorld().playSound(e.getPlayer().getLocation(), customBase.getSoundOnEquip(), 1, 1);
 				}
-			}catch(Error|Exception e4){}
+			} catch (Error | Exception e4) {
+			}
 		}
 		if (QualityArmory.isIronSights(prev)) {
 			try {
@@ -904,8 +925,8 @@ public class QAListener implements Listener {
 	public void onQuit(final PlayerQuitEvent e) {
 		QAMain.resourcepackReq.remove(e.getPlayer().getUniqueId());
 		if (QAMain.reloadingTasks.containsKey(e.getPlayer().getUniqueId())) {
-			for (BukkitTask r : QAMain.reloadingTasks.get(e.getPlayer().getUniqueId())) {
-				r.cancel();
+			for (GunRefillerRunnable r : QAMain.reloadingTasks.get(e.getPlayer().getUniqueId())) {
+				r.getTask().cancel();
 			}
 		}
 		QAMain.reloadingTasks.remove(e.getPlayer().getUniqueId());

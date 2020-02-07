@@ -147,7 +147,7 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
 	public Gun(String name, MaterialStorage id, WeaponType type, boolean h, Ammo am, double acc, double swaymult,
 			int maxBullets, float damage, boolean isAutomatic, int durib, WeaponSounds ws, List<String> extralore,
 			String displayname, double cost, ItemStack[] ing) {
-		this(displayname, id, type, h, am, acc, swaymult, maxBullets, damage, isAutomatic, durib, ws.getSoundName(),
+		this(name, id, type, h, am, acc, swaymult, maxBullets, damage, isAutomatic, durib, ws.getSoundName(),
 				extralore, displayname, cost, ing);
 	}
 
@@ -392,7 +392,7 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
 
 	public void reload(Player player) {
 		if (getChargingVal() == null || (getReloadingingVal() == null || !getReloadingingVal().isReloading(player)))
-			GunUtil.basicReload(this, player, unlimitedAmmo, reloadTime);
+			GunUtil.basicReload(this, player, hasUnlimitedAmmo(), reloadTime);
 	}
 
 	public double getDamage() {
@@ -553,12 +553,10 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
 	@SuppressWarnings("deprecation")
 	public boolean onClick(final Player e, ItemStack usedItem, boolean fire) {
 		QAMain.DEBUG("CLICKED GUN " + getName());
-
 		if (QAMain.requirePermsToShoot && !e.getPlayer().hasPermission("qualityarmory.usegun")) {
 			e.getPlayer().sendMessage(QAMain.S_NOPERM);
 			return true;
 		}
-
 
 		QAMain.DEBUG("Dups check");
 		QAMain.checkforDups(e.getPlayer(), usedItem);
@@ -566,7 +564,8 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
 		ItemStack offhandItem = Update19OffhandChecker.getItemStackOFfhand(e.getPlayer());
 		boolean offhand = offhandItem != null && offhandItem.equals(usedItem);
 
-		QAMain.DEBUG("Made it to gun/attachment check : " + getName());try {
+		QAMain.DEBUG("Made it to gun/attachment check : " + getName());
+		try {
 			if (QAMain.enableInteractChests) {
 				Block b = e.getTargetBlock(null,6);
 				if (b != null
@@ -667,6 +666,7 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
 		} else {
 			QAMain.DEBUG("Non-Fire mode activated");
 
+
 			if (QAMain.enableIronSightsON_RIGHT_CLICK) {
 				if (!Update19OffhandChecker.supportOffhand(e.getPlayer())) {
 					QAMain.enableIronSightsON_RIGHT_CLICK = false;
@@ -751,18 +751,7 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
 								+ "Ironsights not compatible for versions lower than 1.8. The server owner should set EnableIronSights to false in the plugin's config");
 					}
 				} else {
-					/*
-					 * if (!Main.enableDurability || ItemFact.getDamage(usedItem) > 0) { // if
-					 * (allowGunsInRegion(e.getPlayer().getLocation())) { g.shoot(e.getPlayer(),
-					 * attachment); if (Main.enableDurability) if (offhand) {
-					 * e.getPlayer().getInventory().setItemInOffHand(ItemFact.damage(g, usedItem));
-					 * } else { e.getPlayer().setItemInHand(ItemFact.damage(g, usedItem)); } // }
-					 * QualityArmory.sendHotbarGunAmmoCount(e.getPlayer(), g, attachment, usedItem,
-					 * false); // TODO: Verify that the gun is in the main // hand. // Shouldn't
-					 * work for offhand, but it should // still // be checked later. }
-					 */
 				}
-
 				QAMain.DEBUG("Ironsights on RMB finished");
 			} else {
 				QAMain.DEBUG("Reload called");

@@ -22,6 +22,7 @@ SecondsTillRPIsSent: 0.0
 Auto-Detect-Resourcepack: true
 ManuallyOverrideTo_1_8_systems: false
 ManuallyOverrideTo_1_13_systems: false
+ManuallyOverrideTo_1_14_systems: false
 
 # How much should QA check for block corners?
 BulletDetection:

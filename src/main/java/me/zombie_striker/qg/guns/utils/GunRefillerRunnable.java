@@ -30,10 +30,28 @@ public class GunRefillerRunnable {
 
 	private BukkitTask r;
 	private ItemStack reloadedItem;
+	private int originalAmount = 0;
+	private int addedAmount = 0;
+
+	public int getOriginalAmount(){
+		return originalAmount;
+	}
+	public int getAddedAmount(){
+		return  addedAmount;
+	}
+	public BukkitTask getTask(){
+		return r;
+	}
+	public ItemStack getItem(){
+		return reloadedItem;
+	}
 
 	public GunRefillerRunnable(final Player player, final ItemStack modifiedOriginalItem, final Gun g, final int slot,
-			final int reloadAmount, double seconds) {
+			final int originalAmount, final int reloadAmount, double seconds) {
 		final GunRefillerRunnable gg = this;
+
+		this.originalAmount = originalAmount;
+		this.addedAmount = reloadAmount-originalAmount;
 
 		this.reloadedItem = modifiedOriginalItem.clone();
 
@@ -61,8 +79,6 @@ public class GunRefillerRunnable {
 				Gun.updateAmmo(g, newim, reloadAmount);
 				newim.setDisplayName(g.getDisplayName());
 				modifiedOriginalItem.setItemMeta(newim);
-				// if (QAMain.enableVisibleAmounts)
-				// temp.setAmount(reloadAmount);
 				ItemStack current = player.getInventory().getItem(slot);
 				int newSlot = slot;
 				boolean different = false;
@@ -97,8 +113,8 @@ public class GunRefillerRunnable {
 				if (!QAMain.reloadingTasks.containsKey(player.getUniqueId())) {
 					return;
 				}
-				List<BukkitTask> rr = QAMain.reloadingTasks.get(player.getUniqueId());
-				rr.remove(r);
+				List<GunRefillerRunnable> rr = QAMain.reloadingTasks.get(player.getUniqueId());
+				rr.remove(this);
 				reloadedItem = null;
 				allGunRefillers.remove(gg);
 
@@ -113,10 +129,10 @@ public class GunRefillerRunnable {
 		allGunRefillers.add(gg);
 
 		if (!QAMain.reloadingTasks.containsKey(player.getUniqueId())) {
-			QAMain.reloadingTasks.put(player.getUniqueId(), new ArrayList<BukkitTask>());
+			QAMain.reloadingTasks.put(player.getUniqueId(), new ArrayList<GunRefillerRunnable>());
 		}
-		List<BukkitTask> rr = QAMain.reloadingTasks.get(player.getUniqueId());
-		rr.add(r);
+		List<GunRefillerRunnable> rr = QAMain.reloadingTasks.get(player.getUniqueId());
+		rr.add(this);
 		QAMain.reloadingTasks.put(player.getUniqueId(), rr);
 	}
 

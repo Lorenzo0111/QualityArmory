@@ -36,6 +36,9 @@ public class ArmoryYML {
 	public Object get(String path) {
 		return fileConfig.get(path);
 	}
+	public long getLong(String path) {
+		return fileConfig.getLong(path);
+	}
 
 	public boolean contains(String path) {
 		return fileConfig.contains(path);
@@ -46,7 +49,7 @@ public class ArmoryYML {
 	}
 	public ArmoryYML set(boolean force, String name, Object v) {
 		long lastmodifiedFile = save.lastModified();
-		long lastmodifiedInternal = contains("lastModifiedByQA") ? (long) get("lastModifiedByQA") :  (  contains("AllowUserModifications") && fileConfig.getBoolean("AllowUserModifications") ? 0 : System.currentTimeMillis());
+		long lastmodifiedInternal = contains("lastModifiedByQA") ? getLong("lastModifiedByQA") :  (  contains("AllowUserModifications") && fileConfig.getBoolean("AllowUserModifications") ? 0 : System.currentTimeMillis());
 
 		if(!force && lastmodifiedFile-lastmodifiedInternal > 5000) {
 			return this; //The file has been changed sometime after QA made any changes.

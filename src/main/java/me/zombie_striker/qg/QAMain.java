@@ -18,6 +18,7 @@ import me.zombie_striker.qg.guns.projectiles.FireProjectile;
 import me.zombie_striker.qg.guns.projectiles.HomingRocketProjectile;
 import me.zombie_striker.qg.guns.projectiles.MiniNukeProjectile;
 import me.zombie_striker.qg.guns.projectiles.RocketProjectile;
+import me.zombie_striker.qg.guns.utils.GunRefillerRunnable;
 import me.zombie_striker.qg.guns.utils.WeaponSounds;
 import me.zombie_striker.qg.handlers.*;
 import me.zombie_striker.qg.handlers.chargers.*;
@@ -65,7 +66,7 @@ public class QAMain extends JavaPlugin {
 	public static Set<EntityType> avoidTypes = new HashSet<>();
 	public static HashMap<UUID, Location> recoilHelperMovedLocation = new HashMap<>();
 	public static ArrayList<MaterialStorage> expansionPacks = new ArrayList<>();
-	public static HashMap<UUID, List<BukkitTask>> reloadingTasks = new HashMap<>();
+	public static HashMap<UUID, List<GunRefillerRunnable>> reloadingTasks = new HashMap<>();
 	public static HashMap<UUID, Long> sentResourcepack = new HashMap<>();
 	public static ArrayList<UUID> resourcepackReq = new ArrayList<>();
 	public static List<Gunner> gunners = new ArrayList<>();
@@ -214,6 +215,7 @@ public class QAMain extends JavaPlugin {
 	public static boolean ITEM_enableUnbreakable = true;// TODO :stuufff
 	public static boolean MANUALLYSELECT18 = false;
 	public static boolean MANUALLYSELECT113 = false;
+	public static boolean MANUALLYSELECT14 = false;
 	public static boolean unknownTranslationKeyFixer = false;
 	public static boolean enableCreationOfFiles = true;
 	public static List<Scoreboard> coloredGunScoreboard = new ArrayList<Scoreboard>();
@@ -238,8 +240,6 @@ public class QAMain extends JavaPlugin {
 	}
 
 	public static boolean isVersionHigherThan(int mainVersion, int secondVersion) {
-		if (secondVersion >= 9 && hasViaRewind)
-			return false;
 		String firstChar = SERVER_VERSION.substring(1, 2);
 		int fInt = Integer.parseInt(firstChar);
 		if (fInt < mainVersion)
@@ -921,6 +921,7 @@ public class QAMain extends JavaPlugin {
 		MANUALLYSELECT18 = (boolean) a("ManuallyOverrideTo_1_8_systems",
 				Bukkit.getPluginManager().isPluginEnabled("WetSponge") ? true : MANUALLYSELECT18);
 		MANUALLYSELECT113 = (boolean) a("ManuallyOverrideTo_1_13_systems", MANUALLYSELECT113);
+		MANUALLYSELECT14 = (boolean) a("ManuallyOverrideTo_1_14_systems", MANUALLYSELECT14);
 
 		unknownTranslationKeyFixer = (boolean) a("unknownTranslationKeyFixer", false);
 
@@ -1021,7 +1022,7 @@ public class QAMain extends JavaPlugin {
 				expansionPacks.add(MaterialStorage.getMS(Material.DIAMOND_AXE, 115, 0));
 				expansionPacks.add(MaterialStorage.getMS(Material.DIAMOND_AXE, 116, 0));
 			}
-		} else {
+		} else if(true || MANUALLYSELECT14){
 			//1.14. Use crossbows
 			CustomItemManager.registerItemType(getDataFolder(), "gun", new me.zombie_striker.customitemmanager.versions.V1_14.CustomGunItem());
 		}

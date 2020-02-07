@@ -433,7 +433,6 @@ public class GunUtil {
 		if (g.isAutomatic()) {
 			rapidfireshooters.put(player.getUniqueId(), new BukkitRunnable() {
 				int slotUsed = player.getInventory().getHeldItemSlot();
-				//boolean offhand = QualityArmory.isIronSights(player.getItemInHand());
 
 				@Override
 				public void run() {
@@ -486,8 +485,10 @@ public class GunUtil {
 						try {
 							if (QualityArmory.isIronSights(player.getItemInHand())) {
 								player.getInventory().setItemInOffHand(temp);
+								QAMain.DEBUG("Sett Offhand because ironsights in main hand");
 							} else {
 								player.getInventory().setItemInHand(temp);
+								QAMain.DEBUG("Set mainhand because ironsights not in main hand");
 							}
 
 						} catch (Error e) {
@@ -516,7 +517,13 @@ public class GunUtil {
 		firstGunInstance.setItemMeta(im);
 		if (slot == -1) {
 			try {
-				player.getInventory().setItemInOffHand(firstGunInstance);
+				if (QualityArmory.isIronSights(player.getItemInHand())) {
+					player.getInventory().setItemInOffHand(firstGunInstance);
+					QAMain.DEBUG("Sett Offhand because ironsights in main hand");
+				} else {
+					player.getInventory().setItemInHand(firstGunInstance);
+					QAMain.DEBUG("Set mainhand because ironsights not in main hand");
+				}
 			} catch (Error e) {
 			}
 		} else {
@@ -568,7 +575,6 @@ public class GunUtil {
 	}
 
 	public static void basicReload(final Gun g, final Player player, boolean doNotRemoveAmmo, double seconds) {
-		@SuppressWarnings("deprecation")
 
 		final ItemStack temp = player.getInventory().getItemInHand();
 		ItemMeta im = temp.getItemMeta();
@@ -605,15 +611,12 @@ public class GunUtil {
 				seconds = g.getReloadingingVal().reload(player, g, subtractAmount);
 			}
 			QAMain.toggleNightvision(player, g, false);
-
-			Gun.updateAmmo(g, im, 0);
+			//Gun.updateAmmo(g, im, initialAmount);
 			im.setDisplayName(g.getDisplayName() + QAMain.S_RELOADING_MESSAGE);
 			temp.setItemMeta(im);
-			// if (QAMain.enableVisibleAmounts)
-			// temp.setAmount(1);
 			player.getInventory().setItem(slot, temp);
 
-			new GunRefillerRunnable(player, temp, g, slot, reloadAmount, seconds);
+			new GunRefillerRunnable(player, temp, g, slot,initialAmount, reloadAmount, seconds);
 
 		}
 
