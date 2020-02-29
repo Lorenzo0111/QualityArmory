@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>me.zombie_striker</groupId>
     <artifactId>qg</artifactId>
-    <version>1.1.156</version>
+    <version>1.1.158</version>
     <name>QualityArmory</name>
 
     <repositories>
@@ -134,13 +134,13 @@
         </dependency>
 
         <!-- PluginConstructorAPI -->
-        <dependency>
+        <!--dependency>
             <groupId>me.zombie_striker</groupId>
             <artifactId>pluginconstructor</artifactId>
             <version>1.0.50</version>
             <scope>system</scope>
             <systemPath>${project.basedir}/libs/PluginConstructorAPI.jar</systemPath>
-        </dependency>
+        </dependency>-->
 
         <!-- LightAPI -->
         <dependency>

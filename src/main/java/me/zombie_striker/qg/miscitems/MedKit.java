@@ -8,12 +8,12 @@ import java.util.UUID;
 
 import me.zombie_striker.customitemmanager.CustomBaseObject;
 import me.zombie_striker.customitemmanager.CustomItemManager;
+import me.zombie_striker.qg.handlers.HotbarMessager;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import me.zombie_striker.pluginconstructor.HotbarMessager;
 import me.zombie_striker.customitemmanager.ArmoryBaseObject;
 import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.customitemmanager.MaterialStorage;

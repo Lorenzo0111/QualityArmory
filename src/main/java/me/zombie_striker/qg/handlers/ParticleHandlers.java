@@ -1,17 +1,13 @@
 package me.zombie_striker.qg.handlers;
 
+import me.zombie_striker.qg.QAMain;
+import me.zombie_striker.qg.guns.Gun;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.Particle;
-import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
-
-import me.zombie_striker.pluginconstructor.ReflectionUtilREMOVELATEER;
-import me.zombie_striker.qg.QAMain;
-import me.zombie_striker.qg.guns.Gun;
 import ru.beykerykt.lightapi.LightAPI;
 import ru.beykerykt.lightapi.chunks.ChunkInfo;
 
@@ -20,7 +16,7 @@ public class ParticleHandlers {
 	public static boolean is13 = true;
 
 	public static void initValues() {
-		is13 = ReflectionUtilREMOVELATEER.isVersionHigherThan(1, 13);
+		is13 = ReflectionsUtil.isVersionHigherThan(1, 13);
 	}
 
 	public static void spawnExplosion(Location loc) {
@@ -136,17 +132,17 @@ public class ParticleHandlers {
 			if (is13) {
 				Particle.DustOptions dust = new Particle.DustOptions(
 						Color.fromRGB((int) (r * 255), (int) (g * 255), (int) (b * 255)), 1);
-				for(Player player : loc.getWorld().getPlayers()) {
-					if(player.getLocation().distanceSquared(loc) < 60*60)
-					player.spawnParticle(Particle.REDSTONE, loc.getX(), loc.getY(), loc.getZ(), 0, 0, 0, 0, dust);
+				for (Player player : loc.getWorld().getPlayers()) {
+					if (player.getLocation().distanceSquared(loc) < 60 * 60)
+						player.spawnParticle(Particle.REDSTONE, loc.getX(), loc.getY(), loc.getZ(), 0, 0, 0, 0, dust);
 				}
 				/*Particle.DustOptions dust = new Particle.DustOptions(
 						Color.fromRGB((int) (r * 255), (int) (g * 255), (int) (b * 255)), 1);
 				loc.getWorld().spawnParticle(Particle.REDSTONE, loc.getX(), loc.getY(), loc.getZ(), 0, 0, 0, 0, dust);*/
 			} else {
 
-				for(Player player : loc.getWorld().getPlayers()) {
-					if(player.getLocation().distanceSquared(loc) < 60*60)
+				for (Player player : loc.getWorld().getPlayers()) {
+					if (player.getLocation().distanceSquared(loc) < 60 * 60)
 						player.spawnParticle(Particle.REDSTONE, loc.getX(), loc.getY(), loc.getZ(), 0, r, g, b, 1);
 				}
 				//loc.getWorld().spawnParticle(Particle.REDSTONE, loc.getX(), loc.getY(), loc.getZ(), 0, r, g, b, 1);

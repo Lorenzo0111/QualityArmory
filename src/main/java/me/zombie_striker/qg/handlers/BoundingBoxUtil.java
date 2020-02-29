@@ -1,8 +1,6 @@
 package me.zombie_striker.qg.handlers;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.entity.Ageable;
 import org.bukkit.entity.Entity;
 
 public class BoundingBoxUtil {
@@ -33,6 +31,6 @@ public class BoundingBoxUtil {
 	}
 	public static boolean within2DHeight(Entity e, Location closest, double height, double offset) {
 		double rel = closest.getY() - e.getLocation().getY();
-		return rel >= 0 && rel <= height;
+		return rel >= offset && rel <= offset+height;
 	}
 }

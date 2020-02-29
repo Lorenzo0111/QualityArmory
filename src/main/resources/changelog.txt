@@ -1,3 +1,9 @@
+1.1.158
+    Fixed gun duplication when sneaking on automatic weapon
+    Made ironsights name configuable.
+    Fixed data folder not being created on initial download.
+    Fixed Headshots
+
 1.1.157
     Removed ViaVersion handler. You now will need to specify which version QA will need to run on.
     Fixed reloading error message

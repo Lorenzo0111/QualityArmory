@@ -1,5 +1,6 @@
 package me.zombie_striker.qg.guns.utils;
 
+import me.zombie_striker.customitemmanager.CustomBaseObject;
 import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.ammo.Ammo;
 import me.zombie_striker.qg.api.QAHeadShotEvent;
@@ -436,7 +437,7 @@ public class GunUtil {
 
 				@Override
 				public void run() {
-					if ((g.hasIronSights() && !IronsightsHandler.isAiming(player) )|| (!g.hasIronSights() && !player.isSneaking())) {
+					if ((g.hasIronSights() && !IronsightsHandler.isAiming(player) )|| (!g.hasIronSights() && (player.isSneaking() == QAMain.enableSwapSingleShotOnAim))) {
 						cancel();
 						rapidfireshooters.remove(player.getUniqueId());
 						return;
@@ -445,7 +446,7 @@ public class GunUtil {
 					ItemStack temp = IronsightsHandler.getItemAiming(player);
 
 					int amount = Gun.getAmount(temp);
-					if (!player.isSneaking() || slotUsed != player.getInventory().getHeldItemSlot() || amount <= 0) {
+					if ((player.isSneaking()==QAMain.enableSwapSingleShotOnAim) || slotUsed != player.getInventory().getHeldItemSlot() || amount <= 0) {
 						rapidfireshooters.remove(player.getUniqueId()).cancel();
 						return;
 					}
@@ -494,7 +495,15 @@ public class GunUtil {
 						} catch (Error e) {
 						}
 					} else {
-						player.getInventory().setItem(slot, temp);
+						ItemStack tempCheck = player.getInventory().getItem(slot);
+						if(QualityArmory.isIronSights(tempCheck)){
+							CustomBaseObject tempBase = QualityArmory.getCustomItem(Update19OffhandChecker.getItemStackOFfhand(player));
+							if(tempBase != null && tempBase == g){
+								Update19OffhandChecker.setOffhand(player,temp);
+							}
+						}else {
+							player.getInventory().setItem(slot, temp);
+						}
 					}
 					QualityArmory.sendHotbarGunAmmoCount(player, g, temp, false);
 				}

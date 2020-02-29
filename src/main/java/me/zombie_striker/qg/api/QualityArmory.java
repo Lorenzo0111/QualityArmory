@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map.Entry;
 
 import me.zombie_striker.customitemmanager.*;
+import me.zombie_striker.qg.handlers.HotbarMessager;
 import me.zombie_striker.qg.handlers.IronsightsHandler;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.ChatColor;
@@ -18,7 +19,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import me.zombie_striker.pluginconstructor.HotbarMessager;
 import me.zombie_striker.qg.*;
 import me.zombie_striker.qg.ammo.Ammo;
 import me.zombie_striker.qg.armor.ArmorObject;

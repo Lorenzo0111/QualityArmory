@@ -560,9 +560,10 @@ public class CustomGunItem extends AbstractItem {
 	public void initIronSights(File dataFolder) {
 		File ironsights = new File(dataFolder, "default_ironsightstoggleitem.yml");
 		YamlConfiguration ironconfig = YamlConfiguration.loadConfiguration(ironsights);
-		if (!ironconfig.contains("material")) {
+		if (!ironconfig.contains("displayname")) {
 			ironconfig.set("material", Material.CROSSBOW.name());
 			ironconfig.set("id", 68);
+			ironconfig.set("displayname", IronsightsHandler.ironsightsDisplay);
 			try {
 				ironconfig.save(ironsights);
 			} catch (IOException e) {
@@ -571,6 +572,7 @@ public class CustomGunItem extends AbstractItem {
 		}
 		IronsightsHandler.ironsightsMaterial = Material.matchMaterial(ironconfig.getString("material"));
 		IronsightsHandler.ironsightsData = ironconfig.getInt("id");
+		IronsightsHandler.ironsightsDisplay = ironconfig.getString("displayname");
 	}
 
 	public String getIngString(Material m, int durability, int amount) {

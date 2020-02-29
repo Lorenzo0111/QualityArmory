@@ -4,10 +4,13 @@ import org.bukkit.Bukkit;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static org.apache.commons.lang.reflect.MethodUtils.invokeMethod;
 
 public class ReflectionsUtil {
 
@@ -17,6 +20,37 @@ public class ReflectionsUtil {
 	private static String VERSION = OBC_PREFIX.replace("org.bukkit.craftbukkit", "").replace(".", "");
 	// Variable replacement
 	private static Pattern MATCH_VARIABLE = Pattern.compile("\\{([^\\}]+)\\}");
+
+
+	private static final String SERVER_VERSION;
+
+
+	static {
+		String name = Bukkit.getServer().getClass().getName();
+		name = name.substring(name.indexOf("craftbukkit.")
+				+ "craftbukkit.".length());
+		name = name.substring(0, name.indexOf("."));
+		SERVER_VERSION = name;
+	}
+	public static boolean isVersionHigherThan(int mainVersion,
+											  int secondVersion) {
+		String firstChar = SERVER_VERSION.substring(1, 2);
+		int fInt = Integer.parseInt(firstChar);
+		if (fInt < mainVersion)
+			return false;
+		StringBuilder secondChar = new StringBuilder();
+		for (int i = 3; i < 10; i++) {
+			if (SERVER_VERSION.charAt(i) == '_'
+					|| SERVER_VERSION.charAt(i) == '.')
+				break;
+			secondChar.append(SERVER_VERSION.charAt(i));
+		}
+		int sInt = Integer.parseInt(secondChar.toString());
+		if (sInt < secondVersion)
+			return false;
+		return true;
+	}
+
 
 	private ReflectionsUtil() {
 	}
@@ -322,6 +356,35 @@ public class ReflectionsUtil {
 		return null;
 	}
 
+	/**
+	 * Returns an enum constant
+	 *
+	 * @param enumClass
+	 *            The class of the enum
+	 * @param name
+	 *            The name of the enum constant
+	 *
+	 * @return The enum entry or null
+	 */
+	public static Object getEnumConstant(Class<?> enumClass, String name) {
+		if (!enumClass.isEnum()) {
+			return null;
+		}
+		for (Object o : enumClass.getEnumConstants()) {
+			try {
+				if (name.equals(invokeMethod(o, "name", new Class[0]))) {
+					return o;
+				}
+			} catch (NoSuchMethodException e) {
+				e.printStackTrace();
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+			} catch (InvocationTargetException e) {
+				e.printStackTrace();
+			}
+		}
+		return null;
+	}
 	/**
 	 * Retrieve a class in the net.minecraft.server.VERSION.* package.
 	 *

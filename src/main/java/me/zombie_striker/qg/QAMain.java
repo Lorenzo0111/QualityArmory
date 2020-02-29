@@ -1583,6 +1583,8 @@ public class QAMain extends JavaPlugin {
 	public void reloadConfig() {
 		if (configFile == null) {
 			configFile = new File(this.getDataFolder(), "config.yml");
+			if(!this.getDataFolder().exists())
+				this.getDataFolder().mkdirs();
 			if(!configFile.exists()) {
 				try {
 					configFile.createNewFile();

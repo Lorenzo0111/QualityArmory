@@ -3,6 +3,7 @@ package me.zombie_striker.qg.handlers;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
+import me.zombie_striker.qg.handlers.ReflectionsUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -12,7 +13,6 @@ import org.bukkit.util.Vector;
 import com.comphenix.protocol.*;
 import com.comphenix.protocol.events.*;
 
-import me.zombie_striker.pluginconstructor.reflection.ReflectionUtil;
 import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.api.QualityArmory;
 
@@ -182,8 +182,8 @@ public class ProtocolLibHandler {
 			protocolManager = ProtocolLibrary.getProtocolManager();
 		final PacketContainer yawpack = protocolManager.createPacket(PacketType.Play.Server.LOOK_AT, false);
 		if (enumArgumentAnchor_EYES == null) {
-			class_ArgumentAnchor = ReflectionUtil.getNMSClass("ArgumentAnchor$Anchor");
-			enumArgumentAnchor_EYES = ReflectionUtil.getEnumConstant(class_ArgumentAnchor, "EYES");
+			class_ArgumentAnchor = ReflectionsUtil.getMinecraftClass("ArgumentAnchor$Anchor");
+			enumArgumentAnchor_EYES = ReflectionsUtil.getEnumConstant(class_ArgumentAnchor, "EYES");
 		}
 		yawpack.getModifier().write(4, enumArgumentAnchor_EYES);
 		yawpack.getDoubles().write(0, player.getEyeLocation().getX() + newDirection.getX());
