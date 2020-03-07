@@ -41,7 +41,7 @@ public class CustomGunItem extends AbstractItem {
 
 	@Override
 	public void initItems(File dataFolder) {
-		CustomItemManager.setResourcepack("https://www.dropbox.com/s/odvle92e0fz0ezr/QualityArmory1.8v1.0.2.zip?dl=1");
+		CustomItemManager.setResourcepack("https://www.dropbox.com/s/pjoeg5e8l3byauf/QualityArmory1.8v1.0.3.zip?dl=1");
 
 
 		List<String> stringsWoodRif = Arrays.asList(new String[]{getIngString(Material.IRON_INGOT, 0, 12),
