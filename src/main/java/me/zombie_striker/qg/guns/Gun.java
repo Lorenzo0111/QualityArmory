@@ -37,6 +37,13 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
 	private double swaymultiplier = 2;
 	private int maxbull;
 	private float damage;
+	
+	/** These values control the damage a gun can deal at various ranges - replaces the "damage" value entirely */
+    private int rangeStart;
+	private int rangeEnd;
+    private float minDamage;
+	private float maxDamage;
+	
 	private int durib = 1000;
 	private boolean isAutomatic;
 	boolean supports18 = false;
