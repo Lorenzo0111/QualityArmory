@@ -1165,10 +1165,6 @@ public class QAMain extends JavaPlugin {
 				if (b("reload", args[0]))
 					s.add("reload");
 			if (sender.hasPermission("qualityarmory.createnewitem")) {
-				if (b("createNewAmmoGun", args[0]))
-					s.add("createNewGun");
-				if (b("createNewAmmo", args[0]))
-					s.add("createNewAmmo");
 			}
 
 			return s;

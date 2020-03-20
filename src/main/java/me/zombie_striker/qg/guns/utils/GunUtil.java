@@ -15,10 +15,7 @@ import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.block.Block;
-import org.bukkit.entity.Damageable;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -252,10 +249,14 @@ public class GunUtil {
 									+ ((LivingEntity) hitTarget).getHealth() + "/"
 									+ ((LivingEntity) hitTarget).getMaxHealth() + " :" + damageMAX + " DAM)");
 						}
+
 						if(hitTarget instanceof Damageable) {
 							((Damageable) hitTarget).damage(damageMAX, p);
+						}else if (hitTarget instanceof EnderDragon){
+							((EnderDragon) hitTarget).damage(damageMAX, p);
+						}else if (hitTarget instanceof EnderDragonPart) {
+							((EnderDragonPart) hitTarget).damage(damageMAX, p);
 						}
-
 
 					} else {
 						if (hitTarget instanceof LivingEntity) {

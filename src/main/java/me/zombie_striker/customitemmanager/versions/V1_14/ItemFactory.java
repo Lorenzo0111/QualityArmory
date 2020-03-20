@@ -31,7 +31,6 @@ public class ItemFactory extends AbstractItemFact {
 		if (base == null)
 			return null;
 
-
 		MaterialStorage ms = base.getItemData();
 		String displayname = base.getDisplayName();
 		if (ms == null || ms.getMat() == null)
@@ -71,10 +70,6 @@ public class ItemFactory extends AbstractItemFact {
 				try {
 					im.setUnbreakable(true);
 				} catch (Error | Exception e34) {
-					/*try {
-						im.setUnbreakable(true);
-					} catch (Error | Exception e344) {
-					}*/
 				}
 			}
 			try {
