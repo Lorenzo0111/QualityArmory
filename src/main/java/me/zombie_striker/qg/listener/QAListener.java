@@ -885,9 +885,11 @@ public class QAListener implements Listener {
 			if (qaItem != null) {
 				QAMain.DEBUG(qaItem.getName() + " item is being used!");
 				if (e.getAction() == Action.LEFT_CLICK_AIR || e.getAction() == Action.LEFT_CLICK_BLOCK) {
-					e.setCancelled(((ArmoryBaseObject) qaItem).onLMB(e.getPlayer(), usedItem));
+					if(((ArmoryBaseObject) qaItem).onLMB(e.getPlayer(), usedItem))
+					e.setCancelled(true);
 				} else {
-					e.setCancelled(((ArmoryBaseObject) qaItem).onRMB(e.getPlayer(), usedItem));
+					if(((ArmoryBaseObject) qaItem).onRMB(e.getPlayer(), usedItem))
+					e.setCancelled(true);
 				}
 			}
 		}

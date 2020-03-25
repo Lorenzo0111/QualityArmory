@@ -379,11 +379,33 @@ public class QualityArmory {
 	}
 
 	public static void sendHotbarGunAmmoCount(Player p, Gun g, ItemStack usedItem, boolean reloading) {
-		sendHotbarGunAmmoCount(p, g, null, usedItem, reloading);
+		sendHotbarGunAmmoCount(p, g, usedItem, reloading);
 	}
 
-	public static void sendHotbarGunAmmoCount(final Player p, final Gun g, AttachmentBase attachmentBase,
+	public static void sendHotbarGunAmmoCount(final Player p, final CustomBaseObject gun,
 			ItemStack usedItem, boolean reloading) {
+		Gun g = null;
+		AttachmentBase base = null;
+		if(gun instanceof AttachmentBase){
+			base = (AttachmentBase)gun;
+			g = base.getBaseGun();
+		}else{
+			g = (Gun) gun;
+		}
+		sendHotbarGunAmmoCount(p,gun,usedItem,reloading,QualityArmory.getBulletsInGun(usedItem),g.getMaxBullets());
+	}
+		public static void sendHotbarGunAmmoCount(final Player p, final CustomBaseObject gun,
+				ItemStack usedItem, boolean reloading, int currentAmountInGun, int maxAmount) {
+
+		final Gun g;
+		AttachmentBase base = null;
+		if(gun instanceof AttachmentBase){
+			base = (AttachmentBase)gun;
+			g = base.getBaseGun();
+		}else{
+			g = (Gun) gun;
+		}
+
 		int ammoamount = getAmmoInInventory(p, g.getAmmoType());
 
 		if (QAMain.showOutOfAmmoOnTitle && ammoamount <= 0 && Gun.getAmount(usedItem) < 1) {
@@ -420,11 +442,11 @@ public class QualityArmory {
 
 				if (message.contains("%name%"))
 					message = message.replace("%name%",
-							(attachmentBase != null ? attachmentBase.getDisplayName() : g.getDisplayName()));
+							(base != null ? base.getDisplayName() : g.getDisplayName()));
 				if (message.contains("%amount%"))
-					message = message.replace("%amount%", Gun.getAmount(usedItem) + "");
+					message = message.replace("%amount%", currentAmountInGun + "");
 				if (message.contains("%max%"))
-					message = message.replace("%max%", g.getMaxBullets() + "");
+					message = message.replace("%max%", maxAmount + "");
 
 				if (message.contains("%state%"))
 					message = message.replace("%state%", reloading ? QAMain.S_RELOADING_MESSAGE
@@ -609,6 +631,10 @@ public class QualityArmory {
 			}
 		}
 		return remaining <= 0;
+	}
+
+	public static int getBulletsInGun(ItemStack gun){
+		return Gun.getAmount(gun);
 	}
 
 	public static boolean removeAmmoFromInventory(Player player, Ammo a, int amount) {

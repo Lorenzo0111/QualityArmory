@@ -20,6 +20,9 @@ public class IronsightsHandler {
 	public static void aim(Player player){
 			if(!QualityArmory.isIronSights(player.getItemInHand())){
 				offHandStorage.put(player, player.getInventory().getItemInOffHand());
+				if(player.getInventory().getItemInOffHand()!=null){
+					player.getInventory().addItem(player.getInventory().getItemInOffHand());
+				}
 				player.getInventory().setItemInOffHand(player.getItemInHand());
 				player.setItemInHand(QualityArmory.getIronSightsItemStack());
 			}

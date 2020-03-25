@@ -1,3 +1,8 @@
+1.1.161
+    - Added getBulletsInGun to API
+    - Fixed items in off hand being removed when aiming
+    - Fixed ammo being able to negate other plugin's canceling of interactions.
+
 1.1.160
     Fixed Mauser for 1.13
     Fixed EnderDragon hit box
