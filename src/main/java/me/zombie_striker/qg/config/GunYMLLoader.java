@@ -304,6 +304,13 @@ public class GunYMLLoader {
 		if(f2.contains("enableBetterModelScopes"))
 			g.enableBetterAimingAnimations(f2.getBoolean("enableBetterModelScopes"));
 
+		if(f2.contains("sway.sneakModifier"))
+			g.setEnableSwaySneakModifier(f2.getBoolean("sway.sneakModifier"));
+		if(f2.contains("sway.moveModifier"))
+			g.setEnableSwayMovementModifier(f2.getBoolean("sway.moveModifier"));
+		if(f2.contains("sway.runModifier"))
+			g.setEnableSwayRunModifier(f2.getBoolean("sway.runModifier"));
+
 		List<String> sounds = null;
 
 		if (f2.contains("weaponsounds")) {

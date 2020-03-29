@@ -378,9 +378,6 @@ public class QualityArmory {
 		return null;
 	}
 
-	public static void sendHotbarGunAmmoCount(Player p, Gun g, ItemStack usedItem, boolean reloading) {
-		sendHotbarGunAmmoCount(p, g, usedItem, reloading);
-	}
 
 	public static void sendHotbarGunAmmoCount(final Player p, final CustomBaseObject gun,
 			ItemStack usedItem, boolean reloading) {

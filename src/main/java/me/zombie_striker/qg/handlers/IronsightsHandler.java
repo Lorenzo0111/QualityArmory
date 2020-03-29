@@ -1,5 +1,6 @@
 package me.zombie_striker.qg.handlers;
 
+import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.api.QualityArmory;
 import me.zombie_striker.qg.guns.Gun;
 import org.bukkit.*;
@@ -23,12 +24,20 @@ public class IronsightsHandler {
 				if(player.getInventory().getItemInOffHand()!=null){
 					player.getInventory().addItem(player.getInventory().getItemInOffHand());
 				}
+				if (player.getItemInHand() != null && QualityArmory.isGun(player.getItemInHand())) {
+					Gun gun = QualityArmory.getGun(player.getItemInHand());
+					QAMain.toggleNightvision(player, gun, true);
+				}
 				player.getInventory().setItemInOffHand(player.getItemInHand());
 				player.setItemInHand(QualityArmory.getIronSightsItemStack());
 			}
 	}
 	public static void unAim(Player player){
 			if(QualityArmory.isIronSights(player.getItemInHand())){
+				if (player.getInventory().getItemInOffHand() != null && QualityArmory.isGun(player.getInventory().getItemInOffHand())) {
+					Gun gun = QualityArmory.getGun(player.getInventory().getItemInOffHand());
+					QAMain.toggleNightvision(player, null, false);
+				}
 				player.getInventory().setItemInMainHand(player.getInventory().getItemInOffHand());
 				player.getInventory().setItemInOffHand(offHandStorage.get(player));
 				offHandStorage.remove(player);

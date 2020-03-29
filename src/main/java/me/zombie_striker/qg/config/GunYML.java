@@ -51,6 +51,10 @@ public class GunYML extends ArmoryYML {
 		verify("swayMultiplier", 2);
 
 		verify("weaponsounds_volume",4);
+
+		verify("sway.sneakModifier",true);
+		verify("sway.moveModifier",true);
+		verify("sway.runModifier",true);
 	}
 	public GunYML setRecoil(double recoil) {
 		set(false, "recoil", recoil);
@@ -247,5 +251,20 @@ public class GunYML extends ArmoryYML {
 		set(false, "drop-glow-color", c);
 		return this;
 	}
+
+
+	public GunYML setSway_SneakModifier(boolean c) {
+		set(false, "sway.sneakModifier", c);
+		return this;
+	}
+	public GunYML setSway_movementModifier(boolean c) {
+		set(false, "sway.moveModifier", c);
+		return this;
+	}
+	public GunYML setSway_runModifier(boolean c) {
+		set(false, "sway.runModifier", c);
+		return this;
+	}
+
 
 }

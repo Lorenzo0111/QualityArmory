@@ -205,7 +205,7 @@ public class QAListener implements Listener {
 			}
 	}
 
-	@EventHandler
+	/*@EventHandler
 	public void toggleshift(PlayerToggleSneakEvent e) {
 		if (e.isCancelled())
 			return;
@@ -220,7 +220,7 @@ public class QAListener implements Listener {
 			if (!e.isSneaking())
 				QAMain.toggleNightvision(e.getPlayer(), null, false);
 		}
-	}
+	}*/
 
 	@SuppressWarnings("deprecation")
 	@EventHandler(priority = EventPriority.LOWEST)

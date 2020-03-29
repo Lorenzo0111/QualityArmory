@@ -1,3 +1,7 @@
+1.1.162
+    - Fixed Zoom and nightvision for Right click to aim
+    - Added gun config options to disable sprint and movement modifiers to gun sway.
+
 1.1.161
     - Added getBulletsInGun to API
     - Fixed items in off hand being removed when aiming

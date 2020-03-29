@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.UUID;
 
 import me.zombie_striker.qg.QAMain;
+import me.zombie_striker.qg.api.QualityArmory;
 import me.zombie_striker.qg.guns.Gun;
 
 import org.bukkit.Bukkit;
@@ -11,6 +12,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public class AimManager implements Listener {
@@ -26,28 +28,37 @@ public class AimManager implements Listener {
 	
 	public AimManager() {
 		new BukkitRunnable() {
-
 			@SuppressWarnings("deprecation")
 			@Override
 			public void run() {
 				for (Player p : Bukkit.getOnlinePlayers()) {
 					double sway = 1;
-					if (me.zombie_striker.qg.api.QualityArmory.isIronSights(p.getItemInHand()))
+					ItemStack used = p.getItemInHand();
+					if (me.zombie_striker.qg.api.QualityArmory.isIronSights(p.getItemInHand())) {
 						sway *= QAMain.swayModifier_Ironsights;
-					if (p.isSneaking())
-						sway *= QAMain.swayModifier_Sneak;
-					if (p.isSprinting()) 
-						sway *= 1.3;					
+						used = Update19OffhandChecker.getItemStackOFfhand(p);
+					}
+					Gun g = QualityArmory.getGun(used);
+					if(g!=null) {
+						if (p.isSneaking())
+							if (g.isEnableSwaySneakModifier())
+								sway *= QAMain.swayModifier_Sneak;
+						if (p.isSprinting())
+							if (g.isEnableSwayRunModifier())
+								sway *= 1.3;
+					}
 					if (lasLocCheck.containsKey(p.getUniqueId())) {
 						long s = System.currentTimeMillis()
 								- lasLocCheck.get(p.getUniqueId());
-						if(s<=0)
-							s=1;
+						if (s <= 0)
+							s = 1;
 						if (s < 800) {
 							// less than 1.5 sec
-							sway *= Math.min(QAMain.swayModifier_Walk, 800 / s);
+							if (g==null || g.isEnableSwayMovementModifier())
+								sway *= Math.min(QAMain.swayModifier_Walk, 800 / s);
 						}
 					}
+
 					accState.put(p.getUniqueId(), sway);
 				}
 			}

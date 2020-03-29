@@ -61,6 +61,10 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
 	private ChargingHandler ch = null;
 	private ReloadingHandler rh = null;
 
+	private boolean enableSwayMovementModifier = true;
+	private boolean enableSwaySneakModifier = true;
+	private boolean enableSwayRunModifier = true;
+
 	private int maxDistance = 150;
 
 	private Particle particle = null;
@@ -755,8 +759,9 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
 				QAMain.DEBUG("Ironsights on RMB finished");
 			} else {
 				QAMain.DEBUG("Reload called");
-				Block targetblock = e.getTargetBlock(null,6);
+				Block targetblock = e.getTargetBlock(null,5);
 				if (targetblock!= null && QAMain.interactableBlocks.contains(targetblock.getType())) {
+					QAMain.DEBUG("Canceled interact because block is "+targetblock.getType().name());
 					return false;
 				} else {
 					if (QAMain.allowGunReload) {
@@ -769,6 +774,8 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
 						} else {
 							QAMain.DEBUG("Trying to reload. player DOES NOT have ammo");
 						}
+					}else{
+						QAMain.DEBUG("Reloading has been disabled");
 					}
 				}
 			}
@@ -968,4 +975,27 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
 	}
 
 
+	public boolean isEnableSwaySneakModifier() {
+		return enableSwaySneakModifier;
+	}
+
+	public void setEnableSwaySneakModifier(boolean enableSwaySneakModifier) {
+		this.enableSwaySneakModifier = enableSwaySneakModifier;
+	}
+
+	public boolean isEnableSwayMovementModifier() {
+		return enableSwayMovementModifier;
+	}
+
+	public void setEnableSwayMovementModifier(boolean enableSwayMovementModifier) {
+		this.enableSwayMovementModifier = enableSwayMovementModifier;
+	}
+
+	public boolean isEnableSwayRunModifier() {
+		return enableSwayRunModifier;
+	}
+
+	public void setEnableSwayRunModifier(boolean enableSwayRunModifier) {
+		this.enableSwayRunModifier = enableSwayRunModifier;
+	}
 }
