@@ -92,7 +92,7 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
 	public HashMap<UUID, Long> lastshot = new HashMap<>();
 
 	public void copyFrom(Gun g) {
-		this.setIngredients(g.getIngredients());
+		this.setIngredientsRaw(g.getIngredientsRaw());
 		this.type = g.type;
 		this.hasIronSights = g.hasIronSights;
 		this.zoomLevel = g.zoomLevel;
@@ -601,7 +601,6 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
 					QAMain.DEBUG("Reloading message 1!");
 					return true;
 				}
-
 				if (isAutomatic() && GunUtil.rapidfireshooters.containsKey(e.getPlayer().getUniqueId())) {
 					GunUtil.rapidfireshooters.remove(e.getPlayer().getUniqueId()).cancel();
 					if (QAMain.enableReloadWhenOutOfAmmo)
@@ -631,6 +630,7 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
 							return true;
 						}
 				} else {
+					QAMain.DEBUG("About to fire single shot");
 					if (QAMain.enableReloadWhenOutOfAmmo)
 						if (getAmount(usedItem) <= 0) {
 							if (offhand) {

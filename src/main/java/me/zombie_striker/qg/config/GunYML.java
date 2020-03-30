@@ -60,6 +60,16 @@ public class GunYML extends ArmoryYML {
 		set(false, "recoil", recoil);
 		return this;
 	}
+	public GunYML setenableIronSights(boolean ironsights) {
+		set(false, "enableIronSights", ironsights);
+		return this;
+	}
+
+	public GunYML setMaxBullets(int amount){
+		set(false,"maxbullets",amount);
+		return this;
+	}
+
 	public GunYML setSwayMultiplier(double multiplier) {
 		set(false, "swayMultiplier", multiplier);
 		return this;

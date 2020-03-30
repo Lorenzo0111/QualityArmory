@@ -1,3 +1,11 @@
+1.1.163
+    - Added catch for invalid material names.
+    - Fixed issue with Attachment Guns not being created correctly
+    - Fixed Attachment Guns not taking the data from their parent gun
+    - Fixed BurstFire weapons
+    - Fixed issue where automatic weapons did not check if gun was charging.
+    - Added option where attachment weapons can require another weapon when crafting.
+
 1.1.162
     - Fixed Zoom and nightvision for Right click to aim
     - Added gun config options to disable sprint and movement modifiers to gun sway.

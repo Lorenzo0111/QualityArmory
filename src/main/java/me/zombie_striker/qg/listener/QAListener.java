@@ -100,9 +100,9 @@ public class QAListener implements Listener {
 							CustomBaseObject offhandObj = QualityArmory.getCustomItem(e.getPlayer().getInventory().getItemInOffHand());
 							if (g != offhandObj)
 								e.getPlayer().getInventory().addItem(e.getPlayer().getInventory().getItemInOffHand());
+							e.getPlayer().getInventory().setItemInOffHand(null);
+							DEBUG("Removing custom item from offhand when it shouldn't be there. Custom item = "+offhandObj.getName());
 						}
-						e.getPlayer().getInventory().setItemInOffHand(null);
-						DEBUG("Removing ustom item from offhand when it shouldn't be there");
 					}
 					Gun g = QualityArmory.getGun(e.getPlayer().getItemInHand());
 					if (g != null) {
@@ -205,22 +205,6 @@ public class QAListener implements Listener {
 			}
 	}
 
-	/*@EventHandler
-	public void toggleshift(PlayerToggleSneakEvent e) {
-		if (e.isCancelled())
-			return;
-		if (!QAMain.enableIronSightsON_RIGHT_CLICK) {
-			ItemStack item = e.getPlayer().getInventory().getItemInMainHand();
-			if (QualityArmory.isIronSights(item))
-				item = e.getPlayer().getInventory().getItemInOffHand();
-			if (item != null && QualityArmory.isGun(item)) {
-				Gun gun = QualityArmory.getGun(item);
-				QAMain.toggleNightvision(e.getPlayer(), gun, true);
-			}
-			if (!e.isSneaking())
-				QAMain.toggleNightvision(e.getPlayer(), null, false);
-		}
-	}*/
 
 	@SuppressWarnings("deprecation")
 	@EventHandler(priority = EventPriority.LOWEST)
@@ -286,42 +270,7 @@ public class QAListener implements Listener {
 						DEBUG("next_craft");
 						return;
 					}
-				}
-
-				if (QualityArmory.isGun(e.getCurrentItem())) {
-					Gun g = QualityArmory.getGun(e.getCurrentItem());
-					if (g.getPrice() < 0)
-						return;
-					if ((shop && EconHandler.hasEnough(g, (Player) e.getWhoClicked()))
-							|| (!shop && QAMain.lookForIngre((Player) e.getWhoClicked(), g))
-							|| (!shop && e.getWhoClicked().getGameMode() == GameMode.CREATIVE)) {
-						if (shop) {
-							EconHandler.pay(g, (Player) e.getWhoClicked());
-							e.getWhoClicked().sendMessage(
-									QAMain.S_BUYCONFIRM.replaceAll("%item%", ChatColor.stripColor(g.getDisplayName()))
-											.replaceAll("%cost%", "" + g.getPrice()));
-						} else
-							QAMain.removeForIngre((Player) e.getWhoClicked(), g);
-						ItemStack s = CustomItemManager.getItemFact("gun").getItem(g.getItemData(), g.getCraftingReturn());
-						e.getWhoClicked().getInventory().addItem(s);
-						QAMain.shopsSounds(e, shop);
-						DEBUG("Buy-gun");
-					} else {
-						DEBUG("Failed to buy/craft gun");
-						e.getWhoClicked().closeInventory();
-						if (shop)
-							e.getWhoClicked().sendMessage(QAMain.prefix + QAMain.S_noMoney);
-						else
-							e.getWhoClicked().sendMessage(QAMain.prefix + QAMain.S_missingIngredients);
-						try {
-							((Player) e.getWhoClicked()).playSound(e.getWhoClicked().getLocation(),
-									Sound.BLOCK_ANVIL_BREAK, 1, 1);
-						} catch (Error e2) {
-							((Player) e.getWhoClicked()).playSound(e.getWhoClicked().getLocation(),
-									Sound.valueOf("ANVIL_BREAK"), 1, 1);
-						}
-					}
-				} else if (QualityArmory.isAmmo(e.getCurrentItem())) {
+				}if (QualityArmory.isAmmo(e.getCurrentItem())) {
 					Ammo g = QualityArmory.getAmmo(e.getCurrentItem());
 					if (g.getPrice() < 0)
 						return;
@@ -353,8 +302,8 @@ public class QAListener implements Listener {
 									Sound.valueOf("ANVIL_BREAK"), 1, 1);
 						}
 					}
-				} else if (QualityArmory.isMisc(e.getCurrentItem())) {
-					CustomBaseObject g = QualityArmory.getMisc(e.getCurrentItem());
+				} else if (QualityArmory.isCustomItem(e.getCurrentItem())){
+					CustomBaseObject g = QualityArmory.getCustomItem(e.getCurrentItem());
 					if (g.getPrice() < 0)
 						return;
 					if ((shop && EconHandler.hasEnough(g, (Player) e.getWhoClicked()))
@@ -370,9 +319,9 @@ public class QAListener implements Listener {
 						ItemStack s = CustomItemManager.getItemFact("gun").getItem(g.getItemData(), g.getCraftingReturn());
 						e.getWhoClicked().getInventory().addItem(s);
 						QAMain.shopsSounds(e, shop);
-						DEBUG("Buy-Misc");
+						DEBUG("Buy-Item");
 					} else {
-						DEBUG("Failed to buy/craft misc");
+						DEBUG("Failed to buy/craft Item");
 						e.getWhoClicked().closeInventory();
 						if (shop)
 							e.getWhoClicked().sendMessage(QAMain.prefix + QAMain.S_noMoney);
@@ -384,42 +333,6 @@ public class QAListener implements Listener {
 						} catch (Error e2) {
 							((Player) e.getWhoClicked()).playSound(e.getWhoClicked().getLocation(),
 									Sound.valueOf("ANVIL_BREAK"), 1, 1);
-						}
-					}
-				} else if (QualityArmory.isArmor(e.getCurrentItem())) {
-					{
-						ArmorObject g = QualityArmory.getArmor(e.getCurrentItem());
-						if (g.getPrice() < 0)
-							return;
-						if ((shop && EconHandler.hasEnough(g, (Player) e.getWhoClicked()))
-								|| (!shop && QAMain.lookForIngre((Player) e.getWhoClicked(), g))
-								|| (!shop && e.getWhoClicked().getGameMode() == GameMode.CREATIVE)) {
-							if (shop) {
-								e.getWhoClicked()
-										.sendMessage(QAMain.S_BUYCONFIRM
-												.replaceAll("%item%", ChatColor.stripColor(g.getDisplayName()))
-												.replaceAll("%cost%", "" + g.getPrice()));
-								EconHandler.pay(g, (Player) e.getWhoClicked());
-							} else
-								QAMain.removeForIngre((Player) e.getWhoClicked(), g);
-							ItemStack s = CustomItemManager.getItemFact("gun").getItem(g.getItemData(), g.getCraftingReturn());
-							e.getWhoClicked().getInventory().addItem(s);
-							QAMain.shopsSounds(e, shop);
-							DEBUG("Buy-armor");
-						} else {
-							DEBUG("Failed to buy/craft armor");
-							e.getWhoClicked().closeInventory();
-							if (shop)
-								e.getWhoClicked().sendMessage(QAMain.prefix + QAMain.S_noMoney);
-							else
-								e.getWhoClicked().sendMessage(QAMain.prefix + QAMain.S_missingIngredients);
-							try {
-								((Player) e.getWhoClicked()).playSound(e.getWhoClicked().getLocation(),
-										Sound.BLOCK_ANVIL_BREAK, 1, 1);
-							} catch (Error e2) {
-								((Player) e.getWhoClicked()).playSound(e.getWhoClicked().getLocation(),
-										Sound.valueOf("ANVIL_BREAK"), 1, 1);
-							}
 						}
 					}
 				} else {

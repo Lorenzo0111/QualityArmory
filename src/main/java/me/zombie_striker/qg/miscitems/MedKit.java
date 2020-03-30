@@ -34,11 +34,6 @@ public class MedKit extends CustomBaseObject implements ArmoryBaseObject {
 	}
 
 	@Override
-	public ItemStack[] getIngredients() {
-		return ing;
-	}
-
-	@Override
 	public int getCraftingReturn() {
 		return 1;
 	}

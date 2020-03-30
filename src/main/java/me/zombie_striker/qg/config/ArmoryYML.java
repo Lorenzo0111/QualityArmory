@@ -2,10 +2,8 @@ package me.zombie_striker.qg.config;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 
@@ -17,11 +15,11 @@ import me.zombie_striker.qg.handlers.MultiVersionLookup;
 public class ArmoryYML {
 
 	FileConfiguration fileConfig;
-	File save;
+	File file;
 	public boolean saveNow = false;
 
 	public ArmoryYML(File file) {
-		save = file;
+		this.file = file;
 		if (!file.getParentFile().exists())
 			file.getParentFile().mkdirs();
 		if (!file.exists())
@@ -48,7 +46,7 @@ public class ArmoryYML {
 		return set(false, name,v);
 	}
 	public ArmoryYML set(boolean force, String name, Object v) {
-		long lastmodifiedFile = save.lastModified();
+		long lastmodifiedFile = file.lastModified();
 		long lastmodifiedInternal = contains("lastModifiedByQA") ? getLong("lastModifiedByQA") :  (  contains("AllowUserModifications") && fileConfig.getBoolean("AllowUserModifications") ? 0 : System.currentTimeMillis());
 
 		if(!force && lastmodifiedFile-lastmodifiedInternal > 5000) {
@@ -78,7 +76,7 @@ public class ArmoryYML {
 	public void save() {
 		try {
 			putTimeStamp();
-			fileConfig.save(save);
+			fileConfig.save(file);
 			saveNow = false;
 		} catch (IOException e) {
 			e.printStackTrace();

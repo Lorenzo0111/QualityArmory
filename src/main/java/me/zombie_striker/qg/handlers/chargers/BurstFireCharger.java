@@ -30,10 +30,9 @@ public class BurstFireCharger implements ChargingHandler {
 
 	@Override
 	public boolean shoot(final Gun g, final Player player, final ItemStack stack) {
-		GunUtil.shootHandler(g, player);
+		GunUtil.shootHandler(g, player,1);
 	//	final AttachmentBase attach = QualityArmory.getGunWithAttchments(stack);
 		GunUtil.playShoot(g,  player);
-		
 		shooters.put(player.getUniqueId(), new BukkitRunnable() {
 			int slotUsed = player.getInventory().getHeldItemSlot();
 			@SuppressWarnings("deprecation")
@@ -52,7 +51,7 @@ public class BurstFireCharger implements ChargingHandler {
 					return;
 				}
 
-				GunUtil.shootHandler(g, player);
+				GunUtil.shootHandler(g, player,1);
 				GunUtil.playShoot(g,  player);
 				if(QAMain.enableRecoil && g.getRecoil()>0) {
 					GunUtil.addRecoil(player, g);

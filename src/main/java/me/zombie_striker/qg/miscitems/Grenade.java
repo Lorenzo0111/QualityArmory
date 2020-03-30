@@ -40,10 +40,6 @@ public class Grenade extends CustomBaseObject implements ThrowableItems {
 		this.dmageLevel = damage;
 	}
 
-	@Override
-	public ItemStack[] getIngredients() {
-		return ing;
-	}
 
 	@Override
 	public int getCraftingReturn() {

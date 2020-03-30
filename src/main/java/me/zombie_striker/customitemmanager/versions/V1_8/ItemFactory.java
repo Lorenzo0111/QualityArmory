@@ -4,6 +4,7 @@ import me.zombie_striker.customitemmanager.*;
 import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.api.QualityArmory;
 import me.zombie_striker.qg.armor.ArmorObject;
+import me.zombie_striker.qg.attachments.AttachmentBase;
 import me.zombie_striker.qg.guns.Gun;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -38,6 +39,8 @@ public class ItemFactory extends AbstractItemFact {
 
 			if(base instanceof  Gun)
 				lore.addAll(Gun.getGunLore((Gun) base, null, ((Gun) base).getMaxBullets()));
+			if(base instanceof AttachmentBase)
+				lore.addAll(Gun.getGunLore(((AttachmentBase) base).getBaseGun(), null, ((AttachmentBase) base).getMaxBullets()));
 			if (base instanceof ArmorObject)
 				lore.addAll(OLD_ItemFact.getArmorLore((ArmorObject) base));
 

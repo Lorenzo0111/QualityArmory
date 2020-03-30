@@ -38,9 +38,12 @@ public class GunUtil {
 	protected static HashMap<UUID, BukkitTask> AF_tasks = new HashMap<>();
 
 	public static void shootHandler(Gun g, Player p) {
+		shootHandler(g,p,g.getBulletsPerShot());
+	}
+	public static void shootHandler(Gun g, Player p, int numberOfBullets) {
 		double sway = g.getSway() * AimManager.getSway(g, p.getUniqueId());
 		if (g.usesCustomProjctiles()) {
-			for (int i = 0; i < g.getBulletsPerShot(); i++) {
+			for (int i = 0; i < numberOfBullets; i++) {
 				Vector go = p.getLocation().getDirection().normalize();
 				go.add(new Vector((Math.random() * 2 * sway) - sway, (Math.random() * 2 * sway) - sway,
 						(Math.random() * 2 * sway) - sway)).normalize();
@@ -419,25 +422,29 @@ public class GunUtil {
 		ItemStack firstGunInstance = IronsightsHandler.getItemAiming(player);
 
 		boolean regularshoot = true;
-		if (g.getChargingVal() != null && (!g.getChargingVal().isCharging(player)
-				&& (g.getReloadingingVal() == null || !g.getReloadingingVal().isReloading(player)))) {
-			regularshoot = g.getChargingVal().shoot(g, player, firstGunInstance );
+
+		if (g.getChargingVal() != null) {
 			QAMain.DEBUG("Charging shoot debug: " + g.getName() + " = " + g.getChargingVal() == null ? "null"
 					: g.getChargingVal().getName());
+			regularshoot = g.getChargingVal().shoot(g, player, firstGunInstance );
 		}
+
 		if (regularshoot) {
 			GunUtil.shootHandler(g, player);
 			playShoot(g, player);
 			if (QAMain.enableRecoil)
 				addRecoil(player, g);
-
 		}
+
 		if (g.isAutomatic()) {
 			rapidfireshooters.put(player.getUniqueId(), new BukkitRunnable() {
 				int slotUsed = player.getInventory().getHeldItemSlot();
 
 				@Override
 				public void run() {
+					if(g.getChargingVal()!= null && g.getChargingVal().isCharging(player)){
+						return;
+					}
 					if ((g.hasIronSights() && !IronsightsHandler.isAiming(player) )|| (!g.hasIronSights() && (player.isSneaking() == QAMain.enableSwapSingleShotOnAim))) {
 						cancel();
 						rapidfireshooters.remove(player.getUniqueId());

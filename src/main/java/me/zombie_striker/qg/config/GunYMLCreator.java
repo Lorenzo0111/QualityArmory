@@ -190,27 +190,27 @@ public class GunYMLCreator {
 		return h;
 	}
 
-	public static GunYML createAttachment(boolean forceUpdate, File dataFolder, boolean invalid, String filename,
+	public static AttachmentYML createAttachment(boolean forceUpdate, File dataFolder, boolean invalid, String filename,
 			String name, String displayname, List<String> lore, MaterialStorage ms, List<String> craftingRequirements,
 			int cost, Gun originalGun) {
 		return createAttachment(forceUpdate, dataFolder, invalid, filename, name, displayname, lore, ms,
 				craftingRequirements, cost, originalGun.getName());
 	}
 
-	public static GunYML createAttachment(boolean forceUpdate, File dataFolder, boolean invalid, String filename,
+	public static AttachmentYML createAttachment(boolean forceUpdate, File dataFolder, boolean invalid, String filename,
 			String name, String displayname, List<String> lore, MaterialStorage ms, List<String> craftingRequirements,
 			int cost, String originalGun) {
 		File f2 = new File(dataFolder, "attachments/" + filename + ".yml");
 		if (!new File(dataFolder, "attachments").exists())
 			new File(dataFolder, "attachments").mkdirs();
-		GunYML h = new GunYML(f2);
+		AttachmentYML h = new AttachmentYML(f2);
 		if (invalid)
 			h.set(false, "HOW_TO_USE",
 					"Below is just the required values to create a new attachment for the 'basegun'. If you want to modify more parts of the gun, copy the value you want to change from the 'base' gun and paste it here with the value you want.");
 
 		h.set(invalid, "invalid", invalid);
 		h.set(invalid, "name", name);
-		h.set(invalid, "displayname", displayname);
+		h.set(invalid, "displayname", displayname.startsWith("&")?displayname:"&6"+displayname);
 		h.set(invalid, "lore", (lore == null ? new ArrayList<String>() : lore));
 		h.set(invalid, "id", ms.getData());
 		h.set(invalid, "craftingRequirements", craftingRequirements);

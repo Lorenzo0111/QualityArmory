@@ -221,17 +221,19 @@ public class CustomGunItem extends AbstractItem {
 
 		GunYMLCreator
 				.createAttachment(false, dataFolder, false, "default_p30_silencer", "p30silenced",
-						ChatColor.GOLD + "P30[Silenced]", null, m(42), stringsPistol, 1000, "p30")
+						"P30[Silenced]", null, m(23),  Arrays.asList(
+								new String[]{getIngString(Material.IRON_INGOT, 0, 4), "p30"}), 1000, "p30")
 				.setWeaponSound(WeaponSounds.SILENCEDSHOT).done();
 		GunYMLCreator
 				.createAttachment(false, dataFolder, false, "default_awp_asiimov", "awpasiimov",
-						ChatColor.GOLD + "AWP[Asiimov-skin]", null, m(43), stringsMetalRif, 1000, "awp")
-				.done();
+						"AWP[Asiimov-skin]", null, m(24), Arrays.asList(
+								new String[]{getIngString(Material.BONE_MEAL, 0, 1), "awp"}), 1000, "awp")
+				.setUseOffhand(false).done();
 
 		GunYMLCreator
 				.createNewDefaultGun(dataFolder, "m4a1s", "M4A1s", 44, stringsMetalRif, WeaponType.RIFLE,
 						null, true, "556", 3, 30, 3600)
-				.setFullyAutomatic(2).setBulletsPerShot(1).setRecoil(5).done();
+				.setFullyAutomatic(2).setBulletsPerShot(1).setRecoil(5).setWeaponSound(WeaponSounds.SILENCEDSHOT).done();
 
 		GunYMLCreator
 				.createNewDefaultGun(dataFolder, "rpk", "RPK", 45, stringsWoodRif, WeaponType.RIFLE, null,

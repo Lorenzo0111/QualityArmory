@@ -52,7 +52,7 @@ public class CustomGunItem extends AbstractItem {
 
 	@Override
 	public void initItems(File dataFolder) {
-		CustomItemManager.setResourcepack("https://www.dropbox.com/s/xfbnzu02hudhvc5/QualityArmoryV2.0.3.zip?dl=1");
+		CustomItemManager.setResourcepack("https://www.dropbox.com/s/68trcprp0bcl2v9/QualityArmoryV2.0.4.zip?dl=1");
 
 
 		List<String> stringsWoodRif = Arrays.asList(new String[]{getIngString(Material.IRON_INGOT, 0, 12),
@@ -234,17 +234,19 @@ public class CustomGunItem extends AbstractItem {
 
 		GunYMLCreator
 				.createAttachment(false, dataFolder, false, "default_p30_silencer", "p30silenced",
-						"P30[Silenced]", null, m(23), stringsPistol, 1000, "p30")
+						"P30[Silenced]", null, m(23),  Arrays.asList(
+								new String[]{getIngString(Material.IRON_INGOT, 0, 4), "p30"}), 1000, "p30")
 				.setWeaponSound(WeaponSounds.SILENCEDSHOT).setMaterial(Material.CROSSBOW).done();
 		GunYMLCreator
 				.createAttachment(false, dataFolder, false, "default_awp_asiimov", "awpasiimov",
-						"AWP[Asiimov-skin]", null, m(24), stringsMetalRif, 1000, "awp").setMaterial(Material.CROSSBOW)
+						"AWP[Asiimov-skin]", null, m(24), Arrays.asList(
+								new String[]{getIngString(Material.WHITE_DYE, 0, 1), "awp"}), 1000, "awp").setMaterial(Material.CROSSBOW)
 				.setUseOffhand(false).done();
 
 		GunYMLCreator
 				.createNewDefaultGun(dataFolder, "m4a1s", "M4A1s", 25, stringsMetalRif, WeaponType.RIFLE,
 						null, true, "556", 3, 30, 3600)
-				.setFullyAutomatic(2).setBulletsPerShot(1).setRecoil(5).setMaterial(Material.CROSSBOW).done();
+				.setFullyAutomatic(2).setBulletsPerShot(1).setRecoil(5).setWeaponSound(WeaponSounds.SILENCEDSHOT).setMaterial(Material.CROSSBOW).done();
 
 		GunYMLCreator
 				.createNewDefaultGun(dataFolder, "rpk", "RPK", 26, stringsWoodRif, WeaponType.RIFLE, null,
@@ -409,6 +411,7 @@ public class CustomGunItem extends AbstractItem {
 				.setMaterial(Material.CROSSBOW).done();
 		GunYMLCreator.createNewDefaultGun(dataFolder, "uzi", "UZI", 49, stringsMetalRif, WeaponType.SMG,
 				WeaponSounds.GUN_SMALL_AUTO, true, "9mm", 2, 25, 2000).setFullyAutomatic(3).setMaterial(Material.CROSSBOW).done();
+
 		GunYMLCreator
 				.createNewDefaultGun(dataFolder, "skorpion", "Skorpion vz.61", 50, stringsMetalRif,
 						WeaponType.SMG, WeaponSounds.GUN_SMALL_AUTO, true, "9mm", 2, 20, 1600).setMaterial(Material.CROSSBOW)
@@ -528,6 +531,17 @@ public class CustomGunItem extends AbstractItem {
 				.setCustomProjectileVelocity(2).setCustomProjectileExplosionRadius(6)// .setChargingHandler(ChargingManager.MININUKELAUNCHER)
 				.setReloadingHandler(ReloadingManager.SINGLERELOAD).setDelayReload(5).setDistance(500).setMaterial(Material.CROSSBOW)
 				.setParticle(0.001, 0.001, 0.001, Material.COAL_BLOCK).setRecoil(8).done();
+
+		GunYMLCreator
+				.createAttachment(false, dataFolder, false, "default_uzicorn", "uzicorn",
+						"Uzicorn", null, m(75),  Arrays.asList(
+								new String[]{getIngString(Material.WHITE_WOOL, 0, 6), "uzi"}), 2400, "uzi")
+				.setWeaponSound(WeaponSounds.SILENCEDSHOT).setMaterial(Material.CROSSBOW).done();
+
+
+
+
+
 
 		GunYMLCreator.createMisc(false, dataFolder, false, "default_lightsaberblack", "LightSaberBlack",
 				"LightSaber (Black)", Arrays.asList("&fAnyone can hold the Darksaber.","&fThe trick is keeping it, along with your head."),

@@ -1,10 +1,12 @@
 package me.zombie_striker.customitemmanager;
 
 import me.zombie_striker.qg.QAMain;
+import me.zombie_striker.qg.api.QualityArmory;
 import me.zombie_striker.qg.armor.ArmorObject;
 import me.zombie_striker.qg.guns.Gun;
 import me.zombie_striker.qg.handlers.IronsightsHandler;
 import org.bukkit.ChatColor;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -57,18 +59,23 @@ public class OLD_ItemFact {
 	public static List<String> getCraftingLore(CustomBaseObject a) {
 		List<String> lore = new ArrayList<String>();
 		lore.add(ChatColor.RED + QAMain.S_ITEM_ING + ": ");
-		for (ItemStack is : (a).getIngredients()) {
-			StringBuilder sb = new StringBuilder();
-			// Chris: itemName from message.yml
-			String itemName = is.getType().name();
-			sb.append(ChatColor.RED + "- " + QAMain.findCraftEntityName(itemName, itemName) + " x " + is.getAmount());
-			if (is.getDurability() != 0)
-				sb.append(":" + is.getDurability());
-			lore.add(sb.toString());
-		}
-		if ((a).getCraftingReturn() > 1) {
-			lore.add(ChatColor.DARK_RED + QAMain.S_ITEM_CRAFTS + " " + (a).getCraftingReturn());
+		for (Object raw : (a).getIngredientsRaw()) {
+			if (raw instanceof ItemStack) {
+				ItemStack is = (ItemStack) raw;
+				StringBuilder sb = new StringBuilder();
+				// Chris: itemName from message.yml
+				String itemName = is.getType().name();
+				sb.append(ChatColor.RED + "- " + QAMain.findCraftEntityName(itemName, itemName) + " x " + is.getAmount());
+				if (is.getDurability() != 0)
+					sb.append(":" + is.getDurability());
+				lore.add(sb.toString());
 
+			} else if (raw instanceof String) {
+				lore.add(ChatColor.RED + "- " + QualityArmory.getCustomItemByName((String) raw).getDisplayName());
+			}
+			if ((a).getCraftingReturn() > 1) {
+				lore.add(ChatColor.DARK_RED + QAMain.S_ITEM_CRAFTS + " " + (a).getCraftingReturn());
+			}
 		}
 		return lore;
 	}

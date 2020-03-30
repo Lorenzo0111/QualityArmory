@@ -476,9 +476,9 @@ public class GunYMLLoader {
 
 							attach.setCustomLore(extraLore);
 
-							final ItemStack[] materails = main
-									.convertIngredients(f2.getStringList("craftingRequirements"));
-							attach.setIngredients(materails);
+							final Object[] materials = main
+									.convertIngredientsRaw(f2.getStringList("craftingRequirements"));
+							attach.setIngredientsRaw(materials);
 
 							// QAMain.attachmentRegister.put(ms, attach);
 							loadGunSettings(attach, f2);

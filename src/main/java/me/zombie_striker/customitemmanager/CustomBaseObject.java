@@ -18,7 +18,7 @@ public class CustomBaseObject {
 
 	private double price;
 
-	ItemStack[] ing = null;
+	Object[] ing = null;
 	int craftingReturn = 1;
 
 	public CustomBaseObject(String name, MaterialStorage storage, String displayname, List<String> lore, boolean hasAimAnimations) {
@@ -89,7 +89,13 @@ public class CustomBaseObject {
 	public void setIngredients(ItemStack[] ing) {
 		this.ing = ing;
 	}
-	public ItemStack[] getIngredients(){
+	public void setIngredientsRaw(Object[] ing) {
+		this.ing = ing;
+	}
+	public ItemStack[] getIngredients2(){
+		return (ItemStack[]) ing;
+	}
+	public Object[] getIngredientsRaw(){
 		return ing;
 	}
 	public int getCraftingReturn(){

@@ -1,54 +1,57 @@
 package me.zombie_striker.qg;
 
-import java.io.*;
-import java.util.*;
-import java.util.Map.Entry;
-import java.util.logging.Level;
-
-import me.zombie_striker.customitemmanager.*;
-import me.zombie_striker.qg.ammo.*;
+import me.zombie_striker.customitemmanager.CustomBaseObject;
+import me.zombie_striker.customitemmanager.CustomItemManager;
+import me.zombie_striker.customitemmanager.MaterialStorage;
+import me.zombie_striker.customitemmanager.OLD_ItemFact;
+import me.zombie_striker.qg.ammo.Ammo;
 import me.zombie_striker.qg.api.QualityArmory;
-import me.zombie_striker.qg.armor.*;
+import me.zombie_striker.qg.armor.ArmorObject;
 import me.zombie_striker.qg.attachments.AttachmentBase;
 import me.zombie_striker.qg.boundingbox.BoundingBoxManager;
-import me.zombie_striker.qg.config.*;
-import me.zombie_striker.qg.guns.*;
-import me.zombie_striker.qg.guns.projectiles.ExplodingRoundProjectile;
-import me.zombie_striker.qg.guns.projectiles.FireProjectile;
-import me.zombie_striker.qg.guns.projectiles.HomingRocketProjectile;
-import me.zombie_striker.qg.guns.projectiles.MiniNukeProjectile;
-import me.zombie_striker.qg.guns.projectiles.RocketProjectile;
+import me.zombie_striker.qg.config.CommentYamlConfiguration;
+import me.zombie_striker.qg.config.GunYMLCreator;
+import me.zombie_striker.qg.config.GunYMLLoader;
+import me.zombie_striker.qg.config.MessagesYML;
+import me.zombie_striker.qg.guns.Gun;
+import me.zombie_striker.qg.guns.projectiles.*;
 import me.zombie_striker.qg.guns.utils.GunRefillerRunnable;
 import me.zombie_striker.qg.guns.utils.WeaponSounds;
 import me.zombie_striker.qg.handlers.*;
 import me.zombie_striker.qg.handlers.chargers.*;
-import me.zombie_striker.qg.handlers.reloaders.*;
+import me.zombie_striker.qg.handlers.reloaders.PumpactionReloader;
+import me.zombie_striker.qg.handlers.reloaders.SingleBulletReloader;
 import me.zombie_striker.qg.listener.QAListener;
-import me.zombie_striker.qg.miscitems.*;
+import me.zombie_striker.qg.miscitems.ThrowableItems;
 import me.zombie_striker.qg.miscitems.ThrowableItems.ThrowableHolder;
 import me.zombie_striker.qg.npcs.Gunner;
 import me.zombie_striker.qg.npcs.GunnerTrait;
 import me.zombie_striker.qg.npcs_sentinel.SentinelQAHandler;
-
 import org.bukkit.*;
 import org.bukkit.command.BlockCommandSender;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.file.*;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.inventory.*;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import org.bukkit.scheduler.*;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
+
+import java.io.*;
+import java.util.*;
+import java.util.Map.Entry;
+import java.util.logging.Level;
 
 public class QAMain extends JavaPlugin {
 
@@ -325,11 +328,11 @@ public class QAMain extends JavaPlugin {
 	}
 
 	public static boolean lookForIngre(Player player, CustomBaseObject a) {
-		return lookForIngre(player, a.getIngredients());
+		return lookForIngre(player, a.getIngredientsRaw());
 	}
 
 	@SuppressWarnings("deprecation")
-	public static boolean lookForIngre(Player player, ItemStack[] ings) {
+	public static boolean lookForIngre(Player player, Object[] ings) {
 		if (ings == null)
 			return true;
 		boolean[] bb = new boolean[ings.length];
@@ -338,11 +341,21 @@ public class QAMain extends JavaPlugin {
 				for (int i = 0; i < ings.length; i++) {
 					if (bb[i])
 						continue;
-					if (is.getType() == ings[i].getType()
-							&& (ings[i].getDurability() == 0 || is.getDurability() == ings[i].getDurability())) {
-						if (is.getAmount() >= ings[i].getAmount())
+					if (ings[i] instanceof ItemStack) {
+						ItemStack check = (ItemStack) ings[i];
+						if (is.getType() == check.getType()
+								&& (check.getDurability() == 0 || is.getDurability() == check.getDurability())) {
+							if (is.getAmount() >= check.getAmount())
+								bb[i] = true;
+							break;
+						}
+					} else if (ings[i] instanceof String) {
+						CustomBaseObject base = QualityArmory.getCustomItemByName((String) ings[i]);
+						if (QualityArmory.getCustomItem(is) == base) {
 							bb[i] = true;
-						break;
+							break;
+						}
+
 					}
 				}
 			}
@@ -355,31 +368,46 @@ public class QAMain extends JavaPlugin {
 	}
 
 	public static boolean removeForIngre(Player player, CustomBaseObject a) {
-		return removeForIngre(player, a.getIngredients());
+		return removeForIngre(player, a.getIngredientsRaw());
 	}
 
 	@SuppressWarnings("deprecation")
-	public static boolean removeForIngre(Player player, ItemStack[] ings) {
+	public static boolean removeForIngre(Player player, Object[] ings) {
 		if (ings == null)
 			return true;
 		boolean[] bb = new boolean[ings.length];
 		for (ItemStack is : player.getInventory().getContents()) {
 			if (is != null) {
+				CustomBaseObject obj = QualityArmory.getCustomItem(is);
 				for (int i = 0; i < ings.length; i++) {
 					if (bb[i])
 						continue;
-					if (is.getType() == ings[i].getType() && is.getDurability() == ings[i].getDurability()) {
-						if (is.getAmount() > ings[i].getAmount()) {
+					if (obj != null) {
+						if (ings[i] instanceof String && QualityArmory.getCustomItemByName((String) ings[i]) == obj) {
+							for (int slot = 0; slot < player.getInventory().getContents().length; slot++) {
+								if (player.getInventory().getItem(slot).equals(is)) {
+									player.getInventory().setItem(slot, new ItemStack(Material.AIR));
+									break;
+								}
+							}
 							bb[i] = true;
-							int slot = player.getInventory().first(is);
-							is.setAmount(is.getAmount() - ings[i].getAmount());
-							player.getInventory().setItem(slot, is);
-						} else if (is.getAmount() == ings[i].getAmount()) {
-							bb[i] = true;
-							int slot = player.getInventory().first(is);
-							player.getInventory().setItem(slot, new ItemStack(Material.AIR));
+							break;
 						}
-						break;
+					} else if (ings[i] instanceof ItemStack) {
+						ItemStack check = (ItemStack) ings[i];
+						if (is.getType() == check.getType() && is.getDurability() == check.getDurability()) {
+							if (is.getAmount() > check.getAmount()) {
+								bb[i] = true;
+								int slot = player.getInventory().first(is);
+								is.setAmount(is.getAmount() - check.getAmount());
+								player.getInventory().setItem(slot, is);
+							} else if (is.getAmount() == check.getAmount()) {
+								bb[i] = true;
+								int slot = player.getInventory().first(is);
+								player.getInventory().setItem(slot, new ItemStack(Material.AIR));
+							}
+							break;
+						}
 					}
 				}
 			}
@@ -416,18 +444,18 @@ public class QAMain extends JavaPlugin {
 	}
 
 
-	private static boolean addToGUI(CustomBaseObject obj, Inventory gui, boolean shop){
+	private static boolean addToGUI(CustomBaseObject obj, Inventory gui, boolean shop) {
 		if (shop && obj.getPrice() < 0)
 			return false;
-		if (!shop && obj.getIngredients()==null)
+		if (!shop && obj.getIngredientsRaw() == null)
 			return false;
 		try {
 			ItemStack is = CustomItemManager.getItemFact("gun").getItem(obj.getItemData(), obj.getCraftingReturn());
 			ItemMeta im = is.getItemMeta();
-			List<String> lore = im.hasLore()? im.getLore(): new ArrayList<>();
+			List<String> lore = im.hasLore() ? im.getLore() : new ArrayList<>();
 			if (shop) {
 				lore.addAll(OLD_ItemFact.addShopLore(obj));
-			}else{
+			} else {
 				lore.addAll(OLD_ItemFact.getCraftingLore(obj));
 			}
 			im.setLore(lore);
@@ -437,7 +465,7 @@ public class QAMain extends JavaPlugin {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-	return false;
+		return false;
 	}
 
 
@@ -454,7 +482,7 @@ public class QAMain extends JavaPlugin {
 
 		if (basei + gunslistr.size() < index) {
 			basei += gunslistr.size();
-		}else {
+		} else {
 			for (Gun g : gunslistr) {
 				if (basei < index) {
 					basei++;
@@ -469,7 +497,7 @@ public class QAMain extends JavaPlugin {
 		}
 		if (basei + ammoRegister.values().size() < index) {
 			basei += ammoRegister.values().size();
-		}else {
+		} else {
 			for (CustomBaseObject ammo : ammoRegister.values()) {
 				if (basei < index) {
 					basei++;
@@ -484,7 +512,7 @@ public class QAMain extends JavaPlugin {
 		}
 		if (basei + miscRegister.values().size() < index) {
 			basei += miscRegister.values().size();
-		}else {
+		} else {
 			for (CustomBaseObject abo : miscRegister.values()) {
 				if (basei < index) {
 					basei++;
@@ -499,7 +527,7 @@ public class QAMain extends JavaPlugin {
 		}
 		if (basei + armorRegister.values().size() < index) {
 			basei += armorRegister.values().size();
-		}else{
+		} else {
 			for (ArmorObject armor : armorRegister.values()) {
 				if (basei < index) {
 					basei++;
@@ -508,11 +536,38 @@ public class QAMain extends JavaPlugin {
 				basei++;
 				if (index >= maxIndex)
 					break;
-				if(addToGUI(armor,shopMenu,shopping))
-				index++;
+				if (addToGUI(armor, shopMenu, shopping))
+					index++;
 			}
 		}
 		return shopMenu;
+	}
+
+	public static void registerCraftEntityNames(HashMap<MaterialStorage, ?> regMaps) {
+		if (null != regMaps && !regMaps.isEmpty()) {
+			for (Object item : regMaps.values()) {
+				try {
+					Object[] itemStacks = ((CustomBaseObject) item).getIngredientsRaw();
+					if (null != itemStacks && itemStacks.length > 0) {
+						for (Object itemStack : itemStacks) {
+							String itemName = ((ItemStack) itemStack).getType().name();
+							String showName = ChatColor.translateAlternateColorCodes('&', (String) QAMain.m.a("EntityType." + itemName, itemName));
+							craftingEntityNames.put(itemName, showName);
+						}
+					}
+				} catch (Exception e) {
+					//
+				}
+			}
+		}
+	}
+
+	public static String findCraftEntityName(String itemName, String defaultName) {
+		String value = craftingEntityNames.get(itemName);
+		if (null == value || value.trim().length() <= 0) {
+			value = craftingEntityNames.put(itemName, defaultName);
+		}
+		return value;
 	}
 
 	/**
@@ -550,7 +605,7 @@ public class QAMain extends JavaPlugin {
 			return getConfig().get(path);
 		}
 		getConfig().set(path, def);
-		saveTheConfig=true;
+		saveTheConfig = true;
 		return def;
 	}
 
@@ -633,52 +688,52 @@ public class QAMain extends JavaPlugin {
 						return (expansionPacks.size() > 0) + "";
 					}
 				}));
-	if(!CustomItemManager.isUsingCustomData()) {
-		new BukkitRunnable() {
-			@SuppressWarnings("deprecation")
-			public void run() {
-				try {
-					// Cheaty, hacky fix
-					for (Player p : Bukkit.getOnlinePlayers()) {
-						// if (p.getItemInHand().containsEnchantment(Enchantment.MENDING)) {
-						if (p.getItemInHand() != null && p.getItemInHand().hasItemMeta())
-							if (QualityArmory.isCustomItem(p.getItemInHand())) {
-								if (ITEM_enableUnbreakable && (!p.getItemInHand().getItemMeta().isUnbreakable()
-										&& !ignoreUnbreaking)) {
-									ItemStack temp = p.getItemInHand();
-									int j = QualityArmory.findSafeSpot(temp, false, overrideURL);
-									temp.setDurability((short) Math.max(0, j - 1));
-									temp = Gun.removeCalculatedExtra(temp);
-									p.setItemInHand(temp);
-								}
-							}
-						try {
-
-							// if
-							// (p.getInventory().getItemInOffHand().containsEnchantment(Enchantment.MENDING))
-							// {
-							if (p.getInventory().getItemInOffHand() != null
-									&& p.getInventory().getItemInOffHand().hasItemMeta())
-								if (QualityArmory.isCustomItem(p.getInventory().getItemInOffHand())) {
-									if (ITEM_enableUnbreakable && (!p.getInventory().getItemInOffHand().getItemMeta()
-											.isUnbreakable() && !ignoreUnbreaking)) {
-										ItemStack temp = p.getInventory().getItemInOffHand();
+		if (!CustomItemManager.isUsingCustomData()) {
+			new BukkitRunnable() {
+				@SuppressWarnings("deprecation")
+				public void run() {
+					try {
+						// Cheaty, hacky fix
+						for (Player p : Bukkit.getOnlinePlayers()) {
+							// if (p.getItemInHand().containsEnchantment(Enchantment.MENDING)) {
+							if (p.getItemInHand() != null && p.getItemInHand().hasItemMeta())
+								if (QualityArmory.isCustomItem(p.getItemInHand())) {
+									if (ITEM_enableUnbreakable && (!p.getItemInHand().getItemMeta().isUnbreakable()
+											&& !ignoreUnbreaking)) {
+										ItemStack temp = p.getItemInHand();
 										int j = QualityArmory.findSafeSpot(temp, false, overrideURL);
 										temp.setDurability((short) Math.max(0, j - 1));
 										temp = Gun.removeCalculatedExtra(temp);
-										p.getInventory().setItemInOffHand(temp);
-										return;
+										p.setItemInHand(temp);
 									}
 								}
-						} catch (Error | Exception e45) {
-						}
-					}
-				} catch (Error | Exception catchy) {
+							try {
 
+								// if
+								// (p.getInventory().getItemInOffHand().containsEnchantment(Enchantment.MENDING))
+								// {
+								if (p.getInventory().getItemInOffHand() != null
+										&& p.getInventory().getItemInOffHand().hasItemMeta())
+									if (QualityArmory.isCustomItem(p.getInventory().getItemInOffHand())) {
+										if (ITEM_enableUnbreakable && (!p.getInventory().getItemInOffHand().getItemMeta()
+												.isUnbreakable() && !ignoreUnbreaking)) {
+											ItemStack temp = p.getInventory().getItemInOffHand();
+											int j = QualityArmory.findSafeSpot(temp, false, overrideURL);
+											temp.setDurability((short) Math.max(0, j - 1));
+											temp = Gun.removeCalculatedExtra(temp);
+											p.getInventory().setItemInOffHand(temp);
+											return;
+										}
+									}
+							} catch (Error | Exception e45) {
+							}
+						}
+					} catch (Error | Exception catchy) {
+
+					}
 				}
-			}
-		}.runTaskTimer(this, 20, 15);
-	}
+			}.runTaskTimer(this, 20, 15);
+		}
 	}
 
 	@SuppressWarnings({"unchecked", "deprecation"})
@@ -694,10 +749,10 @@ public class QAMain extends JavaPlugin {
 			prevButton = new ItemStack(glass, 1);
 			nextButton = new ItemStack(glass2, 1);
 			ItemMeta nextButtonMeta = nextButton.getItemMeta();
-			nextButtonMeta.setDisplayName(ChatColor.GOLD+" Next Page:");
+			nextButtonMeta.setDisplayName(ChatColor.GOLD + " Next Page:");
 			nextButton.setItemMeta(nextButtonMeta);
 			ItemMeta prevButtonMeta = prevButton.getItemMeta();
-			prevButtonMeta.setDisplayName(ChatColor.GOLD+" Previous Page:");
+			prevButtonMeta.setDisplayName(ChatColor.GOLD + " Previous Page:");
 			prevButton.setItemMeta(prevButtonMeta);
 		} catch (Error | Exception e45) {
 			glass = Material.matchMaterial("STAINED_GLASS_PANE");
@@ -764,7 +819,6 @@ public class QAMain extends JavaPlugin {
 		// Chris: add message Crafts
 		S_ITEM_CRAFTS = ChatColor.translateAlternateColorCodes('&', (String) m.a("Lore_Crafts", S_ITEM_CRAFTS));
 		S_ITEM_RETURNS = ChatColor.translateAlternateColorCodes('&', (String) m.a("Lore_Returns", S_ITEM_RETURNS));
-
 
 
 		S_RELOADING_MESSAGE = ChatColor.translateAlternateColorCodes('&',
@@ -1022,7 +1076,7 @@ public class QAMain extends JavaPlugin {
 				expansionPacks.add(MaterialStorage.getMS(Material.DIAMOND_AXE, 115, 0));
 				expansionPacks.add(MaterialStorage.getMS(Material.DIAMOND_AXE, 116, 0));
 			}
-		} else if(true || MANUALLYSELECT14){
+		} else if (true || MANUALLYSELECT14) {
 			//1.14. Use crossbows
 			CustomItemManager.registerItemType(getDataFolder(), "gun", new me.zombie_striker.customitemmanager.versions.V1_14.CustomGunItem());
 		}
@@ -1031,7 +1085,7 @@ public class QAMain extends JavaPlugin {
 		if (enableCreationOfFiles) {
 			CustomItemManager.getItemType("gun").initItems(getDataFolder());
 		}
-		if(CustomItemManager.getItemType("gun") !=null){
+		if (CustomItemManager.getItemType("gun") != null) {
 			CustomItemManager.getItemType("gun").initIronSights(getDataFolder());
 		}
 
@@ -1080,46 +1134,36 @@ public class QAMain extends JavaPlugin {
 		BoundingBoxManager.initEntityTypeBoundingBoxes();
 	}
 
-
-	public static void registerCraftEntityNames(HashMap<MaterialStorage, ?> regMaps) {
-		if (null != regMaps && !regMaps.isEmpty()) {
-			for (Object item: regMaps.values()) {
-				try {
-					ItemStack[] itemStacks = ((CustomBaseObject)item).getIngredients();
-					if (null != itemStacks && itemStacks.length > 0) {
-						for (ItemStack itemStack: itemStacks) {
-							String itemName = itemStack.getType().name();
-							String showName = ChatColor.translateAlternateColorCodes('&', (String) QAMain.m.a("EntityType." + itemName, itemName));
-							craftingEntityNames.put(itemName, showName);
-						}
-					}
-				} catch (Exception e) {
-					//
-				}
+	public ItemStack[] convertIngredients(List<String> e) {
+		Object[] list = convertIngredientsRaw(e);
+		ItemStack[] li = new ItemStack[list.length];
+		for (int i = 0; i < list.length; i++) {
+			if (list[i] instanceof ItemStack) {
+				li[i] = (ItemStack) list[i];
 			}
 		}
-	}
+		return li;
 
-	public static String findCraftEntityName(String itemName, String defaultName) {
-		String value = craftingEntityNames.get(itemName);
-		if (null == value || value.trim().length() <= 0) {
-			value = craftingEntityNames.put(itemName, defaultName);
-		}
-		return value;
 	}
 
 	@SuppressWarnings("deprecation")
-	public ItemStack[] convertIngredients(List<String> e) {
-		ItemStack[] list = new ItemStack[e.size()];
+	public Object[] convertIngredientsRaw(List<String> e) {
+		Object[] list = new Object[e.size()];
 		for (int i = 0; i < e.size(); i++) {
+			ItemStack temp = null;
+			if (!e.get(i).contains(",")) {
+				list[i] = e.get(i);
+				continue;
+			}
 			String[] k = e.get(i).split(",");
 
-			ItemStack temp = null;
 			try {
 				temp = new ItemStack(Material.matchMaterial(k[0]));
 			} catch (Exception e2) {
-				// temp = new ItemStack(Integer.parseInt(k[0]));
+				e2.printStackTrace();
 			}
+			if (temp == null)
+				continue;
 			if (k.length > 1)
 				temp.setDurability(Short.parseShort(k[1]));
 			if (k.length > 2)
@@ -1176,7 +1220,6 @@ public class QAMain extends JavaPlugin {
 					if (e.getValue() instanceof AttachmentBase) {
 						if (b(e.getValue().getName(), args[1]))
 							s.add(e.getValue().getName());
-
 					} else if (b(e.getValue().getName(), args[1]))
 						s.add(e.getValue().getName());
 				}
@@ -1304,7 +1347,6 @@ public class QAMain extends JavaPlugin {
 
 					return true;
 				}
-
 
 
 				if (args[0].equalsIgnoreCase("listItemIds")) {
@@ -1579,9 +1621,9 @@ public class QAMain extends JavaPlugin {
 	public void reloadConfig() {
 		if (configFile == null) {
 			configFile = new File(this.getDataFolder(), "config.yml");
-			if(!this.getDataFolder().exists())
+			if (!this.getDataFolder().exists())
 				this.getDataFolder().mkdirs();
-			if(!configFile.exists()) {
+			if (!configFile.exists()) {
 				try {
 					configFile.createNewFile();
 				} catch (IOException e) {

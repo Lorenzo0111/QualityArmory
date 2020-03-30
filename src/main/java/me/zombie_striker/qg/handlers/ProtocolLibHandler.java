@@ -119,12 +119,6 @@ public class ProtocolLibHandler {
 								e.printStackTrace();
 							}
 
-							/*try{
-								ironsights = ironsights.getClass().getMethod("cloneItemStack", new Class[0]).invoke(is,new Class[0]);
-							}catch (Error|Exception e43){
-								e43.printStackTrace();
-							}*/
-
 							event.getPacket().getModifier().write(2, is);
 
 							new BukkitRunnable() {
