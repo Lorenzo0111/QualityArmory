@@ -15,12 +15,11 @@ public class IronsightsHandler {
 	public static Material ironsightsMaterial = Material.DIAMOND_AXE;
 	public static int ironsightsData = 21;
 	public static String ironsightsDisplay = "Iron Sights Enabled";
-	public static Map<Player, ItemStack> offHandStorage = new HashMap<>();
 
 
 	public static void aim(Player player){
 			if(!QualityArmory.isIronSights(player.getItemInHand())){
-				offHandStorage.put(player, player.getInventory().getItemInOffHand());
+				//offHandStorage.put(player, player.getInventory().getItemInOffHand());
 				if(player.getInventory().getItemInOffHand()!=null){
 					player.getInventory().addItem(player.getInventory().getItemInOffHand());
 				}
@@ -39,8 +38,8 @@ public class IronsightsHandler {
 					QAMain.toggleNightvision(player, null, false);
 				}
 				player.getInventory().setItemInMainHand(player.getInventory().getItemInOffHand());
-				player.getInventory().setItemInOffHand(offHandStorage.get(player));
-				offHandStorage.remove(player);
+				player.getInventory().setItemInOffHand(null);
+				//offHandStorage.remove(player);
 			}
 	}
 

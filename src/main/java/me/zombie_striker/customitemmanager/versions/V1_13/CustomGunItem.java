@@ -224,11 +224,19 @@ public class CustomGunItem extends AbstractItem {
 						"P30[Silenced]", null, m(23),  Arrays.asList(
 								new String[]{getIngString(Material.IRON_INGOT, 0, 4), "p30"}), 1000, "p30")
 				.setWeaponSound(WeaponSounds.SILENCEDSHOT).done();
-		GunYMLCreator
-				.createAttachment(false, dataFolder, false, "default_awp_asiimov", "awpasiimov",
-						"AWP[Asiimov-skin]", null, m(24), Arrays.asList(
-								new String[]{getIngString(Material.BONE_MEAL, 0, 1), "awp"}), 1000, "awp")
-				.setUseOffhand(false).done();
+		try {
+			GunYMLCreator
+					.createAttachment(false, dataFolder, false, "default_awp_asiimov", "awpasiimov",
+							"AWP[Asiimov-skin]", null, m(24), Arrays.asList(
+									new String[]{getIngString(Material.BONE_MEAL, 0, 1), "awp"}), 1000, "awp")
+					.setUseOffhand(false).done();
+		}catch(Error|Exception e4){
+			GunYMLCreator
+					.createAttachment(false, dataFolder, false, "default_awp_asiimov", "awpasiimov",
+							"AWP[Asiimov-skin]", null, m(24), Arrays.asList(
+									new String[]{getIngString(Material.WHITE_DYE, 0, 1), "awp"}), 1000, "awp")
+					.setUseOffhand(false).done();
+		}
 
 		GunYMLCreator
 				.createNewDefaultGun(dataFolder, "m4a1s", "M4A1s", 44, stringsMetalRif, WeaponType.RIFLE,

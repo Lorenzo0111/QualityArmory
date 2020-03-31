@@ -445,8 +445,9 @@ public class GunUtil {
 					if(g.getChargingVal()!= null && g.getChargingVal().isCharging(player)){
 						return;
 					}
-					if ((g.hasIronSights() && !IronsightsHandler.isAiming(player) )|| (!g.hasIronSights() && (player.isSneaking() == QAMain.enableSwapSingleShotOnAim))) {
+					if ((!g.hasIronSights() || !IronsightsHandler.isAiming(player) ) && ((player.isSneaking() == QAMain.enableSwapSingleShotOnAim))) {
 						cancel();
+						QAMain.DEBUG("Stopping Automatic Firing");
 						rapidfireshooters.remove(player.getUniqueId());
 						return;
 					}

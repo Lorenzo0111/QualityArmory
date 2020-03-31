@@ -601,7 +601,7 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
 					QAMain.DEBUG("Reloading message 1!");
 					return true;
 				}
-				if (isAutomatic() && GunUtil.rapidfireshooters.containsKey(e.getPlayer().getUniqueId())) {
+				if (!isAutomatic() && GunUtil.rapidfireshooters.containsKey(e.getPlayer().getUniqueId())) {
 					GunUtil.rapidfireshooters.remove(e.getPlayer().getUniqueId()).cancel();
 					if (QAMain.enableReloadWhenOutOfAmmo)
 						if (getAmount(usedItem) <= 0) {
@@ -619,7 +619,6 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
 								}else if (playerHasAmmo(e.getPlayer())) {
 									QAMain.DEBUG("Trying to reload WITH AUTORELOAD. player has ammo");
 									reload(e.getPlayer());
-
 								} else {
 									if (QAMain.showOutOfAmmoOnItem) {
 										QAMain.DEBUG("UNSUPPORTED: Out of ammo displayed on item");

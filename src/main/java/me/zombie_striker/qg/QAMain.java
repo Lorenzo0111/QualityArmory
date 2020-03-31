@@ -612,6 +612,9 @@ public class QAMain extends JavaPlugin {
 	@Override
 	public void onEnable() {
 		main = this;
+		if(!this.getDataFolder().exists()){
+			this.getDataFolder().mkdirs();
+		}
 		supportWorldGuard = Bukkit.getPluginManager().isPluginEnabled("WorldGuard");
 		if (Bukkit.getPluginManager().getPlugin("PluginConstructorAPI") == null)
 			// new DependencyDownloader(this, 276723);
@@ -1251,16 +1254,6 @@ public class QAMain extends JavaPlugin {
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 		if (command.getName().equalsIgnoreCase("QualityArmory")) {
 			if (args.length > 0) {
-
-				if (args[0].equalsIgnoreCase("debug")) {
-					Gunner.createGunner(((Entity) sender).getLocation(), "ak47");
-				}
-				if (args[0].equalsIgnoreCase("debug2")) {
-					for (Gunner g : gunners) {
-						g.dispose();
-					}
-				}
-
 				if (args[0].equalsIgnoreCase("version")) {
 					sender.sendMessage(prefix + ChatColor.WHITE + " This server is using version " + ChatColor.GREEN
 							+ this.getDescription().getVersion() + ChatColor.WHITE + " of QualityArmory");

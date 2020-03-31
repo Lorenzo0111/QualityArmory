@@ -1,3 +1,9 @@
+1.1.164
+    - Fixed bonemeal error
+    - Fixed automatic weapons not working with right click
+    - Possible fix for file cannot be created error.
+    - Fixed offhand item duplication
+
 1.1.163
     - Added catch for invalid material names.
     - Fixed issue with Attachment Guns not being created correctly
