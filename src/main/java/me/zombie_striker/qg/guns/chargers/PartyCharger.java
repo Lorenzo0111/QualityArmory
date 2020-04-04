@@ -1,4 +1,4 @@
-package me.zombie_striker.qg.handlers.chargers;
+package me.zombie_striker.qg.guns.chargers;
 
 import org.bukkit.Effect;
 import org.bukkit.entity.Player;

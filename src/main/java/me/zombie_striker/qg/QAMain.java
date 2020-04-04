@@ -15,12 +15,13 @@ import me.zombie_striker.qg.config.GunYMLLoader;
 import me.zombie_striker.qg.config.MessagesYML;
 import me.zombie_striker.qg.guns.Gun;
 import me.zombie_striker.qg.guns.projectiles.*;
+import me.zombie_striker.qg.guns.reloaders.SlideReloader;
 import me.zombie_striker.qg.guns.utils.GunRefillerRunnable;
 import me.zombie_striker.qg.guns.utils.WeaponSounds;
 import me.zombie_striker.qg.handlers.*;
-import me.zombie_striker.qg.handlers.chargers.*;
-import me.zombie_striker.qg.handlers.reloaders.PumpactionReloader;
-import me.zombie_striker.qg.handlers.reloaders.SingleBulletReloader;
+import me.zombie_striker.qg.guns.chargers.*;
+import me.zombie_striker.qg.guns.reloaders.PumpactionReloader;
+import me.zombie_striker.qg.guns.reloaders.SingleBulletReloader;
 import me.zombie_striker.qg.listener.QAListener;
 import me.zombie_striker.qg.miscitems.ThrowableItems;
 import me.zombie_striker.qg.miscitems.ThrowableItems.ThrowableHolder;
@@ -774,6 +775,7 @@ public class QAMain extends JavaPlugin {
 
 		new PumpactionReloader();
 		new SingleBulletReloader();
+		new SlideReloader();
 
 		new MiniNukeProjectile();
 		new ExplodingRoundProjectile();

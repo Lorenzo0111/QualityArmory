@@ -51,7 +51,7 @@ public class GunUtil {
 				g.getCustomProjectile().spawn(g, p.getEyeLocation(), p, two);
 			}
 		} else {
-			shootInstantVector(g, p, sway, g.getDamage(), g.getBulletsPerShot(), g.getMaxDistance());
+			shootInstantVector(g, p, sway, g.getDurabilityDamage(), g.getBulletsPerShot(), g.getMaxDistance());
 		}
 	}
 
@@ -445,6 +445,12 @@ public class GunUtil {
 					if(g.getChargingVal()!= null && g.getChargingVal().isCharging(player)){
 						return;
 					}
+					if(QAMain.enableDurability && g.getDurabilityDamage(offhand?Update19OffhandChecker.getItemStackOFfhand(player):player.getItemInHand()) > 0){
+						player.playSound(player.getLocation(),WeaponSounds.METALHIT.getSoundName(),1,1);
+						cancel();
+						return;
+					}
+
 					if ((!g.hasIronSights() || !IronsightsHandler.isAiming(player) ) && ((player.isSneaking() == QAMain.enableSwapSingleShotOnAim))) {
 						cancel();
 						QAMain.DEBUG("Stopping Automatic Firing");
@@ -550,6 +556,7 @@ public class GunUtil {
 	}
 
 	public static void playShoot(final Gun g, final Player player) {
+		g.damageDurability(player);
 		new BukkitRunnable() {
 			@SuppressWarnings("deprecation")
 			@Override

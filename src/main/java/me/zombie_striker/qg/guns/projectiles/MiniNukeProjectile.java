@@ -72,7 +72,7 @@ public MiniNukeProjectile() {
 						s.getWorld().playEffect(s, Effect.valueOf("CLOUD"), 0);
 						player.getWorld().playSound(s, Sound.valueOf("EXPLODE"), 8, 0.7f);
 					}
-					ExplosionHandler.handleAOEExplosion(player, s, g.getDamage(), g.getExplosionRadius());
+					ExplosionHandler.handleAOEExplosion(player, s, g.getDurabilityDamage(), g.getExplosionRadius());
 					cancel();
 					return;
 				}

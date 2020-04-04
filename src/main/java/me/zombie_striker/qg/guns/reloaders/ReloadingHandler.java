@@ -1,4 +1,4 @@
-package me.zombie_striker.qg.handlers.reloaders;
+package me.zombie_striker.qg.guns.reloaders;
 
 import org.bukkit.entity.Player;
 

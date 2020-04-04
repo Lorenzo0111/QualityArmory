@@ -12,8 +12,8 @@ import me.zombie_striker.qg.guns.utils.WeaponSounds;
 import me.zombie_striker.qg.guns.utils.WeaponType;
 import me.zombie_striker.qg.handlers.IronsightsHandler;
 import me.zombie_striker.qg.handlers.MultiVersionLookup;
-import me.zombie_striker.qg.handlers.chargers.ChargingManager;
-import me.zombie_striker.qg.handlers.reloaders.ReloadingManager;
+import me.zombie_striker.qg.guns.chargers.ChargingManager;
+import me.zombie_striker.qg.guns.reloaders.ReloadingManager;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -131,7 +131,7 @@ public class CustomGunItem extends AbstractItem {
 				.createNewDefaultGun(dataFolder, "remington", "Remington", 8, stringsMetalRif,
 						WeaponType.SHOTGUN, null, false, "shell", 3, 8, 1000)
 				.setChargingHandler(ChargingManager.PUMPACTION)
-				.setReloadingHandler(ReloadingManager.PUMPACTIONRELOAD).setBulletsPerShot(20).setDistance(70)
+				.setReloadingHandler(ReloadingManager.PUMP_ACTION_RELOAD).setBulletsPerShot(20).setDistance(70)
 				.setRecoil(10).done();
 		GunYMLCreator
 				.createNewDefaultGun(dataFolder, "fnfal", "FN Fal", 9, stringsMetalRif, WeaponType.RIFLE,
@@ -142,7 +142,7 @@ public class CustomGunItem extends AbstractItem {
 						"rocket", 100, 1, 4000)
 				.setDelayShoot(1).setCustomProjectile(ProjectileManager.RPG)
 				.setCustomProjectileExplosionRadius(10).setCustomProjectileVelocity(2)// .setChargingHandler(ChargingManager.RPG)
-				.setReloadingHandler(ReloadingManager.SINGLERELOAD).setDistance(500).setParticle("SMOKE_LARGE")
+				.setReloadingHandler(ReloadingManager.SINGLE_RELOAD).setDistance(500).setParticle("SMOKE_LARGE")
 				.setRecoil(15).done();
 		GunYMLCreator
 				.createNewDefaultGun(dataFolder, "ump", "UMP", 11, stringsMetalRif, WeaponType.SMG,
@@ -159,12 +159,12 @@ public class CustomGunItem extends AbstractItem {
 				.createNewDefaultGun(dataFolder, "enfield", "Enfield", 18, stringsPistol,
 						WeaponType.PISTOL, null, true, "9mm", 3, 6, 200)
 				.setIsSecondaryWeapon(true).setChargingHandler(ChargingManager.REVOLVER)
-				.setReloadingHandler(ReloadingManager.SINGLERELOAD).done();
+				.setReloadingHandler(ReloadingManager.SINGLE_RELOAD).done();
 		GunYMLCreator
 				.createNewDefaultGun(dataFolder, "henryrifle", "Henry Rifle", 19, stringsGoldRif,
 						WeaponType.RIFLE, null, true, "556", 4, 6, 400)
 				.setChargingHandler(ChargingManager.BREAKACTION)
-				.setReloadingHandler(ReloadingManager.SINGLERELOAD).done();
+				.setReloadingHandler(ReloadingManager.SINGLE_RELOAD).done();
 		GunYMLCreator
 				.createNewDefaultGun(dataFolder, "mauser", "Mauser C96", 20, stringsPistol,
 						WeaponType.PISTOL, null, true, "9mm", 3, 12, 700)
@@ -198,7 +198,7 @@ public class CustomGunItem extends AbstractItem {
 		GunYMLCreator
 				.createNewDefaultGun(dataFolder, "magnum", "Magnum", 38, stringsPistol, WeaponType.PISTOL,
 						WeaponSounds.GUN_BIG, true, "9mm", 6, 6, 700)
-				.setChargingHandler(ChargingManager.REVOLVER).setReloadingHandler(ReloadingManager.SINGLERELOAD)
+				.setChargingHandler(ChargingManager.REVOLVER).setReloadingHandler(ReloadingManager.SINGLE_RELOAD)
 				.setIsSecondaryWeapon(true).setRecoil(10).done();
 		GunYMLCreator
 				.createNewDefaultGun(dataFolder, "awp", "AWP", 39, stringsMetalRif, WeaponType.SNIPER,
@@ -234,7 +234,7 @@ public class CustomGunItem extends AbstractItem {
 			GunYMLCreator
 					.createAttachment(false, dataFolder, false, "default_awp_asiimov", "awpasiimov",
 							"AWP[Asiimov-skin]", null, m(24), Arrays.asList(
-									new String[]{getIngString(Material.WHITE_DYE, 0, 1), "awp"}), 1000, "awp")
+									new String[]{getIngString(Material.IRON_INGOT, 0, 1), "awp"}), 1000, "awp")
 					.setUseOffhand(false).done();
 		}
 
@@ -275,7 +275,7 @@ public class CustomGunItem extends AbstractItem {
 						WeaponType.RPG, null, false, "rocket", 100, 1, 5000)
 				.setDelayShoot(1).setCustomProjectile(ProjectileManager.HOMING_RPG)
 				.setCustomProjectileExplosionRadius(10).setCustomProjectileVelocity(2)// .setChargingHandler(ChargingManager.HOMINGRPG)
-				.setReloadingHandler(ReloadingManager.SINGLERELOAD).setDistance(800).setNightVisionOnScope(true)
+				.setReloadingHandler(ReloadingManager.SINGLE_RELOAD).setDistance(800).setNightVisionOnScope(true)
 				.setParticle("SMOKE_LARGE").setRecoil(10).done();
 
 		GunYMLCreator
@@ -318,7 +318,7 @@ public class CustomGunItem extends AbstractItem {
 						WeaponSounds.WARHEAD_LAUNCH, false, "mininuke", 500, 1, 6000)
 				.setDelayShoot(1).setCustomProjectile(ProjectileManager.MINI_NUKE)
 				.setCustomProjectileExplosionRadius(10).setCustomProjectileVelocity(3)// .setChargingHandler(ChargingManager.MININUKELAUNCHER)
-				.setReloadingHandler(ReloadingManager.SINGLERELOAD).setDistance(500).setParticle(0.3, 0.9, 0.3, Material.COAL_BLOCK)
+				.setReloadingHandler(ReloadingManager.SINGLE_RELOAD).setDistance(500).setParticle(0.3, 0.9, 0.3, Material.COAL_BLOCK)
 				.setRecoil(5).done();
 		GunYMLCreator.createAmmo(true,dataFolder, false, "mininuke", "MiniNuke",Material.DIAMOND_AXE, 56,
 				stringsMini, 3000, 100, 1);
@@ -442,7 +442,7 @@ public class CustomGunItem extends AbstractItem {
 						WeaponType.RPG, WeaponSounds.WARHEAD_LAUNCH, true, "40mm", 100, 1, 5000)
 				.setDelayShoot(1).setCustomProjectile(ProjectileManager.EXPLODINGROUND)
 				.setCustomProjectileVelocity(2).setCustomProjectileExplosionRadius(6)// .setChargingHandler(ChargingManager.MININUKELAUNCHER)
-				.setReloadingHandler(ReloadingManager.SINGLERELOAD).setDistance(500)
+				.setReloadingHandler(ReloadingManager.SINGLE_RELOAD).setDistance(500)
 				.setParticle(0.001, 0.001, 0.001, Material.COAL_BLOCK).setRecoil(10).done();
 		GunYMLCreator
 				.createNewDefaultGun(dataFolder, "minigun", "Minigun", 101, stringsMetalRif,
@@ -489,7 +489,7 @@ public class CustomGunItem extends AbstractItem {
 		GunYMLCreator
 				.createNewDefaultGun(dataFolder, "sawedoffshotgun", "Sawed-off Shotgun", 109,
 						stringsMetalRif, WeaponType.SHOTGUN, null, true, "shell", 2, 2, 1000)
-				.setReloadingHandler(ReloadingManager.SINGLERELOAD).setDelayReload(1).setBulletsPerShot(20)
+				.setReloadingHandler(ReloadingManager.SINGLE_RELOAD).setDelayReload(1).setBulletsPerShot(20)
 				.setDistance(80).setRecoil(11).done();
 		GunYMLCreator
 				.createNewDefaultGun(dataFolder, "famas", "FAMAS-G2", 110, stringsMetalRif,
@@ -531,7 +531,7 @@ public class CustomGunItem extends AbstractItem {
 						WeaponType.RPG, WeaponSounds.WARHEAD_LAUNCH, true, "40mm", 100, 6, 60000)
 				.setDelayShoot(0.7).setCustomProjectile(ProjectileManager.EXPLODINGROUND)
 				.setCustomProjectileVelocity(2).setCustomProjectileExplosionRadius(6)// .setChargingHandler(ChargingManager.MININUKELAUNCHER)
-				.setReloadingHandler(ReloadingManager.SINGLERELOAD).setDelayReload(5).setDistance(500)
+				.setReloadingHandler(ReloadingManager.SINGLE_RELOAD).setDelayReload(5).setDistance(500)
 				.setParticle(0.001, 0.001, 0.001, Material.COAL_BLOCK).setRecoil(8).done();
 	}
 	@Override

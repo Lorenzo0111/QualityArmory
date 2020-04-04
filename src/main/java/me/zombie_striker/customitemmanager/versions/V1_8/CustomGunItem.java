@@ -11,8 +11,8 @@ import me.zombie_striker.qg.guns.projectiles.ProjectileManager;
 import me.zombie_striker.qg.guns.utils.WeaponSounds;
 import me.zombie_striker.qg.guns.utils.WeaponType;
 import me.zombie_striker.qg.handlers.MultiVersionLookup;
-import me.zombie_striker.qg.handlers.chargers.ChargingManager;
-import me.zombie_striker.qg.handlers.reloaders.ReloadingManager;
+import me.zombie_striker.qg.guns.chargers.ChargingManager;
+import me.zombie_striker.qg.guns.reloaders.ReloadingManager;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -111,7 +111,7 @@ public class CustomGunItem extends AbstractItem {
 							stringsRPG, WeaponType.RPG, null, false, "rocket", 100, 1, 4000)
 					.setMaterial(Material.DIAMOND_HOE).setOn18(true).setCustomProjectile(ProjectileManager.RPG)
 					.setCustomProjectileExplosionRadius(10).setCustomProjectileVelocity(2)// .setChargingHandler(ChargingManager.RPG)
-					.setReloadingHandler(ReloadingManager.SINGLERELOAD).setDistance(500)
+					.setReloadingHandler(ReloadingManager.SINGLE_RELOAD).setDistance(500)
 					.setParticle("SMOKE_LARGE").done();
 
 			// TODO: New guns for resourcepack
@@ -127,7 +127,7 @@ public class CustomGunItem extends AbstractItem {
 							false, "40mm", 100, 1, 5000)
 					.setDelayShoot(1).setCustomProjectile(ProjectileManager.EXPLODINGROUND)
 					.setCustomProjectileVelocity(2).setCustomProjectileExplosionRadius(6)// .setChargingHandler(ChargingManager.MININUKELAUNCHER)
-					.setReloadingHandler(ReloadingManager.SINGLERELOAD).setDistance(500)
+					.setReloadingHandler(ReloadingManager.SINGLE_RELOAD).setDistance(500)
 					.setParticle(0.001, 0.001, 0.001, Material.COAL_BLOCK).setRecoil(10).setMaterial(Material.PRISMARINE_SHARD)
 					.setOn18(true).done();
 			GunYMLCreator

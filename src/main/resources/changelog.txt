@@ -1,3 +1,11 @@
+1.1.165
+    - Added "SlideReloader" which adds reloading sounds for pistol with slides
+    - Added Uzicorn
+    - Revamped model location format (amazing, I know)
+    - Added out of ammo click sound if you try to fire a gun when its out of ammo
+    - Fixed bug where
+    - Fixed gun sway
+
 1.1.164
     - Fixed bonemeal error
     - Fixed automatic weapons not working with right click

@@ -11,7 +11,9 @@ public enum WeaponSounds {
 
 	LAZERSHOOT("bulletlazer"),
 
-	FLASHBANG("flashbang"), METALHIT("metalhit"), CHAINS("chainsmall"), DRIVING("driving"), CARSKID("carskid"),
+	FLASHBANG("flashbang"), METALHIT("metalhit"), CHAINS("chainsmall"),
+
+	DRIVING("driving"), DRIVING2("driving2"), DRIVING3("driving3"), CARSKID("carskid"),
 
 	SHOCKWAVE("shockwave"), LAZERFIRE("lazerfire"), GUN_STARWARS("bulletswblaster"), GUN_NEEDLER(
 			"bulletneedler"), GUN_HALOLAZER("bullethalolazer"), GUN_DEAGLE("bulletdeagle"),
@@ -21,6 +23,8 @@ public enum WeaponSounds {
 	HISS("block.lava.extinguish"), XP_ORG_PICKUP("entity.experience_orb.pickup"),
 
 	LIGHTSABER_SITH_START("sithsaberstart"),LIGHTSABER_LIGHT_START("lightsaberstart"),LIGHTSABER_HIT("saberhit"),
+
+	RELOAD_MAG_CLICK("reloadmagclick"),	OUT_OF_AMMO_CLICK("outofammoclick"),RELOAD_CLICK("reloadclick"),
 
 	DEFAULT("hurt");
 

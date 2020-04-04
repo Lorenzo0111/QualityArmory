@@ -57,7 +57,7 @@ public class SentinelQAHandler extends SentinelIntegration {
 						two);
 			}
 		} else {
-			GunUtil.shootInstantVector(g, ((Player) st.getLivingEntity()), sway, g.getDamage(), g.getBulletsPerShot(),
+			GunUtil.shootInstantVector(g, ((Player) st.getLivingEntity()), sway, g.getDurabilityDamage(), g.getBulletsPerShot(),
 					g.getMaxDistance());
 		}
 

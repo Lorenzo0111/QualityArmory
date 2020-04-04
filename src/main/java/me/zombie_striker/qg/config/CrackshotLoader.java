@@ -17,10 +17,10 @@ import me.zombie_striker.qg.guns.Gun;
 import me.zombie_striker.qg.guns.projectiles.ProjectileManager;
 import me.zombie_striker.qg.guns.utils.WeaponSounds;
 import me.zombie_striker.qg.guns.utils.WeaponType;
-import me.zombie_striker.qg.handlers.chargers.ChargingHandler;
-import me.zombie_striker.qg.handlers.chargers.ChargingManager;
-import me.zombie_striker.qg.handlers.reloaders.ReloadingHandler;
-import me.zombie_striker.qg.handlers.reloaders.ReloadingManager;
+import me.zombie_striker.qg.guns.chargers.ChargingHandler;
+import me.zombie_striker.qg.guns.chargers.ChargingManager;
+import me.zombie_striker.qg.guns.reloaders.ReloadingHandler;
+import me.zombie_striker.qg.guns.reloaders.ReloadingManager;
 
 public class CrackshotLoader {
 
@@ -39,7 +39,7 @@ public class CrackshotLoader {
 				s = WeaponSounds.GUN_MEDIUM;
 			GunYML yml = GunYMLCreator.createNewCustomGun(data, "crackshot_" + g.getName(), g.getName(),
 					g.getDisplayName(), g.getItemData().getData(), null, g.getWeaponType(), s, g.hasIronSights(),
-					g.getAmmoType().getName(), (int) g.getDamage(), g.getMaxBullets(), (int) g.getPrice());
+					g.getAmmoType().getName(), (int) g.getDurabilityDamage(), g.getMaxBullets(), (int) g.getPrice());
 			yml.setLore(g.getCustomLore());
 			yml.setSway(g.getSway());
 			yml.setAutomatic(g.isAutomatic());
@@ -139,22 +139,22 @@ public class CrackshotLoader {
 					break;
 				case "pump":
 					ch = ChargingManager.getHandler(ChargingManager.PUMPACTION);
-					rh = ReloadingManager.getHandler(ReloadingManager.PUMPACTIONRELOAD);
+					rh = ReloadingManager.getHandler(ReloadingManager.PUMP_ACTION_RELOAD);
 					break;
 				case "break":
 					ch = ChargingManager.getHandler(ChargingManager.BREAKACTION);
-					rh = ReloadingManager.getHandler(ReloadingManager.SINGLERELOAD);
+					rh = ReloadingManager.getHandler(ReloadingManager.SINGLE_RELOAD);
 					break;
 				case "revolver":
 					ch = ChargingManager.getHandler(ChargingManager.REVOLVER);
-					rh = ReloadingManager.getHandler(ReloadingManager.SINGLERELOAD);
+					rh = ReloadingManager.getHandler(ReloadingManager.SINGLE_RELOAD);
 					break;
 				}
 			}
 			if (crackshotFile.contains(name + ".Reload.Reload_Bullets_Individually")
 					&& crackshotFile.getBoolean(name + ".Reload.Reload_Bullets_Individually")) {
 				if (rh == null)
-					rh = ReloadingManager.getHandler(ReloadingManager.SINGLERELOAD);
+					rh = ReloadingManager.getHandler(ReloadingManager.SINGLE_RELOAD);
 				// ch = ChargingManager.getHandler(ChargingManager.REVOLVER);
 				reloadDelayInTicks *= maxbullets;
 			}

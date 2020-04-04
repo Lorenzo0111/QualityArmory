@@ -1,4 +1,4 @@
-package me.zombie_striker.qg.handlers.reloaders;
+package me.zombie_striker.qg.guns.reloaders;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,43 +10,36 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.guns.Gun;
+import me.zombie_striker.qg.guns.utils.WeaponSounds;
 
-public class PumpactionReloader implements ReloadingHandler {
+public class SingleBulletReloader implements ReloadingHandler {
 
 	List<UUID> timeR = new ArrayList<>();
 
-	public PumpactionReloader() {
+	public SingleBulletReloader() {
 		ReloadingManager.add(this);
 	}
 
 	@Override
 	public boolean isReloading(Player player) {
-		return false;
+		return timeR.contains(player.getUniqueId());
 	}
 
 	@Override
 	public double reload(final Player player, Gun g, int amountReloading) {
+		timeR.add(player.getUniqueId());
 		double time = (g.getReloadTime()) / g.getMaxBullets();
 		double time2 = time * amountReloading;
 		for (int i = 0; i < amountReloading; i++) {
-			final boolean k = (i + 1 == amountReloading);
 			new BukkitRunnable() {
 				@Override
 				public void run() {
 					try {
-						if (k) {
-							player.getWorld().playSound(player.getLocation(), Sound.BLOCK_PISTON_EXTEND, 5, 4f);
-							player.getWorld().playSound(player.getLocation(), Sound.BLOCK_SAND_BREAK, 8, 1.4f);
-						}
-						player.getWorld().playSound(player.getLocation(), Sound.BLOCK_PISTON_EXTEND, 5, 4f);
+						player.getWorld().playSound(player.getLocation(), WeaponSounds.RELOAD_BULLET.getSoundName(), 1, 1f);
 					} catch (Error e) {
 						try {
-							if (k) {
-								player.getWorld().playSound(player.getLocation(), Sound.valueOf("PISTON_EXTEND"), 5,
-										4f);
-								player.getWorld().playSound(player.getLocation(), Sound.valueOf("DIG_SAND"), 8, 1.4f);
-							}
 							player.getWorld().playSound(player.getLocation(), Sound.valueOf("PISTON_EXTEND"), 5, 4f);
+							player.getWorld().playSound(player.getLocation(), Sound.valueOf("DIG_SAND"), 8, 1.4f);
 						} catch (Error | Exception e43) {
 						}
 					}
@@ -66,7 +59,7 @@ public class PumpactionReloader implements ReloadingHandler {
 	@Override
 	public String getName() {
 
-		return ReloadingManager.PUMPACTIONRELOAD;
+		return ReloadingManager.SINGLE_RELOAD;
 	}
 
 }

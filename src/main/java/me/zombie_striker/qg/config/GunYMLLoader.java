@@ -10,8 +10,8 @@ import me.zombie_striker.qg.attachments.AttachmentBase;
 import me.zombie_striker.qg.guns.Gun;
 import me.zombie_striker.qg.guns.utils.WeaponSounds;
 import me.zombie_striker.qg.guns.utils.WeaponType;
-import me.zombie_striker.qg.handlers.chargers.ChargingManager;
-import me.zombie_striker.qg.handlers.reloaders.ReloadingManager;
+import me.zombie_striker.qg.guns.chargers.ChargingManager;
+import me.zombie_striker.qg.guns.reloaders.ReloadingManager;
 import me.zombie_striker.qg.miscitems.*;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -285,16 +285,17 @@ public class GunYMLLoader {
 		if (f2.contains("ammotype"))
 			g.setAmmo(AmmoType.getAmmo(f2.getString("ammotype")));
 
-		if (f2.contains("sway"))
-			g.setSway(f2.getDouble("sway"));
-		if (f2.contains("swayMultiplier"))
-			g.setSwayMultiplier(f2.getDouble("swayMultiplier"));
+		if (f2.contains("sway.defaultValue")) {
+			g.setSway(f2.getDouble("sway.defaultValue"));
+		}
+		if (f2.contains("sway.defaultMultiplier"))
+			g.setSwayMultiplier(f2.getDouble("sway.defaultMultiplier"));
 		if (f2.contains("enableIronSights"))
 			g.setHasIronsights(f2.getBoolean("enableIronSights"));
 		if (f2.contains("maxbullets"))
 			g.setMaxBullets(f2.getInt("maxbullets"));
 		if (f2.contains("damage"))
-			g.setDamage(f2.getInt("damage"));
+			g.setDurabilityDamage(f2.getInt("damage"));
 		if (f2.contains("durability"))
 			g.setDuribility(f2.getInt("durability"));
 		if (f2.contains("price"))

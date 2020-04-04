@@ -8,8 +8,8 @@ import org.bukkit.Material;
 
 import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.guns.utils.WeaponType;
-import me.zombie_striker.qg.handlers.chargers.ChargingHandler;
-import me.zombie_striker.qg.handlers.reloaders.ReloadingHandler;
+import me.zombie_striker.qg.guns.chargers.ChargingHandler;
+import me.zombie_striker.qg.guns.reloaders.ReloadingHandler;
 
 public class GunYML extends ArmoryYML {
 
@@ -24,7 +24,7 @@ public class GunYML extends ArmoryYML {
 		verify("enableIronSights", false);
 		verify("setZoomLevel", 0);
 		verify("ammotype", "556");
-		verify("sway", 0.2);
+		verify("sway.defaultValue", 0.2);
 		verify("firerate", 1);
 		verify("maxbullets", 0);
 		verify("delayForReload", 1.5);
@@ -48,7 +48,7 @@ public class GunYML extends ArmoryYML {
 
 		verify("drop-glow-color", "none");
 		verify("headshotMultiplier", 3.5);
-		verify("swayMultiplier", 2);
+		verify("sway.defaultMultiplier", 2);
 
 		verify("weaponsounds_volume",4);
 
@@ -71,7 +71,7 @@ public class GunYML extends ArmoryYML {
 	}
 
 	public GunYML setSwayMultiplier(double multiplier) {
-		set(false, "swayMultiplier", multiplier);
+		set(false, "sway.defaultMultiplier", multiplier);
 		return this;
 	}
 
@@ -201,7 +201,7 @@ public class GunYML extends ArmoryYML {
 	}
 
 	public GunYML setSway(double sway) {
-		set(false, "sway", sway);
+		set(false, "sway.defaultValue", sway);
 		return this;
 	}
 

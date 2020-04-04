@@ -7,7 +7,6 @@ import me.zombie_striker.customitemmanager.ArmoryBaseObject;
 import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.ammo.Ammo;
 import me.zombie_striker.qg.api.QualityArmory;
-import me.zombie_striker.qg.armor.ArmorObject;
 import me.zombie_striker.qg.attachments.AttachmentBase;
 import me.zombie_striker.qg.guns.Gun;
 import me.zombie_striker.qg.guns.utils.GunRefillerRunnable;
@@ -814,6 +813,10 @@ public class QAListener implements Listener {
 			return;
 		ItemStack prev = e.getPlayer().getInventory().getItem(e.getPreviousSlot());
 		ItemStack newslot = e.getPlayer().getInventory().getItem(e.getNewSlot());
+		if(QualityArmory.isIronSights(prev) && QualityArmory.isCustomItem(e.getPlayer().getInventory().getItemInOffHand())){
+			e.getPlayer().getInventory().setItem(e.getPreviousSlot(),e.getPlayer().getInventory().getItemInOffHand());
+			e.getPlayer().getInventory().setItemInOffHand(null);
+		}
 		if (QualityArmory.isCustomItem(newslot)) {
 			CustomBaseObject customBase = QualityArmory.getCustomItem(newslot);
 			try {
