@@ -1,5 +1,9 @@
 package me.zombie_striker.qg.guns.utils;
 
+import com.alessiodp.parties.api.Parties;
+import com.alessiodp.parties.api.interfaces.PartiesAPI;
+import com.alessiodp.parties.api.interfaces.Party;
+import com.alessiodp.parties.api.interfaces.PartyPlayer;
 import me.zombie_striker.customitemmanager.CustomBaseObject;
 import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.ammo.Ammo;
@@ -128,10 +132,14 @@ public class GunUtil {
 							}
 							if (QAMain.hasParties && (!QAMain.friendlyFire)) {
 								try {
-									if (com.alessiodp.parties.api.Parties.getApi().getPartyPlayer(e.getUniqueId())
-											.getPartyName().equalsIgnoreCase(com.alessiodp.parties.api.Parties.getApi()
-													.getPartyPlayer(p.getUniqueId()).getPartyName()))
-										continue;
+									PartiesAPI api = Parties.getApi();
+									String partyName = api.getPartyPlayer(p.getUniqueId()).getPartyName();
+									if (!partyName.isEmpty() && partyName.equalsIgnoreCase(api.getPartyPlayer(e.getUniqueId()).getPartyName())) {
+										Party party = api.getParty(partyName);
+										if (party != null && party.isFriendlyFireProtected()) {
+											continue;
+										}
+									}
 								} catch (Error | Exception e43) {
 
 								}
