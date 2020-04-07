@@ -2,41 +2,19 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="3a75e4d7-6f9a-4a9b-ac5e-112a5a655666" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/guns/reloaders/SlideReloader.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/libs/MythicMobs-4.9.0.jar" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/zombie_striker/customitemmanager/versions/V1_13/CustomGunItem.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/zombie_striker/customitemmanager/versions/V1_13/CustomGunItem.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/zombie_striker/customitemmanager/versions/V1_14/CustomGunItem.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/zombie_striker/customitemmanager/versions/V1_14/CustomGunItem.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/zombie_striker/customitemmanager/versions/V1_8/CustomGunItem.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/zombie_striker/customitemmanager/versions/V1_8/CustomGunItem.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/zombie_striker/customitemmanager/versions/V1_13/CustomGunItem.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/zombie_striker/customitemmanager/qa/versions/V1_13/CustomGunItem.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/zombie_striker/customitemmanager/versions/V1_13/ItemFactory.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/zombie_striker/customitemmanager/qa/versions/V1_13/ItemFactory.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/zombie_striker/customitemmanager/versions/V1_14/CustomGunItem.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/zombie_striker/customitemmanager/qa/versions/V1_14/CustomGunItem.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/zombie_striker/customitemmanager/versions/V1_14/ItemFactory.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/zombie_striker/customitemmanager/qa/versions/V1_14/ItemFactory.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/zombie_striker/customitemmanager/versions/V1_8/CustomGunItem.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/zombie_striker/customitemmanager/qa/versions/V1_8/CustomGunItem.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/zombie_striker/customitemmanager/versions/V1_8/ItemFactory.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/zombie_striker/customitemmanager/qa/versions/V1_8/ItemFactory.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/QAMain.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/QAMain.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/config/CrackshotLoader.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/config/CrackshotLoader.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/config/GunYML.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/config/GunYML.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/config/GunYMLLoader.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/config/GunYMLLoader.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/guns/Gun.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/guns/Gun.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/guns/projectiles/ExplodingRoundProjectile.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/guns/projectiles/ExplodingRoundProjectile.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/guns/projectiles/FireProjectile.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/guns/projectiles/FireProjectile.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/guns/projectiles/HomingRocketProjectile.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/guns/projectiles/HomingRocketProjectile.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/guns/projectiles/MiniNukeProjectile.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/guns/projectiles/MiniNukeProjectile.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/guns/projectiles/RocketProjectile.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/guns/projectiles/RocketProjectile.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/guns/utils/GunUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/guns/utils/GunUtil.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/guns/utils/WeaponSounds.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/guns/utils/WeaponSounds.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/handlers/chargers/BoltactionCharger.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/guns/chargers/BoltactionCharger.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/handlers/chargers/BreakactionCharger.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/guns/chargers/BreakactionCharger.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/handlers/chargers/BurstFireCharger.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/guns/chargers/BurstFireCharger.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/handlers/chargers/ChargingHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/guns/chargers/ChargingHandler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/handlers/chargers/ChargingManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/guns/chargers/ChargingManager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/handlers/chargers/DelayedBurstFireCharger.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/guns/chargers/DelayedBurstFireCharger.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/handlers/chargers/PartyCharger.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/guns/chargers/PartyCharger.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/handlers/chargers/PumpactionCharger.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/guns/chargers/PumpactionCharger.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/handlers/chargers/PushbackCharger.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/guns/chargers/PushbackCharger.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/handlers/chargers/RequireAimCharger.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/guns/chargers/RequireAimCharger.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/handlers/chargers/RevolverCharger.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/guns/chargers/RevolverCharger.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/handlers/reloaders/PumpactionReloader.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/guns/reloaders/PumpactionReloader.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/handlers/reloaders/ReloadingHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/guns/reloaders/ReloadingHandler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/handlers/reloaders/ReloadingManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/guns/reloaders/ReloadingManager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/handlers/reloaders/SingleBulletReloader.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/guns/reloaders/SingleBulletReloader.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/listener/QAListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/listener/QAListener.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/npcs_sentinel/SentinelQAHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/npcs_sentinel/SentinelQAHandler.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/resources/changelog.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/changelog.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -90,7 +68,7 @@
   <component name="PropertiesComponent">
     <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/src/main/java/me/zombie_striker/customitemmanager" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/libs" />
     <property name="project.structure.last.edited" value="Project" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.2" />
@@ -105,6 +83,7 @@
       <recent name="me.zombie_striker.qg.handlers" />
     </key>
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="F:\GitHub\QualityArmory\libs" />
       <recent name="F:\GitHub\QualityArmory\src\main\java\me\zombie_striker\customitemmanager" />
     </key>
   </component>
@@ -232,22 +211,22 @@
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
     <state x="301" y="0" key="#com.intellij.refactoring.rename.AutomaticRenamingDialog/0.0.1920.1160@0.0.1920.1160" timestamp="1586032542899" />
-    <state width="1876" height="181" key="GridCell.Tab.0.bottom" timestamp="1586033921523">
+    <state width="1876" height="181" key="GridCell.Tab.0.bottom" timestamp="1586034632872">
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
-    <state width="1876" height="181" key="GridCell.Tab.0.bottom/0.0.1920.1160@0.0.1920.1160" timestamp="1586033921523" />
-    <state width="1876" height="181" key="GridCell.Tab.0.center" timestamp="1586033921523">
+    <state width="1876" height="181" key="GridCell.Tab.0.bottom/0.0.1920.1160@0.0.1920.1160" timestamp="1586034632872" />
+    <state width="1876" height="181" key="GridCell.Tab.0.center" timestamp="1586034632872">
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
-    <state width="1876" height="181" key="GridCell.Tab.0.center/0.0.1920.1160@0.0.1920.1160" timestamp="1586033921523" />
-    <state width="1876" height="181" key="GridCell.Tab.0.left" timestamp="1586033921522">
+    <state width="1876" height="181" key="GridCell.Tab.0.center/0.0.1920.1160@0.0.1920.1160" timestamp="1586034632872" />
+    <state width="1876" height="181" key="GridCell.Tab.0.left" timestamp="1586034632872">
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
-    <state width="1876" height="181" key="GridCell.Tab.0.left/0.0.1920.1160@0.0.1920.1160" timestamp="1586033921522" />
-    <state width="1876" height="181" key="GridCell.Tab.0.right" timestamp="1586033921523">
+    <state width="1876" height="181" key="GridCell.Tab.0.left/0.0.1920.1160@0.0.1920.1160" timestamp="1586034632872" />
+    <state width="1876" height="181" key="GridCell.Tab.0.right" timestamp="1586034632872">
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
-    <state width="1876" height="181" key="GridCell.Tab.0.right/0.0.1920.1160@0.0.1920.1160" timestamp="1586033921523" />
+    <state width="1876" height="181" key="GridCell.Tab.0.right/0.0.1920.1160@0.0.1920.1160" timestamp="1586034632872" />
     <state x="666" y="207" key="refactoring.ChangeSignatureDialog" timestamp="1586033344895">
       <screen x="0" y="0" width="1920" height="1160" />
     </state>

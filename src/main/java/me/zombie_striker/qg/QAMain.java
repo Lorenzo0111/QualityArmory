@@ -1,9 +1,11 @@
 package me.zombie_striker.qg;
 
+import io.lumine.xikage.mythicmobs.MythicMobs;
 import me.zombie_striker.customitemmanager.CustomBaseObject;
 import me.zombie_striker.customitemmanager.CustomItemManager;
 import me.zombie_striker.customitemmanager.MaterialStorage;
 import me.zombie_striker.customitemmanager.OLD_ItemFact;
+import me.zombie_striker.customitemmanager.qa.versions.V1_13.CustomGunItem;
 import me.zombie_striker.qg.ammo.Ammo;
 import me.zombie_striker.qg.api.QualityArmory;
 import me.zombie_striker.qg.armor.ArmorObject;
@@ -1053,10 +1055,10 @@ public class QAMain extends JavaPlugin {
 // Chris: default has 1.14 ItemType
 		if (MANUALLYSELECT18 || !isVersionHigherThan(1, 9)) {
 			//1.8
-			CustomItemManager.registerItemType(getDataFolder(), "gun", new me.zombie_striker.customitemmanager.versions.V1_8.CustomGunItem());
+			CustomItemManager.registerItemType(getDataFolder(), "gun", new me.zombie_striker.customitemmanager.qa.versions.V1_8.CustomGunItem());
 		} else if (!isVersionHigherThan(1, 14) || MANUALLYSELECT113) {
 			//1.9 to 1.13
-			CustomItemManager.registerItemType(getDataFolder(), "gun", new me.zombie_striker.customitemmanager.versions.V1_13.CustomGunItem());
+			CustomItemManager.registerItemType(getDataFolder(), "gun", new CustomGunItem());
 			//Make sure vehicles are safe
 			if (!overrideURL) {
 				expansionPacks.add(MaterialStorage.getMS(Material.DIAMOND_AXE, 80, 0));
@@ -1083,7 +1085,7 @@ public class QAMain extends JavaPlugin {
 			}
 		} else if (true || MANUALLYSELECT14) {
 			//1.14. Use crossbows
-			CustomItemManager.registerItemType(getDataFolder(), "gun", new me.zombie_striker.customitemmanager.versions.V1_14.CustomGunItem());
+			CustomItemManager.registerItemType(getDataFolder(), "gun", new me.zombie_striker.customitemmanager.qa.versions.V1_14.CustomGunItem());
 		}
 
 		// Chris: if switch on, create default items.

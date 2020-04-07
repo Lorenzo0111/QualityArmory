@@ -803,6 +803,7 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
 			} else {
 				QAMain.DEBUG("About to fire single shot");
 				if (getAmount(usedItem) <= 0) {
+					QAMain.DEBUG("Out of ammo");
 
 					if(GunUtil.rapidfireshooters.containsKey(player.getUniqueId()))
 						GunUtil.rapidfireshooters.remove(player.getUniqueId()).cancel();
@@ -835,6 +836,7 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
 					shoot(player.getPlayer());
 				}else{
 					player.getPlayer().playSound(player.getPlayer().getLocation(),WeaponSounds.METALHIT.getSoundName(),1,1);
+					QAMain.DEBUG("Durablility less than 0");
 				}
 			}
 

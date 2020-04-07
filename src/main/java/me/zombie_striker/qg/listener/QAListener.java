@@ -652,7 +652,7 @@ public class QAListener implements Listener {
 	}
 
 	@SuppressWarnings({"deprecation"})
-	@EventHandler
+	@EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
 	public void onClick(final PlayerInteractEvent e) {
 		QAMain.DEBUG("InteractEvent Called. Custom item used = " + QualityArmory.isCustomItem(e.getPlayer().getItemInHand()));
 		if (!CustomItemManager.isUsingCustomData()) {

@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>me.zombie_striker</groupId>
     <artifactId>qg</artifactId>
-    <version>1.1.165</version>
+    <version>1.1.166</version>
     <name>QualityArmory</name>
 
     <repositories>
@@ -156,6 +156,14 @@
             <version>3.2.7</version>
         </dependency>
 
+        <!-- MythicMobs -->
+        <dependency>
+            <groupId>io.lumine.xikage</groupId>
+            <artifactId>mythicmobs</artifactId>
+            <version>1.0.50</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/libs/MythicMobs-4.9.0.jar</systemPath>
+        </dependency>
     </dependencies>
 
     <build>

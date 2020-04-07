@@ -1,3 +1,9 @@
+1.1.166
+    - AlessioDP:  Updated and fixed Parties support
+    - Fixed naming issues
+    - Added more debug messages
+    - Fixed event priority so other plugins can cancel gun events
+
 1.1.165
     - Added "SlideReloader" which adds reloading sounds for pistol with slides
     - Added Uzicorn
