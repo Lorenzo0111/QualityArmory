@@ -5,6 +5,7 @@ import me.zombie_striker.customitemmanager.CustomBaseObject;
 import me.zombie_striker.customitemmanager.CustomItemManager;
 import me.zombie_striker.customitemmanager.MaterialStorage;
 import me.zombie_striker.customitemmanager.OLD_ItemFact;
+import me.zombie_striker.customitemmanager.qa.ItemBridgePatch;
 import me.zombie_striker.customitemmanager.qa.versions.V1_13.CustomGunItem;
 import me.zombie_striker.qg.ammo.Ammo;
 import me.zombie_striker.qg.api.QualityArmory;
@@ -453,7 +454,8 @@ public class QAMain extends JavaPlugin {
 		if (!shop && obj.getIngredientsRaw() == null)
 			return false;
 		try {
-			ItemStack is = CustomItemManager.getItemFact("gun").getItem(obj.getItemData(), obj.getCraftingReturn());
+			ItemStack is = CustomItemManager.getItemType("gun").getItem(obj.getItemData().getMat(),obj.getItemData().getData(),obj.getItemData().getVariant());
+			is.setAmount(obj.getCraftingReturn());
 			ItemMeta im = is.getItemMeta();
 			List<String> lore = im.hasLore() ? im.getLore() : new ArrayList<>();
 			if (shop) {
@@ -628,6 +630,10 @@ public class QAMain extends JavaPlugin {
 			ParticleHandlers.initValues();
 		} catch (Error | Exception e5) {
 		}
+		if(Bukkit.getPluginManager().getPlugin("ItemBridge")!=null){
+			ItemBridgePatch.setup(this);
+		}
+
 		DEBUG(ChatColor.RED + "NOTICE ME");
 		reloadVals();
 		new BukkitRunnable() {
@@ -1280,6 +1286,17 @@ public class QAMain extends JavaPlugin {
 					}
 					return true;
 				}
+				if (args[0].equalsIgnoreCase("debug")) {
+					if (sender.hasPermission("qualityarmory.debug")) {
+						DEBUG = !DEBUG;
+						sender.sendMessage(prefix + "Console debugging set to "+DEBUG);
+					} else {
+						sender.sendMessage(prefix + ChatColor.RED + S_NOPERM);
+						return true;
+					}
+					return true;
+
+				}
 				if (args[0].equalsIgnoreCase("createNewAmmo")) {
 					if (sender.hasPermission("qualityarmory.createnewitem")) {
 						if (args.length >= 2) {
@@ -1361,10 +1378,6 @@ public class QAMain extends JavaPlugin {
 						sender.sendMessage(prefix + ChatColor.RED + S_NOPERM);
 						return true;
 					}
-				}
-				if (args[0].equalsIgnoreCase("debug")) {
-					BulletWoundHandler.bulletHit((Player) sender, 1);
-					return true;
 				}
 				if (args[0].equalsIgnoreCase("reload")) {
 					if (sender.hasPermission("qualityarmory.reload")) {
@@ -1452,11 +1465,11 @@ public class QAMain extends JavaPlugin {
 						ItemStack temp = null;
 
 						if (g instanceof Gun) {
-							temp = CustomItemManager.getItemFact("gun").getItem(g.getItemData(), 1);
+							temp = CustomItemManager.getItemType("gun").getItem(g.getItemData().getMat(),g.getItemData().getData(),g.getItemData().getVariant());
 						} else if (g instanceof Ammo) {
-							temp = CustomItemManager.getItemFact("gun").getItem(g.getItemData(), 1);
+							temp = CustomItemManager.getItemType("gun").getItem(g.getItemData().getMat(),g.getItemData().getData(),g.getItemData().getVariant());
 						} else {
-							temp = CustomItemManager.getItemFact("gun").getItem(g.getItemData(), g.getCraftingReturn());
+							temp = CustomItemManager.getItemType("gun").getItem(g.getItemData().getMat(),g.getItemData().getData(),g.getItemData().getVariant());
 							temp.setAmount(g.getCraftingReturn());
 						}
 						if (temp != null) {
@@ -1521,12 +1534,12 @@ public class QAMain extends JavaPlugin {
 						ItemStack temp;
 
 						if (g instanceof Gun) {
-							temp = CustomItemManager.getItemFact("gun").getItem(g.getItemData(), 1);
+							temp =CustomItemManager.getItemType("gun").getItem(g.getItemData().getMat(),g.getItemData().getData(),g.getItemData().getVariant());;
 							who.getInventory().addItem(temp);
 						} else if (g instanceof Ammo) {
 							QualityArmory.addAmmoToInventory(who, (Ammo) g, ((Ammo) g).getMaxAmount());
 						} else {
-							temp = CustomItemManager.getItemFact("gun").getItem(g.getItemData(), g.getCraftingReturn());
+							temp = CustomItemManager.getItemType("gun").getItem(g.getItemData().getMat(),g.getItemData().getData(),g.getItemData().getVariant());
 							temp.setAmount(g.getCraftingReturn());
 							who.getInventory().addItem(temp);
 						}

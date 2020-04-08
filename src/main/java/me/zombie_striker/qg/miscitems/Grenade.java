@@ -148,7 +148,7 @@ public class Grenade extends CustomBaseObject implements ThrowableItems {
 
 	@Override
 	public ItemStack getItemStack() {
-		return CustomItemManager.getItemFact("gun").getItem(this.getItemData(),1);
+		return CustomItemManager.getItemType("gun").getItem(this.getItemData().getMat(),this.getItemData().getData(),this.getItemData().getVariant());
 	}
 
 	public void removeGrenade(Player player) {

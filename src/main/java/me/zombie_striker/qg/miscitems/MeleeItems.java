@@ -63,6 +63,6 @@ public class MeleeItems extends CustomBaseObject implements ArmoryBaseObject{
 	}
 	@Override
 	public ItemStack getItemStack() {
-		return CustomItemManager.getItemFact("gun").getItem(this.getItemData(),1);
+		return CustomItemManager.getItemType("gun").getItem(this.getItemData().getMat(),this.getItemData().getData(),this.getItemData().getVariant());
 	}
 }

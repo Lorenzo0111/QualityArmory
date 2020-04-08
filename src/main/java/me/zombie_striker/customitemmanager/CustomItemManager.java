@@ -27,12 +27,6 @@ public class CustomItemManager {
 	public static AbstractItem getItemType(String key){
 		return customItemTypes.get(key);
 	}
-	public static AbstractItemFact getItemFact(String type){
-		return customItemTypes.get(type).getItemFactory();
-	}
-	public static AbstractItemFact getItemFact(AbstractItem type){
-		return type.getItemFactory();
-	}
 
 	public static boolean isUsingCustomData(){
 		try{

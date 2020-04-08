@@ -1,12 +1,11 @@
 package me.zombie_striker.customitemmanager.qa.versions.V1_13;
 
-import me.zombie_striker.customitemmanager.AbstractItem;
-import me.zombie_striker.customitemmanager.AbstractItemFact;
-import me.zombie_striker.customitemmanager.CustomItemManager;
-import me.zombie_striker.customitemmanager.OLD_ItemFact;
-import me.zombie_striker.customitemmanager.MaterialStorage;
+import me.zombie_striker.customitemmanager.*;
+import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.api.QualityArmory;
+import me.zombie_striker.qg.armor.ArmorObject;
 import me.zombie_striker.qg.config.GunYMLCreator;
+import me.zombie_striker.qg.guns.Gun;
 import me.zombie_striker.qg.guns.projectiles.ProjectileManager;
 import me.zombie_striker.qg.guns.utils.WeaponSounds;
 import me.zombie_striker.qg.guns.utils.WeaponType;
@@ -14,6 +13,7 @@ import me.zombie_striker.qg.handlers.IronsightsHandler;
 import me.zombie_striker.qg.handlers.MultiVersionLookup;
 import me.zombie_striker.qg.guns.chargers.ChargingManager;
 import me.zombie_striker.qg.guns.reloaders.ReloadingManager;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -22,6 +22,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -30,12 +31,60 @@ public class CustomGunItem extends AbstractItem {
 
 	@Override
 	public ItemStack getItem(Material material, int data, int variant) {
-		ItemStack is = new ItemStack(material,1, (short) data);
-		if(variant!=0) {
-			ItemMeta im = is.getItemMeta();
-			OLD_ItemFact.addVariantData(im, im.getLore(), variant);
+		CustomBaseObject base = QualityArmory.getCustomItem(MaterialStorage.getMS(material,data,variant));
+
+		if(base==null)
+			return null;
+
+		MaterialStorage ms = base.getItemData();
+		String displayname = base.getDisplayName();
+		if (ms == null || ms.getMat() == null)
+			return new ItemStack(Material.AIR);
+
+		ItemStack is = new ItemStack(ms.getMat(),1,(short)ms.getData());
+		if (ms.getData() < 0)
+			is.setDurability((short) 0);
+		ItemMeta im = is.getItemMeta();
+		if (im == null)
+			im = Bukkit.getServer().getItemFactory().getItemMeta(ms.getMat());
+		if (im != null) {
+			im.setDisplayName(displayname);
+			List<String> lore = base.getCustomLore()!=null?new ArrayList<>(base.getCustomLore()):new ArrayList<>();
+
+			if(base instanceof Gun)
+				lore.addAll(Gun.getGunLore((Gun) base, null, ((Gun) base).getMaxBullets()));
+			if (base instanceof ArmorObject)
+				lore.addAll(OLD_ItemFact.getArmorLore((ArmorObject) base));
+
+			OLD_ItemFact.addVariantData(im,lore,base);
+			im.setLore(lore);
+			if (QAMain.ITEM_enableUnbreakable) {
+				try {
+					im.setUnbreakable(true);
+				} catch (Error | Exception e34) {
+				}
+			}
+			try {
+				if (QAMain.ITEM_enableUnbreakable) {
+					im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_UNBREAKABLE);
+				}
+				im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_ATTRIBUTES);
+				im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_DESTROYS);
+			} catch (Error e) {
+
+			}
+			if(variant!=0) {
+				OLD_ItemFact.addVariantData(im, im.getLore(), variant);
+			}
+			is.setItemMeta(im);
+		} else {
+			// Item meta is still null. Catch and report.
+			QAMain.getInstance().getLogger()
+					.warning(QAMain.prefix + " ItemMeta is null for " + base.getName() + ". I have");
 		}
-		return QualityArmory.getCustomItemAsItemStack(QualityArmory.getCustomItem(is));
+		is.setAmount(1);
+		return is;
+
 	}
 
 
@@ -560,12 +609,5 @@ public class CustomGunItem extends AbstractItem {
 	}
 	public static MaterialStorage m(int d) {
 		return MaterialStorage.getMS(Material.DIAMOND_AXE, d, 0);
-	}
-
-	private AbstractItemFact fact = new ItemFactory();
-
-	@Override
-	public AbstractItemFact getItemFactory() {
-		return fact;
 	}
 }

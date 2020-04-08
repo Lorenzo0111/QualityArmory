@@ -6,6 +6,7 @@ import me.zombie_striker.customitemmanager.MaterialStorage;
 import me.zombie_striker.customitemmanager.ArmoryBaseObject;
 import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.ammo.Ammo;
+import me.zombie_striker.qg.api.QACustomItemInteractEvent;
 import me.zombie_striker.qg.api.QualityArmory;
 import me.zombie_striker.qg.attachments.AttachmentBase;
 import me.zombie_striker.qg.guns.Gun;
@@ -315,7 +316,7 @@ public class QAListener implements Listener {
 											.replaceAll("%cost%", "" + g.getPrice()));
 						} else
 							QAMain.removeForIngre((Player) e.getWhoClicked(), g);
-						ItemStack s = CustomItemManager.getItemFact("gun").getItem(g.getItemData(), g.getCraftingReturn());
+						ItemStack s = CustomItemManager.getItemType("gun").getItem(g.getItemData().getMat(),g.getItemData().getData(),g.getItemData().getVariant());
 						e.getWhoClicked().getInventory().addItem(s);
 						QAMain.shopsSounds(e, shop);
 						DEBUG("Buy-Item");
@@ -430,7 +431,7 @@ public class QAListener implements Listener {
 								for (Gun g2 : QAMain.gunRegister.values()) {
 									if (g2.is18Support()) {
 										if (g2.getDisplayName().equals(g.getDisplayName())) {
-											e.getItem().setItemStack(CustomItemManager.getItemFact("gun").getItem(g2.getItemData(), 1));
+											e.getItem().setItemStack(CustomItemManager.getItemType("gun").getItem(g2.getItemData().getMat(),g2.getItemData().getData(),g2.getItemData().getVariant()));
 											QAMain.DEBUG("Custom-validation check 1");
 											return;
 										}
@@ -441,7 +442,7 @@ public class QAListener implements Listener {
 								for (Gun g2 : QAMain.gunRegister.values()) {
 									if (g2.is18Support()) {
 										if (g2.getAmmoType().equals(g.getAmmoType())) {
-											e.getItem().setItemStack(CustomItemManager.getItemFact("gun").getItem(g2.getItemData(), 1));
+											e.getItem().setItemStack(CustomItemManager.getItemType("gun").getItem(g2.getItemData().getMat(),g2.getItemData().getData(),g2.getItemData().getVariant()));
 											QAMain.DEBUG("Custom-validation check 2");
 											return;
 										}
@@ -455,7 +456,7 @@ public class QAListener implements Listener {
 									for (Gun g2 : QAMain.gunRegister.values()) {
 										if (!g2.is18Support()) {
 											if (g2.getDisplayName().equals(g.getDisplayName())) {
-												e.getItem().setItemStack(CustomItemManager.getItemFact("gun").getItem(g2.getItemData(), 1));
+												e.getItem().setItemStack(CustomItemManager.getItemType("gun").getItem(g2.getItemData().getMat(),g2.getItemData().getData(),g2.getItemData().getVariant()));
 												QAMain.DEBUG("Custom-validation check 3");
 												return;
 											}
@@ -466,7 +467,7 @@ public class QAListener implements Listener {
 									for (Gun g2 : QAMain.gunRegister.values()) {
 										if (!g2.is18Support()) {
 											if (g2.getAmmoType().equals(g.getAmmoType())) {
-												e.getItem().setItemStack(CustomItemManager.getItemFact("gun").getItem(g2.getItemData(), 1));
+												e.getItem().setItemStack(CustomItemManager.getItemType("gun").getItem(g2.getItemData().getMat(),g2.getItemData().getData(),g2.getItemData().getVariant()));
 												QAMain.DEBUG("Custom-validation check 4");
 												return;
 											}
@@ -575,8 +576,10 @@ public class QAListener implements Listener {
 	}
 
 	@SuppressWarnings("deprecation")
-	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+	@EventHandler(priority = EventPriority.MONITOR)
 	public void onClickMONITOR(final PlayerInteractEvent e) {
+		if(e.isCancelled())
+			return;
 		if (QAMain.ignoreSkipping)
 			return;
 
@@ -652,7 +655,7 @@ public class QAListener implements Listener {
 	}
 
 	@SuppressWarnings({"deprecation"})
-	@EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
+	@EventHandler(priority = EventPriority.LOWEST)
 	public void onClick(final PlayerInteractEvent e) {
 		QAMain.DEBUG("InteractEvent Called. Custom item used = " + QualityArmory.isCustomItem(e.getPlayer().getItemInHand()));
 		if (!CustomItemManager.isUsingCustomData()) {
@@ -717,6 +720,11 @@ public class QAListener implements Listener {
 		if (object == null)
 			return;
 		QAMain.DEBUG("It Is a custom item! = " + object.getName());
+
+		QACustomItemInteractEvent event = new QACustomItemInteractEvent(e.getPlayer(),object);
+		Bukkit.getPluginManager().callEvent(event);
+		if(event.isCanceled())
+			return;
 
 		if (QAMain.kickIfDeniedRequest && QAMain.sentResourcepack.containsKey(e.getPlayer().getUniqueId())
 				&& System.currentTimeMillis() - QAMain.sentResourcepack.get(e.getPlayer().getUniqueId()) >= 3000) {

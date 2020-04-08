@@ -156,6 +156,15 @@
             <version>3.2.7</version>
         </dependency>
 
+        <!-- LightAPI -->
+        <dependency>
+            <groupId>com.jojodmo</groupId>
+            <artifactId>ItemBridge</artifactId>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/libs/ItemBridge.jar</systemPath>
+            <version>IDK</version>
+        </dependency>
+
         <!-- MythicMobs -->
         <dependency>
             <groupId>io.lumine.xikage</groupId>

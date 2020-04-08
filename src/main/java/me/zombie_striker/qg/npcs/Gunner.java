@@ -34,7 +34,7 @@ public class Gunner {
 		if (g == null) {
 			Bukkit.broadcastMessage("gun is null");
 		} else {
-			((Player) gunner.gunner.getEntity()).setItemInHand(CustomItemManager.getItemFact("gun").getItem(g.getItemData(),1));
+			((Player) gunner.gunner.getEntity()).setItemInHand(CustomItemManager.getItemType("gun").getItem(g.getItemData().getMat(),g.getItemData().getData(),g.getItemData().getVariant()));
 		}
 		gunner.gunner.getDefaultGoalController().addGoal(new Gunnergoal(gunner, g), 1);
 		

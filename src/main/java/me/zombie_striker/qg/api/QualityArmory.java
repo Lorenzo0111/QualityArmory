@@ -60,6 +60,9 @@ public class QualityArmory {
 	public static void registerNewUsedExpansionItem(Material used, int id, int var) {
 		QAMain.expansionPacks.add(MaterialStorage.getMS(used, id, var));
 	}
+	public static void registerNewUsedExpansionItem(MaterialStorage ms) {
+		QAMain.expansionPacks.add(ms);
+	}
 
 	public static Iterator<Gun> getGuns(){
 		return QAMain.gunRegister.values().iterator();
@@ -576,11 +579,11 @@ public class QualityArmory {
 	}
 
 	public static ItemStack getCustomItemAsItemStack(String name) {
-		return CustomItemManager.getItemFact("gun").getItem(getCustomItemByName(name).getItemData(),1);
+		return getCustomItemAsItemStack(getCustomItemByName(name));
 	}
 
 	public static ItemStack getCustomItemAsItemStack(CustomBaseObject obj) {
-		return CustomItemManager.getItemFact("gun").getItem(obj.getItemData(),1);
+		return CustomItemManager.getItemType("gun").getItem(obj.getItemData().getMat(),obj.getItemData().getData(),obj.getItemData().getVariant());
 	}
 
 	public static ItemStack getIronSightsItemStack() {
@@ -621,7 +624,7 @@ public class QualityArmory {
 		}
 		if (remaining > 0) {
 			if (player.getInventory().firstEmpty() >= 0) {
-				ItemStack is = CustomItemManager.getItemFact("gun").getItem(a.getItemData(),1);
+				ItemStack is = getCustomItemAsItemStack(a);
 				is.setAmount(remaining);
 				player.getInventory().addItem(is);
 				remaining = 0;

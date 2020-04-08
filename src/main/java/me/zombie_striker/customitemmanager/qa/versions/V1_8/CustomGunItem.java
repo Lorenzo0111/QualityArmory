@@ -1,29 +1,32 @@
 package me.zombie_striker.customitemmanager.qa.versions.V1_8;
 
-import me.zombie_striker.customitemmanager.AbstractItem;
-import me.zombie_striker.customitemmanager.AbstractItemFact;
-import me.zombie_striker.customitemmanager.CustomItemManager;
-import me.zombie_striker.customitemmanager.OLD_ItemFact;
+import me.zombie_striker.customitemmanager.*;
+import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.api.QualityArmory;
+import me.zombie_striker.qg.armor.ArmorObject;
+import me.zombie_striker.qg.attachments.AttachmentBase;
 import me.zombie_striker.qg.config.ArmoryYML;
 import me.zombie_striker.qg.config.GunYMLCreator;
+import me.zombie_striker.qg.guns.Gun;
 import me.zombie_striker.qg.guns.projectiles.ProjectileManager;
 import me.zombie_striker.qg.guns.utils.WeaponSounds;
 import me.zombie_striker.qg.guns.utils.WeaponType;
 import me.zombie_striker.qg.handlers.MultiVersionLookup;
 import me.zombie_striker.qg.guns.chargers.ChargingManager;
 import me.zombie_striker.qg.guns.reloaders.ReloadingManager;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 public class CustomGunItem extends AbstractItem {
 
-	@Override
+	/*@Override
 	public ItemStack getItem(Material material, int data, int variant) {
 		ItemStack is = new ItemStack(material, 1, (short) data);
 		if (variant != 0) {
@@ -31,8 +34,72 @@ public class CustomGunItem extends AbstractItem {
 			OLD_ItemFact.addVariantData(im, im.getLore(), variant);
 		}
 		return QualityArmory.getCustomItemAsItemStack(QualityArmory.getCustomItem(is));
-	}
+	}*/
 
+	@Override
+	public ItemStack getItem(Material material, int data, int variant) {
+		CustomBaseObject base = QualityArmory.getCustomItem(MaterialStorage.getMS(material,data,variant));
+
+		if(base==null)
+			return null;
+		MaterialStorage ms = base.getItemData();
+		String displayname = base.getDisplayName();
+		if (ms == null || ms.getMat() == null)
+			return new ItemStack(Material.AIR);
+
+		ItemStack is = new ItemStack(ms.getMat(),1,(short)ms.getData());
+		if (ms.getData() < 0)
+			is.setDurability((short) 0);
+		ItemMeta im = is.getItemMeta();
+		if (im == null)
+			im = Bukkit.getServer().getItemFactory().getItemMeta(ms.getMat());
+		if (im != null) {
+			im.setDisplayName(displayname);
+			List<String> lore = base.getCustomLore()!=null?new ArrayList<>(base.getCustomLore()):new ArrayList<>();
+
+			if(base instanceof Gun)
+				lore.addAll(Gun.getGunLore((Gun) base, null, ((Gun) base).getMaxBullets()));
+			if(base instanceof AttachmentBase)
+				lore.addAll(Gun.getGunLore(((AttachmentBase) base).getBaseGun(), null, ((AttachmentBase) base).getMaxBullets()));
+			if (base instanceof ArmorObject)
+				lore.addAll(OLD_ItemFact.getArmorLore((ArmorObject) base));
+
+			OLD_ItemFact.addVariantData(im,lore,base);
+
+			im.setLore(lore);
+			if (QAMain.ITEM_enableUnbreakable) {
+				try {
+					im.setUnbreakable(true);
+				} catch (Error | Exception e34) {
+					/*try {
+						im.spigot().setUnbreakable(true);
+					} catch (Error | Exception e344) {
+					}*/
+					//TODO: Readd Unbreakable support for 1.9
+				}
+			}
+			try {
+				if (QAMain.ITEM_enableUnbreakable) {
+					im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_UNBREAKABLE);
+				}
+				im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_ATTRIBUTES);
+				im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_DESTROYS);
+			} catch (Error e) {
+
+			}
+
+			if (variant != 0) {
+				OLD_ItemFact.addVariantData(im, im.getLore(), variant);
+			}
+			is.setItemMeta(im);
+		} else {
+			// Item meta is still null. Catch and report.
+			QAMain.getInstance().getLogger()
+					.warning(QAMain.prefix + " ItemMeta is null for " + base.getName() + ". I have");
+		}
+		is.setAmount(1);
+		return is;
+	}
 
 	@Override
 	public boolean isCustomItem(ItemStack is) {
@@ -176,12 +243,6 @@ public class CustomGunItem extends AbstractItem {
 	@Override
 	public void initIronSights(File dataFolder) {
 
-	}
-	private AbstractItemFact fact = new ItemFactory();
-
-	@Override
-	public AbstractItemFact getItemFactory() {
-		return fact;
 	}
 
 	public String getIngString(Material m, int durability, int amount) {

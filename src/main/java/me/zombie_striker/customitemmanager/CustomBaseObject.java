@@ -38,6 +38,7 @@ public class CustomBaseObject {
 	}
 
 	public List<String> getCustomLore() {
+		if(lore==null) return new ArrayList<>();
 		return new ArrayList<>(lore);
 	}
 

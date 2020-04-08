@@ -1,11 +1,12 @@
 package me.zombie_striker.customitemmanager.qa.versions.V1_14;
 
-import me.zombie_striker.customitemmanager.AbstractItem;
-import me.zombie_striker.customitemmanager.AbstractItemFact;
-import me.zombie_striker.customitemmanager.CustomItemManager;
-import me.zombie_striker.customitemmanager.MaterialStorage;
+import me.zombie_striker.customitemmanager.*;
+import me.zombie_striker.qg.QAMain;
+import me.zombie_striker.qg.ammo.Ammo;
 import me.zombie_striker.qg.api.QualityArmory;
+import me.zombie_striker.qg.armor.ArmorObject;
 import me.zombie_striker.qg.config.GunYMLCreator;
+import me.zombie_striker.qg.guns.Gun;
 import me.zombie_striker.qg.guns.projectiles.ProjectileManager;
 import me.zombie_striker.qg.guns.utils.WeaponSounds;
 import me.zombie_striker.qg.guns.utils.WeaponType;
@@ -13,21 +14,24 @@ import me.zombie_striker.qg.handlers.IronsightsHandler;
 import me.zombie_striker.qg.handlers.MultiVersionLookup;
 import me.zombie_striker.qg.guns.chargers.ChargingManager;
 import me.zombie_striker.qg.guns.reloaders.ReloadingManager;
+import me.zombie_striker.qg.handlers.SkullHandler;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.CrossbowMeta;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.SkullMeta;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 public class CustomGunItem extends AbstractItem {
-
-	private AbstractItemFact fact = new ItemFactory();
 
 	public static MaterialStorage m(int d) {
 		return MaterialStorage.getMS(Material.CROSSBOW, d, 0);
@@ -35,13 +39,75 @@ public class CustomGunItem extends AbstractItem {
 
 	@Override
 	public ItemStack getItem(Material material, int data, int variant) {
-		ItemStack is = QualityArmory.getCustomItemAsItemStack(QualityArmory.getCustomItem(material, data, variant));
-		if (is.getType() == Material.CROSSBOW) {
-			//Now the player will hold the crossbow like a gun
-			CrossbowMeta im = (CrossbowMeta) is.getItemMeta();
-			im.addChargedProjectile(new ItemStack(Material.VOID_AIR));
+		CustomBaseObject base = QualityArmory.getCustomItem(MaterialStorage.getMS(material,data,variant));
+
+		if (base == null)
+			return null;
+
+		MaterialStorage ms = base.getItemData();
+		String displayname = base.getDisplayName();
+		if (ms == null || ms.getMat() == null)
+			return new ItemStack(Material.AIR);
+
+		ItemStack is = new ItemStack(ms.getMat());
+		if (ms.getData() < 0)
+			is.setDurability((short) 0);
+
+
+		ItemMeta im = is.getItemMeta();
+		if (im == null)
+			im = Bukkit.getServer().getItemFactory().getItemMeta(ms.getMat());
+		if (im != null) {
+			im.setDisplayName(displayname);
+			List<String> lore = base.getCustomLore()!=null?new ArrayList<>(base.getCustomLore()):new ArrayList<>();
+
+			if (base instanceof Ammo) {
+				boolean setSkull = false;
+				if (((Ammo) base).isSkull() && ((Ammo) base).hasCustomSkin()) {
+					setSkull = true;
+					is = SkullHandler.getCustomSkull64(((Ammo) base).getCustomSkin().getBytes());
+				}
+				if (((Ammo) base).isSkull() && !setSkull) {
+					((SkullMeta) im).setOwner(((Ammo) base).getSkullOwner());
+				}
+			}
+
+
+			if(base instanceof Gun)
+				lore.addAll(Gun.getGunLore((Gun) base, null, ((Gun) base).getMaxBullets()));
+			if (base instanceof ArmorObject)
+				lore.addAll(OLD_ItemFact.getArmorLore((ArmorObject) base));
+
+			im.setLore(lore);
+			if (QAMain.ITEM_enableUnbreakable) {
+				try {
+					im.setUnbreakable(true);
+				} catch (Error | Exception e34) {
+				}
+			}
+			try {
+				if (QAMain.ITEM_enableUnbreakable) {
+					im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_UNBREAKABLE);
+				}
+				im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_ATTRIBUTES);
+				im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_DESTROYS);
+			} catch (Error e) {
+
+			}
+			if (ms.getData() >= 0)
+				im.setCustomModelData(ms.getData());
+
+			if (is.getType() == Material.CROSSBOW) {
+				//Now the player will hold the crossbow like a gun
+			//	CrossbowMeta im2 = (CrossbowMeta) im;
+			//	im2.addChargedProjectile(new ItemStack(Material.VOID_AIR));
+			}
 			is.setItemMeta(im);
+		} else {
+			QAMain.getInstance().getLogger()
+					.warning(QAMain.prefix + " ItemMeta is null for " + base.getName() + ". I have");
 		}
+		is.setAmount(1);
 		return is;
 	}
 
@@ -111,6 +177,9 @@ public class CustomGunItem extends AbstractItem {
 						Material.BLAZE_POWDER, 0,
 						Arrays.asList(new String[]{getIngString(Material.BLAZE_ROD, 0, 1),}), 1, 1, 64, 2)
 				.setVariant(1).done();
+
+		//BACKPACK GREEN
+		QualityArmory.registerNewUsedExpansionItem(MaterialStorage.getMS(Material.PHANTOM_MEMBRANE,11,0));
 
 
 		GunYMLCreator.createAmmo(true, dataFolder, false, "mininuke", "MiniNuke", Material.PHANTOM_MEMBRANE, 9,
@@ -593,8 +662,4 @@ public class CustomGunItem extends AbstractItem {
 		return m.toString() + "," + durability + "," + amount;
 	}
 
-	@Override
-	public AbstractItemFact getItemFactory() {
-		return fact;
-	}
 }
