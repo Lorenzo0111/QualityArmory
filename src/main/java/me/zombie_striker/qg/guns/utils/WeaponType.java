@@ -3,7 +3,7 @@ package me.zombie_striker.qg.guns.utils;
 public enum WeaponType {
 	PISTOL(true), SMG(true), RPG(true), RIFLE(true), SHOTGUN(true), FLAMER(true), SNIPER(true), BIG_GUN(true), GRENADES(false), SMOKE_GRENADES(
 			false), FLASHBANGS(false), INCENDARY_GRENADES(false), MINES(
-					false), MELEE(false),  MISC(false), AMMO(false), HELMET(false), MEDKIT(false), LAZER(true);
+					false), MELEE(false),  MISC(false), AMMO(false), HELMET(false), MEDKIT(false), LAZER(true),BACKPACK(false),PARACHUTE(false),CUSTOM(false);
 
 	private boolean isGun;
 
@@ -11,7 +11,7 @@ public enum WeaponType {
 		return isGun;
 	}
 
-	private WeaponType(boolean isGun) {
+	WeaponType(boolean isGun) {
 		this.isGun = isGun;
 	}
 

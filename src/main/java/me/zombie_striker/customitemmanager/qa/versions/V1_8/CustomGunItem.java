@@ -26,23 +26,16 @@ import java.util.List;
 
 public class CustomGunItem extends AbstractItem {
 
-	/*@Override
-	public ItemStack getItem(Material material, int data, int variant) {
-		ItemStack is = new ItemStack(material, 1, (short) data);
-		if (variant != 0) {
-			ItemMeta im = is.getItemMeta();
-			OLD_ItemFact.addVariantData(im, im.getLore(), variant);
-		}
-		return QualityArmory.getCustomItemAsItemStack(QualityArmory.getCustomItem(is));
-	}*/
-
 	@Override
 	public ItemStack getItem(Material material, int data, int variant) {
-		CustomBaseObject base = QualityArmory.getCustomItem(MaterialStorage.getMS(material,data,variant));
+		return getItem(MaterialStorage.getMS(material,data,variant));
+	}
 
+	@Override
+		public ItemStack getItem(MaterialStorage ms) {
+		CustomBaseObject base = QualityArmory.getCustomItem(ms);
 		if(base==null)
 			return null;
-		MaterialStorage ms = base.getItemData();
 		String displayname = base.getDisplayName();
 		if (ms == null || ms.getMat() == null)
 			return new ItemStack(Material.AIR);
@@ -88,8 +81,8 @@ public class CustomGunItem extends AbstractItem {
 
 			}
 
-			if (variant != 0) {
-				OLD_ItemFact.addVariantData(im, im.getLore(), variant);
+			if (ms.getVariant() != 0) {
+				OLD_ItemFact.addVariantData(im, im.getLore(), ms.getVariant());
 			}
 			is.setItemMeta(im);
 		} else {
@@ -240,10 +233,6 @@ public class CustomGunItem extends AbstractItem {
 
 	}
 
-	@Override
-	public void initIronSights(File dataFolder) {
-
-	}
 
 	public String getIngString(Material m, int durability, int amount) {
 		return m.toString() + "," + durability + "," + amount;

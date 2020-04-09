@@ -39,12 +39,14 @@ public class CustomGunItem extends AbstractItem {
 
 	@Override
 	public ItemStack getItem(Material material, int data, int variant) {
-		CustomBaseObject base = QualityArmory.getCustomItem(MaterialStorage.getMS(material,data,variant));
+		return getItem(MaterialStorage.getMS(material,data,variant));
+	}
 
-		if (base == null)
+	@Override
+	public ItemStack getItem(MaterialStorage ms) {
+		CustomBaseObject base = QualityArmory.getCustomItem(ms);
+		if(base==null)
 			return null;
-
-		MaterialStorage ms = base.getItemData();
 		String displayname = base.getDisplayName();
 		if (ms == null || ms.getMat() == null)
 			return new ItemStack(Material.AIR);
@@ -121,6 +123,25 @@ public class CustomGunItem extends AbstractItem {
 		CustomItemManager.setResourcepack("https://www.dropbox.com/s/oj2pky2yh5li4mk/QualityArmoryV2.1.0.zip?dl=1");
 
 
+
+
+		File ironsights = new File(dataFolder, "default_ironsightstoggleitem.yml");
+		YamlConfiguration ironconfig = YamlConfiguration.loadConfiguration(ironsights);
+		if (!ironconfig.contains("displayname")) {
+			ironconfig.set("material", Material.CROSSBOW.name());
+			ironconfig.set("id", 68);
+			ironconfig.set("displayname", IronsightsHandler.ironsightsDisplay);
+			try {
+				ironconfig.save(ironsights);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		IronsightsHandler.ironsightsMaterial = Material.matchMaterial(ironconfig.getString("material"));
+		IronsightsHandler.ironsightsData = ironconfig.getInt("id");
+		IronsightsHandler.ironsightsDisplay = ironconfig.getString("displayname");
+
+
 		List<String> stringsWoodRif = Arrays.asList(new String[]{getIngString(Material.IRON_INGOT, 0, 12),
 				getIngString(MultiVersionLookup.getWood(), 0, 2), getIngString(Material.REDSTONE, 0, 5)});
 		List<String> stringsGoldRif = Arrays.asList(new String[]{getIngString(Material.IRON_INGOT, 0, 12),
@@ -180,6 +201,12 @@ public class CustomGunItem extends AbstractItem {
 
 		//BACKPACK GREEN
 		QualityArmory.registerNewUsedExpansionItem(MaterialStorage.getMS(Material.PHANTOM_MEMBRANE,11,0));
+		QualityArmory.registerNewUsedExpansionItem(MaterialStorage.getMS(Material.PHANTOM_MEMBRANE,12,0));
+		QualityArmory.registerNewUsedExpansionItem(MaterialStorage.getMS(Material.PHANTOM_MEMBRANE,13,0));
+		QualityArmory.registerNewUsedExpansionItem(MaterialStorage.getMS(Material.PHANTOM_MEMBRANE,14,0));
+		QualityArmory.registerNewUsedExpansionItem(MaterialStorage.getMS(Material.PHANTOM_MEMBRANE,15,0));
+		QualityArmory.registerNewUsedExpansionItem(MaterialStorage.getMS(Material.PHANTOM_MEMBRANE,16,0));
+		QualityArmory.registerNewUsedExpansionItem(MaterialStorage.getMS(Material.PHANTOM_MEMBRANE,17,0));
 
 
 		GunYMLCreator.createAmmo(true, dataFolder, false, "mininuke", "MiniNuke", Material.PHANTOM_MEMBRANE, 9,
@@ -506,7 +533,7 @@ public class CustomGunItem extends AbstractItem {
 				WeaponType.RIFLE, null, true, "762", 3, 71, 7000).setFullyAutomatic(3).setRecoil(2).setMaterial(Material.CROSSBOW).done();
 		GunYMLCreator
 				.createNewDefaultGun(dataFolder, "m79", "M79 \"Thumper\"", 55, stringsFatman,
-						WeaponType.RPG, WeaponSounds.WARHEAD_LAUNCH, true, "40mm", 100, 1, 5000)
+						WeaponType.RPG, WeaponSounds.THUMPER, true, "40mm", 100, 1, 5000)
 				.setDelayShoot(1).setCustomProjectile(ProjectileManager.EXPLODINGROUND)
 				.setCustomProjectileVelocity(2).setCustomProjectileExplosionRadius(6)// .setChargingHandler(ChargingManager.MININUKELAUNCHER)
 				.setReloadingHandler(ReloadingManager.SINGLE_RELOAD).setDistance(500).setMaterial(Material.CROSSBOW)
@@ -637,25 +664,6 @@ public class CustomGunItem extends AbstractItem {
 				WeaponType.PISTOL, WeaponSounds.LAZERSHOOT, true, null, 5, 69420, -1).setLore("&3No sway. Perfect for detecting bounding boxes.").setReloadingHandler(ReloadingManager.SLIDE_RELOAD).setIsSecondaryWeapon(true).setDelayShoot(0).setRecoil(0).setFullyAutomatic(12).setSway(0).setSwayMultiplier(0).setHeadShotMultiplier(12).setVariant(12).setMaterial(Material.CROSSBOW).done();
 
 
-	}
-
-	@Override
-	public void initIronSights(File dataFolder) {
-		File ironsights = new File(dataFolder, "default_ironsightstoggleitem.yml");
-		YamlConfiguration ironconfig = YamlConfiguration.loadConfiguration(ironsights);
-		if (!ironconfig.contains("displayname")) {
-			ironconfig.set("material", Material.CROSSBOW.name());
-			ironconfig.set("id", 68);
-			ironconfig.set("displayname", IronsightsHandler.ironsightsDisplay);
-			try {
-				ironconfig.save(ironsights);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-		IronsightsHandler.ironsightsMaterial = Material.matchMaterial(ironconfig.getString("material"));
-		IronsightsHandler.ironsightsData = ironconfig.getInt("id");
-		IronsightsHandler.ironsightsDisplay = ironconfig.getString("displayname");
 	}
 
 	public String getIngString(Material m, int durability, int amount) {

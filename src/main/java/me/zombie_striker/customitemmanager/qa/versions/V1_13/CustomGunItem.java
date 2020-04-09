@@ -31,12 +31,14 @@ public class CustomGunItem extends AbstractItem {
 
 	@Override
 	public ItemStack getItem(Material material, int data, int variant) {
-		CustomBaseObject base = QualityArmory.getCustomItem(MaterialStorage.getMS(material,data,variant));
+		return getItem(MaterialStorage.getMS(material,data,variant));
+	}
 
+	@Override
+	public ItemStack getItem(MaterialStorage ms) {
+		CustomBaseObject base = QualityArmory.getCustomItem(ms);
 		if(base==null)
 			return null;
-
-		MaterialStorage ms = base.getItemData();
 		String displayname = base.getDisplayName();
 		if (ms == null || ms.getMat() == null)
 			return new ItemStack(Material.AIR);
@@ -73,8 +75,8 @@ public class CustomGunItem extends AbstractItem {
 			} catch (Error e) {
 
 			}
-			if(variant!=0) {
-				OLD_ItemFact.addVariantData(im, im.getLore(), variant);
+			if(ms.getVariant()!=0) {
+				OLD_ItemFact.addVariantData(im, im.getLore(), ms.getVariant());
 			}
 			is.setItemMeta(im);
 		} else {
@@ -98,6 +100,22 @@ public class CustomGunItem extends AbstractItem {
 		CustomItemManager.setResourcepack("https://www.dropbox.com/s/b04i5eqtqwrh5ub/QualityArmoryV1.0.40.zip?dl=1");
 
 
+
+		File ironsights = new File(dataFolder,"default_ironsightstoggleitem.yml");
+		YamlConfiguration ironconfig = YamlConfiguration.loadConfiguration(ironsights);
+		if(!ironconfig.contains("displayname")){
+			ironconfig.set("material",Material.DIAMOND_AXE.name());
+			ironconfig.set("id",21);
+			ironconfig.set("displayname",IronsightsHandler.ironsightsDisplay);
+			try {
+				ironconfig.save(ironsights);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		IronsightsHandler.ironsightsMaterial = Material.matchMaterial(ironconfig.getString("material"));
+		IronsightsHandler.ironsightsData = ironconfig.getInt("id");
+		IronsightsHandler.ironsightsDisplay = ironconfig.getString("displayname");
 
 
 
@@ -582,25 +600,6 @@ public class CustomGunItem extends AbstractItem {
 				.setCustomProjectileVelocity(2).setCustomProjectileExplosionRadius(6)// .setChargingHandler(ChargingManager.MININUKELAUNCHER)
 				.setReloadingHandler(ReloadingManager.SINGLE_RELOAD).setDelayReload(5).setDistance(500)
 				.setParticle(0.001, 0.001, 0.001, Material.COAL_BLOCK).setRecoil(8).done();
-	}
-	@Override
-	public void initIronSights(File dataFolder) {
-
-		File ironsights = new File(dataFolder,"default_ironsightstoggleitem.yml");
-		YamlConfiguration ironconfig = YamlConfiguration.loadConfiguration(ironsights);
-		if(!ironconfig.contains("displayname")){
-			ironconfig.set("material",Material.DIAMOND_AXE.name());
-			ironconfig.set("id",21);
-			ironconfig.set("displayname",IronsightsHandler.ironsightsDisplay);
-			try {
-				ironconfig.save(ironsights);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-		IronsightsHandler.ironsightsMaterial = Material.matchMaterial(ironconfig.getString("material"));
-		IronsightsHandler.ironsightsData = ironconfig.getInt("id");
-		IronsightsHandler.ironsightsDisplay = ironconfig.getString("displayname");
 	}
 
 

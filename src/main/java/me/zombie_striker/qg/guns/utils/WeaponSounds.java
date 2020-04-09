@@ -26,6 +26,8 @@ public enum WeaponSounds {
 
 	RELOAD_MAG_CLICK("reloadmagclick"),	OUT_OF_AMMO_CLICK("outofammoclick"),RELOAD_CLICK("reloadclick"),
 
+	OPENBAG("openbag"),THUMPER("thumper"),PARTY_SHOT("partyshot"),
+
 	DEFAULT("hurt");
 
 	private String soundname;

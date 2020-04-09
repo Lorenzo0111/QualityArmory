@@ -32,7 +32,7 @@ public class CustomItemManager {
 		try{
 			new ItemStack(Material.DIAMOND_BLOCK).getItemMeta().hasCustomModelData();
 			return true;
-		}catch (Error|Exception e4){
+		}catch (Error | Exception e4){
 
 		}
 		return false;

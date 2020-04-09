@@ -1098,9 +1098,6 @@ public class QAMain extends JavaPlugin {
 		if (enableCreationOfFiles) {
 			CustomItemManager.getItemType("gun").initItems(getDataFolder());
 		}
-		if (CustomItemManager.getItemType("gun") != null) {
-			CustomItemManager.getItemType("gun").initIronSights(getDataFolder());
-		}
 
 
 		if (overrideURL) {
