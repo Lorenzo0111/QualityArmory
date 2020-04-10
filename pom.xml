@@ -156,7 +156,7 @@
             <version>3.2.7</version>
         </dependency>
 
-        <!-- LightAPI -->
+        <!-- ItemBridge -->
         <dependency>
             <groupId>com.jojodmo</groupId>
             <artifactId>ItemBridge</artifactId>

@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="3a75e4d7-6f9a-4a9b-ac5e-112a5a655666" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -36,7 +36,6 @@
     </option>
     <option name="importingSettings">
       <MavenImportingSettings>
-        <option name="importAutomatically" value="true" />
         <option name="jdkForImporter" value="10" />
       </MavenImportingSettings>
     </option>
@@ -50,7 +49,6 @@
   </component>
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
-    <option name="showExcludedFiles" value="true" />
     <option name="showLibraryContents" value="true" />
     <option name="showMembers" value="true" />
   </component>
@@ -76,7 +74,34 @@
       <recent name="F:\GitHub\QualityArmory\libs" />
     </key>
   </component>
-  <component name="RunManager" selected="Maven.qg [clean,package]">
+  <component name="RunManager" selected="Maven.QualityArmory [clean,package,deploy]">
+    <configuration name="QualityArmory [clean,package,deploy]" type="MavenRunConfiguration" factoryName="Maven" nameIsGenerated="true">
+      <MavenSettings>
+        <option name="myGeneralSettings" />
+        <option name="myRunnerSettings" />
+        <option name="myRunnerParameters">
+          <MavenRunnerParameters>
+            <option name="profiles">
+              <set />
+            </option>
+            <option name="goals">
+              <list>
+                <option value="clean" />
+                <option value="package" />
+                <option value="deploy" />
+              </list>
+            </option>
+            <option name="pomFileName" />
+            <option name="profilesMap">
+              <map />
+            </option>
+            <option name="resolveToWorkspace" value="false" />
+            <option name="workingDirPath" value="$PROJECT_DIR$" />
+          </MavenRunnerParameters>
+        </option>
+      </MavenSettings>
+      <method v="2" />
+    </configuration>
     <configuration name="qg [clean,deploy]" type="MavenRunConfiguration" factoryName="Maven" nameIsGenerated="true">
       <MavenSettings>
         <option name="myGeneralSettings" />
@@ -103,48 +128,10 @@
       </MavenSettings>
       <method v="2" />
     </configuration>
-    <configuration name="qg [clean,package]" type="MavenRunConfiguration" factoryName="Maven" nameIsGenerated="true">
-      <MavenSettings>
-        <option name="myGeneralSettings" />
-        <option name="myRunnerSettings" />
-        <option name="myRunnerParameters">
-          <MavenRunnerParameters>
-            <option name="profiles">
-              <set />
-            </option>
-            <option name="goals">
-              <list>
-                <option value="clean" />
-                <option value="package" />
-              </list>
-            </option>
-            <option name="pomFileName" />
-            <option name="profilesMap">
-              <map />
-            </option>
-            <option name="resolveToWorkspace" value="false" />
-            <option name="workingDirPath" value="$PROJECT_DIR$" />
-          </MavenRunnerParameters>
-        </option>
-      </MavenSettings>
-      <method v="2" />
-    </configuration>
     <list>
       <item itemvalue="Maven.qg [clean,deploy]" />
-      <item itemvalue="Maven.qg [clean,package]" />
+      <item itemvalue="Maven.QualityArmory [clean,package,deploy]" />
     </list>
-  </component>
-  <component name="ServiceViewManager">
-    <option name="viewStates">
-      <list>
-        <serviceView>
-          <treeState>
-            <expand />
-            <select />
-          </treeState>
-        </serviceView>
-      </list>
-    </option>
   </component>
   <component name="SvnConfiguration">
     <configuration />
@@ -157,6 +144,14 @@
       <option name="presentableId" value="Default" />
       <updated>1559420638867</updated>
     </task>
+    <task id="LOCAL-00001" summary="Changed artifactId">
+      <created>1586478985131</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1586478985131</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -164,22 +159,27 @@
       <map>
         <entry key="MAIN">
           <value>
-            <State>
-              <option name="COLUMN_ORDER" />
-            </State>
+            <State />
           </value>
         </entry>
       </map>
     </option>
+    <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
+    <MESSAGE value="Changed artifactId" />
+    <option name="LAST_COMMIT_MESSAGE" value="Changed artifactId" />
   </component>
   <component name="WindowStateProjectService">
     <state x="690" y="334" key="#com.intellij.codeInsight.editorActions.RestoreReferencesDialog" timestamp="1579397266527">
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
     <state x="690" y="334" key="#com.intellij.codeInsight.editorActions.RestoreReferencesDialog/0.0.1920.1160@0.0.1920.1160" timestamp="1579397266527" />
+    <state x="414" y="234" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1586543357313">
+      <screen x="0" y="0" width="1920" height="1160" />
+    </state>
+    <state x="414" y="234" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1920.1160@0.0.1920.1160" timestamp="1586543357313" />
     <state x="765" y="288" key="#com.intellij.ide.util.MemberChooser" timestamp="1585988102739">
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
@@ -204,22 +204,26 @@
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
     <state x="690" y="326" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog/0.0.1920.1160@0.0.1920.1160" timestamp="1586295597923" />
-    <state width="1876" height="181" key="GridCell.Tab.0.bottom" timestamp="1586478948706">
+    <state x="614" y="173" width="1018" height="813" key="CommitChangelistDialog2" timestamp="1586478984143">
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
-    <state width="1876" height="181" key="GridCell.Tab.0.bottom/0.0.1920.1160@0.0.1920.1160" timestamp="1586478948706" />
-    <state width="1876" height="181" key="GridCell.Tab.0.center" timestamp="1586478948706">
+    <state x="614" y="173" width="1018" height="813" key="CommitChangelistDialog2/0.0.1920.1160@0.0.1920.1160" timestamp="1586478984143" />
+    <state width="1876" height="181" key="GridCell.Tab.0.bottom" timestamp="1586479459715">
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
-    <state width="1876" height="181" key="GridCell.Tab.0.center/0.0.1920.1160@0.0.1920.1160" timestamp="1586478948706" />
-    <state width="1876" height="181" key="GridCell.Tab.0.left" timestamp="1586478948706">
+    <state width="1876" height="181" key="GridCell.Tab.0.bottom/0.0.1920.1160@0.0.1920.1160" timestamp="1586479459715" />
+    <state width="1876" height="181" key="GridCell.Tab.0.center" timestamp="1586479459715">
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
-    <state width="1876" height="181" key="GridCell.Tab.0.left/0.0.1920.1160@0.0.1920.1160" timestamp="1586478948706" />
-    <state width="1876" height="181" key="GridCell.Tab.0.right" timestamp="1586478948706">
+    <state width="1876" height="181" key="GridCell.Tab.0.center/0.0.1920.1160@0.0.1920.1160" timestamp="1586479459715" />
+    <state width="1876" height="181" key="GridCell.Tab.0.left" timestamp="1586479459715">
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
-    <state width="1876" height="181" key="GridCell.Tab.0.right/0.0.1920.1160@0.0.1920.1160" timestamp="1586478948706" />
+    <state width="1876" height="181" key="GridCell.Tab.0.left/0.0.1920.1160@0.0.1920.1160" timestamp="1586479459715" />
+    <state width="1876" height="181" key="GridCell.Tab.0.right" timestamp="1586479459715">
+      <screen x="0" y="0" width="1920" height="1160" />
+    </state>
+    <state width="1876" height="181" key="GridCell.Tab.0.right/0.0.1920.1160@0.0.1920.1160" timestamp="1586479459715" />
     <state x="666" y="207" key="refactoring.ChangeSignatureDialog" timestamp="1586033344895">
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
