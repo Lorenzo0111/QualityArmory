@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>me.zombie_striker</groupId>
-    <artifactId>qg</artifactId>
+    <artifactId>QualityArmory</artifactId>
     <version>1.1.166</version>
     <name>QualityArmory</name>
 
@@ -217,7 +217,17 @@
                     </altDeploymentRepository>
                 </configuration>
             </plugin>
-
         </plugins>
     </build>
+
+    <distributionManagement>
+        <repository>
+            <id>codemc-releases</id>
+            <url>https://repo.codemc.io/repository/maven-releases/</url>
+        </repository>
+        <snapshotRepository>
+            <id>codemc-snapshots</id>
+            <url>https://repo.codemc.io/repository/maven-snapshots/</url>
+        </snapshotRepository>
+    </distributionManagement>
 </project>
