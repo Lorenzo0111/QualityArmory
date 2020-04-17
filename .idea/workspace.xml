@@ -3,8 +3,11 @@
   <component name="ChangeListManager">
     <list default="true" id="3a75e4d7-6f9a-4a9b-ac5e-112a5a655666" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/License.txt" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/zombie_striker/customitemmanager/qa/versions/V1_14/CustomGunItem.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/zombie_striker/customitemmanager/qa/versions/V1_14/CustomGunItem.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/listener/QAListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/listener/QAListener.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/changelog.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/changelog.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -74,7 +77,7 @@
       <recent name="F:\GitHub\QualityArmory\libs" />
     </key>
   </component>
-  <component name="RunManager" selected="Maven.QualityArmory [clean,package,deploy]">
+  <component name="RunManager" selected="Maven.QualityArmory [deploy]">
     <configuration name="QualityArmory [clean,package,deploy]" type="MavenRunConfiguration" factoryName="Maven" nameIsGenerated="true">
       <MavenSettings>
         <option name="myGeneralSettings" />
@@ -102,7 +105,7 @@
       </MavenSettings>
       <method v="2" />
     </configuration>
-    <configuration name="qg [clean,deploy]" type="MavenRunConfiguration" factoryName="Maven" nameIsGenerated="true">
+    <configuration name="QualityArmory [deploy]" type="MavenRunConfiguration" factoryName="Maven" nameIsGenerated="true">
       <MavenSettings>
         <option name="myGeneralSettings" />
         <option name="myRunnerSettings" />
@@ -113,7 +116,6 @@
             </option>
             <option name="goals">
               <list>
-                <option value="clean" />
                 <option value="deploy" />
               </list>
             </option>
@@ -129,8 +131,8 @@
       <method v="2" />
     </configuration>
     <list>
-      <item itemvalue="Maven.qg [clean,deploy]" />
       <item itemvalue="Maven.QualityArmory [clean,package,deploy]" />
+      <item itemvalue="Maven.QualityArmory [deploy]" />
     </list>
   </component>
   <component name="SvnConfiguration">
@@ -176,18 +178,14 @@
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
     <state x="690" y="334" key="#com.intellij.codeInsight.editorActions.RestoreReferencesDialog/0.0.1920.1160@0.0.1920.1160" timestamp="1579397266527" />
-    <state x="414" y="234" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1586543357313">
+    <state x="414" y="234" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1586977999556">
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
-    <state x="414" y="234" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1920.1160@0.0.1920.1160" timestamp="1586543357313" />
+    <state x="414" y="234" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1920.1160@0.0.1920.1160" timestamp="1586977999556" />
     <state x="765" y="288" key="#com.intellij.ide.util.MemberChooser" timestamp="1585988102739">
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
     <state x="765" y="288" key="#com.intellij.ide.util.MemberChooser/0.0.1920.1160@0.0.1920.1160" timestamp="1585988102739" />
-    <state x="640" y="315" key="#com.intellij.openapi.updateSettings.impl.PluginUpdateInfoDialog" timestamp="1578027404238">
-      <screen x="0" y="0" width="1920" height="1160" />
-    </state>
-    <state x="640" y="315" key="#com.intellij.openapi.updateSettings.impl.PluginUpdateInfoDialog/0.0.1920.1160@0.0.1920.1160" timestamp="1578027404238" />
     <state x="782" y="504" key="#com.intellij.refactoring.move.MoveHandler.SelectRefactoringDialog" timestamp="1585987136458">
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
@@ -208,22 +206,22 @@
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
     <state x="614" y="173" width="1018" height="813" key="CommitChangelistDialog2/0.0.1920.1160@0.0.1920.1160" timestamp="1586478984143" />
-    <state width="1876" height="181" key="GridCell.Tab.0.bottom" timestamp="1586479459715">
+    <state width="1876" height="241" key="GridCell.Tab.0.bottom" timestamp="1586999637402">
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
-    <state width="1876" height="181" key="GridCell.Tab.0.bottom/0.0.1920.1160@0.0.1920.1160" timestamp="1586479459715" />
-    <state width="1876" height="181" key="GridCell.Tab.0.center" timestamp="1586479459715">
+    <state width="1876" height="241" key="GridCell.Tab.0.bottom/0.0.1920.1160@0.0.1920.1160" timestamp="1586999637402" />
+    <state width="1876" height="241" key="GridCell.Tab.0.center" timestamp="1586999637402">
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
-    <state width="1876" height="181" key="GridCell.Tab.0.center/0.0.1920.1160@0.0.1920.1160" timestamp="1586479459715" />
-    <state width="1876" height="181" key="GridCell.Tab.0.left" timestamp="1586479459715">
+    <state width="1876" height="241" key="GridCell.Tab.0.center/0.0.1920.1160@0.0.1920.1160" timestamp="1586999637402" />
+    <state width="1876" height="241" key="GridCell.Tab.0.left" timestamp="1586999637402">
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
-    <state width="1876" height="181" key="GridCell.Tab.0.left/0.0.1920.1160@0.0.1920.1160" timestamp="1586479459715" />
-    <state width="1876" height="181" key="GridCell.Tab.0.right" timestamp="1586479459715">
+    <state width="1876" height="241" key="GridCell.Tab.0.left/0.0.1920.1160@0.0.1920.1160" timestamp="1586999637402" />
+    <state width="1876" height="241" key="GridCell.Tab.0.right" timestamp="1586999637402">
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
-    <state width="1876" height="181" key="GridCell.Tab.0.right/0.0.1920.1160@0.0.1920.1160" timestamp="1586479459715" />
+    <state width="1876" height="241" key="GridCell.Tab.0.right/0.0.1920.1160@0.0.1920.1160" timestamp="1586999637402" />
     <state x="666" y="207" key="refactoring.ChangeSignatureDialog" timestamp="1586033344895">
       <screen x="0" y="0" width="1920" height="1160" />
     </state>

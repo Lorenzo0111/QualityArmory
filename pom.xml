@@ -184,8 +184,17 @@
                 <directory>${basedir}/src/main/resources</directory>
                 <filtering>true</filtering>
                 <includes>
+                    <include>changelog.txt</include>
                     <include>plugin.yml</include>
                     <include>config.yml</include>
+                </includes>
+            </resource>
+            <resource>
+                <directory>${basedir}/src/main/resources/lang</directory>
+                <targetPath>lang</targetPath>
+                <filtering>true</filtering>
+                <includes>
+                    <include>*</include>
                 </includes>
             </resource>
             <resource>
@@ -219,7 +228,6 @@
             </plugin>
         </plugins>
     </build>
-
     <distributionManagement>
         <repository>
             <id>codemc-releases</id>

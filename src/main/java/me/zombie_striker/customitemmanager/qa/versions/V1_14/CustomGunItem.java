@@ -120,7 +120,7 @@ public class CustomGunItem extends AbstractItem {
 
 	@Override
 	public void initItems(File dataFolder) {
-		CustomItemManager.setResourcepack("https://www.dropbox.com/s/oj2pky2yh5li4mk/QualityArmoryV2.1.0.zip?dl=1");
+		CustomItemManager.setResourcepack("https://www.dropbox.com/s/gdaw9a09zlq1gdl/QualityArmoryV2.1.1.zip?dl=1");
 
 
 

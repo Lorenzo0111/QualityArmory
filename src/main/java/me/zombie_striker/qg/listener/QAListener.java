@@ -608,6 +608,7 @@ public class QAListener implements Listener {
 					// }
 				}
 			}
+			if(Update19OffhandChecker.supportOffhand(e.getPlayer())){
 			if (e.getPlayer().getInventory().getItemInOffHand() != null
 					&& !QualityArmory.isCustomItem(e.getPlayer().getInventory().getItemInOffHand())) {
 				QAMain.DEBUG("Item is not any valid item - offhand");
@@ -627,6 +628,7 @@ public class QAListener implements Listener {
 					e.getPlayer().getInventory().setItemInOffHand(is);
 					// }
 				}
+			}
 			}
 		}
 
