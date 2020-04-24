@@ -120,7 +120,7 @@ public class CustomGunItem extends AbstractItem {
 
 	@Override
 	public void initItems(File dataFolder) {
-		CustomItemManager.setResourcepack("https://www.dropbox.com/s/gdaw9a09zlq1gdl/QualityArmoryV2.1.1.zip?dl=1");
+		CustomItemManager.setResourcepack("https://www.dropbox.com/s/hnnqkagerdk1q64/QualityArmoryV2.1.2.zip?dl=1");
 
 
 
@@ -268,11 +268,6 @@ public class CustomGunItem extends AbstractItem {
 				.createNewDefaultGun(dataFolder, "enfield", "Enfield", 13, stringsPistol,
 						WeaponType.PISTOL, null, true, "9mm", 3, 6, 200)
 				.setIsSecondaryWeapon(true).setChargingHandler(ChargingManager.REVOLVER).setMaterial(Material.CROSSBOW)
-				.setReloadingHandler(ReloadingManager.SINGLE_RELOAD).done();
-		GunYMLCreator
-				.createNewDefaultGun(dataFolder, "henryrifle", "Henry Rifle", 19, stringsGoldRif,
-						WeaponType.RIFLE, null, true, "556", 4, 6, 400)
-				.setChargingHandler(ChargingManager.BREAKACTION).setMaterial(Material.CROSSBOW)
 				.setReloadingHandler(ReloadingManager.SINGLE_RELOAD).done();
 		GunYMLCreator
 				.createNewDefaultGun(dataFolder, "mauser", "Mauser C96", 14, stringsPistol,
@@ -635,6 +630,13 @@ public class CustomGunItem extends AbstractItem {
 				.setWeaponSound(WeaponSounds.SILENCEDSHOT).setMaterial(Material.CROSSBOW).done();
 
 
+		GunYMLCreator
+				.createNewDefaultGun(dataFolder, "henryrifle", "Henry Rifle", 76, stringsGoldRif,
+						WeaponType.RIFLE, null, true, "556", 4, 6, 400)
+				.setChargingHandler(ChargingManager.BREAKACTION).setMaterial(Material.CROSSBOW)
+				.setReloadingHandler(ReloadingManager.SINGLE_RELOAD).done();
+
+
 
 
 
@@ -658,6 +660,10 @@ public class CustomGunItem extends AbstractItem {
 		GunYMLCreator.createMisc(false, dataFolder, false, "default_lightsaberorange", "LightSaberOrange",
 				"LightSaber (Orange)", Arrays.asList("&fAn extremely rare saber."),
 				Material.CROSSBOW, 74, stringsLight, 10000, WeaponType.MELEE, 9, 1000).setSoundOnEquip(WeaponSounds.LIGHTSABER_SITH_START.getSoundName()).setSoundOnHit(WeaponSounds.LIGHTSABER_HIT.getSoundName()).done();
+
+		GunYMLCreator.createMisc(false, dataFolder, false, "default_spear", "spear",
+				"Spear", null,
+				Material.CROSSBOW, 77, stringsMetalRif, 100, WeaponType.MELEE, 6, 1000).done();
 
 
 		GunYMLCreator.createNewDefaultGun(dataFolder, "debuggun", "Debug Gun", 34, strings10mm,

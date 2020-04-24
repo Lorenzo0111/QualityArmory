@@ -18,4 +18,14 @@ public class WorldGuardSupport {
 		}
 		return true;
 	}
+	public static boolean canExplode(Location loc){
+		WorldGuard wGuard = WorldGuard.getInstance();
+		for (ProtectedRegion k : wGuard.getPlatform().getRegionContainer().get(BukkitAdapter.adapt(loc.getWorld())).getRegions().values()) {
+			if (k.contains(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ())) {
+				if (k.getFlag(Flags.OTHER_EXPLOSION) == com.sk89q.worldguard.protection.flags.StateFlag.State.DENY)
+					return false;
+			}
+		}
+		return true;
+	}
 }

@@ -453,11 +453,6 @@ public class GunUtil {
 					if(g.getChargingVal()!= null && g.getChargingVal().isCharging(player)){
 						return;
 					}
-					if(QAMain.enableDurability && g.getDurabilityDamage(offhand?Update19OffhandChecker.getItemStackOFfhand(player):player.getItemInHand()) > 0){
-						player.playSound(player.getLocation(),WeaponSounds.METALHIT.getSoundName(),1,1);
-						cancel();
-						return;
-					}
 
 					if ((!g.hasIronSights() || !IronsightsHandler.isAiming(player) ) && ((player.isSneaking() == QAMain.enableSwapSingleShotOnAim))) {
 						cancel();
@@ -467,6 +462,14 @@ public class GunUtil {
 					}
 
 					ItemStack temp = IronsightsHandler.getItemAiming(player);
+
+					if(QAMain.enableDurability && g.getDurabilityDamage(temp) <= 0){
+						player.playSound(player.getLocation(),WeaponSounds.METALHIT.getSoundName(),1,1);
+						rapidfireshooters.remove(player.getUniqueId());
+						QAMain.DEBUG("Canceld due to weapon durability = "+g.getDurabilityDamage(temp));
+						cancel();
+						return;
+					}
 
 					int amount = Gun.getAmount(temp);
 					if ((player.isSneaking()==QAMain.enableSwapSingleShotOnAim) || slotUsed != player.getInventory().getHeldItemSlot() || amount <= 0) {

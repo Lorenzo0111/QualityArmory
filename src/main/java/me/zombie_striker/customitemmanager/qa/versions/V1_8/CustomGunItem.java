@@ -191,27 +191,27 @@ public class CustomGunItem extends AbstractItem {
 					.setParticle(0.001, 0.001, 0.001, Material.COAL_BLOCK).setRecoil(10).setMaterial(Material.PRISMARINE_SHARD)
 					.setOn18(true).done();
 			GunYMLCreator
-					.createNewCustomGun(dataFolder, "default_1_8_dp27", "dp27" + additive, "DP-27", 1,
+					.createNewCustomGun(dataFolder, "default_1_8_dp27", "dp27" + additive, "DP-27", 0,
 							stringsMetalRif, WeaponType.RIFLE, WeaponSounds.GUN_BIG, false, "762", 3, 47, 3000)
 					.setFullyAutomatic(2).setBulletsPerShot(1).setRecoil(2).setMaterial(Material.QUARTZ)
 					.setOn18(true).done();
 			GunYMLCreator
-					.createNewCustomGun(dataFolder, "default_1_8_m40", "m40" + additive, "M40", 1,
+					.createNewCustomGun(dataFolder, "default_1_8_m40", "m40" + additive, "M40", 0,
 							stringsWoodRif, WeaponType.SNIPER, null, false, "762", 10, 6, 2700)
 					.setZoomLevel(9).setDelayShoot(0.7).setChargingHandler(ChargingManager.BOLT)
 					.setSwayMultiplier(3).setDistance(280).setRecoil(5).setMaterial(Material.NETHER_BRICK)
 					.setOn18(true).done();
-			GunYMLCreator.createNewCustomGun(dataFolder, "default_1_8_uzi", "uzi" + additive, "UZI", 1,
+			GunYMLCreator.createNewCustomGun(dataFolder, "default_1_8_uzi", "uzi" + additive, "UZI", 0,
 					stringsMetalRif, WeaponType.SMG, WeaponSounds.GUN_SMALL_AUTO, false, "9mm", 2, 25, 2000)
 					.setFullyAutomatic(3).setMaterial(Material.RABBIT_FOOT).setOn18(true).done();
 			GunYMLCreator
-					.createNewCustomGun(dataFolder, "default_1_8_aa12", "aa12" + additive, "AA-12", 26,
+					.createNewCustomGun(dataFolder, "default_1_8_aa12", "aa12" + additive, "AA-12", 0,
 							stringsMetalRif, WeaponType.SHOTGUN, null, false, "shell", 2, 32, 4000)
 					.setBulletsPerShot(10).setDistance(80).setFullyAutomatic(2).setRecoil(7)
 					.setMaterial(MultiVersionLookup.getCarrotOnAStick()).setOn18(true).done();
 			GunYMLCreator
 					.createNewCustomGun(dataFolder, "default_1_8_spas12", "spas12" + additive, "Spas-12",
-							1, stringsMetalRif, WeaponType.SHOTGUN, null, false, "shell", 2, 8, 1000)
+							0, stringsMetalRif, WeaponType.SHOTGUN, null, false, "shell", 2, 8, 1000)
 					.setBulletsPerShot(20).setDistance(80).setRecoil(10).setMaterial(Material.RABBIT_HIDE)
 					.setOn18(true).done();
 

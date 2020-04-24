@@ -850,10 +850,8 @@ public class QAListener implements Listener {
 
 		if (QualityArmory.isIronSights(e.getPlayer().getInventory().getItemInMainHand())) {
 			try {
-
 				e.getPlayer().getInventory().setItemInMainHand(e.getPlayer().getInventory().getItemInOffHand());
-				//e.getPlayer().getInventory().setItemInOffHand(IronsightsHandler.offHandStorage.get(e.getPlayer()));
-				//IronsightsHandler.offHandStorage.remove(e.getPlayer());
+				e.getPlayer().getInventory().setItemInOffHand(new ItemStack(Material.AIR));
 			} catch (Error e2) {
 			}
 		}

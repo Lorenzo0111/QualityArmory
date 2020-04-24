@@ -1038,7 +1038,12 @@ public class QAMain extends JavaPlugin {
 		overrideURL = (boolean) a("DefaultResourcepackOverride", false);
 
 		enableIronSightsON_RIGHT_CLICK = (boolean) a("IronSightsOnRightClick", false);
-		enableSwapSingleShotOnAim = (boolean) a("SwapSneakToSingleFile", enableSwapSingleShotOnAim);
+		if(getConfig().contains("SwapSneakToSingleFile")){
+			enableSwapSingleShotOnAim = (boolean) a("SwapSneakToSingleFire", a("SwapSneakToSingleFile",false));
+			getConfig().set("SwapSneakToSingleFile",null);
+			saveTheConfig = true;
+		}
+		enableSwapSingleShotOnAim = (boolean) a("SwapSneakToSingleFire", enableSwapSingleShotOnAim);
 
 		List<String> destarray = (List<String>) a("DestructableMaterials",
 				Collections.singletonList("MATERIAL_NAME_HERE"));

@@ -3,9 +3,14 @@
   <component name="ChangeListManager">
     <list default="true" id="3a75e4d7-6f9a-4a9b-ac5e-112a5a655666" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/License.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/me/zombie_striker/customitemmanager/qa/versions/V1_14/CustomGunItem.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/zombie_striker/customitemmanager/qa/versions/V1_14/CustomGunItem.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/zombie_striker/customitemmanager/qa/versions/V1_8/CustomGunItem.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/zombie_striker/customitemmanager/qa/versions/V1_8/CustomGunItem.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/QAMain.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/QAMain.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/guns/utils/GunUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/guns/utils/GunUtil.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/handlers/ExplosionHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/handlers/ExplosionHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/handlers/WorldGuardSupport.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/handlers/WorldGuardSupport.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/listener/QAListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/listener/QAListener.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/resources/changelog.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/changelog.txt" afterDir="false" />
     </list>
@@ -77,7 +82,7 @@
       <recent name="F:\GitHub\QualityArmory\libs" />
     </key>
   </component>
-  <component name="RunManager" selected="Maven.QualityArmory [deploy]">
+  <component name="RunManager" selected="Maven.QualityArmory [clean,package,deploy]">
     <configuration name="QualityArmory [clean,package,deploy]" type="MavenRunConfiguration" factoryName="Maven" nameIsGenerated="true">
       <MavenSettings>
         <option name="myGeneralSettings" />
@@ -206,22 +211,22 @@
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
     <state x="614" y="173" width="1018" height="813" key="CommitChangelistDialog2/0.0.1920.1160@0.0.1920.1160" timestamp="1586478984143" />
-    <state width="1876" height="241" key="GridCell.Tab.0.bottom" timestamp="1586999637402">
+    <state width="1876" height="334" key="GridCell.Tab.0.bottom" timestamp="1587762417455">
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
-    <state width="1876" height="241" key="GridCell.Tab.0.bottom/0.0.1920.1160@0.0.1920.1160" timestamp="1586999637402" />
-    <state width="1876" height="241" key="GridCell.Tab.0.center" timestamp="1586999637402">
+    <state width="1876" height="334" key="GridCell.Tab.0.bottom/0.0.1920.1160@0.0.1920.1160" timestamp="1587762417455" />
+    <state width="1876" height="334" key="GridCell.Tab.0.center" timestamp="1587762417454">
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
-    <state width="1876" height="241" key="GridCell.Tab.0.center/0.0.1920.1160@0.0.1920.1160" timestamp="1586999637402" />
-    <state width="1876" height="241" key="GridCell.Tab.0.left" timestamp="1586999637402">
+    <state width="1876" height="334" key="GridCell.Tab.0.center/0.0.1920.1160@0.0.1920.1160" timestamp="1587762417454" />
+    <state width="1876" height="334" key="GridCell.Tab.0.left" timestamp="1587762417454">
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
-    <state width="1876" height="241" key="GridCell.Tab.0.left/0.0.1920.1160@0.0.1920.1160" timestamp="1586999637402" />
-    <state width="1876" height="241" key="GridCell.Tab.0.right" timestamp="1586999637402">
+    <state width="1876" height="334" key="GridCell.Tab.0.left/0.0.1920.1160@0.0.1920.1160" timestamp="1587762417454" />
+    <state width="1876" height="334" key="GridCell.Tab.0.right" timestamp="1587762417454">
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
-    <state width="1876" height="241" key="GridCell.Tab.0.right/0.0.1920.1160@0.0.1920.1160" timestamp="1586999637402" />
+    <state width="1876" height="334" key="GridCell.Tab.0.right/0.0.1920.1160@0.0.1920.1160" timestamp="1587762417454" />
     <state x="666" y="207" key="refactoring.ChangeSignatureDialog" timestamp="1586033344895">
       <screen x="0" y="0" width="1920" height="1160" />
     </state>

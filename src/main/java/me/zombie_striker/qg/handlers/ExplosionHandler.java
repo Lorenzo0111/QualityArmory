@@ -15,7 +15,11 @@ public class ExplosionHandler {
 	// Material.COMMAND_REPEATING);
 
 	public static void handleExplosion(Location origin, int radius, int power) {
+		if(WorldGuardSupport.canExplode(origin)) {
 			origin.getWorld().createExplosion(origin, power);
+		}else{
+			origin.getWorld().createExplosion(origin, 0);
+		}
 		/**
 		 * for (int x = origin.getBlockX() - radius; x < origin.getBlockX() + radius;
 		 * x++) { for (int y = origin.getBlockY() - radius; y < origin.getBlockY() +
