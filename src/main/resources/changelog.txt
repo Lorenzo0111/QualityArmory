@@ -1,3 +1,15 @@
+1.1.168
+    - Re-added Helmets for 1.13+
+    - Added Deagle
+    - Re-Added Henry Rifle
+    - Fixed a bunch of textures for models.
+
+1.1.167C
+    - Removed worldhguard flag for explosions
+
+1.1.167B
+    - Fixed Melee Weapons being able to shoot arrorws on 1.13+
+
 1.1.167
     - Added check for worldguard flags before adding explosion.
     - Fixed issue with gun duirability and automatic weapons

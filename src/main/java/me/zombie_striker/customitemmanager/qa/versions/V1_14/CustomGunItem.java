@@ -120,7 +120,7 @@ public class CustomGunItem extends AbstractItem {
 
 	@Override
 	public void initItems(File dataFolder) {
-		CustomItemManager.setResourcepack("https://www.dropbox.com/s/hnnqkagerdk1q64/QualityArmoryV2.1.2.zip?dl=1");
+		CustomItemManager.setResourcepack("https://www.dropbox.com/s/8mhrll2vjay2un5/QualityArmoryV2.1.3.zip?dl=1");
 
 
 
@@ -585,15 +585,18 @@ public class CustomGunItem extends AbstractItem {
 						WeaponType.RIFLE, null, true, "556", 3, 30, 4500).setMaterial(Material.CROSSBOW)
 				.setFullyAutomatic(3).setRecoil(2).done();
 
-		/*GunYMLCreator.createDefaultArmor(dataFolder, false, "assaulthelmet", "Assault Helmet", null, 25,
-				stringsHelmet, 3000, WeaponType.HELMET, 1.5, 2, true);
-		GunYMLCreator.createDefaultArmor(dataFolder, false, "ncrhelmet", "NCR Ranger Helmet", null, 59,
-				stringsHelmet, 5000, WeaponType.HELMET, 1.5, 2, true);
-		GunYMLCreator.createDefaultArmor(dataFolder, false, "skimask", "Ski Mask", null, 60, StringsWool,
-				50, WeaponType.HELMET, 1, 0, false);
-		GunYMLCreator.createDefaultArmor(dataFolder, false, "ushanka", "Ushanka-Hat", null, 61,
-				StringsWool, 50, WeaponType.HELMET, 1, 0, false);
-		*/
+		GunYMLCreator.createDefaultArmor(dataFolder, false, "assaulthelmet", "Assault Helmet", null, 18,
+				stringsHelmet, 3000, WeaponType.HELMET, 1.5, 2, true).setMaterial(Material.PHANTOM_MEMBRANE).done();
+		GunYMLCreator.createDefaultArmor(dataFolder, false, "ncrhelmet", "NCR Ranger Helmet", null, 19,
+				stringsHelmet, 5000, WeaponType.HELMET, 1.5, 2, true).setMaterial(Material.PHANTOM_MEMBRANE).done();
+		GunYMLCreator.createDefaultArmor(dataFolder, false, "skimask", "Ski Mask", null, 20, StringsWool,
+				50, WeaponType.HELMET, 1, 0, false).setMaterial(Material.PHANTOM_MEMBRANE).done();
+		GunYMLCreator.createDefaultArmor(dataFolder, false, "ushanka", "Ushanka-Hat", null, 21,
+				StringsWool, 50, WeaponType.HELMET, 1, 0, false).setMaterial(Material.PHANTOM_MEMBRANE).done();
+
+
+
+
 		GunYMLCreator
 				.createNewDefaultGun(dataFolder, "flamer", "Flamer", 65, stringsMetalRif,
 						WeaponType.FLAMER, WeaponSounds.HISS, false, "fuel", 1, 60, 8000)
@@ -636,6 +639,10 @@ public class CustomGunItem extends AbstractItem {
 				.setChargingHandler(ChargingManager.BREAKACTION).setMaterial(Material.CROSSBOW)
 				.setReloadingHandler(ReloadingManager.SINGLE_RELOAD).done();
 
+		GunYMLCreator
+				.createNewDefaultGun(dataFolder, "deagle", "Deagle", 77, stringsMetalRif,
+						WeaponType.PISTOL, WeaponSounds.GUN_DEAGLE, true, "9mm", 8, 7, 1800).setMaterial(Material.CROSSBOW)
+				.setReloadingHandler(ReloadingManager.SLIDE_RELOAD).done();
 
 
 

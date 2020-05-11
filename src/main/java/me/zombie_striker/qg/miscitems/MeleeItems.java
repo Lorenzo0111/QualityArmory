@@ -51,8 +51,7 @@ public class MeleeItems extends CustomBaseObject implements ArmoryBaseObject{
 
 	@Override
 	public boolean onRMB(Player e, ItemStack usedItem) {
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 		
 	}
 
