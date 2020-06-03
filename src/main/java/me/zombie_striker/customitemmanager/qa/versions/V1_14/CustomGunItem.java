@@ -229,13 +229,14 @@ public class CustomGunItem extends AbstractItem {
 		GunYMLCreator
 				.createNewDefaultGun(dataFolder, "ak47", "AK47", 4, stringsMetalRif, WeaponType.RIFLE,
 						null, true, "762", 3, 40, 5000)
-				.setSway(0.19).setFullyAutomatic(2).setBulletsPerShot(1).setRecoil(2).setMaterial(Material.CROSSBOW).done();
+				.setSway(0.19).setFullyAutomatic(2).setBulletsPerShot(1).setRecoil(2).setMaterial(Material.CROSSBOW).setKilledByMessage("%player% was shot by %killer% using an %name%").done();
 		GunYMLCreator
 				.createNewDefaultGun(dataFolder, "ak47u", "AK47-U", 5, stringsMetalRif, WeaponType.RIFLE,
 						null, true, "762", 3, 30, 5000)
 				.setFullyAutomatic(2).setBulletsPerShot(1).setRecoil(2).setMaterial(Material.CROSSBOW).done();
 		GunYMLCreator.createNewDefaultGun(dataFolder, "m16", "M16", 6, stringsMetalRif, WeaponType.RIFLE,
-				null, true, "556", 3, 30, 3600).setFullyAutomatic(2).setBulletsPerShot(1).setMaterial(Material.CROSSBOW).setRecoil(2).done();
+				null, true, "556", 3, 30, 3600).setFullyAutomatic(2).setBulletsPerShot(1).setMaterial(Material.CROSSBOW)
+				.setKilledByMessage("%player% was shot by %killer% using an %name%").setRecoil(2).done();
 		GunYMLCreator
 				.createNewDefaultGun(dataFolder, "remington", "Remington", 7, stringsMetalRif,
 						WeaponType.SHOTGUN, null, false, "shell", 3, 8, 1000)
@@ -252,13 +253,14 @@ public class CustomGunItem extends AbstractItem {
 				.setDelayShoot(1).setCustomProjectile(ProjectileManager.RPG)
 				.setCustomProjectileExplosionRadius(10).setCustomProjectileVelocity(2)// .setChargingHandler(ChargingManager.RPG)
 				.setReloadingHandler(ReloadingManager.SINGLE_RELOAD).setDistance(500).setMaterial(Material.CROSSBOW).setParticle("SMOKE_LARGE")
-				.setRecoil(15).done();
+				.setRecoil(15).setKilledByMessage("%player% was blown up by %killer% using a %name%").done();
 		GunYMLCreator
 				.createNewDefaultGun(dataFolder, "ump", "UMP", 10, stringsMetalRif, WeaponType.SMG,
 						WeaponSounds.GUN_SMALL_AUTO, false, "9mm", 2, 32, 1700)
 				.setFullyAutomatic(2).setBulletsPerShot(1).setMaterial(Material.CROSSBOW).done();
 		GunYMLCreator.createNewDefaultGun(dataFolder, "sw1911", "SW-1911", 11, stringsPistol,
-				WeaponType.PISTOL, null, true, "9mm", 3, 12, 700).setReloadingHandler(ReloadingManager.SLIDE_RELOAD).setMaterial(Material.CROSSBOW).setIsSecondaryWeapon(true).done();
+				WeaponType.PISTOL, null, true, "9mm", 3, 12, 700).setKilledByMessage("%player% was shot by %killer% using an %name%")
+				.setReloadingHandler(ReloadingManager.SLIDE_RELOAD).setMaterial(Material.CROSSBOW).setIsSecondaryWeapon(true).done();
 		GunYMLCreator
 				.createNewDefaultGun(dataFolder, "m40", "M40", 12, stringsWoodRif, WeaponType.SNIPER, null,
 						true, "762", 10, 6, 2700)
@@ -268,7 +270,8 @@ public class CustomGunItem extends AbstractItem {
 				.createNewDefaultGun(dataFolder, "enfield", "Enfield", 13, stringsPistol,
 						WeaponType.PISTOL, null, true, "9mm", 3, 6, 200)
 				.setIsSecondaryWeapon(true).setChargingHandler(ChargingManager.REVOLVER).setMaterial(Material.CROSSBOW)
-				.setReloadingHandler(ReloadingManager.SINGLE_RELOAD).done();
+				.setReloadingHandler(ReloadingManager.SINGLE_RELOAD).setKilledByMessage("%player% was shot by %killer% using an %name%")
+				.done();
 		GunYMLCreator
 				.createNewDefaultGun(dataFolder, "mauser", "Mauser C96", 14, stringsPistol,
 						WeaponType.PISTOL, null, true, "9mm", 3, 12, 700).setReloadingHandler(ReloadingManager.SLIDE_RELOAD).setMaterial(Material.CROSSBOW)
@@ -283,7 +286,7 @@ public class CustomGunItem extends AbstractItem {
 		GunYMLCreator
 				.createNewDefaultGun(dataFolder, "dragunov", "Dragunov", 16, stringsMetalRif,
 						WeaponType.SNIPER, null, true, "762", 7, 12, 2100).setMaterial(Material.CROSSBOW)
-				.setUseOffhand(false).setDelayShoot(0.4).setZoomLevel(9).setSwayMultiplier(3).setRecoil(5).done();
+				.setUseOffhand(false).setDelayShoot(0.4).setZoomLevel(9).setSwayMultiplier(3).setRecoil(5).setKilledByMessage("%player% was sniped by %killer% using an %name%").done();
 		GunYMLCreator
 				.createNewDefaultGun(dataFolder, "spas12", "Spas-12", 17, stringsMetalRif,
 						WeaponType.SHOTGUN, null, false, "shell", 2, 8, 1000).setMaterial(Material.CROSSBOW)
@@ -291,7 +294,7 @@ public class CustomGunItem extends AbstractItem {
 		GunYMLCreator
 				.createNewDefaultGun(dataFolder, "aa12", "AA-12", 18, stringsMetalRif, WeaponType.SHOTGUN,
 						null, false, "shell", 2, 32, 4000).setMaterial(Material.CROSSBOW)
-				.setBulletsPerShot(10).setDistance(80).setFullyAutomatic(2).setRecoil(7).done();
+				.setBulletsPerShot(10).setDistance(80).setFullyAutomatic(2).setRecoil(7).setKilledByMessage("%player% was shot to bits by %killer% using an %name%").done();
 
 		/**
 		 * 27 - 36 taken for custom weapons
@@ -303,11 +306,12 @@ public class CustomGunItem extends AbstractItem {
 				.createNewDefaultGun(dataFolder, "magnum", "Magnum", 19, stringsPistol, WeaponType.PISTOL,
 						WeaponSounds.GUN_BIG, true, "9mm", 6, 6, 700)
 				.setChargingHandler(ChargingManager.REVOLVER).setReloadingHandler(ReloadingManager.SINGLE_RELOAD).setMaterial(Material.CROSSBOW)
-				.setIsSecondaryWeapon(true).setRecoil(10).done();
+				.setIsSecondaryWeapon(true).setRecoil(10).setKilledByMessage("%player% was shot by %killer% using a %name%").done();
 		GunYMLCreator
 				.createNewDefaultGun(dataFolder, "awp", "AWP", 20, stringsMetalRif, WeaponType.SNIPER,
 						WeaponSounds.GUN_BIG, true, "762", 10, 12, 3000)
-				.setUseOffhand(false).setDelayShoot(0.8).setZoomLevel(9).setSwayMultiplier(3).setRecoil(5).setMaterial(Material.CROSSBOW).done();
+				.setUseOffhand(false).setDelayShoot(0.8).setZoomLevel(9).setSway(1).setSwayMultiplier(10).setRecoil(5)
+				.setKilledByMessage("%player% was sniped by %killer% using an %name%").setMaterial(Material.CROSSBOW).done();
 
 		GunYMLCreator.createMisc(false, dataFolder, false, "default_smokegrenade", "smokegrenade",
 				"&7Smoke Grenade",
@@ -372,7 +376,8 @@ public class CustomGunItem extends AbstractItem {
 				.setDelayShoot(1).setCustomProjectile(ProjectileManager.HOMING_RPG)
 				.setCustomProjectileExplosionRadius(10).setCustomProjectileVelocity(2)// .setChargingHandler(ChargingManager.HOMINGRPG)
 				.setReloadingHandler(ReloadingManager.SINGLE_RELOAD).setDistance(800).setNightVisionOnScope(true)
-				.setParticle("SMOKE_LARGE").setRecoil(10).setMaterial(Material.CROSSBOW).done();
+				.setParticle("SMOKE_LARGE").setRecoil(10).setMaterial(Material.CROSSBOW)
+				.setKilledByMessage("%player% was blown to bits with precision the likes of which has never been seen before by %killer% using an %name%").done();
 
 		GunYMLCreator
 				.createNewDefaultGun(dataFolder, "flintlockpistol", "\"Harper's Ferry\" Flintlock Pistol",
@@ -402,14 +407,15 @@ public class CustomGunItem extends AbstractItem {
 				.createNewDefaultGun(dataFolder, "lazerrifle", "Lazer Rifle", 32, stringsMetalRif,
 						WeaponType.LAZER, WeaponSounds.LAZERSHOOT, false, "fusion_cell", 4, 20, 2000)
 				.setAutomatic(true).setParticle(1, 0, 0, Material.REDSTONE_BLOCK).setDistance(150).setSwayMultiplier(3).setSway(0.2)
-				.setRecoil(0).setMaterial(Material.CROSSBOW).done();
+				.setRecoil(0).setMaterial(Material.CROSSBOW)
+				.setKilledByMessage("%player% was pew-pew'd by %killer% using a %name%").done();
 		GunYMLCreator
 				.createNewDefaultGun(dataFolder, "fatman", "Fatman", 33, stringsFatman, WeaponType.RPG,
 						WeaponSounds.WARHEAD_LAUNCH, false, "mininuke", 500, 1, 6000)
 				.setDelayShoot(1).setCustomProjectile(ProjectileManager.MINI_NUKE)
 				.setCustomProjectileExplosionRadius(10).setCustomProjectileVelocity(3)// .setChargingHandler(ChargingManager.MININUKELAUNCHER)
 				.setReloadingHandler(ReloadingManager.SINGLE_RELOAD).setDistance(500).setParticle(0.3, 0.9, 0.3, Material.COAL_BLOCK).setMaterial(Material.CROSSBOW)
-				.setRecoil(5).done();
+				.setRecoil(5).setKilledByMessage("%player% was nuked by %killer% using a %name%").done();
 
 		GunYMLCreator.createNewDefaultGun(dataFolder, "10mmpistol", "10mm Pistol", 34, strings10mm,
 				WeaponType.PISTOL, null, true, "9mm", 3, 12, 700).setReloadingHandler(ReloadingManager.SLIDE_RELOAD).setIsSecondaryWeapon(true).setMaterial(Material.CROSSBOW).done();
@@ -419,7 +425,8 @@ public class CustomGunItem extends AbstractItem {
 						stringsMetalRif, WeaponType.LAZER, WeaponSounds.LAZERSHOOT, false, "fusion_cell", 4, 20,
 						2000).setMaterial(Material.CROSSBOW)
 				.setAutomatic(true).setParticle(0.5, 0.9, 0.9, Material.LAPIS_BLOCK).setDistance(150).setSwayMultiplier(3)
-				.setSway(0.2).setRecoil(0).done();
+				.setSway(0.2).setRecoil(0)
+				.setKilledByMessage("%player% was pew-pew'd by %killer% using an %name%").done();
 
 		GunYMLCreator
 				.createNewDefaultGun(dataFolder, "musket", "\"Brown Bess\" Musket", 36, stringsMetalRif,
@@ -447,7 +454,7 @@ public class CustomGunItem extends AbstractItem {
 						"The Arc-Gun-9", 39, strings10mm, WeaponType.LAZER,
 						WeaponSounds.SHOCKWAVE, false, "fusion_cell", 0, 10, 2400)
 				.setLore(Collections.singletonList("&fPushy!")).setMaterial(Material.CROSSBOW)
-				.setChargingHandler(ChargingManager.getHandler(ChargingManager.PUSHBACK)).done();
+				.setChargingHandler(ChargingManager.getHandler(ChargingManager.PUSHBACK)).setKilledByMessage("%player% was ?????? by %killer% using a %name%").done();
 		GunYMLCreator
 				.createNewCustomGun(dataFolder, "default_halorifle", "unscassaultrifle",
 						"UNSCAssaultRifle", 40, stringsRifle, WeaponType.RIFLE,
@@ -472,7 +479,8 @@ public class CustomGunItem extends AbstractItem {
 						"\"Blaster\" Pistol", 43, stringsGoldRif, WeaponType.LAZER,
 						WeaponSounds.GUN_STARWARS, false, "fusion_cell", 4, 20, 1600)
 				.setFullyAutomatic(1).setBulletsPerShot(1).setMuzzleSmoke(false).setParticle(1, 0, 0, Material.REDSTONE_BLOCK)
-				.setLore(Collections.singletonList("&fMiss all the shots you want!")).setRecoil(0).setMaterial(Material.CROSSBOW).done();
+				.setLore(Collections.singletonList("&fMiss all the shots you want!")).setRecoil(0).setMaterial(Material.CROSSBOW)
+				.setKilledByMessage("%player% was pew-pew'd by %killer% using a %name%").done();
 		GunYMLCreator
 				.createNewCustomGun(dataFolder, "default_hl2pulserifle", "pulserifle",
 						"Overwatch Pulse Rifle", 44, stringsGoldRif, WeaponType.LAZER,
@@ -511,13 +519,14 @@ public class CustomGunItem extends AbstractItem {
 		GunYMLCreator
 				.createNewDefaultGun(dataFolder, "sks", "SKS-45", 51, stringsWoodRif, WeaponType.SNIPER,
 						null, true, "762", 7, 10, 2000).setMaterial(Material.CROSSBOW)
-				.setUseOffhand(false).setDelayShoot(0.6).setZoomLevel(6).setDistance(290).setSwayMultiplier(3).setRecoil(8).done();
+				.setUseOffhand(false).setDelayShoot(0.6).setZoomLevel(6).setDistance(290).setSwayMultiplier(3).setRecoil(8)
+				.setKilledByMessage("%player% was sniped by %killer% using a %name%").done();
 
 		GunYMLCreator
 				.createNewDefaultGun(dataFolder, "barrett", "Barrett-M82", 52, stringsWoodRif,
 						WeaponType.SNIPER, WeaponSounds.GUN_BIG, true, "50bmg", 17, 10, 4000)
 				.setDelayShoot(1).setZoomLevel(6).setDistance(350).setDelayReload(2.5).setSwayMultiplier(3).setMaterial(Material.CROSSBOW).setUseOffhand(false)
-				.setNightVisionOnScope(true).setRecoil(15).done();
+				.setNightVisionOnScope(true).setRecoil(15).setKilledByMessage("%player% was sniped by %killer% using a %name%").done();
 
 		GunYMLCreator
 				.createNewDefaultGun(dataFolder, "makarov", "Makarov \"PM\"", 53, stringsPistol,
@@ -532,19 +541,21 @@ public class CustomGunItem extends AbstractItem {
 				.setDelayShoot(1).setCustomProjectile(ProjectileManager.EXPLODINGROUND)
 				.setCustomProjectileVelocity(2).setCustomProjectileExplosionRadius(6)// .setChargingHandler(ChargingManager.MININUKELAUNCHER)
 				.setReloadingHandler(ReloadingManager.SINGLE_RELOAD).setDistance(500).setMaterial(Material.CROSSBOW)
-				.setParticle(0.001, 0.001, 0.001, Material.COAL_BLOCK).setRecoil(10).done();
+				.setParticle(0.001, 0.001, 0.001, Material.COAL_BLOCK).setRecoil(10).setKilledByMessage("%player% was thump'd by %killer% using a %name%").done();
 		GunYMLCreator
 				.createNewDefaultGun(dataFolder, "minigun", "Minigun", 56, stringsMetalRif,
 						WeaponType.BIG_GUN, WeaponSounds.GUN_BIG, true, "556", 2, 200, 15000)
 				.setFullyAutomatic(5).setBulletsPerShot(1).setChargingHandler(ChargingManager.REQUIREAIM).setMaterial(Material.CROSSBOW)
-				.setSway(0.5).setSwayMultiplier(2.4).setUseOffhand(false).setParticle(0.9, 0.9, 0.9, Material.STONE).done();
+				.setSway(0.5).setSwayMultiplier(2.4).setUseOffhand(false).setParticle(0.9, 0.9, 0.9, Material.STONE)
+				.setKilledByMessage("%player% was BRRRRRRRR'd by %killer% using a big %name%").done();
 		GunYMLCreator// TODO: MINIGUN RECOIL
 				.createNewDefaultGun(dataFolder, "mk19", "Mk-19", 57, stringsMetalRif, WeaponType.BIG_GUN,
 						WeaponSounds.WARHEAD_LAUNCH, true, "40mm", 50, 50, 20000)
 				.setFullyAutomatic(1).setCustomProjectile(ProjectileManager.EXPLODINGROUND)
 				.setCustomProjectileVelocity(4).setCustomProjectileExplosionRadius(5)
 				.setUseOffhand(false).setChargingHandler(ChargingManager.REQUIREAIM).setSway(0.5).setSwayMultiplier(2.4).setMaterial(Material.CROSSBOW)
-				.setParticle(0.001, 0.001, 0.001, Material.COAL_BLOCK).setRecoil(7).done();
+				.setParticle(0.001, 0.001, 0.001, Material.COAL_BLOCK).setRecoil(7)
+				.setKilledByMessage("%player% was blown up by %killer% using a %name%").done();
 		GunYMLCreator
 				.createNewDefaultGun(dataFolder, "asval", "AS-Val", 58, stringsMetalRif, WeaponType.RIFLE,
 						WeaponSounds.SILENCEDSHOT, true, "762", 3, 30, 7000).setMaterial(Material.CROSSBOW)
@@ -601,6 +612,7 @@ public class CustomGunItem extends AbstractItem {
 				.createNewDefaultGun(dataFolder, "flamer", "Flamer", 65, stringsMetalRif,
 						WeaponType.FLAMER, WeaponSounds.HISS, false, "fuel", 1, 60, 8000)
 				.setFullyAutomatic(5).setRecoil(0).setCustomProjectile(ProjectileManager.FIRE).setDistance(11).setMaterial(Material.CROSSBOW)
+				.setKilledByMessage("%player% was burned alive by %killer% using a %name%")
 				.done();
 		GunYMLCreator
 				.createNewDefaultGun(dataFolder, "glock", "Glock-17", 1, stringsPistol, WeaponType.PISTOL,
@@ -629,7 +641,9 @@ public class CustomGunItem extends AbstractItem {
 		GunYMLCreator
 				.createAttachment(false, dataFolder, false, "default_uzicorn", "uzicorn",
 						"Uzicorn", null, m(75),  Arrays.asList(
-								new String[]{getIngString(Material.WHITE_WOOL, 0, 6), "uzi"}), 2400, "uzi").setReloadingHandler(ReloadingManager.SLIDE_RELOAD)
+								new String[]{getIngString(Material.WHITE_WOOL, 0, 6), "uzi"}), 2400, "uzi")
+				.setKilledByMessage("%player% was surprised by %killer% using a %name%")
+				.setReloadingHandler(ReloadingManager.SLIDE_RELOAD)
 				.setWeaponSound(WeaponSounds.SILENCEDSHOT).setMaterial(Material.CROSSBOW).done();
 
 
@@ -640,9 +654,10 @@ public class CustomGunItem extends AbstractItem {
 				.setReloadingHandler(ReloadingManager.SINGLE_RELOAD).done();
 
 		GunYMLCreator
-				.createNewDefaultGun(dataFolder, "deagle", "Deagle", 77, stringsMetalRif,
+				.createNewDefaultGun(dataFolder, "deagle", "Deagle", 78, stringsMetalRif,
 						WeaponType.PISTOL, WeaponSounds.GUN_DEAGLE, true, "9mm", 8, 7, 1800).setMaterial(Material.CROSSBOW)
-				.setReloadingHandler(ReloadingManager.SLIDE_RELOAD).done();
+				.setReloadingHandler(ReloadingManager.SLIDE_RELOAD)
+				.setKilledByMessage("%player% was shot by %killer% using a %name%").done();
 
 
 
@@ -674,7 +689,9 @@ public class CustomGunItem extends AbstractItem {
 
 
 		GunYMLCreator.createNewDefaultGun(dataFolder, "debuggun", "Debug Gun", 34, strings10mm,
-				WeaponType.PISTOL, WeaponSounds.LAZERSHOOT, true, null, 5, 69420, -1).setLore("&3No sway. Perfect for detecting bounding boxes.").setReloadingHandler(ReloadingManager.SLIDE_RELOAD).setIsSecondaryWeapon(true).setDelayShoot(0).setRecoil(0).setFullyAutomatic(12).setSway(0).setSwayMultiplier(0).setHeadShotMultiplier(12).setVariant(12).setMaterial(Material.CROSSBOW).done();
+				WeaponType.PISTOL, WeaponSounds.LAZERSHOOT, true, null, 5, 69420, -1)
+				.setKilledByMessage("%player% was \"killed\" by %killer% using a %name%")
+				.setLore("&3No sway. Perfect for detecting bounding boxes.").setReloadingHandler(ReloadingManager.SLIDE_RELOAD).setIsSecondaryWeapon(true).setDelayShoot(0).setRecoil(0).setFullyAutomatic(12).setSway(0).setSwayMultiplier(0).setHeadShotMultiplier(12).setVariant(12).setMaterial(Material.CROSSBOW).done();
 
 
 	}

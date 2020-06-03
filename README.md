@@ -13,5 +13,5 @@ To add QA to your project using maven, copy the following into the POM.xml.
         <dependency>
             <groupId>me.zombie_striker</groupId>
             <artifactId>QualityArmory</artifactId>
-            <version>1.1.167</version>
+            <version>1.1.169</version>
         </dependency>

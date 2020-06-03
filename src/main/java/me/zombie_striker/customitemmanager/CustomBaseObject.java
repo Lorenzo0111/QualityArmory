@@ -93,7 +93,8 @@ public class CustomBaseObject {
 	public void setIngredientsRaw(Object[] ing) {
 		this.ing = ing;
 	}
-	public ItemStack[] getIngredients2(){
+	@Deprecated
+	public ItemStack[] getIngredients(){
 		return (ItemStack[]) ing;
 	}
 	public Object[] getIngredientsRaw(){

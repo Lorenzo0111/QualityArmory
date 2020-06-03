@@ -32,6 +32,10 @@ public class AttachmentYML extends GunYML {
 		return (String) get("baseGun");
 	}
 
+	public AttachmentYML setKilledByMessage(String message) {
+		set(false, "KilledByMessage", message);
+		return this;
+	}
 	@Override
 	public AttachmentYML verify(String name, Object v) {
 		if (!fileConfig.contains(name)) {

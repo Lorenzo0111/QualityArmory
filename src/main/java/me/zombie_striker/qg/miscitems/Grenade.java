@@ -34,7 +34,7 @@ public class Grenade extends CustomBaseObject implements ThrowableItems {
 	public Grenade(ItemStack[] ingg, double cost, double damage, double explosionreadius, String name,
 			String displayname, List<String> lore, MaterialStorage ms) {
 		super(name,ms,displayname,lore,false);
-		this.ing = ingg;
+		super.setIngredients(ingg);
 		this.setPrice(cost);
 		this.radius = explosionreadius;
 		this.dmageLevel = damage;

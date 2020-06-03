@@ -1,3 +1,16 @@
+1.1.170
+    - Added an amount argument to give specific amounts of ammo.
+    - Added customizable death messages for each gun.
+
+1.1.169b
+    - Removed debug messages
+    - Fixed misc items not appearing in crafting menu
+    - Fixed flamer doing damage in non pvp areas.
+
+1.1.169
+    - Added QAWeaponDamageBlockEvent to detect when a bullet hits a block
+    - Fixed IncendaryGrenades doing damage in no-PVP zones.
+
 1.1.168
     - Re-added Helmets for 1.13+
     - Added Deagle

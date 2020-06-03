@@ -74,6 +74,8 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
 	private int lightl = 20;
 	private boolean enableMuzzleSmoke = false;
 
+	private String killedByMessage = "%player% was shot by %killer% using a %name%";
+
 	@Deprecated
 	public Gun(String name, MaterialStorage id, WeaponType type, boolean h, Ammo am, double acc, double swaymult,
 			   int maxBullets, float damage, boolean isAutomatic, int durib, String ws, double cost,
@@ -524,6 +526,13 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
 
 	public boolean shoot(Player player) {
 		return Gun.USE_THIS_INSTEAD_OF_INDEVIDUAL_SHOOT_METHODS(this, player, getSway());
+	}
+
+	public void setDeathMessage(String deathMessage){
+		this.killedByMessage = deathMessage;
+	}
+	public String getDeathMessage(){
+		return killedByMessage;
 	}
 
 	public int getMaxBullets() {

@@ -224,8 +224,10 @@ public class GunYMLLoader {
 								QAMain.miscRegister.put(ms,
 										base=new Flashbang(materails, price, damage, radius, name, displayname, lore, ms));
 
-							if(base!=null)
+							if(base!=null) {
 								base.setCustomLore(lore);
+								base.setIngredients(materails);
+							}
 						}
 					}
 				} catch (Exception e) {

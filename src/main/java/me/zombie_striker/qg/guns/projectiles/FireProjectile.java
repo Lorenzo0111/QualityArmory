@@ -9,6 +9,7 @@ import me.zombie_striker.qg.boundingbox.BoundingBoxManager;
 import me.zombie_striker.qg.guns.Gun;
 import me.zombie_striker.qg.guns.utils.GunUtil;
 
+import me.zombie_striker.qg.handlers.WorldGuardSupport;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.entity.Damageable;
@@ -47,7 +48,13 @@ public class FireProjectile implements RealtimeCalculationProjectile {
 							((Damageable) e).damage(g.getDurabilityDamage(), player);
 							if (e instanceof LivingEntity) {
 								((LivingEntity) e).setNoDamageTicks(0);
-								((LivingEntity) e).setFireTicks(20 * 3);
+								try {
+									if (WorldGuardSupport.a(e.getLocation())) {
+										e.setFireTicks(20*3);
+									}
+								}catch (Error error){
+									e.setFireTicks(20*3);
+								}
 							}
 						}
 						nearby.remove(e);

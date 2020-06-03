@@ -55,6 +55,12 @@ public class GunYML extends ArmoryYML {
 		verify("sway.sneakModifier",true);
 		verify("sway.moveModifier",true);
 		verify("sway.runModifier",true);
+		verify("KilledByMessage","%player% was shot by %killer% using a %name%");
+	}
+
+	public GunYML setKilledByMessage(String message) {
+		set(false, "KilledByMessage", message);
+		return this;
 	}
 	public GunYML setRecoil(double recoil) {
 		set(false, "recoil", recoil);

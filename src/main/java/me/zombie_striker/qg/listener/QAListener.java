@@ -15,6 +15,7 @@ import me.zombie_striker.qg.guns.utils.GunUtil;
 import me.zombie_striker.qg.handlers.*;
 import me.zombie_striker.qg.miscitems.MeleeItems;
 import org.bukkit.*;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -511,6 +512,27 @@ public class QAListener implements Listener {
 		if (QualityArmory.isCustomItem(e.getItemInHand()))
 			e.setCancelled(true);
 	}
+
+
+	@EventHandler
+	public void onDeathChat(PlayerDeathEvent e){
+		if(QAMain.changeDeathMessages){
+			if(e.getEntity().getKiller()!=null && e.getEntity().getKiller() instanceof Player){
+				Player killer = e.getEntity().getKiller();
+				if(e.getDeathMessage().contains(" using ")){
+					CustomBaseObject base = IronsightsHandler.getGunUsed(killer);
+					if(base instanceof Gun){
+						e.setDeathMessage(((Gun) base).getDeathMessage()
+								.replaceAll("%player%",e.getEntity().getDisplayName())
+								.replaceAll("%killer%",killer.getDisplayName())
+								.replaceAll("%name%",base.getDisplayName())
+						);
+					}
+				}
+			}
+		}
+	}
+
 
 	@SuppressWarnings("deprecation")
 	@EventHandler(priority = EventPriority.HIGH)

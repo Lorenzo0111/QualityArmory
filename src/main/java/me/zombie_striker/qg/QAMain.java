@@ -225,6 +225,7 @@ public class QAMain extends JavaPlugin {
 	public static boolean MANUALLYSELECT14 = false;
 	public static boolean unknownTranslationKeyFixer = false;
 	public static boolean enableCreationOfFiles = true;
+	public static boolean changeDeathMessages = true;
 	public static List<Scoreboard> coloredGunScoreboard = new ArrayList<Scoreboard>();
 	public static boolean blockBreakTexture = false;
 	public static List<UUID> currentlyScoping = new ArrayList<>();
@@ -456,6 +457,8 @@ public class QAMain extends JavaPlugin {
 		try {
 			ItemStack is = CustomItemManager.getItemType("gun").getItem(obj.getItemData().getMat(),obj.getItemData().getData(),obj.getItemData().getVariant());
 			is.setAmount(obj.getCraftingReturn());
+			if(is.getAmount()<=0)
+				is.setAmount(1);
 			ItemMeta im = is.getItemMeta();
 			List<String> lore = im.hasLore() ? im.getLore() : new ArrayList<>();
 			if (shop) {
@@ -1019,6 +1022,9 @@ public class QAMain extends JavaPlugin {
 		swayModifier_Ironsights = (double) a("generalModifiers.sway.Ironsights", swayModifier_Ironsights);
 		swayModifier_Sneak = (double) a("generalModifiers.sway.Sneak", swayModifier_Sneak);
 
+		changeDeathMessages = (boolean) a("deathmessages.enable", changeDeathMessages);
+
+
 		List<String> avoidTypes = (List<String>) a("impenetrableEntityTypes",
 				Collections.singletonList(EntityType.ARROW.name()));
 		if (getConfig().getBoolean("ignoreArmorStands"))
@@ -1526,7 +1532,7 @@ public class QAMain extends JavaPlugin {
 						else if (sender instanceof Player)
 							who = ((Player) sender);
 						else {
-							sender.sendMessage("A USER IS REQUIRED FOR CONSOLE. /QA give <gun> <player>");
+							sender.sendMessage("A USER IS REQUIRED FOR CONSOLE. /QA give <gun> <player> <amount>");
 						}
 						if (who == null) {
 							sender.sendMessage("That player is not online");
@@ -1539,7 +1545,10 @@ public class QAMain extends JavaPlugin {
 							temp =CustomItemManager.getItemType("gun").getItem(g.getItemData().getMat(),g.getItemData().getData(),g.getItemData().getVariant());;
 							who.getInventory().addItem(temp);
 						} else if (g instanceof Ammo) {
-							QualityArmory.addAmmoToInventory(who, (Ammo) g, ((Ammo) g).getMaxAmount());
+							int amount = ((Ammo) g).getMaxAmount();
+							if(args.length > 3)
+								amount = Integer.parseInt(args[3]);
+							QualityArmory.addAmmoToInventory(who, (Ammo) g, amount);
 						} else {
 							temp = CustomItemManager.getItemType("gun").getItem(g.getItemData().getMat(),g.getItemData().getData(),g.getItemData().getVariant());
 							temp.setAmount(g.getCraftingReturn());
@@ -1598,7 +1607,7 @@ public class QAMain extends JavaPlugin {
 
 	public void sendHelp(CommandSender sender) {
 		sender.sendMessage(prefix + " Commands:");
-		sender.sendMessage(ChatColor.GOLD + "/QA give <Item>:" + ChatColor.GRAY
+		sender.sendMessage(ChatColor.GOLD + "/QA give <Item> <player> <amount>:" + ChatColor.GRAY
 				+ " Gives the sender the item specified (guns, ammo, misc.)");
 		sender.sendMessage(ChatColor.GOLD + "/QA craft:" + ChatColor.GRAY + " Opens the crafting menu.");
 		sender.sendMessage(ChatColor.GOLD + "/QA shop: " + ChatColor.GRAY + "Opens the shop menu");

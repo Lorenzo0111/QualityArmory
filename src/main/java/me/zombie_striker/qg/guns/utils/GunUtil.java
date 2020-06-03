@@ -8,6 +8,7 @@ import me.zombie_striker.customitemmanager.CustomBaseObject;
 import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.ammo.Ammo;
 import me.zombie_striker.qg.api.QAHeadShotEvent;
+import me.zombie_striker.qg.api.QAWeaponDamageBlockEvent;
 import me.zombie_striker.qg.api.QAWeaponDamageEntityEvent;
 import me.zombie_striker.qg.api.QualityArmory;
 import me.zombie_striker.qg.armor.BulletProtectionUtil;
@@ -296,13 +297,17 @@ public class GunUtil {
 
 					if (start.getBlock().getType() != Material.AIR) {
 						boolean solid = isSolid(start.getBlock(), start);
-						if ((solid || isBreakable(start.getBlock(), start)) && !blocksThatWillPLAYBreak.contains(
-								new Location(start.getWorld(), start.getBlockX(), start.getBlockY(), start.getBlockZ()))) {
-							blocksThatWillPLAYBreak.add(
-									new Location(start.getWorld(), start.getBlockX(), start.getBlockY(), start.getBlockZ()));
-						}
-						if (QAMain.destructableBlocks.contains(start.getBlock().getType())) {
-							blocksThatWillBreak.add(start);
+						QAWeaponDamageBlockEvent blockevent = new QAWeaponDamageBlockEvent(p,g,start.getBlock());
+						Bukkit.getPluginManager().callEvent(blockevent);
+						if(!blockevent.isCanceled()) {
+							if ((solid || isBreakable(start.getBlock(), start)) && !blocksThatWillPLAYBreak.contains(
+									new Location(start.getWorld(), start.getBlockX(), start.getBlockY(), start.getBlockZ()))) {
+								blocksThatWillPLAYBreak.add(
+										new Location(start.getWorld(), start.getBlockX(), start.getBlockY(), start.getBlockZ()));
+							}
+							if (QAMain.destructableBlocks.contains(start.getBlock().getType())) {
+								blocksThatWillBreak.add(start);
+							}
 						}
 					}
 

@@ -2,6 +2,7 @@ package me.zombie_striker.qg.miscitems;
 
 import java.util.List;
 
+import me.zombie_striker.qg.handlers.WorldGuardSupport;
 import org.bukkit.Effect;
 import org.bukkit.Sound;
 import org.bukkit.entity.Entity;
@@ -70,7 +71,13 @@ public class IncendaryGrenades extends Grenade {
 					for(Entity e : h.getHolder().getNearbyEntities(radius, radius, radius)) 
 						if(e instanceof LivingEntity) {
 							QAMain.DEBUG("Firedamage to "+e.getName());
-							e.setFireTicks(20);
+							try {
+								if (WorldGuardSupport.a(e.getLocation())) {
+									e.setFireTicks(20);
+								}
+							}catch (Error error){
+								e.setFireTicks(20);
+							}
 						}
 					k++;
 				}

@@ -25,12 +25,11 @@ public class MedKit extends CustomBaseObject implements ArmoryBaseObject {
 	HashMap<UUID, Long> lastTimeHealed = new HashMap<>();
 	HashMap<UUID, Double> PercentTimeHealed = new HashMap<>();
 
-	ItemStack[] ing = null;
 
 
 	public MedKit(MaterialStorage ms, String name, String displayname, ItemStack[] ings, int cost) {
 		super(name,ms,displayname,null,false);
-		this.ing = ings;
+		super.setIngredients(ings);
 	}
 
 	@Override

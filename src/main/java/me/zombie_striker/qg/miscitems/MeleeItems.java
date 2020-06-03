@@ -19,14 +19,12 @@ public class MeleeItems extends CustomBaseObject implements ArmoryBaseObject{
 	HashMap<UUID, Long> lastTimeHealed = new HashMap<>();
 	HashMap<UUID, Double> PercentTimeHealed = new HashMap<>();
 
-	ItemStack[] ing = null;
-
 	int damage = 1;
 
 	public MeleeItems(MaterialStorage ms, String name, String displayname, ItemStack[] ings, int cost, int damage) {
 		super(name,ms,displayname,null,false);
 		this.setPrice(cost);
-		this.ing = ings;
+		super.setIngredients(ings);
 		this.damage = damage;
 	}
 
