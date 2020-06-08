@@ -55,9 +55,14 @@ public class GunYML extends ArmoryYML {
 		verify("sway.sneakModifier",true);
 		verify("sway.moveModifier",true);
 		verify("sway.runModifier",true);
+		verify("sway.unscopedModifier",1);
 		verify("KilledByMessage","%player% was shot by %killer% using a %name%");
 	}
 
+	public GunYML setSwayUnscopedModifier(int sway) {
+		set(false, "sway.unscopedModifier", sway);
+		return this;
+	}
 	public GunYML setKilledByMessage(String message) {
 		set(false, "KilledByMessage", message);
 		return this;

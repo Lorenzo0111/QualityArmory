@@ -2,25 +2,13 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="3a75e4d7-6f9a-4a9b-ac5e-112a5a655666" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/api/QAWeaponDamageBlockEvent.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/zombie_striker/customitemmanager/CustomBaseObject.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/zombie_striker/customitemmanager/CustomBaseObject.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/me/zombie_striker/customitemmanager/qa/versions/V1_14/CustomGunItem.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/zombie_striker/customitemmanager/qa/versions/V1_14/CustomGunItem.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/QAMain.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/QAMain.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/config/AttachmentYML.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/config/AttachmentYML.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/config/GunYML.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/config/GunYML.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/config/GunYMLLoader.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/config/GunYMLLoader.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/guns/Gun.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/guns/Gun.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/guns/projectiles/FireProjectile.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/guns/projectiles/FireProjectile.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/guns/utils/GunUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/guns/utils/GunUtil.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/handlers/WorldGuardSupport.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/handlers/WorldGuardSupport.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/listener/QAListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/listener/QAListener.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/miscitems/Grenade.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/miscitems/Grenade.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/miscitems/IncendaryGrenades.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/miscitems/IncendaryGrenades.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/miscitems/MedKit.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/miscitems/MedKit.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/miscitems/MeleeItems.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/miscitems/MeleeItems.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/handlers/AimManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/handlers/AimManager.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/resources/changelog.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/changelog.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -213,22 +201,22 @@
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
     <state x="614" y="173" width="1018" height="813" key="CommitChangelistDialog2/0.0.1920.1160@0.0.1920.1160" timestamp="1586478984143" />
-    <state width="1876" height="393" key="GridCell.Tab.0.bottom" timestamp="1590955437558">
+    <state width="1876" height="393" key="GridCell.Tab.0.bottom" timestamp="1591654143369">
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
-    <state width="1876" height="393" key="GridCell.Tab.0.bottom/0.0.1920.1160@0.0.1920.1160" timestamp="1590955437558" />
-    <state width="1876" height="393" key="GridCell.Tab.0.center" timestamp="1590955437558">
+    <state width="1876" height="393" key="GridCell.Tab.0.bottom/0.0.1920.1160@0.0.1920.1160" timestamp="1591654143369" />
+    <state width="1876" height="393" key="GridCell.Tab.0.center" timestamp="1591654143369">
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
-    <state width="1876" height="393" key="GridCell.Tab.0.center/0.0.1920.1160@0.0.1920.1160" timestamp="1590955437558" />
-    <state width="1876" height="393" key="GridCell.Tab.0.left" timestamp="1590955437558">
+    <state width="1876" height="393" key="GridCell.Tab.0.center/0.0.1920.1160@0.0.1920.1160" timestamp="1591654143369" />
+    <state width="1876" height="393" key="GridCell.Tab.0.left" timestamp="1591654143369">
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
-    <state width="1876" height="393" key="GridCell.Tab.0.left/0.0.1920.1160@0.0.1920.1160" timestamp="1590955437558" />
-    <state width="1876" height="393" key="GridCell.Tab.0.right" timestamp="1590955437558">
+    <state width="1876" height="393" key="GridCell.Tab.0.left/0.0.1920.1160@0.0.1920.1160" timestamp="1591654143369" />
+    <state width="1876" height="393" key="GridCell.Tab.0.right" timestamp="1591654143369">
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
-    <state width="1876" height="393" key="GridCell.Tab.0.right/0.0.1920.1160@0.0.1920.1160" timestamp="1590955437558" />
+    <state width="1876" height="393" key="GridCell.Tab.0.right/0.0.1920.1160@0.0.1920.1160" timestamp="1591654143369" />
     <state x="461" y="211" key="SettingsEditor" timestamp="1590175357034">
       <screen x="0" y="0" width="1920" height="1160" />
     </state>

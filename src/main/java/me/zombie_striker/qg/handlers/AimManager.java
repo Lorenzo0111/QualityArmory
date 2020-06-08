@@ -22,8 +22,8 @@ public class AimManager implements Listener {
 
 	public static double getSway(Gun gun,UUID uuid) {
 		if(!accState.containsKey(uuid))
-			return gun.getSway()*gun.getMovementMultiplier();		
-		return gun.getSway()*Math.pow(accState.get(uuid),gun.getMovementMultiplier());		
+			return gun.getSway()*gun.getMovementMultiplier();
+		return gun.getSway()*Math.pow(accState.get(uuid),gun.getMovementMultiplier());
 	}
 	
 	public AimManager() {
@@ -34,18 +34,24 @@ public class AimManager implements Listener {
 				for (Player p : Bukkit.getOnlinePlayers()) {
 					double sway = 1;
 					ItemStack used = p.getItemInHand();
+					boolean offhand = false;
 					if (me.zombie_striker.qg.api.QualityArmory.isIronSights(p.getItemInHand())) {
 						sway *= QAMain.swayModifier_Ironsights;
 						used = Update19OffhandChecker.getItemStackOFfhand(p);
+						offhand = true;
 					}
 					Gun g = QualityArmory.getGun(used);
 					if(g!=null) {
 						if (p.isSneaking())
 							if (g.isEnableSwaySneakModifier())
 								sway *= QAMain.swayModifier_Sneak;
-						if (p.isSprinting())
+						if (p.isSprinting()) {
 							if (g.isEnableSwayRunModifier())
 								sway *= 1.3;
+						}
+						if(!offhand){
+							sway *= g.getSwayUnscopedMultiplier();
+						}
 					}
 					if (lasLocCheck.containsKey(p.getUniqueId())) {
 						long s = System.currentTimeMillis()

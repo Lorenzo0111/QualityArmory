@@ -1,6 +1,7 @@
 1.1.170
     - Added an amount argument to give specific amounts of ammo.
     - Added customizable death messages for each gun.
+    - Added "Unscoped sway"
 
 1.1.169b
     - Removed debug messages

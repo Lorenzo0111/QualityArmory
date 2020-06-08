@@ -47,6 +47,7 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
 	private Ammo ammotype;
 	private double acc;
 	private double swaymultiplier = 2;
+	private double swayUnscopedMultiplier = 1;
 	private int maxbull;
 	private float damage;
 	private int durib = 1000;
@@ -575,12 +576,21 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
 		return damage;
 	}
 
+
 	public void setDurabilityDamage(float damage) {
 		this.damage = damage;
 	}
 
 	public int getDurability() {
 		return this.durib;
+	}
+
+
+	public void setSwayUnscopedMultiplier(double swaymultiplier){
+		this.swayUnscopedMultiplier = swaymultiplier;
+	}
+	public double getSwayUnscopedMultiplier(){
+		return swayUnscopedMultiplier;
 	}
 
 	public Ammo getAmmoType() {
