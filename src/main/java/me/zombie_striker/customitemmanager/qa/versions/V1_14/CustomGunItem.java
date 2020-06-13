@@ -120,7 +120,7 @@ public class CustomGunItem extends AbstractItem {
 
 	@Override
 	public void initItems(File dataFolder) {
-		CustomItemManager.setResourcepack("https://www.dropbox.com/s/8mhrll2vjay2un5/QualityArmoryV2.1.3.zip?dl=1");
+		CustomItemManager.setResourcepack("https://www.dropbox.com/s/wjwfw8rrfhx11lb/QualityArmoryV2.1.4.zip?dl=1");
 
 
 
@@ -311,7 +311,7 @@ public class CustomGunItem extends AbstractItem {
 				.createNewDefaultGun(dataFolder, "awp", "AWP", 20, stringsMetalRif, WeaponType.SNIPER,
 						WeaponSounds.GUN_BIG, true, "762", 10, 12, 3000)
 				.setUseOffhand(false).setDelayShoot(0.8).setZoomLevel(9).setSway(1).setSwayMultiplier(10).setRecoil(5)
-				.setKilledByMessage("%player% was sniped by %killer% using an %name%").setMaterial(Material.CROSSBOW).setSwayUnscopedModifier(10).done();
+				.setKilledByMessage("%player% was sniped by %killer% using an %name%").setMaterial(Material.CROSSBOW).setSwayUnscopedModifier(3).setWeaponSound(WeaponSounds.GUN_BIG).done();
 
 		GunYMLCreator.createMisc(false, dataFolder, false, "default_smokegrenade", "smokegrenade",
 				"&7Smoke Grenade",

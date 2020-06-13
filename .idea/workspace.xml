@@ -6,9 +6,6 @@
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/me/zombie_striker/customitemmanager/qa/versions/V1_14/CustomGunItem.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/zombie_striker/customitemmanager/qa/versions/V1_14/CustomGunItem.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/config/GunYML.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/config/GunYML.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/guns/Gun.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/guns/Gun.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/handlers/AimManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/zombie_striker/qg/handlers/AimManager.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/resources/changelog.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/changelog.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />

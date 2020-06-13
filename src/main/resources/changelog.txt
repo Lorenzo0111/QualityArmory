@@ -1,3 +1,6 @@
+1.1.171
+    - Added unscoped modifier to 1.9-1.13
+
 1.1.170
     - Added an amount argument to give specific amounts of ammo.
     - Added customizable death messages for each gun.
