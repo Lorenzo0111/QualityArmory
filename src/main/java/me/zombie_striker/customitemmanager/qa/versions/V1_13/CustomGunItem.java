@@ -1,6 +1,7 @@
 package me.zombie_striker.customitemmanager.qa.versions.V1_13;
 
 import me.zombie_striker.customitemmanager.*;
+import me.zombie_striker.customitemmanager.qa.AbstractCustomGunItem;
 import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.api.QualityArmory;
 import me.zombie_striker.qg.armor.ArmorObject;
@@ -27,8 +28,11 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class CustomGunItem extends AbstractItem {
+public class CustomGunItem extends AbstractCustomGunItem {
 
+	public CustomGunItem(){
+		CustomItemManager.setResourcepack("https://www.dropbox.com/s/b04i5eqtqwrh5ub/QualityArmoryV1.0.40.zip?dl=1");
+	}
 	@Override
 	public ItemStack getItem(Material material, int data, int variant) {
 		return getItem(MaterialStorage.getMS(material,data,variant));
@@ -96,11 +100,7 @@ public class CustomGunItem extends AbstractItem {
 	}
 
 	@Override
-	public void initItems(File dataFolder) {
-		CustomItemManager.setResourcepack("https://www.dropbox.com/s/b04i5eqtqwrh5ub/QualityArmoryV1.0.40.zip?dl=1");
-
-
-
+	public void initIronsights(File dataFolder) {
 		File ironsights = new File(dataFolder,"default_ironsightstoggleitem.yml");
 		YamlConfiguration ironconfig = YamlConfiguration.loadConfiguration(ironsights);
 		if(!ironconfig.contains("displayname")){
@@ -116,8 +116,10 @@ public class CustomGunItem extends AbstractItem {
 		IronsightsHandler.ironsightsMaterial = Material.matchMaterial(ironconfig.getString("material"));
 		IronsightsHandler.ironsightsData = ironconfig.getInt("id");
 		IronsightsHandler.ironsightsDisplay = ironconfig.getString("displayname");
+	}
 
-
+	@Override
+	public void initItems(File dataFolder) {
 
 		List<String> stringsWoodRif = Arrays.asList(new String[]{getIngString(Material.IRON_INGOT, 0, 12),
 				getIngString(MultiVersionLookup.getWood(), 0, 2), getIngString(Material.REDSTONE, 0, 5)});

@@ -458,8 +458,9 @@ public class GunYMLLoader {
 
 							// Gun baseGun = null;
 							MaterialStorage baseGunM = null;
+							String base = f2.getString("baseGun");
 							for (Entry<MaterialStorage, Gun> g : QAMain.gunRegister.entrySet()) {
-								if (g.getValue().getName().equalsIgnoreCase(f2.getString("baseGun"))) {
+								if (g.getValue().getName().equalsIgnoreCase(base)) {
 									// baseGun = g.getValue();
 									baseGunM = g.getKey();
 								}
@@ -471,6 +472,10 @@ public class GunYMLLoader {
 									extraLore.add(ChatColor.translateAlternateColorCodes('&', lore));
 								}
 							} catch (Error | Exception re52) {
+							}
+							if(baseGunM==null){
+								main.getLogger().info("--Failed to load "+name+" attachment because the base \""+base+"\" does not exist.");
+								continue;
 							}
 
 							AttachmentBase attach = new AttachmentBase(baseGunM, ms, name, displayname);

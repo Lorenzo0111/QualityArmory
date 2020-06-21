@@ -1,6 +1,7 @@
 package me.zombie_striker.customitemmanager.qa.versions.V1_14;
 
 import me.zombie_striker.customitemmanager.*;
+import me.zombie_striker.customitemmanager.qa.AbstractCustomGunItem;
 import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.ammo.Ammo;
 import me.zombie_striker.qg.api.QualityArmory;
@@ -20,7 +21,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.CrossbowMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 
@@ -31,7 +31,11 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class CustomGunItem extends AbstractItem {
+public class CustomGunItem extends AbstractCustomGunItem {
+
+	public CustomGunItem(){
+		CustomItemManager.setResourcepack("https://www.dropbox.com/s/wjwfw8rrfhx11lb/QualityArmoryV2.1.4.zip?dl=1");
+	}
 
 	public static MaterialStorage m(int d) {
 		return MaterialStorage.getMS(Material.CROSSBOW, d, 0);
@@ -119,12 +123,7 @@ public class CustomGunItem extends AbstractItem {
 	}
 
 	@Override
-	public void initItems(File dataFolder) {
-		CustomItemManager.setResourcepack("https://www.dropbox.com/s/wjwfw8rrfhx11lb/QualityArmoryV2.1.4.zip?dl=1");
-
-
-
-
+	public void initIronsights(File dataFolder) {
 		File ironsights = new File(dataFolder, "default_ironsightstoggleitem.yml");
 		YamlConfiguration ironconfig = YamlConfiguration.loadConfiguration(ironsights);
 		if (!ironconfig.contains("displayname")) {
@@ -140,6 +139,11 @@ public class CustomGunItem extends AbstractItem {
 		IronsightsHandler.ironsightsMaterial = Material.matchMaterial(ironconfig.getString("material"));
 		IronsightsHandler.ironsightsData = ironconfig.getInt("id");
 		IronsightsHandler.ironsightsDisplay = ironconfig.getString("displayname");
+
+	}
+
+	@Override
+	public void initItems(File dataFolder) {
 
 
 		List<String> stringsWoodRif = Arrays.asList(new String[]{getIngString(Material.IRON_INGOT, 0, 12),

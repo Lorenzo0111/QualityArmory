@@ -43,8 +43,9 @@ public class GunUtil {
 	protected static HashMap<UUID, BukkitTask> AF_tasks = new HashMap<>();
 
 	public static void shootHandler(Gun g, Player p) {
-		shootHandler(g,p,g.getBulletsPerShot());
+		shootHandler(g, p, g.getBulletsPerShot());
 	}
+
 	public static void shootHandler(Gun g, Player p, int numberOfBullets) {
 		double sway = g.getSway() * AimManager.getSway(g, p.getUniqueId());
 		if (g.usesCustomProjctiles()) {
@@ -62,11 +63,18 @@ public class GunUtil {
 
 	public static double getTargetedSolidMaxDistance(Vector v, Location start, double maxDistance) {
 		Location test = start.clone();
-		for (int i = 0; i < maxDistance; i++) {
+		Block previous = null;
+		for (double i = 0; i < maxDistance; i += v.length()) {
+			if (test.getBlock() == previous) {
+				previous = test.getBlock();
+				test.add(v);
+				continue;
+			}
 			if (test.getBlock().getType() != Material.AIR) {
 				if (isSolid(test.getBlock(), test))
 					return start.distance(test);
 			}
+			previous = test.getBlock();
 			test.add(v);
 		}
 		return maxDistance;
@@ -85,7 +93,7 @@ public class GunUtil {
 			Vector normalizedDirection = p.getLocation().getDirection().normalize();
 			normalizedDirection.add(new Vector((Math.random() * 2 * sway) - sway, (Math.random() * 2 * sway) - sway,
 					(Math.random() * 2 * sway) - sway));
-			normalizedDirection =normalizedDirection.normalize();
+			normalizedDirection = normalizedDirection.normalize();
 			Vector step = normalizedDirection.clone().multiply(QAMain.bulletStep);
 
 			// Simple values to make it easier on the search
@@ -98,7 +106,7 @@ public class GunUtil {
 
 			double maxDistance = getTargetedSolidMaxDistance(step, start, range);
 			double maxEntityDistance = maxDistance;
-			double maxEntityDistanceSquared = maxDistance*maxDistance;
+			double maxEntityDistanceSquared = maxDistance * maxDistance;
 
 			// double degreeVector = Math.atan2(normalizedDirection.getX(),
 			// normalizedDirection.getZ());
@@ -148,13 +156,13 @@ public class GunUtil {
 						}
 						// Clear this to make sure
 						double checkDistanceMax = box.maximumCheckingDistance(e);
-						double startDistance = Math.max(entityDistance-(checkDistanceMax), 0);
+						double startDistance = Math.max(entityDistance - (checkDistanceMax), 0);
 
 						//Get it somewhere close to the entity
-						if(startDistance > 0)
+						if (startDistance > 0)
 							bulletLocationTest.add(normalizedDirection.clone().multiply(startDistance));
 
-						for (double testDistance = startDistance; testDistance < entityDistance+(checkDistanceMax); testDistance+=step.length()) {
+						for (double testDistance = startDistance; testDistance < entityDistance + (checkDistanceMax); testDistance += step.length()) {
 							bulletLocationTest.add(step);
 							if (box.intersects(p, bulletLocationTest, e)) {
 								bulletHitLoc = bulletLocationTest;
@@ -172,11 +180,10 @@ public class GunUtil {
 			time2 = System.currentTimeMillis();
 
 
-
 			if (hitTarget != null) {
 				if (!(hitTarget instanceof Player) || QualityArmory.allowGunsInRegion(hitTarget.getLocation())) {
 
-	boolean headshot = hitBox.allowsHeadshots() && hitBox.intersectsHead(bulletHitLoc, hitTarget);
+					boolean headshot = hitBox.allowsHeadshots() && hitBox.intersectsHead(bulletHitLoc, hitTarget);
 					if (headshot) {
 						QAMain.DEBUG("Headshot!");
 						if (QAMain.headshotPling) {
@@ -220,7 +227,7 @@ public class GunUtil {
 						}
 						if (hitTarget instanceof Player) {
 							Player player = (Player) hitTarget;
-							if (QAMain.enableArmorIgnore) {
+							if (!QAMain.enableArmorIgnore) {
 								try {
 									// damage = damage * ( 1 - min( 20, max( defensePoints / 5, defensePoints -
 									// damage / ( toughness / 4 + 2 ) ) ) / 25 )
@@ -262,11 +269,11 @@ public class GunUtil {
 									+ ((LivingEntity) hitTarget).getMaxHealth() + " :" + damageMAX + " DAM)");
 						}
 
-						if(hitTarget instanceof Damageable) {
+						if (hitTarget instanceof Damageable) {
 							((Damageable) hitTarget).damage(damageMAX, p);
-						}else if (hitTarget instanceof EnderDragon){
+						} else if (hitTarget instanceof EnderDragon) {
 							((EnderDragon) hitTarget).damage(damageMAX, p);
-						}else if (hitTarget instanceof EnderDragonPart) {
+						} else if (hitTarget instanceof EnderDragonPart) {
 							((EnderDragonPart) hitTarget).damage(damageMAX, p);
 						}
 
@@ -275,8 +282,8 @@ public class GunUtil {
 							QAMain.DEBUG("Damaging entity CANCELED " + hitTarget.getName() + " ( "
 									+ ((LivingEntity) hitTarget).getHealth() + "/"
 									+ ((LivingEntity) hitTarget).getMaxHealth() + " :" + damageMAX + " DAM)");
-						}else{
-							QAMain.DEBUG("Damaging entity CANCELED " + hitTarget.getType()+".");
+						} else {
+							QAMain.DEBUG("Damaging entity CANCELED " + hitTarget.getType() + ".");
 						}
 					}
 
@@ -297,9 +304,9 @@ public class GunUtil {
 
 					if (start.getBlock().getType() != Material.AIR) {
 						boolean solid = isSolid(start.getBlock(), start);
-						QAWeaponDamageBlockEvent blockevent = new QAWeaponDamageBlockEvent(p,g,start.getBlock());
+						QAWeaponDamageBlockEvent blockevent = new QAWeaponDamageBlockEvent(p, g, start.getBlock());
 						Bukkit.getPluginManager().callEvent(blockevent);
-						if(!blockevent.isCanceled()) {
+						if (!blockevent.isCanceled()) {
 							if ((solid || isBreakable(start.getBlock(), start)) && !blocksThatWillPLAYBreak.contains(
 									new Location(start.getWorld(), start.getBlockX(), start.getBlockY(), start.getBlockZ()))) {
 								blocksThatWillPLAYBreak.add(
@@ -341,7 +348,7 @@ public class GunUtil {
 							}
 						}
 					}
-						ParticleHandlers.spawnGunParticles(g, start);
+					ParticleHandlers.spawnGunParticles(g, start);
 				}
 
 				for (Location l : blocksThatWillBreak) {
@@ -353,7 +360,7 @@ public class GunUtil {
 			// TODO: Do lights n stuff
 			try {
 				if (Bukkit.getPluginManager().getPlugin("LightAPI") != null) {
-					if(p.getEyeLocation().getBlock().getLightLevel() < g.getLightOnShoot()) {
+					if (p.getEyeLocation().getBlock().getLightLevel() < g.getLightOnShoot()) {
 						final Location loc = p.getEyeLocation().clone();
 						LightAPI.createLight(loc, g.getLightOnShoot(), false);
 						for (ChunkInfo c : LightAPI.collectChunks(loc)) {
@@ -396,12 +403,12 @@ public class GunUtil {
 				}
 			time4 = System.currentTimeMillis();
 		}
-		if(timingsReport){
-			System.out.println("time1 = "+time1);
-			System.out.println("time2 = "+time2);
-			System.out.println("time3 = "+time3);
-			System.out.println("time3.5 = "+time4point5);
-			System.out.println("time4 = "+time4);
+		if (timingsReport) {
+			System.out.println("time1 = " + time1);
+			System.out.println("time2 = " + time2);
+			System.out.println("time3 = " + time3);
+			System.out.println("time3.5 = " + time4point5);
+			System.out.println("time4 = " + time4);
 		}
 	}
 
@@ -426,7 +433,6 @@ public class GunUtil {
 		g.getLastShotForGun().put(player.getUniqueId(), System.currentTimeMillis());
 
 
-
 		if (rapidfireshooters.containsKey(player.getUniqueId())) {
 			QAMain.DEBUG("Shooting canceled due to rapid fire being enabled.");
 			return;
@@ -439,7 +445,7 @@ public class GunUtil {
 		if (g.getChargingVal() != null) {
 			QAMain.DEBUG("Charging shoot debug: " + g.getName() + " = " + g.getChargingVal() == null ? "null"
 					: g.getChargingVal().getName());
-			regularshoot = g.getChargingVal().shoot(g, player, firstGunInstance );
+			regularshoot = g.getChargingVal().shoot(g, player, firstGunInstance);
 		}
 
 		if (regularshoot) {
@@ -455,11 +461,11 @@ public class GunUtil {
 
 				@Override
 				public void run() {
-					if(g.getChargingVal()!= null && g.getChargingVal().isCharging(player)){
+					if (g.getChargingVal() != null && g.getChargingVal().isCharging(player)) {
 						return;
 					}
 
-					if ((!g.hasIronSights() || !IronsightsHandler.isAiming(player) ) && ((player.isSneaking() == QAMain.enableSwapSingleShotOnAim))) {
+					if ((!g.hasIronSights() || !IronsightsHandler.isAiming(player)) && ((player.isSneaking() == QAMain.enableSwapSingleShotOnAim))) {
 						cancel();
 						QAMain.DEBUG("Stopping Automatic Firing");
 						rapidfireshooters.remove(player.getUniqueId());
@@ -468,16 +474,16 @@ public class GunUtil {
 
 					ItemStack temp = IronsightsHandler.getItemAiming(player);
 
-					if(QAMain.enableDurability && g.getDurabilityDamage(temp) <= 0){
-						player.playSound(player.getLocation(),WeaponSounds.METALHIT.getSoundName(),1,1);
+					if (QAMain.enableDurability && g.getDurabilityDamage(temp) <= 0) {
+						player.playSound(player.getLocation(), WeaponSounds.METALHIT.getSoundName(), 1, 1);
 						rapidfireshooters.remove(player.getUniqueId());
-						QAMain.DEBUG("Canceld due to weapon durability = "+g.getDurabilityDamage(temp));
+						QAMain.DEBUG("Canceld due to weapon durability = " + g.getDurabilityDamage(temp));
 						cancel();
 						return;
 					}
 
 					int amount = Gun.getAmount(temp);
-					if ((player.isSneaking()==QAMain.enableSwapSingleShotOnAim) || slotUsed != player.getInventory().getHeldItemSlot() || amount <= 0) {
+					if ((player.isSneaking() == QAMain.enableSwapSingleShotOnAim) || slotUsed != player.getInventory().getHeldItemSlot() || amount <= 0) {
 						rapidfireshooters.remove(player.getUniqueId()).cancel();
 						return;
 					}
@@ -527,12 +533,12 @@ public class GunUtil {
 						}
 					} else {
 						ItemStack tempCheck = player.getInventory().getItem(slot);
-						if(QualityArmory.isIronSights(tempCheck)){
+						if (QualityArmory.isIronSights(tempCheck)) {
 							CustomBaseObject tempBase = QualityArmory.getCustomItem(Update19OffhandChecker.getItemStackOFfhand(player));
-							if(tempBase != null && tempBase == g){
-								Update19OffhandChecker.setOffhand(player,temp);
+							if (tempBase != null && tempBase == g) {
+								Update19OffhandChecker.setOffhand(player, temp);
 							}
-						}else {
+						} else {
 							player.getInventory().setItem(slot, temp);
 						}
 					}
@@ -657,7 +663,7 @@ public class GunUtil {
 			temp.setItemMeta(im);
 			player.getInventory().setItem(slot, temp);
 
-			new GunRefillerRunnable(player, temp, g, slot,initialAmount, reloadAmount, seconds);
+			new GunRefillerRunnable(player, temp, g, slot, initialAmount, reloadAmount, seconds);
 
 		}
 

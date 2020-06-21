@@ -5,6 +5,7 @@ import me.zombie_striker.customitemmanager.CustomBaseObject;
 import me.zombie_striker.customitemmanager.CustomItemManager;
 import me.zombie_striker.customitemmanager.MaterialStorage;
 import me.zombie_striker.customitemmanager.OLD_ItemFact;
+import me.zombie_striker.customitemmanager.qa.AbstractCustomGunItem;
 import me.zombie_striker.customitemmanager.qa.ItemBridgePatch;
 import me.zombie_striker.customitemmanager.qa.versions.V1_13.CustomGunItem;
 import me.zombie_striker.qg.ammo.Ammo;
@@ -1109,7 +1110,7 @@ public class QAMain extends JavaPlugin {
 		if (enableCreationOfFiles) {
 			CustomItemManager.getItemType("gun").initItems(getDataFolder());
 		}
-
+		((AbstractCustomGunItem)CustomItemManager.getItemType("gun")).initIronsights(getDataFolder());
 
 		if (overrideURL) {
 			CustomItemManager.setResourcepack((String) a("DefaultResourcepack", CustomItemManager.getResourcepack()));
@@ -1117,6 +1118,7 @@ public class QAMain extends JavaPlugin {
 			if (!getConfig().contains("DefaultResourcepack")
 					|| !getConfig().getString("DefaultResourcepack").equals(CustomItemManager.getResourcepack())) {
 				getConfig().set("DefaultResourcepack", CustomItemManager.getResourcepack());
+				CustomItemManager.setResourcepack(CustomItemManager.getResourcepack());
 				saveTheConfig = true;
 			}
 		}

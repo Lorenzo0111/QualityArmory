@@ -1,6 +1,7 @@
 package me.zombie_striker.customitemmanager.qa.versions.V1_8;
 
 import me.zombie_striker.customitemmanager.*;
+import me.zombie_striker.customitemmanager.qa.AbstractCustomGunItem;
 import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.api.QualityArmory;
 import me.zombie_striker.qg.armor.ArmorObject;
@@ -24,8 +25,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class CustomGunItem extends AbstractItem {
+public class CustomGunItem extends AbstractCustomGunItem {
 
+	public CustomGunItem(){
+		CustomItemManager.setResourcepack("https://www.dropbox.com/s/pjoeg5e8l3byauf/QualityArmory1.8v1.0.3.zip?dl=1");
+	}
 	@Override
 	public ItemStack getItem(Material material, int data, int variant) {
 		return getItem(MaterialStorage.getMS(material,data,variant));
@@ -100,8 +104,12 @@ public class CustomGunItem extends AbstractItem {
 	}
 
 	@Override
+	public void initIronsights(File dataFolder) {
+
+	}
+
+	@Override
 	public void initItems(File dataFolder) {
-		CustomItemManager.setResourcepack("https://www.dropbox.com/s/pjoeg5e8l3byauf/QualityArmory1.8v1.0.3.zip?dl=1");
 
 
 		List<String> stringsWoodRif = Arrays.asList(new String[]{getIngString(Material.IRON_INGOT, 0, 12),

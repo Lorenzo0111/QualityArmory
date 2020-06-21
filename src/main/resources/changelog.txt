@@ -1,3 +1,12 @@
+1.1.171d
+    - Quickfix: Fixed creation of default files overrides ironsights
+
+1.1.171c
+    - Quick fix: Fixed resourcepack if file creation is disabled.
+
+1.1.171b
+    - Quick fix: Added error handling if attachment base is null.
+
 1.1.171
     - Added unscoped modifier to 1.9-1.13
 
