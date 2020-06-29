@@ -20,18 +20,23 @@ public class GunRefillerRunnable {
 
 	private static List<GunRefillerRunnable> allGunRefillers = new ArrayList<>();
 
-	public static boolean hasItemReloaded(ItemStack is) {
+	public static boolean hasItemReloaded(Player reloader, ItemStack is) {
 		for (GunRefillerRunnable s : allGunRefillers) {
 			if (is.isSimilar(s.reloadedItem))
+				if(reloader == null || reloader == s.reloader);
 				return true;
 		}
 		return false;
+	}
+	public static boolean hasItemReloaded(ItemStack is) {
+		return hasItemReloaded(null,is);
 	}
 
 	private BukkitTask r;
 	private ItemStack reloadedItem;
 	private int originalAmount = 0;
 	private int addedAmount = 0;
+	private Player reloader = null;
 
 	public int getOriginalAmount(){
 		return originalAmount;
@@ -49,6 +54,7 @@ public class GunRefillerRunnable {
 	public GunRefillerRunnable(final Player player, final ItemStack modifiedOriginalItem, final Gun g, final int slot,
 			final int originalAmount, final int reloadAmount, double seconds) {
 		final GunRefillerRunnable gg = this;
+		gg.reloader = player;
 
 		this.originalAmount = originalAmount;
 		this.addedAmount = reloadAmount-originalAmount;

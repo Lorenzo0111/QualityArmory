@@ -1,3 +1,15 @@
+1.1.172
+    - Added Pancor Jackhammer
+    - Fixed offhand aiming error for 1.16
+    - Updated ammo models
+    - Updated positions of some gun in 3rd person
+
+1.1.171f
+    - Possible Fix to broken gun reloading
+
+1.1.171e
+    - Fixed sentinel support
+
 1.1.171d
     - Quickfix: Fixed creation of default files overrides ironsights
 

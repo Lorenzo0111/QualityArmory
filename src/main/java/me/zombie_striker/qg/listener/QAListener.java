@@ -557,10 +557,12 @@ public class QAListener implements Listener {
 		QAMain.reloadingTasks.remove(e.getEntity().getUniqueId());
 
 		for (ItemStack is : new ArrayList<>(e.getDrops())) {
+			if(is==null)
+				continue;
 			if (QualityArmory.isIronSights(is)) {
 				e.getDrops().remove(is);
 				DEBUG("Removing IronSights");
-			}else if (is.hasItemMeta() && is.getItemMeta().hasDisplayName() && is.getItemMeta().getDisplayName().endsWith(QAMain.S_RELOADING_MESSAGE)) {
+			}else if (is.hasItemMeta() && is.getItemMeta().hasDisplayName() && is.getItemMeta().getDisplayName().contains(QAMain.S_RELOADING_MESSAGE)) {
 				Gun g = QualityArmory.getGun(is);
 				ItemMeta im = is.getItemMeta();
 				im.setDisplayName(g.getDisplayName());
@@ -956,7 +958,7 @@ public class QAListener implements Listener {
 			 */
 			if ((e.getItemDrop().getItemStack().getItemMeta().hasDisplayName()
 					&& e.getItemDrop().getItemStack().getItemMeta().getDisplayName().contains(QAMain.S_RELOADING_MESSAGE))) {
-				if (!GunRefillerRunnable.hasItemReloaded(e.getItemDrop().getItemStack())) {
+				if (!GunRefillerRunnable.hasItemReloaded(e.getPlayer(), e.getItemDrop().getItemStack())) {
 					if (g != null) {
 						ItemStack fix = e.getItemDrop().getItemStack();
 						ItemMeta temp = fix.getItemMeta();

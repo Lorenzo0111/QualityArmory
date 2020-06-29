@@ -776,7 +776,7 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
 		if (fire) {
 			QAMain.DEBUG("Fire mode called");
 			if (player.getPlayer().getItemInHand().getItemMeta().getDisplayName().contains(QAMain.S_RELOADING_MESSAGE)) {
-				if (!GunRefillerRunnable.hasItemReloaded(usedItem)) {
+				if (!GunRefillerRunnable.hasItemReloaded(player,usedItem)) {
 					ItemStack tempused = usedItem;
 					ItemMeta im = tempused.getItemMeta();
 					im.setDisplayName(getDisplayName());
@@ -879,7 +879,7 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
 
 						if (player.getPlayer().getItemInHand().getItemMeta().getDisplayName()
 								.contains(QAMain.S_RELOADING_MESSAGE)) {
-							if (!GunRefillerRunnable.hasItemReloaded(usedItem)) {
+							if (!GunRefillerRunnable.hasItemReloaded(player,usedItem)) {
 								ItemStack tempused = usedItem.clone();
 								ItemMeta im = tempused.getItemMeta();
 								im.setDisplayName(getDisplayName());

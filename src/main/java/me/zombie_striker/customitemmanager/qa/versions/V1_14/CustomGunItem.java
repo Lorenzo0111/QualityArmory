@@ -34,7 +34,7 @@ import java.util.List;
 public class CustomGunItem extends AbstractCustomGunItem {
 
 	public CustomGunItem(){
-		CustomItemManager.setResourcepack("https://www.dropbox.com/s/wjwfw8rrfhx11lb/QualityArmoryV2.1.4.zip?dl=1");
+		CustomItemManager.setResourcepack("https://www.dropbox.com/s/r3zqz97pnzhl7fa/QualityArmoryV2.1.5.zip?dl=1");
 	}
 
 	public static MaterialStorage m(int d) {
@@ -690,6 +690,15 @@ public class CustomGunItem extends AbstractCustomGunItem {
 		GunYMLCreator.createMisc(false, dataFolder, false, "default_spear", "spear",
 				"Spear", null,
 				Material.CROSSBOW, 77, stringsMetalRif, 100, WeaponType.MELEE, 6, 1000).done();
+
+
+		GunYMLCreator
+				.createNewDefaultGun(dataFolder, "pancorjackhammer", "Pancor Jackhammer", 79, stringsMetalRif, WeaponType.SHOTGUN,
+						null, false, "shell", 2, 8, 4000).setMaterial(Material.CROSSBOW)
+				.setBulletsPerShot(10).setDistance(80).setFullyAutomatic(2).setRecoil(7).setKilledByMessage("%player% was shot to bits by %killer% using an %name%, a gun that does not exist.").done();
+
+
+
 
 
 		GunYMLCreator.createNewDefaultGun(dataFolder, "debuggun", "Debug Gun", 34, strings10mm,

@@ -2,7 +2,11 @@ package me.zombie_striker.qg.handlers;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Function;
 
+import com.mojang.datafixers.util.Pair;
 import me.zombie_striker.qg.handlers.ReflectionsUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -75,8 +79,15 @@ public class ProtocolLibHandler {
 					public void onPacketSending(PacketEvent event) {
 						final Player sender = event.getPlayer();
 						int id = (int) event.getPacket().getModifier().read(0);
-						Object slot = event.getPacket().getModifier().read(1);
-						final Object ironsights = event.getPacket().getModifier().read(2);
+						Object slot;
+						final Object ironsights;
+						if(ReflectionsUtil.isVersionHigherThan(1,16)){
+							slot = event.getPacket().getModifier().read(1);
+							ironsights = slot;//event.getPacket().getModifier().read(2);
+						}else{
+							slot = event.getPacket().getModifier().read(1);
+							ironsights = event.getPacket().getModifier().read(2);
+						}
 						if ((id) == sender.getEntityId()) {
 							return;
 						}
@@ -89,7 +100,7 @@ public class ProtocolLibHandler {
 						}
 						if (who == null)
 							return;
-						if (!slot.toString().equals("MAINHAND")) {
+						if (!slot.toString().contains("MAINHAND")) {
 							if (QualityArmory.isIronSights(who.getInventory().getItemInMainHand())) {
 								event.setCancelled(true);
 							}
@@ -98,7 +109,6 @@ public class ProtocolLibHandler {
 						if (who.getItemInHand() != null && who.getItemInHand().getType().name().equals("CROSSBOW") &&
 								QualityArmory.isIronSights(who.getItemInHand()) &&
 								ironsights.toString().contains("crossbow")) {
-
 							Object is = null;
 							try {
 								if (!QualityArmory.getGun(who.getInventory().getItemInOffHand()).hasBetterAimingAnimations())
@@ -118,9 +128,23 @@ public class ProtocolLibHandler {
 							} catch (NoSuchMethodException e) {
 								e.printStackTrace();
 							}
+							if(ReflectionsUtil.isVersionHigherThan(1,16)){
+								List list = (List) slot;
+								for(Object o : new ArrayList(list)){
+									if(o.toString().contains("MAINHAND")) {
+										Pair pair = (Pair) o;
+										Pair newpair = new Pair(pair.getFirst(), is);
+										list.set(list.indexOf(pair), newpair);
+									}else if(o.toString().contains("OFFHAND")) {
+										list.remove(list.indexOf(o));
+									}
+								}
+								event.getPacket().getModifier().write(1, list);
+							}else{
+								event.getPacket().getModifier().write(2, is);
+							}
 
-							event.getPacket().getModifier().write(2, is);
-
+							if(!ReflectionsUtil.isVersionHigherThan(1,16))
 							new BukkitRunnable() {
 								public void run() {
 									try {
@@ -133,14 +157,20 @@ public class ProtocolLibHandler {
 										Object[] enums = slot.getClass().getEnumConstants();
 										for (Object k : enums) {
 											String name = (String) k.getClass().getMethod("name").invoke(k, new Class[0]);
-											if (name.equals("OFFHAND")) {
+											if (name.contains("OFFHAND")) {
 												neededSlot = k;
 												break;
 											}
 										}
-										pc2.getModifier().write(0, id)
-												.write(1, neededSlot)
-												.write(2, ironsights);
+										if(ReflectionsUtil.isVersionHigherThan(1,16)){
+											pc2.getModifier().write(0, id)
+													.write(1, ironsights);
+
+										}else {
+											pc2.getModifier().write(0, id)
+													.write(1, neededSlot)
+													.write(2, ironsights);
+										}
 
 										protocolManager.sendServerPacket(event.getPlayer(), pc2);
 									} catch (Exception e) {

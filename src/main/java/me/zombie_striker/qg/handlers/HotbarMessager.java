@@ -1,10 +1,13 @@
 package me.zombie_striker.qg.handlers;
 
-import java.lang.reflect.*;
-import java.util.logging.Level;
-
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.util.UUID;
+import java.util.logging.Level;
 
 public class HotbarMessager {
 
@@ -21,9 +24,11 @@ public class HotbarMessager {
 	// Used in 1.12+. Bytes are replaced with this enum
 	private static Object CHAT_MESSAGE_TYPE_ENUM_OBJECT;
 
+	private static Class CHAT_MESSAGE_TYPE;
+
 	// This is the server version. This is how we know the server version.
 	private static final String SERVER_VERSION;
-	private static boolean useByte = false;
+	private static int PacketConstructorType = 0;
 	static {
 		// This gets the server version.
 		String name = Bukkit.getServer().getClass().getName();
@@ -42,12 +47,18 @@ public class HotbarMessager {
 			try {
 				CHAT_MESSAGE_TYPE_CLASS = Class.forName("net.minecraft.server." + SERVER_VERSION + ".ChatMessageType");
 				CHAT_MESSAGE_TYPE_ENUM_OBJECT = CHAT_MESSAGE_TYPE_CLASS.getEnumConstants()[2];
-
-				PACKET_PLAYER_CHAT_CONSTRUCTOR = PACKET_PLAYER_CHAT_CLASS.getConstructor(ICHATCOMP,
-						CHAT_MESSAGE_TYPE_CLASS);
-			} catch (ClassNotFoundException|NoSuchMethodException e) {
-				PACKET_PLAYER_CHAT_CONSTRUCTOR = PACKET_PLAYER_CHAT_CLASS.getConstructor(ICHATCOMP, byte.class);
-				useByte = true;
+				try {
+					PACKET_PLAYER_CHAT_CONSTRUCTOR = PACKET_PLAYER_CHAT_CLASS.getConstructor(ICHATCOMP,
+							CHAT_MESSAGE_TYPE_CLASS, UUID.class);
+					PacketConstructorType = 2;
+				}catch (NoSuchMethodException noerror){
+					PACKET_PLAYER_CHAT_CONSTRUCTOR = PACKET_PLAYER_CHAT_CLASS.getConstructor(ICHATCOMP,
+							CHAT_MESSAGE_TYPE_CLASS);
+					PacketConstructorType = 1;
+				}
+			} catch (ClassNotFoundException | NoSuchMethodException e) {
+					PACKET_PLAYER_CHAT_CONSTRUCTOR = PACKET_PLAYER_CHAT_CLASS.getConstructor(ICHATCOMP, byte.class);
+					PacketConstructorType = 0;
 			}
 			CHATMESSAGE = Class.forName("net.minecraft.server." + SERVER_VERSION + ".ChatMessage");
 			CHATMESSAGE_CONSTRUCTOR = CHATMESSAGE.getConstructor(String.class, Object[].class);
@@ -68,11 +79,13 @@ public class HotbarMessager {
 			// This creates the IChatComponentBase instance
 			Object icb = CHATMESSAGE_CONSTRUCTOR.newInstance(message, new Object[0]);
 			// This creates the packet
-			Object packet;
-			if (useByte)
+			Object packet=null;
+			if (PacketConstructorType==0)
 				packet = PACKET_PLAYER_CHAT_CONSTRUCTOR.newInstance(icb, (byte) 2);
-			else
+			else if (PacketConstructorType==1)
 				packet = PACKET_PLAYER_CHAT_CONSTRUCTOR.newInstance(icb, CHAT_MESSAGE_TYPE_ENUM_OBJECT);
+			else if (PacketConstructorType==2)
+				packet = PACKET_PLAYER_CHAT_CONSTRUCTOR.newInstance(icb, CHAT_MESSAGE_TYPE_ENUM_OBJECT, UUID.randomUUID());
 			// This casts the player to a craftplayer
 			Object craftplayerInst = CRAFTPLAYERCLASS.cast(player);
 			// This invokes the method above.
@@ -81,8 +94,9 @@ public class HotbarMessager {
 			Object playerConnection = PLAYERCONNECTION.get(methodhHandle);
 			// This sends the packet.
 			SENDPACKET.invoke(playerConnection, packet);
+
 		} catch (Exception e) {
-			failsafe("sendHotBarMessage");
+			failsafe("sendHotBarMessage = "+e.getMessage());
 			throw e;
 		}
 	}
