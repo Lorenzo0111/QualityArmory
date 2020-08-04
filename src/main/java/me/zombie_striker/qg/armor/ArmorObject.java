@@ -73,6 +73,11 @@ public class ArmorObject extends CustomBaseObject implements ArmoryBaseObject {
 	}
 
 	@Override
+	public boolean onShift(Player shooter, ItemStack usedItem, boolean toggle) {
+		return false;
+	}
+
+	@Override
 	public boolean onLMB(Player e, ItemStack usedItem) {
 		// TODO Auto-generated method stub
 		return false;
@@ -81,6 +86,18 @@ public class ArmorObject extends CustomBaseObject implements ArmoryBaseObject {
 	@Override
 	public ItemStack getItemStack() {
 		return CustomItemManager.getItemType("gun").getItem(this.getItemData().getMat(),this.getItemData().getData(),this.getItemData().getVariant());
+	}
+
+	@Override
+	public boolean onSwapTo(Player shooter, ItemStack usedItem) {
+		if (getSoundOnEquip() != null)
+			shooter.getWorld().playSound(shooter.getLocation(), getSoundOnEquip(), 1, 1);
+		return false;
+	}
+
+	@Override
+	public boolean onSwapAway(Player shooter, ItemStack usedItem) {
+		return false;
 	}
 
 }

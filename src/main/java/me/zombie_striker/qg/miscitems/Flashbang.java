@@ -27,8 +27,9 @@ public class Flashbang extends Grenade {
 
 
 	@Override
-	public boolean onLMB(Player e, ItemStack usedItem) {
+	public boolean onPull(Player e, ItemStack usedItem) {
 		Player thrower = e.getPlayer();
+		if(!QAMain.autoarm)
 		if (throwItems.containsKey(thrower)) {
 			thrower.sendMessage(QAMain.prefix + QAMain.S_GRENADE_PALREADYPULLPIN);
 			thrower.playSound(thrower.getLocation(), WeaponSounds.RELOAD_BULLET.getSoundName(), 1, 1);

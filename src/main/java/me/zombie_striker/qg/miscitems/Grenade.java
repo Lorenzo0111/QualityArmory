@@ -31,6 +31,8 @@ public class Grenade extends CustomBaseObject implements ThrowableItems {
 
 	int craftingReturn;
 
+	double throwspeed = 1.5;
+
 	public Grenade(ItemStack[] ingg, double cost, double damage, double explosionreadius, String name,
 			String displayname, List<String> lore, MaterialStorage ms) {
 		super(name,ms,displayname,lore,false);
@@ -49,6 +51,8 @@ public class Grenade extends CustomBaseObject implements ThrowableItems {
 	@SuppressWarnings("deprecation")
 	@Override
 	public boolean onRMB(Player thrower, ItemStack usedItem) {
+		if(QAMain.autoarm)
+		onPull(thrower,usedItem);
 		if (throwItems.containsKey(thrower)) {
 			ThrowableHolder holder = throwItems.get(thrower);
 			ItemStack grenadeStack = thrower.getItemInHand();
@@ -65,7 +69,7 @@ public class Grenade extends CustomBaseObject implements ThrowableItems {
 			Item grenade = holder.getHolder().getWorld().dropItem(holder.getHolder().getLocation().add(0, 1.5, 0),
 					temp);
 			grenade.setPickupDelay(Integer.MAX_VALUE);
-			grenade.setVelocity(thrower.getLocation().getDirection().normalize().multiply(1.2));
+			grenade.setVelocity(thrower.getLocation().getDirection().normalize().multiply(getThrowSpeed()));
 			holder.setHolder(grenade);
 			thrower.getWorld().playSound(thrower.getLocation(), Sound.ENTITY_ARROW_SHOOT, 1, 1.5f);
 
@@ -79,8 +83,20 @@ public class Grenade extends CustomBaseObject implements ThrowableItems {
 	}
 
 	@Override
+	public boolean onShift(Player shooter, ItemStack usedItem, boolean toggle) {
+		return false;
+	}
+
+	@Override
 	public boolean onLMB(Player e, ItemStack usedItem) {
+		if(!QAMain.autoarm)
+			return onPull(e,usedItem);
+		return false;
+	}
+
+	public boolean onPull(Player e, ItemStack usedItem) {
 		Player thrower = e.getPlayer();
+		if(!QAMain.autoarm)
 		if (throwItems.containsKey(thrower)) {
 			thrower.sendMessage(QAMain.prefix + QAMain.S_GRENADE_PALREADYPULLPIN);
 			thrower.playSound(thrower.getLocation(), WeaponSounds.RELOAD_BULLET.getSoundName(), 1, 1);
@@ -170,5 +186,28 @@ public class Grenade extends CustomBaseObject implements ThrowableItems {
 				player.getInventory().setItem(slot, stack);
 			}
 		}
+	}
+
+
+	@Override
+	public boolean onSwapTo(Player shooter, ItemStack usedItem) {
+		if (getSoundOnEquip() != null)
+			shooter.getWorld().playSound(shooter.getLocation(), getSoundOnEquip(), 1, 1);
+		return false;
+	}
+
+	@Override
+	public boolean onSwapAway(Player shooter, ItemStack usedItem) {
+		return false;
+	}
+
+	@Override
+	public double getThrowSpeed() {
+		return throwspeed;
+	}
+
+	@Override
+	public void setThrowSpeed(double t) {
+		throwspeed = t;
 	}
 }

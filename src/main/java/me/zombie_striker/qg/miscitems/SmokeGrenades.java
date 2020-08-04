@@ -25,7 +25,8 @@ public class SmokeGrenades extends Grenade {
 	}
 
 	@Override
-	public boolean onLMB(Player thrower, ItemStack usedItem) {
+	public boolean onPull(Player thrower, ItemStack usedItem) {
+		if(!QAMain.autoarm)
 		if (throwItems.containsKey(thrower)) {
 			thrower.sendMessage(QAMain.prefix + QAMain.S_GRENADE_PALREADYPULLPIN);
 			thrower.playSound(thrower.getLocation(), WeaponSounds.RELOAD_BULLET.getSoundName(), 1, 1);
@@ -63,8 +64,7 @@ public class SmokeGrenades extends Grenade {
 					}
 					throwItems.remove(h.getHolder());
 					this.cancel();
-				} else
-					k++;
+				}
 			}
 		}.runTaskTimer(QAMain.getInstance(), 5 * 20, 5));
 		throwItems.put(thrower, h);

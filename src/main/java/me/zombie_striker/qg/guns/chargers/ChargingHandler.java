@@ -11,4 +11,6 @@ public interface ChargingHandler {
 	public boolean shoot(Gun g, Player player, ItemStack stack);
 	
 	public String getName();
+
+	String getDefaultChargingSound();
 }

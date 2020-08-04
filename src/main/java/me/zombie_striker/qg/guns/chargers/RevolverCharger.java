@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import me.zombie_striker.qg.api.QualityArmory;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -27,11 +28,11 @@ public RevolverCharger() {
 	public boolean shoot(Gun g, final Player player, ItemStack stack) {
 		timeC.add(player.getUniqueId());
 		new BukkitRunnable() {
-			
 			@Override
 			public void run() {try {
-				player.getWorld().playSound(player.getLocation(), WeaponSounds.RELOAD_BULLET.getSoundName(), 1,
+				player.getWorld().playSound(player.getLocation(), g.getChargingSound(), 1,
 						0.75f);
+
 			}catch(Error|Exception e43) {}
 			}
 		}.runTaskLater(QAMain.getInstance(), 10);
@@ -47,8 +48,12 @@ public RevolverCharger() {
 
 	@Override
 	public String getName() {
-
 		return ChargingManager.REVOLVER;
+	}
+	@Override
+	public String getDefaultChargingSound() {
+		return WeaponSounds.RELOAD_BULLET.getSoundName();
+		//g.getChargingSound()
 	}
 
 }

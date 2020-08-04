@@ -10,10 +10,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class SlideReloader implements ReloadingHandler{
+public class M1GarandReloader implements ReloadingHandler{
 
 
-	public SlideReloader() {
+	public M1GarandReloader() {
 		ReloadingManager.add(this);
 	}
 
@@ -39,11 +39,11 @@ public class SlideReloader implements ReloadingHandler{
 
 	@Override
 	public String getName() {
-		return ReloadingManager.SLIDE_RELOAD;
+		return ReloadingManager.M1GARAND_RELOAD;
 	}
 
 	@Override
 	public String getDefaultReloadingSound() {
-		return WeaponSounds.RELOAD_MAG_CLICK.getSoundName();
+		return WeaponSounds.RELOAD_SLIDE.getSoundName();
 	}
 }

@@ -1,5 +1,6 @@
 package me.zombie_striker.qg.guns.chargers;
 
+import me.zombie_striker.qg.guns.utils.WeaponSounds;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -31,6 +32,11 @@ public RequireAimCharger() {
 	public String getName() {
 
 		return ChargingManager.REQUIREAIM;
+	}
+	@Override
+	public String getDefaultChargingSound() {
+		return WeaponSounds.SHOCKWAVE.getSoundName();
+		//g.getChargingSound()
 	}
 
 }

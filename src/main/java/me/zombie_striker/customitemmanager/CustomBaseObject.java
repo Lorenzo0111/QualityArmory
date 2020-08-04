@@ -21,6 +21,8 @@ public class CustomBaseObject {
 	Object[] ing = null;
 	int craftingReturn = 1;
 
+	public int maxItemStack = 1;
+
 	public CustomBaseObject(String name, MaterialStorage storage, String displayname, List<String> lore, boolean hasAimAnimations) {
 		this.name = name;
 		this.base = storage;
@@ -105,5 +107,11 @@ public class CustomBaseObject {
 	}
 	public void setCraftingReturn(int amount){
 		this.craftingReturn = amount;
+	}
+	public int getMaxItemStack(){
+		return maxItemStack;
+	}
+	public void setMaxItemStack(int amount){
+		maxItemStack = amount;
 	}
 }

@@ -8,10 +8,10 @@ import me.zombie_striker.qg.ammo.AmmoType;
 import me.zombie_striker.qg.armor.Helmet;
 import me.zombie_striker.qg.attachments.AttachmentBase;
 import me.zombie_striker.qg.guns.Gun;
-import me.zombie_striker.qg.guns.utils.WeaponSounds;
-import me.zombie_striker.qg.guns.utils.WeaponType;
 import me.zombie_striker.qg.guns.chargers.ChargingManager;
 import me.zombie_striker.qg.guns.reloaders.ReloadingManager;
+import me.zombie_striker.qg.guns.utils.WeaponSounds;
+import me.zombie_striker.qg.guns.utils.WeaponType;
 import me.zombie_striker.qg.miscitems.*;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -72,7 +72,9 @@ public class GunYMLLoader {
 							final double price = f2.contains("price") ? f2.getDouble("price") : 100;
 
 							int amountA = f2.getInt("maxAmount");
-
+							if(f2.contains("maxItemStack")) {
+								amountA=(f2.getInt("maxItemStack"));
+							}
 							double piercing = f2.getDouble("piercingSeverity");
 
 							Ammo da = new Ammo(name, displayname, extraLore, ms, amountA, false, 1, price, materails,
@@ -220,6 +222,15 @@ public class GunYMLLoader {
 							if (wt == WeaponType.INCENDARY_GRENADES)
 								QAMain.miscRegister.put(ms, base=new IncendaryGrenades(materails, price, damage, radius,
 										name, displayname, lore, ms));
+							if (wt == WeaponType.PROXYMINES)
+								QAMain.miscRegister.put(ms, base=new ProxyMines(materails, price, damage, radius,
+										name, displayname, lore, ms));
+							if (wt == WeaponType.STICKYGRENADE)
+								QAMain.miscRegister.put(ms, base=new StickyGrenades(materails, price, damage, radius,
+										name, displayname, lore, ms));
+							if (wt == WeaponType.MOLOTOV)
+								QAMain.miscRegister.put(ms, base=new Molotov(materails, price, damage, radius,
+										name, displayname, lore, ms));
 							if (wt == WeaponType.FLASHBANGS)
 								QAMain.miscRegister.put(ms,
 										base=new Flashbang(materails, price, damage, radius, name, displayname, lore, ms));
@@ -228,6 +239,15 @@ public class GunYMLLoader {
 								base.setCustomLore(lore);
 								base.setIngredients(materails);
 							}
+
+							if(f2.contains("maxItemStack"))
+								base.setMaxItemStack(f2.getInt("maxItemStack"));
+							if(base instanceof ThrowableItems) {
+								ThrowableItems throwableItems = (ThrowableItems) base;
+								if (f2.contains("ThrowSpeed"))
+									throwableItems.setThrowSpeed(f2.getDouble("ThrowSpeed"));
+							}
+
 						}
 					}
 				} catch (Exception e) {
@@ -304,14 +324,14 @@ public class GunYMLLoader {
 			g.setPrice(f2.getDouble("price"));
 		if (f2.contains("isAutomatic"))
 			g.setAutomatic(f2.getBoolean("isAutomatic"));
-		if(f2.contains("enableBetterModelScopes"))
+		if (f2.contains("enableBetterModelScopes"))
 			g.enableBetterAimingAnimations(f2.getBoolean("enableBetterModelScopes"));
 
-		if(f2.contains("sway.sneakModifier"))
+		if (f2.contains("sway.sneakModifier"))
 			g.setEnableSwaySneakModifier(f2.getBoolean("sway.sneakModifier"));
-		if(f2.contains("sway.moveModifier"))
+		if (f2.contains("sway.moveModifier"))
 			g.setEnableSwayMovementModifier(f2.getBoolean("sway.moveModifier"));
-		if(f2.contains("sway.runModifier"))
+		if (f2.contains("sway.runModifier"))
 			g.setEnableSwayRunModifier(f2.getBoolean("sway.runModifier"));
 
 		List<String> sounds = null;
@@ -340,12 +360,13 @@ public class GunYMLLoader {
 		}
 		g.setSounds(sounds);
 
-		if(f2.contains("weaponsounds_volume"))
-		g.setVolume(f2.getDouble("weaponsounds_volume"));
+		if (f2.contains("weaponsounds_volume"))
+			g.setVolume(f2.getDouble("weaponsounds_volume"));
 
 		double partr = f2.getDouble("particles.bullet_particleR", 1.0D);
 		double partg = f2.getDouble("particles.bullet_particleG", 1.0D);
 		double partb = f2.getDouble("particles.bullet_particleB", 1.0D);
+		int partdata = f2.getInt("particles.bullet_particleData", 0);
 		Material partm = Material.matchMaterial(f2.getString("particles.bullet_particleMaterial", "COAL_BLOCK"));
 
 		if (partm == null) {
@@ -387,10 +408,18 @@ public class GunYMLLoader {
 			g.setLightOnShoot(f2.getInt("LightLeveOnShoot"));
 		if (f2.contains("firerate"))
 			g.setFireRate(f2.getInt("firerate"));
-		if (f2.contains("ReloadingHandler"))
+		if (f2.contains("ReloadingHandler")) {
 			g.setReloadingHandler(ReloadingManager.getHandler(f2.getString("ReloadingHandler")));
-		if (f2.contains("ChargingHandler") && !f2.getString("ChargingHandler").equals("none"))
+			if(g.getReloadingingHandler()!=null){
+				g.setReloadingSound(g.getReloadingingHandler().getDefaultReloadingSound());
+			}
+		}
+		if (f2.contains("ChargingHandler") && !f2.getString("ChargingHandler").equals("none")) {
 			g.setChargingHandler(ChargingManager.getHandler(f2.getString("ChargingHandler")));
+			if(g.getChargingHandler()!=null){
+				g.setChargingSound(g.getChargingHandler().getDefaultChargingSound());
+			}
+		}
 		if (f2.contains("delayForShoot"))
 			g.setDelayBetweenShots(f2.getDouble("delayForShoot"));
 		if (f2.contains("bullets-per-shot"))
@@ -405,13 +434,24 @@ public class GunYMLLoader {
 			g.setIsPrimary(f2.getBoolean("isPrimaryWeapon"));
 		if (f2.contains("setZoomLevel"))
 			g.setZoomLevel(f2.getInt("setZoomLevel"));
+		if(f2.contains("firing_knockback"))
+			g.setKnockbackPower(f2.getDouble("firing_knockback"));
+		if(f2.contains("slownessOnEquip"))
+			g.setSlownessPower(f2.getInt("slownessOnEquip"));
+		if(f2.contains("weaponsounds_reloadingSound"))
+			g.setReloadingSound(f2.getString("weaponsounds_reloadingSound"));
+		if(f2.contains("weaponsounds_chargingSound"))
+			g.setChargingSound(f2.getString("weaponsounds_chargingSound"));
+		if(f2.contains("maxItemStack"))
+			g.setMaxItemStack(f2.getInt("maxItemStack"));
+
 
 		if (f2.contains("particles.bullet_particle") || f2.contains("particles.bullet_particleR")) {
 			try {
 				Particle particle = (Particle) (f2.contains("particles.bullet_particle")
 						? Particle.valueOf(f2.getString("particles.bullet_particle"))
 						: QAMain.bulletTrail);
-				g.setParticles(particle, partr, partg, partb, partm);
+				g.setParticles(particle, partr, partg, partb, partm, partdata);
 			} catch (Error | Exception er5) {
 			}
 		}

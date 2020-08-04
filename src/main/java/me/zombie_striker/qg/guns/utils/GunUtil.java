@@ -3,7 +3,6 @@ package me.zombie_striker.qg.guns.utils;
 import com.alessiodp.parties.api.Parties;
 import com.alessiodp.parties.api.interfaces.PartiesAPI;
 import com.alessiodp.parties.api.interfaces.Party;
-import com.alessiodp.parties.api.interfaces.PartyPlayer;
 import me.zombie_striker.customitemmanager.CustomBaseObject;
 import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.ammo.Ammo;
@@ -57,7 +56,7 @@ public class GunUtil {
 				g.getCustomProjectile().spawn(g, p.getEyeLocation(), p, two);
 			}
 		} else {
-			shootInstantVector(g, p, sway, g.getDurabilityDamage(), g.getBulletsPerShot(), g.getMaxDistance());
+			shootInstantVector(g, p, sway, g.getDamage(), g.getBulletsPerShot(), g.getMaxDistance());
 		}
 	}
 
@@ -90,15 +89,16 @@ public class GunUtil {
 		long time4 = 0;
 		for (int i = 0; i < shots; i++) {
 			Location start = p.getEyeLocation().clone();
+
+			start.add(p.getVelocity());
+
+
 			Vector normalizedDirection = p.getLocation().getDirection().normalize();
 			normalizedDirection.add(new Vector((Math.random() * 2 * sway) - sway, (Math.random() * 2 * sway) - sway,
 					(Math.random() * 2 * sway) - sway));
 			normalizedDirection = normalizedDirection.normalize();
 			Vector step = normalizedDirection.clone().multiply(QAMain.bulletStep);
 
-			// Simple values to make it easier on the search
-			// boolean posX = go.getX() > 0;
-			// boolean posZ = go.getZ() > 0;
 			Entity hitTarget = null;
 			AbstractBoundingBox hitBox = null;
 
@@ -107,11 +107,6 @@ public class GunUtil {
 			double maxDistance = getTargetedSolidMaxDistance(step, start, range);
 			double maxEntityDistance = maxDistance;
 			double maxEntityDistanceSquared = maxDistance * maxDistance;
-
-			// double degreeVector = Math.atan2(normalizedDirection.getX(),
-			// normalizedDirection.getZ());
-			// if (degreeVector > Math.PI)
-			// degreeVector = 2 * Math.PI - degreeVector;
 
 			List<Location> blocksThatWillPLAYBreak = new ArrayList<>();
 			List<Location> blocksThatWillBreak = new ArrayList<>();
@@ -247,7 +242,7 @@ public class GunUtil {
 												toughness += a.getAmount();
 										}
 									}
-									damageMAX = damageMAX * (1 - Math.min(20, Math.max(defensePoints / 5,
+									damageMAX = damageMAX / (1 - Math.min(20, Math.max(defensePoints / 5,
 											defensePoints - damageMAX / (toughness / 4 + 2))) / 25);
 								} catch (Error | Exception e5) {
 
@@ -318,7 +313,7 @@ public class GunUtil {
 						}
 					}
 
-					try {
+					/*try {
 						int control = 3;
 						if (dist % control == 0) {
 							List<Player> heard = new ArrayList<>();
@@ -347,7 +342,7 @@ public class GunUtil {
 								start.getWorld().playSound(start, Sound.valueOf("FIRE_IGNITE"), 2, 2);
 							}
 						}
-					}
+					}*/
 					ParticleHandlers.spawnGunParticles(g, start);
 				}
 
@@ -413,16 +408,22 @@ public class GunUtil {
 	}
 
 	public static void basicShoot(boolean offhand, Gun g, Player player, double acc) {
-		basicShoot(offhand, g, player, acc, 1);
+		basicShoot(offhand, g, player, acc, 1, false);
+	}
+	public static void basicShoot(boolean offhand, Gun g, Player player, double acc, boolean holdingRMB) {
+		basicShoot(offhand, g, player, acc, 1, holdingRMB);
 	}
 
-	@SuppressWarnings("deprecation")
 	public static void basicShoot(boolean offhand, final Gun g, final Player player, final double acc, int times) {
+		basicShoot(offhand,g,player,acc,times,false);
+	}
+	@SuppressWarnings("deprecation")
+	public static void basicShoot(boolean offhand, final Gun g, final Player player, final double acc, int times, boolean holdingRMB) {
 		long showdelay = ((int) (g.getDelayBetweenShotsInSeconds() * 1000));
 		QAMain.DEBUG("About to shoot!");
 
-		if (g.getChargingVal() != null && (g.getChargingVal().isCharging(player)
-				|| (g.getReloadingingVal() != null && g.getReloadingingVal().isReloading(player))))
+		if (g.getChargingHandler() != null && (g.getChargingHandler().isCharging(player)
+				|| (g.getReloadingingHandler() != null && g.getReloadingingHandler().isReloading(player))))
 			return;
 
 		if (g.getLastShotForGun().containsKey(player.getUniqueId())
@@ -442,10 +443,10 @@ public class GunUtil {
 
 		boolean regularshoot = true;
 
-		if (g.getChargingVal() != null) {
-			QAMain.DEBUG("Charging shoot debug: " + g.getName() + " = " + g.getChargingVal() == null ? "null"
-					: g.getChargingVal().getName());
-			regularshoot = g.getChargingVal().shoot(g, player, firstGunInstance);
+		if (g.getChargingHandler() != null) {
+			QAMain.DEBUG("Charging shoot debug: " + g.getName() + " = " + g.getChargingHandler() == null ? "null"
+					: g.getChargingHandler().getName());
+			regularshoot = g.getChargingHandler().shoot(g, player, firstGunInstance);
 		}
 
 		if (regularshoot) {
@@ -461,43 +462,53 @@ public class GunUtil {
 
 				@Override
 				public void run() {
-					if (g.getChargingVal() != null && g.getChargingVal().isCharging(player)) {
+					if (g.getChargingHandler() != null && g.getChargingHandler().isCharging(player)) {
 						return;
 					}
 
-					if ((!g.hasIronSights() || !IronsightsHandler.isAiming(player)) && ((player.isSneaking() == QAMain.enableSwapSingleShotOnAim))) {
-						cancel();
-						QAMain.DEBUG("Stopping Automatic Firing");
-						rapidfireshooters.remove(player.getUniqueId());
-						return;
+					if(!holdingRMB){
+						if ((!g.hasIronSights() || !IronsightsHandler.isAiming(player)) && ((player.isSneaking() == QAMain.SwapSneakToSingleFire))) {
+							cancel();
+							QAMain.DEBUG("Stopping Automatic Firing");
+							rapidfireshooters.remove(player.getUniqueId());
+							return;
+						}
 					}
 
 					ItemStack temp = IronsightsHandler.getItemAiming(player);
 
-					if (QAMain.enableDurability && g.getDurabilityDamage(temp) <= 0) {
+					if (QAMain.enableDurability && g.getDamage(temp) <= 0) {
 						player.playSound(player.getLocation(), WeaponSounds.METALHIT.getSoundName(), 1, 1);
 						rapidfireshooters.remove(player.getUniqueId());
-						QAMain.DEBUG("Canceld due to weapon durability = " + g.getDurabilityDamage(temp));
+						QAMain.DEBUG("Canceld due to weapon durability = " + g.getDamage(temp));
 						cancel();
 						return;
 					}
 
 					int amount = Gun.getAmount(temp);
-					if ((player.isSneaking() == QAMain.enableSwapSingleShotOnAim) || slotUsed != player.getInventory().getHeldItemSlot() || amount <= 0) {
-						rapidfireshooters.remove(player.getUniqueId()).cancel();
+					if(holdingRMB && !QAMain.SWAP_TO_LMB_SHOOT){
+						if(System.currentTimeMillis()-g.getLastTimeRMB(player) > 310){
+							rapidfireshooters.remove(player.getUniqueId());
+							cancel();
+							return;
+						}
+					}
+
+					if (((QAMain.SWAP_TO_LMB_SHOOT && player.isSneaking() == QAMain.SwapSneakToSingleFire)) || slotUsed != player.getInventory().getHeldItemSlot() || amount <= 0) {
+						rapidfireshooters.remove(player.getUniqueId());
+						cancel();
 						return;
 					}
 
 					boolean regularshoot = true;
-					if (g.getChargingVal() != null && (!g.getChargingVal().isCharging(player)
-							&& (g.getReloadingingVal() == null || !g.getReloadingingVal().isReloading(player)))) {
-						regularshoot = g.getChargingVal().shoot(g, player, temp);
+					if (g.getChargingHandler() != null && (!g.getChargingHandler().isCharging(player)
+							&& (g.getReloadingingHandler() == null || !g.getReloadingingHandler().isReloading(player)))) {
+						regularshoot = g.getChargingHandler().shoot(g, player, temp);
 						QAMain.DEBUG(
-								"Charging (rapidfire) shoot debug: " + g.getName() + " = " + g.getChargingVal() == null
+								"Charging (rapidfire) shoot debug: " + g.getName() + " = " + g.getChargingHandler() == null
 										? "null"
-										: g.getChargingVal().getName());
+										: g.getChargingHandler().getName());
 					}
-
 					if (regularshoot) {
 						GunUtil.shootHandler(g, player);
 						playShoot(g, player);
@@ -505,6 +516,8 @@ public class GunUtil {
 							addRecoil(player, g);
 						// TODO: recoil
 					}
+
+
 					amount--;
 
 					if (amount < 0)
@@ -654,8 +667,8 @@ public class GunUtil {
 			if (!doNotRemoveAmmo)
 				QualityArmory.removeAmmoFromInventory(player, ammo, subtractAmount);
 
-			if (g.getReloadingingVal() != null) {
-				seconds = g.getReloadingingVal().reload(player, g, subtractAmount);
+			if (g.getReloadingingHandler() != null) {
+				seconds = g.getReloadingingHandler().reload(player, g, subtractAmount);
 			}
 			QAMain.toggleNightvision(player, g, false);
 			//Gun.updateAmmo(g, im, initialAmount);

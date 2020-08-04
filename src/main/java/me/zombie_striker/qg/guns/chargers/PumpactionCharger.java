@@ -38,7 +38,7 @@ public PumpactionCharger() {
 					 * 1.4f); player.getWorld().playSound(player.getLocation(),
 					 * Sound.BLOCK_SAND_BREAK, 8, 1.4f);
 					 */
-					player.getWorld().playSound(player.getLocation(), WeaponSounds.RELOAD_BULLET.getSoundName(), 1, 1f);
+					player.getWorld().playSound(player.getLocation(), g.getChargingSound(), 1, 1f);
 				} catch (Error e) {
 					try {
 					player.getWorld().playSound(player.getLocation(), Sound.valueOf("CLICK"), 8, 1.4f);
@@ -51,7 +51,7 @@ public PumpactionCharger() {
 			@Override
 			public void run() {
 				try {
-					player.getWorld().playSound(player.getLocation(), WeaponSounds.RELOAD_BOLT.getSoundName(), 1,
+					player.getWorld().playSound(player.getLocation(), g.getChargingSound(), 1,
 							1f);/*
 								 * player.getWorld().playSound(player.getLocation(), Sound.BLOCK_SAND_BREAK, 8,
 								 * 1.4f); player.getWorld().playSound(player.getLocation(),
@@ -64,7 +64,7 @@ public PumpactionCharger() {
 
 				}
 			}
-		}.runTaskLater(QAMain.getInstance(), 16);
+		}.runTaskLater(QAMain.getInstance(), (long) (g.getDelayBetweenShotsInSeconds()*20));
 		new BukkitRunnable() {
 			@Override
 			public void run() {
@@ -79,6 +79,11 @@ public PumpactionCharger() {
 	public String getName() {
 
 		return ChargingManager.PUMPACTION;
+	}
+	@Override
+	public String getDefaultChargingSound() {
+		return WeaponSounds.RELOAD_BOLT.getSoundName();
+		//g.getChargingSound()
 	}
 
 }

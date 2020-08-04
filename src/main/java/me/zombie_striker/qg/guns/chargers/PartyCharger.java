@@ -1,5 +1,6 @@
 package me.zombie_striker.qg.guns.chargers;
 
+import me.zombie_striker.qg.guns.utils.WeaponSounds;
 import org.bukkit.Effect;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -32,4 +33,9 @@ public class PartyCharger implements ChargingHandler {
 		return "PartyCharger";
 	}
 
+	@Override
+	public String getDefaultChargingSound() {
+		return WeaponSounds.PARTY_SHOT.getSoundName();
+		//g.getChargingSound()
+	}
 }

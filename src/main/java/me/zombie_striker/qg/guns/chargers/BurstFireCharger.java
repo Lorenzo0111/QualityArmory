@@ -3,6 +3,7 @@ package me.zombie_striker.qg.guns.chargers;
 import java.util.HashMap;
 import java.util.UUID;
 
+import me.zombie_striker.qg.guns.utils.WeaponSounds;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -41,6 +42,12 @@ public class BurstFireCharger implements ChargingHandler {
 			@Override
 			@SuppressWarnings("deprecation")
 			public void run() {
+				int slot;
+				if (offhand) {
+					slot = -1;
+				} else {
+					slot = player.getInventory().getHeldItemSlot();
+				}
 
 				int amount = Gun.getAmount(stack);
 				if (shotCurrently >= g.getBulletsPerShot() || slotUsed != player.getInventory().getHeldItemSlot()
@@ -65,22 +72,18 @@ public class BurstFireCharger implements ChargingHandler {
 				//	stack.setAmount(amount > 64 ? 64 : amount == 0 ? 1 : amount);
 				//}
 				ItemMeta im = stack.getItemMeta();
-				int slot;
-				if (offhand) {
-					slot = -1;
-				} else {
-					slot = player.getInventory().getHeldItemSlot();
-				}
 				Gun.updateAmmo(g, im, amount);
 				stack.setItemMeta(im);
 				if (slot == -1) {
 					try {
 						if (QualityArmory.isIronSights(player.getItemInHand())) {
+							if(QualityArmory.isGun(player.getInventory().getItemInOffHand()))
 							player.getInventory().setItemInOffHand(stack);
 						}
 					} catch (Error e) {
 					}
 				} else {
+					if(QualityArmory.isGun(player.getInventory().getItem(slot)))
 					player.getInventory().setItem(slot, stack);
 				}
 				QualityArmory.sendHotbarGunAmmoCount(player, g, stack, false);
@@ -94,6 +97,11 @@ public class BurstFireCharger implements ChargingHandler {
 	public String getName() {
 
 		return ChargingManager.BURSTFIRE;
+	}
+	@Override
+	public String getDefaultChargingSound() {
+		return WeaponSounds.RELOAD_BULLET.getSoundName();
+		//g.getChargingSound()
 	}
 
 }

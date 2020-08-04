@@ -32,7 +32,7 @@ public class ExplosionHandler {
 		for(Entity e : loc.getWorld().getNearbyEntities(loc, radius, radius, radius)) {
 			if(e instanceof Damageable) {
 				Damageable d = (Damageable) e;
-				d.damage(damage*radius/e.getLocation().distanceSquared(loc), shooter);
+				d.damage(damage/e.getLocation().distance(loc), shooter);
 			}
 		}
 	}

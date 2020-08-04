@@ -1,0 +1,19 @@
+TODO:
+-Make it so it detects if multiple RMB packets are being sent continuously   ==CHECK
+-Slowness option   -done
+-Sticky grenades   - Done
+-Proxy mines instead of shifty mines -Done
+--PlaceholderAPI support    ==Impossible
+- Item names      - Done-ish
+--chainsaw with aura
+-Knockback for shooters  ==check
+
+
+Make reload sound customizable   ==Done
+optional grenade stack == Done?
+Throw speed  == Done
+
+
+Look at rocket damage    -CHECK
+Charging handler sounds - configable - DONE
+Rocket explosion sound - configurable - DONE-Ish

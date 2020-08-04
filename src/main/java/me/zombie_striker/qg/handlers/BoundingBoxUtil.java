@@ -17,9 +17,9 @@ public class BoundingBoxUtil {
 	}
 
 	public static boolean within2DWidth(Entity e, Location closest, double minDist, double centerOffset) {
-		double xS = (e.getLocation().getX()) - (closest.getX());
+		double xS = (e.getLocation().clone().add(e.getVelocity()).getX()) - (closest.getX());
 		xS *= xS;
-		double zS = (e.getLocation().getZ()) - (closest.getZ());
+		double zS = (e.getLocation().clone().add(e.getVelocity()).getZ()) - (closest.getZ());
 		zS *= zS;
 
 		double distancesqr = xS + zS;
@@ -31,6 +31,6 @@ public class BoundingBoxUtil {
 	}
 	public static boolean within2DHeight(Entity e, Location closest, double height, double offset) {
 		double rel = closest.getY() - e.getLocation().getY();
-		return rel >= offset && rel <= offset+height;
+		return rel >= offset && rel <= offset+height+e.getVelocity().getY();
 	}
 }

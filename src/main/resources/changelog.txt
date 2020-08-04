@@ -1,3 +1,34 @@
+1.1.174b
+    Quickfgix for m1garand
+
+1.1.174
+    Added M1Garand
+    Added 3 new Bullet sounds and 6 new reloading sounds.
+
+1.1.173c
+    Fixed sentinel sway issue
+    Fixed sentinel time delay issue
+
+1.1.173b
+    Fixed ammo bug
+
+1.1.173
+    - Added Molotov
+    - Added ProxyMines
+    - Fixed issue with dup for burstfire weapons.
+    - Changed charging handler sounds to match when the gun can shoot
+    - Change Right click system so holding RMB acts as auto firing
+    - Added Sticky Grenades
+    - Fixed proxy mines to act like proxy mines.
+    - Added Knockback option for guns.
+    - Fixed bullet check for fast players
+    - Made reloading sounds customizable
+    - Added customizable stack amounts for items
+    - Made ThrowSpeed for grenades customizable
+
+1.1.172b
+    -Quickfix: Fixed damage if dam set to 1;
+
 1.1.172
     - Added Pancor Jackhammer
     - Fixed offhand aiming error for 1.16

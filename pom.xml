@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>me.zombie_striker</groupId>
     <artifactId>QualityArmory</artifactId>
-    <version>1.1.171</version>
+    <version>1.1.174</version>
     <name>QualityArmory</name>
 
     <repositories>
@@ -18,6 +18,10 @@
         <repository>
             <id>jitpack.io</id>
             <url>https://jitpack.io</url>
+        </repository>
+        <repository>
+            <id>chestshop-repo</id>
+            <url>https://repo.minebench.de/</url>
         </repository>
 
         <repository>
@@ -55,6 +59,10 @@
             <url>http://repo.citizensnpcs.co/</url>
         </repository>
 
+        <repository>
+            <id>placeholderapi</id>
+            <url>https://repo.extendedclip.com/content/repositories/placeholderapi/</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -106,6 +114,14 @@
             <version>2.0.1</version>
         </dependency>
 
+
+        <dependency>
+            <groupId>me.clip</groupId>
+            <artifactId>placeholderapi</artifactId>
+            <version>2.9.2</version>
+            <scope>provided</scope>
+        </dependency>
+
         <!-- Sentinel API -->
         <dependency>
             <groupId>org.mcmonkey</groupId>
@@ -122,6 +138,13 @@
             <version>4.4.0</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.acrobot.chestshop</groupId>
+            <artifactId>chestshop</artifactId>
+            <version>3.10</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/libs/ChestShop.jar</systemPath>
+        </dependency>
         <!-- Citzens -->
         <dependency>
             <groupId>net.citizensnpcs</groupId>

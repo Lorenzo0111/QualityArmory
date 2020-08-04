@@ -50,7 +50,11 @@ public class MeleeItems extends CustomBaseObject implements ArmoryBaseObject{
 	@Override
 	public boolean onRMB(Player e, ItemStack usedItem) {
 		return true;
-		
+	}
+
+	@Override
+	public boolean onShift(Player shooter, ItemStack usedItem, boolean toggle) {
+		return false;
 	}
 
 	@Override
@@ -61,5 +65,18 @@ public class MeleeItems extends CustomBaseObject implements ArmoryBaseObject{
 	@Override
 	public ItemStack getItemStack() {
 		return CustomItemManager.getItemType("gun").getItem(this.getItemData().getMat(),this.getItemData().getData(),this.getItemData().getVariant());
+	}
+
+
+	@Override
+	public boolean onSwapTo(Player shooter, ItemStack usedItem) {
+		if (getSoundOnEquip() != null)
+			shooter.getWorld().playSound(shooter.getLocation(), getSoundOnEquip(), 1, 1);
+		return false;
+	}
+
+	@Override
+	public boolean onSwapAway(Player shooter, ItemStack usedItem) {
+		return false;
 	}
 }

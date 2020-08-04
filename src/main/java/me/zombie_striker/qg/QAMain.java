@@ -1,6 +1,5 @@
 package me.zombie_striker.qg;
 
-import io.lumine.xikage.mythicmobs.MythicMobs;
 import me.zombie_striker.customitemmanager.CustomBaseObject;
 import me.zombie_striker.customitemmanager.CustomItemManager;
 import me.zombie_striker.customitemmanager.MaterialStorage;
@@ -19,6 +18,7 @@ import me.zombie_striker.qg.config.GunYMLLoader;
 import me.zombie_striker.qg.config.MessagesYML;
 import me.zombie_striker.qg.guns.Gun;
 import me.zombie_striker.qg.guns.projectiles.*;
+import me.zombie_striker.qg.guns.reloaders.M1GarandReloader;
 import me.zombie_striker.qg.guns.reloaders.SlideReloader;
 import me.zombie_striker.qg.guns.utils.GunRefillerRunnable;
 import me.zombie_striker.qg.guns.utils.WeaponSounds;
@@ -112,7 +112,7 @@ public class QAMain extends JavaPlugin {
 	public static boolean overrideAnvil = false;
 	public static boolean supportWorldGuard = false;
 	public static boolean enableIronSightsON_RIGHT_CLICK = false;
-	public static boolean enableSwapSingleShotOnAim = false;
+	public static boolean SwapSneakToSingleFire = false;
 	public static boolean enableBulletTrails = true;
 	public static boolean reloadOnF = true;
 	public static boolean reloadOnFOnly = true;
@@ -216,7 +216,7 @@ public class QAMain extends JavaPlugin {
 	public static boolean hasViaVersion = false;
 	public static boolean hasViaRewind = false;
 	public static boolean AUTOUPDATE = true;
-	public static boolean SWAP_RMB_WITH_LMB = true;
+	public static boolean SWAP_TO_LMB_SHOOT = true;
 	public static boolean ENABLE_LORE_INFO = true;
 	public static boolean ENABLE_LORE_HELP = true;
 	public static boolean AutoDetectResourcepackVersion = true;
@@ -229,6 +229,7 @@ public class QAMain extends JavaPlugin {
 	public static boolean changeDeathMessages = true;
 	public static List<Scoreboard> coloredGunScoreboard = new ArrayList<Scoreboard>();
 	public static boolean blockBreakTexture = false;
+	public static boolean autoarm = false;
 	public static List<UUID> currentlyScoping = new ArrayList<>();
 	private static QAMain main;
 
@@ -664,6 +665,10 @@ public class QAMain extends JavaPlugin {
 
 		Bukkit.getPluginManager().registerEvents(new QAListener(), this);
 		Bukkit.getPluginManager().registerEvents(new AimManager(), this);
+		try{
+			if(Bukkit.getPluginManager().isPluginEnabled("ChestShop"))
+				Bukkit.getPluginManager().registerEvents(new ChestShopHandler(),this);
+		}catch (Error|Exception e43){}
 
 		try {
 			Bukkit.getPluginManager().registerEvents(new Update19resourcepackhandler(), this);
@@ -788,6 +793,7 @@ public class QAMain extends JavaPlugin {
 		new PumpactionReloader();
 		new SingleBulletReloader();
 		new SlideReloader();
+		new M1GarandReloader();
 
 		new MiniNukeProjectile();
 		new ExplodingRoundProjectile();
@@ -971,7 +977,7 @@ public class QAMain extends JavaPlugin {
 		enableShop = (boolean) a("enableShop", true);
 
 		AUTOUPDATE = (boolean) a("AUTO-UPDATE", true);
-		SWAP_RMB_WITH_LMB = !(boolean) a("Swap-Reload-and-Shooting-Controls", false);
+		SWAP_TO_LMB_SHOOT = !(boolean) a("Swap-Reload-and-Shooting-Controls", false);
 
 		orderShopByPrice = (boolean) a("Order-Shop-By-Price", orderShopByPrice);
 
@@ -982,6 +988,8 @@ public class QAMain extends JavaPlugin {
 		headshotPling = (boolean) a("Enable_Headshot_Notification_Sound", headshotPling);
 		headshot_sound = (String) a("Headshot_Notification_Sound", headshot_sound);
 		headshotGoreSounds = (boolean) a("Enable_Headshot_Sounds", headshotGoreSounds);
+
+		autoarm = (boolean) a("Enable_AutoArm_Grenades", autoarm);
 
 		// ignoreArmorStands = (boolean) a("ignoreArmorStands", false);
 
@@ -1046,11 +1054,11 @@ public class QAMain extends JavaPlugin {
 
 		enableIronSightsON_RIGHT_CLICK = (boolean) a("IronSightsOnRightClick", false);
 		if(getConfig().contains("SwapSneakToSingleFile")){
-			enableSwapSingleShotOnAim = (boolean) a("SwapSneakToSingleFire", a("SwapSneakToSingleFile",false));
+			SwapSneakToSingleFire = (boolean) a("SwapSneakToSingleFire", a("SwapSneakToSingleFile",false));
 			getConfig().set("SwapSneakToSingleFile",null);
 			saveTheConfig = true;
 		}
-		enableSwapSingleShotOnAim = (boolean) a("SwapSneakToSingleFire", enableSwapSingleShotOnAim);
+		SwapSneakToSingleFire = (boolean) a("SwapSneakToSingleFire", SwapSneakToSingleFire);
 
 		List<String> destarray = (List<String>) a("DestructableMaterials",
 				Collections.singletonList("MATERIAL_NAME_HERE"));
@@ -1071,10 +1079,10 @@ public class QAMain extends JavaPlugin {
 						|| m.name().contains("LEVER"))
 					interactableBlocks.add(m);
 // Chris: default has 1.14 ItemType
-		if (MANUALLYSELECT18 || !isVersionHigherThan(1, 9)) {
+		if ((MANUALLYSELECT18 || !isVersionHigherThan(1, 9)) && !MANUALLYSELECT113 && !MANUALLYSELECT14) {
 			//1.8
 			CustomItemManager.registerItemType(getDataFolder(), "gun", new me.zombie_striker.customitemmanager.qa.versions.V1_8.CustomGunItem());
-		} else if (!isVersionHigherThan(1, 14) || MANUALLYSELECT113) {
+		} else if ((!isVersionHigherThan(1, 14) || MANUALLYSELECT113)&& !MANUALLYSELECT18 && !MANUALLYSELECT14) {
 			//1.9 to 1.13
 			CustomItemManager.registerItemType(getDataFolder(), "gun", new CustomGunItem());
 			//Make sure vehicles are safe
@@ -1257,13 +1265,9 @@ public class QAMain extends JavaPlugin {
 						s.add(e.getValue().getName());
 			}
 			return s;
-		}
-		if (args[0].equalsIgnoreCase("give")) {
-			if (args.length > 2) {
-				List<String> s = new ArrayList<String>();
-				if (b("~", args[0]))
-					s.add("~");
-				return s;
+		}else if(args.length==3) {
+			if (args[0].equalsIgnoreCase("give")) {
+				return null;
 			}
 		}
 		return null;
@@ -1547,7 +1551,7 @@ public class QAMain extends JavaPlugin {
 							temp =CustomItemManager.getItemType("gun").getItem(g.getItemData().getMat(),g.getItemData().getData(),g.getItemData().getVariant());;
 							who.getInventory().addItem(temp);
 						} else if (g instanceof Ammo) {
-							int amount = ((Ammo) g).getMaxAmount();
+							int amount = ((Ammo) g).getMaxItemStack();
 							if(args.length > 3)
 								amount = Integer.parseInt(args[3]);
 							QualityArmory.addAmmoToInventory(who, (Ammo) g, amount);
@@ -1557,7 +1561,7 @@ public class QAMain extends JavaPlugin {
 							who.getInventory().addItem(temp);
 						}
 
-						sender.sendMessage(prefix + " Adding " + g.getName() + " to your inventory");
+						sender.sendMessage(prefix + " Adding " + g.getName() + " to "+(sender==who?"your":who.getName()+"'s")+" inventory");
 					} else {
 						sender.sendMessage(prefix + " Could not find item \"" + args[1] + "\"");
 					}

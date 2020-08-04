@@ -3,6 +3,7 @@ package me.zombie_striker.qg.guns.chargers;
 import java.util.HashMap;
 import java.util.UUID;
 
+import me.zombie_striker.qg.guns.utils.WeaponSounds;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -105,6 +106,11 @@ public class DelayedBurstFireCharger implements ChargingHandler {
 	public String getName() {
 
 		return ChargingManager.DelayedBURSTFIRE;
+	}
+	@Override
+	public String getDefaultChargingSound() {
+		return WeaponSounds.RELOAD_BULLET.getSoundName();
+		//g.getChargingSound()
 	}
 
 }

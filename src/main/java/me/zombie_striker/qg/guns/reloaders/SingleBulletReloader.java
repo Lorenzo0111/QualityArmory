@@ -4,8 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import me.zombie_striker.qg.api.QualityArmory;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import me.zombie_striker.qg.QAMain;
@@ -31,11 +33,16 @@ public class SingleBulletReloader implements ReloadingHandler {
 		double time = (g.getReloadTime()) / g.getMaxBullets();
 		double time2 = time * amountReloading;
 		for (int i = 0; i < amountReloading; i++) {
+			final int finalI = i;
 			new BukkitRunnable() {
+				int temp = player.getInventory().getHeldItemSlot();
 				@Override
 				public void run() {
+					if(player.getInventory().getHeldItemSlot()!=temp)
+						return;
+					QualityArmory.sendHotbarGunAmmoCount(player, g, player.getInventory().getItemInMainHand(), true, g.getMaxBullets()-amountReloading+finalI, g.getMaxBullets());
 					try {
-						player.getWorld().playSound(player.getLocation(), WeaponSounds.RELOAD_BULLET.getSoundName(), 1, 1f);
+						player.getWorld().playSound(player.getLocation(),g.getReloadingSound(), 1, 1f);
 					} catch (Error e) {
 						try {
 							player.getWorld().playSound(player.getLocation(), Sound.valueOf("PISTON_EXTEND"), 5, 4f);
@@ -62,4 +69,8 @@ public class SingleBulletReloader implements ReloadingHandler {
 		return ReloadingManager.SINGLE_RELOAD;
 	}
 
+	@Override
+	public String getDefaultReloadingSound() {
+		return WeaponSounds.RELOAD_BULLET.getSoundName();
+	}
 }

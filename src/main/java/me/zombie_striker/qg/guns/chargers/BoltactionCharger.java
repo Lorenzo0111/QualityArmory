@@ -36,7 +36,7 @@ public class BoltactionCharger implements ChargingHandler {
 			public void run() {
 				try {
 					if (QAMain.isVersionHigherThan(1, 9)) {
-						player.getWorld().playSound(player.getLocation(), WeaponSounds.RELOAD_BOLT.getSoundName(), 1, 1f);
+						player.getWorld().playSound(player.getLocation(), g.getChargingSound(), 1, 1f);
 					} else
 						player.getWorld().playSound(player.getLocation(), Sound.BLOCK_LEVER_CLICK, 5, 1);
 				} catch (Error e) {
@@ -52,7 +52,7 @@ public class BoltactionCharger implements ChargingHandler {
 			public void run() {
 				try {
 					if (QAMain.isVersionHigherThan(1, 9)) {
-						player.getWorld().playSound(player.getLocation(), WeaponSounds.RELOAD_BOLT.getSoundName(), 1, 1f);
+						player.getWorld().playSound(player.getLocation(), g.getChargingSound(), 1, 1f);
 					} else
 						player.getWorld().playSound(player.getLocation(), Sound.BLOCK_LEVER_CLICK, 5, 1);
 				} catch (Error e) {
@@ -63,13 +63,19 @@ public class BoltactionCharger implements ChargingHandler {
 				}
 				timeR.remove(player.getUniqueId());
 			}
-		}.runTaskLater(QAMain.getInstance(), 16);
+		}.runTaskLater(QAMain.getInstance(), (int)g.getDelayBetweenShotsInSeconds()*20);
 		return true;
 	}
 
 	@Override
 	public String getName() {
 		return ChargingManager.BOLT;
+	}
+
+	@Override
+	public String getDefaultChargingSound() {
+		return WeaponSounds.RELOAD_BOLT.getSoundName();
+		//g.getChargingSound()
 	}
 
 }

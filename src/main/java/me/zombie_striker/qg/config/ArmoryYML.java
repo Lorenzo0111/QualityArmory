@@ -137,6 +137,10 @@ public class ArmoryYML {
 		set( "weaponsounds", sound.getSoundName());
 		return this;
 	}
+	public ArmoryYML setMaxItemStack(int amount){
+		set("maxItemStack", amount);
+		return this;
+	}
 
 	public void verifyAllTagsExist() {
 		if(contains("AllowUserModifications")){
@@ -152,6 +156,7 @@ public class ArmoryYML {
 		verify("durability", 1000);
 
 		verify("price", 1000);
+		verify("maxItemStack", 1);
 	}
 
 	public ArmoryYML putTimeStamp(){

@@ -610,12 +610,12 @@ public class QualityArmory {
 		for (int i = 0; i < player.getInventory().getSize(); i++) {
 			ItemStack is = player.getInventory().getItem(i);
 			if (is != null && QualityArmory.isAmmo(is) && QualityArmory.getAmmo(is).equals(a)) {
-				if (is.getAmount() + remaining <= a.getMaxAmount()) {
+				if (is.getAmount() + remaining <= a.getMaxItemStack()) {
 					is.setAmount(is.getAmount() + remaining);
 					remaining = 0;
 				} else {
-					remaining -= a.getMaxAmount() - is.getAmount();
-					is.setAmount(a.getMaxAmount());
+					remaining -= a.getMaxItemStack() - is.getAmount();
+					is.setAmount(a.getMaxItemStack());
 				}
 				player.getInventory().setItem(i, is);
 				if (remaining <= 0)

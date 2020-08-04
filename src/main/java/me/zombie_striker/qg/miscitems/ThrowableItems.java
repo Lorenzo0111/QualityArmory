@@ -10,7 +10,7 @@ import me.zombie_striker.customitemmanager.ArmoryBaseObject;
 
 public interface ThrowableItems extends ArmoryBaseObject {
 
-	public HashMap<Entity, ThrowableHolder> throwItems = new HashMap<>();
+	HashMap<Entity, ThrowableHolder> throwItems = new HashMap<>();
 	
 	class ThrowableHolder {
 		private Entity holder;
@@ -43,4 +43,8 @@ public interface ThrowableItems extends ArmoryBaseObject {
 			return owner;
 		}
 	}
+
+
+	double getThrowSpeed();
+	void setThrowSpeed(double throwspeed);
 }

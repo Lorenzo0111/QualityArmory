@@ -1,5 +1,6 @@
 package me.zombie_striker.qg.guns.chargers;
 
+import me.zombie_striker.qg.guns.utils.WeaponSounds;
 import org.bukkit.Location;
 import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Entity;
@@ -66,6 +67,11 @@ public class PushbackCharger implements ChargingHandler {
 				}
 		}
 		return false;
+	}
+	@Override
+	public String getDefaultChargingSound() {
+		return WeaponSounds.SHOCKWAVE.getSoundName();
+		//g.getChargingSound()
 	}
 
 }

@@ -1,5 +1,6 @@
 package me.zombie_striker.customitemmanager.qa.versions.V1_14;
 
+import me.clip.placeholderapi.PlaceholderAPI;
 import me.zombie_striker.customitemmanager.*;
 import me.zombie_striker.customitemmanager.qa.AbstractCustomGunItem;
 import me.zombie_striker.qg.QAMain;
@@ -19,6 +20,8 @@ import me.zombie_striker.qg.handlers.SkullHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -26,15 +29,12 @@ import org.bukkit.inventory.meta.SkullMeta;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public class CustomGunItem extends AbstractCustomGunItem {
 
 	public CustomGunItem(){
-		CustomItemManager.setResourcepack("https://www.dropbox.com/s/r3zqz97pnzhl7fa/QualityArmoryV2.1.5.zip?dl=1");
+		CustomItemManager.setResourcepack("https://www.dropbox.com/s/fl74oclaa06kcv9/QualityArmoryV2.1.7.zip?dl=1");
 	}
 
 	public static MaterialStorage m(int d) {
@@ -85,6 +85,11 @@ public class CustomGunItem extends AbstractCustomGunItem {
 				lore.addAll(OLD_ItemFact.getArmorLore((ArmorObject) base));
 
 			im.setLore(lore);
+
+
+			AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "generic.attackSpeed", 0, AttributeModifier.Operation.ADD_NUMBER);
+			im.addAttributeModifier(Attribute.GENERIC_ATTACK_SPEED, modifier);
+
 			if (QAMain.ITEM_enableUnbreakable) {
 				try {
 					im.setUnbreakable(true);
@@ -233,24 +238,25 @@ public class CustomGunItem extends AbstractCustomGunItem {
 		GunYMLCreator
 				.createNewDefaultGun(dataFolder, "ak47", "AK47", 4, stringsMetalRif, WeaponType.RIFLE,
 						null, true, "762", 3, 40, 5000)
-				.setSway(0.19).setFullyAutomatic(2).setBulletsPerShot(1).setRecoil(2).setMaterial(Material.CROSSBOW).setKilledByMessage("%player% was shot by %killer% using an %name%").done();
+				.setSway(0.19).setFullyAutomatic(2).setBulletsPerShot(1).setRecoil(2).setMaterial(Material.CROSSBOW)
+				.setKilledByMessage("%player% was shot by %killer% using an %name%").setReloadingSound(WeaponSounds.RELOAD_AK47).setWeaponSound(WeaponSounds.GUN_AK47).done();
 		GunYMLCreator
 				.createNewDefaultGun(dataFolder, "ak47u", "AK47-U", 5, stringsMetalRif, WeaponType.RIFLE,
 						null, true, "762", 3, 30, 5000)
-				.setFullyAutomatic(2).setBulletsPerShot(1).setRecoil(2).setMaterial(Material.CROSSBOW).done();
+				.setFullyAutomatic(2).setBulletsPerShot(1).setRecoil(2).setMaterial(Material.CROSSBOW).setReloadingSound(WeaponSounds.RELOAD_AK47).setWeaponSound(WeaponSounds.GUN_AK47).done();
 		GunYMLCreator.createNewDefaultGun(dataFolder, "m16", "M16", 6, stringsMetalRif, WeaponType.RIFLE,
 				null, true, "556", 3, 30, 3600).setFullyAutomatic(2).setBulletsPerShot(1).setMaterial(Material.CROSSBOW)
-				.setKilledByMessage("%player% was shot by %killer% using an %name%").setRecoil(2).done();
+				.setKilledByMessage("%player% was shot by %killer% using an %name%").setRecoil(2).setReloadingSound(WeaponSounds.RELOAD_M16).done();
 		GunYMLCreator
 				.createNewDefaultGun(dataFolder, "remington", "Remington", 7, stringsMetalRif,
 						WeaponType.SHOTGUN, null, false, "shell", 3, 8, 1000)
-				.setChargingHandler(ChargingManager.PUMPACTION)
-				.setReloadingHandler(ReloadingManager.PUMP_ACTION_RELOAD).setBulletsPerShot(20).setDistance(70)
+				.setChargingHandler(ChargingManager.PUMPACTION).setDelayReload(0.7)
+				.setReloadingHandler(ReloadingManager.PUMP_ACTION_RELOAD).setWeaponSound(WeaponSounds.GUN_SHOTGUN).setBulletsPerShot(20).setDistance(70)
 				.setRecoil(10).setMaterial(Material.CROSSBOW).done();
 		GunYMLCreator
 				.createNewDefaultGun(dataFolder, "fnfal", "FN Fal", 8, stringsMetalRif, WeaponType.RIFLE,
 						null, false, "762", 3, 32, 3800)
-				.setFullyAutomatic(2).setBulletsPerShot(1).setRecoil(2).setMaterial(Material.CROSSBOW).done();
+				.setFullyAutomatic(2).setBulletsPerShot(1).setRecoil(2).setMaterial(Material.CROSSBOW).setReloadingSound(WeaponSounds.RELOAD_FN).done();
 		GunYMLCreator
 				.createNewDefaultGun(dataFolder, "rpg", "RPG", 9, stringsRPG, WeaponType.RPG, null, false,
 						"rocket", 100, 1, 4000)
@@ -269,7 +275,7 @@ public class CustomGunItem extends AbstractCustomGunItem {
 				.createNewDefaultGun(dataFolder, "m40", "M40", 12, stringsWoodRif, WeaponType.SNIPER, null,
 						true, "762", 10, 6, 2700)
 				.setZoomLevel(9).setDelayShoot(0.7).setChargingHandler(ChargingManager.BOLT).setMaterial(Material.CROSSBOW).setUseOffhand(true)
-				.setSwayMultiplier(3).setDistance(280).setRecoil(5).done();
+				.setSwayMultiplier(3).setDistance(280).setRecoil(5).setReloadingSound(WeaponSounds.RELOAD_FN).done();
 		GunYMLCreator
 				.createNewDefaultGun(dataFolder, "enfield", "Enfield", 13, stringsPistol,
 						WeaponType.PISTOL, null, true, "9mm", 3, 6, 200)
@@ -279,7 +285,7 @@ public class CustomGunItem extends AbstractCustomGunItem {
 		GunYMLCreator
 				.createNewDefaultGun(dataFolder, "mauser", "Mauser C96", 14, stringsPistol,
 						WeaponType.PISTOL, null, true, "9mm", 3, 12, 700).setReloadingHandler(ReloadingManager.SLIDE_RELOAD).setMaterial(Material.CROSSBOW)
-				.setSwayMultiplier(3).setIsSecondaryWeapon(true).done();
+				.setSwayMultiplier(3).setIsSecondaryWeapon(true).setWeaponSound(WeaponSounds.GUN_MAUSER).done();
 
 		GunYMLCreator.createMisc(false, dataFolder, false, "default_grenade", "grenade", "&7Grenade",
 				Arrays.asList(ChatColor.DARK_GRAY + "[LMB] to pull pin", ChatColor.DARK_GRAY + "[RMB] to throw",
@@ -290,14 +296,14 @@ public class CustomGunItem extends AbstractCustomGunItem {
 		GunYMLCreator
 				.createNewDefaultGun(dataFolder, "dragunov", "Dragunov", 16, stringsMetalRif,
 						WeaponType.SNIPER, null, true, "762", 7, 12, 2100).setMaterial(Material.CROSSBOW)
-				.setUseOffhand(false).setDelayShoot(0.4).setZoomLevel(9).setSwayMultiplier(3).setRecoil(5).setKilledByMessage("%player% was sniped by %killer% using an %name%").done();
+				.setUseOffhand(false).setDelayShoot(0.4).setZoomLevel(9).setSwayMultiplier(3).setRecoil(5).setReloadingSound(WeaponSounds.RELOAD_FN).setKilledByMessage("%player% was sniped by %killer% using an %name%").done();
 		GunYMLCreator
 				.createNewDefaultGun(dataFolder, "spas12", "Spas-12", 17, stringsMetalRif,
 						WeaponType.SHOTGUN, null, false, "shell", 2, 8, 1000).setMaterial(Material.CROSSBOW)
-				.setBulletsPerShot(20).setDistance(80).setRecoil(10).done();
+				.setBulletsPerShot(20).setDistance(80).setRecoil(10).setReloadingHandler(ReloadingManager.PUMP_ACTION_RELOAD).setWeaponSound(WeaponSounds.GUN_SHOTGUN).done();
 		GunYMLCreator
 				.createNewDefaultGun(dataFolder, "aa12", "AA-12", 18, stringsMetalRif, WeaponType.SHOTGUN,
-						null, false, "shell", 2, 32, 4000).setMaterial(Material.CROSSBOW)
+						null, false, "shell", 2, 32, 4000).setMaterial(Material.CROSSBOW).setWeaponSound(WeaponSounds.GUN_SHOTGUN)
 				.setBulletsPerShot(10).setDistance(80).setFullyAutomatic(2).setRecoil(7).setKilledByMessage("%player% was shot to bits by %killer% using an %name%").done();
 
 		/**
@@ -315,7 +321,7 @@ public class CustomGunItem extends AbstractCustomGunItem {
 				.createNewDefaultGun(dataFolder, "awp", "AWP", 20, stringsMetalRif, WeaponType.SNIPER,
 						WeaponSounds.GUN_BIG, true, "762", 10, 12, 3000)
 				.setUseOffhand(false).setDelayShoot(0.8).setZoomLevel(9).setSway(1).setSwayMultiplier(10).setRecoil(5)
-				.setKilledByMessage("%player% was sniped by %killer% using an %name%").setMaterial(Material.CROSSBOW).setSwayUnscopedModifier(3).setWeaponSound(WeaponSounds.GUN_BIG).done();
+				.setKilledByMessage("%player% was sniped by %killer% using an %name%").setMaterial(Material.CROSSBOW).setReloadingSound(WeaponSounds.RELOAD_FN).setSwayUnscopedModifier(3).setWeaponSound(WeaponSounds.GUN_BIG).done();
 
 		GunYMLCreator.createMisc(false, dataFolder, false, "default_smokegrenade", "smokegrenade",
 				"&7Smoke Grenade",
@@ -345,17 +351,17 @@ public class CustomGunItem extends AbstractCustomGunItem {
 		GunYMLCreator
 				.createNewDefaultGun(dataFolder, "m4a1s", "M4A1s", 25, stringsMetalRif, WeaponType.RIFLE,
 						null, true, "556", 3, 30, 3600)
-				.setFullyAutomatic(2).setBulletsPerShot(1).setRecoil(5).setWeaponSound(WeaponSounds.SILENCEDSHOT).setMaterial(Material.CROSSBOW).done();
+				.setFullyAutomatic(2).setBulletsPerShot(1).setRecoil(5).setReloadingSound(WeaponSounds.RELOAD_FN).setWeaponSound(WeaponSounds.SILENCEDSHOT).setMaterial(Material.CROSSBOW).done();
 
 		GunYMLCreator
 				.createNewDefaultGun(dataFolder, "rpk", "RPK", 26, stringsWoodRif, WeaponType.RIFLE, null,
 						false, "762", 3, 70, 7000)
-				.setFullyAutomatic(3).setBulletsPerShot(1).setRecoil(2).setMaterial(Material.CROSSBOW).done();
+				.setFullyAutomatic(3).setBulletsPerShot(1).setRecoil(2).setReloadingSound(WeaponSounds.RELOAD_AK47).setWeaponSound(WeaponSounds.GUN_AK47).setMaterial(Material.CROSSBOW).done();
 
 		GunYMLCreator
 				.createNewDefaultGun(dataFolder, "sg553", "SG-553", 27, stringsMetalRif, WeaponType.RIFLE,
 						null, true, "556", 3, 40, 3200)
-				.setFullyAutomatic(2).setBulletsPerShot(1).setRecoil(2).setMaterial(Material.CROSSBOW).done();
+				.setFullyAutomatic(2).setBulletsPerShot(1).setRecoil(2).setMaterial(Material.CROSSBOW).setReloadingSound(WeaponSounds.RELOAD_FN).done();
 		GunYMLCreator.createNewDefaultGun(dataFolder, "fnfiveseven", "FN-Five-Seven", 69, stringsPistol,
 				WeaponType.PISTOL, null, true, "9mm", 3, 12, 700).setMaterial(Material.CROSSBOW).setIsSecondaryWeapon(true).done();
 
@@ -458,13 +464,13 @@ public class CustomGunItem extends AbstractCustomGunItem {
 						"The Arc-Gun-9", 39, strings10mm, WeaponType.LAZER,
 						WeaponSounds.SHOCKWAVE, false, "fusion_cell", 0, 10, 2400)
 				.setLore(Collections.singletonList("&fPushy!")).setMaterial(Material.CROSSBOW)
-				.setChargingHandler(ChargingManager.getHandler(ChargingManager.PUSHBACK)).setKilledByMessage("%player% was ?????? by %killer% using a %name%").done();
+				.setChargingHandler(ChargingManager.getHandler(ChargingManager.PUSHBACK)).setFiringKnockback(1).setKilledByMessage("%player% was ?????? by %killer% using a %name%").done();
 		GunYMLCreator
 				.createNewCustomGun(dataFolder, "default_halorifle", "unscassaultrifle",
 						"UNSCAssaultRifle", 40, stringsRifle, WeaponType.RIFLE,
 						WeaponSounds.GUN_MEDIUM, true, "556", 3, 32, 3800)
 				.setFullyAutomatic(3).setBulletsPerShot(1).setMaterial(Material.CROSSBOW)
-				.setLore(Collections.singletonList("&fAlso known as the \"MA5B\"")).setRecoil(2).done();
+				.setLore(Collections.singletonList("&fAlso known as the \"MA5B\"")).setReloadingSound(WeaponSounds.RELOAD_FN).setRecoil(2).done();
 		GunYMLCreator
 				.createNewCustomGun(dataFolder, "default_haloalien", "alienneedler",
 						"\"Needler\"", 41, stringsRifle, WeaponType.PISTOL,
@@ -523,13 +529,13 @@ public class CustomGunItem extends AbstractCustomGunItem {
 		GunYMLCreator
 				.createNewDefaultGun(dataFolder, "sks", "SKS-45", 51, stringsWoodRif, WeaponType.SNIPER,
 						null, true, "762", 7, 10, 2000).setMaterial(Material.CROSSBOW)
-				.setUseOffhand(false).setDelayShoot(0.6).setZoomLevel(6).setDistance(290).setSwayMultiplier(3).setRecoil(8)
+				.setUseOffhand(false).setDelayShoot(0.6).setZoomLevel(6).setDistance(290).setSwayMultiplier(3).setRecoil(8).setReloadingSound(WeaponSounds.RELOAD_SLIDE)
 				.setKilledByMessage("%player% was sniped by %killer% using a %name%").done();
 
 		GunYMLCreator
 				.createNewDefaultGun(dataFolder, "barrett", "Barrett-M82", 52, stringsWoodRif,
 						WeaponType.SNIPER, WeaponSounds.GUN_BIG, true, "50bmg", 17, 10, 4000)
-				.setDelayShoot(1).setZoomLevel(6).setDistance(350).setDelayReload(2.5).setSwayMultiplier(3).setMaterial(Material.CROSSBOW).setUseOffhand(false)
+				.setDelayShoot(1).setZoomLevel(6).setDistance(350).setDelayReload(2.5).setSwayMultiplier(3).setMaterial(Material.CROSSBOW).setWeaponSound(WeaponSounds.GUN_SHOTGUN).setReloadingSound(WeaponSounds.RELOAD_FN).setUseOffhand(false)
 				.setNightVisionOnScope(true).setRecoil(15).setKilledByMessage("%player% was sniped by %killer% using a %name%").done();
 
 		GunYMLCreator
@@ -538,7 +544,7 @@ public class CustomGunItem extends AbstractCustomGunItem {
 				.setIsSecondaryWeapon(true).done();
 
 		GunYMLCreator.createNewDefaultGun(dataFolder, "ppsh41", "PPSh-41", 54, stringsWoodRif,
-				WeaponType.RIFLE, null, true, "762", 3, 71, 7000).setFullyAutomatic(3).setRecoil(2).setMaterial(Material.CROSSBOW).done();
+				WeaponType.RIFLE, null, true, "762", 3, 71, 7000).setReloadingSound(WeaponSounds.RELOAD_FN).setFullyAutomatic(3).setRecoil(2).setMaterial(Material.CROSSBOW).done();
 		GunYMLCreator
 				.createNewDefaultGun(dataFolder, "m79", "M79 \"Thumper\"", 55, stringsFatman,
 						WeaponType.RPG, WeaponSounds.THUMPER, true, "40mm", 100, 1, 5000)
@@ -555,7 +561,7 @@ public class CustomGunItem extends AbstractCustomGunItem {
 		GunYMLCreator// TODO: MINIGUN RECOIL
 				.createNewDefaultGun(dataFolder, "mk19", "Mk-19", 57, stringsMetalRif, WeaponType.BIG_GUN,
 						WeaponSounds.WARHEAD_LAUNCH, true, "40mm", 50, 50, 20000)
-				.setFullyAutomatic(1).setCustomProjectile(ProjectileManager.EXPLODINGROUND)
+				.setFullyAutomatic(1).setCustomProjectile(ProjectileManager.EXPLODINGROUND).setWeaponSound(WeaponSounds.GUN_SHOTGUN)
 				.setCustomProjectileVelocity(4).setCustomProjectileExplosionRadius(5)
 				.setUseOffhand(false).setChargingHandler(ChargingManager.REQUIREAIM).setSway(0.5).setSwayMultiplier(2.4).setMaterial(Material.CROSSBOW)
 				.setParticle(0.001, 0.001, 0.001, Material.COAL_BLOCK).setRecoil(7)
@@ -563,10 +569,10 @@ public class CustomGunItem extends AbstractCustomGunItem {
 		GunYMLCreator
 				.createNewDefaultGun(dataFolder, "asval", "AS-Val", 58, stringsMetalRif, WeaponType.RIFLE,
 						WeaponSounds.SILENCEDSHOT, true, "762", 3, 30, 7000).setMaterial(Material.CROSSBOW)
-				.setUseOffhand(false).setSway(0.2).setFullyAutomatic(3).setRecoil(2).done();
+				.setUseOffhand(false).setSway(0.2).setFullyAutomatic(3).setRecoil(2).setReloadingSound(WeaponSounds.RELOAD_FN).done();
 		GunYMLCreator
 				.createNewDefaultGun(dataFolder, "fnp90", "FN-P90", 59, stringsMetalRif, WeaponType.SMG,
-						WeaponSounds.SILENCEDSHOT, true, "556", 2, 50, 3000).setMaterial(Material.CROSSBOW)
+						WeaponSounds.SILENCEDSHOT, true, "556", 2, 50, 3000).setMaterial(Material.CROSSBOW).setReloadingSound(WeaponSounds.RELOAD_FN)
 				.setDelayReload(2.5).setFullyAutomatic(4).setRecoil(2).done();
 		GunYMLCreator
 				.createNewDefaultGun(dataFolder, "kar98k", "Kar-98K", 60, stringsWoodRif,
@@ -574,10 +580,10 @@ public class CustomGunItem extends AbstractCustomGunItem {
 				.setUseOffhand(false).setZoomLevel(2).setDelayShoot(0.7).setChargingHandler(ChargingManager.BOLT)
 				.setSwayMultiplier(3).setDistance(280).setRecoil(7).done();
 		GunYMLCreator.createNewDefaultGun(dataFolder, "mp40", "MP 40", 61, stringsMetalRif,
-				WeaponType.SMG, WeaponSounds.GUN_SMALL, true, "9mm", 2, 32, 3800).setFullyAutomatic(3).setMaterial(Material.CROSSBOW).done();
+				WeaponType.SMG, WeaponSounds.GUN_SMALL, true, "9mm", 2, 32, 3800).setFullyAutomatic(3).setMaterial(Material.CROSSBOW).setReloadingSound(WeaponSounds.RELOAD_FN).done();
 		GunYMLCreator
 				.createNewDefaultGun(dataFolder, "sturmgewehr44", "Sturmgewehr 44", 62, stringsMetalRif,
-						WeaponType.SMG, WeaponSounds.GUN_AUTO, true, "762", 3, 30, 3800).setMaterial(Material.CROSSBOW)
+						WeaponType.SMG, WeaponSounds.GUN_AUTO, true, "762", 3, 30, 3800).setMaterial(Material.CROSSBOW).setReloadingSound(WeaponSounds.RELOAD_AK47)
 				.setFullyAutomatic(3).setRecoil(2).done();
 
 		/**
@@ -593,11 +599,11 @@ public class CustomGunItem extends AbstractCustomGunItem {
 		GunYMLCreator
 				.createNewDefaultGun(dataFolder, "sawedoffshotgun", "Sawed-off Shotgun", 63,
 						stringsMetalRif, WeaponType.SHOTGUN, null, true, "shell", 2, 2, 1000)
-				.setReloadingHandler(ReloadingManager.SINGLE_RELOAD).setDelayReload(1).setBulletsPerShot(20).setMaterial(Material.CROSSBOW)
+				.setReloadingHandler(ReloadingManager.SINGLE_RELOAD).setReloadingSound(WeaponSounds.RELOAD_SHELL).setWeaponSound(WeaponSounds.GUN_SHOTGUN).setDelayReload(1).setBulletsPerShot(20).setMaterial(Material.CROSSBOW)
 				.setDistance(80).setRecoil(11).done();
 		GunYMLCreator
 				.createNewDefaultGun(dataFolder, "famas", "FAMAS-G2", 64, stringsMetalRif,
-						WeaponType.RIFLE, null, true, "556", 3, 30, 4500).setMaterial(Material.CROSSBOW)
+						WeaponType.RIFLE, null, true, "556", 3, 30, 4500).setMaterial(Material.CROSSBOW).setReloadingSound(WeaponSounds.RELOAD_FN)
 				.setFullyAutomatic(3).setRecoil(2).done();
 
 		GunYMLCreator.createDefaultArmor(dataFolder, false, "assaulthelmet", "Assault Helmet", null, 18,
@@ -626,12 +632,12 @@ public class CustomGunItem extends AbstractCustomGunItem {
 		GunYMLCreator
 				.createNewDefaultGun(dataFolder, "sten", "STEN Gun", 66, stringsMetalRif,
 						WeaponType.RIFLE, WeaponSounds.GUN_SMALL_AUTO, true, "9mm", 2, 32, 2500)
-				.setFullyAutomatic(3).setRecoil(1).setMaterial(Material.CROSSBOW).done();
+				.setFullyAutomatic(3).setRecoil(1).setMaterial(Material.CROSSBOW).setReloadingSound(WeaponSounds.RELOAD_FN).done();
 
 		GunYMLCreator
 				.createNewDefaultGun(dataFolder, "m4a1sburst", "M4A1s (Burst)", 25, stringsMetalRif,
 						WeaponType.RIFLE, null, true, "556", 3, 30, 3600)
-				.setVariant(1).setChargingHandler(ChargingManager.BURSTFIRE).setFireRate(3).setBulletsPerShot(3).setMaterial(Material.CROSSBOW)
+				.setVariant(1).setChargingHandler(ChargingManager.BURSTFIRE).setFireRate(3).setBulletsPerShot(3).setMaterial(Material.CROSSBOW).setReloadingSound(WeaponSounds.RELOAD_M16)
 				.setRecoil(1).done();
 
 		GunYMLCreator
@@ -654,7 +660,7 @@ public class CustomGunItem extends AbstractCustomGunItem {
 		GunYMLCreator
 				.createNewDefaultGun(dataFolder, "henryrifle", "Henry Rifle", 76, stringsGoldRif,
 						WeaponType.RIFLE, null, true, "556", 4, 6, 400)
-				.setChargingHandler(ChargingManager.BREAKACTION).setMaterial(Material.CROSSBOW)
+				.setChargingHandler(ChargingManager.BREAKACTION).setMaterial(Material.CROSSBOW).setDelayReload(0.5)
 				.setReloadingHandler(ReloadingManager.SINGLE_RELOAD).done();
 
 		GunYMLCreator
@@ -695,11 +701,40 @@ public class CustomGunItem extends AbstractCustomGunItem {
 		GunYMLCreator
 				.createNewDefaultGun(dataFolder, "pancorjackhammer", "Pancor Jackhammer", 79, stringsMetalRif, WeaponType.SHOTGUN,
 						null, false, "shell", 2, 8, 4000).setMaterial(Material.CROSSBOW)
-				.setBulletsPerShot(10).setDistance(80).setFullyAutomatic(2).setRecoil(7).setKilledByMessage("%player% was shot to bits by %killer% using an %name%, a gun that does not exist.").done();
+				.setBulletsPerShot(10).setDistance(80).setFullyAutomatic(2).setRecoil(7).setReloadingSound(WeaponSounds.RELOAD_FN).setKilledByMessage("%player% was shot to bits by %killer% using an %name%, a gun that does not exist.").done();
 
 
 
+		GunYMLCreator
+				.createMisc(false, dataFolder, false, "default_molotov", "molotov",
+						"&7Molotov",
+						Arrays.asList(ChatColor.DARK_GRAY + "[LMB] to light",
+								ChatColor.DARK_GRAY + "[RMB] to throw",
+								ChatColor.DARK_GRAY + "Molotovs explode on contact",
+								ChatColor.DARK_RED + "<!>Will Not Explode If Not Thrown<!>"),
+						m(80), stringsGrenades, 100, WeaponType.MOLOTOV, 100, 1)
+				.set(false, "radius", 5).done();
 
+		GunYMLCreator
+				.createMisc(false, dataFolder, false, "default_proxymine", "proxymine",
+						"&7Proxy-Mine",
+						Arrays.asList(ChatColor.DARK_GRAY + "[LMB] to activate",
+								ChatColor.DARK_GRAY + "[RMB] to throw",
+								ChatColor.DARK_GRAY + "Proxy-Mines explode after being thrown by pressing [SHIFT]",
+								ChatColor.DARK_RED + "<!>Will Not Explode If Not Thrown<!>"),
+						m(81), stringsGrenades, 100, WeaponType.PROXYMINES, 100, 1)
+				.set(false, "radius", 5).done();
+
+
+		GunYMLCreator.createMisc(false, dataFolder, false, "default_medkit", "medkit",
+				"Medkit", null,
+				Material.PHANTOM_MEMBRANE, 22, stringsHealer, 10000, WeaponType.MEDKIT, 9, 1000).setSoundOnEquip(WeaponSounds.OPENBAG.getSoundName()).setSoundOnHit(WeaponSounds.OPENBAG.getSoundName()).done();
+
+		GunYMLCreator
+				.createNewDefaultGun(dataFolder, "m1garand", "M1 Garand", 82, stringsWoodRif, WeaponType.SNIPER, null,
+						true, "762", 10, 6, 2700)
+				.setZoomLevel(9).setDelayShoot(0.7).setReloadingHandler(ReloadingManager.getHandler(ReloadingManager.M1GARAND_RELOAD)).setMaterial(Material.CROSSBOW).setUseOffhand(true)
+				.setSwayMultiplier(3).setDistance(280).setRecoil(5).done();
 
 		GunYMLCreator.createNewDefaultGun(dataFolder, "debuggun", "Debug Gun", 34, strings10mm,
 				WeaponType.PISTOL, WeaponSounds.LAZERSHOOT, true, null, 5, 69420, -1)

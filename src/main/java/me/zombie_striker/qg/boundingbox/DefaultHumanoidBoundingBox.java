@@ -1,5 +1,7 @@
 package me.zombie_striker.qg.boundingbox;
 
+import me.zombie_striker.qg.QAMain;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Ageable;
 import org.bukkit.entity.Entity;
@@ -8,8 +10,8 @@ import me.zombie_striker.qg.handlers.BoundingBoxUtil;
 
 public class DefaultHumanoidBoundingBox implements AbstractBoundingBox{
 
-	private double bodyWidthRadius = 0.47;
-	private double bodyWidthRadius_baby = 0.47;
+	private double bodyWidthRadius = 0.48;
+	private double bodyWidthRadius_baby = 0.48;
 
 	private double bodyheight = 1.45;
 	private double headTopHeight = 1.95;
@@ -64,9 +66,13 @@ public class DefaultHumanoidBoundingBox implements AbstractBoundingBox{
 	@Override
 	public boolean intersectsBody(Location check, Entity base) {
 		if (base instanceof Ageable && !((Ageable) base).isAdult() ){
-			return BoundingBoxUtil.within2DHeight(base,check,bodyheight_baby);
+			boolean old_box =  BoundingBoxUtil.within2DHeight(base,check,bodyheight_baby);
+
+			return old_box;
 		}
-		return BoundingBoxUtil.within2DHeight(base,check,headTopHeight);
+		boolean old_box =  BoundingBoxUtil.within2DHeight(base,check,headTopHeight);
+
+		return old_box;
 	}
 
 	@Override

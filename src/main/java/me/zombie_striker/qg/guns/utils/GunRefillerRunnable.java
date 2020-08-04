@@ -24,6 +24,7 @@ public class GunRefillerRunnable {
 		for (GunRefillerRunnable s : allGunRefillers) {
 			if (is.isSimilar(s.reloadedItem))
 				if(reloader == null || reloader == s.reloader);
+				if(!s.getTask().isCancelled())
 				return true;
 		}
 		return false;
@@ -64,25 +65,26 @@ public class GunRefillerRunnable {
 		r = new BukkitRunnable() {
 			@Override
 			public void run() {
-				try {
-
-					player.getWorld().playSound(player.getLocation(), WeaponSounds.RELOAD_MAG_IN.getSoundName(), 1, 1f);
-					if (!QAMain.isVersionHigherThan(1, 9)) {
+				ItemMeta newim = modifiedOriginalItem.getItemMeta();
+				if(player.getInventory().getHeldItemSlot()==slot) {
+					try {
+						player.getWorld().playSound(player.getLocation(), WeaponSounds.RELOAD_MAG_IN.getSoundName(), 1, 1f);
+						if (!QAMain.isVersionHigherThan(1, 9)) {
+							try {
+								player.getWorld().playSound(player.getLocation(), Sound.valueOf("CLICK"), 5, 1);
+							} catch (Error | Exception e3) {
+								player.getWorld().playSound(player.getLocation(), Sound.valueOf("BLOCK_LEVER_CLICK"), 5, 1);
+							}
+						}
+					} catch (Error e2) {
 						try {
 							player.getWorld().playSound(player.getLocation(), Sound.valueOf("CLICK"), 5, 1);
 						} catch (Error | Exception e3) {
 							player.getWorld().playSound(player.getLocation(), Sound.valueOf("BLOCK_LEVER_CLICK"), 5, 1);
 						}
 					}
-				} catch (Error e2) {
-					try {
-						player.getWorld().playSound(player.getLocation(), Sound.valueOf("CLICK"), 5, 1);
-					} catch (Error | Exception e3) {
-						player.getWorld().playSound(player.getLocation(), Sound.valueOf("BLOCK_LEVER_CLICK"), 5, 1);
-					}
+					Gun.updateAmmo(g, newim, reloadAmount);
 				}
-				ItemMeta newim = modifiedOriginalItem.getItemMeta();
-				Gun.updateAmmo(g, newim, reloadAmount);
 				newim.setDisplayName(g.getDisplayName());
 				modifiedOriginalItem.setItemMeta(newim);
 				ItemStack current = player.getInventory().getItem(slot);

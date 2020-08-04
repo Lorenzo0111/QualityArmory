@@ -10,7 +10,9 @@ import me.zombie_striker.customitemmanager.CustomBaseObject;
 import me.zombie_striker.customitemmanager.CustomItemManager;
 import me.zombie_striker.qg.handlers.HotbarMessager;
 import org.apache.commons.lang.StringUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -67,9 +69,8 @@ public class MedKit extends CustomBaseObject implements ArmoryBaseObject {
 
 				if (p2 + percent < 100) {
 					PercentTimeHealed.put(healer.getUniqueId(), p2 + percent);
-
 				} else {
-
+					healer.playSound(healer.getLocation(),getSoundOnEquip(),1,1);
 					healer.setHealth(Math.min(healer.getMaxHealth(), healer.getHealth() + QAMain.S_MEDKIT_HEAL_AMOUNT));
 					PercentTimeHealed.remove(healer.getUniqueId());
 					lastTimeHealed.remove(healer.getUniqueId());
@@ -145,6 +146,11 @@ public class MedKit extends CustomBaseObject implements ArmoryBaseObject {
 	}
 
 	@Override
+	public boolean onShift(Player shooter, ItemStack usedItem, boolean toggle) {
+		return false;
+	}
+
+	@Override
 	public boolean onLMB(Player e, ItemStack usedItem) {
 		return false;
 		// TODO Auto-generated method stub
@@ -156,4 +162,15 @@ public class MedKit extends CustomBaseObject implements ArmoryBaseObject {
 		return CustomItemManager.getItemType("gun").getItem(this.getItemData().getMat(),this.getItemData().getData(),this.getItemData().getVariant());
 	}
 
+	@Override
+	public boolean onSwapTo(Player shooter, ItemStack usedItem) {
+		if (getSoundOnEquip() != null)
+			shooter.getWorld().playSound(shooter.getLocation(), getSoundOnEquip(), 1, 1);
+		return false;
+	}
+
+	@Override
+	public boolean onSwapAway(Player shooter, ItemStack usedItem) {
+		return false;
+	}
 }

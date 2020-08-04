@@ -45,7 +45,7 @@ public class GunYMLCreator {
 		for (WeaponType g : WeaponType.values()) {
 			validGuns.append(g.name() + ", ");
 		}
-		h.set(false, "_VALID_WEAPON_TYPES", validGuns.toString());
+		//h.set(false, "_VALID_WEAPON_TYPES", validGuns.toString());
 		h.set(false, "enableIronSights", enableIronSights);
 		h.set(false, "ammotype", ammotype);
 		h.set(false, "damage", damage);
@@ -53,68 +53,6 @@ public class GunYMLCreator {
 
 		h.set(false, "price", cost);
 
-		return h;
-	}
-
-	public static ArmoryYML createNewGun(boolean forceUpdate, File dataFolder, boolean invalid, String filename,
-			String name, String displayname, List<String> lore, int id, List<String> craftingRequirements,
-			WeaponType weapontype, boolean enableIronSights, String ammotype, int damage, double sway, Material type,
-			int maxBullets, int duribility, double delayReload, double delayShoot, int bulletspershot,
-			boolean isAutomatic, int cost, String ch, int distance, int var, boolean version18, WeaponSounds ws,
-			String particle, double particleR, double particleG, double particleB, boolean addMuzzleSmoke) {
-		File f2 = new File(dataFolder, "newGuns/" + filename + ".yml");
-		if (!new File(dataFolder, "newGuns").exists())
-			new File(dataFolder, "newGuns").mkdirs();
-
-		ArmoryYML h = new ArmoryYML(f2);
-		h.set(invalid, "invalid", invalid);
-		h.set(invalid, "name", name);
-		h.set(invalid, "displayname", displayname);
-		h.set(invalid, "lore", (lore == null ? new ArrayList<String>() : lore));
-		h.set(invalid, "material", type.name());
-		h.set(invalid, "id", id);
-		h.set(invalid, "variant", var);
-		h.set(invalid, "craftingRequirements", craftingRequirements);
-		h.set(invalid, "weapontype", weapontype.name());
-		h.set(invalid, "weaponsounds", ws != null ? ws.getSoundName() : WeaponSounds.getSoundByType(weapontype));
-		StringBuilder validGuns = new StringBuilder();
-		for (WeaponType g : WeaponType.values()) {
-			validGuns.append(g.name() + ", ");
-		}
-		h.set(invalid, "_VALID_WEAPON_TYPES", validGuns.toString());
-		h.set(invalid, "enableIronSights", enableIronSights);
-		h.set(invalid, "ammotype", ammotype);
-		h.set(invalid, "damage", damage);
-		h.set(invalid, "sway", sway);
-		h.set(invalid, "maxbullets", maxBullets);
-		h.set(invalid, "durability", duribility);
-		h.set(invalid, "delayForReload", delayReload);
-		h.set(invalid, "delayForShoot", delayShoot);
-		h.set(invalid, "bullets-per-shot", bulletspershot);
-		h.set(invalid, "isAutomatic", isAutomatic);
-		h.set(invalid, "price", cost);
-		h.set(invalid, "maxBulletDistance", distance);
-		h.set(invalid, "unlimitedAmmo", false);
-		h.set(invalid, "LightLeveOnShoot", 14);
-
-		h.set(invalid, "particles.bullet_particle", particle);
-		if (particle.equals("REDSTONE")) {
-			h.set(invalid, "particles.bullet_particleR", particleR);
-			h.set(invalid, "particles.bullet_particleG", particleG);
-			h.set(invalid, "particles.bullet_particleB", particleB);
-		}
-
-		if (version18)
-			h.set(invalid, "Version_18_Support", version18);
-		h.set(invalid, "ChargingHandler", ch == null ? "null" : ch);
-		if (addMuzzleSmoke)
-			h.set(invalid, "addMuzzleSmoke", addMuzzleSmoke);
-
-		if (invalid) {
-			h.set(invalid, "drop-glow-color", ChatColor.WHITE.name());
-		}
-		if (h.saveNow)
-			h.save();
 		return h;
 	}
 
@@ -130,14 +68,6 @@ public class GunYMLCreator {
 		return createAmmo(forceUpdate, dataFolder, invalid, "default_" + name, name, displayname, null,
 			type, id, craftingRequirements, cost, severity, maxAmount, returnamount);
 	}
-
-	/*public static ArmoryYML createAmmo(boolean forceUpdate, File dataFolder, boolean invalid, String filename,
-			String name, String displayname, int id, List<String> craftingRequirements, int cost, double severity,
-			int maxAmount) {
-		return createAmmo(forceUpdate, dataFolder, invalid, filename, name, displayname, null, Material.DIAMOND_AXE, id,
-				craftingRequirements, cost, severity, maxAmount);
-	}*/
-
 	public static ArmoryYML createAmmo(boolean forceUpdate, File dataFolder, boolean invalid, String filename,
 			String name, String displayname, List<String> lore, Material type, int id,
 			List<String> craftingRequirements, int cost, double severity, int maxAmount) {
@@ -176,7 +106,7 @@ public class GunYMLCreator {
 		h.set(invalid, "craftingRequirements", craftingRequirements);
 		h.set(invalid, "craftingReturnAmount", craftingReturn);
 		h.set(invalid, "price", cost);
-		h.set(invalid, "maxAmount", maxAmount);
+		h.set(invalid, "maxItemStack", maxAmount);
 		h.set(invalid, "material", type.name());
 
 		if (SKULL_OWNER != null) {
@@ -261,20 +191,20 @@ public class GunYMLCreator {
 		return h;
 	}
 
-	public static ArmoryYML createMisc(boolean forceUpdate, File dataFolder, boolean invalid, String filename,
+	public static MiscYML createMisc(boolean forceUpdate, File dataFolder, boolean invalid, String filename,
 			String name, String displayname, List<String> lore, MaterialStorage ms, List<String> craftingRequirements,
 			int cost, WeaponType misctype, int damage, int durability) {
 		return createMisc(forceUpdate, dataFolder, invalid, filename, name, displayname, lore, ms.getMat(),
 				ms.getData(), craftingRequirements, cost, misctype, damage, durability);
 	}
 
-	public static ArmoryYML createMisc(boolean forceUpdate, File dataFolder, boolean invalid, String filename,
+	public static MiscYML createMisc(boolean forceUpdate, File dataFolder, boolean invalid, String filename,
 			String name, String displayname, List<String> lore, Material type, int id,
 			List<String> craftingRequirements, int cost, WeaponType misctype, int damage, int durability) {
 		File f2 = new File(dataFolder, "misc/" + filename + ".yml");
 		if (!new File(dataFolder, "misc").exists())
 			new File(dataFolder, "misc").mkdirs();
-		ArmoryYML h = new ArmoryYML(f2);
+		MiscYML h = new MiscYML(f2);
 		h.set(invalid, "invalid", invalid);
 		h.set(invalid, "name", name);
 		h.set(invalid, "displayname", displayname);
@@ -287,7 +217,7 @@ public class GunYMLCreator {
 		h.set(invalid, "damage", damage);
 		h.set(invalid, "durability", durability);
 
-		h.set(invalid, "MiscType", misctype.name());
+		h.setMiscType(misctype);
 		if (h.saveNow)
 			h.save();
 		return h;

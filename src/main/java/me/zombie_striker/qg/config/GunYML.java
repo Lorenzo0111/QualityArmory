@@ -1,15 +1,17 @@
 package me.zombie_striker.qg.config;
 
-import java.io.File;
-import java.util.List;
-
+import me.zombie_striker.qg.QAMain;
+import me.zombie_striker.qg.guns.chargers.ChargingHandler;
+import me.zombie_striker.qg.guns.chargers.ChargingManager;
+import me.zombie_striker.qg.guns.reloaders.ReloadingHandler;
+import me.zombie_striker.qg.guns.reloaders.ReloadingManager;
+import me.zombie_striker.qg.guns.utils.WeaponSounds;
+import me.zombie_striker.qg.guns.utils.WeaponType;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 
-import me.zombie_striker.qg.QAMain;
-import me.zombie_striker.qg.guns.utils.WeaponType;
-import me.zombie_striker.qg.guns.chargers.ChargingHandler;
-import me.zombie_striker.qg.guns.reloaders.ReloadingHandler;
+import java.io.File;
+import java.util.List;
 
 public class GunYML extends ArmoryYML {
 
@@ -35,49 +37,90 @@ public class GunYML extends ArmoryYML {
 		verify("unlimitedAmmo", false);
 		verify("LightLeveOnShoot", 14);
 		verify("recoil", 1);
+		verify("slownessOnEquip", 0);
 
 		verify("particles.bullet_particle", "REDSTONE");
 		verify("particles.bullet_particleR", 1);
 		verify("particles.bullet_particleG", 1);
 		verify("particles.bullet_particleB", 1);
+		verify("particles.bullet_particleData", 0);
 		verify("particles.bullet_particleMaterial", "COAL_BLOCK");
 
 		verify("Version_18_Support", !QAMain.isVersionHigherThan(1, 9));
 		verify("ChargingHandler", "none");
+		verify("ReloadingHandler", "none");
 		verify("addMuzzleSmoke", true);
 
 		verify("drop-glow-color", "none");
 		verify("headshotMultiplier", 3.5);
 		verify("sway.defaultMultiplier", 2);
 
-		verify("weaponsounds_volume",4);
+		verify("weaponsounds_volume", 4);
+		verify("weaponsounds", WeaponSounds.getSoundByType(WeaponType.RIFLE));
+		try {
+			verify("weaponsounds_reloadingSound",
+					get("ReloadingHandler") != null ?
+							((ReloadingManager.getHandler((String) get("ReloadingHandler")).getDefaultReloadingSound()))
+							: WeaponSounds.RELOAD_MAG_OUT.getSoundName());
+			verify("weaponsounds_chargingSound",
+					get("ChargingHandler") != null ?
+							((ChargingManager.getHandler((String) get("ChargingHandler")).getDefaultChargingSound()))
+							: WeaponSounds.RELOAD_BOLT.getSoundName());
+		}catch (Error|Exception e5){}
 
-		verify("sway.sneakModifier",true);
-		verify("sway.moveModifier",true);
-		verify("sway.runModifier",true);
-		verify("sway.unscopedModifier",1);
-		verify("KilledByMessage","%player% was shot by %killer% using a %name%");
+		verify("sway.sneakModifier", true);
+		verify("sway.moveModifier", true);
+		verify("sway.runModifier", true);
+		verify("sway.unscopedModifier", 1);
+		verify("firing_knockback", 0);
+		verify("KilledByMessage", "%player% was shot by %killer% using a %name%");
 	}
 
+	public GunYML setReloadingSound(String sound) {
+		set(false, "weaponsounds_reloadingSound", sound);
+		return this;
+	}
+	public GunYML setReloadingSound(WeaponSounds sound) {
+		set(false, "weaponsounds_reloadingSound", sound.getSoundName());
+		return this;
+	}
+
+	public GunYML setWeaponSound(WeaponSounds sound) {
+		set( "weaponsounds", sound.getSoundName());
+		return this;
+	}
 	public GunYML setSwayUnscopedModifier(int sway) {
 		set(false, "sway.unscopedModifier", sway);
 		return this;
 	}
+
 	public GunYML setKilledByMessage(String message) {
 		set(false, "KilledByMessage", message);
 		return this;
 	}
+
+	public GunYML setFiringKnockback(double message) {
+		set(false, "firing_knockback", message);
+		return this;
+	}
+
+	public GunYML setSlownessOnEquip(int amount) {
+		set(false, "slownessOnEquip", amount);
+		return this;
+	}
+
 	public GunYML setRecoil(double recoil) {
 		set(false, "recoil", recoil);
 		return this;
 	}
+
 	public GunYML setenableIronSights(boolean ironsights) {
 		set(false, "enableIronSights", ironsights);
 		return this;
 	}
 
-	public GunYML setMaxBullets(int amount){
-		set(false,"maxbullets",amount);
+	public GunYML setMaxBullets(int amount) {
+		set(false, "maxbullets", amount);
 		return this;
 	}
 
@@ -90,13 +133,14 @@ public class GunYML extends ArmoryYML {
 		set(false, "headshotMultiplier", multiplier);
 		return this;
 	}
+
 	public GunYML setNightVisionOnScope(boolean b) {
 		set(false, "hasNightVisionOnScope", b);
 		return this;
 	}
 
-	public GunYML setVolume(float volume){
-		set(false,"weaponsounds_volume",volume);
+	public GunYML setVolume(float volume) {
+		set(false, "weaponsounds_volume", volume);
 		return this;
 	}
 
@@ -109,14 +153,17 @@ public class GunYML extends ArmoryYML {
 		set(false, "CustomProjectiles.explosionRadius", radius);
 		return this;
 	}
+
 	public GunYML setCustomProjectile(String customProjectle) {
 		set(false, "CustomProjectiles.projectileType", customProjectle);
 		return this;
 	}
+
 	public GunYML setCustomProjectileVelocity(double velocity) {
 		set(false, "CustomProjectiles.Velocity", velocity);
 		return this;
 	}
+
 	@Override
 	public GunYML setInvalid(boolean invalid) {
 		set(false, "invalid", invalid);
@@ -131,7 +178,7 @@ public class GunYML extends ArmoryYML {
 
 	@Override
 	public GunYML setLore(String... lore) {
-		set( "lore", lore);
+		set("lore", lore);
 		return this;
 	}
 
@@ -194,13 +241,14 @@ public class GunYML extends ArmoryYML {
 	}
 
 	public GunYML setReloadingHandler(ReloadingHandler rh) {
-		return setChargingHandler(rh.getName());
+		return setReloadingHandler(rh.getName());
 	}
 
 	public GunYML setReloadingHandler(String rh) {
 		set(false, "ReloadingHandler", rh);
 		return this;
 	}
+
 	public GunYML setDelayReload(double reload) {
 		set(false, "delayForReload", reload);
 		return this;
@@ -220,6 +268,7 @@ public class GunYML extends ArmoryYML {
 		set(false, "bullets-per-shot", shots);
 		return this;
 	}
+
 	public GunYML setFireRate(int fireRate) {
 		set(false, "firerate", fireRate);
 		return this;
@@ -237,6 +286,7 @@ public class GunYML extends ArmoryYML {
 		set(false, "isAutomatic", automatic);
 		return this;
 	}
+
 	public GunYML setUseOffhand(boolean offhand) {
 		set(false, "enableBetterModelScopes", offhand);
 		return this;
@@ -248,18 +298,19 @@ public class GunYML extends ArmoryYML {
 	}
 
 	public GunYML setParticle(String particle) {
-		set(false,"particles.bullet_particle", particle);
+		set(false, "particles.bullet_particle", particle);
 		return this;
 	}
+
 	public GunYML setParticle(double r, double g, double b, Material m) {
 		return setParticle("REDSTONE", r, g, b, m);
 	}
 
 	public GunYML setParticle(String particle, double r, double g, double b, Material m) {
-		set(false,"particles.bullet_particle", particle);
-		set(false,"particles.bullet_particleR", r);
-		set(false,"particles.bullet_particleG", g);
-		set(false,"particles.bullet_particleB", b);
+		set(false, "particles.bullet_particle", particle);
+		set(false, "particles.bullet_particleR", r);
+		set(false, "particles.bullet_particleG", g);
+		set(false, "particles.bullet_particleB", b);
 		set(false, "particles.bullet_particleMaterial", m.toString());
 		return this;
 	}
@@ -278,10 +329,12 @@ public class GunYML extends ArmoryYML {
 		set(false, "sway.sneakModifier", c);
 		return this;
 	}
+
 	public GunYML setSway_movementModifier(boolean c) {
 		set(false, "sway.moveModifier", c);
 		return this;
 	}
+
 	public GunYML setSway_runModifier(boolean c) {
 		set(false, "sway.runModifier", c);
 		return this;

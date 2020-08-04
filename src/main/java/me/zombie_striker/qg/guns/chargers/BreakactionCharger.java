@@ -33,14 +33,14 @@ public class BreakactionCharger implements ChargingHandler {
 		new BukkitRunnable() {
 			@Override
 			public void run() {
-				player.getWorld().playSound(player.getLocation(), WeaponSounds.RELOAD_BULLET.getSoundName(), 1, 1f);
+				player.getWorld().playSound(player.getLocation(), g.getChargingSound(), 1, 1f);
 			}
 		}.runTaskLater(QAMain.getInstance(), 10);
 		new BukkitRunnable() {
 
 			@Override
 			public void run() {
-				player.getWorld().playSound(player.getLocation(), WeaponSounds.RELOAD_BULLET.getSoundName(), 1, 1f);
+				player.getWorld().playSound(player.getLocation(), g.getChargingSound(), 1, 1f);
 			}
 		}.runTaskLater(QAMain.getInstance(), 15);
 		new BukkitRunnable() {
@@ -49,7 +49,7 @@ public class BreakactionCharger implements ChargingHandler {
 			public void run() {
 				timeC.remove(player.getUniqueId());
 			}
-		}.runTaskLater(QAMain.getInstance(), 20);
+		}.runTaskLater(QAMain.getInstance(), (long) (g.getDelayBetweenShotsInSeconds()*20));
 		return true;
 	}
 
@@ -59,4 +59,9 @@ public class BreakactionCharger implements ChargingHandler {
 		return ChargingManager.BREAKACTION;
 	}
 
+	@Override
+	public String getDefaultChargingSound() {
+		return WeaponSounds.RELOAD_BULLET.getSoundName();
+		//g.getChargingSound()
+	}
 }

@@ -17,9 +17,7 @@ import me.zombie_striker.qg.handlers.MultiVersionLookup;
 
 public class Ammo extends CustomBaseObject implements ArmoryBaseObject{
 
-	int maxAmount;
 	boolean indiDrop;
-
 
 	int returnAmount;
 
@@ -50,7 +48,7 @@ public class Ammo extends CustomBaseObject implements ArmoryBaseObject{
 	public Ammo(String name, String displayName, List<String> lore, MaterialStorage ms, int maxAmount,
 			boolean indiDrop, int returnamount, double cost, ItemStack[] ingredients, double piercing) {
 		super(name,ms,displayName,lore,false);
-		this.maxAmount = maxAmount;
+		setMaxItemStack(maxAmount);
 		this.indiDrop = indiDrop;
 		super.setIngredients(ingredients);
 		this.returnAmount = returnamount;
@@ -88,11 +86,6 @@ public class Ammo extends CustomBaseObject implements ArmoryBaseObject{
 		return piercingDamage;
 	}
 
-
-	public int getMaxAmount() {
-		return maxAmount;
-	}
-
 	public boolean individualDrop() {
 		return indiDrop;
 	}
@@ -122,6 +115,11 @@ public class Ammo extends CustomBaseObject implements ArmoryBaseObject{
 	}
 
 	@Override
+	public boolean onShift(Player shooter, ItemStack usedItem, boolean toggle) {
+		return false;
+	}
+
+	@Override
 	public boolean onLMB(Player e, ItemStack usedItem) {
 		return false;
 	}
@@ -129,4 +127,18 @@ public class Ammo extends CustomBaseObject implements ArmoryBaseObject{
 	public ItemStack getItemStack() {
 		return CustomItemManager.getItemType("gun").getItem(this.getItemData().getMat(),this.getItemData().getData(),this.getItemData().getVariant());
 	}
+
+
+	@Override
+	public boolean onSwapTo(Player shooter, ItemStack usedItem) {
+		if (getSoundOnEquip() != null)
+			shooter.getWorld().playSound(shooter.getLocation(), getSoundOnEquip(), 1, 1);
+		return false;
+	}
+
+	@Override
+	public boolean onSwapAway(Player shooter, ItemStack usedItem) {
+		return false;
+	}
+
 }

@@ -35,16 +35,7 @@ public class RocketProjectile implements RealtimeCalculationProjectile {
 				for (int tick = 0; tick < g.getVelocityForRealtimeCalculations(); tick++) {
 					distance--;
 					s.add(dir);
-					ParticleHandlers.spawnGunParticles(g, s);// .spawnParticle(r, g, b, loc);
-					try {
-						// s.getWorld().spawnParticle(org.bukkit.Particle.SMOKE_LARGE, s, 0);
-						// s.getWorld().spawnParticle(org.bukkit.Particle.FIREWORKS_SPARK, s, 0);
-						player.getWorld().playSound(s, MultiVersionLookup.getDragonGrowl(), 1, 2f);
-
-					} catch (Error e2) {
-						// s.getWorld().playEffect(s, Effect.valueOf("CLOUD"), 0);
-						player.getWorld().playSound(s, Sound.valueOf("ENDERDRAGON_GROWL"), 1, 2f);
-					}
+					ParticleHandlers.spawnGunParticles(g, s);
 					boolean entityNear = false;
 					try {
 						List<Entity> e2 = new ArrayList<>(s.getWorld().getNearbyEntities(s, 1, 1, 1));
@@ -61,7 +52,7 @@ public class RocketProjectile implements RealtimeCalculationProjectile {
 							ExplosionHandler.handleExplosion(s, 4, 2);
 						}
 						try {
-							player.getWorld().playSound(s, WeaponSounds.WARHEAD_EXPLODE.getSoundName(), 10, 0.9f);
+							//player.getWorld().playSound(s, WeaponSounds.WARHEAD_EXPLODE.getSoundName(), 10, 0.9f);
 							player.getWorld().playSound(s, Sound.ENTITY_GENERIC_EXPLODE, 8, 0.7f);
 							s.getWorld().spawnParticle(org.bukkit.Particle.EXPLOSION_HUGE, s, 0);
 
@@ -69,7 +60,7 @@ public class RocketProjectile implements RealtimeCalculationProjectile {
 							s.getWorld().playEffect(s, Effect.valueOf("CLOUD"), 0);
 							player.getWorld().playSound(s, Sound.valueOf("EXPLODE"), 8, 0.7f);
 						}
-						ExplosionHandler.handleAOEExplosion(player, s, g.getDurabilityDamage(), g.getExplosionRadius());
+						ExplosionHandler.handleAOEExplosion(player, s, g.getDamage(), g.getExplosionRadius());
 						cancel();
 						return;
 					}

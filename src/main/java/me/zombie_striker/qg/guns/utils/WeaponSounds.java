@@ -26,7 +26,9 @@ public enum WeaponSounds {
 
 	RELOAD_MAG_CLICK("reloadmagclick"),	OUT_OF_AMMO_CLICK("outofammoclick"),RELOAD_CLICK("reloadclick"),
 
-	OPENBAG("openbag"),THUMPER("thumper"),PARTY_SHOT("partyshot"),
+	OPENBAG("openbag"),THUMPER("thumper"),PARTY_SHOT("partyshot"),RELOAD_AK47("reloadak47"),RELOAD_SLIDE("reloadslide"),
+	GUN_MAUSER("bulletmauser"),GUN_AK47("bulletak47"),RELOAD_FN("reloadfn"),RELOAD_M16("reloadm16"),RELOAD_SHOTGUN("reloadshotgun"),GUN_SHOTGUN("bulletshotgun"),
+	RELOAD_SHELL("reloadshell"),
 
 	DEFAULT("hurt");
 

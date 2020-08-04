@@ -12,6 +12,31 @@
       <option name="url" value="https://hub.spigotmc.org/nexus/content/repositories/snapshots/" />
     </remote-repository>
     <remote-repository>
+      <option name="id" value="central" />
+      <option name="name" value="Maven Central repository" />
+      <option name="url" value="https://repo1.maven.org/maven2" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="placeholderapi" />
+      <option name="name" value="placeholderapi" />
+      <option name="url" value="https://repo.extendedclip.com/content/repositories/placeholderapi/" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="dmulloy2-repo" />
+      <option name="name" value="dmulloy2-repo" />
+      <option name="url" value="http://repo.dmulloy2.net/nexus/repository/public/" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="chestshop-repo" />
+      <option name="name" value="chestshop-repo" />
+      <option name="url" value="https://repo.minebench.de/" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="jboss.community" />
+      <option name="name" value="JBoss Community repository" />
+      <option name="url" value="https://repository.jboss.org/nexus/content/repositories/public/" />
+    </remote-repository>
+    <remote-repository>
       <option name="id" value="viaversion-repo" />
       <option name="name" value="viaversion-repo" />
       <option name="url" value="https://repo.viaversion.com" />
@@ -25,11 +50,6 @@
       <option name="id" value="central" />
       <option name="name" value="Central Repository" />
       <option name="url" value="https://repo.maven.apache.org/maven2" />
-    </remote-repository>
-    <remote-repository>
-      <option name="id" value="central" />
-      <option name="name" value="Maven Central repository" />
-      <option name="url" value="https://repo1.maven.org/maven2" />
     </remote-repository>
     <remote-repository>
       <option name="id" value="sk89q-repo" />
@@ -47,19 +67,9 @@
       <option name="url" value="https://repo.codemc.org/repository/maven-public/" />
     </remote-repository>
     <remote-repository>
-      <option name="id" value="dmulloy2-repo" />
-      <option name="name" value="dmulloy2-repo" />
-      <option name="url" value="http://repo.dmulloy2.net/nexus/repository/public/" />
-    </remote-repository>
-    <remote-repository>
       <option name="id" value="citizens-repo" />
       <option name="name" value="citizens-repo" />
       <option name="url" value="http://repo.citizensnpcs.co" />
-    </remote-repository>
-    <remote-repository>
-      <option name="id" value="jboss.community" />
-      <option name="name" value="JBoss Community repository" />
-      <option name="url" value="https://repository.jboss.org/nexus/content/repositories/public/" />
     </remote-repository>
   </component>
 </project>

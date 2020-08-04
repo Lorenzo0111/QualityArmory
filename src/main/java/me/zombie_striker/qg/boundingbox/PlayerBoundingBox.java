@@ -8,7 +8,7 @@ import org.bukkit.entity.Player;
 
 public class PlayerBoundingBox implements AbstractBoundingBox{
 
-	private double bodyWidthRadius = 0.47;
+	private double bodyWidthRadius = 0.51;
 
 	private double bodyheight = 1.45;
 	private double headTopHeight = 1.95;

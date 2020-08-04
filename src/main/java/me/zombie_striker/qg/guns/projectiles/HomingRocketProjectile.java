@@ -84,7 +84,7 @@ public class HomingRocketProjectile implements RealtimeCalculationProjectile {
 							RPGLOCATION.getWorld().playEffect(RPGLOCATION, Effect.valueOf("CLOUD"), 0);
 							player.getWorld().playSound(RPGLOCATION, Sound.valueOf("EXPLODE"), 8, 0.7f);
 						}
-						ExplosionHandler.handleAOEExplosion(player, RPGLOCATION, g.getDurabilityDamage(), g.getExplosionRadius());
+						ExplosionHandler.handleAOEExplosion(player, RPGLOCATION, g.getDamage(), g.getExplosionRadius());
 						cancel();
 						return;
 					}
