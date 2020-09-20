@@ -39,6 +39,16 @@ public class ProtocolLibHandler {
 					@SuppressWarnings("deprecation")
 					public void onPacketReceiving(PacketEvent event) {
 						final Player player = event.getPlayer();
+
+						boolean tempplayer =  false;
+						try{
+							player.getVehicle();
+						}catch (UnsupportedOperationException e){
+							tempplayer=true;
+						}
+						if(tempplayer)
+							return;
+
 						if (event.getPacketType() == PacketType.Play.Client.ARM_ANIMATION
 								&& player.getVehicle() != null) {
 							try {

@@ -21,7 +21,11 @@ public class IronsightsHandler {
 			if(!QualityArmory.isIronSights(player.getItemInHand())){
 				//offHandStorage.put(player, player.getInventory().getItemInOffHand());
 				if(player.getInventory().getItemInOffHand()!=null){
-					player.getInventory().addItem(player.getInventory().getItemInOffHand());
+					if(player.getInventory().firstEmpty()==-1){
+						player.getWorld().dropItem(player.getLocation(),player.getInventory().getItemInOffHand());
+					}else {
+						player.getInventory().addItem(player.getInventory().getItemInOffHand());
+					}
 				}
 				if (player.getItemInHand() != null && QualityArmory.isGun(player.getItemInHand())) {
 					Gun gun = QualityArmory.getGun(player.getItemInHand());

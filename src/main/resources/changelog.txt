@@ -1,3 +1,11 @@
+1.1.175
+    - Fixed temporary player issue for protocol lib
+    - Fixed swapping item issue for QAV
+
+1.1.174c
+    Quickfix to gui error.
+    Added fix to offhand item being replaced. Now item should drop on ground
+
 1.1.174b
     Quickfgix for m1garand
 
