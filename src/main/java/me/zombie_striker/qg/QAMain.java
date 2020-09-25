@@ -146,6 +146,7 @@ public class QAMain extends JavaPlugin {
 
 	public static String S_NORES1 = " &c&l Downloading Resourcepack...";
 	public static String S_NORES2 = " &f Accept the resourcepack to see the custom items";
+	public static String S_PREFIX = "&8[&2QualityArmory&8]&r";
 	public static String S_ANVIL = " &a You do not have permission to use this armory bench. Shift+Click to access anvil.";
 	public static String S_ITEM_BULLETS = "&aBullets";
 	public static String S_ITEM_DURIB = "Durability";
@@ -196,8 +197,7 @@ public class QAMain extends JavaPlugin {
 	public static boolean enablePrimaryWeaponHandler = false;
 	public static int primaryWeaponLimit = 2;
 	public static int secondaryWeaponLimit = 2;
-	public static String prefix = ChatColor.GRAY + "[" + ChatColor.DARK_GREEN + "QualityArmory" + ChatColor.GRAY + "]"
-			+ ChatColor.WHITE;
+	public static String prefix = S_PREFIX;
 	// public Inventory craftingMenu;
 	public static String S_craftingBenchName = "Armory Crafting-Bench Page:";
 	public static String S_missingIngredients = "You do not have all the materials needed to craft this.";
@@ -819,6 +819,7 @@ public class QAMain extends JavaPlugin {
 			langFolder.mkdir();
 		}
 		m = new MessagesYML(new File(langFolder, "message_" + language + ".yml"));
+		S_PREFIX = ChatColor.translateAlternateColorCodes('&', (String) m.a("Prefix", S_PREFIX));
 		S_ANVIL = ChatColor.translateAlternateColorCodes('&', (String) m.a("NoPermAnvilMessage", S_ANVIL));
 		S_NOPERM = ChatColor.translateAlternateColorCodes('&', (String) m.a("NoPerm", S_NOPERM));
 		S_shopName = (String) m.a("ShopName", S_shopName);
