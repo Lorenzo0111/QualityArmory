@@ -34,7 +34,7 @@ import java.util.*;
 public class CustomGunItem extends AbstractCustomGunItem {
 
 	public CustomGunItem(){
-		CustomItemManager.setResourcepack("https://www.dropbox.com/s/fl74oclaa06kcv9/QualityArmoryV2.1.7.zip?dl=1");
+		CustomItemManager.setResourcepack("https://www.dropbox.com/s/cnh7mjc88mqprjd/QualityArmoryV2.1.8.zip?dl=1");
 	}
 
 	public static MaterialStorage m(int d) {
@@ -735,6 +735,17 @@ public class CustomGunItem extends AbstractCustomGunItem {
 						true, "762", 10, 6, 2700)
 				.setZoomLevel(9).setDelayShoot(0.7).setReloadingHandler(ReloadingManager.getHandler(ReloadingManager.M1GARAND_RELOAD)).setMaterial(Material.CROSSBOW).setUseOffhand(true)
 				.setSwayMultiplier(3).setDistance(280).setRecoil(5).done();
+
+
+		GunYMLCreator
+				.createNewDefaultGun(dataFolder, "galil", "Galil-AR", 83, stringsMetalRif,
+						WeaponType.RIFLE, null, true, "556", 3, 30, 4500).setMaterial(Material.CROSSBOW).setReloadingSound(WeaponSounds.RELOAD_FN)
+				.setFullyAutomatic(3).setRecoil(2).done();
+		GunYMLCreator
+				.createNewDefaultGun(dataFolder, "ctar21", "CTAR-21", 84, stringsMetalRif, WeaponType.RIFLE,
+						null, true, "762", 3, 40, 5000)
+				.setSway(0.19).setFullyAutomatic(2).setBulletsPerShot(1).setRecoil(2).setMaterial(Material.CROSSBOW)
+				.setKilledByMessage("%player% was shot by %killer% using an %name%").setReloadingSound(WeaponSounds.RELOAD_AK47).setWeaponSound(WeaponSounds.GUN_AK47).done();
 
 		GunYMLCreator.createNewDefaultGun(dataFolder, "debuggun", "Debug Gun", 34, strings10mm,
 				WeaponType.PISTOL, WeaponSounds.LAZERSHOOT, true, null, 5, 69420, -1)

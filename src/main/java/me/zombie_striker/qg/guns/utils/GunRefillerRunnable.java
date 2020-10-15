@@ -116,6 +116,10 @@ public class GunRefillerRunnable {
 						player.getInventory().setItem(newSlot, modifiedOriginalItem);
 					}
 					QualityArmory.sendHotbarGunAmmoCount(player, g, modifiedOriginalItem, false);
+
+					if(QAMain.showAmmoInXPBar){
+						GunUtil.updateXPBar(player,g,reloadAmount);
+					}
 				}
 
 				if (!QAMain.reloadingTasks.containsKey(player.getUniqueId())) {

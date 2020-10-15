@@ -531,6 +531,9 @@ public class GunUtil {
 						slot = player.getInventory().getHeldItemSlot();
 					}
 					Gun.updateAmmo(g, im, amount);
+					if(QAMain.showAmmoInXPBar){
+						updateXPBar(player,g,amount);
+					}
 					temp.setItemMeta(im);
 					if (slot == -1) {
 						try {
@@ -588,6 +591,13 @@ public class GunUtil {
 		} else {
 			player.getInventory().setItem(slot, firstGunInstance);
 		}
+	}
+
+	public static void updateXPBar(Player player, Gun g, int amount) {
+		ExperienceManager manager = new ExperienceManager(player);
+		double totalXpNeededForpercent = manager.getXpNeededToLevelUp(amount)*(((double)amount)/g.getMaxBullets());//This is 100% charge
+		player.setLevel(amount);
+		player.setExp((int)totalXpNeededForpercent-1);
 	}
 
 	public static void playShoot(final Gun g, final Player player) {
@@ -676,6 +686,9 @@ public class GunUtil {
 			temp.setItemMeta(im);
 			player.getInventory().setItem(slot, temp);
 
+			if(QAMain.showAmmoInXPBar){
+				updateXPBar(player,g,0);
+			}
 			new GunRefillerRunnable(player, temp, g, slot, initialAmount, reloadAmount, seconds);
 
 		}

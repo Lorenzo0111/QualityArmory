@@ -1,3 +1,13 @@
+1.1.176
+    - Added Galil-AR
+    - Added CTAR-21
+    - Added support for QualityHats
+    - Updated resources for QualityArmoryVehicles
+    - Fixed XP in bar when reloading
+
+1.1.175b
+    - Added optional feature to display ammo as XP in XP bar
+
 1.1.175
     - Fixed temporary player issue for protocol lib
     - Fixed swapping item issue for QAV

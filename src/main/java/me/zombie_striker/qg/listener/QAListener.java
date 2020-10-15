@@ -899,6 +899,15 @@ public class QAListener implements Listener {
 					e.getPlayer().getWorld().playSound(e.getPlayer().getLocation(), customBase.getSoundOnEquip(), 1, 1);
 			}
 		}
+
+		if(QAMain.showAmmoInXPBar) {
+			CustomBaseObject customBase = QualityArmory.getCustomItem(newslot);
+			if (customBase instanceof Gun) {
+				GunUtil.updateXPBar(e.getPlayer(), (Gun) customBase,QualityArmory.getBulletsInGun(newslot));
+			}else{
+				e.getPlayer().setTotalExperience(0);
+			}
+		}
 	}
 
 	@EventHandler

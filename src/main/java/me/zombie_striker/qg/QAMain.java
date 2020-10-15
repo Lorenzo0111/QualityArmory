@@ -139,6 +139,7 @@ public class QAMain extends JavaPlugin {
 	public static boolean enableReloadWhenOutOfAmmo = false;
 	public static boolean overrideURL = false;
 	public static boolean kickIfDeniedRequest = false;
+	public static boolean showAmmoInXPBar = false;
 
 	public static boolean allowGunHitEntities = false;
 
@@ -652,14 +653,14 @@ public class QAMain extends JavaPlugin {
 		// check if Citizens is present and enabled.
 
 		if (getServer().getPluginManager().getPlugin("Citizens") == null) {
-			getLogger().log(Level.SEVERE, "Citizens 2.0 not found or not enabled (Ignore this.)");
+			getLogger().log(Level.INFO, "Citizens 2.0 not found or not enabled (Ignore this.)");
 		} else {
 			try {
 				// Register your trait with Citizens.
 				net.citizensnpcs.api.CitizensAPI.getTraitFactory()
 						.registerTrait(net.citizensnpcs.api.trait.TraitInfo.create(GunnerTrait.class));
 			} catch (Error | Exception e4) {
-				getLogger().log(Level.SEVERE, "Citizens 2.0 failed to register gunner trait (Ignore this.)");
+				getLogger().log(Level.WARNING, "Citizens 2.0 failed to register gunner trait (Ignore this.)");
 			}
 		}
 
@@ -965,6 +966,8 @@ public class QAMain extends JavaPlugin {
 		// showOutOfAmmoOnItem = (boolean) a("showOutOfAmmoOnItem", false);
 		showOutOfAmmoOnTitle = (boolean) a("showOutOfAmmoOnTitle", false);
 		showReloadOnTitle = (boolean) a("showReloadingTitle", false);
+
+		showAmmoInXPBar = (boolean) a("showAmmoInXPBar", false);
 
 		enableExplosionDamage = (boolean) a("enableExplosionDamage", false);
 		enableExplosionDamageDrop = (boolean) a("enableExplosionDamageDrop", false);
