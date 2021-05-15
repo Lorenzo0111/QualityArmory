@@ -3,6 +3,7 @@ package me.zombie_striker.qg.guns.utils;
 import com.alessiodp.parties.api.Parties;
 import com.alessiodp.parties.api.interfaces.PartiesAPI;
 import com.alessiodp.parties.api.interfaces.Party;
+import com.alessiodp.parties.api.interfaces.PartyPlayer;
 import me.zombie_striker.customitemmanager.CustomBaseObject;
 import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.ammo.Ammo;
@@ -137,9 +138,10 @@ public class GunUtil {
 							if (QAMain.hasParties && (!QAMain.friendlyFire)) {
 								try {
 									PartiesAPI api = Parties.getApi();
-									String partyName = api.getPartyPlayer(p.getUniqueId()).getPartyName();
-									if (!partyName.isEmpty() && partyName.equalsIgnoreCase(api.getPartyPlayer(e.getUniqueId()).getPartyName())) {
-										Party party = api.getParty(partyName);
+									PartyPlayer pp1 = api.getPartyPlayer(p.getUniqueId());
+									PartyPlayer pp2 = api.getPartyPlayer(e.getUniqueId());
+									if (pp1.getPartyId() != null && pp1.getPartyId().equals(pp2.getPartyId())) {
+										Party party = api.getParty(pp1.getPartyId());
 										if (party != null && party.isFriendlyFireProtected()) {
 											continue;
 										}
