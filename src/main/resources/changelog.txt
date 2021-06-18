@@ -1,3 +1,7 @@
+1.1.177
+    Updated parties-API support
+    Updated to 1.17.
+
 1.1.176
     - Added Galil-AR
     - Added CTAR-21

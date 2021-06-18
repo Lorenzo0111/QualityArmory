@@ -140,8 +140,8 @@ public class GunUtil {
 									PartiesAPI api = Parties.getApi();
 									PartyPlayer pp1 = api.getPartyPlayer(p.getUniqueId());
 									PartyPlayer pp2 = api.getPartyPlayer(e.getUniqueId());
-									if (pp1.getPartyId() != null && pp1.getPartyId().equals(pp2.getPartyId())) {
-										Party party = api.getParty(pp1.getPartyId());
+									if (pp1.getName() != null && pp1.getPartyName().equals(pp2.getName())) {
+										Party party = api.getParty(pp1.getName());
 										if (party != null && party.isFriendlyFireProtected()) {
 											continue;
 										}
