@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>me.zombie_striker</groupId>
     <artifactId>QualityArmory</artifactId>
-    <version>1.1.176</version>
+    <version>2.0.0</version>
     <name>QualityArmory</name>
 
     <repositories>
@@ -53,6 +53,7 @@
             <id>codemc-repo</id>
             <url>https://repo.codemc.org/repository/maven-public/</url>
         </repository>
+
         <repository>
             <id>alessiodp-repo</id>
             <url>https://repo.alessiodp.com/releases/</url>
@@ -67,27 +68,45 @@
             <id>placeholderapi</id>
             <url>https://repo.extendedclip.com/content/repositories/placeholderapi/</url>
         </repository>
+
+        <repository>
+            <id>minecraft-libraries</id>
+            <name>Minecraft Libraries</name>
+            <url>https://libraries.minecraft.net</url>
+        </repository>
     </repositories>
 
     <dependencies>
-
 
         <!-- MCAPI -->
         <dependency>
             <groupId>com.mojang</groupId>
             <artifactId>authlib</artifactId>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/libs/authlib-1.5.25.jar</systemPath>
             <version>1.5.25</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- Mojang DataFixer -->
+        <dependency>
+            <groupId>com.mojang</groupId>
+            <artifactId>datafixerupper</artifactId>
+            <version>1.0.20</version>
+            <scope>provided</scope>
         </dependency>
 
         <!--Spigot API-->
-        <!--You only need one of the two, don't put both. Spigot is recommended.-->
         <dependency>
             <groupId>org.spigotmc</groupId>
-            <artifactId>spigot</artifactId>
-            <version>1.15-R0.1-SNAPSHOT</version>
+            <artifactId>spigot-api</artifactId>
+            <version>1.17.1-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
+        </dependency>
+
+        <!-- XSeries for Reflection -->
+        <dependency>
+            <groupId>com.github.cryptomorin</groupId>
+            <artifactId>XSeries</artifactId>
+            <version>8.3.0</version>
         </dependency>
 
         <!-- Vault API -->
@@ -95,6 +114,7 @@
             <groupId>net.milkbowl.vault</groupId>
             <artifactId>VaultAPI</artifactId>
             <version>1.7</version>
+            <scope>provided</scope>
             <exclusions>
                 <exclusion>
                     <groupId>org.bukkit</groupId>
@@ -116,6 +136,7 @@
             <groupId>us.myles</groupId>
             <artifactId>viaversion</artifactId>
             <version>2.0.1</version>
+            <scope>provided</scope>
         </dependency>
 
 
@@ -140,6 +161,7 @@
             <groupId>com.comphenix.protocol</groupId>
             <artifactId>ProtocolLib</artifactId>
             <version>4.4.0</version>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
@@ -149,30 +171,23 @@
             <scope>system</scope>
             <systemPath>${project.basedir}/libs/ChestShop.jar</systemPath>
         </dependency>
+
         <!-- Citzens -->
         <dependency>
             <groupId>net.citizensnpcs</groupId>
             <artifactId>citizens</artifactId>
             <version>2.0.24-SNAPSHOT</version>
             <type>jar</type>
-            <scope>compile</scope>
+            <scope>provided</scope>
         </dependency>
 
         <!-- Parties -->
         <dependency>
             <groupId>com.alessiodp.parties</groupId>
             <artifactId>parties-api</artifactId>
-            <version>3.0.0-rc.1</version>
+            <version>3.1.10</version>
+            <scope>provided</scope>
         </dependency>
-
-        <!-- PluginConstructorAPI -->
-        <!--dependency>
-            <groupId>me.zombie_striker</groupId>
-            <artifactId>pluginconstructor</artifactId>
-            <version>1.0.50</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/libs/PluginConstructorAPI.jar</systemPath>
-        </dependency>-->
 
         <!-- LightAPI -->
         <dependency>
@@ -251,6 +266,27 @@
                 <configuration>
                     <!--altDeploymentRepository>internal.repo::default::file://${project.build.directory}/mvn-repo</altDeploymentRepository-->
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.2.4</version>
+                <configuration>
+                    <relocations>
+                        <relocation>
+                            <pattern>com.cryptomorin.xseries</pattern>
+                            <shadedPattern>me.zombie_striker.qg.xseries</shadedPattern>
+                        </relocation>
+                    </relocations>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
