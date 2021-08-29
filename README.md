@@ -17,7 +17,7 @@ To add QA to your project using maven, copy the following into the POM.xml.
         </dependency>        
 
 ## Download ✅
-Download latest release [here](https://alonsoaliaga.com/QualityArmory/releases)
+Download latest release of this UNOFFICIAL fork [here](https://alonsoaliaga.com/QualityArmory/releases).
 
 ## Fork details ✅
 This is a fork from [ZombieStriker's QualityArmory](https://github.com/ZombieStriker/QualityArmory) with some bug fixes in 1.17:
