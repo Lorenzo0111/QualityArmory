@@ -3,6 +3,7 @@ package me.zombie_striker.qg.boundingbox;
 import java.util.HashMap;
 import java.util.UUID;
 
+import me.zombie_striker.qg.enums.EntityTypes;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 
@@ -70,7 +71,7 @@ public class BoundingBoxManager {
 			setEntityTypeBoundingBox(EntityType.SKELETON, HUMANOID);
 			setEntityTypeBoundingBox(EntityType.ZOMBIE, HUMANOID);
 			setEntityTypeBoundingBox(EntityType.BLAZE, HUMANOID);
-			setEntityTypeBoundingBox(EntityType.PIG_ZOMBIE, HUMANOID);
+			setEntityTypeBoundingBox(EntityTypes.PIG_ZOMBIE.getEntityType(), HUMANOID);
 			setEntityTypeBoundingBox(EntityType.SNOWMAN, HUMANOID);
 
 			setEntityTypeBoundingBox(EntityType.ENDERMAN, ENDERMAN);

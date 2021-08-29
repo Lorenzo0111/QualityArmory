@@ -216,7 +216,7 @@ public class ProtocolLibHandler {
 			protocolManager = ProtocolLibrary.getProtocolManager();
 		final PacketContainer yawpack = protocolManager.createPacket(PacketType.Play.Server.LOOK_AT, false);
 		if (enumArgumentAnchor_EYES == null) {
-			class_ArgumentAnchor = ReflectionsUtil.getMinecraftClass("ArgumentAnchor$Anchor");
+			class_ArgumentAnchor = ReflectionsUtil.getMinecraftClass("ArgumentAnchor$Anchor","commands.arguments.ArgumentAnchor$Anchor");
 			enumArgumentAnchor_EYES = ReflectionsUtil.getEnumConstant(class_ArgumentAnchor, "EYES");
 		}
 		yawpack.getModifier().write(4, enumArgumentAnchor_EYES);

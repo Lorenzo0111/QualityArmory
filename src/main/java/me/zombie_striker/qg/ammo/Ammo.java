@@ -4,6 +4,7 @@ import java.util.List;
 
 import me.zombie_striker.customitemmanager.CustomBaseObject;
 import me.zombie_striker.customitemmanager.CustomItemManager;
+import me.zombie_striker.qg.enums.Materials;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -108,7 +109,7 @@ public class Ammo extends CustomBaseObject implements ArmoryBaseObject{
 		if (usedItem.getType() == Material.DIAMOND_HOE
 				&& (b.getType() == Material.DIRT
 						||b.getType() == Material.GRASS
-						|| b.getType() == Material.GRASS_PATH
+						|| b.getType() == Materials.GRASS_PATH.getMaterial()
 						|| b.getType() == MultiVersionLookup.getMycil()))
 			return true;
 		return false;

@@ -38,14 +38,33 @@ public class HotbarMessager {
 		try {
 			// This here sets the class fields.
 			CRAFTPLAYERCLASS = Class.forName("org.bukkit.craftbukkit." + SERVER_VERSION + ".entity.CraftPlayer");
-			PACKET_PLAYER_CHAT_CLASS = Class.forName("net.minecraft.server." + SERVER_VERSION + ".PacketPlayOutChat");
-			PACKET_CLASS = Class.forName("net.minecraft.server." + SERVER_VERSION + ".Packet");
-			ICHATCOMP = Class.forName("net.minecraft.server." + SERVER_VERSION + ".IChatBaseComponent");
+			//PACKET_PLAYER_CHAT_CLASS = Class.forName("net.minecraft.server." + SERVER_VERSION + ".PacketPlayOutChat");
+			PACKET_PLAYER_CHAT_CLASS = ReflectionsUtil.getMinecraftClass("PacketPlayOutChat","network.protocol.game.PacketPlayOutChat");
+			//PACKET_CLASS = Class.forName("net.minecraft.server." + SERVER_VERSION + ".Packet");
+			PACKET_CLASS = ReflectionsUtil.getMinecraftClass("Packet","network.protocol.Packet");
+			//ICHATCOMP = Class.forName("net.minecraft.server." + SERVER_VERSION + ".IChatBaseComponent");
+			ICHATCOMP = ReflectionsUtil.getMinecraftClass("IChatBaseComponent","network.chat.IChatBaseComponent");
 			GETHANDLE = CRAFTPLAYERCLASS.getMethod("getHandle");
-			PLAYERCONNECTION = GETHANDLE.getReturnType().getField("playerConnection");
+			Class<?> PLAYERCONNECTIONCLAZZ = ReflectionsUtil.getMinecraftClass("PlayerConnection","server.network.PlayerConnection");
+			try {
+				PLAYERCONNECTION = GETHANDLE.getReturnType().getField("playerConnection");
+			}catch (Throwable e) {
+				for (Field field : GETHANDLE.getReturnType().getFields()) {
+					Bukkit.getConsoleSender().sendMessage("§4[QualityArmory] §7Checking field '"+field.getName()+"' return type: '"+field.getType().getName()+"'");
+					if(field.getType().isAssignableFrom(PLAYERCONNECTIONCLAZZ)) {
+						Bukkit.getConsoleSender().sendMessage("§4[QualityArmory] §7PlayerConnection field found is: '"+field.getName()+"'");
+						PLAYERCONNECTION = field;
+						break;
+					}
+				}
+				if(PLAYERCONNECTION == null) {
+					Bukkit.getConsoleSender().sendMessage("§4[QualityArmory] §7PlayerConnection field couldn't be found!");
+				}
+			}
 			SENDPACKET = PLAYERCONNECTION.getType().getMethod("sendPacket", PACKET_CLASS);
 			try {
-				CHAT_MESSAGE_TYPE_CLASS = Class.forName("net.minecraft.server." + SERVER_VERSION + ".ChatMessageType");
+				//CHAT_MESSAGE_TYPE_CLASS = Class.forName("net.minecraft.server." + SERVER_VERSION + ".ChatMessageType");
+				CHAT_MESSAGE_TYPE_CLASS = ReflectionsUtil.getMinecraftClass("ChatMessageType","network.chat.ChatMessageType");
 				CHAT_MESSAGE_TYPE_ENUM_OBJECT = CHAT_MESSAGE_TYPE_CLASS.getEnumConstants()[2];
 				try {
 					PACKET_PLAYER_CHAT_CONSTRUCTOR = PACKET_PLAYER_CHAT_CLASS.getConstructor(ICHATCOMP,
@@ -56,13 +75,18 @@ public class HotbarMessager {
 							CHAT_MESSAGE_TYPE_CLASS);
 					PacketConstructorType = 1;
 				}
-			} catch (ClassNotFoundException | NoSuchMethodException e) {
+			} catch (NullPointerException | NoSuchMethodException e) {
 					PACKET_PLAYER_CHAT_CONSTRUCTOR = PACKET_PLAYER_CHAT_CLASS.getConstructor(ICHATCOMP, byte.class);
 					PacketConstructorType = 0;
 			}
-			CHATMESSAGE = Class.forName("net.minecraft.server." + SERVER_VERSION + ".ChatMessage");
+			//CHATMESSAGE = Class.forName("net.minecraft.server." + SERVER_VERSION + ".ChatMessage");
+			CHATMESSAGE = ReflectionsUtil.getMinecraftClass("ChatMessage","network.chat.ChatMessage");
 			CHATMESSAGE_CONSTRUCTOR = CHATMESSAGE.getConstructor(String.class, Object[].class);
+			Bukkit.getConsoleSender().sendMessage("§4[QualityArmory] §cSupport for 1.17+ added by AlonsoAliaga.");
+			Bukkit.getConsoleSender().sendMessage("§4[QualityArmory] §cVisit https://alonsoaliaga.com/QualityArmory");
+			Bukkit.getConsoleSender().sendMessage("§4[QualityArmory] §cMore plugins on https://alonsoaliaga.com/plugins");
 		} catch (Exception e) {
+			Bukkit.getConsoleSender().sendMessage("§4[QualityArmory] §cError loading HotBarMessager handler.. Report it on github.");
 			e.printStackTrace();
 		}
 	}

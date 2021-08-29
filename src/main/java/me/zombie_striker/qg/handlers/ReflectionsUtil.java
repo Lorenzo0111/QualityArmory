@@ -13,7 +13,7 @@ import java.util.regex.Pattern;
 import static org.apache.commons.lang.reflect.MethodUtils.invokeMethod;
 
 public class ReflectionsUtil {
-
+	private static boolean newNMS;
 	// Deduce the net.minecraft.server.v* package
 	private static String OBC_PREFIX = Bukkit.getServer().getClass().getPackage().getName();
 	private static String NMS_PREFIX = OBC_PREFIX.replace("org.bukkit.craftbukkit", "net.minecraft.server");
@@ -26,6 +26,14 @@ public class ReflectionsUtil {
 
 
 	static {
+		try{
+			Class.forName("net.minecraft.commands.arguments.ArgumentAnchor");
+			newNMS = true;
+			Bukkit.getConsoleSender().sendMessage("§4[QualityArmory] &7Using new NMS classes..");
+		}catch(Throwable e) {
+			newNMS = false;
+			Bukkit.getConsoleSender().sendMessage("§4[QualityArmory] &7Using old NMS classes..");
+		}
 		String name = Bukkit.getServer().getClass().getName();
 		name = name.substring(name.indexOf("craftbukkit.")
 				+ "craftbukkit.".length());
@@ -393,8 +401,12 @@ public class ReflectionsUtil {
 	 * @throws IllegalArgumentException
 	 *             If the class doesn't exist
 	 */
-	public static Class<?> getMinecraftClass(String name) {
-		return getCanonicalClass(NMS_PREFIX + "." + name);
+	public static Class<?> getMinecraftClass(String name, String newNMSPath) {
+		if(newNMS) {
+			return getCanonicalClass("net.minecraft."+newNMSPath);
+		}else {
+			return getCanonicalClass(NMS_PREFIX + "." + name);
+		}
 	}
 
 	/**

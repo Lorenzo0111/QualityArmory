@@ -147,7 +147,7 @@ public class QAMain extends JavaPlugin {
 
 	public static String S_NORES1 = " &c&l Downloading Resourcepack...";
 	public static String S_NORES2 = " &f Accept the resourcepack to see the custom items";
-	public static String S_PREFIX = "&8[&2QualityArmory&8]&r";
+	public static String S_PREFIX = ChatColor.translateAlternateColorCodes('&',"&8[&2QualityArmory&8]&r");
 	public static String S_ANVIL = " &a You do not have permission to use this armory bench. Shift+Click to access anvil.";
 	public static String S_ITEM_BULLETS = "&aBullets";
 	public static String S_ITEM_DURIB = "Durability";
@@ -821,6 +821,7 @@ public class QAMain extends JavaPlugin {
 		}
 		m = new MessagesYML(new File(langFolder, "message_" + language + ".yml"));
 		S_PREFIX = ChatColor.translateAlternateColorCodes('&', (String) m.a("Prefix", S_PREFIX));
+		prefix = S_PREFIX;
 		S_ANVIL = ChatColor.translateAlternateColorCodes('&', (String) m.a("NoPermAnvilMessage", S_ANVIL));
 		S_NOPERM = ChatColor.translateAlternateColorCodes('&', (String) m.a("NoPerm", S_NOPERM));
 		S_shopName = (String) m.a("ShopName", S_shopName);

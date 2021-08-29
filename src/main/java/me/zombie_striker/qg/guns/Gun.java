@@ -143,6 +143,7 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
 	@SuppressWarnings("deprecation")
 	public static boolean USE_THIS_INSTEAD_OF_INDEVIDUAL_SHOOT_METHODS(Gun g, Player player, double acc, boolean holdingRMB) {
 		boolean offhand = QualityArmory.isIronSights(player.getInventory().getItemInHand());
+		player.sendMessage();
 		if ((!offhand && getAmount(player.getInventory().getItemInHand()) > 0)
 				|| (offhand && Update19OffhandChecker.hasAmountOFfhandGreaterthan(player, 0))) {
 			QAWeaponPrepareShootEvent shootevent = new QAWeaponPrepareShootEvent(player, g);

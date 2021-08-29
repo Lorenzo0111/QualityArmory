@@ -1,0 +1,36 @@
+<component name="ArtifactManager">
+  <artifact type="jar" build-on-make="true" name="QualityArmory:jar">
+    <output-path>$PROJECT_DIR$/</output-path>
+    <root id="archive" name="QualityArmory.jar">
+      <element id="module-output" name="QualityArmory" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/net/citizensnpcs/citizens-v1_10_R1/2.0.24-SNAPSHOT/citizens-v1_10_R1-2.0.24-20190423.163228-1636.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/com/google/guava/guava/21.0/guava-21.0.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/libs/MythicMobs-4.9.0.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/libs/ItemBridge.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/us/myles/viaversion-velocity/2.0.1/viaversion-velocity-2.0.1.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/com/comphenix/protocol/ProtocolLib-API/4.4.0/ProtocolLib-API-4.4.0.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/net/citizensnpcs/citizens-v1_11_R1/2.0.24-SNAPSHOT/citizens-v1_11_R1-2.0.24-20190423.163228-1636.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/com/comphenix/executors/BukkitExecutors/1.1-SNAPSHOT/BukkitExecutors-1.1-20191013.233151-1.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/net/citizensnpcs/citizens-v1_12_R1/2.0.24-SNAPSHOT/citizens-v1_12_R1-2.0.24-20190423.163228-1636.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/us/myles/viaversion-common/2.0.1/viaversion-common-2.0.1.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/com/google/code/gson/gson/2.8.0/gson-2.8.0.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/us/myles/viaversion-bukkit/2.0.1/viaversion-bukkit-2.0.1.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/us/myles/viaversion-bungee/2.0.1/viaversion-bungee-2.0.1.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/libs/LightAPI.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/net/citizensnpcs/citizens/2.0.24-SNAPSHOT/citizens-2.0.24-20190423.163228-1636.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/net/md-5/bungeecord-chat/1.14-SNAPSHOT/bungeecord-chat-1.14-20191205.013037-26.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/us/myles/viaversion-sponge-legacy/2.0.1/viaversion-sponge-legacy-2.0.1.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/us/myles/viaversion/2.0.1/viaversion-2.0.1.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/net/citizensnpcs/citizens-v1_8_R3/2.0.24-SNAPSHOT/citizens-v1_8_R3-2.0.24-20190423.163228-1636.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/net/citizensnpcs/citizens-v1_13_R2/2.0.24-SNAPSHOT/citizens-v1_13_R2-2.0.24-20190423.163228-1636.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/cglib/cglib-nodep/3.2.5/cglib-nodep-3.2.5.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/com/comphenix/protocol/ProtocolLib/4.4.0/ProtocolLib-4.4.0.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/libs/authlib-1.5.25.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/libs/ChestShop.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/net/milkbowl/vault/VaultAPI/1.7/VaultAPI-1.7.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/net/citizensnpcs/citizens-main/2.0.24-SNAPSHOT/citizens-main-2.0.24-20190423.163228-1636.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/yaml/snakeyaml/1.21/snakeyaml-1.21.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/us/myles/viaversion-sponge/2.0.1/viaversion-sponge-2.0.1.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>

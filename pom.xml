@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>me.zombie_striker</groupId>
     <artifactId>QualityArmory</artifactId>
-    <version>1.1.176</version>
+    <version>1.1.178-UNOFFICIAL</version>
     <name>QualityArmory</name>
 
     <repositories>
@@ -86,7 +86,7 @@
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot</artifactId>
-            <version>1.15-R0.1-SNAPSHOT</version>
+            <version>1.17.1-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
 
@@ -162,7 +162,8 @@
         <dependency>
             <groupId>com.alessiodp.parties</groupId>
             <artifactId>parties-api</artifactId>
-            <version>3.0.0-rc.1</version>
+            <version>3.1.10</version>
+            <scope>provided</scope>
         </dependency>
 
         <!-- PluginConstructorAPI -->
