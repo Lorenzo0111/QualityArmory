@@ -25,6 +25,9 @@ This is a fork from [ZombieStriker's QualityArmory](https://github.com/ZombieStr
 + Fixed issue with action bar.
 + Fixed issue with infinite ammo.
 + Fixed spam in console when firing weapons (related to infinite ammo).
++ Added HEX color support for items and messages. (Will never work with action bar or titles, minecraft limitations)
+
+⚠️ Remember that modifying any weapon lore in config will make all weapons already created stop working. (that's how the original system work, can't change that)
 
 ## Warning ✅
 I'm not the official developer of [QualityArmory](https://www.spigotmc.org/resources/47561/) so I might not be able to fix future issues.
