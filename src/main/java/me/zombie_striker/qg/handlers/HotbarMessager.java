@@ -1,5 +1,7 @@
 package me.zombie_striker.qg.handlers;
 
+import me.zombie_striker.qg.QAMain;
+import me.zombie_striker.qg.utils.LocalUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -27,8 +29,9 @@ public class HotbarMessager {
 	private static Class CHAT_MESSAGE_TYPE;
 
 	// This is the server version. This is how we know the server version.
-	private static final String SERVER_VERSION;
+	private static String SERVER_VERSION;
 	private static int PacketConstructorType = 0;
+	private static QAMain plugin = QAMain.getInstance();
 	static {
 		// This gets the server version.
 		String name = Bukkit.getServer().getClass().getName();
@@ -50,15 +53,15 @@ public class HotbarMessager {
 				PLAYERCONNECTION = GETHANDLE.getReturnType().getField("playerConnection");
 			}catch (Throwable e) {
 				for (Field field : GETHANDLE.getReturnType().getFields()) {
-					Bukkit.getConsoleSender().sendMessage("§4[QualityArmory] §7Checking field '"+field.getName()+"' return type: '"+field.getType().getName()+"'");
+					LocalUtils.logp("Checking field '"+field.getName()+"' return type: '"+field.getType().getName()+"'");
 					if(field.getType().isAssignableFrom(PLAYERCONNECTIONCLAZZ)) {
-						Bukkit.getConsoleSender().sendMessage("§4[QualityArmory] §7PlayerConnection field found is: '"+field.getName()+"'");
+						LocalUtils.logp("PlayerConnection field found is: '"+field.getName()+"'");
 						PLAYERCONNECTION = field;
 						break;
 					}
 				}
 				if(PLAYERCONNECTION == null) {
-					Bukkit.getConsoleSender().sendMessage("§4[QualityArmory] §7PlayerConnection field couldn't be found!");
+					LocalUtils.logp("PlayerConnection field couldn't be found!");
 				}
 			}
 			SENDPACKET = PLAYERCONNECTION.getType().getMethod("sendPacket", PACKET_CLASS);
@@ -82,12 +85,13 @@ public class HotbarMessager {
 			//CHATMESSAGE = Class.forName("net.minecraft.server." + SERVER_VERSION + ".ChatMessage");
 			CHATMESSAGE = ReflectionsUtil.getMinecraftClass("ChatMessage","network.chat.ChatMessage");
 			CHATMESSAGE_CONSTRUCTOR = CHATMESSAGE.getConstructor(String.class, Object[].class);
-			Bukkit.getConsoleSender().sendMessage("§4[QualityArmory] §cSupport for 1.17+ added by AlonsoAliaga.");
-			Bukkit.getConsoleSender().sendMessage("§4[QualityArmory] §cVisit https://alonsoaliaga.com/QualityArmory");
-			Bukkit.getConsoleSender().sendMessage("§4[QualityArmory] §cMore plugins on https://alonsoaliaga.com/plugins");
-		} catch (Exception e) {
-			Bukkit.getConsoleSender().sendMessage("§4[QualityArmory] §cError loading HotBarMessager handler.. Report it on github.");
-			e.printStackTrace();
+			LocalUtils.logp("&cSupport for 1.17+ added by &6AlonsoAliaga&c.");
+			LocalUtils.logp("&cVisit https://alonsoaliaga.com/QualityArmory");
+			LocalUtils.logp("&cMore plugins on https://alonsoaliaga.com/plugins");
+		} catch (Throwable e) {
+			LocalUtils.loge("Error loading HotBarMessager handler.. Report it on github: "+e.getMessage());
+			if(QAMain.DEBUG)
+				e.printStackTrace();
 		}
 	}
 

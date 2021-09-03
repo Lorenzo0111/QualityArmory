@@ -1,4 +1,4 @@
-Prefix: "&8[&2QualityArmory&8]&r"
+Prefix: "&4[QualityArmory]&7"
 NoPermAnvilMessage: ' &a You do not have permission to use this armory bench. Shift+Click
   to access anvil.'
 NoPerm: '&c You do not have permission to do that.'
@@ -17,9 +17,9 @@ Lore_Price: '&6Price: '
 Lore_DamagePerSecond: '&2DPS'
 Lore_Crafts: Crafts
 Lore_Returns: Returns
-Reloading_Message: '[Reloading...]'
-State_AmmoCount: '[%total%]'
-State_OutOfAmmo: '[Out of Ammo]'
+Reloading_Message: '&6[Reloading...]'
+State_AmmoCount: '&a[%total%]'
+State_OutOfAmmo: '&c[Out of Ammo]&r'
 HotbarMessage: '%name% = %amount%/%max% %state%'
 Kick_message_if_player_denied_request: "&c You have been kicked because you did not\
   \ accept the resourcepack. \n&f If you want to rejoin the server, edit the server\

@@ -9,6 +9,7 @@ import java.util.Map.Entry;
 import me.zombie_striker.customitemmanager.*;
 import me.zombie_striker.qg.handlers.HotbarMessager;
 import me.zombie_striker.qg.handlers.IronsightsHandler;
+import me.zombie_striker.qg.utils.LocalUtils;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
@@ -457,7 +458,7 @@ public class QualityArmory {
 				if (QAMain.unknownTranslationKeyFixer) {
 					message = ChatColor.stripColor(message);
 				} else {
-					message = ChatColor.translateAlternateColorCodes('&', message);
+					message = LocalUtils.colorize( message);
 				}
 				HotbarMessager.sendHotBarMessage(p, message);
 			} catch (Error | Exception e5) {

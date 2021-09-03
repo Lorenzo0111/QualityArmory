@@ -2,6 +2,7 @@ main: me.zombie_striker.qg.QAMain
 version: ${project.version}
 api-version: "1.13"
 name: QualityArmory
+website: "https://alonsoaliaga.com/QualityArmory"
 commands:
   QualityArmory:
     description: Main command for QA
@@ -31,5 +32,4 @@ permissions:
       qualityarmory.usegun: true
 softdepend: [Vault, PlaceholderAPI, ChestShop, Parties, WorldGuard, ViaVersion, ViaRewind, LightAPI, Citizens, ProtocolLib, SunLight-Core, ItemBridge, Sentinel]
 description: "Unofficial QualityArmory release with 1.17+ support by AlonsoAliaga"
-author:
-   Zombie_Striker
+authors: [Zombie_Striker,AlonsoAliaga]

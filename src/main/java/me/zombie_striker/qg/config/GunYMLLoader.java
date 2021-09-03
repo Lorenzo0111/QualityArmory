@@ -13,6 +13,7 @@ import me.zombie_striker.qg.guns.reloaders.ReloadingManager;
 import me.zombie_striker.qg.guns.utils.WeaponSounds;
 import me.zombie_striker.qg.guns.utils.WeaponType;
 import me.zombie_striker.qg.miscitems.*;
+import me.zombie_striker.qg.utils.LocalUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -58,13 +59,13 @@ public class GunYMLLoader {
 							final ItemStack[] materails = main
 									.convertIngredients(f2.getStringList("craftingRequirements"));
 							final String displayname = f2.contains("displayname")
-									? ChatColor.translateAlternateColorCodes('&', f2.getString("displayname"))
+									? LocalUtils.colorize(f2.getString("displayname"))
 									: (ChatColor.WHITE + name);
 							final List<String> extraLore2 = f2.contains("lore") ? f2.getStringList("lore") : null;
 							final List<String> extraLore = new ArrayList<String>();
 							try {
 								for (String lore : extraLore2) {
-									extraLore.add(ChatColor.translateAlternateColorCodes('&', lore));
+									extraLore.add(LocalUtils.colorize( lore));
 								}
 							} catch (Error | Exception re52) {
 							}
@@ -128,13 +129,13 @@ public class GunYMLLoader {
 							final ItemStack[] materails = main
 									.convertIngredients(f2.getStringList("craftingRequirements"));
 							final String displayname = f2.contains("displayname")
-									? ChatColor.translateAlternateColorCodes('&', f2.getString("displayname"))
+									? LocalUtils.colorize( f2.getString("displayname"))
 									: (ChatColor.WHITE + name);
 							final List<String> rawLore = f2.contains("lore") ? f2.getStringList("lore") : null;
 							final List<String> lore = new ArrayList<String>();
 							try {
 								for (String lore2 : rawLore) {
-									lore.add(ChatColor.translateAlternateColorCodes('&', lore2));
+									lore.add(LocalUtils.colorize( lore2));
 								}
 							} catch (Error | Exception re52) {
 							}
@@ -177,13 +178,13 @@ public class GunYMLLoader {
 							final ItemStack[] materails = main
 									.convertIngredients(f2.getStringList("craftingRequirements"));
 							final String displayname = f2.contains("displayname")
-									? ChatColor.translateAlternateColorCodes('&', f2.getString("displayname"))
+									? LocalUtils.colorize( f2.getString("displayname"))
 									: (ChatColor.WHITE + name);
 							final List<String> rawLore = f2.contains("lore") ? f2.getStringList("lore") : null;
 							final List<String> lore = new ArrayList<String>();
 							try {
 								for (String lore2 : rawLore) {
-									lore.add(ChatColor.translateAlternateColorCodes('&', lore2));
+									lore.add(LocalUtils.colorize( lore2));
 								}
 							} catch (Error | Exception re52) {
 							}
@@ -276,14 +277,14 @@ public class GunYMLLoader {
 					final ItemStack[] materails = main.convertIngredients(f2.getStringList("craftingRequirements"));
 
 					final String displayname = f2.contains("displayname")
-							? ChatColor.translateAlternateColorCodes('&', f2.getString("displayname"))
+							? LocalUtils.colorize( f2.getString("displayname"))
 							: (ChatColor.GOLD + name);
 					final List<String> extraLore2 = f2.contains("lore") ? f2.getStringList("lore") : null;
 					final List<String> extraLore = new ArrayList<String>();
 
 					try {
 						for (String lore : extraLore2) {
-							extraLore.add(ChatColor.translateAlternateColorCodes('&', lore));
+							extraLore.add(LocalUtils.colorize( lore));
 						}
 					} catch (Error | Exception re52) {
 					}
@@ -487,7 +488,7 @@ public class GunYMLLoader {
 							final String name = f2.getString("name");
 							main.getLogger().info("-Loading Attachment: " + name);
 							final String displayname = f2.contains("displayname")
-									? ChatColor.translateAlternateColorCodes('&', f2.getString("displayname"))
+									? LocalUtils.colorize( f2.getString("displayname"))
 									: (ChatColor.GOLD + name);
 							final List<String> extraLore2 = f2.contains("lore") ? f2.getStringList("lore") : null;
 
@@ -509,7 +510,7 @@ public class GunYMLLoader {
 							final List<String> extraLore = new ArrayList<String>();
 							try {
 								for (String lore : extraLore2) {
-									extraLore.add(ChatColor.translateAlternateColorCodes('&', lore));
+									extraLore.add(LocalUtils.colorize( lore));
 								}
 							} catch (Error | Exception re52) {
 							}

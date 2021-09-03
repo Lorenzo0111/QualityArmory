@@ -1,4 +1,4 @@
-Prefix: "&8[&2质量军械库&8]&r"
+Prefix: "&4[质量军械库]&7"
 NoPermAnvilMessage: ' &a你没有权限使用这个军火库.右键单击进入铁砧.'
 NoPerm: '&c你没有权限使用这个命令'
 ShopName: '武器商店页面:'

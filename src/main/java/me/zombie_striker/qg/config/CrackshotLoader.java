@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import me.zombie_striker.qg.utils.LocalUtils;
 import org.bukkit.*;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.inventory.ItemStack;
@@ -118,8 +119,8 @@ public class CrackshotLoader {
 			int firerate = -1;
 			if (loreString == null)
 				loreString = "";
-			List<String> lore = Arrays.asList(ChatColor.translateAlternateColorCodes('&', loreString).split("\\|"));
-			String displayname = ChatColor.translateAlternateColorCodes('&',
+			List<String> lore = Arrays.asList(LocalUtils.colorize( loreString).split("\\|"));
+			String displayname = LocalUtils.colorize(
 					crackshotFile.getString(name + ".Item_Information.Item_Name"));
 			double price = crackshotFile.contains(name + ".SignShops.Price")
 					? Integer.parseInt(crackshotFile.getString(name + ".SignShops.Price").split("-")[0])
