@@ -40,5 +40,5 @@ For issues go to [QualityArmory's issue tracker](https://github.com/ZombieStrike
 :warning: I only fixed some issues, I don't even know how the plugin works. I was reading the plugin reviews yesterday and I realized the author needed some help, so here it is a fork with some bugs fixed (most important ones I think). I have no plans to keep updating the plugin once the original author is back, I won't add new features either.
 
 ## Images ✅
-Hex colors support for lore.
+**Hex colors support for lore.**\
 ![Hex support](https://imgur.com/gTkBcUw.png)
