@@ -313,6 +313,10 @@ public class GunUtil {
 								blocksThatWillBreak.add(start);
 							}
 						}
+
+						if (!solid) {
+							continue;
+						}
 					}
 
 					/*try {
