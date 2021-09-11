@@ -14,6 +14,7 @@ import me.zombie_striker.qg.guns.utils.GunUtil;
 import me.zombie_striker.qg.guns.utils.WeaponSounds;
 import me.zombie_striker.qg.guns.utils.WeaponType;
 import me.zombie_striker.qg.handlers.Update19OffhandChecker;
+import me.zombie_striker.qg.utils.LocalUtils;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -116,7 +117,7 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
 	public Gun(String name, MaterialStorage id, WeaponType type, boolean h, Ammo am, double acc, double swaymult,
 			   int maxBullets, float damage, boolean isAutomatic, int durib, String ws, List<String> extralore,
 			   String displayname, double cost, ItemStack[] ing) {
-		super(name, id, ChatColor.translateAlternateColorCodes('&', displayname), extralore, true);
+		super(name, id, LocalUtils.colorize(displayname), extralore, true);
 		this.type = type;
 		this.hasIronSights = h;
 		this.ammotype = am;
@@ -133,7 +134,7 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
 		this.setPrice(cost);
 
 		//this.extralore = extralore;
-		//this.displayname = ChatColor.translateAlternateColorCodes('&', displayname);
+		//this.displayname = LocalUtils.colorize(displayname);
 	}
 
 	public Gun(String name, MaterialStorage id) {
@@ -147,7 +148,7 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
 				|| (offhand && Update19OffhandChecker.hasAmountOFfhandGreaterthan(player, 0))) {
 			QAWeaponPrepareShootEvent shootevent = new QAWeaponPrepareShootEvent(player, g);
 			Bukkit.getPluginManager().callEvent(shootevent);
-			if (shootevent.isCanceled())
+			if (shootevent.isCancelled())
 				return false;
 			GunUtil.basicShoot(offhand, g, player, acc,  holdingRMB);
 			return true;

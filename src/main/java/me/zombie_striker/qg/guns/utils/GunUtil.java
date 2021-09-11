@@ -216,11 +216,11 @@ public class GunUtil {
 					QAWeaponDamageEntityEvent shootevent = new QAWeaponDamageEntityEvent(p, g, hitTarget, headshot,
 							damage, bulletProtection);
 					Bukkit.getPluginManager().callEvent(shootevent);
-					if (!shootevent.isCanceled()) {
+					if (!shootevent.isCancelled()) {
 						if (headshot) {
 							QAHeadShotEvent headshotevent = new QAHeadShotEvent(hitTarget, p, g);
 							Bukkit.getPluginManager().callEvent(headshotevent);
-							headshot = !headshotevent.isCanceled();
+							headshot = !headshotevent.isCancelled();
 						}
 						if (hitTarget instanceof Player) {
 							Player player = (Player) hitTarget;
@@ -303,7 +303,7 @@ public class GunUtil {
 						boolean solid = isSolid(start.getBlock(), start);
 						QAWeaponDamageBlockEvent blockevent = new QAWeaponDamageBlockEvent(p, g, start.getBlock());
 						Bukkit.getPluginManager().callEvent(blockevent);
-						if (!blockevent.isCanceled()) {
+						if (!blockevent.isCancelled()) {
 							if ((solid || isBreakable(start.getBlock(), start)) && !blocksThatWillPLAYBreak.contains(
 									new Location(start.getWorld(), start.getBlockX(), start.getBlockY(), start.getBlockZ()))) {
 								blocksThatWillPLAYBreak.add(

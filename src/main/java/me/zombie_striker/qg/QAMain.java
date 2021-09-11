@@ -32,6 +32,7 @@ import me.zombie_striker.qg.miscitems.ThrowableItems.ThrowableHolder;
 import me.zombie_striker.qg.npcs.Gunner;
 import me.zombie_striker.qg.npcs.GunnerTrait;
 import me.zombie_striker.qg.npcs_sentinel.SentinelQAHandler;
+import me.zombie_striker.qg.utils.LocalUtils;
 import org.bukkit.*;
 import org.bukkit.command.BlockCommandSender;
 import org.bukkit.command.Command;
@@ -198,7 +199,7 @@ public class QAMain extends JavaPlugin {
 	public static boolean enablePrimaryWeaponHandler = false;
 	public static int primaryWeaponLimit = 2;
 	public static int secondaryWeaponLimit = 2;
-	public static String prefix = ChatColor.translateAlternateColorCodes('&', S_PREFIX);
+	public static String prefix = LocalUtils.colorize( S_PREFIX);
 	// public Inventory craftingMenu;
 	public static String S_craftingBenchName = "Armory Crafting-Bench Page:";
 	public static String S_missingIngredients = "You do not have all the materials needed to craft this.";
@@ -562,7 +563,7 @@ public class QAMain extends JavaPlugin {
 					if (null != itemStacks && itemStacks.length > 0) {
 						for (Object itemStack : itemStacks) {
 							String itemName = ((ItemStack) itemStack).getType().name();
-							String showName = ChatColor.translateAlternateColorCodes('&', (String) QAMain.m.a("EntityType." + itemName, itemName));
+							String showName = LocalUtils.colorize( (String) QAMain.m.a("EntityType." + itemName, itemName));
 							craftingEntityNames.put(itemName, showName);
 						}
 					}
@@ -814,39 +815,39 @@ public class QAMain extends JavaPlugin {
 			langFolder.mkdir();
 		}
 		m = new MessagesYML(new File(langFolder, "message_" + language + ".yml"));
-		S_PREFIX = ChatColor.translateAlternateColorCodes('&', (String) m.a("Prefix", S_PREFIX));
-		S_ANVIL = ChatColor.translateAlternateColorCodes('&', (String) m.a("NoPermAnvilMessage", S_ANVIL));
-		S_NOPERM = ChatColor.translateAlternateColorCodes('&', (String) m.a("NoPerm", S_NOPERM));
+		S_PREFIX = LocalUtils.colorize( (String) m.a("Prefix", S_PREFIX));
+		S_ANVIL = LocalUtils.colorize( (String) m.a("NoPermAnvilMessage", S_ANVIL));
+		S_NOPERM = LocalUtils.colorize( (String) m.a("NoPerm", S_NOPERM));
 		S_shopName = (String) m.a("ShopName", S_shopName);
 		S_craftingBenchName = (String) m.a("CraftingBenchName", S_craftingBenchName);
 		S_missingIngredients = (String) m.a("Missing_Ingredients", S_missingIngredients);
-		S_NORES1 = ChatColor.translateAlternateColorCodes('&', (String) m.a("NoResourcepackMessage1", S_NORES1));
-		S_NORES2 = ChatColor.translateAlternateColorCodes('&', (String) m.a("NoResourcepackMessage2", S_NORES2));
-		S_ITEM_AMMO = ChatColor.translateAlternateColorCodes('&', (String) m.a("Lore_Ammo", S_ITEM_AMMO));
-		S_ITEM_BULLETS = ChatColor.translateAlternateColorCodes('&', (String) m.a("lore_bullets", S_ITEM_BULLETS));
-		S_ITEM_DAMAGE = ChatColor.translateAlternateColorCodes('&', (String) m.a("Lore_Damage", S_ITEM_DAMAGE));
-		S_ITEM_DURIB = ChatColor.translateAlternateColorCodes('&', (String) m.a("Lore_Durib", S_ITEM_DURIB));
-		S_ITEM_ING = ChatColor.translateAlternateColorCodes('&', (String) m.a("Lore_ingredients", S_ITEM_ING));
+		S_NORES1 = LocalUtils.colorize( (String) m.a("NoResourcepackMessage1", S_NORES1));
+		S_NORES2 = LocalUtils.colorize( (String) m.a("NoResourcepackMessage2", S_NORES2));
+		S_ITEM_AMMO = LocalUtils.colorize( (String) m.a("Lore_Ammo", S_ITEM_AMMO));
+		S_ITEM_BULLETS = LocalUtils.colorize( (String) m.a("lore_bullets", S_ITEM_BULLETS));
+		S_ITEM_DAMAGE = LocalUtils.colorize( (String) m.a("Lore_Damage", S_ITEM_DAMAGE));
+		S_ITEM_DURIB = LocalUtils.colorize( (String) m.a("Lore_Durib", S_ITEM_DURIB));
+		S_ITEM_ING = LocalUtils.colorize( (String) m.a("Lore_ingredients", S_ITEM_ING));
 		if (m.getConfig().contains("Lore_Varients"))
-			S_ITEM_VARIANTS_LEGACY = ChatColor.translateAlternateColorCodes('&',
+			S_ITEM_VARIANTS_LEGACY = LocalUtils.colorize(
 					(String) m.a("Lore_Varients", S_ITEM_VARIANTS_LEGACY));
-		S_ITEM_VARIANTS_NEW = ChatColor.translateAlternateColorCodes('&',
+		S_ITEM_VARIANTS_NEW = LocalUtils.colorize(
 				(String) m.a("Lore_Variants", S_ITEM_VARIANTS_NEW));
-		S_ITEM_COST = ChatColor.translateAlternateColorCodes('&', (String) m.a("Lore_Price", S_ITEM_COST));
-		S_ITEM_DPS = ChatColor.translateAlternateColorCodes('&', (String) m.a("Lore_DamagePerSecond", S_ITEM_DPS));
+		S_ITEM_COST = LocalUtils.colorize( (String) m.a("Lore_Price", S_ITEM_COST));
+		S_ITEM_DPS = LocalUtils.colorize( (String) m.a("Lore_DamagePerSecond", S_ITEM_DPS));
 
 		// Chris: add message Crafts
-		S_ITEM_CRAFTS = ChatColor.translateAlternateColorCodes('&', (String) m.a("Lore_Crafts", S_ITEM_CRAFTS));
-		S_ITEM_RETURNS = ChatColor.translateAlternateColorCodes('&', (String) m.a("Lore_Returns", S_ITEM_RETURNS));
+		S_ITEM_CRAFTS = LocalUtils.colorize( (String) m.a("Lore_Crafts", S_ITEM_CRAFTS));
+		S_ITEM_RETURNS = LocalUtils.colorize( (String) m.a("Lore_Returns", S_ITEM_RETURNS));
 
 
-		S_RELOADING_MESSAGE = ChatColor.translateAlternateColorCodes('&',
+		S_RELOADING_MESSAGE = LocalUtils.colorize(
 				(String) m.a("Reloading_Message", S_RELOADING_MESSAGE));
-		S_MAX_FOUND = ChatColor.translateAlternateColorCodes('&', (String) m.a("State_AmmoCount", S_MAX_FOUND));
-		S_OUT_OF_AMMO = ChatColor.translateAlternateColorCodes('&', (String) m.a("State_OutOfAmmo", S_OUT_OF_AMMO));
-		S_HOTBAR_FORMAT = ChatColor.translateAlternateColorCodes('&', (String) m.a("HotbarMessage", S_HOTBAR_FORMAT));
+		S_MAX_FOUND = LocalUtils.colorize( (String) m.a("State_AmmoCount", S_MAX_FOUND));
+		S_OUT_OF_AMMO = LocalUtils.colorize( (String) m.a("State_OutOfAmmo", S_OUT_OF_AMMO));
+		S_HOTBAR_FORMAT = LocalUtils.colorize( (String) m.a("HotbarMessage", S_HOTBAR_FORMAT));
 
-		S_KICKED_FOR_RESOURCEPACK = ChatColor.translateAlternateColorCodes('&',
+		S_KICKED_FOR_RESOURCEPACK = LocalUtils.colorize(
 				(String) m.a("Kick_message_if_player_denied_request", S_KICKED_FOR_RESOURCEPACK));
 
 		S_LMB_SINGLE = (String) m.a("Lore-LMB-Single", S_LMB_SINGLE);
@@ -856,33 +857,33 @@ public class QAMain extends JavaPlugin {
 		S_RMB_A2 = (String) m.a("Lore-Ironsights-Sneak", S_RMB_A2);
 		S_RMB_R1 = (String) m.a("Lore-Reload-Dropitem", S_RMB_R1);
 		S_RMB_R2 = (String) m.a("Lore-Reload-RMB", S_RMB_R2);
-		S_HELMET_RMB = ChatColor.translateAlternateColorCodes('&', (String) m.a("Lore-Helmet-RMB", S_HELMET_RMB));
+		S_HELMET_RMB = LocalUtils.colorize( (String) m.a("Lore-Helmet-RMB", S_HELMET_RMB));
 
-		S_BUYCONFIRM = ChatColor.translateAlternateColorCodes('&', (String) m.a("Shop_Confirm", S_BUYCONFIRM));
+		S_BUYCONFIRM = LocalUtils.colorize( (String) m.a("Shop_Confirm", S_BUYCONFIRM));
 
 		S_RESOURCEPACK_HELP = (String) m.a("Resourcepack_InCaseOfCrash", S_RESOURCEPACK_HELP);
 		S_RESOURCEPACK_DOWNLOAD = (String) m.a("Resourcepack_Download", S_RESOURCEPACK_DOWNLOAD);
 		S_RESOURCEPACK_BYPASS = (String) m.a("Resourcepack_NowBypass", S_RESOURCEPACK_BYPASS);
 		S_RESOURCEPACK_OPTIN = (String) m.a("Resourcepack_NowOptIn", S_RESOURCEPACK_OPTIN);
 
-		S_FULLYHEALED = ChatColor.translateAlternateColorCodes('&', (String) m.a("Medkit-FullyHealed", S_FULLYHEALED));
-		S_MEDKIT_HEALING = ChatColor.translateAlternateColorCodes('&',
+		S_FULLYHEALED = LocalUtils.colorize( (String) m.a("Medkit-FullyHealed", S_FULLYHEALED));
+		S_MEDKIT_HEALING = LocalUtils.colorize(
 				(String) m.a("Medkit-Healing", S_MEDKIT_HEALING));
-		S_MEDKIT_BLEEDING = ChatColor.translateAlternateColorCodes('&',
+		S_MEDKIT_BLEEDING = LocalUtils.colorize(
 				(String) m.a("Medkit-Bleeding", S_MEDKIT_BLEEDING));
 
 		S_MEDKIT_HEAL_AMOUNT = (double) m.a("Medkit-HEALING_HEARTS_AMOUNT", S_MEDKIT_HEAL_AMOUNT);
 
 		S_MEDKIT_HEALDELAY = (double) m.a("Medkit-HEALING_WEAPPING_DELAY_IN_SECONDS", S_MEDKIT_HEALDELAY);
 
-		S_MEDKIT_LORE_INFO = ChatColor.translateAlternateColorCodes('&',
+		S_MEDKIT_LORE_INFO = LocalUtils.colorize(
 				(String) m.a("Medkit-Lore_RMB", S_MEDKIT_LORE_INFO));
 
-		S_BLEEDOUT_LOSINGconscious = ChatColor.translateAlternateColorCodes('&',
+		S_BLEEDOUT_LOSINGconscious = LocalUtils.colorize(
 				(String) m.a("Bleeding.Losingconsciousness", S_BLEEDOUT_LOSINGconscious));
-		S_BLEEDOUT_STARTBLEEDING = ChatColor.translateAlternateColorCodes('&',
+		S_BLEEDOUT_STARTBLEEDING = LocalUtils.colorize(
 				(String) m.a("Bleeding.StartBleeding", S_BLEEDOUT_STARTBLEEDING));
-		S_BULLETPROOFSTOPPEDBLEEDING = ChatColor.translateAlternateColorCodes('&',
+		S_BULLETPROOFSTOPPEDBLEEDING = LocalUtils.colorize(
 				(String) m.a("Bleeding.ProtectedByKevlar", S_BULLETPROOFSTOPPEDBLEEDING));
 
 		resourcepackwhitelist = new MessagesYML(new File(getDataFolder(), "resourcepackwhitelist.yml"));
@@ -1610,7 +1611,7 @@ public class QAMain extends JavaPlugin {
 	}
 
 	public void sendHelp(CommandSender sender) {
-		sender.sendMessage(ChatColor.translateAlternateColorCodes('&', prefix + " Commands:"));
+		sender.sendMessage(LocalUtils.colorize( prefix + " Commands:"));
 		sender.sendMessage(ChatColor.GOLD + "/QA give <Item> <player> <amount>:" + ChatColor.GRAY
 				+ " Gives the sender the item specified (guns, ammo, misc.)");
 		sender.sendMessage(ChatColor.GOLD + "/QA craft:" + ChatColor.GRAY + " Opens the crafting menu.");

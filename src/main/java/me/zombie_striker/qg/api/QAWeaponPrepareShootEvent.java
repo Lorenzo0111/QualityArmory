@@ -1,12 +1,13 @@
 package me.zombie_striker.qg.api;
 
 import org.bukkit.entity.Player;
+import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
 import me.zombie_striker.qg.guns.Gun;
 
-public class QAWeaponPrepareShootEvent extends Event {
+public class QAWeaponPrepareShootEvent extends Event implements Cancellable {
 	private static final HandlerList handlers = new HandlerList();
 
 	private boolean cancel = false;
@@ -26,11 +27,13 @@ public class QAWeaponPrepareShootEvent extends Event {
 		return player;
 	}
 
-	public boolean isCanceled() {
+	@Override
+	public boolean isCancelled() {
 		return cancel;
 	}
 
-	public void setCanceled(boolean canceled) {
+	@Override
+	public void setCancelled(boolean canceled) {
 		this.cancel = canceled;
 	}
 

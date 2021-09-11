@@ -9,6 +9,7 @@ import java.util.Map.Entry;
 import me.zombie_striker.customitemmanager.*;
 import me.zombie_striker.qg.handlers.HotbarMessager;
 import me.zombie_striker.qg.handlers.IronsightsHandler;
+import me.zombie_striker.qg.utils.LocalUtils;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
@@ -97,14 +98,14 @@ public class QualityArmory {
 				}
 				if (warning) {
 					try {
-						player.sendTitle(ChatColor.translateAlternateColorCodes('&', ChatColor.RED + QAMain.S_NORES1), ChatColor.translateAlternateColorCodes('&', QAMain.S_NORES2));
+						player.sendTitle(LocalUtils.colorize(ChatColor.RED + QAMain.S_NORES1), LocalUtils.colorize(QAMain.S_NORES2));
 					} catch (Error e2) {
-						player.sendMessage(ChatColor.translateAlternateColorCodes('&', ChatColor.RED + QAMain.S_NORES1));
-						player.sendMessage(ChatColor.translateAlternateColorCodes('&', ChatColor.RED + QAMain.S_NORES2));
+						player.sendMessage(LocalUtils.colorize(ChatColor.RED + QAMain.S_NORES1));
+						player.sendMessage(LocalUtils.colorize(ChatColor.RED + QAMain.S_NORES2));
 					}
 				}
 				if (QAMain.showCrashMessage)
-					player.sendMessage(ChatColor.translateAlternateColorCodes('&', QAMain.prefix + QAMain.S_RESOURCEPACK_HELP));
+					player.sendMessage(LocalUtils.colorize(QAMain.prefix + QAMain.S_RESOURCEPACK_HELP));
 
 				new BukkitRunnable() {
 					@Override
@@ -457,7 +458,7 @@ public class QualityArmory {
 				if (QAMain.unknownTranslationKeyFixer) {
 					message = ChatColor.stripColor(message);
 				} else {
-					message = ChatColor.translateAlternateColorCodes('&', message);
+					message = LocalUtils.colorize(message);
 				}
 				HotbarMessager.sendHotBarMessage(p, message);
 			} catch (Error | Exception e5) {

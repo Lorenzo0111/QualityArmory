@@ -1,3 +1,10 @@
+2.0
+    - Added HEX color support for items and messages (Warning: Already created weapons might stop working if you change lore, same as before)
+    - Reminder: HEX colors format is with # only. Example: "#aabbcc" NOT &#aabbcc". Hex doesn't work with action bar or titles. (Minecraft limitations)
+    - Fixed unlimited ammo
+    - Fixed spam in console
+    - Fixed action bar messages
+
 1.1.176
     - Added Galil-AR
     - Added CTAR-21

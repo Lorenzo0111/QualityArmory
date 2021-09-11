@@ -784,7 +784,7 @@ public class QAListener implements Listener {
 
 		QACustomItemInteractEvent event = new QACustomItemInteractEvent(e.getPlayer(), object);
 		Bukkit.getPluginManager().callEvent(event);
-		if (event.isCanceled())
+		if (event.isCancelled())
 			return;
 
 		if (QAMain.kickIfDeniedRequest && QAMain.sentResourcepack.containsKey(e.getPlayer().getUniqueId())
