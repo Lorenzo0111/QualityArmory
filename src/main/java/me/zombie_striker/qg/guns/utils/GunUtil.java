@@ -600,10 +600,8 @@ public class GunUtil {
 	}
 
 	public static void updateXPBar(Player player, Gun g, int amount) {
-		ExperienceManager manager = new ExperienceManager(player);
-		double totalXpNeededForpercent = manager.getXpNeededToLevelUp(amount)*(((double)amount)/g.getMaxBullets());//This is 100% charge
 		player.setLevel(amount);
-		player.setExp((int)totalXpNeededForpercent-1);
+		// Todo exp
 	}
 
 	public static void playShoot(final Gun g, final Player player) {

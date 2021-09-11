@@ -1294,9 +1294,15 @@ public class QAMain extends JavaPlugin {
 							}
 							sender.sendMessage(s);
 						} catch (IOException e) {
-							e.printStackTrace();
 						}
 					}
+
+					try {
+						in.close();
+						reader.close();
+					} catch (IOException e) {
+					}
+
 					return true;
 				}
 				if (args[0].equalsIgnoreCase("debug")) {
