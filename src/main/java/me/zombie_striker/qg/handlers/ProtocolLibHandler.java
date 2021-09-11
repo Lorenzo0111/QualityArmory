@@ -4,10 +4,11 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Function;
 
+import com.cryptomorin.xseries.ReflectionUtils;
+import com.cryptomorin.xseries.XMaterial;
 import com.mojang.datafixers.util.Pair;
-import me.zombie_striker.qg.handlers.ReflectionsUtil;
+import org.apache.commons.lang3.reflect.MethodUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -91,7 +92,7 @@ public class ProtocolLibHandler {
 						int id = (int) event.getPacket().getModifier().read(0);
 						Object slot;
 						final Object ironsights;
-						if(ReflectionsUtil.isVersionHigherThan(1,16)){
+						if(XMaterial.supports(16)){
 							slot = event.getPacket().getModifier().read(1);
 							ironsights = slot;//event.getPacket().getModifier().read(2);
 						}else{
@@ -138,7 +139,7 @@ public class ProtocolLibHandler {
 							} catch (NoSuchMethodException e) {
 								e.printStackTrace();
 							}
-							if(ReflectionsUtil.isVersionHigherThan(1,16)){
+							if(XMaterial.supports(16)){
 								List list = (List) slot;
 								for(Object o : new ArrayList(list)){
 									if(o.toString().contains("MAINHAND")) {
@@ -154,7 +155,7 @@ public class ProtocolLibHandler {
 								event.getPacket().getModifier().write(2, is);
 							}
 
-							if(!ReflectionsUtil.isVersionHigherThan(1,16))
+							if(!XMaterial.supports(16))
 							new BukkitRunnable() {
 								public void run() {
 									try {
@@ -172,7 +173,7 @@ public class ProtocolLibHandler {
 												break;
 											}
 										}
-										if(ReflectionsUtil.isVersionHigherThan(1,16)){
+										if(XMaterial.supports(16)){
 											pc2.getModifier().write(0, id)
 													.write(1, ironsights);
 
@@ -198,7 +199,7 @@ public class ProtocolLibHandler {
 
 	private static Object getCraftItemStack(ItemStack is) throws NoSuchMethodException {
 		if (nbtFactClass == null) {
-			nbtFactClass = ReflectionsUtil.getCraftBukkitClass("inventory.CraftItemStack");
+			nbtFactClass = ReflectionUtils.getCraftClass("inventory.CraftItemStack");
 			Class[] c = new Class[1];
 			c[0] = ItemStack.class;
 			nbtFactmethod = nbtFactClass.getMethod("asNMSCopy", c);
@@ -216,7 +217,7 @@ public class ProtocolLibHandler {
 			protocolManager = ProtocolLibrary.getProtocolManager();
 		final PacketContainer yawpack = protocolManager.createPacket(PacketType.Play.Server.LOOK_AT, false);
 		if (enumArgumentAnchor_EYES == null) {
-			class_ArgumentAnchor = ReflectionsUtil.getMinecraftClass("ArgumentAnchor$Anchor");
+			class_ArgumentAnchor = ReflectionUtils.getNMSClass("commands.arguments", "ArgumentAnchor$Anchor");
 			enumArgumentAnchor_EYES = ReflectionsUtil.getEnumConstant(class_ArgumentAnchor, "EYES");
 		}
 		yawpack.getModifier().write(4, enumArgumentAnchor_EYES);

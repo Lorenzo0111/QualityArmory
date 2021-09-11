@@ -97,14 +97,14 @@ public class QualityArmory {
 				}
 				if (warning) {
 					try {
-						player.sendTitle(ChatColor.RED + QAMain.S_NORES1, QAMain.S_NORES2);
+						player.sendTitle(ChatColor.translateAlternateColorCodes('&', ChatColor.RED + QAMain.S_NORES1), ChatColor.translateAlternateColorCodes('&', QAMain.S_NORES2));
 					} catch (Error e2) {
-						player.sendMessage(ChatColor.RED + QAMain.S_NORES1);
-						player.sendMessage(ChatColor.RED + QAMain.S_NORES2);
+						player.sendMessage(ChatColor.translateAlternateColorCodes('&', ChatColor.RED + QAMain.S_NORES1));
+						player.sendMessage(ChatColor.translateAlternateColorCodes('&', ChatColor.RED + QAMain.S_NORES2));
 					}
 				}
 				if (QAMain.showCrashMessage)
-					player.sendMessage(QAMain.prefix + QAMain.S_RESOURCEPACK_HELP);
+					player.sendMessage(ChatColor.translateAlternateColorCodes('&', QAMain.prefix + QAMain.S_RESOURCEPACK_HELP));
 
 				new BukkitRunnable() {
 					@Override

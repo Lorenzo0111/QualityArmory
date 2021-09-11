@@ -198,7 +198,7 @@ public class QAMain extends JavaPlugin {
 	public static boolean enablePrimaryWeaponHandler = false;
 	public static int primaryWeaponLimit = 2;
 	public static int secondaryWeaponLimit = 2;
-	public static String prefix = S_PREFIX;
+	public static String prefix = ChatColor.translateAlternateColorCodes('&', S_PREFIX);
 	// public Inventory craftingMenu;
 	public static String S_craftingBenchName = "Armory Crafting-Bench Page:";
 	public static String S_missingIngredients = "You do not have all the materials needed to craft this.";
@@ -627,11 +627,7 @@ public class QAMain extends JavaPlugin {
 			this.getDataFolder().mkdirs();
 		}
 		supportWorldGuard = Bukkit.getPluginManager().isPluginEnabled("WorldGuard");
-		if (Bukkit.getPluginManager().getPlugin("PluginConstructorAPI") == null)
-			// new DependencyDownloader(this, 276723);
-			GithubDependDownloader.autoUpdate(this,
-					new File(getDataFolder().getParentFile(), "PluginConstructorAPI.jar"), "ZombieStriker",
-					"PluginConstructorAPI", "PluginConstructorAPI.jar");
+
 		try {
 			ParticleHandlers.initValues();
 		} catch (Error | Exception e5) {
@@ -652,9 +648,7 @@ public class QAMain extends JavaPlugin {
 
 		// check if Citizens is present and enabled.
 
-		if (getServer().getPluginManager().getPlugin("Citizens") == null) {
-			getLogger().log(Level.INFO, "Citizens 2.0 not found or not enabled (Ignore this.)");
-		} else {
+		if (getServer().getPluginManager().getPlugin("Citizens") != null) {
 			try {
 				// Register your trait with Citizens.
 				net.citizensnpcs.api.CitizensAPI.getTraitFactory()
@@ -683,7 +677,7 @@ public class QAMain extends JavaPlugin {
 
 		try {
 			if (AUTOUPDATE)
-				GithubUpdater.autoUpdate(this, "ZombieStriker", "QualityArmory", "QualityArmory.jar");
+				GithubUpdater.autoUpdate(this, "Lorenzo0111", "QualityArmory", "QualityArmory.jar");
 		} catch (Exception e) {
 		}
 
@@ -1616,7 +1610,7 @@ public class QAMain extends JavaPlugin {
 	}
 
 	public void sendHelp(CommandSender sender) {
-		sender.sendMessage(prefix + " Commands:");
+		sender.sendMessage(ChatColor.translateAlternateColorCodes('&', prefix + " Commands:"));
 		sender.sendMessage(ChatColor.GOLD + "/QA give <Item> <player> <amount>:" + ChatColor.GRAY
 				+ " Gives the sender the item specified (guns, ammo, misc.)");
 		sender.sendMessage(ChatColor.GOLD + "/QA craft:" + ChatColor.GRAY + " Opens the crafting menu.");

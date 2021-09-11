@@ -11,6 +11,10 @@ public class MessagesYML {
 	private File s;
 	public MessagesYML(File f) {
 		s = f;
+		if (!f.getParentFile().exists()) {
+			f.getParentFile().mkdirs();
+		}
+
 		if(!s.exists()) {
 			try {
 				s.createNewFile();

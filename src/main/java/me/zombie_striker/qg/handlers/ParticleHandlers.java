@@ -1,5 +1,6 @@
 package me.zombie_striker.qg.handlers;
 
+import com.cryptomorin.xseries.ReflectionUtils;
 import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.guns.Gun;
 import org.bukkit.Bukkit;
@@ -16,7 +17,7 @@ public class ParticleHandlers {
 	public static boolean is13 = true;
 
 	public static void initValues() {
-		is13 = ReflectionsUtil.isVersionHigherThan(1, 13);
+		is13 = ReflectionUtils.supports(13);
 	}
 
 	public static void spawnExplosion(Location loc) {
