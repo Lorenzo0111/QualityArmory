@@ -15,6 +15,8 @@ import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -31,6 +33,8 @@ import me.zombie_striker.qg.guns.Gun;
 import me.zombie_striker.qg.guns.utils.WeaponSounds;
 import me.zombie_striker.qg.guns.utils.WeaponType;
 import me.zombie_striker.qg.handlers.WorldGuardSupport;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class QualityArmory {
 
@@ -291,6 +295,24 @@ public class QualityArmory {
 
 	public static Gun getGun(ItemStack is) {
 		return QAMain.gunRegister.get(MaterialStorage.getMS(is));
+	}
+
+	@Nullable
+	public static Gun getGunInHand(@NotNull HumanEntity entity) {
+		ItemStack stack = entity.getInventory().getItemInMainHand();
+		if (stack == null || stack.getType().equals(Material.AIR)) return null;
+
+		if (isGun(stack)) return getGun(stack);
+		if (isIronSights(stack)) {
+			try {
+				ItemStack offHand = entity.getInventory().getItemInOffHand();
+				if (isGun(offHand)) {
+					return getGun(offHand);
+				}
+			} catch (NoSuchMethodError ignored) {}
+		}
+
+		return null;
 	}
 
 	public static boolean isGun(ItemStack is) {
