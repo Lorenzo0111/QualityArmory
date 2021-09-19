@@ -174,7 +174,7 @@ public class CustomGunItem extends AbstractCustomGunItem {
 				.createAmmo(false, dataFolder, false, "default_flamerfuel", "fuel", "&fFlamerFuel", null,
 						Material.BLAZE_POWDER, 0,
 						Arrays.asList(new String[] { getIngString(Material.BLAZE_ROD, 0, 1), }), 1, 1, 64, 2)
-				.setVariant(1).done();
+				.done();
 
 		GunYMLCreator.createNewDefaultGun(dataFolder, "p30", "P30", 2, stringsPistol, WeaponType.PISTOL,
 				null, true, "9mm", 3, 12, 700).setIsSecondaryWeapon(true).done();

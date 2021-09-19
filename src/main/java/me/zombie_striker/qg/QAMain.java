@@ -1372,8 +1372,11 @@ public class QAMain extends JavaPlugin {
 					} else {
 						player = (Player) sender;
 					}
-					namesToBypass.add(player.getName());
-					resourcepackwhitelist.set("Names_Of_players_to_bypass", namesToBypass);
+					if (!namesToBypass.contains(player.getName())) {
+						namesToBypass.add(player.getName());
+						resourcepackwhitelist.set("Names_Of_players_to_bypass", namesToBypass);
+					}
+
 					player.sendMessage(prefix + S_RESOURCEPACK_DOWNLOAD);
 					player.sendMessage(CustomItemManager.getResourcepack());
 					player.sendMessage(prefix + S_RESOURCEPACK_BYPASS);

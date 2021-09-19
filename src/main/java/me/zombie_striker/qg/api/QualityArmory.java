@@ -356,10 +356,10 @@ public class QualityArmory {
 		if (is == null)
 			return false;
 		int var = MaterialStorage.getVariant(is);
-		boolean k = (is != null && (QAMain.ammoRegister
-				.containsKey(MaterialStorage.getMS(is,var))
-				|| QAMain.ammoRegister.containsKey(MaterialStorage.getMS(is,var))));
-		return k;
+
+		MaterialStorage storage = MaterialStorage.getMS(is,var);
+
+		return QAMain.ammoRegister.containsKey(storage);
 	}
 
 	@SuppressWarnings("deprecation")
@@ -621,7 +621,7 @@ public class QualityArmory {
 		if(player.getGameMode()==GameMode.CREATIVE)
 			return 99999;
 		for (ItemStack is : player.getInventory().getContents()) {
-			if (is != null && me.zombie_striker.qg.api.QualityArmory.isAmmo(is)&&QualityArmory.getAmmo(is).equals(a)) {
+			if (isAmmo(is) && getAmmo(is).equals(a)) {
 				amount += is.getAmount();
 			}
 		}
@@ -649,6 +649,7 @@ public class QualityArmory {
 			if (player.getInventory().firstEmpty() >= 0) {
 				ItemStack is = getCustomItemAsItemStack(a);
 				is.setAmount(remaining);
+				System.out.println(MaterialStorage.getVariant(is));
 				player.getInventory().addItem(is);
 				remaining = 0;
 			}
