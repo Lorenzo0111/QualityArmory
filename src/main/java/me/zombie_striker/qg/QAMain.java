@@ -1062,13 +1062,19 @@ public class QAMain extends JavaPlugin {
 		List<String> destarray = (List<String>) a("DestructableMaterials",
 				Collections.singletonList("MATERIAL_NAME_HERE"));
 		for (String s : destarray) {
+			if (s.equals("MATERIAL_NAME_HERE")) continue;
+
 			try {
-				destructableBlocks.add(Material.getMaterial(s));
-			} catch (Error | Exception e54) {
-				try {
-					// destructableBlocks.add(Material.getMaterial(Integer.parseInt(s.split(":")[0])));
-				} catch (Error | Exception e5) {
+				Material material = Material.getMaterial(s.toUpperCase());
+
+				if (material == null) {
+					this.getLogger().warning("Invalid material name: " + s + ".");
+					continue;
 				}
+
+				destructableBlocks.add(material);
+			} catch (Error | Exception ignored) {
+				this.getLogger().warning("Invalid material name: " + s + ".");
 			}
 		}
 
