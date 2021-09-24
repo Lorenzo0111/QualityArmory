@@ -110,7 +110,7 @@ public class GunUtil {
 			double maxEntityDistanceSquared = maxDistance * maxDistance;
 
 			List<Location> blocksThatWillPLAYBreak = new ArrayList<>();
-			List<Location> blocksThatWillBreak = new ArrayList<>();
+			List<Block> blocksThatWillBreak = new ArrayList<>();
 
 			Location centerTest = start.clone().add(normalizedDirection.clone().multiply(maxDistance / 2));
 
@@ -309,8 +309,10 @@ public class GunUtil {
 								blocksThatWillPLAYBreak.add(
 										new Location(start.getWorld(), start.getBlockX(), start.getBlockY(), start.getBlockZ()));
 							}
-							if (QAMain.destructableBlocks.contains(start.getBlock().getType())) {
-								blocksThatWillBreak.add(start);
+
+							final Block block = start.getBlock();
+							if (QAMain.destructableBlocks.contains(block.getType())) {
+								blocksThatWillBreak.add(block);
 							}
 						}
 
@@ -352,8 +354,9 @@ public class GunUtil {
 					ParticleHandlers.spawnGunParticles(g, start);
 				}
 
-				for (Location l : blocksThatWillBreak) {
-					l.getBlock().breakNaturally();
+				for (Block l : blocksThatWillBreak) {
+					QAMain.DEBUG("Breaking " + l.getX() + " " + l.getY() + " " + l.getZ() + ": " + l.getType());
+					l.breakNaturally();
 				}
 			}
 
