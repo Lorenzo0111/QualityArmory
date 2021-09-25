@@ -1,3 +1,8 @@
+2.0.2
+    - Improved DestructableMaterials configuration
+    - Fixed block breaking
+    - Fixed gun reload (Reloading weapons and switching to another slot causes ammo disappear without reloading)
+
 2.0.1
     - Added an API method to check if a player is using a gun
     - Fixed flamer fuel
