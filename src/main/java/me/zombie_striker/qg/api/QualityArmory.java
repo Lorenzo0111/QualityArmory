@@ -649,7 +649,6 @@ public class QualityArmory {
 			if (player.getInventory().firstEmpty() >= 0) {
 				ItemStack is = getCustomItemAsItemStack(a);
 				is.setAmount(remaining);
-				System.out.println(MaterialStorage.getVariant(is));
 				player.getInventory().addItem(is);
 				remaining = 0;
 			}
