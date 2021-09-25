@@ -681,8 +681,6 @@ public class GunUtil {
 			final int reloadAmount = doNotRemoveAmmo ? g.getMaxBullets()
 					: Math.min(g.getMaxBullets(), initialAmount + QualityArmory.getAmmoInInventory(player, ammo));
 			final int subtractAmount = reloadAmount - initialAmount;
-			if (!doNotRemoveAmmo)
-				QualityArmory.removeAmmoFromInventory(player, ammo, subtractAmount);
 
 			if (g.getReloadingingHandler() != null) {
 				seconds = g.getReloadingingHandler().reload(player, g, subtractAmount);
@@ -696,7 +694,7 @@ public class GunUtil {
 			if(QAMain.showAmmoInXPBar){
 				updateXPBar(player,g,0);
 			}
-			new GunRefillerRunnable(player, temp, g, slot, initialAmount, reloadAmount, seconds);
+			new GunRefillerRunnable(player, temp, g, slot, initialAmount, reloadAmount, seconds, ammo, subtractAmount, !doNotRemoveAmmo);
 
 		}
 

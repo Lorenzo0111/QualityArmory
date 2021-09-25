@@ -3,6 +3,7 @@ package me.zombie_striker.qg.guns.utils;
 import java.util.ArrayList;
 import java.util.List;
 
+import me.zombie_striker.qg.ammo.Ammo;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -53,7 +54,7 @@ public class GunRefillerRunnable {
 	}
 
 	public GunRefillerRunnable(final Player player, final ItemStack modifiedOriginalItem, final Gun g, final int slot,
-			final int originalAmount, final int reloadAmount, double seconds) {
+							   final int originalAmount, final int reloadAmount, double seconds, Ammo ammo, int subtractAmount, boolean removeAmmo) {
 		final GunRefillerRunnable gg = this;
 		gg.reloader = player;
 
@@ -66,7 +67,17 @@ public class GunRefillerRunnable {
 			@Override
 			public void run() {
 				ItemMeta newim = modifiedOriginalItem.getItemMeta();
-				if(player.getInventory().getHeldItemSlot()==slot) {
+				boolean shouldContinue = player.getInventory().getHeldItemSlot()==slot;
+
+				if (shouldContinue && removeAmmo) {
+					// Check if player still have ammo and remove it
+					if (g.playerHasAmmo(player) && QualityArmory.getAmmoInInventory(player,ammo) >= reloadAmount)
+						QualityArmory.removeAmmoFromInventory(player, ammo, subtractAmount);
+					else
+						shouldContinue = false;
+				}
+
+				if(shouldContinue) {
 					try {
 						player.getWorld().playSound(player.getLocation(), WeaponSounds.RELOAD_MAG_IN.getSoundName(), 1, 1f);
 						if (!QAMain.isVersionHigherThan(1, 9)) {
@@ -126,7 +137,7 @@ public class GunRefillerRunnable {
 					return;
 				}
 				List<GunRefillerRunnable> rr = QAMain.reloadingTasks.get(player.getUniqueId());
-				rr.remove(this);
+				rr.remove(GunRefillerRunnable.this);
 				reloadedItem = null;
 				allGunRefillers.remove(gg);
 
