@@ -21,9 +21,7 @@ public class ExplosionHandler {
 			}else{
 				origin.getWorld().createExplosion(origin, 0);
 			}
-			if(false)
-				throw new ClassNotFoundException();
-		}catch(ClassNotFoundException e4){
+		}catch(NoClassDefFoundError e4){
 			origin.getWorld().createExplosion(origin, power);
 		}
 	}
