@@ -756,6 +756,9 @@ public class QAMain extends JavaPlugin {
 	public void reloadVals() {
 		reloadConfig();
 		DEBUG = (boolean) a("ENABLE-DEBUG", false);
+		if (!((boolean) a("worldGuardSupport", true))) {
+			supportWorldGuard = false;
+		}
 
 		Material glass = null;
 		Material glass2 = null;
