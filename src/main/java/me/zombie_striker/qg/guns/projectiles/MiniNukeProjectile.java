@@ -54,7 +54,7 @@ public MiniNukeProjectile() {
 
 				if (GunUtil.isSolid(s.getBlock(), s) || entityNear || distance < 0) {
 					if (QAMain.enableExplosionDamage) {
-						ExplosionHandler.handleExplosion(s, 4, 2);
+						ExplosionHandler.handleExplosion(s, Math.toIntExact(Math.round(g.getExplosionRadius())), 2);
 					}
 					try {
 						player.getWorld().playSound(s, WeaponSounds.WARHEAD_EXPLODE.getSoundName(), 10, 0.9f);

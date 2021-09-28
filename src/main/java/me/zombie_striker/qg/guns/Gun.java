@@ -1120,4 +1120,59 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
 	public void setChargingSound(String chargingSound) {
 		this.chargingSound = chargingSound;
 	}
+
+	@Override
+	public String toString() {
+		return "Gun{" +
+				"glowEffect=" + glowEffect +
+				", unlimitedAmmo=" + unlimitedAmmo +
+				", lastshot=" + lastshot +
+				", supports18=" + supports18 +
+				", nightVisionOnScope=" + nightVisionOnScope +
+				", customProjectile=" + customProjectile +
+				", velocity=" + velocity +
+				", explosionRadius=" + explosionRadius +
+				", recoil=" + recoil +
+				", type=" + type +
+				", hasIronSights=" + hasIronSights +
+				", zoomLevel=" + zoomLevel +
+				", ammotype=" + ammotype +
+				", acc=" + acc +
+				", swaymultiplier=" + swaymultiplier +
+				", swayUnscopedMultiplier=" + swayUnscopedMultiplier +
+				", maxbull=" + maxbull +
+				", damage=" + damage +
+				", durib=" + durib +
+				", isAutomatic=" + isAutomatic +
+				", headshotMultiplier=" + headshotMultiplier +
+				", isPrimaryWeapon=" + isPrimaryWeapon +
+				", useOffhandOverride=" + useOffhandOverride +
+				", weaponSounds=" + weaponSounds +
+				", volume=" + volume +
+				", delayBetweenShots=" + delayBetweenShots +
+				", shotsPerBullet=" + shotsPerBullet +
+				", firerate=" + firerate +
+				", reloadTime=" + reloadTime +
+				", ch=" + ch +
+				", rh=" + rh +
+				", enableSwayMovementModifier=" + enableSwayMovementModifier +
+				", enableSwaySneakModifier=" + enableSwaySneakModifier +
+				", enableSwayRunModifier=" + enableSwayRunModifier +
+				", maxDistance=" + maxDistance +
+				", particle=" + particle +
+				", particle_data=" + particle_data +
+				", particle_r=" + particle_r +
+				", particle_g=" + particle_g +
+				", particle_b=" + particle_b +
+				", particle_material=" + particle_material +
+				", lightl=" + lightl +
+				", enableMuzzleSmoke=" + enableMuzzleSmoke +
+				", knockbackPower=" + knockbackPower +
+				", slownessPower=" + slownessPower +
+				", reloadingSound='" + reloadingSound + '\'' +
+				", chargingSound='" + chargingSound + '\'' +
+				", killedByMessage='" + killedByMessage + '\'' +
+				", lastRMB=" + lastRMB +
+				'}';
+	}
 }

@@ -17,12 +17,12 @@ public class ExplosionHandler {
 	public static void handleExplosion(Location origin, int radius, int power) {
 		try{
 			if(WorldGuardSupport.canExplode(origin)) {
-				origin.getWorld().createExplosion(origin, power);
+				origin.getWorld().createExplosion(origin, Math.max(radius,power));
 			}else{
 				origin.getWorld().createExplosion(origin, 0);
 			}
 		}catch(NoClassDefFoundError e4){
-			origin.getWorld().createExplosion(origin, power);
+			origin.getWorld().createExplosion(origin, Math.max(radius,power));
 		}
 	}
 	

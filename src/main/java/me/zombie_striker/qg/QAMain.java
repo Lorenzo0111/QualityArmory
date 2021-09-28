@@ -1235,6 +1235,8 @@ public class QAMain extends JavaPlugin {
 				s.add("sendResourcepack");
 			if (b("version", args[0]))
 				s.add("version");
+			if (b("dumpItem", args[0]))
+				s.add("dumpItem");
 			if (enableShop)
 				if (b("shop", args[0]))
 					s.add("shop");
@@ -1317,6 +1319,25 @@ public class QAMain extends JavaPlugin {
 					if (sender.hasPermission("qualityarmory.debug")) {
 						DEBUG = !DEBUG;
 						sender.sendMessage(prefix + "Console debugging set to "+DEBUG);
+					} else {
+						sender.sendMessage(prefix + ChatColor.RED + S_NOPERM);
+						return true;
+					}
+					return true;
+
+				}
+				if (args[0].equalsIgnoreCase("dumpItem")) {
+					if (sender.hasPermission("qualityarmory.debug")) {
+						if (!(sender instanceof Player)) {
+							return true;
+						}
+						Gun gun = QualityArmory.getGunInHand(((Player) sender));
+						if (gun == null) {
+							sender.sendMessage(prefix + ChatColor.RED + "You need to hold a gun to do this.");
+							return true;
+						}
+
+						sender.sendMessage(prefix + ChatColor.YELLOW + gun.toString());
 					} else {
 						sender.sendMessage(prefix + ChatColor.RED + S_NOPERM);
 						return true;
