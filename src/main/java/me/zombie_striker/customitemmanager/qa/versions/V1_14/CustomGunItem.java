@@ -708,20 +708,20 @@ public class CustomGunItem extends AbstractCustomGunItem {
 		GunYMLCreator
 				.createMisc(false, dataFolder, false, "default_molotov", "molotov",
 						"&7Molotov",
-						Arrays.asList(ChatColor.DARK_GRAY + "[LMB] to light",
-								ChatColor.DARK_GRAY + "[RMB] to throw",
-								ChatColor.DARK_GRAY + "Molotovs explode on contact",
-								ChatColor.DARK_RED + "<!>Will Not Explode If Not Thrown<!>"),
+						Arrays.asList("&8[LMB] to light",
+								"&8[RMB] to throw",
+								"&8Molotovs explode on contact",
+								"&4<!>Will Not Explode If Not Thrown<!>"),
 						m(80), stringsGrenades, 100, WeaponType.MOLOTOV, 100, 1)
 				.set(false, "radius", 5).done();
 
 		GunYMLCreator
 				.createMisc(false, dataFolder, false, "default_proxymine", "proxymine",
 						"&7Proxy-Mine",
-						Arrays.asList(ChatColor.DARK_GRAY + "[LMB] to activate",
-								ChatColor.DARK_GRAY + "[RMB] to throw",
-								ChatColor.DARK_GRAY + "Proxy-Mines explode after being thrown by pressing [SHIFT]",
-								ChatColor.DARK_RED + "<!>Will Not Explode If Not Thrown<!>"),
+						Arrays.asList("&8[LMB] to activate",
+								"&8[RMB] to throw",
+								"&8Proxy-Mines explode after being thrown by pressing [SHIFT]",
+								"&4<!>Will Not Explode If Not Thrown<!>"),
 						m(81), stringsGrenades, 100, WeaponType.PROXYMINES, 100, 1)
 				.set(false, "radius", 5).done();
 
