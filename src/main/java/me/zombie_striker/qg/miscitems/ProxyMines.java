@@ -65,8 +65,9 @@ public class ProxyMines extends Grenade {
 				if (k >= 20) {
 					boolean det = false;
 					for(Entity e : h.getHolder().getNearbyEntities(radius,radius,radius)){
-						if(e instanceof Player){
+						if (e instanceof Player) {
 							det = true;
+							break;
 						}
 					}
 					if(det){
@@ -74,7 +75,7 @@ public class ProxyMines extends Grenade {
 							h.getHolder().remove();
 						}
 						if (QAMain.enableExplosionDamage) {
-							ExplosionHandler.handleExplosion(h.getHolder().getLocation(), 3, 1);
+							ExplosionHandler.handleExplosion(h.getHolder().getLocation(), Math.toIntExact(Math.round(radius/2)), 1);
 							QAMain.DEBUG("Using default explosions");
 						}
 						try {
