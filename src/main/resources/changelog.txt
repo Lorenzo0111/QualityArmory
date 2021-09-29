@@ -2,6 +2,13 @@
     - Improved DestructableMaterials configuration
     - Fixed block breaking
     - Fixed gun reload (Reloading weapons and switching to another slot causes ammo disappear without reloading)
+    - Fixed customizable prefix
+    - Fixed wrong gun names
+    - Fixed explosions
+    - Fixed wrong guns colors encoding in configuration files
+    - Added an option to force-disable worldguard support
+    - Added more messages customization
+    - Now caching changelog to reduce lag
 
 2.0.1
     - Added an API method to check if a player is using a gun
