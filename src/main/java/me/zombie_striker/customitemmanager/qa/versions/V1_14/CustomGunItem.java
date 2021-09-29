@@ -593,7 +593,7 @@ public class CustomGunItem extends AbstractCustomGunItem {
 				.createNewDefaultGun(dataFolder, "vz58", "VZ.58", 4, stringsMetalRif, WeaponType.RIFLE,
 						null, true, "762", 3, 30, 4500)
 				.setSway(0.2).setFullyAutomatic(2).setBulletsPerShot(1).setVariant(1).setMaterial(Material.CROSSBOW).done();
-		GunYMLCreator.createNewDefaultGun(dataFolder, "cz65", "CZ.65", 2, stringsPistol, WeaponType.PISTOL,
+		GunYMLCreator.createNewDefaultGun(dataFolder, "cz75", "CZ.75", 2, stringsPistol, WeaponType.PISTOL,
 				null, true, "9mm", 3, 12, 700).setIsSecondaryWeapon(true).setVariant(1).setMaterial(Material.CROSSBOW).done();
 
 		GunYMLCreator
