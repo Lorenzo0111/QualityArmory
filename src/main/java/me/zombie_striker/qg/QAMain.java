@@ -146,6 +146,7 @@ public class QAMain extends JavaPlugin {
 
 	public static String S_NOPERM = "&c You do not have permission to do that.";
 
+	public static String S_RELOAD = " Guns and configs have been reloaded.";
 	public static String S_NORES1 = " &c&l Downloading Resourcepack...";
 	public static String S_NORES2 = " &f Accept the resourcepack to see the custom items";
 	public static String S_ANVIL = " &a You do not have permission to use this armory bench. Shift+Click to access anvil.";
@@ -206,6 +207,9 @@ public class QAMain extends JavaPlugin {
 	public static String S_shopName = "Weapons Shop Page:";
 	public static String S_noMoney = "You do not have enough money to buy this.";
 	public static String S_noEcon = "ECONOMY NOT ENABLED. REPORT THIS TO THE OWNER!";
+	public static String S_nextPage = "&6Next Page:";
+	public static String S_prevPage = "&6Previous Page:";
+
 	public static ItemStack prevButton;
 	public static ItemStack nextButton;
 	public static MessagesYML m;
@@ -768,10 +772,10 @@ public class QAMain extends JavaPlugin {
 			prevButton = new ItemStack(glass, 1);
 			nextButton = new ItemStack(glass2, 1);
 			ItemMeta nextButtonMeta = nextButton.getItemMeta();
-			nextButtonMeta.setDisplayName(ChatColor.GOLD + " Next Page:");
+			nextButtonMeta.setDisplayName(S_nextPage);
 			nextButton.setItemMeta(nextButtonMeta);
 			ItemMeta prevButtonMeta = prevButton.getItemMeta();
-			prevButtonMeta.setDisplayName(ChatColor.GOLD + " Previous Page:");
+			prevButtonMeta.setDisplayName(S_prevPage);
 			prevButton.setItemMeta(prevButtonMeta);
 		} catch (Error | Exception e45) {
 			glass = Material.matchMaterial("STAINED_GLASS_PANE");
@@ -820,6 +824,7 @@ public class QAMain extends JavaPlugin {
 		prefix = LocalUtils.colorize( (String) m.a("Prefix", prefix));
 		S_ANVIL = LocalUtils.colorize( (String) m.a("NoPermAnvilMessage", S_ANVIL));
 		S_NOPERM = LocalUtils.colorize( (String) m.a("NoPerm", S_NOPERM));
+		S_RELOAD = LocalUtils.colorize( (String) m.a("Reload", S_RELOAD));
 		S_shopName = (String) m.a("ShopName", S_shopName);
 		S_craftingBenchName = (String) m.a("CraftingBenchName", S_craftingBenchName);
 		S_missingIngredients = (String) m.a("Missing_Ingredients", S_missingIngredients);
@@ -868,6 +873,9 @@ public class QAMain extends JavaPlugin {
 		S_RESOURCEPACK_BYPASS = (String) m.a("Resourcepack_NowBypass", S_RESOURCEPACK_BYPASS);
 		S_RESOURCEPACK_OPTIN = (String) m.a("Resourcepack_NowOptIn", S_RESOURCEPACK_OPTIN);
 
+		S_GRENADE_PALREADYPULLPIN = LocalUtils.colorize((String) m.a("grenadeAlreadyPulled", S_GRENADE_PALREADYPULLPIN));
+		S_GRENADE_PULLPIN = LocalUtils.colorize((String) m.a("grenadePull", S_GRENADE_PULLPIN));
+
 		S_FULLYHEALED = LocalUtils.colorize( (String) m.a("Medkit-FullyHealed", S_FULLYHEALED));
 		S_MEDKIT_HEALING = LocalUtils.colorize(
 				(String) m.a("Medkit-Healing", S_MEDKIT_HEALING));
@@ -887,6 +895,8 @@ public class QAMain extends JavaPlugin {
 				(String) m.a("Bleeding.StartBleeding", S_BLEEDOUT_STARTBLEEDING));
 		S_BULLETPROOFSTOPPEDBLEEDING = LocalUtils.colorize(
 				(String) m.a("Bleeding.ProtectedByKevlar", S_BULLETPROOFSTOPPEDBLEEDING));
+		S_prevPage = LocalUtils.colorize( (String) m.a("gui.prevPage", S_prevPage));
+		S_nextPage = LocalUtils.colorize( (String) m.a("gui.nextPage", S_nextPage));
 
 		resourcepackwhitelist = new MessagesYML(new File(getDataFolder(), "resourcepackwhitelist.yml"));
 		namesToBypass = (List<String>) resourcepackwhitelist.a("Names_Of_players_to_bypass", namesToBypass);
@@ -1434,7 +1444,7 @@ public class QAMain extends JavaPlugin {
 					if (sender.hasPermission("qualityarmory.reload")) {
 						reloadConfig();
 						reloadVals();
-						sender.sendMessage(prefix + " Guns and configs have been reloaded.");
+						sender.sendMessage(prefix + S_RELOAD);
 						return true;
 					} else {
 						sender.sendMessage(prefix + ChatColor.RED + S_NOPERM);
