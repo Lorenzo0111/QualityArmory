@@ -61,6 +61,8 @@ import java.util.logging.Level;
 
 public class QAMain extends JavaPlugin {
 
+	private static String changelog = null;
+
 	public static final int ViaVersionIdfor_1_8 = 106;
 	private static final String SERVER_VERSION;
 	// Chris: change to LinkedHashMap let the Items can sort by FileName.
@@ -1301,28 +1303,36 @@ public class QAMain extends JavaPlugin {
 					sender.sendMessage(prefix + ChatColor.WHITE + " This server is using version " + ChatColor.GREEN
 							+ this.getDescription().getVersion() + ChatColor.WHITE + " of QualityArmory");
 					sender.sendMessage("--==Changelog==--");
-					InputStream in = getClass().getResourceAsStream("/changelog.txt");
-					BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-					for (int i = 0; i < 7; i++) {
-						try {
-							String s = reader.readLine();
-							if (s.length() <= 1)
-								break;
-							if (i == 6) {
-								sender.sendMessage("......");
-								break;
+					if (changelog == null) {
+						StringBuilder builder = new StringBuilder();
+
+						InputStream in = getClass().getResourceAsStream("/changelog.txt");
+						BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+						for (int i = 0; i < 7; i++) {
+							try {
+								String s = reader.readLine();
+								if (s.length() <= 1)
+									break;
+								if (i == 6) {
+									builder.append("......\n");
+									break;
+								}
+								builder.append("\n").append(s);
+							} catch (IOException ignored) {
 							}
-							sender.sendMessage(s);
+						}
+
+						try {
+							in.close();
+							reader.close();
 						} catch (IOException e) {
 						}
+
+						changelog = LocalUtils.colorize(builder.toString());
 					}
 
-					try {
-						in.close();
-						reader.close();
-					} catch (IOException e) {
-					}
 
+					sender.sendMessage(changelog);
 					return true;
 				}
 				if (args[0].equalsIgnoreCase("debug")) {
