@@ -66,7 +66,6 @@ public class QAMain extends JavaPlugin {
 
 	public static final int ViaVersionIdfor_1_8 = 106;
 	private static final String SERVER_VERSION;
-	// Chris: change to LinkedHashMap let the Items can sort by FileName.
 	public static HashMap<MaterialStorage, Gun> gunRegister = new LinkedHashMap<>();
 	public static HashMap<MaterialStorage, Ammo> ammoRegister = new LinkedHashMap<>();
 	public static HashMap<MaterialStorage, CustomBaseObject> miscRegister = new LinkedHashMap<>();
@@ -684,7 +683,7 @@ public class QAMain extends JavaPlugin {
 
 		try {
 			if (AUTOUPDATE)
-				GithubUpdater.autoUpdate(this, "Lorenzo0111", "QualityArmory", "QualityArmory.jar");
+				GithubUpdater.autoUpdate(this, "ZombieStriker", "QualityArmory", "QualityArmory.jar");
 		} catch (Exception e) {
 		}
 
@@ -767,6 +766,9 @@ public class QAMain extends JavaPlugin {
 			supportWorldGuard = false;
 		}
 
+		if (Bukkit.getPluginManager().isPluginEnabled("WorldGuard") && !Bukkit.getPluginManager().isPluginEnabled("QAWorldGuard")) {
+			this.getLogger().info("It appears you are running WorldGuard. If you want to implement flags you can download the QAWorldGuard addon: https://www.spigotmc.org/resources/96868/");
+		}
 
 		new BoltactionCharger();
 		new BreakactionCharger();
