@@ -9,7 +9,7 @@ import me.zombie_striker.qg.boundingbox.BoundingBoxManager;
 import me.zombie_striker.qg.guns.Gun;
 import me.zombie_striker.qg.guns.utils.GunUtil;
 
-import me.zombie_striker.qg.handlers.WorldGuardSupport;
+import me.zombie_striker.qg.hooks.WorldGuardSupport;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.entity.Damageable;

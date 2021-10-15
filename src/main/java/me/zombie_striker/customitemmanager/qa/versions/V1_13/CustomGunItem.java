@@ -392,9 +392,6 @@ public class CustomGunItem extends AbstractCustomGunItem {
 		GunYMLCreator.createAmmo(true,dataFolder, false, "mininuke", "MiniNuke",Material.DIAMOND_AXE, 56,
 				stringsMini, 3000, 100, 1);
 
-		GunYMLCreator.createNewDefaultGun(dataFolder, "10mm", "&610mm Pistol", 57, strings10mm,
-				WeaponType.PISTOL, null, true, "9mm", 3, 12, 700).setIsSecondaryWeapon(true).done();
-
 		GunYMLCreator
 				.createNewDefaultGun(dataFolder, "instituterifle", "&6Institute Rifle", 58,
 						stringsMetalRif, WeaponType.LAZER, WeaponSounds.LAZERSHOOT, false, "fusion_cell", 4, 20,

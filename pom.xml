@@ -74,6 +74,11 @@
             <name>Minecraft Libraries</name>
             <url>https://libraries.minecraft.net</url>
         </repository>
+
+        <repository>
+            <id>Sparky</id>
+            <url>https://nexus.sparky.ac/repository/Sparky/</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -121,6 +126,14 @@
                     <artifactId>bukkit</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+
+        <!-- Spartan -->
+        <dependency>
+            <groupId>me.vagdedes.spartan</groupId>
+            <artifactId>SpartanAPI</artifactId>
+            <version>1.0</version>
+            <scope>provided</scope>
         </dependency>
 
         <!-- WorldGuard API -->

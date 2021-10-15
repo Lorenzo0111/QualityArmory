@@ -1,4 +1,4 @@
-package me.zombie_striker.qg.handlers;
+package me.zombie_striker.qg.hooks;
 
 import me.zombie_striker.qg.QAMain;
 import org.bukkit.Location;

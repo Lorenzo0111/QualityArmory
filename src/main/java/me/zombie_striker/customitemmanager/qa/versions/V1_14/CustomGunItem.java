@@ -427,8 +427,6 @@ public class CustomGunItem extends AbstractCustomGunItem {
 				.setReloadingHandler(ReloadingManager.SINGLE_RELOAD).setDistance(500).setParticle(0.3, 0.9, 0.3, Material.COAL_BLOCK).setMaterial(Material.CROSSBOW)
 				.setRecoil(5).setKilledByMessage("%player% was nuked by %killer% using a %name%").done();
 
-		GunYMLCreator.createNewDefaultGun(dataFolder, "10mmpistol", "10mm Pistol", 34, strings10mm,
-				WeaponType.PISTOL, null, true, "9mm", 3, 12, 700).setReloadingHandler(ReloadingManager.SLIDE_RELOAD).setIsSecondaryWeapon(true).setMaterial(Material.CROSSBOW).done();
 
 		GunYMLCreator
 				.createNewDefaultGun(dataFolder, "instituterifle", "Institute Rifle", 35,
