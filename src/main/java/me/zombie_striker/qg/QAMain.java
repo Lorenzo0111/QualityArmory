@@ -8,6 +8,7 @@ import me.zombie_striker.customitemmanager.qa.AbstractCustomGunItem;
 import me.zombie_striker.customitemmanager.qa.ItemBridgePatch;
 import me.zombie_striker.customitemmanager.qa.versions.V1_13.CustomGunItem;
 import me.zombie_striker.qg.ammo.Ammo;
+import me.zombie_striker.qg.api.QAGunGiveEvent;
 import me.zombie_striker.qg.api.QualityArmory;
 import me.zombie_striker.qg.armor.ArmorObject;
 import me.zombie_striker.qg.attachments.AttachmentBase;
@@ -1605,7 +1606,12 @@ public class QAMain extends JavaPlugin {
 						ItemStack temp;
 
 						if (g instanceof Gun) {
-							temp =CustomItemManager.getItemType("gun").getItem(g.getItemData().getMat(),g.getItemData().getData(),g.getItemData().getVariant());;
+							QAGunGiveEvent event = new QAGunGiveEvent(who,(Gun) g, QAGunGiveEvent.Cause.COMMAND);
+							Bukkit.getPluginManager().callEvent(event);
+							if (event.isCancelled()) return true;
+
+							g = event.getGun();
+							temp = CustomItemManager.getItemType("gun").getItem(g.getItemData().getMat(),g.getItemData().getData(),g.getItemData().getVariant());
 							who.getInventory().addItem(temp);
 						} else if (g instanceof Ammo) {
 							int amount = ((Ammo) g).getMaxItemStack();

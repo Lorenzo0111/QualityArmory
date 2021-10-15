@@ -7,6 +7,7 @@ import me.zombie_striker.customitemmanager.MaterialStorage;
 import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.ammo.Ammo;
 import me.zombie_striker.qg.api.QACustomItemInteractEvent;
+import me.zombie_striker.qg.api.QAGunGiveEvent;
 import me.zombie_striker.qg.api.QualityArmory;
 import me.zombie_striker.qg.attachments.AttachmentBase;
 import me.zombie_striker.qg.guns.Gun;
@@ -338,6 +339,13 @@ public class QAListener implements Listener {
 											.replaceAll("%cost%", "" + g.getPrice()));
 						} else
 							QAMain.removeForIngre((Player) e.getWhoClicked(), g);
+
+						if (g instanceof Gun) {
+							QAGunGiveEvent event = new QAGunGiveEvent(((Player) e.getWhoClicked()), ((Gun) g), QAGunGiveEvent.Cause.SHOP);
+							if (event.isCancelled()) return;
+							g = event.getGun();
+						}
+
 						ItemStack s = CustomItemManager.getItemType("gun").getItem(g.getItemData().getMat(), g.getItemData().getData(), g.getItemData().getVariant());
 						e.getWhoClicked().getInventory().addItem(s);
 						QAMain.shopsSounds(e, shop);
