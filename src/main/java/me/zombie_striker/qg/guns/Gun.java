@@ -917,12 +917,12 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
 						}
 						lastRMB.put(player.getUniqueId(),System.currentTimeMillis());
 					}
-					shoot(player.getPlayer(), automaticfiring);
-					if(getKnockbackPower() != 0){
+					if(!GunUtil.isDelay(this,player,((int) (this.getDelayBetweenShotsInSeconds() * 1000))) && getKnockbackPower() != 0){
 						Vector currentVelocity = player.getVelocity();
 						currentVelocity.add(player.getLocation().getDirection().normalize().multiply(-getKnockbackPower()));
 						player.setVelocity(currentVelocity);
 					}
+					shoot(player.getPlayer(), automaticfiring);
 				}else{
 					player.getPlayer().playSound(player.getPlayer().getLocation(),WeaponSounds.METALHIT.getSoundName(),1,1);
 					QAMain.DEBUG("Durablility less than 0");

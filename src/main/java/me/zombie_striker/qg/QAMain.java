@@ -27,6 +27,7 @@ import me.zombie_striker.qg.handlers.*;
 import me.zombie_striker.qg.guns.chargers.*;
 import me.zombie_striker.qg.guns.reloaders.PumpactionReloader;
 import me.zombie_striker.qg.guns.reloaders.SingleBulletReloader;
+import me.zombie_striker.qg.hooks.SpartanHook;
 import me.zombie_striker.qg.listener.QAListener;
 import me.zombie_striker.qg.miscitems.ThrowableItems;
 import me.zombie_striker.qg.miscitems.ThrowableItems.ThrowableHolder;
@@ -633,6 +634,8 @@ public class QAMain extends JavaPlugin {
 			this.getDataFolder().mkdirs();
 		}
 		supportWorldGuard = Bukkit.getPluginManager().isPluginEnabled("WorldGuard");
+		if (Bukkit.getPluginManager().isPluginEnabled("Spartan"))
+			Bukkit.getPluginManager().registerEvents(new SpartanHook(),this);
 
 		try {
 			ParticleHandlers.initValues();

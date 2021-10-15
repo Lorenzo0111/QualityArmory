@@ -435,8 +435,7 @@ public class GunUtil {
 				|| (g.getReloadingingHandler() != null && g.getReloadingingHandler().isReloading(player))))
 			return;
 
-		if (g.getLastShotForGun().containsKey(player.getUniqueId())
-				&& (System.currentTimeMillis() - g.getLastShotForGun().get(player.getUniqueId()) < showdelay)) {
+		if (isDelay(g,player,showdelay)) {
 			QAMain.DEBUG("Shooting canceled due to last shot being too soon.");
 			return;
 		}
@@ -770,5 +769,10 @@ public class GunUtil {
 	@SuppressWarnings("deprecation")
 	public static boolean isSolid(Block b, Location l) {
 		return BlockCollisionUtil.isSolid(b, l);
+	}
+
+	public static boolean isDelay(Gun g, Player player, long showdelay) {
+		 return (g.getLastShotForGun().containsKey(player.getUniqueId())
+				&& (System.currentTimeMillis() - g.getLastShotForGun().get(player.getUniqueId()) < showdelay));
 	}
 }
