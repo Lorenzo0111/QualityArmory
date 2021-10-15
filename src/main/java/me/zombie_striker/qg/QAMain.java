@@ -767,24 +767,6 @@ public class QAMain extends JavaPlugin {
 			supportWorldGuard = false;
 		}
 
-		Material glass = null;
-		Material glass2 = null;
-		try {
-			glass = Material.matchMaterial("BLUE_STAINED_GLASS_PANE");
-			glass2 = Material.matchMaterial("RED_STAINED_GLASS_PANE");
-			prevButton = new ItemStack(glass, 1);
-			nextButton = new ItemStack(glass2, 1);
-			ItemMeta nextButtonMeta = nextButton.getItemMeta();
-			nextButtonMeta.setDisplayName(S_nextPage);
-			nextButton.setItemMeta(nextButtonMeta);
-			ItemMeta prevButtonMeta = prevButton.getItemMeta();
-			prevButtonMeta.setDisplayName(S_prevPage);
-			prevButton.setItemMeta(prevButtonMeta);
-		} catch (Error | Exception e45) {
-			glass = Material.matchMaterial("STAINED_GLASS_PANE");
-			prevButton = new ItemStack(glass, 1, (short) 14);
-			nextButton = new ItemStack(glass, 1, (short) 5);
-		}
 
 		new BoltactionCharger();
 		new BreakactionCharger();
@@ -829,6 +811,7 @@ public class QAMain extends JavaPlugin {
 		S_NOPERM = LocalUtils.colorize( (String) m.a("NoPerm", S_NOPERM));
 		S_RELOAD = LocalUtils.colorize( (String) m.a("Reload", S_RELOAD));
 		S_shopName = (String) m.a("ShopName", S_shopName);
+		S_noMoney = LocalUtils.colorize( (String) m.a("NoMoney", S_noMoney));
 		S_craftingBenchName = (String) m.a("CraftingBenchName", S_craftingBenchName);
 		S_missingIngredients = (String) m.a("Missing_Ingredients", S_missingIngredients);
 		S_NORES1 = LocalUtils.colorize( (String) m.a("NoResourcepackMessage1", S_NORES1));
@@ -900,6 +883,25 @@ public class QAMain extends JavaPlugin {
 				(String) m.a("Bleeding.ProtectedByKevlar", S_BULLETPROOFSTOPPEDBLEEDING));
 		S_prevPage = LocalUtils.colorize( (String) m.a("gui.prevPage", S_prevPage));
 		S_nextPage = LocalUtils.colorize( (String) m.a("gui.nextPage", S_nextPage));
+
+		Material glass = null;
+		Material glass2 = null;
+		try {
+			glass = Material.matchMaterial("BLUE_STAINED_GLASS_PANE");
+			glass2 = Material.matchMaterial("RED_STAINED_GLASS_PANE");
+			prevButton = new ItemStack(glass, 1);
+			nextButton = new ItemStack(glass2, 1);
+			ItemMeta nextButtonMeta = nextButton.getItemMeta();
+			nextButtonMeta.setDisplayName(S_nextPage);
+			nextButton.setItemMeta(nextButtonMeta);
+			ItemMeta prevButtonMeta = prevButton.getItemMeta();
+			prevButtonMeta.setDisplayName(S_prevPage);
+			prevButton.setItemMeta(prevButtonMeta);
+		} catch (Error | Exception e45) {
+			glass = Material.matchMaterial("STAINED_GLASS_PANE");
+			prevButton = new ItemStack(glass, 1, (short) 14);
+			nextButton = new ItemStack(glass, 1, (short) 5);
+		}
 
 		resourcepackwhitelist = new MessagesYML(new File(getDataFolder(), "resourcepackwhitelist.yml"));
 		namesToBypass = (List<String>) resourcepackwhitelist.a("Names_Of_players_to_bypass", namesToBypass);
