@@ -1665,6 +1665,17 @@ public class QAMain extends JavaPlugin {
 					}
 				if (enableShop)
 					if (args[0].equalsIgnoreCase("shop")) {
+						if (args.length == 2 && sender.hasPermission("qualityarmory.shop.other")) {
+							Player target = Bukkit.getPlayer(args[1]);
+							if (target == null) {
+								sender.sendMessage(prefix + ChatColor.RED + "That player is not online");
+								return true;
+							}
+
+							target.openInventory(createShop(0));
+							return true;
+						}
+
 						if (!sender.hasPermission("qualityarmory.shop")) {
 							sender.sendMessage(prefix + ChatColor.RED + S_NOPERM);
 							return true;
