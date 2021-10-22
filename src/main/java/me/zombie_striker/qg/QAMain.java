@@ -634,8 +634,10 @@ public class QAMain extends JavaPlugin {
 			this.getDataFolder().mkdirs();
 		}
 		supportWorldGuard = Bukkit.getPluginManager().isPluginEnabled("WorldGuard");
-		if (Bukkit.getPluginManager().isPluginEnabled("Spartan"))
-			Bukkit.getPluginManager().registerEvents(new SpartanHook(),this);
+		if (Bukkit.getPluginManager().isPluginEnabled("Spartan")) {
+			Bukkit.getPluginManager().registerEvents(new SpartanHook(), this);
+			this.getLogger().info("Found Spartan AntiCheat. Loaded support");
+		}
 
 		try {
 			ParticleHandlers.initValues();

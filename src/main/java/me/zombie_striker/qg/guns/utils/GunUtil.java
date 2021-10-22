@@ -428,14 +428,13 @@ public class GunUtil {
 	}
 	@SuppressWarnings("deprecation")
 	public static void basicShoot(boolean offhand, final Gun g, final Player player, final double acc, int times, boolean holdingRMB) {
-		long showdelay = ((int) (g.getDelayBetweenShotsInSeconds() * 1000));
 		QAMain.DEBUG("About to shoot!");
 
 		if (g.getChargingHandler() != null && (g.getChargingHandler().isCharging(player)
 				|| (g.getReloadingingHandler() != null && g.getReloadingingHandler().isReloading(player))))
 			return;
 
-		if (isDelay(g,player,showdelay)) {
+		if (isDelay(g,player)) {
 			QAMain.DEBUG("Shooting canceled due to last shot being too soon.");
 			return;
 		}
@@ -771,7 +770,9 @@ public class GunUtil {
 		return BlockCollisionUtil.isSolid(b, l);
 	}
 
-	public static boolean isDelay(Gun g, Player player, long showdelay) {
+	public static boolean isDelay(Gun g, Player player) {
+		int showdelay = ((int) (g.getDelayBetweenShotsInSeconds() * 1000));
+
 		 return (g.getLastShotForGun().containsKey(player.getUniqueId())
 				&& (System.currentTimeMillis() - g.getLastShotForGun().get(player.getUniqueId()) < showdelay));
 	}

@@ -917,7 +917,7 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
 						}
 						lastRMB.put(player.getUniqueId(),System.currentTimeMillis());
 					}
-					if(!GunUtil.isDelay(this,player,((int) (this.getDelayBetweenShotsInSeconds() * 1000))) && getKnockbackPower() != 0){
+					if(!GunUtil.isDelay(this,player) && getKnockbackPower() != 0){
 						Vector currentVelocity = player.getVelocity();
 						currentVelocity.add(player.getLocation().getDirection().normalize().multiply(-getKnockbackPower()));
 						player.setVelocity(currentVelocity);
