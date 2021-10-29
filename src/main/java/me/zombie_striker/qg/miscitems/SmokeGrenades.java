@@ -2,12 +2,13 @@ package me.zombie_striker.qg.miscitems;
 
 import java.util.List;
 
+import me.zombie_striker.qg.hooks.WorldGuardSupport;
 import org.bukkit.Effect;
 import org.bukkit.Sound;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -64,6 +65,18 @@ public class SmokeGrenades extends Grenade {
 					}
 					throwItems.remove(h.getHolder());
 					this.cancel();
+				} else {
+					for(Entity e : h.getHolder().getNearbyEntities(radius, radius, radius))
+						if(e instanceof LivingEntity) {
+							QAMain.DEBUG("Blinding to "+e.getName());
+							try {
+								if (WorldGuardSupport.a(e.getLocation())) {
+									((LivingEntity) e).addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 20 * 10, 2));
+								}
+							}catch (Error error){
+								((LivingEntity) e).addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 20 * 10, 2));
+							}
+						}
 				}
 			}
 		}.runTaskTimer(QAMain.getInstance(), 5 * 20, 5));
