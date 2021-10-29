@@ -29,10 +29,7 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.PlayerDeathEvent;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryMoveItemEvent;
-import org.bukkit.event.inventory.InventoryPickupItemEvent;
-import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.event.inventory.*;
 import org.bukkit.event.player.*;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -870,6 +867,13 @@ public class QAListener implements Listener {
 				} catch (Error e2) {
 				}
 			}
+			try {
+				if (!IronsightsHandler.isAiming(e.getPlayer()) && event.getPlayer().getInventory().getItemInOffHand().equals(e.getItem())) {
+					e.setCancelled(true);
+					return;
+				}
+			} catch (Throwable ignored) {}
+
 			CustomBaseObject qaItem = QualityArmory.getCustomItem(usedItem);
 			if (qaItem != null) {
 				QAMain.DEBUG(qaItem.getName() + " item is being used!");

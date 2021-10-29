@@ -638,6 +638,9 @@ public class QAMain extends JavaPlugin {
 			Bukkit.getPluginManager().registerEvents(new SpartanHook(), this);
 			this.getLogger().info("Found Spartan AntiCheat. Loaded support");
 		}
+/*		if (Bukkit.getPluginManager().isPluginEnabled("Oraxen") && (boolean) a("hooks.oraxen", true)) {
+			Bukkit.getPluginManager().registerEvents(new OraxenHook(), this);
+		}*/
 
 		try {
 			ParticleHandlers.initValues();

@@ -365,7 +365,7 @@ public class QualityArmory {
 	public static boolean isIronSights(ItemStack is) {
 		if (is == null)
 			return false;
-		if (is != null && is.getType() == IronsightsHandler.ironsightsMaterial	)
+		if (is.getType() == IronsightsHandler.ironsightsMaterial)
 			try{
 				if(!is.hasItemMeta() || !is.getItemMeta().hasCustomModelData())
 					return false;
