@@ -681,5 +681,12 @@ public class QualityArmory {
 		}
 		return remaining <= 0;
 	}
-	
+
+	public static void giveOrDrop(HumanEntity entity, ItemStack item) {
+		if (entity.getInventory().firstEmpty() != -1) {
+			entity.getInventory().addItem(item);
+		} else {
+			entity.getWorld().dropItem(entity.getLocation(), item);
+		}
+	}
 }

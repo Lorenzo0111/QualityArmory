@@ -344,7 +344,7 @@ public class QAListener implements Listener {
 						}
 
 						ItemStack s = CustomItemManager.getItemType("gun").getItem(g.getItemData().getMat(), g.getItemData().getData(), g.getItemData().getVariant());
-						e.getWhoClicked().getInventory().addItem(s);
+						QualityArmory.giveOrDrop(e.getWhoClicked(),s);
 						QAMain.shopsSounds(e, shop);
 						DEBUG("Buy-Item");
 					} else {
