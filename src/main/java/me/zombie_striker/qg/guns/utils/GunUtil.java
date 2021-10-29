@@ -26,6 +26,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
+import org.jetbrains.annotations.NotNull;
 import ru.beykerykt.lightapi.LightAPI;
 import ru.beykerykt.lightapi.chunks.ChunkInfo;
 
@@ -768,6 +769,11 @@ public class GunUtil {
 	@SuppressWarnings("deprecation")
 	public static boolean isSolid(Block b, Location l) {
 		return BlockCollisionUtil.isSolid(b, l);
+	}
+
+	@NotNull
+	public static String locationToString(@NotNull Location l) {
+		return "X: " + l.getX() + " Y: " + l.getY() + " Z: " + l.getZ();
 	}
 
 	public static boolean isDelay(Gun g, Player player) {

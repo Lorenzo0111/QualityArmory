@@ -47,9 +47,10 @@ public class RocketProjectile implements RealtimeCalculationProjectile {
 					} catch (Error e) {
 					}
 
-					if (GunUtil.isSolid(s.getBlock(), s) || entityNear || distance < 0) {
+					final Location explode = s.clone();
+					if (GunUtil.isSolid(explode.getBlock(), explode) || entityNear || distance < 0) {
 						if (QAMain.enableExplosionDamage) {
-							ExplosionHandler.handleExplosion(s, 4, 2);
+							ExplosionHandler.handleExplosion(explode, 4, 2);
 						}
 						try {
 							//player.getWorld().playSound(s, WeaponSounds.WARHEAD_EXPLODE.getSoundName(), 10, 0.9f);
