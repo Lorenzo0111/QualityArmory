@@ -695,29 +695,13 @@ public class QAMain extends JavaPlugin {
 		} catch (Exception e) {
 		}
 
-		Metrics metrics = new Metrics(this);
+		Metrics metrics = new Metrics(this, 1699);
 
-		// Optional: Add custom charts
-		metrics.addCustomChart(new Metrics.SimplePie("GunCount", new java.util.concurrent.Callable<String>() {
-			@Override
-			public String call() throws Exception {
-				return gunRegister.size() + "";
-			}
-		}));
+		metrics.addCustomChart(new Metrics.SimplePie("GunCount", () -> gunRegister.size() + ""));
 		metrics.addCustomChart(
-				new Metrics.SimplePie("uses_default_resourcepack", new java.util.concurrent.Callable<String>() {
-					@Override
-					public String call() throws Exception {
-						return overrideURL + "";
-					}
-				}));
+				new Metrics.SimplePie("uses_default_resourcepack", () -> overrideURL + ""));
 		metrics.addCustomChart(
-				new Metrics.SimplePie("has_an_expansion_pack", new java.util.concurrent.Callable<String>() {
-					@Override
-					public String call() throws Exception {
-						return (expansionPacks.size() > 0) + "";
-					}
-				}));
+				new Metrics.SimplePie("has_an_expansion_pack", () -> (expansionPacks.size() > 0) + ""));
 		if (!CustomItemManager.isUsingCustomData()) {
 			new BukkitRunnable() {
 				@SuppressWarnings("deprecation")
