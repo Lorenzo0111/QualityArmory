@@ -9,7 +9,7 @@ import me.zombie_striker.qg.boundingbox.BoundingBoxManager;
 import me.zombie_striker.qg.guns.Gun;
 import me.zombie_striker.qg.guns.utils.GunUtil;
 
-import me.zombie_striker.qg.hooks.WorldGuardSupport;
+import me.zombie_striker.qg.hooks.protection.ProtectionHandler;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.entity.Damageable;
@@ -49,7 +49,7 @@ public class FireProjectile implements RealtimeCalculationProjectile {
 							if (e instanceof LivingEntity) {
 								((LivingEntity) e).setNoDamageTicks(0);
 								try {
-									if (WorldGuardSupport.a(e.getLocation())) {
+									if (ProtectionHandler.canPvp(e.getLocation())) {
 										e.setFireTicks(20*3);
 									}
 								}catch (Error error){

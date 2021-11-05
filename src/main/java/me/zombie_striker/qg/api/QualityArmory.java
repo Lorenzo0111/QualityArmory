@@ -9,6 +9,7 @@ import java.util.Map.Entry;
 import me.zombie_striker.customitemmanager.*;
 import me.zombie_striker.qg.handlers.HotbarMessager;
 import me.zombie_striker.qg.handlers.IronsightsHandler;
+import me.zombie_striker.qg.hooks.protection.ProtectionHandler;
 import me.zombie_striker.qg.utils.LocalUtils;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.ChatColor;
@@ -31,7 +32,6 @@ import me.zombie_striker.qg.config.GunYMLLoader;
 import me.zombie_striker.qg.guns.Gun;
 import me.zombie_striker.qg.guns.utils.WeaponSounds;
 import me.zombie_striker.qg.guns.utils.WeaponType;
-import me.zombie_striker.qg.hooks.WorldGuardSupport;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -149,10 +149,8 @@ public class QualityArmory {
 	}
 
 	public static boolean allowGunsInRegion(Location loc) {
-		if (!QAMain.supportWorldGuard)
-			return true;
 		try {
-			return WorldGuardSupport.a(loc);
+			return ProtectionHandler.canPvp(loc);
 		} catch (Error e) {
 		}
 		return true;

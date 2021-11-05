@@ -2,7 +2,7 @@ package me.zombie_striker.qg.miscitems;
 
 import java.util.List;
 
-import me.zombie_striker.qg.hooks.WorldGuardSupport;
+import me.zombie_striker.qg.hooks.protection.ProtectionHandler;
 import org.bukkit.Effect;
 import org.bukkit.Sound;
 import org.bukkit.entity.Entity;
@@ -70,7 +70,7 @@ public class SmokeGrenades extends Grenade {
 						if(e instanceof LivingEntity) {
 							QAMain.DEBUG("Blinding to "+e.getName());
 							try {
-								if (WorldGuardSupport.a(e.getLocation())) {
+								if (ProtectionHandler.canPvp(e.getLocation())) {
 									((LivingEntity) e).addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 20 * 10, 2));
 								}
 							}catch (Error error){

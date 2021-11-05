@@ -3,7 +3,7 @@ package me.zombie_striker.qg.miscitems;
 import me.zombie_striker.customitemmanager.MaterialStorage;
 import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.guns.utils.WeaponSounds;
-import me.zombie_striker.qg.hooks.WorldGuardSupport;
+import me.zombie_striker.qg.hooks.protection.ProtectionHandler;
 import org.bukkit.Effect;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
@@ -72,7 +72,7 @@ public class Molotov extends Grenade {
 						if(e instanceof LivingEntity) {
 							QAMain.DEBUG("Firedamage to "+e.getName());
 							try {
-								if (WorldGuardSupport.a(e.getLocation())) {
+								if (ProtectionHandler.canPvp(e.getLocation())) {
 									e.setFireTicks(20);
 								}
 							}catch (Error error){

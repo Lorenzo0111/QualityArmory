@@ -28,6 +28,7 @@ import me.zombie_striker.qg.guns.chargers.*;
 import me.zombie_striker.qg.guns.reloaders.PumpactionReloader;
 import me.zombie_striker.qg.guns.reloaders.SingleBulletReloader;
 import me.zombie_striker.qg.hooks.SpartanHook;
+import me.zombie_striker.qg.hooks.protection.ProtectionHandler;
 import me.zombie_striker.qg.listener.QAListener;
 import me.zombie_striker.qg.miscitems.ThrowableItems;
 import me.zombie_striker.qg.miscitems.ThrowableItems.ThrowableHolder;
@@ -114,7 +115,6 @@ public class QAMain extends JavaPlugin {
 	public static boolean blockbullet_water = false;
 	public static boolean blockbullet_glass = false;
 	public static boolean overrideAnvil = false;
-	public static boolean supportWorldGuard = false;
 	public static boolean enableIronSightsON_RIGHT_CLICK = false;
 	public static boolean SwapSneakToSingleFire = false;
 	public static boolean enableBulletTrails = true;
@@ -633,7 +633,7 @@ public class QAMain extends JavaPlugin {
 		if(!this.getDataFolder().exists()){
 			this.getDataFolder().mkdirs();
 		}
-		supportWorldGuard = Bukkit.getPluginManager().isPluginEnabled("WorldGuard");
+		ProtectionHandler.init();
 		if (Bukkit.getPluginManager().isPluginEnabled("Spartan")) {
 			Bukkit.getPluginManager().registerEvents(new SpartanHook(), this);
 			this.getLogger().info("Found Spartan AntiCheat. Loaded support");
@@ -754,9 +754,6 @@ public class QAMain extends JavaPlugin {
 	public void reloadVals() {
 		reloadConfig();
 		DEBUG = (boolean) a("ENABLE-DEBUG", false);
-		if (!((boolean) a("worldGuardSupport", true))) {
-			supportWorldGuard = false;
-		}
 
 		if (Bukkit.getPluginManager().isPluginEnabled("WorldGuard") && !Bukkit.getPluginManager().isPluginEnabled("QAWorldGuard")) {
 			this.getLogger().info("It appears you are running WorldGuard. If you want to implement flags you can download the QAWorldGuard addon: https://www.spigotmc.org/resources/96868/");

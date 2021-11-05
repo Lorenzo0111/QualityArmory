@@ -2,7 +2,7 @@ package me.zombie_striker.qg.miscitems;
 
 import java.util.List;
 
-import me.zombie_striker.qg.hooks.WorldGuardSupport;
+import me.zombie_striker.qg.hooks.protection.ProtectionHandler;
 import org.bukkit.Effect;
 import org.bukkit.Sound;
 import org.bukkit.entity.Entity;
@@ -72,7 +72,7 @@ public class IncendaryGrenades extends Grenade {
 						if(e instanceof LivingEntity) {
 							QAMain.DEBUG("Firedamage to "+e.getName());
 							try {
-								if (WorldGuardSupport.a(e.getLocation())) {
+								if (ProtectionHandler.canPvp(e.getLocation())) {
 									e.setFireTicks(20);
 								}
 							}catch (Error error){

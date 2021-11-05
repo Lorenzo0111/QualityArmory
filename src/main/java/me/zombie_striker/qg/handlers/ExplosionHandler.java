@@ -1,6 +1,6 @@
 package me.zombie_striker.qg.handlers;
 
-import me.zombie_striker.qg.hooks.WorldGuardSupport;
+import me.zombie_striker.qg.hooks.protection.ProtectionHandler;
 import org.bukkit.Location;
 import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Entity;
@@ -17,7 +17,7 @@ public class ExplosionHandler {
 
 	public static void handleExplosion(Location origin, int radius, int power) {
 		try{
-			if(WorldGuardSupport.canExplode(origin)) {
+			if(ProtectionHandler.canExplode(origin)) {
 				origin.getWorld().createExplosion(origin, Math.max(radius,power));
 			}else{
 				origin.getWorld().createExplosion(origin, 0);
