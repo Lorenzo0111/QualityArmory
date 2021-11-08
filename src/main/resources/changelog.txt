@@ -1,3 +1,14 @@
+2.0.3
+    - Added residence,towny and worldguard support
+    - Fixed item give on shop
+    - Fixed glass break
+    - Fixed Smoke Grenades
+    - Updated metrics
+    - Fixed spartan compatiblity
+    - Fixed gun delay
+    - Fixed translations
+    - Added QAGunGiveEvent
+
 2.0.2
     - Improved DestructableMaterials configuration
     - Fixed block breaking
