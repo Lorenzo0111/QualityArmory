@@ -1,6 +1,7 @@
 package me.zombie_striker.qg.hooks.protection;
 
 import me.zombie_striker.qg.QAMain;
+import me.zombie_striker.qg.hooks.protection.implementation.ResidenceHook;
 import me.zombie_striker.qg.hooks.protection.implementation.TownyHook;
 import me.zombie_striker.qg.hooks.protection.implementation.WorldGuardHook;
 import org.bukkit.Bukkit;
@@ -15,6 +16,7 @@ public class ProtectionHandler {
     public static void init() {
         hook("WorldGuard", WorldGuardHook::new);
         hook("Towny", TownyHook::new);
+        hook("Residence", ResidenceHook::new);
     }
 
     public static boolean canPvp(Location target) {

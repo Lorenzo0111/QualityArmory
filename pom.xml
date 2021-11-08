@@ -160,7 +160,6 @@
             <scope>provided</scope>
         </dependency>
 
-
         <dependency>
             <groupId>me.clip</groupId>
             <artifactId>placeholderapi</artifactId>
@@ -191,6 +190,14 @@
             <version>3.10</version>
             <scope>system</scope>
             <systemPath>${project.basedir}/libs/ChestShop.jar</systemPath>
+        </dependency>
+
+        <dependency>
+            <groupId>com.bekvon.bukkit</groupId>
+            <artifactId>Residence</artifactId>
+            <version>5.0.0.4</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/libs/Residence.jar</systemPath>
         </dependency>
 
         <!-- Citzens -->
