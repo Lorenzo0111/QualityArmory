@@ -136,6 +136,14 @@
             <scope>provided</scope>
         </dependency>
 
+        <!-- Matrix -->
+        <dependency>
+            <groupId>com.github.jiangdashao</groupId>
+            <artifactId>matrix-api-repo</artifactId>
+            <version>317d4635fd</version>
+            <scope>provided</scope>
+        </dependency>
+
         <!-- WorldGuard API -->
         <dependency>
             <groupId>com.sk89q.worldguard</groupId>
