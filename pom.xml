@@ -243,13 +243,11 @@
             <version>IDK</version>
         </dependency>
 
-        <!-- MythicMobs -->
         <dependency>
-            <groupId>io.lumine.xikage</groupId>
-            <artifactId>mythicmobs</artifactId>
-            <version>1.0.50</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/libs/MythicMobs-4.9.0.jar</systemPath>
+            <groupId>org.jetbrains</groupId>
+            <artifactId>annotations</artifactId>
+            <version>23.0.0</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 
