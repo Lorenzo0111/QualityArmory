@@ -543,6 +543,23 @@ public class QAListener implements Listener {
 	}
 
 	@EventHandler
+	public void onDropReload(PlayerDropItemEvent e) {
+		if (QAMain.reloadOnQ && !QAMain.reloadOnFOnly) {
+			Gun g = QualityArmory.getGun(e.getItemDrop().getItemStack());
+			if (g != null) {
+				e.setCancelled(true);
+				reload(e.getPlayer(),g);
+			}
+		}
+	}
+
+	public static void reload(Player player, Gun g) {
+		if (g.playerHasAmmo(player)) {
+			g.reload(player);
+		}
+	}
+
+	@EventHandler
 	public void onMove(PlayerMoveEvent e) {
 		QAMain.recoilHelperMovedLocation.put(e.getPlayer().getUniqueId(), e.getTo());
 	}

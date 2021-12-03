@@ -119,6 +119,7 @@ public class QAMain extends JavaPlugin {
 	public static boolean enableIronSightsON_RIGHT_CLICK = false;
 	public static boolean SwapSneakToSingleFire = false;
 	public static boolean enableBulletTrails = true;
+	public static boolean reloadOnQ = true;
 	public static boolean reloadOnF = true;
 	public static boolean reloadOnFOnly = true;
 	public static boolean disableHotBarMessageOnShoot = false;
@@ -966,6 +967,7 @@ public class QAMain extends JavaPlugin {
 		ITEM_enableUnbreakable = (boolean) a("Items.enable_Unbreaking", ITEM_enableUnbreakable);
 
 		// enableVisibleAmounts = (boolean) a("enableVisibleBulletCounts", false);
+		reloadOnQ = (boolean) a("enableReloadingOnDrop", true);
 		reloadOnF = (boolean) a("enableReloadingWhenSwapToOffhand", true);
 		reloadOnFOnly = (boolean) a("enableReloadOnlyWhenSwapToOffhand", false);
 
