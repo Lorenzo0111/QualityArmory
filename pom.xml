@@ -195,7 +195,7 @@
         <dependency>
             <groupId>com.acrobot.chestshop</groupId>
             <artifactId>chestshop</artifactId>
-            <version>3.10</version>
+            <version>3.12</version>
             <scope>system</scope>
             <systemPath>${project.basedir}/libs/ChestShop.jar</systemPath>
         </dependency>
