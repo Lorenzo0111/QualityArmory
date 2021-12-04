@@ -1,6 +1,9 @@
 2.0.4
     - 1.18 support
     - Added a way to reload with the Q button
+    - Added Matrix anticheat support
+    - Fixed the protection handler
+    - Fixed grenade duplication
 
 2.0.3
     - Added residence,towny and worldguard support
