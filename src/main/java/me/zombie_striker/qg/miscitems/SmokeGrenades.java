@@ -61,6 +61,7 @@ public class SmokeGrenades extends Grenade {
 					}
 				} else if (k == 80) {
 					if (h.getHolder() instanceof Item) {
+						Grenade.getGrenades().remove(h.getHolder());
 						h.getHolder().remove();
 					}
 					throwItems.remove(h.getHolder());

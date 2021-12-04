@@ -66,6 +66,7 @@ public class Flashbang extends Grenade {
 					removeGrenade(((Player) h.getHolder()));
 				}
 				if (h.getHolder() instanceof Item) {
+					Grenade.getGrenades().remove(h.getHolder());
 					h.getHolder().remove();
 				}
 

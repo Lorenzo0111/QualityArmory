@@ -63,6 +63,7 @@ public class IncendaryGrenades extends Grenade {
 					}
 				} else if (k == 40) {
 					if (h.getHolder() instanceof Item) {
+						Grenade.getGrenades().remove(h.getHolder());
 						h.getHolder().remove();
 					}
 					throwItems.remove(h.getHolder());

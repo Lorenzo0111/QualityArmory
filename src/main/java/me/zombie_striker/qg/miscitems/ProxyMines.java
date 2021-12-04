@@ -72,6 +72,7 @@ public class ProxyMines extends Grenade {
 					}
 					if(det){
 						if (h.getHolder() instanceof Item) {
+							Grenade.getGrenades().remove(h.getHolder());
 							h.getHolder().remove();
 						}
 						if (QAMain.enableExplosionDamage) {

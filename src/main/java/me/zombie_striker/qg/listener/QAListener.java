@@ -17,6 +17,7 @@ import me.zombie_striker.qg.handlers.BulletWoundHandler;
 import me.zombie_striker.qg.handlers.EconHandler;
 import me.zombie_striker.qg.handlers.IronsightsHandler;
 import me.zombie_striker.qg.handlers.Update19OffhandChecker;
+import me.zombie_striker.qg.miscitems.Grenade;
 import me.zombie_striker.qg.miscitems.MeleeItems;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
@@ -79,9 +80,15 @@ public class QAListener implements Listener {
 	public void onHopperpickup(InventoryPickupItemEvent e) {
 		if (e.isCancelled())
 			return;
-		if (e.getInventory().getType() == InventoryType.HOPPER)
+		if (e.getInventory().getType() == InventoryType.HOPPER) {
 			if (QualityArmory.isGun(e.getItem().getItemStack()))
 				e.setCancelled(true);
+
+			if (Grenade.getGrenades().contains(e.getItem())) {
+				e.setCancelled(true);
+				QAMain.DEBUG("Cancelled item pickup event because it was a grenade");
+			}
+		}
 	}
 
 	@EventHandler

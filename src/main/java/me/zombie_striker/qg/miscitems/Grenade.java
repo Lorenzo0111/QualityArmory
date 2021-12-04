@@ -1,5 +1,6 @@
 package me.zombie_striker.qg.miscitems;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import me.zombie_striker.customitemmanager.CustomBaseObject;
@@ -12,17 +13,16 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import me.zombie_striker.customitemmanager.OLD_ItemFact;
 import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.customitemmanager.MaterialStorage;
 import me.zombie_striker.qg.guns.utils.WeaponSounds;
 import me.zombie_striker.qg.handlers.ExplosionHandler;
 
 public class Grenade extends CustomBaseObject implements ThrowableItems {
+	private static final List<Entity> GRENADES = new ArrayList<>();
 
 	private ItemStack[] ing = null;
 
@@ -74,6 +74,7 @@ public class Grenade extends CustomBaseObject implements ThrowableItems {
 			thrower.getWorld().playSound(thrower.getLocation(), Sound.ENTITY_ARROW_SHOOT, 1, 1.5f);
 
 			throwItems.put(grenade, holder);
+			GRENADES.add(grenade);
 			throwItems.remove(thrower);
 			QAMain.DEBUG("Throw grenade");
 		} else {
@@ -115,6 +116,7 @@ public class Grenade extends CustomBaseObject implements ThrowableItems {
 					((Player) h.getHolder()).damage(dmageLevel);
 				}
 				if (h.getHolder() instanceof Item) {
+					GRENADES.remove(h.getHolder());
 					h.getHolder().remove();
 				}
 				if (QAMain.enableExplosionDamage) {
@@ -209,5 +211,9 @@ public class Grenade extends CustomBaseObject implements ThrowableItems {
 	@Override
 	public void setThrowSpeed(double t) {
 		throwspeed = t;
+	}
+
+	public static List<Entity> getGrenades() {
+		return GRENADES;
 	}
 }
