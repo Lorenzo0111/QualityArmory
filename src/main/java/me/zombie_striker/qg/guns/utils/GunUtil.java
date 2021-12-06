@@ -275,6 +275,18 @@ public class GunUtil {
 							((EnderDragonPart) hitTarget).damage(damageMAX, p);
 						}
 
+
+						if (hitTarget.getPassenger() instanceof Damageable) {
+							QAMain.DEBUG("Found a passenger (" + hitTarget.getPassenger().getName() + "). Damaging it.");
+
+							QAWeaponDamageEntityEvent passengerShoot = new QAWeaponDamageEntityEvent(p, g, hitTarget.getPassenger(), false,
+									damage, bulletProtection);
+							Bukkit.getPluginManager().callEvent(passengerShoot);
+
+							if (!passengerShoot.isCancelled()) {
+								((Damageable) hitTarget.getPassenger()).damage(damageMAX, p);
+							}
+						}
 					} else {
 						if (hitTarget instanceof LivingEntity) {
 							QAMain.DEBUG("Damaging entity CANCELED " + hitTarget.getName() + " ( "

@@ -4,6 +4,7 @@
     - Added Matrix anticheat support
     - Fixed the protection handler
     - Fixed grenade duplication
+    - Fixed damage for entity passengers
 
 2.0.3
     - Added residence,towny and worldguard support

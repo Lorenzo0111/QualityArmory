@@ -36,6 +36,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scoreboard.Scoreboard;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 
@@ -549,7 +550,7 @@ public class QAListener implements Listener {
 		}
 	}
 
-	@EventHandler
+	@EventHandler(priority = EventPriority.LOW)
 	public void onDropReload(PlayerDropItemEvent e) {
 		if (QAMain.reloadOnQ && !QAMain.reloadOnFOnly) {
 			Gun g = QualityArmory.getGun(e.getItemDrop().getItemStack());
@@ -1119,6 +1120,15 @@ public class QAListener implements Listener {
 		}
 
 	}
+
+    @EventHandler(priority = EventPriority.NORMAL)
+    public void onInventoryDrop(@NotNull InventoryClickEvent event) {
+		if (QualityArmory.isGun(event.getCursor()) && event.getSlotType().equals(InventoryType.SlotType.OUTSIDE)) {
+			event.setCancelled(false);
+
+			QAMain.DEBUG("Found a drop out of the inventory. Setting it as not cancelled");
+		}
+    }
 
 	private void DEBUG(String s) {
 		QAMain.DEBUG(s);
