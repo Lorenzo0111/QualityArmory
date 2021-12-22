@@ -10,6 +10,10 @@ import org.bukkit.scheduler.BukkitRunnable;
 public class GithubUpdater {
 
 	public static boolean autoUpdate(final Plugin main, String author, String githubProject, String jarname) {
+		if (main.getDescription().getVersion().endsWith("SNAPSHOT")) {
+			return false;
+		}
+
 		try {
 			String version = main.getDescription().getVersion();
 			String parseVersion = version.replace(".", "");
