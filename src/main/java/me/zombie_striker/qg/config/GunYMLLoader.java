@@ -71,6 +71,7 @@ public class GunYMLLoader {
 							}
 
 							final double price = f2.contains("price") ? f2.getDouble("price") : 100;
+							final boolean allowInShop = f2.getBoolean("allowInShop", true) && price > 0;
 
 							int amountA = f2.getInt("maxAmount");
 							if(f2.contains("maxItemStack")) {
@@ -81,6 +82,7 @@ public class GunYMLLoader {
 							Ammo da = new Ammo(name, displayname, extraLore, ms, amountA, false, 1, price, materails,
 									piercing);
 
+							da.setEnableShop(allowInShop);
 							da.setCustomLore(extraLore);
 
 							QAMain.ammoRegister.put(ms, da);
@@ -141,11 +143,12 @@ public class GunYMLLoader {
 							}
 
 							final int price = f2.contains("price") ? f2.getInt("price") : 100;
+							final boolean allowInShop = f2.getBoolean("allowInShop", true) && price > 0;
 
 							WeaponType wt = WeaponType.getByName(f2.getString("MiscType"));
 
 							if (wt == WeaponType.HELMET) {
-								QAMain.armorRegister.put(ms, new Helmet(name, displayname, lore, materails, ms, price));
+								QAMain.armorRegister.put(ms, new Helmet(name, displayname, lore, materails, ms, price, allowInShop));
 								items++;
 							}
 						}
@@ -190,6 +193,7 @@ public class GunYMLLoader {
 							}
 
 							final int price = f2.contains("price") ? f2.getInt("price") : 100;
+							final boolean allowInShop = f2.getBoolean("allowInShop", true) && price > 0;
 
 							int damage = f2.contains("damage") ? f2.getInt("damage") : 1;
 							// int durib = f2.contains("durability") ? f2.getInt("durability") : 1000;
@@ -236,9 +240,11 @@ public class GunYMLLoader {
 								QAMain.miscRegister.put(ms,
 										base=new Flashbang(materails, price, damage, radius, name, displayname, lore, ms));
 
+
 							if(base!=null) {
 								base.setCustomLore(lore);
 								base.setIngredients(materails);
+								base.setEnableShop(allowInShop);
 							}
 
 							if(f2.contains("maxItemStack"))
@@ -323,6 +329,8 @@ public class GunYMLLoader {
 			g.setDuribility(f2.getInt("durability"));
 		if (f2.contains("price"))
 			g.setPrice(f2.getDouble("price"));
+		if (f2.contains("allowInShop"))
+			g.setEnableShop(f2.getBoolean("allowInShop"));
 		if (f2.contains("isAutomatic"))
 			g.setAutomatic(f2.getBoolean("isAutomatic"));
 		if (f2.contains("enableBetterModelScopes"))

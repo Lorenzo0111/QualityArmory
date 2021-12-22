@@ -17,6 +17,7 @@ public class CustomBaseObject {
 	private String soundOnHit;
 
 	private double price;
+	private boolean enableShop = true;
 
 	Object[] ing = null;
 	int craftingReturn = 1;
@@ -87,7 +88,13 @@ public class CustomBaseObject {
 		this.price = price;
 	}
 
+	public boolean isEnableShop() {
+		return enableShop;
+	}
 
+	public void setEnableShop(boolean enableShop) {
+		this.enableShop = enableShop;
+	}
 
 	public void setIngredients(ItemStack[] ing) {
 		this.ing = ing;

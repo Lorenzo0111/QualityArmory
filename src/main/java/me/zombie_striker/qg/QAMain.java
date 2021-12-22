@@ -462,7 +462,7 @@ public class QAMain extends JavaPlugin {
 
 
 	private static boolean addToGUI(CustomBaseObject obj, Inventory gui, boolean shop) {
-		if (shop && obj.getPrice() < 0)
+		if (shop && (obj.getPrice() < 0 || !obj.isEnableShop()))
 			return false;
 		if (!shop && obj.getIngredientsRaw() == null)
 			return false;

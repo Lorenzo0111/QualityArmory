@@ -300,7 +300,7 @@ public class QAListener implements Listener {
 				}
 				if (QualityArmory.isAmmo(e.getCurrentItem())) {
 					Ammo g = QualityArmory.getAmmo(e.getCurrentItem());
-					if (g.getPrice() < 0)
+					if (g.getPrice() < 0 || !g.isEnableShop())
 						return;
 					if ((shop && EconHandler.hasEnough(g, (Player) e.getWhoClicked()))
 							|| (!shop && QAMain.lookForIngre((Player) e.getWhoClicked(), g))
@@ -332,7 +332,7 @@ public class QAListener implements Listener {
 					}
 				} else if (QualityArmory.isCustomItem(e.getCurrentItem())) {
 					CustomBaseObject g = QualityArmory.getCustomItem(e.getCurrentItem());
-					if (g.getPrice() < 0)
+					if (g.getPrice() < 0 || !g.isEnableShop())
 						return;
 					if ((shop && EconHandler.hasEnough(g, (Player) e.getWhoClicked()))
 							|| (!shop && QAMain.lookForIngre((Player) e.getWhoClicked(), g))

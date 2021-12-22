@@ -357,6 +357,7 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
 		this.setCustomLore(g.getCustomLore());
 		this.weaponSounds = g.weaponSounds;
 		this.setPrice(g.getPrice());
+		this.setEnableShop(g.isEnableShop());
 		this.delayBetweenShots = g.delayBetweenShots;
 		this.shotsPerBullet = g.shotsPerBullet;
 		this.firerate = g.firerate;
