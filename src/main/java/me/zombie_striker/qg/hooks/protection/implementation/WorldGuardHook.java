@@ -1,53 +1,55 @@
 package me.zombie_striker.qg.hooks.protection.implementation;
 
-
-import com.sk89q.worldedit.bukkit.BukkitAdapter;
-import com.sk89q.worldguard.LocalPlayer;
-import com.sk89q.worldguard.WorldGuard;
-import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
-import com.sk89q.worldguard.protection.flags.Flags;
-import com.sk89q.worldguard.protection.regions.ProtectedRegion;
-import com.sk89q.worldguard.protection.regions.RegionContainer;
 import me.zombie_striker.qg.hooks.protection.ProtectionHook;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.entity.Player;
+import org.codemc.worldguardwrapper.WorldGuardWrapper;
+import org.codemc.worldguardwrapper.flag.IWrappedFlag;
+import org.codemc.worldguardwrapper.flag.WrappedState;
+import org.codemc.worldguardwrapper.region.IWrappedRegion;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Optional;
+
 public class WorldGuardHook implements ProtectionHook {
-    private final RegionContainer regionContainer;
-    private final WorldGuard worldGuard;
-    private final WorldGuardPlugin plugin;
+    private final WorldGuardWrapper worldGuard;
+    private final IWrappedFlag<WrappedState> pvp;
+    private final IWrappedFlag<WrappedState> explosion;
 
     public WorldGuardHook() {
-        worldGuard = WorldGuard.getInstance();
-        regionContainer = worldGuard.getPlatform().getRegionContainer();
-        plugin = (WorldGuardPlugin) Bukkit.getPluginManager().getPlugin("WorldGuard");
+        worldGuard = WorldGuardWrapper.getInstance();
+        IWrappedFlag<WrappedState> allowFlag = new IWrappedFlag<WrappedState>() {
+            @Override
+            public String getName() {
+                return "ALLOW";
+            }
+
+            @Override
+            public Optional<WrappedState> getDefaultValue() {
+                return Optional.of(WrappedState.ALLOW);
+            }
+        };
+
+        pvp = worldGuard.getFlag("PVP", WrappedState.class).orElse(allowFlag);
+        explosion = worldGuard.getFlag("OTHER_EXPLOSION", WrappedState.class).orElse(allowFlag);
     }
 
     @Override
     public boolean canPvp(@NotNull Location location) {
-        for (ProtectedRegion k : regionContainer.get(BukkitAdapter.adapt(location.getWorld())).getRegions().values()) {
-            if (k.contains(location.getBlockX(), location.getBlockY(), location.getBlockZ())) {
-                if (k.getFlag(Flags.PVP) == com.sk89q.worldguard.protection.flags.StateFlag.State.DENY)
-                    return false;
-            }
-        }
-        return true;    }
-
-    @Override
-    public boolean canExplode(@NotNull Location location) {
-        for (ProtectedRegion k : regionContainer.get(BukkitAdapter.adapt(location.getWorld())).getRegions().values()) {
-            if (k.contains(location.getBlockX(), location.getBlockY(), location.getBlockZ())) {
-                if (k.getFlag(Flags.OTHER_EXPLOSION) == com.sk89q.worldguard.protection.flags.StateFlag.State.DENY)
-                    return false;
-            }
+        for (IWrappedRegion k : worldGuard.getRegions(location)) {
+            WrappedState wrappedState = k.getFlag(pvp).orElse(WrappedState.ALLOW);
+            if (wrappedState.equals(WrappedState.DENY)) return false;
         }
 
         return true;
     }
 
-    private LocalPlayer wrapPlayer(Player player) {
-        return plugin.wrapPlayer(player);
+    @Override
+    public boolean canExplode(@NotNull Location location) {
+        for (IWrappedRegion k : worldGuard.getRegions(location)) {
+            WrappedState wrappedState = k.getFlag(explosion).orElse(WrappedState.ALLOW);
+            if (wrappedState.equals(WrappedState.DENY)) return false;
+        }
+
+        return true;
     }
 }

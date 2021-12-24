@@ -1123,7 +1123,7 @@ public class QAListener implements Listener {
 
     @EventHandler(priority = EventPriority.NORMAL)
     public void onInventoryDrop(@NotNull InventoryClickEvent event) {
-		if (QualityArmory.isGun(event.getCursor()) && event.getSlotType().equals(InventoryType.SlotType.OUTSIDE)) {
+		if (QualityArmory.isGun(event.getCursor()) && (event.getSlotType().equals(InventoryType.SlotType.OUTSIDE)) || event.getClick().equals(ClickType.DROP) || event.getClick().equals(ClickType.CONTROL_DROP)) {
 			event.setCancelled(false);
 
 			QAMain.DEBUG("Found a drop out of the inventory. Setting it as not cancelled");

@@ -28,6 +28,7 @@ import me.zombie_striker.qg.guns.chargers.*;
 import me.zombie_striker.qg.guns.reloaders.PumpactionReloader;
 import me.zombie_striker.qg.guns.reloaders.SingleBulletReloader;
 import me.zombie_striker.qg.hooks.MatrixHook;
+import me.zombie_striker.qg.hooks.QuickShopHook;
 import me.zombie_striker.qg.hooks.SpartanHook;
 import me.zombie_striker.qg.hooks.protection.ProtectionHandler;
 import me.zombie_striker.qg.listener.QAListener;
@@ -644,9 +645,10 @@ public class QAMain extends JavaPlugin {
 			Bukkit.getPluginManager().registerEvents(new MatrixHook(), this);
 			this.getLogger().info("Found Matrix AntiCheat. Loaded support");
 		}
-/*		if (Bukkit.getPluginManager().isPluginEnabled("Oraxen") && (boolean) a("hooks.oraxen", true)) {
-			Bukkit.getPluginManager().registerEvents(new OraxenHook(), this);
-		}*/
+		if (Bukkit.getPluginManager().isPluginEnabled("QuickShop")) {
+			Bukkit.getPluginManager().registerEvents(new QuickShopHook(), this);
+			this.getLogger().info("Found QuickShop. Loaded support");
+		}
 
 		try {
 			ParticleHandlers.initValues();

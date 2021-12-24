@@ -34,7 +34,7 @@ public class GithubUpdater {
 
 			String parsedTagName = tagname.replace(".", "");
 
-			int latestVersion = Integer.valueOf(parsedTagName.substring(1, parsedTagName.length()).replaceAll("[^\\d.]", ""));
+			int latestVersion = Integer.parseInt(parsedTagName.substring(1).replaceAll("[^\\d.]", ""));
 			int parsedVersion = Integer.parseInt(parseVersion.replaceAll("[^\\d.]", ""));
 
 			final URL download = new URL("https://github.com/" + author + "/" + githubProject + "/releases/download/"
