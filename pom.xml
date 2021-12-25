@@ -307,9 +307,9 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
                 <version>3.2.0</version>
-                <configuration>
+                <!-- <configuration>
                     <outputDirectory>server/plugins</outputDirectory>
-                </configuration>
+                </configuration> -->
             </plugin>
             <plugin>
                 <artifactId>maven-deploy-plugin</artifactId>
