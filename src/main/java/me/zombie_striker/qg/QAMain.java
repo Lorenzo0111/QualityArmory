@@ -27,9 +27,11 @@ import me.zombie_striker.qg.handlers.*;
 import me.zombie_striker.qg.guns.chargers.*;
 import me.zombie_striker.qg.guns.reloaders.PumpactionReloader;
 import me.zombie_striker.qg.guns.reloaders.SingleBulletReloader;
-import me.zombie_striker.qg.hooks.MatrixHook;
+import me.zombie_striker.qg.hooks.anticheat.AntiCheatHook;
+import me.zombie_striker.qg.hooks.anticheat.MatrixHook;
 import me.zombie_striker.qg.hooks.QuickShopHook;
-import me.zombie_striker.qg.hooks.SpartanHook;
+import me.zombie_striker.qg.hooks.anticheat.SpartanHook;
+import me.zombie_striker.qg.hooks.anticheat.VulcanHook;
 import me.zombie_striker.qg.hooks.protection.ProtectionHandler;
 import me.zombie_striker.qg.listener.QAListener;
 import me.zombie_striker.qg.miscitems.ThrowableItems;
@@ -637,14 +639,11 @@ public class QAMain extends JavaPlugin {
 			this.getDataFolder().mkdirs();
 		}
 		ProtectionHandler.init();
-		if (Bukkit.getPluginManager().isPluginEnabled("Spartan")) {
-			Bukkit.getPluginManager().registerEvents(new SpartanHook(), this);
-			this.getLogger().info("Found Spartan AntiCheat. Loaded support");
-		}
-		if (Bukkit.getPluginManager().isPluginEnabled("Matrix")) {
-			Bukkit.getPluginManager().registerEvents(new MatrixHook(), this);
-			this.getLogger().info("Found Matrix AntiCheat. Loaded support");
-		}
+
+		AntiCheatHook.registerHook("Spartan", SpartanHook.class);
+		AntiCheatHook.registerHook("Matrix", MatrixHook.class);
+		AntiCheatHook.registerHook("Vulcan", VulcanHook.class);
+
 		if (Bukkit.getPluginManager().isPluginEnabled("QuickShop")) {
 			Bukkit.getPluginManager().registerEvents(new QuickShopHook(), this);
 			this.getLogger().info("Found QuickShop. Loaded support");

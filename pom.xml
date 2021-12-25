@@ -209,6 +209,14 @@
             <systemPath>${project.basedir}/libs/Residence.jar</systemPath>
         </dependency>
 
+        <dependency>
+            <groupId>me.frep</groupId>
+            <artifactId>Vulcan</artifactId>
+            <version>LATEST</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/libs/VulcanAPI.jar</systemPath>
+        </dependency>
+
         <!-- Citzens -->
         <dependency>
             <groupId>net.citizensnpcs</groupId>
@@ -299,9 +307,9 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
                 <version>3.2.0</version>
-                <!-- <configuration>
+                <configuration>
                     <outputDirectory>server/plugins</outputDirectory>
-                </configuration> -->
+                </configuration>
             </plugin>
             <plugin>
                 <artifactId>maven-deploy-plugin</artifactId>
