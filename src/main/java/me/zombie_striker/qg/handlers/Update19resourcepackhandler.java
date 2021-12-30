@@ -1,5 +1,6 @@
 package me.zombie_striker.qg.handlers;
 
+import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerResourcePackStatusEvent;
@@ -16,7 +17,7 @@ public class Update19resourcepackhandler implements Listener{
 				|| event.getStatus() == PlayerResourcePackStatusEvent.Status.SUCCESSFULLY_LOADED) {
 			QAMain.resourcepackReq.add(event.getPlayer().getUniqueId());
 		}else if (QAMain.kickIfDeniedRequest) {
-			event.getPlayer().kickPlayer(QAMain.S_KICKED_FOR_RESOURCEPACK);
+			Bukkit.getScheduler().runTask(QAMain.getInstance(), () -> event.getPlayer().kickPlayer(QAMain.S_KICKED_FOR_RESOURCEPACK));
 		}
 	}
 }
