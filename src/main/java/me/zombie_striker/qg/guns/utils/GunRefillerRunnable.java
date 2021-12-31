@@ -71,7 +71,7 @@ public class GunRefillerRunnable {
 
 				if (shouldContinue && removeAmmo) {
 					// Check if player still have ammo and remove it
-					if (g.playerHasAmmo(player) && QualityArmory.getAmmoInInventory(player,ammo) >= reloadAmount)
+					if (g.playerHasAmmo(player) && QualityArmory.getAmmoInInventory(player,ammo) >= subtractAmount)
 						QualityArmory.removeAmmoFromInventory(player, ammo, subtractAmount);
 					else
 						shouldContinue = false;
