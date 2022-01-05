@@ -1397,7 +1397,7 @@ public class QAMain extends JavaPlugin {
 				}
 				if (args[0].equalsIgnoreCase("sendResourcepack")) {
 					Player player = null;
-					if (args.length > 1) {
+					if (args.length > 1 && sender.hasPermission("qualityarmory.sendresourcepack.other")) {
 						player = Bukkit.getPlayer(args[1]);
 						if (player == null) {
 							sender.sendMessage(prefix + " This player does not exist.");
