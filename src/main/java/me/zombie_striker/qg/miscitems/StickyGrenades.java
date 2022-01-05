@@ -27,7 +27,7 @@ public class StickyGrenades extends Grenade {
 	public boolean onRMB(Player thrower, ItemStack usedItem) {
 		if(QAMain.autoarm)
 			onPull(thrower,usedItem);
-		if (throwItems.containsKey(thrower)) {
+		if (throwItems.containsKey(thrower) && throwItems.get(thrower).getGrenade().equals(this)) {
 			ThrowableHolder holder = throwItems.get(thrower);
 			ItemStack grenadeStack = thrower.getItemInHand();
 			ItemStack temp = grenadeStack.clone();
@@ -104,7 +104,7 @@ public class StickyGrenades extends Grenade {
 			return true;
 		}
 		thrower.getWorld().playSound(thrower.getLocation(), Sound.ENTITY_ARROW_SHOOT, 2, 1);
-		final ThrowableHolder h = new ThrowableHolder(thrower.getUniqueId(), thrower);
+		final ThrowableHolder h = new ThrowableHolder(thrower.getUniqueId(), thrower, this);
 		throwItems.put(thrower, h);
 		return true;
 

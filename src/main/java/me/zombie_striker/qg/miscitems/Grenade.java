@@ -53,7 +53,7 @@ public class Grenade extends CustomBaseObject implements ThrowableItems {
 	public boolean onRMB(Player thrower, ItemStack usedItem) {
 		if(QAMain.autoarm)
 		onPull(thrower,usedItem);
-		if (throwItems.containsKey(thrower)) {
+		if (throwItems.containsKey(thrower) && throwItems.get(thrower).getGrenade().equals(this)) {
 			ThrowableHolder holder = throwItems.get(thrower);
 			ItemStack grenadeStack = thrower.getItemInHand();
 			ItemStack temp = grenadeStack.clone();
@@ -106,7 +106,7 @@ public class Grenade extends CustomBaseObject implements ThrowableItems {
 		}
 
 		thrower.getWorld().playSound(thrower.getLocation(), WeaponSounds.RELOAD_MAG_IN.getSoundName(), 2, 1);
-		final ThrowableHolder h = new ThrowableHolder(thrower.getUniqueId(), thrower);
+		final ThrowableHolder h = new ThrowableHolder(thrower.getUniqueId(), thrower, this);
 		h.setTimer(new BukkitRunnable() {
 			@Override
 			public void run() {

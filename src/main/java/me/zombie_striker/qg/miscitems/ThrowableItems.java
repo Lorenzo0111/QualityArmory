@@ -15,12 +15,14 @@ public interface ThrowableItems extends ArmoryBaseObject {
 	class ThrowableHolder {
 		private Entity holder;
 		private UUID owner;
+		private Grenade grenade;
 
 		private BukkitTask timer;
 
-		public ThrowableHolder(UUID owner, Entity holder) {
+		public ThrowableHolder(UUID owner, Entity holder, Grenade grenade) {
 			this.holder = holder;
 			this.owner = owner;
+			this.grenade = grenade;
 		}
 
 		public void setHolder(Entity e) {
@@ -41,6 +43,14 @@ public interface ThrowableItems extends ArmoryBaseObject {
 
 		public UUID getOwner() {
 			return owner;
+		}
+
+		public Grenade getGrenade() {
+			return grenade;
+		}
+
+		public void setGrenade(Grenade grenade) {
+			this.grenade = grenade;
 		}
 	}
 
