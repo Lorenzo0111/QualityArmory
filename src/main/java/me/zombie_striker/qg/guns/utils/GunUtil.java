@@ -324,7 +324,10 @@ public class GunUtil {
 							}
 
 							final Block block = start.getBlock();
-							if (QAMain.destructableBlocks.contains(block.getType())) {
+							final Material type = block.getType();
+							if (QAMain.destructableBlocks.contains(type)) {
+								blocksThatWillBreak.add(block);
+							} else if (g.getBreakableMaterials().contains(type)) {
 								blocksThatWillBreak.add(block);
 							}
 						}

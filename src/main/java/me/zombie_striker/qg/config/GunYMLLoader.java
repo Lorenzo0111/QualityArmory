@@ -17,9 +17,11 @@ import me.zombie_striker.qg.utils.LocalUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Particle;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -342,6 +344,10 @@ public class GunYMLLoader {
 			g.setEnableSwayMovementModifier(f2.getBoolean("sway.moveModifier"));
 		if (f2.contains("sway.runModifier"))
 			g.setEnableSwayRunModifier(f2.getBoolean("sway.runModifier"));
+		if (f2.contains("DestructableMaterials")) {
+			g.getBreakableMaterials().clear();
+			g.getBreakableMaterials().addAll(getMaterials(f2.getStringList("DestructableMaterials")));
+		}
 
 		List<String> sounds = null;
 
@@ -549,5 +555,28 @@ public class GunYMLLoader {
 			if(!QAMain.verboseLoadingLogging)
 				main.getLogger().info("-Loaded "+items+" Attachment types.");
 		}
+	}
+
+	public static @NotNull List<Material> getMaterials(@NotNull List<String> list) {
+		List<Material> materials = new ArrayList<>();
+
+		for (String s : list) {
+			if (s.equals("MATERIAL_NAME_HERE")) continue;
+
+			try {
+				Material material = Material.getMaterial(s.toUpperCase());
+
+				if (material == null) {
+					QAMain.getInstance().getLogger().warning("Invalid material name: " + s + ".");
+					continue;
+				}
+
+				materials.add(material);
+			} catch (Error | Exception ignored) {
+				QAMain.getInstance().getLogger().warning("Invalid material name: " + s + ".");
+			}
+		}
+
+		return materials;
 	}
 }

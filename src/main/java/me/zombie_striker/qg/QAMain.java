@@ -1077,22 +1077,7 @@ public class QAMain extends JavaPlugin {
 
 		List<String> destarray = (List<String>) a("DestructableMaterials",
 				Collections.singletonList("MATERIAL_NAME_HERE"));
-		for (String s : destarray) {
-			if (s.equals("MATERIAL_NAME_HERE")) continue;
-
-			try {
-				Material material = Material.getMaterial(s.toUpperCase());
-
-				if (material == null) {
-					this.getLogger().warning("Invalid material name: " + s + ".");
-					continue;
-				}
-
-				destructableBlocks.add(material);
-			} catch (Error | Exception ignored) {
-				this.getLogger().warning("Invalid material name: " + s + ".");
-			}
-		}
+		destructableBlocks.addAll(GunYMLLoader.getMaterials(destarray));
 
 		for (Material m : Material.values())
 			if (m.isBlock())

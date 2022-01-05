@@ -81,6 +81,7 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
 	private boolean enableMuzzleSmoke = false;
 	private double knockbackPower = 0;
 	private int slownessPower = 0;
+	private final List<Material> breakableMaterials = new ArrayList<>();
 
 	private String reloadingSound = WeaponSounds.RELOAD_MAG_OUT.getSoundName();
 	private String chargingSound = WeaponSounds.RELOAD_BOLT.getSoundName();
@@ -1122,6 +1123,10 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
 		this.chargingSound = chargingSound;
 	}
 
+	public List<Material> getBreakableMaterials() {
+		return breakableMaterials;
+	}
+
 	@Override
 	public String toString() {
 		return "Gun{" +
@@ -1170,6 +1175,7 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
 				", enableMuzzleSmoke=" + enableMuzzleSmoke +
 				", knockbackPower=" + knockbackPower +
 				", slownessPower=" + slownessPower +
+				", breakableMaterials=" + breakableMaterials +
 				", reloadingSound='" + reloadingSound + '\'' +
 				", chargingSound='" + chargingSound + '\'' +
 				", killedByMessage='" + killedByMessage + '\'' +
