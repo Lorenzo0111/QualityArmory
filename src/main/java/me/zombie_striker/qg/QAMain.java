@@ -1117,7 +1117,7 @@ public class QAMain extends JavaPlugin {
 			}
 		} else if (true || MANUALLYSELECT14) {
 			//1.14. Use crossbows
-			CustomItemManager.registerItemType(getDataFolder(), "gun", new me.zombie_striker.customitemmanager.qa.versions.V1_14.CustomGunItem());
+			CustomItemManager.registerItemType(getDataFolder(), "gun", new me.zombie_striker.customitemmanager.qa.versions.V1_14.CustomGunItem().setOverrideAttackSpeed((boolean) a("overrideAttackSpeed", true)));
 		}
 
 		// Chris: if switch on, create default items.

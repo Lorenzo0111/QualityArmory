@@ -33,6 +33,8 @@ import java.util.*;
 
 public class CustomGunItem extends AbstractCustomGunItem {
 
+	private boolean overrideAttackSpeed = true;
+
 	public CustomGunItem(){
 		CustomItemManager.setResourcepack("https://www.dropbox.com/s/cnh7mjc88mqprjd/QualityArmoryV2.1.8.zip?dl=1");
 	}
@@ -87,8 +89,10 @@ public class CustomGunItem extends AbstractCustomGunItem {
 			im.setLore(lore);
 
 
-			AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "generic.attackSpeed", 0, AttributeModifier.Operation.ADD_NUMBER);
-			im.addAttributeModifier(Attribute.GENERIC_ATTACK_SPEED, modifier);
+			if (overrideAttackSpeed) {
+				AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "generic.attackSpeed", 0, AttributeModifier.Operation.ADD_NUMBER);
+				im.addAttributeModifier(Attribute.GENERIC_ATTACK_SPEED, modifier);
+			}
 
 			if (QAMain.ITEM_enableUnbreakable) {
 				try {
@@ -757,4 +761,12 @@ public class CustomGunItem extends AbstractCustomGunItem {
 		return m.toString() + "," + durability + "," + amount;
 	}
 
+	public boolean isOverrideAttackSpeed() {
+		return overrideAttackSpeed;
+	}
+
+	public CustomGunItem setOverrideAttackSpeed(boolean overrideAttackSpeed) {
+		this.overrideAttackSpeed = overrideAttackSpeed;
+		return this;
+	}
 }

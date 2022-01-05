@@ -16,6 +16,7 @@ import me.zombie_striker.qg.boundingbox.AbstractBoundingBox;
 import me.zombie_striker.qg.boundingbox.BoundingBoxManager;
 import me.zombie_striker.qg.guns.Gun;
 import me.zombie_striker.qg.handlers.*;
+import me.zombie_striker.qg.hooks.CoreProtectHook;
 import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
@@ -373,6 +374,7 @@ public class GunUtil {
 				for (Block l : blocksThatWillBreak) {
 					QAMain.DEBUG("Breaking " + l.getX() + " " + l.getY() + " " + l.getZ() + ": " + l.getType());
 					l.breakNaturally();
+					CoreProtectHook.logBreak(l,p);
 				}
 			}
 

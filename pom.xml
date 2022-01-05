@@ -74,6 +74,11 @@
             <id>Sparky</id>
             <url>https://nexus.sparky.ac/repository/Sparky/</url>
         </repository>
+
+        <repository>
+            <id>PlayPro</id>
+            <url>https://maven.playpro.com/</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -231,6 +236,13 @@
             <groupId>com.alessiodp.parties</groupId>
             <artifactId>parties-api</artifactId>
             <version>3.1.14</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>net.coreprotect</groupId>
+            <artifactId>coreprotect</artifactId>
+            <version>20.4</version>
             <scope>provided</scope>
         </dependency>
 
