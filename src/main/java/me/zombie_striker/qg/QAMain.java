@@ -314,7 +314,7 @@ public class QAMain extends JavaPlugin {
 
 	public static void DEBUG(String message) {
 		if (DEBUG)
-			Bukkit.broadcast(message, "qualityarmory.debugmessages");
+			Bukkit.broadcast(prefix + ChatColor.GREEN + " [DEBUG] " + ChatColor.RESET + message, "qualityarmory.debugmessages");
 	}
 
 	public static Scoreboard registerGlowTeams(Scoreboard sb) {

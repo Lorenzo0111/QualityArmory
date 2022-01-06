@@ -17,6 +17,7 @@ public class ArmorYML extends ArmoryYML {
 		verify("minProtectionHeight", 1);
 		verify("maxProtectionHeight", 2);
 		verify("stopsHeadshots", false);
+		verify("protection", 1);
 	}
 
 	public ArmorYML setStopsHeadshots(boolean b) {
@@ -27,6 +28,11 @@ public class ArmorYML extends ArmoryYML {
 	public ArmorYML setProtectionRegion(double min, double max) {
 		set(false, "minProtectionHeight", min);
 		set(false, "maxProtectionHeight", max);
+		return this;
+	}
+
+	public ArmorYML setProtection(int protection) {
+		set("protection", protection);
 		return this;
 	}
 

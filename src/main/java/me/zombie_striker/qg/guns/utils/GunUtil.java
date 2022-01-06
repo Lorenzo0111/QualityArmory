@@ -32,6 +32,7 @@ import ru.beykerykt.lightapi.LightAPI;
 import ru.beykerykt.lightapi.chunks.ChunkInfo;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
@@ -236,20 +237,24 @@ public class GunUtil {
 											player.getInventory().getChestplate(), player.getInventory().getLeggings(),
 											player.getInventory().getBoots()}) {
 										if (is != null) {
-											if (!is.getItemMeta().getAttributeModifiers(Attribute.GENERIC_ARMOR)
-													.isEmpty())
-												for (AttributeModifier a : is.getItemMeta()
-														.getAttributeModifiers(Attribute.GENERIC_ARMOR))
+											Collection<AttributeModifier> attributes = is.getItemMeta().getAttributeModifiers(Attribute.GENERIC_ARMOR);
+											Collection<AttributeModifier> toughnessAttributes = is.getItemMeta().getAttributeModifiers(Attribute.GENERIC_ARMOR_TOUGHNESS);
+
+											if (attributes != null && !attributes.isEmpty())
+												for (AttributeModifier a : attributes)
 													defensePoints += a.getAmount();
-											for (AttributeModifier a : is.getItemMeta()
-													.getAttributeModifiers(Attribute.GENERIC_ARMOR_TOUGHNESS))
-												toughness += a.getAmount();
+											if (toughnessAttributes != null && !toughnessAttributes.isEmpty())
+												for (AttributeModifier a : toughnessAttributes)
+													toughness += a.getAmount();
 										}
 									}
+
+									QAMain.DEBUG("Applied armor protection: " + defensePoints);
+
 									damageMAX = damageMAX / (1 - Math.min(20, Math.max(defensePoints / 5,
 											defensePoints - damageMAX / (toughness / 4 + 2))) / 25);
 								} catch (Error | Exception e5) {
-
+									QAMain.DEBUG("An error has occurred: " + e5.getMessage());
 								}
 							}
 

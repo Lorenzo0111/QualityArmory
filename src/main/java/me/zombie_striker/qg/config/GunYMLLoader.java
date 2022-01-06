@@ -150,7 +150,11 @@ public class GunYMLLoader {
 							WeaponType wt = WeaponType.getByName(f2.getString("MiscType"));
 
 							if (wt == WeaponType.HELMET) {
-								QAMain.armorRegister.put(ms, new Helmet(name, displayname, lore, materails, ms, price, allowInShop));
+								Helmet helmet = new Helmet(name,displayname,lore,materails,ms,price,allowInShop);
+								helmet.setHeightMax(f2.getDouble("maxProtectionHeight"));
+								helmet.setHeightMin(f2.getDouble("minProtectionHeight"));
+								helmet.setProtection(f2.getInt("protection", 0));
+								QAMain.armorRegister.put(ms, helmet);
 								items++;
 							}
 						}

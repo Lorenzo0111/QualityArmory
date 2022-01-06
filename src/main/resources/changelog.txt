@@ -1,3 +1,16 @@
+2.0.5
+    - Fixed an important bug that allows normal users to send the resourcepack title to every player.
+    - Fixed grenades
+    - Added CoreProtect support
+    - Added per-gun breakable blocks
+    - Fixed helmets
+    - Added helmets' protection
+    - Fixed wrong ammo removal
+    - Fixed kicks in 1.8
+    - Added QuickShop support
+    - Fixed WorldGuard support
+    - Updated the AUTO-UPDATE system, now it will ignore snapshot versions
+
 2.0.4
     - 1.18 support
     - Added a way to reload with the Q button
