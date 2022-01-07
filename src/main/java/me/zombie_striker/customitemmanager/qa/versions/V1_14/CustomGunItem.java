@@ -36,7 +36,7 @@ public class CustomGunItem extends AbstractCustomGunItem {
 	private boolean overrideAttackSpeed = true;
 
 	public CustomGunItem(){
-		CustomItemManager.setResourcepack("https://www.dropbox.com/s/cnh7mjc88mqprjd/QualityArmoryV2.1.8.zip?dl=1");
+		CustomItemManager.setResourcepack("https://github.com/ZombieStriker/QualityArmory-Resourcepack/releases/download/v2.1.9/QualityArmory.zip");
 	}
 
 	public static MaterialStorage m(int d) {

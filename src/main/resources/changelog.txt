@@ -1,3 +1,7 @@
+2.0.5.1
+   - Fixed a bug that allow users to drop item out of guis
+   - Updated the resourcepack link to the latest version
+
 2.0.5
     - Fixed an important bug that allows normal users to send the resourcepack title to every player.
     - Fixed grenades

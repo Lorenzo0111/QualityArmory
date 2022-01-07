@@ -968,7 +968,7 @@ public class QAMain extends JavaPlugin {
 		ITEM_enableUnbreakable = (boolean) a("Items.enable_Unbreaking", ITEM_enableUnbreakable);
 
 		// enableVisibleAmounts = (boolean) a("enableVisibleBulletCounts", false);
-		reloadOnQ = (boolean) a("enableReloadingOnDrop", true);
+		reloadOnQ = (boolean) a("enableReloadingOnDrop", false);
 		reloadOnF = (boolean) a("enableReloadingWhenSwapToOffhand", true);
 		reloadOnFOnly = (boolean) a("enableReloadOnlyWhenSwapToOffhand", false);
 
