@@ -112,7 +112,7 @@ public class QAMain extends JavaPlugin {
 	public static double swayModifier_Ironsights = 0.8;
 	public static double swayModifier_Sneak = 0.7;
 	public static double swayModifier_Walk = 1.5;
-	public static double swayModifier_Run = 2;
+	public static double swayModifier_Run = 1.3;
 	public static boolean blockbullet_leaves = false;
 	public static boolean blockbullet_halfslabs = false;
 	public static boolean blockbullet_door = false;
