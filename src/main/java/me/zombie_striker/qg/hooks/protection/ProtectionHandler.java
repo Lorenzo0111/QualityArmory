@@ -41,6 +41,10 @@ public class ProtectionHandler {
         return compatibilities.stream().allMatch(compatibility -> compatibility.canExplode(target));
     }
 
+    public static boolean canBreak(Location target) {
+        return compatibilities.stream().allMatch(compatibility -> compatibility.canBreak(target));
+    }
+
     public static void hook(String plugin, CompatibilityConstructor constructor) throws InvocationTargetException, InstantiationException, IllegalAccessException {
         if (Bukkit.getPluginManager().isPluginEnabled(plugin) && (boolean) QAMain.getInstance().a("hooks." + plugin, true)) {
             compatibilities.add(constructor.create());

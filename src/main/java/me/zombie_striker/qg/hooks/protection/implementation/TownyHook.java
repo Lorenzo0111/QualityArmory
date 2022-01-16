@@ -15,7 +15,16 @@ public class TownyHook implements ProtectionHook {
 
     @Override
     public boolean canExplode(Location location) {
-        return true;
+        try {
+            return TownyAPI.getInstance().getTown(location) == null;
+        } catch (Throwable ignored) { return true; }
+    }
+
+    @Override
+    public boolean canBreak(Location location) {
+        try {
+            return TownyAPI.getInstance().getTown(location) == null;
+        } catch (Throwable ignored) { return true; }
     }
 
 }

@@ -17,6 +17,7 @@ import me.zombie_striker.qg.boundingbox.BoundingBoxManager;
 import me.zombie_striker.qg.guns.Gun;
 import me.zombie_striker.qg.handlers.*;
 import me.zombie_striker.qg.hooks.CoreProtectHook;
+import me.zombie_striker.qg.hooks.protection.ProtectionHandler;
 import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
@@ -331,9 +332,7 @@ public class GunUtil {
 
 							final Block block = start.getBlock();
 							final Material type = block.getType();
-							if (QAMain.destructableBlocks.contains(type)) {
-								blocksThatWillBreak.add(block);
-							} else if (g.getBreakableMaterials().contains(type)) {
+							if ((QAMain.destructableBlocks.contains(type) || g.getBreakableMaterials().contains(type)) && ProtectionHandler.canBreak(start)) {
 								blocksThatWillBreak.add(block);
 							}
 						}

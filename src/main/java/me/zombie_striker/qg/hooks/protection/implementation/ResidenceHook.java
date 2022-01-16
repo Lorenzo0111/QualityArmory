@@ -29,4 +29,10 @@ public class ResidenceHook implements ProtectionHook {
         return res == null || res.getPermissions().has(Flags.explode, false);
     }
 
+    @Override
+    public boolean canBreak(Location location) {
+        ClaimedResidence res = manager.getByLoc(location);
+        return res == null || res.getPermissions().has(Flags.build, false);
+    }
+
 }
