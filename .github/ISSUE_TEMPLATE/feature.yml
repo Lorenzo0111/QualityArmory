@@ -11,7 +11,7 @@ body:
    id: terms
    attributes:
       label: Confirmations
-      description: By submitting this issue, you confirm:
+      description: By submitting this issue, you confirm
       options:
         - label: There isn't any other PR or issue regarding this.
           required: true
