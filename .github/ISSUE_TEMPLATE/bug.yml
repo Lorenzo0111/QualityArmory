@@ -22,14 +22,6 @@ body:
     attributes:
       label: What happened?
       description: What is happening?
-      placeholder: Tell us what you see!
-    validations:
-      required: true
-  - type: textarea
-    id: what-happened
-    attributes:
-      label: What happened?
-      description: What is happening?
       placeholder: The plugin is..
     validations:
       required: true
