@@ -7,9 +7,9 @@ body:
     attributes:
       value: |
         Thanks for your interest in improving the plugin.
- - type: checkboxes
-   id: terms
-   attributes:
+  - type: checkboxes
+    id: terms
+    attributes:
       label: Confirmations
       description: By submitting this issue, you confirm
       options:
@@ -17,21 +17,21 @@ body:
           required: true
         - label: This feature does not exist in the latest version.
           required: true
- - type: dropdown
-   id: type
-   attributes:
+  - type: dropdown
+    id: type
+    attributes:
       label: What is your request about?
       multiple: false
       options:
         - New gun
         - New mechanic
         - Other
-   validarions:
+    validations:
       required: true
- - type: textarea
-   id: description
-   attributes:
+  - type: textarea
+    id: description
+    attributes:
       label: Description
       description: Describe the feature
-   validarions:
+    validations:
       required: true
