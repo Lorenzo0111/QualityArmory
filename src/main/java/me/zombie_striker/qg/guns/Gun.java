@@ -266,7 +266,7 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
 		double k = ((double) damage) / g.getDurability();
 		ChatColor c = k > 0.5 ? ChatColor.DARK_GREEN : k > 0.25 ? ChatColor.GOLD : ChatColor.DARK_RED;
 		for (int j = 0; j < lore.size(); j++) {
-			if (ChatColor.stripColor(lore.get(j)).contains(QAMain.S_ITEM_DURIB)) {
+			if (ChatColor.stripColor(lore.get(j)).contains(ChatColor.stripColor(QAMain.S_ITEM_DURIB))) {
 				lore.set(j, c + QAMain.S_ITEM_DURIB + ":" + damage + "/" + g.getDurability());
 				foundLine = true;
 				break;

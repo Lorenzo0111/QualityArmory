@@ -217,6 +217,8 @@ public class GunYMLLoader {
 
 							if (wt == WeaponType.MEDKIT)
 								QAMain.miscRegister.put(ms, base=new MedKit(ms, name, displayname, materails, price));
+							if (wt == WeaponType.AMMO_BAG)
+								QAMain.miscRegister.put(ms, base=new AmmoBag(ms, name, displayname, materails, f2.getInt("max", 5), price));
 							if (wt == WeaponType.MELEE) {
 								QAMain.miscRegister.put(ms,
 										base = new MeleeItems(ms, name, displayname, materails, price, damage));

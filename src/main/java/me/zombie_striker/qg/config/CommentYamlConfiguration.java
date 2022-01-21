@@ -13,6 +13,7 @@ import java.util.*;
 import java.util.logging.Level;
  
 public class CommentYamlConfiguration extends YamlConfiguration {
+    private File file;
 	
     private Map<Integer, String> comments = Maps.newHashMap();
     @Override
@@ -61,6 +62,19 @@ public class CommentYamlConfiguration extends YamlConfiguration {
             writer.write(data);
         }
     }
+
+    public Object getOrSet(String path, Object val) {
+        if(!this.contains(path)){
+            this.set(path, val);
+            if (file != null) {
+                try {
+                    this.save(file);
+                } catch (IOException ignored) {}
+            }
+            return val;
+        }
+        return this.get(path);
+    }
  
     @Override
     protected String buildHeader() {
@@ -71,10 +85,15 @@ public class CommentYamlConfiguration extends YamlConfiguration {
     protected String parseHeader(String input) {
         return "";
     }
- 
-    public static YamlConfiguration loadConfiguration(File file) {
+
+    public void setFile(File file) {
+        this.file = file;
+    }
+
+    public static CommentYamlConfiguration loadConfiguration(File file) {
         Validate.notNull(file, "File cannot be null");
-        YamlConfiguration config = new CommentYamlConfiguration();
+        CommentYamlConfiguration config = new CommentYamlConfiguration();
+        config.setFile(file);
         if(!file.exists())
 			try {
 				file.createNewFile();

@@ -217,11 +217,13 @@ public class QAMain extends JavaPlugin {
 	public static String S_noEcon = "ECONOMY NOT ENABLED. REPORT THIS TO THE OWNER!";
 	public static String S_nextPage = "&6Next Page:";
 	public static String S_prevPage = "&6Previous Page:";
+	public static String bagAmmo = "&aAmmo: ";
+	public static String bagAmmoType = "&aAmmo Type: ";
 
 	public static ItemStack prevButton;
 	public static ItemStack nextButton;
 	public static MessagesYML m;
-	public static MessagesYML resourcepackwhitelist;
+	public static CommentYamlConfiguration resourcepackwhitelist;
 	public static String language = "en";
 	public static boolean hasParties = false;
 	public static boolean friendlyFire = false;
@@ -797,13 +799,11 @@ public class QAMain extends JavaPlugin {
 //Chris: Support more language file lang/message_xx.yml
 		language = (String) a("language", "en");
 		File langFolder = new File(getDataFolder(), "lang");
-		if (null == langFolder) {
-			if (langFolder.exists() && !langFolder.isDirectory()) {
-				langFolder.delete();
-			}
-			langFolder.mkdir();
+		if (langFolder.exists() && !langFolder.isDirectory()) {
+			langFolder.delete();
 		}
-		m = new MessagesYML(new File(langFolder, "message_" + language + ".yml"));
+		langFolder.mkdir();
+		m = new MessagesYML(language, new File(langFolder, "message_" + language + ".yml"));
 		prefix = LocalUtils.colorize( (String) m.a("Prefix", prefix));
 		S_ANVIL = LocalUtils.colorize( (String) m.a("NoPermAnvilMessage", S_ANVIL));
 		S_NOPERM = LocalUtils.colorize( (String) m.a("NoPerm", S_NOPERM));
@@ -881,6 +881,8 @@ public class QAMain extends JavaPlugin {
 				(String) m.a("Bleeding.ProtectedByKevlar", S_BULLETPROOFSTOPPEDBLEEDING));
 		S_prevPage = LocalUtils.colorize( (String) m.a("gui.prevPage", S_prevPage));
 		S_nextPage = LocalUtils.colorize( (String) m.a("gui.nextPage", S_nextPage));
+		bagAmmo = LocalUtils.colorize( (String) m.a("AmmoBag.current", bagAmmo));
+		bagAmmoType = LocalUtils.colorize( (String) m.a("AmmoBag.type", bagAmmoType));
 
 		Material glass = null;
 		Material glass2 = null;
@@ -901,8 +903,8 @@ public class QAMain extends JavaPlugin {
 			nextButton = new ItemStack(glass, 1, (short) 5);
 		}
 
-		resourcepackwhitelist = new MessagesYML(new File(getDataFolder(), "resourcepackwhitelist.yml"));
-		namesToBypass = (List<String>) resourcepackwhitelist.a("Names_Of_players_to_bypass", namesToBypass);
+		resourcepackwhitelist = CommentYamlConfiguration.loadConfiguration(new File(getDataFolder(), "resourcepackwhitelist.yml"));
+		namesToBypass = (List<String>) resourcepackwhitelist.getOrSet("Names_Of_players_to_bypass", namesToBypass);
 
 
 		if (!new File(getDataFolder(), "config.yml").exists()) {

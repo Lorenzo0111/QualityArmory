@@ -1,6 +1,6 @@
 package me.zombie_striker.customitemmanager.qa.versions.V1_14;
 
-import me.clip.placeholderapi.PlaceholderAPI;
+import com.cryptomorin.xseries.XMaterial;
 import me.zombie_striker.customitemmanager.*;
 import me.zombie_striker.customitemmanager.qa.AbstractCustomGunItem;
 import me.zombie_striker.qg.QAMain;
@@ -171,6 +171,8 @@ public class CustomGunItem extends AbstractCustomGunItem {
 
 		List<String> stringsGrenades = Arrays.asList(new String[]{getIngString(Material.IRON_INGOT, 0, 6),
 				getIngString(MultiVersionLookup.getGunpowder(), 0, 10)});
+		List<String> stringsAmmoBag = Arrays.asList(new String[]{getIngString(Material.STRING, 0, 2),
+				getIngString(Material.LEATHER, 0, 6)});
 
 		List<String> stringsAmmo = Arrays.asList(new String[]{getIngString(Material.IRON_INGOT, 0, 1),
 				getIngString(MultiVersionLookup.getGunpowder(), 0, 1), getIngString(Material.REDSTONE, 0, 1)});
@@ -297,6 +299,8 @@ public class CustomGunItem extends AbstractCustomGunItem {
 								+ ChatColor.DARK_GRAY + " before exploding.",
 						ChatColor.DARK_RED + "<!>Will Explode Even If Not Thrown<!>"),
 				m(15), stringsGrenades, 100, WeaponType.GRENADES, 100, 1).set(false, "radius", 10).setMaterial(Material.CROSSBOW).done();
+		GunYMLCreator.createMisc(false, dataFolder, false, "default_ammobag", "ammobag", "&7Ammo Bag",
+				Arrays.asList(ChatColor.DARK_GRAY + "[Left-Click] to unload", ChatColor.DARK_GRAY + "[Right-Click] to load"), m(85), stringsAmmoBag, 100, WeaponType.AMMO_BAG, 0, 1000).set(false, "max", 6).done();
 		GunYMLCreator
 				.createNewDefaultGun(dataFolder, "dragunov", "Dragunov", 16, stringsMetalRif,
 						WeaponType.SNIPER, null, true, "762", 7, 12, 2100).setMaterial(Material.CROSSBOW)
