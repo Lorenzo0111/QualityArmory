@@ -19,7 +19,7 @@ public class WorldGuardHook implements ProtectionHook {
     public WorldGuardHook() {
         worldGuard = WorldGuardWrapper.getInstance();
         pvp = worldGuard.getFlag("PVP", WrappedState.class).orElse(createFlag("PVP"));
-        explosion = worldGuard.getFlag("OTHER_EXPLOSION", WrappedState.class).orElse(createFlag("OTHER-EXPLOSION"));
+        explosion = worldGuard.getFlag("OTHER-EXPLOSION", WrappedState.class).orElse(createFlag("OTHER-EXPLOSION"));
         blockBreak = worldGuard.getFlag("BLOCK-BREAK", WrappedState.class).orElse(createFlag("BLOCK-BREAK"));
     }
 
