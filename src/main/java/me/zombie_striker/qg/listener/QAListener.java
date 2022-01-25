@@ -602,25 +602,6 @@ public class QAListener implements Listener {
 	@SuppressWarnings("deprecation")
 	@EventHandler(priority = EventPriority.HIGH)
 	public void onDeath(PlayerDeathEvent e) {
-		if (QAMain.reloadingTasks.containsKey(e.getEntity().getUniqueId())) {
-			for (GunRefillerRunnable r : QAMain.reloadingTasks.get(e.getEntity().getUniqueId())) {
-				if (e.getEntity().getGameMode() != GameMode.CREATIVE) {
-					Gun gun = QualityArmory.getGun(r.getItem());
-					if (gun != null) {
-						Ammo ammotype = gun.getAmmoType();
-						if (ammotype != null) {
-							ItemStack ammo = QualityArmory.getCustomItemAsItemStack(ammotype);
-							ammo.setAmount(r.getAddedAmount());
-							e.getDrops().add(ammo);
-						}
-					}
-				}
-				r.getTask().cancel();
-				DEBUG("Canceling reload task " + r.getTask().getTaskId());
-			}
-		}
-		QAMain.reloadingTasks.remove(e.getEntity().getUniqueId());
-
 		for (ItemStack is : new ArrayList<>(e.getDrops())) {
 			if (is == null)
 				continue;
