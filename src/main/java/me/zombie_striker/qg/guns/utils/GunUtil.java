@@ -376,8 +376,12 @@ public class GunUtil {
 
 				for (Block l : blocksThatWillBreak) {
 					QAMain.DEBUG("Breaking " + l.getX() + " " + l.getY() + " " + l.getZ() + ": " + l.getType());
-					l.breakNaturally();
-					CoreProtectHook.logBreak(l,p);
+					QAWeaponDamageBlockEvent event = new QAWeaponDamageBlockEvent(p,g,l);
+					Bukkit.getPluginManager().callEvent(event);
+					if (!event.isCancelled()) {
+						l.breakNaturally();
+						CoreProtectHook.logBreak(l,p);
+					}
 				}
 			}
 
