@@ -29,8 +29,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
-import ru.beykerykt.lightapi.LightAPI;
-import ru.beykerykt.lightapi.chunks.ChunkInfo;
+import ru.beykerykt.minecraft.lightapi.common.LightAPI;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -388,18 +387,12 @@ public class GunUtil {
 				if (Bukkit.getPluginManager().getPlugin("LightAPI") != null) {
 					if (p.getEyeLocation().getBlock().getLightLevel() < g.getLightOnShoot()) {
 						final Location loc = p.getEyeLocation().clone();
-						LightAPI.createLight(loc, g.getLightOnShoot(), false);
-						for (ChunkInfo c : LightAPI.collectChunks(loc)) {
-							LightAPI.updateChunk(c);
-						}
+						LightAPI.get().setLightLevel(loc.getWorld().getName(),loc.getBlockX(),loc.getBlockY(),loc.getBlockZ(), g.getLightOnShoot());
 						new BukkitRunnable() {
 
 							@Override
 							public void run() {
-								LightAPI.deleteLight(loc, false);
-								for (ChunkInfo c : LightAPI.collectChunks(loc)) {
-									LightAPI.updateChunk(c);
-								}
+								LightAPI.get().setLightLevel(loc.getWorld().getName(), loc.getBlockX(), loc.getBlockY(), loc.getBlockZ(), 0);
 							}
 						}.runTaskLater(QAMain.getInstance(), 3);
 					}

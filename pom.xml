@@ -26,7 +26,7 @@
 
         <repository>
             <id>vault-repo</id>
-            <url>http://nexus.hc.to/content/repositories/pub_releases</url>
+            <url>https://nexus.hc.to/content/repositories/pub_releases</url>
         </repository>
 
         <repository>
@@ -56,7 +56,7 @@
 
         <repository>
             <id>everything</id>
-            <url>http://repo.citizensnpcs.co/</url>
+            <url>https://repo.citizensnpcs.co/</url>
         </repository>
 
         <repository>
@@ -103,7 +103,7 @@
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>1.18.1-R0.1-SNAPSHOT</version>
+            <version>1.18-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
 
@@ -248,11 +248,10 @@
 
         <!-- LightAPI -->
         <dependency>
-            <groupId>ru.beykerykt</groupId>
-            <artifactId>LightAPI</artifactId>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/libs/LightAPI.jar</systemPath>
-            <version>3.2.7</version>
+            <groupId>com.github.BeYkeRYkt.LightAPI</groupId>
+            <artifactId>lightapi-bukkit-common</artifactId>
+            <version>5.1.0-Bukkit</version>
+            <scope>provided</scope>
         </dependency>
 
         <!-- ItemBridge -->
