@@ -53,6 +53,7 @@ public class FireProjectile implements RealtimeCalculationProjectile {
 										e.setFireTicks(20*3);
 									}
 								}catch (Error error){
+									QAMain.DEBUG("Cannot use protection hook: " + error.getMessage());
 									e.setFireTicks(20*3);
 								}
 							}
