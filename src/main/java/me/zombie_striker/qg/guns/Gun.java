@@ -626,7 +626,6 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
 	}
 
 	public double getSway() {
-		// TODO Auto-generated method stub
 		return acc;
 	}
 
@@ -635,7 +634,6 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
 	}
 
 	public double getMovementMultiplier() {
-		// TODO Auto-generated method stub
 		return swaymultiplier;
 	}
 

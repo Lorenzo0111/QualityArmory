@@ -24,9 +24,9 @@ public class GunRefillerRunnable {
 	public static boolean hasItemReloaded(Player reloader, ItemStack is) {
 		for (GunRefillerRunnable s : allGunRefillers) {
 			if (is.isSimilar(s.reloadedItem))
-				if(reloader == null || reloader == s.reloader);
-				if(!s.getTask().isCancelled())
-				return true;
+				if(reloader == null || reloader.equals(s.reloader)) {
+					if(!s.getTask().isCancelled()) return true;
+				}
 		}
 		return false;
 	}

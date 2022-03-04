@@ -7,7 +7,8 @@ import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
- 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.*;
 import java.util.*;
 import java.util.logging.Level;
@@ -77,11 +78,11 @@ public class CommentYamlConfiguration extends YamlConfiguration {
     }
  
     @Override
-    protected String buildHeader() {
+    @Deprecated
+    protected @NotNull String buildHeader() {
         return "";
     }
- 
-    @Override
+
     protected String parseHeader(String input) {
         return "";
     }
