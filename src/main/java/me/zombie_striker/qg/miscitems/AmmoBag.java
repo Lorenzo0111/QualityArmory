@@ -59,7 +59,7 @@ public class AmmoBag extends CustomBaseObject implements ArmoryBaseObject {
         int newAmmoCount = getAmmo(usedItem);
 
         if (ammoType != null) {
-            int inInv = QualityArmory.getAmmoInInventory(shooter, ammoType);
+            int inInv = QualityArmory.getAmmoInInventory(shooter, ammoType, true);
             int newCount = Math.min(inInv + newAmmoCount, maxAmmo);
             int toRemove = Math.max(0,newCount - newAmmoCount);
 

@@ -643,6 +643,10 @@ public class QualityArmory {
 
 
 	public static int getAmmoInInventory(Player player, Ammo a) {
+		return getAmmoInInventory(player,a,false);
+	}
+
+	public static int getAmmoInInventory(Player player, Ammo a, boolean ignoreBag) {
 		int amount = 0;
 		if(player.getGameMode()==GameMode.CREATIVE)
 			return 99999;
@@ -651,7 +655,7 @@ public class QualityArmory {
 				amount += is.getAmount();
 			}
 		}
-		return amount + getAmmoInBag(player, a);
+		return ignoreBag ? amount : amount + getAmmoInBag(player, a);
 	}
 
 	public static boolean addAmmoToInventory(Player player, Ammo a, int amount) {
