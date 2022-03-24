@@ -107,7 +107,7 @@
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>1.18-R0.1-SNAPSHOT</version>
+            <version>1.18.2-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
 
@@ -115,7 +115,7 @@
         <dependency>
             <groupId>com.github.cryptomorin</groupId>
             <artifactId>XSeries</artifactId>
-            <version>8.6.1</version>
+            <version>8.7.0</version>
         </dependency>
 
         <!-- Vault API -->
@@ -136,7 +136,7 @@
         <dependency>
             <groupId>me.vagdedes.spartan</groupId>
             <artifactId>SpartanAPI</artifactId>
-            <version>2.0</version>
+            <version>3.0</version>
             <scope>provided</scope>
         </dependency>
 
@@ -191,7 +191,7 @@
         <dependency>
             <groupId>com.comphenix.protocol</groupId>
             <artifactId>ProtocolLib</artifactId>
-            <version>4.7.0</version>
+            <version>4.8.0</version>
             <scope>provided</scope>
         </dependency>
 
@@ -206,7 +206,7 @@
         <dependency>
             <groupId>org.maxgamer</groupId>
             <artifactId>QuickShop</artifactId>
-            <version>5.1.0.4</version>
+            <version>5.1.0.5</version>
             <scope>provided</scope>
         </dependency>
 
@@ -239,14 +239,14 @@
         <dependency>
             <groupId>com.alessiodp.parties</groupId>
             <artifactId>parties-api</artifactId>
-            <version>3.1.14</version>
+            <version>3.2.2</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>net.coreprotect</groupId>
             <artifactId>coreprotect</artifactId>
-            <version>20.4</version>
+            <version>21.2</version>
             <scope>provided</scope>
         </dependency>
 
@@ -254,7 +254,7 @@
         <dependency>
             <groupId>com.github.BeYkeRYkt.LightAPI</groupId>
             <artifactId>lightapi-bukkit-common</artifactId>
-            <version>5.1.0-Bukkit</version>
+            <version>5.2.0-Bukkit</version>
             <scope>provided</scope>
         </dependency>
 
@@ -312,7 +312,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.10.0</version>
+                <version>3.10.1</version>
                 <configuration>
                     <source>1.8</source>
                     <target>1.8</target>
