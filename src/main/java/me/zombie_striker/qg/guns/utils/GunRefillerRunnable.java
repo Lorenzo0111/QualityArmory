@@ -33,6 +33,14 @@ public class GunRefillerRunnable {
 	public static boolean hasItemReloaded(ItemStack is) {
 		return hasItemReloaded(null,is);
 	}
+	public static boolean isReloading(Player reloader) {
+		for (GunRefillerRunnable s : allGunRefillers) {
+			if(reloader == null || reloader.equals(s.reloader)) {
+				if(!s.getTask().isCancelled()) return true;
+			}
+		}
+		return false;
+	}
 
 	private BukkitTask r;
 	private ItemStack reloadedItem;

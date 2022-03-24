@@ -488,7 +488,7 @@ public class GunUtil {
 
 				@Override
 				public void run() {
-					if ((g.getChargingHandler() != null && g.getChargingHandler().isCharging(player)) || GunRefillerRunnable.hasItemReloaded(player, firstGunInstance)) {
+					if ((g.getChargingHandler() != null && g.getChargingHandler().isCharging(player)) || GunRefillerRunnable.isReloading(player)) {
 						QAMain.DEBUG("Cancelling rapid fire shoot due to charging or reloading.");
 						rapidfireshooters.remove(player.getUniqueId());
 						cancel();
