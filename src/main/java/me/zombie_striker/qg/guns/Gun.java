@@ -806,6 +806,10 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
 			player.getPlayer().sendMessage(QAMain.S_NOPERM);
 			return true;
 		}
+		if (QAMain.perWeaponPermission && !player.getPlayer().hasPermission("qualityarmory.usegun." + getName())) {
+			player.getPlayer().sendMessage(QAMain.S_NOPERM);
+			return true;
+		}
 
 		QAMain.DEBUG("Dups check");
 		QAMain.checkforDups(player.getPlayer(), usedItem);

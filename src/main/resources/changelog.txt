@@ -1,5 +1,16 @@
 2.0.6
   - Added ammobags
+  - Performance fixes
+  - Fixed protection support
+  - Bump resourcepack version
+  - Updated LightAPI support
+  - Fixed WorldGuard hook
+  - Now calling the QAWeaponDamageBlockEvent on block break
+  - Fixed ammo duplication on death
+  - Fixed ProtocolLib support with 1.18
+  - Fixed medkit price
+  - Fixed reloading on rapidshoot
+  - Added per weapon permission
 
 2.0.5.1
    - Fixed a bug that allow users to drop item out of guis

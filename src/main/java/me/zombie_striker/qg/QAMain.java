@@ -149,6 +149,7 @@ public class QAMain extends JavaPlugin {
 	public static boolean overrideURL = false;
 	public static boolean kickIfDeniedRequest = false;
 	public static boolean showAmmoInXPBar = false;
+	public static boolean perWeaponPermission = false;
 
 	public static boolean allowGunHitEntities = false;
 
@@ -982,6 +983,7 @@ public class QAMain extends JavaPlugin {
 		showReloadOnTitle = (boolean) a("showReloadingTitle", false);
 
 		showAmmoInXPBar = (boolean) a("showAmmoInXPBar", false);
+		perWeaponPermission = (boolean) a("perWeaponPermission", false);
 
 		enableExplosionDamage = (boolean) a("enableExplosionDamage", false);
 		enableExplosionDamageDrop = (boolean) a("enableExplosionDamageDrop", false);
