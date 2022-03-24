@@ -33,6 +33,7 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.*;
 import org.bukkit.event.player.*;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scoreboard.Scoreboard;
@@ -239,6 +240,19 @@ public class QAListener implements Listener {
 		if (e.isCancelled())
 			return;
 		String name = null;
+
+		if(e.getClickedInventory() instanceof PlayerInventory) {
+			ItemStack cursor = e.getCursor();
+			final int OFFHAND_SLOT = 40;
+			// null check is done by isGun
+			// offhand slot check also works with hotkey inventory swap (F by default) - tested on 1.16.5
+			if(e.getSlot() == OFFHAND_SLOT && QualityArmory.isGun(cursor)) {
+				e.setCancelled(true);
+				// restore placed item because cancelling an event seems to wipe it.
+				// it will make cursor item look disappeared, but it'll be dropped when inventory is closed
+				e.getView().setCursor(cursor);
+			}
+		}
 
 		if (e.getView().getTitle().startsWith((QAMain.S_craftingBenchName)) || e.getView().getTitle().startsWith((QAMain.S_shopName))) {
 			if (e.getClick().isShiftClick()) {
