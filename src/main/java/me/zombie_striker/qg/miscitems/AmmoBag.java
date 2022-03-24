@@ -24,6 +24,7 @@ public class AmmoBag extends CustomBaseObject implements ArmoryBaseObject {
     public AmmoBag(MaterialStorage ms, String name, String displayname, ItemStack[] ings, int max, int cost) {
         super(name,ms,displayname,null,false);
         super.setIngredients(ings);
+        this.setPrice(cost);
         this.maxAmmo = max;
     }
 
