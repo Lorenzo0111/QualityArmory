@@ -159,7 +159,7 @@
         <dependency>
             <groupId>com.github.TownyAdvanced</groupId>
             <artifactId>Towny</artifactId>
-            <version>0.97.5.1</version>
+            <version>0.98.1.6</version>
             <scope>provided</scope>
         </dependency>
 
