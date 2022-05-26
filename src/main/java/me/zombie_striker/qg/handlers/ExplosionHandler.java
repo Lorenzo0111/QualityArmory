@@ -15,16 +15,19 @@ public class ExplosionHandler {
 	// Material.COMMAND, Material.COMMAND_CHAIN, Material.COMMAND_MINECART,
 	// Material.COMMAND_REPEATING);
 
-	public static void handleExplosion(Location origin, int radius, int power) {
+	public static boolean handleExplosion(Location origin, int radius, int power) {
 		try{
-			if(ProtectionHandler.canExplode(origin)) {
-				origin.getWorld().createExplosion(origin, Math.max(radius,power));
-			}else{
+			if(!ProtectionHandler.canExplode(origin)) {
 				origin.getWorld().createExplosion(origin, 0);
+				return false;
 			}
+
+			origin.getWorld().createExplosion(origin, Math.max(radius,power));
 		}catch(NoClassDefFoundError e4){
 			origin.getWorld().createExplosion(origin, Math.max(radius,power));
 		}
+
+		return true;
 	}
 	
 	public static void handleAOEExplosion(Entity shooter, Location loc, double damage, double radius) {

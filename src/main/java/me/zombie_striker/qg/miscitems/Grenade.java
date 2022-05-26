@@ -5,6 +5,7 @@ import java.util.List;
 
 import me.zombie_striker.customitemmanager.CustomBaseObject;
 import me.zombie_striker.customitemmanager.CustomItemManager;
+import me.zombie_striker.qg.hooks.protection.ProtectionHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.Effect;
 import org.bukkit.GameMode;
@@ -72,6 +73,10 @@ public class Grenade extends CustomBaseObject implements ThrowableItems {
 			grenade.setVelocity(thrower.getLocation().getDirection().normalize().multiply(getThrowSpeed()));
 			holder.setHolder(grenade);
 			thrower.getWorld().playSound(thrower.getLocation(), Sound.ENTITY_ARROW_SHOOT, 1, 1.5f);
+
+			if (!ProtectionHandler.canExplode(grenade.getLocation())) {
+				return false;
+			}
 
 			throwItems.put(grenade, holder);
 			GRENADES.add(grenade);

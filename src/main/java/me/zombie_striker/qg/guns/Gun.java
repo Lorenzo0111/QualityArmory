@@ -213,7 +213,9 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
 
 		if (QAMain.enableDurability)
 			if (current == null) {
-				lore.add(QAMain.S_ITEM_DURIB + ":" + g.getDurability() + "/" + g.getDurability());
+				double k = ((double) g.getDamage()) / g.getDurability();
+				ChatColor c = k > 0.5 ? ChatColor.DARK_GREEN : k > 0.25 ? ChatColor.GOLD : ChatColor.DARK_RED;
+				lore.add(c + QAMain.S_ITEM_DURIB + ":" + g.getDurability() + "/" + g.getDurability());
 			} else {
 				lore = setDurabilityDamage(g, lore, getDamage(current));
 			}
