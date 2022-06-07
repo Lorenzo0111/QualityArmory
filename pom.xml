@@ -198,7 +198,7 @@
         <dependency>
             <groupId>com.acrobot.chestshop</groupId>
             <artifactId>chestshop</artifactId>
-            <version>3.12</version>
+            <version>3.12.1</version>
             <scope>provided</scope>
         </dependency>
 
