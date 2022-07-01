@@ -2,8 +2,8 @@ package me.zombie_striker.qg.handlers;
 
 import java.lang.ref.WeakReference;
 import java.util.Arrays;
+import java.util.Objects;
 
-import org.apache.commons.lang.Validate;
 import org.bukkit.entity.Player;
 
 /**
@@ -40,7 +40,7 @@ public class ExperienceManager {
 	 * @throws IllegalArgumentException if the player is null
 	 */
 	public ExperienceManager(Player player) {
-		Validate.notNull(player, "Player cannot be null");
+		Objects.requireNonNull(player, "Player cannot be null");
 		this.player = new WeakReference<Player>(player);
 		this.playerName = player.getName();
 	}
@@ -234,7 +234,8 @@ public class ExperienceManager {
 		if (exp > xpTotalToReachLevel[xpTotalToReachLevel.length - 1]) {
 			// need to extend the lookup tables
 			int newMax = calculateLevelForExp(exp) * 2;
-			Validate.isTrue(newMax <= hardMaxLevel, "Level for exp " + exp + " > hard max level " + hardMaxLevel);
+			if (newMax > hardMaxLevel)
+				throw new IllegalStateException("Level for exp " + exp + " > hard max level " + hardMaxLevel);
 			initLookupTables(newMax);
 		}
 		int pos = Arrays.binarySearch(xpTotalToReachLevel, exp);
@@ -249,7 +250,8 @@ public class ExperienceManager {
 	 * @throws IllegalArgumentException if the level is less than 0
 	 */
 	public int getXpNeededToLevelUp(int level) {
-		Validate.isTrue(level >= 0, "Level may not be negative.");
+		if (level < 0)
+			throw new IllegalStateException("Level may not be negative.");
 		return level > 30 ? 62 + (level - 30) * 7 : level >= 16 ? 17 + (level - 15) * 3 : 17;
 	}
 
@@ -261,7 +263,8 @@ public class ExperienceManager {
 	 * @throws IllegalArgumentException if the level is less than 0 or greater than the current hard maximum
 	 */
 	public int getXpForLevel(int level) {
-		Validate.isTrue(level >= 0 && level <= hardMaxLevel, "Invalid level " + level + "(must be in range 0.." + hardMaxLevel + ")");
+		if (!(level >= 0 && level <= hardMaxLevel))
+			throw new IllegalStateException("Invalid level " + level + "(must be in range 0.." + hardMaxLevel + ")");
 		if (level >= xpTotalToReachLevel.length) {
 			initLookupTables(level * 2);
 		}

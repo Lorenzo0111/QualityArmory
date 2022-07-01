@@ -90,7 +90,7 @@ public class CustomGunItem extends AbstractCustomGunItem {
 
 
 			if (overrideAttackSpeed) {
-				AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "generic.attackSpeed", 0, AttributeModifier.Operation.ADD_NUMBER);
+				AttributeModifier modifier = new AttributeModifier(base.getUuid(), "generic.attackSpeed", 0, AttributeModifier.Operation.ADD_NUMBER);
 				im.addAttributeModifier(Attribute.GENERIC_ATTACK_SPEED, modifier);
 			}
 

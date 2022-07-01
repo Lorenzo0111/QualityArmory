@@ -8,11 +8,9 @@ import java.util.UUID;
 
 import me.zombie_striker.customitemmanager.CustomBaseObject;
 import me.zombie_striker.customitemmanager.CustomItemManager;
+import me.zombie_striker.qg.api.QualityArmory;
 import me.zombie_striker.qg.handlers.HotbarMessager;
-import org.apache.commons.lang.StringUtils;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -93,9 +91,9 @@ public class MedKit extends CustomBaseObject implements ArmoryBaseObject {
 
 				StringBuilder levelbar = new StringBuilder();
 				levelbar.append(ChatColor.WHITE);
-				levelbar.append(StringUtils.repeat(":", healthBars));
+				levelbar.append(QualityArmory.repeat(":", healthBars));
 				levelbar.append(ChatColor.BLACK);
-				levelbar.append(StringUtils.repeat(":", totalBars - healthBars));
+				levelbar.append(QualityArmory.repeat(":", totalBars - healthBars));
 				try {
 					HotbarMessager.sendHotBarMessage(healer, ChatColor.RED + "[" + levelbar.toString() + ChatColor.RED
 							+ "] " + new DecimalFormat("##0.#").format((p2 + percent)) + " percent!");
@@ -131,9 +129,9 @@ public class MedKit extends CustomBaseObject implements ArmoryBaseObject {
 
 			StringBuilder levelbar = new StringBuilder();
 			levelbar.append(severity);
-			levelbar.append(StringUtils.repeat(":", healthBars));
+			levelbar.append(QualityArmory.repeat(":", healthBars));
 			levelbar.append(ChatColor.BLACK);
-			levelbar.append(StringUtils.repeat(":", totalBars - healthBars));
+			levelbar.append(QualityArmory.repeat(":", totalBars - healthBars));
 
 			HotbarMessager.sendHotBarMessage(healer,
 					ChatColor.RED + QAMain.S_MEDKIT_HEALING + "[" + levelbar.toString() + ChatColor.RED + "] "

@@ -3,8 +3,7 @@ package me.zombie_striker.qg.handlers;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-
-import static org.apache.commons.lang.reflect.MethodUtils.invokeMethod;
+import java.lang.reflect.Method;
 
 public class ReflectionsUtil {
 	/**
@@ -81,7 +80,11 @@ public class ReflectionsUtil {
 		}
 		for (Object o : enumClass.getEnumConstants()) {
 			try {
-				if (name.equals(invokeMethod(o, "name", new Class[0]))) {
+				Method method = o.getClass().getMethod("name");
+				method.setAccessible(true);
+				String n = (String) method.invoke(o);
+
+				if (name.equals(n)) {
 					return o;
 				}
 			} catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {

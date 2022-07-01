@@ -4,9 +4,11 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class CustomBaseObject {
 
+	private final UUID uuid = UUID.randomUUID();
 	private String name;
 	private MaterialStorage base;
 	private List<String> lore;
@@ -120,5 +122,9 @@ public class CustomBaseObject {
 	}
 	public void setMaxItemStack(int amount){
 		maxItemStack = amount;
+	}
+
+	public UUID getUuid() {
+		return uuid;
 	}
 }

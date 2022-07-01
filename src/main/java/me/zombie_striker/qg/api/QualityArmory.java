@@ -12,7 +12,6 @@ import me.zombie_striker.qg.handlers.IronsightsHandler;
 import me.zombie_striker.qg.hooks.protection.ProtectionHandler;
 import me.zombie_striker.qg.miscitems.AmmoBag;
 import me.zombie_striker.qg.utils.LocalUtils;
-import org.apache.commons.lang.StringUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -467,9 +466,9 @@ public class QualityArmory {
 					public void run() {
 						StringBuilder sb = new StringBuilder();
 						sb.append(ChatColor.GRAY);
-						sb.append(StringUtils.repeat("#", (int) (20 * (1.0 * id / (20 * g.getReloadTime())))));
+						sb.append(repeat("#", (int) (20 * (1.0 * id / (20 * g.getReloadTime())))));
 						sb.append(ChatColor.DARK_GRAY);
-						sb.append(StringUtils.repeat("#", (int) (20 - ((int) (20.0 * id / (20 * g.getReloadTime()))))));
+						sb.append(repeat("#", (int) (20 - ((int) (20.0 * id / (20 * g.getReloadTime()))))));
 						p.sendTitle(QAMain.S_RELOADING_MESSAGE, sb.toString(), 0, 4, 0);
 					}
 				}.runTaskLater(QAMain.getInstance(), i);
@@ -744,5 +743,13 @@ public class QualityArmory {
 		} else {
 			entity.getWorld().dropItem(entity.getLocation(), item);
 		}
+	}
+
+	public static String repeat(String string, int times) {
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < times; i++) {
+			sb.append(string);
+		}
+		return sb.toString();
 	}
 }
