@@ -625,6 +625,12 @@ public class QAMain extends JavaPlugin {
 		for (Gunner g : gunners) {
 			g.dispose();
 		}
+
+		try {
+			resourcepackwhitelist.save(new File(getDataFolder(), "resourcepackwhitelist.yml"));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public Object a(String path, Object def) {
