@@ -27,6 +27,7 @@ import me.zombie_striker.qg.handlers.*;
 import me.zombie_striker.qg.guns.chargers.*;
 import me.zombie_striker.qg.guns.reloaders.PumpactionReloader;
 import me.zombie_striker.qg.guns.reloaders.SingleBulletReloader;
+import me.zombie_striker.qg.hooks.PlaceholderAPIHook;
 import me.zombie_striker.qg.hooks.anticheat.AntiCheatHook;
 import me.zombie_striker.qg.hooks.anticheat.MatrixHook;
 import me.zombie_striker.qg.hooks.QuickShopHook;
@@ -650,6 +651,11 @@ public class QAMain extends JavaPlugin {
 		if (Bukkit.getPluginManager().isPluginEnabled("QuickShop")) {
 			Bukkit.getPluginManager().registerEvents(new QuickShopHook(), this);
 			this.getLogger().info("Found QuickShop. Loaded support");
+		}
+
+		if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+			new PlaceholderAPIHook().register();
+			this.getLogger().info("Found PlaceholderAPI. Loaded support");
 		}
 
 		try {
