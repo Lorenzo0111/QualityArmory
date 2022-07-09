@@ -952,7 +952,7 @@ public class QAListener implements Listener {
 		}
 		QAMain.reloadingTasks.remove(e.getPlayer().getUniqueId());
 
-		if (QualityArmory.isIronSights(e.getPlayer().getInventory().getItemInMainHand())) {
+		if (QualityArmory.isIronSights(e.getPlayer().getInventory().getItemInHand())) {
 			try {
 				e.getPlayer().getInventory().setItemInMainHand(e.getPlayer().getInventory().getItemInOffHand());
 				e.getPlayer().getInventory().setItemInOffHand(new ItemStack(Material.AIR));

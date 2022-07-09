@@ -1,5 +1,6 @@
 package me.zombie_striker.qg.handlers;
 
+import com.cryptomorin.xseries.XSound;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
 
@@ -7,17 +8,17 @@ public class SoundHandler {
 
 	public static Sound getSoundWhenShot(Block b) {
 		if(b.getType().name().contains("GLASS"))
-			return Sound.BLOCK_GLASS_BREAK;
+			return XSound.BLOCK_GLASS_BREAK.parseSound();
 		if(b.getType().name().contains("STONE"))
-			return Sound.BLOCK_STONE_BREAK;
+			return XSound.BLOCK_STONE_BREAK.parseSound();
 		if(b.getType().name().contains("WOOD"))
-			return Sound.BLOCK_WOOD_BREAK;
+			return XSound.BLOCK_WOOD_BREAK.parseSound();
 		if(b.getType().name().contains("SNOW"))
-			return Sound.BLOCK_SNOW_BREAK;
+			return XSound.BLOCK_SNOW_BREAK.parseSound();
 		if(b.getType().name().contains("SAND"))
-			return Sound.BLOCK_SAND_BREAK;
+			return XSound.BLOCK_SAND_BREAK.parseSound();
 		if(b.getType().name().contains("WOOL"))
 			return MultiVersionLookup.getWoolSound();
-		return Sound.BLOCK_WOOD_BREAK;
+		return XSound.BLOCK_WOOD_BREAK.parseSound();
 	}
 }
