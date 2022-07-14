@@ -8,6 +8,7 @@ import java.util.List;
 import com.cryptomorin.xseries.ReflectionUtils;
 import com.cryptomorin.xseries.XMaterial;
 import com.mojang.datafixers.util.Pair;
+import de.tr7zw.nbtapi.NBTItem;
 import org.apache.commons.lang3.reflect.MethodUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -121,21 +122,17 @@ public class ProtocolLibHandler {
 								QualityArmory.isIronSights(who.getItemInHand()) &&
 								ironsights.toString().contains("crossbow")) {
 							Object is = null;
+
+							if (!QualityArmory.getGun(who.getInventory().getItemInOffHand()).hasBetterAimingAnimations())
+								return;
+
 							try {
-								if (!QualityArmory.getGun(who.getInventory().getItemInOffHand()).hasBetterAimingAnimations())
-									return;
 								is = getCraftItemStack(who.getInventory().getItemInOffHand());
-								Method getTag = ReflectionUtils.supports(18) ? is.getClass().getMethod("b") : is.getClass().getMethod("getOrCreateTag");
-								Object nbtTag = getTag.invoke(is);
-								//new NBTTagCompound().
-								Class[] args = new Class[2];
-								args[0] = String.class;
-								args[1] = boolean.class;
-								nbtTag.getClass().getMethod("setBoolean", args).invoke(nbtTag, "Charged", true);
-								is.getClass().getMethod("setTag", nbtTag.getClass()).invoke(is, nbtTag);
-							} catch (IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
-								e.printStackTrace();
-							}
+							} catch (NoSuchMethodException e) {}
+
+							NBTItem item = new NBTItem(who.getInventory().getItemInOffHand());
+							item.setBoolean("Charged",true);
+
 							if(XMaterial.supports(16)){
 								List list = (List) slot;
 								for(Object o : new ArrayList(list)){

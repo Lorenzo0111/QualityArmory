@@ -934,7 +934,11 @@ public class QAMain extends JavaPlugin {
 		if (getServer().getPluginManager().isPluginEnabled("ProtocolLib")) {
 			hasProtocolLib = true;
 			ProtocolLibHandler.initRemoveArmswing();
-			ProtocolLibHandler.initAimBow();
+			if (Bukkit.getPluginManager().isPluginEnabled("NBTAPI")) {
+				ProtocolLibHandler.initAimBow();
+			} else {
+				this.getLogger().warning("ProtocolLib is installed but NBTAPI is not loaded. Please install it to use the AimBow feature.");
+			}
 		}
 
 		if (getServer().getPluginManager().isPluginEnabled("Sentinel"))
