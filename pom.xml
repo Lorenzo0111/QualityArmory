@@ -287,6 +287,13 @@
             <version>3.0.0</version>
             <scope>provided</scope>
         </dependency>
+
+        <dependency>
+            <groupId>ru.endlesscode.mimic</groupId>
+            <artifactId>mimic-bukkit-api</artifactId>
+            <version>0.8.0</version>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
     <build>

@@ -1,6 +1,11 @@
 2.0.7
   - Fixed worldguard protection
   - Fixed chestshop support
+  - Added PlaceholderAPI placeholders
+  - Added Mimic support
+  - 1.19 support
+  - Fixed ProtocolLib support
+  - Minor fixes
 
 2.0.6
   - Added ammobags

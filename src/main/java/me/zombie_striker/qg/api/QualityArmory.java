@@ -81,12 +81,16 @@ public class QualityArmory {
 		return QAMain.armorRegister.values().iterator();
 	}
 	public static Iterator<CustomBaseObject> getCustomItems(){
+		return getCustomItemsAsList().iterator();
+	}
+
+	public static List<CustomBaseObject> getCustomItemsAsList(){
 		List<CustomBaseObject> list = new ArrayList<>();
 		list.addAll(QAMain.gunRegister.values());
 		list.addAll(QAMain.ammoRegister.values());
 		list.addAll(QAMain.armorRegister.values());
 		list.addAll(QAMain.miscRegister.values());
-		return list.iterator();
+		return list;
 	}
 
 
@@ -631,6 +635,7 @@ public class QualityArmory {
 	}
 
 	public static ItemStack getCustomItemAsItemStack(CustomBaseObject obj) {
+		if (obj == null) return null;
 		return CustomItemManager.getItemType("gun").getItem(obj.getItemData().getMat(),obj.getItemData().getData(),obj.getItemData().getVariant());
 	}
 

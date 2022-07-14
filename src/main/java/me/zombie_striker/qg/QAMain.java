@@ -27,6 +27,7 @@ import me.zombie_striker.qg.handlers.*;
 import me.zombie_striker.qg.guns.chargers.*;
 import me.zombie_striker.qg.guns.reloaders.PumpactionReloader;
 import me.zombie_striker.qg.guns.reloaders.SingleBulletReloader;
+import me.zombie_striker.qg.hooks.MimicHook;
 import me.zombie_striker.qg.hooks.PlaceholderAPIHook;
 import me.zombie_striker.qg.hooks.anticheat.AntiCheatHook;
 import me.zombie_striker.qg.hooks.anticheat.MatrixHook;
@@ -55,12 +56,15 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
+import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
+import ru.endlesscode.mimic.Mimic;
+import ru.endlesscode.mimic.MimicApiLevel;
 
 import java.io.*;
 import java.util.*;
@@ -664,6 +668,11 @@ public class QAMain extends JavaPlugin {
 			this.getLogger().info("Found PlaceholderAPI. Loaded support");
 		}
 
+		if (Bukkit.getPluginManager().isPluginEnabled("Mimic")) {
+			Mimic.getInstance().registerItemsRegistry(new MimicHook(), MimicApiLevel.CURRENT, this, ServicePriority.Normal);
+			this.getLogger().info("Found Mimic. Loaded support");
+		}
+
 		try {
 			ParticleHandlers.initValues();
 		} catch (Error | Exception e5) {
@@ -776,10 +785,6 @@ public class QAMain extends JavaPlugin {
 	public void reloadVals() {
 		reloadConfig();
 		DEBUG = (boolean) a("ENABLE-DEBUG", false);
-
-		if (Bukkit.getPluginManager().isPluginEnabled("WorldGuard") && !Bukkit.getPluginManager().isPluginEnabled("QAWorldGuard")) {
-			this.getLogger().info("It appears you are running WorldGuard. If you want to implement flags you can download the QAWorldGuard addon: https://www.spigotmc.org/resources/96868/");
-		}
 
 		new BoltactionCharger();
 		new BreakactionCharger();
