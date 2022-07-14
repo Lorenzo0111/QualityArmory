@@ -56,15 +56,12 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
-import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
-import ru.endlesscode.mimic.Mimic;
-import ru.endlesscode.mimic.MimicApiLevel;
 
 import java.io.*;
 import java.util.*;
@@ -668,10 +665,12 @@ public class QAMain extends JavaPlugin {
 			this.getLogger().info("Found PlaceholderAPI. Loaded support");
 		}
 
-		if (Bukkit.getPluginManager().isPluginEnabled("Mimic")) {
-			Mimic.getInstance().registerItemsRegistry(new MimicHook(), MimicApiLevel.CURRENT, this, ServicePriority.Normal);
-			this.getLogger().info("Found Mimic. Loaded support");
-		}
+		try {
+			if (Bukkit.getPluginManager().isPluginEnabled("Mimic")) {
+				new MimicHook().register();
+				this.getLogger().info("Found Mimic. Loaded support");
+			}
+		} catch (Exception | Error ignored) {}
 
 		try {
 			ParticleHandlers.initValues();
