@@ -935,7 +935,7 @@ public class QAListener implements Listener {
 		if(QAMain.showAmmoInXPBar) {
 			CustomBaseObject customBase = QualityArmory.getCustomItem(newslot);
 			if (customBase instanceof Gun) {
-				GunUtil.updateXPBar(e.getPlayer(), (Gun) customBase,QualityArmory.getBulletsInGun(newslot));
+				GunUtil.updateXPBar(e.getPlayer(), (Gun) customBase,QualityArmory.getBulletsInHand(e.getPlayer()));
 			}else{
 				e.getPlayer().setTotalExperience(0);
 			}
@@ -1086,7 +1086,7 @@ public class QAListener implements Listener {
 							QAMain.DEBUG("Dropped gun is a gun. Checking for has ammo");
 							if (!dealtWithDrop) {
 								if (e.getPlayer().getItemInHand().getType() != Material.AIR) {
-									if ((g.getMaxBullets() - 1) == Gun.getAmount(e.getPlayer().getItemInHand())) {
+									if ((g.getMaxBullets() - 1) == Gun.getAmount(e.getPlayer())) {
 										QAMain.DEBUG("Player is full on ammo. Don't reload");
 										return;
 									}

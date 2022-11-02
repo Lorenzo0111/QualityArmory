@@ -1,6 +1,7 @@
 package me.zombie_striker.qg.hooks.protection;
 
 import me.zombie_striker.qg.QAMain;
+import me.zombie_striker.qg.hooks.protection.implementation.GriefPreventionHook;
 import me.zombie_striker.qg.hooks.protection.implementation.ResidenceHook;
 import me.zombie_striker.qg.hooks.protection.implementation.TownyHook;
 import me.zombie_striker.qg.hooks.protection.implementation.WorldGuardHook;
@@ -23,6 +24,7 @@ public class ProtectionHandler {
         classes.put("WorldGuard", WorldGuardHook.class);
         classes.put("Towny", TownyHook.class);
         classes.put("Residence", ResidenceHook.class);
+        classes.put("GriefPrevention", GriefPreventionHook.class);
 
         for (Map.Entry<String,Class<? extends ProtectionHook>> entry : classes.entrySet()) {
             try {

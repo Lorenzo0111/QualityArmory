@@ -102,10 +102,11 @@ public class GunRefillerRunnable {
 							player.getWorld().playSound(player.getLocation(), Sound.valueOf("BLOCK_LEVER_CLICK"), 5, 1);
 						}
 					}
-					Gun.updateAmmo(g, newim, reloadAmount);
 				}
 				newim.setDisplayName(g.getDisplayName());
 				modifiedOriginalItem.setItemMeta(newim);
+				Gun.updateAmmo(g,modifiedOriginalItem,reloadAmount);
+
 				ItemStack current = player.getInventory().getItem(slot);
 				int newSlot = slot;
 				boolean different = false;

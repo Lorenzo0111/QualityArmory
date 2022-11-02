@@ -1,5 +1,6 @@
 package me.zombie_striker.qg.guns;
 
+import de.tr7zw.nbtapi.NBTItem;
 import me.zombie_striker.customitemmanager.*;
 import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.ammo.Ammo;
@@ -145,7 +146,7 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
 	@SuppressWarnings("deprecation")
 	public static boolean USE_THIS_INSTEAD_OF_INDEVIDUAL_SHOOT_METHODS(Gun g, Player player, double acc, boolean holdingRMB) {
 		boolean offhand = QualityArmory.isIronSights(player.getInventory().getItemInHand());
-		if ((!offhand && getAmount(player.getInventory().getItemInHand()) > 0)
+		if ((!offhand && getAmount(player) > 0)
 				|| (offhand && Update19OffhandChecker.hasAmountOFfhandGreaterthan(player, 0))) {
 			QAWeaponPrepareShootEvent shootevent = new QAWeaponPrepareShootEvent(player, g);
 			Bukkit.getPluginManager().callEvent(shootevent);
@@ -157,43 +158,34 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
 		return false;
 	}
 
-	public static int getAmount(ItemStack is) {
-		if (is != null) {
-			if (is.hasItemMeta() && is.getItemMeta().hasLore()) {
-				for (String lore : is.getItemMeta().getLore()) {
-					if (lore.contains(QAMain.S_ITEM_BULLETS)) {
-						return Integer.parseInt(lore.split(":")[1].split("/")[0].trim());
-					}
-				}
-				return 0;
-			}
+	public static int getAmount(Player player) {
+		ItemStack is = player.getInventory().getItemInMainHand();
+		if (is.getType().isAir()) return 0;
+
+		NBTItem item = new NBTItem(is);
+		if (item.hasKey("ammo")) {
+			return item.getInteger("ammo");
 		}
+
 		return 0;
 	}
 
-	public static void updateAmmo(Gun g, ItemMeta current, int amount) {
-		if (((current == null || !current.hasLore())))
-			return;
-		List<String> lore = current.getLore();
-		updateAmmo(g, lore, amount);
-		current.setLore(lore);
-		return;
+	public static void updateAmmo(Gun g, ItemStack current, int amount) {
+		NBTItem item = new NBTItem(current);
+		item.setInteger("ammo", amount);
+		item.applyNBT(current);
 	}
 
-	public static void updateAmmo(Gun g, List<String> lore, int amount) {
-		for (int i = 0; i < lore.size(); i++) {
-			if (lore.get(i).startsWith(QAMain.S_ITEM_BULLETS)) {
-				lore.set(i, QAMain.S_ITEM_BULLETS + ": " + (amount) + "/" + (g.getMaxBullets()));
-				break;
-			}
-		}
-		return;
+	public static void updateAmmo(Gun g, Player player, int amount) {
+		ItemStack current = player.getInventory().getItemInMainHand();
+		NBTItem item = new NBTItem(current);
+		item.setInteger("ammo", amount);
+		item.applyNBT(current);
 	}
 
 	public static List<String> getGunLore(Gun g, ItemStack current, int amount) {
 		List<String> lore = (current != null && current.hasItemMeta() && current.getItemMeta().hasLore()) ? current.getItemMeta().getLore() : new ArrayList<>();
 		OLD_ItemFact.addVariantData(null, lore, g);
-		lore.add(QAMain.S_ITEM_BULLETS + ": " + (amount) + "/" + (g.getMaxBullets()));
 		if (QAMain.ENABLE_LORE_INFO) {
 			lore.add(QAMain.S_ITEM_DAMAGE + ": " + g.getDamage());
 			lore.add(QAMain.S_ITEM_DPS + ": "
@@ -856,7 +848,7 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
 			if (!isAutomatic() && GunUtil.rapidfireshooters.containsKey(player.getPlayer().getUniqueId())) {
 				GunUtil.rapidfireshooters.remove(player.getPlayer().getUniqueId()).cancel();
 				if (QAMain.enableReloadWhenOutOfAmmo) {
-					if (getAmount(usedItem) <= 0) {
+					if (getAmount(player) <= 0) {
 						if (offhand) {
 							player.getPlayer().setItemInHand(player.getPlayer().getInventory().getItemInOffHand());
 							player.getPlayer().getInventory().setItemInOffHand(null);
@@ -864,9 +856,9 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
 							offhand = false;
 						}
 						if (QAMain.allowGunReload) {
-							QualityArmory.sendHotbarGunAmmoCount(player.getPlayer(), this, usedItem, ((getMaxBullets() != getAmount(usedItem))
+							QualityArmory.sendHotbarGunAmmoCount(player.getPlayer(), this, usedItem, ((getMaxBullets() != getAmount(player))
 									&& GunUtil.hasAmmo(player.getPlayer(), this)));
-							if ((getMaxBullets() != getAmount(usedItem))) {
+							if ((getMaxBullets() != getAmount(player))) {
 								QAMain.DEBUG("Ammo full");
 							} else if (playerHasAmmo(player.getPlayer())) {
 								QAMain.DEBUG("Trying to reload WITH AUTORELOAD. player has ammo");
@@ -883,7 +875,7 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
 				}
 			} else {
 				QAMain.DEBUG("About to fire single shot");
-				if (getAmount(usedItem) <= 0) {
+				if (getAmount(player) <= 0) {
 					QAMain.DEBUG("Out of ammo");
 
 					if(GunUtil.rapidfireshooters.containsKey(player.getUniqueId()))
@@ -900,7 +892,7 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
 						}
 						if (QAMain.allowGunReload) {
 							QualityArmory.sendHotbarGunAmmoCount(player.getPlayer(), this, usedItem,
-									((getMaxBullets() != getAmount(usedItem))
+									((getMaxBullets() != getAmount(player))
 											&& GunUtil.hasAmmo(player.getPlayer(), this)));
 							if (playerHasAmmo(player.getPlayer())) {
 								QAMain.DEBUG("Trying to reload WITH AUTORELOAD. player has ammo");
@@ -1037,7 +1029,7 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
 				} else {
 					if (QAMain.allowGunReload) {
 						QualityArmory.sendHotbarGunAmmoCount(player.getPlayer(), this, usedItem,
-								((getMaxBullets() != getAmount(usedItem))
+								((getMaxBullets() != getAmount(player))
 										&& GunUtil.hasAmmo(player.getPlayer(), this)));
 						if (playerHasAmmo(player.getPlayer())) {
 							QAMain.DEBUG("Trying to reload. player has ammo");

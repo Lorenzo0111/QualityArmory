@@ -14,7 +14,7 @@ import ru.endlesscode.mimic.items.BukkitItemsRegistry;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
-public class MimicHook implements BukkitItemsRegistry {
+public class MimicHookImpl implements BukkitItemsRegistry {
 
     @NotNull
     @Override

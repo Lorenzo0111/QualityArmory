@@ -11,7 +11,7 @@ public class Update19OffhandChecker {
 
 	public static boolean hasAmountOFfhandGreaterthan(Player p, int amount) {
 		try {
-			return Gun.getAmount(p.getInventory().getItemInOffHand()) > amount;
+			return Gun.getAmount(p) > amount;
 		} catch (Error e) {
 			return false;
 		}

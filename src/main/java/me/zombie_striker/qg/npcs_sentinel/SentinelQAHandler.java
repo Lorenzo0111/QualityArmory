@@ -48,7 +48,7 @@ public class SentinelQAHandler extends SentinelIntegration {
 
 		if(st.needsAmmo){
 			if(GunUtil.hasAmmo((Player) st.getLivingEntity(),g)){
-				int amount = Gun.getAmount(itm);
+				int amount = Gun.getAmount((Player) st.getLivingEntity());
 				if(amount <=0){
 					GunUtil.basicReload(g, (Player) st.getLivingEntity(),false);
 					return false;
@@ -91,9 +91,9 @@ public class SentinelQAHandler extends SentinelIntegration {
 		GunUtil.playShoot(g, (Player) st.getLivingEntity());
 		QAMain.DEBUG("Sentinel shooting!");
 		if(st.needsAmmo){
-			int amount = Gun.getAmount(itm) - 1;
+			int amount = Gun.getAmount((Player) st.getLivingEntity()) - 1;
 			ItemMeta im = itm.getItemMeta();
-			Gun.updateAmmo(g, im, amount);
+			Gun.updateAmmo(g, (Player) st.getLivingEntity(), amount);
 			itm.setItemMeta(im);
 		}
 		// direc.csminion.weaponInteraction((Player) st.getLivingEntity(), node, false);

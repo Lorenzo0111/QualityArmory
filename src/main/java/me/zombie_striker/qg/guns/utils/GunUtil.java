@@ -514,7 +514,7 @@ public class GunUtil {
 						return;
 					}
 
-					int amount = Gun.getAmount(temp);
+					int amount = Gun.getAmount(player);
 					if(holdingRMB && !QAMain.SWAP_TO_LMB_SHOOT){
 						if(System.currentTimeMillis()-g.getLastTimeRMB(player) > 310){
 							rapidfireshooters.remove(player.getUniqueId());
@@ -559,7 +559,7 @@ public class GunUtil {
 					} else {
 						slot = player.getInventory().getHeldItemSlot();
 					}
-					Gun.updateAmmo(g, im, amount);
+					Gun.updateAmmo(g, player, amount);
 					if(QAMain.showAmmoInXPBar){
 						updateXPBar(player,g,amount);
 					}
@@ -592,7 +592,7 @@ public class GunUtil {
 			}.runTaskTimer(QAMain.getInstance(), 10 / g.getFireRate(), 10 / g.getFireRate()));
 		}
 
-		int amount = Gun.getAmount(firstGunInstance) - 1;
+		int amount = Gun.getAmount(player) - 1;
 
 		if (amount < 0)
 			amount = 0;
@@ -603,9 +603,7 @@ public class GunUtil {
 		} else {
 			slot = player.getInventory().getHeldItemSlot();
 		}
-		ItemMeta im = firstGunInstance.getItemMeta();
-		Gun.updateAmmo(g, im, amount);
-		firstGunInstance.setItemMeta(im);
+		Gun.updateAmmo(g, firstGunInstance, amount);
 		if (slot == -1) {
 			try {
 				if (QualityArmory.isIronSights(player.getItemInHand())) {
@@ -676,7 +674,7 @@ public class GunUtil {
 		final ItemStack temp = player.getInventory().getItemInHand();
 		ItemMeta im = temp.getItemMeta();
 
-		if (Gun.getAmount(temp) == g.getMaxBullets()) {
+		if (Gun.getAmount(player) == g.getMaxBullets()) {
 			return;
 		}
 		if (im == null || !im.hasDisplayName())
@@ -697,7 +695,7 @@ public class GunUtil {
 
 			Ammo ammo = g.getAmmoType();
 
-			final int initialAmount = Gun.getAmount(temp);
+			final int initialAmount = Gun.getAmount(player);
 			final int reloadAmount = doNotRemoveAmmo ? g.getMaxBullets()
 					: Math.min(g.getMaxBullets(), initialAmount + QualityArmory.getAmmoInInventory(player, ammo));
 			final int subtractAmount = reloadAmount - initialAmount;

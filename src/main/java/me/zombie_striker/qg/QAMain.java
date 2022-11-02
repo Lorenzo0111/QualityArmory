@@ -27,7 +27,8 @@ import me.zombie_striker.qg.handlers.*;
 import me.zombie_striker.qg.guns.chargers.*;
 import me.zombie_striker.qg.guns.reloaders.PumpactionReloader;
 import me.zombie_striker.qg.guns.reloaders.SingleBulletReloader;
-import me.zombie_striker.qg.hooks.MimicHook;
+import me.zombie_striker.qg.hooks.MimicHookHandler;
+import me.zombie_striker.qg.hooks.MimicHookImpl;
 import me.zombie_striker.qg.hooks.PlaceholderAPIHook;
 import me.zombie_striker.qg.hooks.anticheat.AntiCheatHook;
 import me.zombie_striker.qg.hooks.anticheat.MatrixHook;
@@ -667,7 +668,7 @@ public class QAMain extends JavaPlugin {
 
 		try {
 			if (Bukkit.getPluginManager().isPluginEnabled("Mimic")) {
-				new MimicHook().register();
+				MimicHookHandler.register();
 				this.getLogger().info("Found Mimic. Loaded support");
 			}
 		} catch (Exception | Error ignored) {}

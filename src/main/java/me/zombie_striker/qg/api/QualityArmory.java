@@ -444,7 +444,7 @@ public class QualityArmory {
 		}else{
 			g = (Gun) gun;
 		}
-		sendHotbarGunAmmoCount(p,gun,usedItem,reloading,QualityArmory.getBulletsInGun(usedItem),g.getMaxBullets());
+		sendHotbarGunAmmoCount(p,gun,usedItem,reloading,QualityArmory.getBulletsInHand(p),g.getMaxBullets());
 	}
 		public static void sendHotbarGunAmmoCount(final Player p, final CustomBaseObject gun,
 				ItemStack usedItem, boolean reloading, int currentAmountInGun, int maxAmount) {
@@ -460,7 +460,7 @@ public class QualityArmory {
 
 		int ammoamount = getAmmoInInventory(p, g.getAmmoType());
 
-		if (QAMain.showOutOfAmmoOnTitle && ammoamount <= 0 && Gun.getAmount(usedItem) < 1) {
+		if (QAMain.showOutOfAmmoOnTitle && ammoamount <= 0 && Gun.getAmount(p) < 1) {
 			p.sendTitle(" ", QAMain.S_OUT_OF_AMMO, 0, 20, 1);
 		} else if (QAMain.showReloadOnTitle && reloading) {
 			for (int i = 1; i < g.getReloadTime() * 20; i += 2) {
@@ -690,8 +690,8 @@ public class QualityArmory {
 		return remaining <= 0;
 	}
 
-	public static int getBulletsInGun(ItemStack gun){
-		return Gun.getAmount(gun);
+	public static int getBulletsInHand(Player player){
+		return Gun.getAmount(player);
 	}
 
 	public static boolean removeAmmoFromInventory(Player player, Ammo a, int amount) {
