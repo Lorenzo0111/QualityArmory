@@ -3,6 +3,7 @@ package me.zombie_striker.qg.guns.utils;
 import java.util.ArrayList;
 import java.util.List;
 
+import me.zombie_striker.qg.ammo.Ammo;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -23,14 +24,22 @@ public class GunRefillerRunnable {
 	public static boolean hasItemReloaded(Player reloader, ItemStack is) {
 		for (GunRefillerRunnable s : allGunRefillers) {
 			if (is.isSimilar(s.reloadedItem))
-				if(reloader == null || reloader == s.reloader);
-				if(!s.getTask().isCancelled())
-				return true;
+				if(reloader == null || reloader.equals(s.reloader)) {
+					if(!s.getTask().isCancelled()) return true;
+				}
 		}
 		return false;
 	}
 	public static boolean hasItemReloaded(ItemStack is) {
 		return hasItemReloaded(null,is);
+	}
+	public static boolean isReloading(Player reloader) {
+		for (GunRefillerRunnable s : allGunRefillers) {
+			if(reloader == null || reloader.equals(s.reloader)) {
+				if(!s.getTask().isCancelled()) return true;
+			}
+		}
+		return false;
 	}
 
 	private BukkitTask r;
@@ -53,7 +62,7 @@ public class GunRefillerRunnable {
 	}
 
 	public GunRefillerRunnable(final Player player, final ItemStack modifiedOriginalItem, final Gun g, final int slot,
-			final int originalAmount, final int reloadAmount, double seconds) {
+							   final int originalAmount, final int reloadAmount, double seconds, Ammo ammo, int subtractAmount, boolean removeAmmo) {
 		final GunRefillerRunnable gg = this;
 		gg.reloader = player;
 
@@ -66,7 +75,17 @@ public class GunRefillerRunnable {
 			@Override
 			public void run() {
 				ItemMeta newim = modifiedOriginalItem.getItemMeta();
-				if(player.getInventory().getHeldItemSlot()==slot) {
+				boolean shouldContinue = player.getInventory().getHeldItemSlot()==slot;
+
+				if (shouldContinue && removeAmmo) {
+					// Check if player still have ammo and remove it
+					if (!player.isDead() && g.playerHasAmmo(player) && QualityArmory.getAmmoInInventory(player,ammo) >= subtractAmount)
+						QualityArmory.removeAmmoFromInventory(player, ammo, subtractAmount);
+					else
+						shouldContinue = false;
+				}
+
+				if(shouldContinue) {
 					try {
 						player.getWorld().playSound(player.getLocation(), WeaponSounds.RELOAD_MAG_IN.getSoundName(), 1, 1f);
 						if (!QAMain.isVersionHigherThan(1, 9)) {
@@ -83,10 +102,11 @@ public class GunRefillerRunnable {
 							player.getWorld().playSound(player.getLocation(), Sound.valueOf("BLOCK_LEVER_CLICK"), 5, 1);
 						}
 					}
-					Gun.updateAmmo(g, newim, reloadAmount);
 				}
 				newim.setDisplayName(g.getDisplayName());
 				modifiedOriginalItem.setItemMeta(newim);
+				Gun.updateAmmo(g,modifiedOriginalItem,reloadAmount);
+
 				ItemStack current = player.getInventory().getItem(slot);
 				int newSlot = slot;
 				boolean different = false;
@@ -126,7 +146,7 @@ public class GunRefillerRunnable {
 					return;
 				}
 				List<GunRefillerRunnable> rr = QAMain.reloadingTasks.get(player.getUniqueId());
-				rr.remove(this);
+				rr.remove(GunRefillerRunnable.this);
 				reloadedItem = null;
 				allGunRefillers.remove(gg);
 

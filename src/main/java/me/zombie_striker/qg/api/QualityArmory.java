@@ -9,11 +9,14 @@ import java.util.Map.Entry;
 import me.zombie_striker.customitemmanager.*;
 import me.zombie_striker.qg.handlers.HotbarMessager;
 import me.zombie_striker.qg.handlers.IronsightsHandler;
-import org.apache.commons.lang.StringUtils;
+import me.zombie_striker.qg.hooks.protection.ProtectionHandler;
+import me.zombie_striker.qg.miscitems.AmmoBag;
+import me.zombie_striker.qg.utils.LocalUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -29,7 +32,8 @@ import me.zombie_striker.qg.config.GunYMLLoader;
 import me.zombie_striker.qg.guns.Gun;
 import me.zombie_striker.qg.guns.utils.WeaponSounds;
 import me.zombie_striker.qg.guns.utils.WeaponType;
-import me.zombie_striker.qg.handlers.WorldGuardSupport;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class QualityArmory {
 
@@ -77,12 +81,16 @@ public class QualityArmory {
 		return QAMain.armorRegister.values().iterator();
 	}
 	public static Iterator<CustomBaseObject> getCustomItems(){
+		return getCustomItemsAsList().iterator();
+	}
+
+	public static List<CustomBaseObject> getCustomItemsAsList(){
 		List<CustomBaseObject> list = new ArrayList<>();
 		list.addAll(QAMain.gunRegister.values());
 		list.addAll(QAMain.ammoRegister.values());
 		list.addAll(QAMain.armorRegister.values());
 		list.addAll(QAMain.miscRegister.values());
-		return list.iterator();
+		return list;
 	}
 
 
@@ -97,14 +105,14 @@ public class QualityArmory {
 				}
 				if (warning) {
 					try {
-						player.sendTitle(ChatColor.RED + QAMain.S_NORES1, QAMain.S_NORES2);
+						player.sendTitle(LocalUtils.colorize(ChatColor.RED + QAMain.S_NORES1), LocalUtils.colorize(QAMain.S_NORES2));
 					} catch (Error e2) {
-						player.sendMessage(ChatColor.RED + QAMain.S_NORES1);
-						player.sendMessage(ChatColor.RED + QAMain.S_NORES2);
+						player.sendMessage(LocalUtils.colorize(ChatColor.RED + QAMain.S_NORES1));
+						player.sendMessage(LocalUtils.colorize(ChatColor.RED + QAMain.S_NORES2));
 					}
 				}
 				if (QAMain.showCrashMessage)
-					player.sendMessage(QAMain.prefix + QAMain.S_RESOURCEPACK_HELP);
+					player.sendMessage(LocalUtils.colorize(QAMain.prefix + QAMain.S_RESOURCEPACK_HELP));
 
 				new BukkitRunnable() {
 					@Override
@@ -145,10 +153,8 @@ public class QualityArmory {
 	}
 
 	public static boolean allowGunsInRegion(Location loc) {
-		if (!QAMain.supportWorldGuard)
-			return true;
 		try {
-			return WorldGuardSupport.a(loc);
+			return ProtectionHandler.canPvp(loc);
 		} catch (Error e) {
 		}
 		return true;
@@ -292,6 +298,24 @@ public class QualityArmory {
 		return QAMain.gunRegister.get(MaterialStorage.getMS(is));
 	}
 
+	@Nullable
+	public static Gun getGunInHand(@NotNull HumanEntity entity) {
+		ItemStack stack = entity.getInventory().getItemInMainHand();
+		if (stack == null || stack.getType().equals(Material.AIR)) return null;
+
+		if (isGun(stack)) return getGun(stack);
+		if (isIronSights(stack)) {
+			try {
+				ItemStack offHand = entity.getInventory().getItemInOffHand();
+				if (isGun(offHand)) {
+					return getGun(offHand);
+				}
+			} catch (NoSuchMethodError ignored) {}
+		}
+
+		return null;
+	}
+
 	public static boolean isGun(ItemStack is) {
 		return (is != null && QAMain.gunRegister.containsKey(MaterialStorage.getMS(is)));
 	}
@@ -314,6 +338,24 @@ public class QualityArmory {
 		return null;
 	}
 
+	public static int getAmmoInBag(@NotNull Player player, Ammo a) {
+		int amount = 0;
+
+		for (ItemStack is : player.getInventory().getContents()) {
+			if (is == null || is.getType().equals(Material.AIR)) continue;
+
+			CustomBaseObject customItem = getCustomItem(is);
+			if (customItem instanceof AmmoBag) {
+				Ammo ammoType = ((AmmoBag) customItem).getAmmoType(is);
+				if (ammoType == null || !ammoType.equals(a)) continue;
+
+				amount += ((AmmoBag) customItem).getAmmo(is);
+			}
+		}
+
+		return amount;
+	}
+
 	public static CustomBaseObject getCustomItemByName(String name){
 		CustomBaseObject b = null;
 		if((b=getAmmoByName(name))!=null)
@@ -333,17 +375,27 @@ public class QualityArmory {
 		if (is == null)
 			return false;
 		int var = MaterialStorage.getVariant(is);
-		boolean k = (is != null && (QAMain.ammoRegister
-				.containsKey(MaterialStorage.getMS(is,var))
-				|| QAMain.ammoRegister.containsKey(MaterialStorage.getMS(is,var))));
-		return k;
+
+		MaterialStorage storage = MaterialStorage.getMS(is,var);
+
+		return QAMain.ammoRegister.containsKey(storage);
+	}
+
+	public static boolean isAmmoBag(ItemStack is) {
+		if (is == null)
+			return false;
+		int var = MaterialStorage.getVariant(is);
+
+		MaterialStorage storage = MaterialStorage.getMS(is,var);
+
+		return QAMain.miscRegister.containsKey(storage) && QAMain.miscRegister.get(storage) instanceof AmmoBag;
 	}
 
 	@SuppressWarnings("deprecation")
 	public static boolean isIronSights(ItemStack is) {
 		if (is == null)
 			return false;
-		if (is != null && is.getType() == IronsightsHandler.ironsightsMaterial	)
+		if (is.getType() == IronsightsHandler.ironsightsMaterial)
 			try{
 				if(!is.hasItemMeta() || !is.getItemMeta().hasCustomModelData())
 					return false;
@@ -392,7 +444,7 @@ public class QualityArmory {
 		}else{
 			g = (Gun) gun;
 		}
-		sendHotbarGunAmmoCount(p,gun,usedItem,reloading,QualityArmory.getBulletsInGun(usedItem),g.getMaxBullets());
+		sendHotbarGunAmmoCount(p,gun,usedItem,reloading,QualityArmory.getBulletsInHand(p),g.getMaxBullets());
 	}
 		public static void sendHotbarGunAmmoCount(final Player p, final CustomBaseObject gun,
 				ItemStack usedItem, boolean reloading, int currentAmountInGun, int maxAmount) {
@@ -408,7 +460,7 @@ public class QualityArmory {
 
 		int ammoamount = getAmmoInInventory(p, g.getAmmoType());
 
-		if (QAMain.showOutOfAmmoOnTitle && ammoamount <= 0 && Gun.getAmount(usedItem) < 1) {
+		if (QAMain.showOutOfAmmoOnTitle && ammoamount <= 0 && Gun.getAmount(p) < 1) {
 			p.sendTitle(" ", QAMain.S_OUT_OF_AMMO, 0, 20, 1);
 		} else if (QAMain.showReloadOnTitle && reloading) {
 			for (int i = 1; i < g.getReloadTime() * 20; i += 2) {
@@ -418,9 +470,9 @@ public class QualityArmory {
 					public void run() {
 						StringBuilder sb = new StringBuilder();
 						sb.append(ChatColor.GRAY);
-						sb.append(StringUtils.repeat("#", (int) (20 * (1.0 * id / (20 * g.getReloadTime())))));
+						sb.append(repeat("#", (int) (20 * (1.0 * id / (20 * g.getReloadTime())))));
 						sb.append(ChatColor.DARK_GRAY);
-						sb.append(StringUtils.repeat("#", (int) (20 - ((int) (20.0 * id / (20 * g.getReloadTime()))))));
+						sb.append(repeat("#", (int) (20 - ((int) (20.0 * id / (20 * g.getReloadTime()))))));
 						p.sendTitle(QAMain.S_RELOADING_MESSAGE, sb.toString(), 0, 4, 0);
 					}
 				}.runTaskLater(QAMain.getInstance(), i);
@@ -457,7 +509,7 @@ public class QualityArmory {
 				if (QAMain.unknownTranslationKeyFixer) {
 					message = ChatColor.stripColor(message);
 				} else {
-					message = ChatColor.translateAlternateColorCodes('&', message);
+					message = LocalUtils.colorize(message);
 				}
 				HotbarMessager.sendHotBarMessage(p, message);
 			} catch (Error | Exception e5) {
@@ -583,6 +635,7 @@ public class QualityArmory {
 	}
 
 	public static ItemStack getCustomItemAsItemStack(CustomBaseObject obj) {
+		if (obj == null) return null;
 		return CustomItemManager.getItemType("gun").getItem(obj.getItemData().getMat(),obj.getItemData().getData(),obj.getItemData().getVariant());
 	}
 
@@ -594,15 +647,19 @@ public class QualityArmory {
 
 
 	public static int getAmmoInInventory(Player player, Ammo a) {
+		return getAmmoInInventory(player,a,false);
+	}
+
+	public static int getAmmoInInventory(Player player, Ammo a, boolean ignoreBag) {
 		int amount = 0;
 		if(player.getGameMode()==GameMode.CREATIVE)
 			return 99999;
 		for (ItemStack is : player.getInventory().getContents()) {
-			if (is != null && me.zombie_striker.qg.api.QualityArmory.isAmmo(is)&&QualityArmory.getAmmo(is).equals(a)) {
+			if (isAmmo(is) && getAmmo(is).equals(a)) {
 				amount += is.getAmount();
 			}
 		}
-		return amount;
+		return ignoreBag ? amount : amount + getAmmoInBag(player, a);
 	}
 
 	public static boolean addAmmoToInventory(Player player, Ammo a, int amount) {
@@ -633,8 +690,8 @@ public class QualityArmory {
 		return remaining <= 0;
 	}
 
-	public static int getBulletsInGun(ItemStack gun){
-		return Gun.getAmount(gun);
+	public static int getBulletsInHand(Player player){
+		return Gun.getAmount(player);
 	}
 
 	public static boolean removeAmmoFromInventory(Player player, Ammo a, int amount) {
@@ -657,7 +714,47 @@ public class QualityArmory {
 
 			}
 		}
+
+		if (remaining > 0) {
+			for (int i = 0; i < player.getInventory().getSize(); i++) {
+				ItemStack is = player.getInventory().getItem(i);
+				if (QualityArmory.isAmmoBag(is)) {
+					AmmoBag ab = (AmmoBag) QualityArmory.getCustomItem(is);
+					if (ab == null) continue;
+
+					Ammo ammoType = ab.getAmmoType(is);
+					if (ammoType != null && ammoType.equals(a)) {
+						int amountInBag = ab.getAmmo(is);
+
+						if (amountInBag >= remaining) {
+							ab.updateAmmoLore(is, amountInBag - remaining);
+							remaining = 0;
+						} else {
+							ab.updateAmmoLore(is, 0);
+							remaining -= amountInBag;
+						}
+					}
+
+				}
+			}
+		}
+
 		return remaining <= 0;
 	}
-	
+
+	public static void giveOrDrop(HumanEntity entity, ItemStack item) {
+		if (entity.getInventory().firstEmpty() != -1) {
+			entity.getInventory().addItem(item);
+		} else {
+			entity.getWorld().dropItem(entity.getLocation(), item);
+		}
+	}
+
+	public static String repeat(String string, int times) {
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < times; i++) {
+			sb.append(string);
+		}
+		return sb.toString();
+	}
 }

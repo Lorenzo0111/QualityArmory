@@ -29,6 +29,8 @@ permissions:
       qualityarmory.craft: true
       qualityarmory.shop: true
       qualityarmory.usegun: true
-softdepend: [Vault, PlaceholderAPI, ChestShop, Parties, WorldGuard, ViaVersion, ViaRewind, LightAPI, Citizens, ProtocolLib, SunLight-Core, ItemBridge, Sentinel]
-author:
-   Zombie_Striker
+softdepend: [Vault, PlaceholderAPI, ChestShop, Parties, WorldGuard, ViaVersion, ViaRewind, LightAPI, Citizens, ProtocolLib, SunLight-Core, ItemBridge, Sentinel, Spartan, Towny, Residence, Matrix, QuickShop, Vulcan, CoreProtect, Mimic, GriefPrevention]
+authors:
+  - Zombie_Striker
+  - Lorenzo0111
+  - AlonsoAliaga

@@ -1,0 +1,57 @@
+name: Bug Report
+description: File a bug report
+title: "[Bug]: "
+labels: ["bug", "status: needs triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for your bug report. Please fill the fields below.
+  - type: checkboxes
+    id: confirm
+    attributes:
+      label: Confirmations
+      description: By submitting this issue, you confirm that
+      options:
+        - label: I am using the latest plugin version with the required dependencies.
+          required: true
+        - label: There isn't any open issue that shows my problem
+          required: true
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: What is happening?
+      placeholder: The plugin is..
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Behaviour
+      description: What did you expect from the plugin?
+      placeholder: The plugin should..
+    validations:
+      required: true
+  - type: input
+    id: plugins
+    attributes:
+      label: Plugins
+      description: If you think that's relevant, please send your plugins list
+      placeholder: Plugin1, Plugin2..
+    validations:
+      required: true
+  - type: input
+    id: server
+    attributes:
+      label: Server Version
+      description: Send the output of /version
+      placeholder: The server is running..
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant log output
+      description: Please copy and paste any relevant log output. This will be automatically formatted into code, so no need for backticks.
+      render: shell

@@ -10,6 +10,7 @@ import org.bukkit.inventory.meta.SkullMeta;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class MaterialStorage {
 
@@ -166,5 +167,29 @@ public class MaterialStorage {
 
 	public int getVariant() {
 		return variant;
+	}
+
+	@Override
+	public String toString() {
+		return "MaterialStorage{" +
+				"d=" + d +
+				", m=" + m +
+				", variant=" + variant +
+				", specialValues='" + specialValues + '\'' +
+				", specialValues2='" + specialValues2 + '\'' +
+				'}';
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		MaterialStorage that = (MaterialStorage) o;
+		return d == that.d && variant == that.variant && m == that.m && Objects.equals(specialValues, that.specialValues) && Objects.equals(specialValues2, that.specialValues2);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(d, m, variant, specialValues, specialValues2);
 	}
 }

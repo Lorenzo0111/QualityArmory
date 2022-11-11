@@ -137,6 +137,8 @@ public class CustomGunItem extends AbstractCustomGunItem {
 
 		List<String> stringsGrenades = Arrays.asList(new String[]{getIngString(Material.IRON_INGOT, 0, 6),
 				getIngString(MultiVersionLookup.getGunpowder(), 0, 10)});
+		List<String> stringsAmmoBag = Arrays.asList(new String[]{getIngString(Material.STRING, 0, 2),
+				getIngString(Material.LEATHER, 0, 6)});
 
 		List<String> stringsAmmo = Arrays.asList(new String[]{getIngString(Material.IRON_INGOT, 0, 1),
 				getIngString(MultiVersionLookup.getGunpowder(), 0, 1), getIngString(Material.REDSTONE, 0, 1)});
@@ -174,7 +176,7 @@ public class CustomGunItem extends AbstractCustomGunItem {
 				.createAmmo(false, dataFolder, false, "default_flamerfuel", "fuel", "&fFlamerFuel", null,
 						Material.BLAZE_POWDER, 0,
 						Arrays.asList(new String[] { getIngString(Material.BLAZE_ROD, 0, 1), }), 1, 1, 64, 2)
-				.setVariant(1).done();
+				.done();
 
 		GunYMLCreator.createNewDefaultGun(dataFolder, "p30", "P30", 2, stringsPistol, WeaponType.PISTOL,
 				null, true, "9mm", 3, 12, 700).setIsSecondaryWeapon(true).done();
@@ -245,6 +247,8 @@ public class CustomGunItem extends AbstractCustomGunItem {
 								+ ChatColor.DARK_GRAY + " before exploding.",
 						ChatColor.DARK_RED + "<!>Will Explode Even If Not Thrown<!>"),
 				m(22), stringsGrenades, 100, WeaponType.GRENADES, 100, 1).set(false, "radius", 10).done();
+		GunYMLCreator.createMisc(false, dataFolder, false, "default_ammobag", "ammobag", "&7Ammo Bag",
+				Arrays.asList(ChatColor.DARK_GRAY + "[Left-Click] to unload", ChatColor.DARK_GRAY + "[Right-Click] to load"), m(85), stringsAmmoBag, 100, WeaponType.AMMO_BAG, 0, 1000).set(false, "max", 6).done();
 		GunYMLCreator
 				.createNewDefaultGun(dataFolder, "dragunov", "Dragunov", 23, stringsMetalRif,
 						WeaponType.SNIPER, null, true, "762", 7, 12, 2100)
@@ -391,9 +395,6 @@ public class CustomGunItem extends AbstractCustomGunItem {
 				.setRecoil(5).done();
 		GunYMLCreator.createAmmo(true,dataFolder, false, "mininuke", "MiniNuke",Material.DIAMOND_AXE, 56,
 				stringsMini, 3000, 100, 1);
-
-		GunYMLCreator.createNewDefaultGun(dataFolder, "10mm", "&610mm Pistol", 57, strings10mm,
-				WeaponType.PISTOL, null, true, "9mm", 3, 12, 700).setIsSecondaryWeapon(true).done();
 
 		GunYMLCreator
 				.createNewDefaultGun(dataFolder, "instituterifle", "&6Institute Rifle", 58,
@@ -552,7 +553,7 @@ public class CustomGunItem extends AbstractCustomGunItem {
 				.createNewDefaultGun(dataFolder, "vz58", "VZ.58", 5, stringsMetalRif, WeaponType.RIFLE,
 						null, true, "762", 3, 30, 4500)
 				.setSway(0.2).setFullyAutomatic(2).setBulletsPerShot(1).setVariant(1).done();
-		GunYMLCreator.createNewDefaultGun(dataFolder, "cz65", "CZ.75", 2, stringsPistol, WeaponType.PISTOL,
+		GunYMLCreator.createNewDefaultGun(dataFolder, "cz75", "CZ.75", 2, stringsPistol, WeaponType.PISTOL,
 				null, true, "9mm", 3, 12, 700).setIsSecondaryWeapon(true).setVariant(1).done();
 
 		GunYMLCreator

@@ -47,9 +47,12 @@ public class RocketProjectile implements RealtimeCalculationProjectile {
 					} catch (Error e) {
 					}
 
-					if (GunUtil.isSolid(s.getBlock(), s) || entityNear || distance < 0) {
+					final Location explode = s.clone();
+					if (GunUtil.isSolid(explode.getBlock(), explode) || entityNear || distance < 0) {
+						boolean explodeDamage = false;
+
 						if (QAMain.enableExplosionDamage) {
-							ExplosionHandler.handleExplosion(s, 4, 2);
+							explodeDamage = ExplosionHandler.handleExplosion(explode, 4, 2);
 						}
 						try {
 							//player.getWorld().playSound(s, WeaponSounds.WARHEAD_EXPLODE.getSoundName(), 10, 0.9f);
@@ -60,7 +63,7 @@ public class RocketProjectile implements RealtimeCalculationProjectile {
 							s.getWorld().playEffect(s, Effect.valueOf("CLOUD"), 0);
 							player.getWorld().playSound(s, Sound.valueOf("EXPLODE"), 8, 0.7f);
 						}
-						ExplosionHandler.handleAOEExplosion(player, s, g.getDamage(), g.getExplosionRadius());
+						if (explodeDamage) ExplosionHandler.handleAOEExplosion(player, s, g.getDamage(), g.getExplosionRadius());
 						cancel();
 						return;
 					}

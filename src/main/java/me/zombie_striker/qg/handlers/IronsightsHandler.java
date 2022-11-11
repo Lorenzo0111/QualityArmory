@@ -31,8 +31,11 @@ public class IronsightsHandler {
 					Gun gun = QualityArmory.getGun(player.getItemInHand());
 					QAMain.toggleNightvision(player, gun, true);
 				}
+				final int ammo = Gun.getAmount(player);
+
 				player.getInventory().setItemInOffHand(player.getItemInHand());
 				player.setItemInHand(QualityArmory.getIronSightsItemStack());
+				Gun.updateAmmo(null, player, ammo);
 			}
 	}
 	public static void unAim(Player player){
@@ -41,9 +44,14 @@ public class IronsightsHandler {
 					Gun gun = QualityArmory.getGun(player.getInventory().getItemInOffHand());
 					QAMain.toggleNightvision(player, null, false);
 				}
+
+				final int ammo = Gun.getAmount(player);
+
 				player.getInventory().setItemInMainHand(player.getInventory().getItemInOffHand());
 				player.getInventory().setItemInOffHand(null);
 				//offHandStorage.remove(player);
+
+				Gun.updateAmmo(null, player, ammo);
 			}
 	}
 

@@ -1,9 +1,11 @@
 package me.zombie_striker.qg.miscitems;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import me.zombie_striker.customitemmanager.CustomBaseObject;
 import me.zombie_striker.customitemmanager.CustomItemManager;
+import me.zombie_striker.qg.hooks.protection.ProtectionHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.Effect;
 import org.bukkit.GameMode;
@@ -12,17 +14,16 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import me.zombie_striker.customitemmanager.OLD_ItemFact;
 import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.customitemmanager.MaterialStorage;
 import me.zombie_striker.qg.guns.utils.WeaponSounds;
 import me.zombie_striker.qg.handlers.ExplosionHandler;
 
 public class Grenade extends CustomBaseObject implements ThrowableItems {
+	private static final List<Entity> GRENADES = new ArrayList<>();
 
 	private ItemStack[] ing = null;
 
@@ -53,7 +54,7 @@ public class Grenade extends CustomBaseObject implements ThrowableItems {
 	public boolean onRMB(Player thrower, ItemStack usedItem) {
 		if(QAMain.autoarm)
 		onPull(thrower,usedItem);
-		if (throwItems.containsKey(thrower)) {
+		if (throwItems.containsKey(thrower) && throwItems.get(thrower).getGrenade().equals(this)) {
 			ThrowableHolder holder = throwItems.get(thrower);
 			ItemStack grenadeStack = thrower.getItemInHand();
 			ItemStack temp = grenadeStack.clone();
@@ -73,7 +74,12 @@ public class Grenade extends CustomBaseObject implements ThrowableItems {
 			holder.setHolder(grenade);
 			thrower.getWorld().playSound(thrower.getLocation(), Sound.ENTITY_ARROW_SHOOT, 1, 1.5f);
 
+			if (!ProtectionHandler.canExplode(grenade.getLocation())) {
+				return false;
+			}
+
 			throwItems.put(grenade, holder);
+			GRENADES.add(grenade);
 			throwItems.remove(thrower);
 			QAMain.DEBUG("Throw grenade");
 		} else {
@@ -105,7 +111,7 @@ public class Grenade extends CustomBaseObject implements ThrowableItems {
 		}
 
 		thrower.getWorld().playSound(thrower.getLocation(), WeaponSounds.RELOAD_MAG_IN.getSoundName(), 2, 1);
-		final ThrowableHolder h = new ThrowableHolder(thrower.getUniqueId(), thrower);
+		final ThrowableHolder h = new ThrowableHolder(thrower.getUniqueId(), thrower, this);
 		h.setTimer(new BukkitRunnable() {
 			@Override
 			public void run() {
@@ -115,6 +121,7 @@ public class Grenade extends CustomBaseObject implements ThrowableItems {
 					((Player) h.getHolder()).damage(dmageLevel);
 				}
 				if (h.getHolder() instanceof Item) {
+					GRENADES.remove(h.getHolder());
 					h.getHolder().remove();
 				}
 				if (QAMain.enableExplosionDamage) {
@@ -209,5 +216,9 @@ public class Grenade extends CustomBaseObject implements ThrowableItems {
 	@Override
 	public void setThrowSpeed(double t) {
 		throwspeed = t;
+	}
+
+	public static List<Entity> getGrenades() {
+		return GRENADES;
 	}
 }

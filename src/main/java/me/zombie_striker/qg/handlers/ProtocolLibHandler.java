@@ -4,10 +4,12 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Function;
 
+import com.cryptomorin.xseries.ReflectionUtils;
+import com.cryptomorin.xseries.XMaterial;
 import com.mojang.datafixers.util.Pair;
-import me.zombie_striker.qg.handlers.ReflectionsUtil;
+import de.tr7zw.nbtapi.NBTItem;
+import org.apache.commons.lang3.reflect.MethodUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -91,7 +93,7 @@ public class ProtocolLibHandler {
 						int id = (int) event.getPacket().getModifier().read(0);
 						Object slot;
 						final Object ironsights;
-						if(ReflectionsUtil.isVersionHigherThan(1,16)){
+						if(XMaterial.supports(16)){
 							slot = event.getPacket().getModifier().read(1);
 							ironsights = slot;//event.getPacket().getModifier().read(2);
 						}else{
@@ -120,25 +122,18 @@ public class ProtocolLibHandler {
 								QualityArmory.isIronSights(who.getItemInHand()) &&
 								ironsights.toString().contains("crossbow")) {
 							Object is = null;
+
+							if (!QualityArmory.getGun(who.getInventory().getItemInOffHand()).hasBetterAimingAnimations())
+								return;
+
 							try {
-								if (!QualityArmory.getGun(who.getInventory().getItemInOffHand()).hasBetterAimingAnimations())
-									return;
 								is = getCraftItemStack(who.getInventory().getItemInOffHand());
-								Object nbtTag = is.getClass().getMethod("getOrCreateTag").invoke(is, new Object[0]);
-								//new NBTTagCompound().
-								Class[] args = new Class[2];
-								args[0] = String.class;
-								args[1] = boolean.class;
-								nbtTag.getClass().getMethod("setBoolean", args).invoke(nbtTag, "Charged", true);
-								is.getClass().getMethod("setTag", nbtTag.getClass()).invoke(is, nbtTag);
-							} catch (IllegalAccessException e) {
-								e.printStackTrace();
-							} catch (InvocationTargetException e) {
-								e.printStackTrace();
-							} catch (NoSuchMethodException e) {
-								e.printStackTrace();
-							}
-							if(ReflectionsUtil.isVersionHigherThan(1,16)){
+							} catch (NoSuchMethodException e) {}
+
+							NBTItem item = new NBTItem(who.getInventory().getItemInOffHand());
+							item.setBoolean("Charged",true);
+
+							if(XMaterial.supports(16)){
 								List list = (List) slot;
 								for(Object o : new ArrayList(list)){
 									if(o.toString().contains("MAINHAND")) {
@@ -154,7 +149,7 @@ public class ProtocolLibHandler {
 								event.getPacket().getModifier().write(2, is);
 							}
 
-							if(!ReflectionsUtil.isVersionHigherThan(1,16))
+							if(!XMaterial.supports(16))
 							new BukkitRunnable() {
 								public void run() {
 									try {
@@ -172,7 +167,7 @@ public class ProtocolLibHandler {
 												break;
 											}
 										}
-										if(ReflectionsUtil.isVersionHigherThan(1,16)){
+										if(XMaterial.supports(16)){
 											pc2.getModifier().write(0, id)
 													.write(1, ironsights);
 
@@ -198,7 +193,7 @@ public class ProtocolLibHandler {
 
 	private static Object getCraftItemStack(ItemStack is) throws NoSuchMethodException {
 		if (nbtFactClass == null) {
-			nbtFactClass = ReflectionsUtil.getCraftBukkitClass("inventory.CraftItemStack");
+			nbtFactClass = ReflectionUtils.getCraftClass("inventory.CraftItemStack");
 			Class[] c = new Class[1];
 			c[0] = ItemStack.class;
 			nbtFactmethod = nbtFactClass.getMethod("asNMSCopy", c);
@@ -216,7 +211,7 @@ public class ProtocolLibHandler {
 			protocolManager = ProtocolLibrary.getProtocolManager();
 		final PacketContainer yawpack = protocolManager.createPacket(PacketType.Play.Server.LOOK_AT, false);
 		if (enumArgumentAnchor_EYES == null) {
-			class_ArgumentAnchor = ReflectionsUtil.getMinecraftClass("ArgumentAnchor$Anchor");
+			class_ArgumentAnchor = ReflectionUtils.getNMSClass("commands.arguments", "ArgumentAnchor$Anchor");
 			enumArgumentAnchor_EYES = ReflectionsUtil.getEnumConstant(class_ArgumentAnchor, "EYES");
 		}
 		yawpack.getModifier().write(4, enumArgumentAnchor_EYES);

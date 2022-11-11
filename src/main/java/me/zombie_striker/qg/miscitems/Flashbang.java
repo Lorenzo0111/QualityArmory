@@ -36,7 +36,7 @@ public class Flashbang extends Grenade {
 			return true;
 		}
 		thrower.getWorld().playSound(thrower.getLocation(), WeaponSounds.RELOAD_MAG_IN.getSoundName(), 2, 1);
-		final ThrowableHolder h = new ThrowableHolder(thrower.getUniqueId(), thrower);
+		final ThrowableHolder h = new ThrowableHolder(thrower.getUniqueId(), thrower, this);
 		h.setTimer(new BukkitRunnable() {
 			@Override
 			public void run() {
@@ -66,6 +66,7 @@ public class Flashbang extends Grenade {
 					removeGrenade(((Player) h.getHolder()));
 				}
 				if (h.getHolder() instanceof Item) {
+					Grenade.getGrenades().remove(h.getHolder());
 					h.getHolder().remove();
 				}
 

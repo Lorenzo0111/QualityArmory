@@ -1,7 +1,9 @@
 package me.zombie_striker.qg.handlers;
 
+import com.cryptomorin.xseries.ReflectionUtils;
 import org.bukkit.Material;
 import org.bukkit.Sound;
+import org.bukkit.entity.EntityType;
 
 public class MultiVersionLookup {
 
@@ -11,6 +13,7 @@ public class MultiVersionLookup {
 	private static Material skull;
 	private static Material mycil;
 	private static Material wool;
+	private static Material grasspath;
 	private static Material goldpickaxe;
 	private static Material goldshovel;
 	private static Material goldhoe;
@@ -23,6 +26,8 @@ public class MultiVersionLookup {
 	private static Sound woolsound;
 	private static Sound enderdrag;
 	private static Sound pliung;
+
+	private static EntityType zombiePig;
 
 	public static Sound getPling() {
 		if (pliung == null) {
@@ -143,6 +148,18 @@ public class MultiVersionLookup {
 		return goldpickaxe;
 	}
 
+	public static Material getGrassPath() {
+		if (grasspath == null) {
+			try {
+				grasspath = Material.matchMaterial("GRASS_PATH");
+			} catch (Error | Exception e) {
+			}
+			if (grasspath == null)
+				grasspath = Material.DIRT_PATH;
+		}
+		return grasspath;
+	}
+
 	public static Material getWool() {
 		if (wool == null) {
 			try {
@@ -216,5 +233,17 @@ public class MultiVersionLookup {
 				mycil = Material.MYCELIUM;
 		}
 		return mycil;
+	}
+
+	public static EntityType getZombiePig() {
+		if (zombiePig == null) {
+			try {
+				zombiePig = EntityType.valueOf("PIG_ZOMBIE");
+			} catch (Error | Exception e) {
+			}
+			if (zombiePig == null)
+				zombiePig = EntityType.ZOMBIFIED_PIGLIN;
+		}
+		return zombiePig;
 	}
 }

@@ -36,7 +36,7 @@ public class ProxyMines extends Grenade {
 			return true;
 		}
 		thrower.getWorld().playSound(thrower.getLocation(), WeaponSounds.RELOAD_MAG_IN.getSoundName(), 2, 1);
-		final ThrowableHolder h = new ThrowableHolder(thrower.getUniqueId(), thrower);
+		final ThrowableHolder h = new ThrowableHolder(thrower.getUniqueId(), thrower, this);
 		h.setTimer(new BukkitRunnable() {
 
 			int k = 0;
@@ -65,16 +65,18 @@ public class ProxyMines extends Grenade {
 				if (k >= 20) {
 					boolean det = false;
 					for(Entity e : h.getHolder().getNearbyEntities(radius,radius,radius)){
-						if(e instanceof Player){
+						if (e instanceof Player) {
 							det = true;
+							break;
 						}
 					}
 					if(det){
 						if (h.getHolder() instanceof Item) {
+							Grenade.getGrenades().remove(h.getHolder());
 							h.getHolder().remove();
 						}
 						if (QAMain.enableExplosionDamage) {
-							ExplosionHandler.handleExplosion(h.getHolder().getLocation(), 3, 1);
+							ExplosionHandler.handleExplosion(h.getHolder().getLocation(), Math.toIntExact(Math.round(radius/2)), 1);
 							QAMain.DEBUG("Using default explosions");
 						}
 						try {

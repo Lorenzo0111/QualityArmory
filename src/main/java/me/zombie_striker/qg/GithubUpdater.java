@@ -10,6 +10,10 @@ import org.bukkit.scheduler.BukkitRunnable;
 public class GithubUpdater {
 
 	public static boolean autoUpdate(final Plugin main, String author, String githubProject, String jarname) {
+		if (main.getDescription().getVersion().endsWith("SNAPSHOT")) {
+			return false;
+		}
+
 		try {
 			String version = main.getDescription().getVersion();
 			String parseVersion = version.replace(".", "");
@@ -30,7 +34,7 @@ public class GithubUpdater {
 
 			String parsedTagName = tagname.replace(".", "");
 
-			int latestVersion = Integer.valueOf(parsedTagName.substring(1, parsedTagName.length()).replaceAll("[^\\d.]", ""));
+			int latestVersion = Integer.parseInt(parsedTagName.substring(1).replaceAll("[^\\d.]", ""));
 			int parsedVersion = Integer.parseInt(parseVersion.replaceAll("[^\\d.]", ""));
 
 			final URL download = new URL("https://github.com/" + author + "/" + githubProject + "/releases/download/"

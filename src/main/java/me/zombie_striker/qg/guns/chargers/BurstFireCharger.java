@@ -49,7 +49,7 @@ public class BurstFireCharger implements ChargingHandler {
 					slot = player.getInventory().getHeldItemSlot();
 				}
 
-				int amount = Gun.getAmount(stack);
+				int amount = Gun.getAmount(player);
 				if (shotCurrently >= g.getBulletsPerShot() || slotUsed != player.getInventory().getHeldItemSlot()
 						|| amount <= 0) {
 					if (shooters.containsKey(player.getUniqueId()))
@@ -72,7 +72,7 @@ public class BurstFireCharger implements ChargingHandler {
 				//	stack.setAmount(amount > 64 ? 64 : amount == 0 ? 1 : amount);
 				//}
 				ItemMeta im = stack.getItemMeta();
-				Gun.updateAmmo(g, im, amount);
+				Gun.updateAmmo(g, player, amount);
 				stack.setItemMeta(im);
 				if (slot == -1) {
 					try {

@@ -3,7 +3,7 @@ package me.zombie_striker.qg.miscitems;
 import me.zombie_striker.customitemmanager.MaterialStorage;
 import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.guns.utils.WeaponSounds;
-import me.zombie_striker.qg.handlers.WorldGuardSupport;
+import me.zombie_striker.qg.hooks.protection.ProtectionHandler;
 import org.bukkit.Effect;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
@@ -33,7 +33,7 @@ public class Molotov extends Grenade {
 			return true;
 		}
 		thrower.getWorld().playSound(thrower.getLocation(), WeaponSounds.RELOAD_MAG_IN.getSoundName(), 2, 1);
-		final ThrowableHolder h = new ThrowableHolder(thrower.getUniqueId(), thrower);
+		final ThrowableHolder h = new ThrowableHolder(thrower.getUniqueId(), thrower, this);
 		h.setTimer(new BukkitRunnable() {
 
 			int k = 0;
@@ -63,6 +63,7 @@ public class Molotov extends Grenade {
 				QAMain.DEBUG("Fireticks");
 				if (k == 40) {
 					if (h.getHolder() instanceof Item) {
+						Grenade.getGrenades().remove(h.getHolder());
 						h.getHolder().remove();
 					}
 					throwItems.remove(h.getHolder());
@@ -72,7 +73,7 @@ public class Molotov extends Grenade {
 						if(e instanceof LivingEntity) {
 							QAMain.DEBUG("Firedamage to "+e.getName());
 							try {
-								if (WorldGuardSupport.a(e.getLocation())) {
+								if (ProtectionHandler.canPvp(e.getLocation())) {
 									e.setFireTicks(20);
 								}
 							}catch (Error error){

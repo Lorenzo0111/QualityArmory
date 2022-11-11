@@ -3,3 +3,7 @@
 .project
 .classpath
 /bin/
+.idea/
+*.iml
+dependency-reduced-pom.xml
+server/

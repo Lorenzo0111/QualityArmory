@@ -1,5 +1,6 @@
 package me.zombie_striker.qg.handlers;
 
+import com.cryptomorin.xseries.ReflectionUtils;
 import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.guns.Gun;
 import org.bukkit.Bukkit;
@@ -8,15 +9,14 @@ import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
-import ru.beykerykt.lightapi.LightAPI;
-import ru.beykerykt.lightapi.chunks.ChunkInfo;
+import ru.beykerykt.minecraft.lightapi.common.LightAPI;
 
 public class ParticleHandlers {
 
 	public static boolean is13 = true;
 
 	public static void initValues() {
-		is13 = ReflectionsUtil.isVersionHigherThan(1, 13);
+		is13 = ReflectionUtils.supports(13);
 	}
 
 	public static void spawnExplosion(Location loc) {
@@ -28,18 +28,11 @@ public class ParticleHandlers {
 		try {
 			if (Bukkit.getPluginManager().getPlugin("LightAPI") != null) {
 				final Location loc2 = loc;
-				LightAPI.createLight(loc, 15, false);
-				for (ChunkInfo c : LightAPI.collectChunks(loc)) {
-					LightAPI.updateChunk(c);
-				}
+				LightAPI.get().setLightLevel(loc.getWorld().getName(), loc.getBlockX(), loc.getBlockY(), loc.getBlockZ(), 15);
 				new BukkitRunnable() {
-
 					@Override
 					public void run() {
-						LightAPI.deleteLight(loc2, false);
-						for (ChunkInfo c : LightAPI.collectChunks(loc2)) {
-							LightAPI.updateChunk(c);
-						}
+						LightAPI.get().setLightLevel(loc2.getWorld().getName(), loc2.getBlockX(), loc2.getBlockY(), loc2.getBlockZ(), 0);
 					}
 				}.runTaskLater(QAMain.getInstance(), 10);
 			}
@@ -90,22 +83,16 @@ public class ParticleHandlers {
 			}
 		} catch (Error | Exception e4) {
 		}
-		// TODO: Do lights n stuff
+
 		try {
 			if (Bukkit.getPluginManager().getPlugin("LightAPI") != null) {
 				final Location loc2 = loc;
-				LightAPI.createLight(loc, 15, false);
-				for (ChunkInfo c : LightAPI.collectChunks(loc)) {
-					LightAPI.updateChunk(c);
-				}
+				LightAPI.get().setLightLevel(loc.getWorld().getName(), loc.getBlockX(), loc.getBlockY(), loc.getBlockZ(), 15);
 				new BukkitRunnable() {
 
 					@Override
 					public void run() {
-						LightAPI.deleteLight(loc2, false);
-						for (ChunkInfo c : LightAPI.collectChunks(loc2)) {
-							LightAPI.updateChunk(c);
-						}
+						LightAPI.get().setLightLevel(loc2.getWorld().getName(), loc2.getBlockX(), loc2.getBlockY(), loc2.getBlockZ(), 0);
 					}
 				}.runTaskLater(QAMain.getInstance(), 20);
 			}

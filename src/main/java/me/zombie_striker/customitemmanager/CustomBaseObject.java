@@ -4,9 +4,11 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class CustomBaseObject {
 
+	private final UUID uuid = UUID.randomUUID();
 	private String name;
 	private MaterialStorage base;
 	private List<String> lore;
@@ -17,6 +19,7 @@ public class CustomBaseObject {
 	private String soundOnHit;
 
 	private double price;
+	private boolean enableShop = true;
 
 	Object[] ing = null;
 	int craftingReturn = 1;
@@ -87,7 +90,13 @@ public class CustomBaseObject {
 		this.price = price;
 	}
 
+	public boolean isEnableShop() {
+		return enableShop;
+	}
 
+	public void setEnableShop(boolean enableShop) {
+		this.enableShop = enableShop;
+	}
 
 	public void setIngredients(ItemStack[] ing) {
 		this.ing = ing;
@@ -113,5 +122,9 @@ public class CustomBaseObject {
 	}
 	public void setMaxItemStack(int amount){
 		maxItemStack = amount;
+	}
+
+	public UUID getUuid() {
+		return uuid;
 	}
 }

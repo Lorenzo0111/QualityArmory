@@ -16,6 +16,8 @@ import me.zombie_striker.qg.boundingbox.AbstractBoundingBox;
 import me.zombie_striker.qg.boundingbox.BoundingBoxManager;
 import me.zombie_striker.qg.guns.Gun;
 import me.zombie_striker.qg.handlers.*;
+import me.zombie_striker.qg.hooks.CoreProtectHook;
+import me.zombie_striker.qg.hooks.protection.ProtectionHandler;
 import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
@@ -26,10 +28,11 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
-import ru.beykerykt.lightapi.LightAPI;
-import ru.beykerykt.lightapi.chunks.ChunkInfo;
+import org.jetbrains.annotations.NotNull;
+import ru.beykerykt.minecraft.lightapi.common.LightAPI;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
@@ -110,7 +113,7 @@ public class GunUtil {
 			double maxEntityDistanceSquared = maxDistance * maxDistance;
 
 			List<Location> blocksThatWillPLAYBreak = new ArrayList<>();
-			List<Location> blocksThatWillBreak = new ArrayList<>();
+			List<Block> blocksThatWillBreak = new ArrayList<>();
 
 			Location centerTest = start.clone().add(normalizedDirection.clone().multiply(maxDistance / 2));
 
@@ -216,11 +219,11 @@ public class GunUtil {
 					QAWeaponDamageEntityEvent shootevent = new QAWeaponDamageEntityEvent(p, g, hitTarget, headshot,
 							damage, bulletProtection);
 					Bukkit.getPluginManager().callEvent(shootevent);
-					if (!shootevent.isCanceled()) {
+					if (!shootevent.isCancelled()) {
 						if (headshot) {
 							QAHeadShotEvent headshotevent = new QAHeadShotEvent(hitTarget, p, g);
 							Bukkit.getPluginManager().callEvent(headshotevent);
-							headshot = !headshotevent.isCanceled();
+							headshot = !headshotevent.isCancelled();
 						}
 						if (hitTarget instanceof Player) {
 							Player player = (Player) hitTarget;
@@ -234,20 +237,24 @@ public class GunUtil {
 											player.getInventory().getChestplate(), player.getInventory().getLeggings(),
 											player.getInventory().getBoots()}) {
 										if (is != null) {
-											if (!is.getItemMeta().getAttributeModifiers(Attribute.GENERIC_ARMOR)
-													.isEmpty())
-												for (AttributeModifier a : is.getItemMeta()
-														.getAttributeModifiers(Attribute.GENERIC_ARMOR))
+											Collection<AttributeModifier> attributes = is.getItemMeta().getAttributeModifiers(Attribute.GENERIC_ARMOR);
+											Collection<AttributeModifier> toughnessAttributes = is.getItemMeta().getAttributeModifiers(Attribute.GENERIC_ARMOR_TOUGHNESS);
+
+											if (attributes != null && !attributes.isEmpty())
+												for (AttributeModifier a : attributes)
 													defensePoints += a.getAmount();
-											for (AttributeModifier a : is.getItemMeta()
-													.getAttributeModifiers(Attribute.GENERIC_ARMOR_TOUGHNESS))
-												toughness += a.getAmount();
+											if (toughnessAttributes != null && !toughnessAttributes.isEmpty())
+												for (AttributeModifier a : toughnessAttributes)
+													toughness += a.getAmount();
 										}
 									}
+
+									QAMain.DEBUG("Applied armor protection: " + defensePoints);
+
 									damageMAX = damageMAX / (1 - Math.min(20, Math.max(defensePoints / 5,
 											defensePoints - damageMAX / (toughness / 4 + 2))) / 25);
 								} catch (Error | Exception e5) {
-
+									QAMain.DEBUG("An error has occurred: " + e5.getMessage());
 								}
 							}
 
@@ -274,6 +281,18 @@ public class GunUtil {
 							((EnderDragonPart) hitTarget).damage(damageMAX, p);
 						}
 
+
+						if (hitTarget.getPassenger() instanceof Damageable) {
+							QAMain.DEBUG("Found a passenger (" + hitTarget.getPassenger().getName() + "). Damaging it.");
+
+							QAWeaponDamageEntityEvent passengerShoot = new QAWeaponDamageEntityEvent(p, g, hitTarget.getPassenger(), false,
+									damage, bulletProtection);
+							Bukkit.getPluginManager().callEvent(passengerShoot);
+
+							if (!passengerShoot.isCancelled()) {
+								((Damageable) hitTarget.getPassenger()).damage(damageMAX, p);
+							}
+						}
 					} else {
 						if (hitTarget instanceof LivingEntity) {
 							QAMain.DEBUG("Damaging entity CANCELED " + hitTarget.getName() + " ( "
@@ -303,15 +322,22 @@ public class GunUtil {
 						boolean solid = isSolid(start.getBlock(), start);
 						QAWeaponDamageBlockEvent blockevent = new QAWeaponDamageBlockEvent(p, g, start.getBlock());
 						Bukkit.getPluginManager().callEvent(blockevent);
-						if (!blockevent.isCanceled()) {
+						if (!blockevent.isCancelled()) {
 							if ((solid || isBreakable(start.getBlock(), start)) && !blocksThatWillPLAYBreak.contains(
 									new Location(start.getWorld(), start.getBlockX(), start.getBlockY(), start.getBlockZ()))) {
 								blocksThatWillPLAYBreak.add(
 										new Location(start.getWorld(), start.getBlockX(), start.getBlockY(), start.getBlockZ()));
 							}
-							if (QAMain.destructableBlocks.contains(start.getBlock().getType())) {
-								blocksThatWillBreak.add(start);
+
+							final Block block = start.getBlock();
+							final Material type = block.getType();
+							if ((QAMain.destructableBlocks.contains(type) || g.getBreakableMaterials().contains(type)) && ProtectionHandler.canBreak(start)) {
+								blocksThatWillBreak.add(block);
 							}
+						}
+
+						if (!solid) {
+							continue;
 						}
 					}
 
@@ -348,8 +374,14 @@ public class GunUtil {
 					ParticleHandlers.spawnGunParticles(g, start);
 				}
 
-				for (Location l : blocksThatWillBreak) {
-					l.getBlock().breakNaturally();
+				for (Block l : blocksThatWillBreak) {
+					QAMain.DEBUG("Breaking " + l.getX() + " " + l.getY() + " " + l.getZ() + ": " + l.getType());
+					QAWeaponDamageBlockEvent event = new QAWeaponDamageBlockEvent(p,g,l);
+					Bukkit.getPluginManager().callEvent(event);
+					if (!event.isCancelled()) {
+						l.breakNaturally();
+						CoreProtectHook.logBreak(l,p);
+					}
 				}
 			}
 
@@ -359,18 +391,12 @@ public class GunUtil {
 				if (Bukkit.getPluginManager().getPlugin("LightAPI") != null) {
 					if (p.getEyeLocation().getBlock().getLightLevel() < g.getLightOnShoot()) {
 						final Location loc = p.getEyeLocation().clone();
-						LightAPI.createLight(loc, g.getLightOnShoot(), false);
-						for (ChunkInfo c : LightAPI.collectChunks(loc)) {
-							LightAPI.updateChunk(c);
-						}
+						LightAPI.get().setLightLevel(loc.getWorld().getName(),loc.getBlockX(),loc.getBlockY(),loc.getBlockZ(), g.getLightOnShoot());
 						new BukkitRunnable() {
 
 							@Override
 							public void run() {
-								LightAPI.deleteLight(loc, false);
-								for (ChunkInfo c : LightAPI.collectChunks(loc)) {
-									LightAPI.updateChunk(c);
-								}
+								LightAPI.get().setLightLevel(loc.getWorld().getName(), loc.getBlockX(), loc.getBlockY(), loc.getBlockZ(), 0);
 							}
 						}.runTaskLater(QAMain.getInstance(), 3);
 					}
@@ -421,15 +447,13 @@ public class GunUtil {
 	}
 	@SuppressWarnings("deprecation")
 	public static void basicShoot(boolean offhand, final Gun g, final Player player, final double acc, int times, boolean holdingRMB) {
-		long showdelay = ((int) (g.getDelayBetweenShotsInSeconds() * 1000));
 		QAMain.DEBUG("About to shoot!");
 
 		if (g.getChargingHandler() != null && (g.getChargingHandler().isCharging(player)
 				|| (g.getReloadingingHandler() != null && g.getReloadingingHandler().isReloading(player))))
 			return;
 
-		if (g.getLastShotForGun().containsKey(player.getUniqueId())
-				&& (System.currentTimeMillis() - g.getLastShotForGun().get(player.getUniqueId()) < showdelay)) {
+		if (isDelay(g,player)) {
 			QAMain.DEBUG("Shooting canceled due to last shot being too soon.");
 			return;
 		}
@@ -464,7 +488,10 @@ public class GunUtil {
 
 				@Override
 				public void run() {
-					if (g.getChargingHandler() != null && g.getChargingHandler().isCharging(player)) {
+					if ((g.getChargingHandler() != null && g.getChargingHandler().isCharging(player)) || GunRefillerRunnable.isReloading(player)) {
+						QAMain.DEBUG("Cancelling rapid fire shoot due to charging or reloading.");
+						rapidfireshooters.remove(player.getUniqueId());
+						cancel();
 						return;
 					}
 
@@ -487,7 +514,7 @@ public class GunUtil {
 						return;
 					}
 
-					int amount = Gun.getAmount(temp);
+					int amount = Gun.getAmount(player);
 					if(holdingRMB && !QAMain.SWAP_TO_LMB_SHOOT){
 						if(System.currentTimeMillis()-g.getLastTimeRMB(player) > 310){
 							rapidfireshooters.remove(player.getUniqueId());
@@ -532,7 +559,7 @@ public class GunUtil {
 					} else {
 						slot = player.getInventory().getHeldItemSlot();
 					}
-					Gun.updateAmmo(g, im, amount);
+					Gun.updateAmmo(g, player, amount);
 					if(QAMain.showAmmoInXPBar){
 						updateXPBar(player,g,amount);
 					}
@@ -565,7 +592,7 @@ public class GunUtil {
 			}.runTaskTimer(QAMain.getInstance(), 10 / g.getFireRate(), 10 / g.getFireRate()));
 		}
 
-		int amount = Gun.getAmount(firstGunInstance) - 1;
+		int amount = Gun.getAmount(player) - 1;
 
 		if (amount < 0)
 			amount = 0;
@@ -576,9 +603,7 @@ public class GunUtil {
 		} else {
 			slot = player.getInventory().getHeldItemSlot();
 		}
-		ItemMeta im = firstGunInstance.getItemMeta();
-		Gun.updateAmmo(g, im, amount);
-		firstGunInstance.setItemMeta(im);
+		Gun.updateAmmo(g, firstGunInstance, amount);
 		if (slot == -1) {
 			try {
 				if (QualityArmory.isIronSights(player.getItemInHand())) {
@@ -596,10 +621,8 @@ public class GunUtil {
 	}
 
 	public static void updateXPBar(Player player, Gun g, int amount) {
-		ExperienceManager manager = new ExperienceManager(player);
-		double totalXpNeededForpercent = manager.getXpNeededToLevelUp(amount)*(((double)amount)/g.getMaxBullets());//This is 100% charge
 		player.setLevel(amount);
-		player.setExp((int)totalXpNeededForpercent-1);
+		// Todo exp
 	}
 
 	public static void playShoot(final Gun g, final Player player) {
@@ -651,7 +674,7 @@ public class GunUtil {
 		final ItemStack temp = player.getInventory().getItemInHand();
 		ItemMeta im = temp.getItemMeta();
 
-		if (Gun.getAmount(temp) == g.getMaxBullets()) {
+		if (Gun.getAmount(player) == g.getMaxBullets()) {
 			return;
 		}
 		if (im == null || !im.hasDisplayName())
@@ -672,12 +695,10 @@ public class GunUtil {
 
 			Ammo ammo = g.getAmmoType();
 
-			final int initialAmount = Gun.getAmount(temp);
+			final int initialAmount = Gun.getAmount(player);
 			final int reloadAmount = doNotRemoveAmmo ? g.getMaxBullets()
 					: Math.min(g.getMaxBullets(), initialAmount + QualityArmory.getAmmoInInventory(player, ammo));
 			final int subtractAmount = reloadAmount - initialAmount;
-			if (!doNotRemoveAmmo)
-				QualityArmory.removeAmmoFromInventory(player, ammo, subtractAmount);
 
 			if (g.getReloadingingHandler() != null) {
 				seconds = g.getReloadingingHandler().reload(player, g, subtractAmount);
@@ -691,7 +712,7 @@ public class GunUtil {
 			if(QAMain.showAmmoInXPBar){
 				updateXPBar(player,g,0);
 			}
-			new GunRefillerRunnable(player, temp, g, slot, initialAmount, reloadAmount, seconds);
+			new GunRefillerRunnable(player, temp, g, slot, initialAmount, reloadAmount, seconds, ammo, subtractAmount, !doNotRemoveAmmo);
 
 		}
 
@@ -767,5 +788,17 @@ public class GunUtil {
 	@SuppressWarnings("deprecation")
 	public static boolean isSolid(Block b, Location l) {
 		return BlockCollisionUtil.isSolid(b, l);
+	}
+
+	@NotNull
+	public static String locationToString(@NotNull Location l) {
+		return "X: " + l.getX() + " Y: " + l.getY() + " Z: " + l.getZ();
+	}
+
+	public static boolean isDelay(Gun g, Player player) {
+		int showdelay = ((int) (g.getDelayBetweenShotsInSeconds() * 1000));
+
+		 return (g.getLastShotForGun().containsKey(player.getUniqueId())
+				&& (System.currentTimeMillis() - g.getLastShotForGun().get(player.getUniqueId()) < showdelay));
 	}
 }

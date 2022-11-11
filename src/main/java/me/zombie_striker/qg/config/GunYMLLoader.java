@@ -13,12 +13,15 @@ import me.zombie_striker.qg.guns.reloaders.ReloadingManager;
 import me.zombie_striker.qg.guns.utils.WeaponSounds;
 import me.zombie_striker.qg.guns.utils.WeaponType;
 import me.zombie_striker.qg.miscitems.*;
+import me.zombie_striker.qg.utils.LocalUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Particle;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -58,18 +61,19 @@ public class GunYMLLoader {
 							final ItemStack[] materails = main
 									.convertIngredients(f2.getStringList("craftingRequirements"));
 							final String displayname = f2.contains("displayname")
-									? ChatColor.translateAlternateColorCodes('&', f2.getString("displayname"))
+									? LocalUtils.colorize( f2.getString("displayname"))
 									: (ChatColor.WHITE + name);
 							final List<String> extraLore2 = f2.contains("lore") ? f2.getStringList("lore") : null;
 							final List<String> extraLore = new ArrayList<String>();
 							try {
 								for (String lore : extraLore2) {
-									extraLore.add(ChatColor.translateAlternateColorCodes('&', lore));
+									extraLore.add(LocalUtils.colorize( lore));
 								}
 							} catch (Error | Exception re52) {
 							}
 
 							final double price = f2.contains("price") ? f2.getDouble("price") : 100;
+							final boolean allowInShop = f2.getBoolean("allowInShop", true) && price > 0;
 
 							int amountA = f2.getInt("maxAmount");
 							if(f2.contains("maxItemStack")) {
@@ -80,6 +84,7 @@ public class GunYMLLoader {
 							Ammo da = new Ammo(name, displayname, extraLore, ms, amountA, false, 1, price, materails,
 									piercing);
 
+							da.setEnableShop(allowInShop);
 							da.setCustomLore(extraLore);
 
 							QAMain.ammoRegister.put(ms, da);
@@ -128,23 +133,28 @@ public class GunYMLLoader {
 							final ItemStack[] materails = main
 									.convertIngredients(f2.getStringList("craftingRequirements"));
 							final String displayname = f2.contains("displayname")
-									? ChatColor.translateAlternateColorCodes('&', f2.getString("displayname"))
+									? LocalUtils.colorize( f2.getString("displayname"))
 									: (ChatColor.WHITE + name);
 							final List<String> rawLore = f2.contains("lore") ? f2.getStringList("lore") : null;
 							final List<String> lore = new ArrayList<String>();
 							try {
 								for (String lore2 : rawLore) {
-									lore.add(ChatColor.translateAlternateColorCodes('&', lore2));
+									lore.add(LocalUtils.colorize( lore2));
 								}
 							} catch (Error | Exception re52) {
 							}
 
 							final int price = f2.contains("price") ? f2.getInt("price") : 100;
+							final boolean allowInShop = f2.getBoolean("allowInShop", true) && price > 0;
 
 							WeaponType wt = WeaponType.getByName(f2.getString("MiscType"));
 
 							if (wt == WeaponType.HELMET) {
-								QAMain.armorRegister.put(ms, new Helmet(name, displayname, lore, materails, ms, price));
+								Helmet helmet = new Helmet(name,displayname,lore,materails,ms,price,allowInShop);
+								helmet.setHeightMax(f2.getDouble("maxProtectionHeight"));
+								helmet.setHeightMin(f2.getDouble("minProtectionHeight"));
+								helmet.setProtection(f2.getInt("protection", 0));
+								QAMain.armorRegister.put(ms, helmet);
 								items++;
 							}
 						}
@@ -177,18 +187,19 @@ public class GunYMLLoader {
 							final ItemStack[] materails = main
 									.convertIngredients(f2.getStringList("craftingRequirements"));
 							final String displayname = f2.contains("displayname")
-									? ChatColor.translateAlternateColorCodes('&', f2.getString("displayname"))
+									? LocalUtils.colorize( f2.getString("displayname"))
 									: (ChatColor.WHITE + name);
 							final List<String> rawLore = f2.contains("lore") ? f2.getStringList("lore") : null;
 							final List<String> lore = new ArrayList<String>();
 							try {
 								for (String lore2 : rawLore) {
-									lore.add(ChatColor.translateAlternateColorCodes('&', lore2));
+									lore.add(LocalUtils.colorize( lore2));
 								}
 							} catch (Error | Exception re52) {
 							}
 
 							final int price = f2.contains("price") ? f2.getInt("price") : 100;
+							final boolean allowInShop = f2.getBoolean("allowInShop", true) && price > 0;
 
 							int damage = f2.contains("damage") ? f2.getInt("damage") : 1;
 							// int durib = f2.contains("durability") ? f2.getInt("durability") : 1000;
@@ -206,6 +217,8 @@ public class GunYMLLoader {
 
 							if (wt == WeaponType.MEDKIT)
 								QAMain.miscRegister.put(ms, base=new MedKit(ms, name, displayname, materails, price));
+							if (wt == WeaponType.AMMO_BAG)
+								QAMain.miscRegister.put(ms, base=new AmmoBag(ms, name, displayname, materails, f2.getInt("max", 5), price));
 							if (wt == WeaponType.MELEE) {
 								QAMain.miscRegister.put(ms,
 										base = new MeleeItems(ms, name, displayname, materails, price, damage));
@@ -235,9 +248,11 @@ public class GunYMLLoader {
 								QAMain.miscRegister.put(ms,
 										base=new Flashbang(materails, price, damage, radius, name, displayname, lore, ms));
 
+
 							if(base!=null) {
 								base.setCustomLore(lore);
 								base.setIngredients(materails);
+								base.setEnableShop(allowInShop);
 							}
 
 							if(f2.contains("maxItemStack"))
@@ -276,14 +291,14 @@ public class GunYMLLoader {
 					final ItemStack[] materails = main.convertIngredients(f2.getStringList("craftingRequirements"));
 
 					final String displayname = f2.contains("displayname")
-							? ChatColor.translateAlternateColorCodes('&', f2.getString("displayname"))
+							? LocalUtils.colorize( f2.getString("displayname"))
 							: (ChatColor.GOLD + name);
 					final List<String> extraLore2 = f2.contains("lore") ? f2.getStringList("lore") : null;
 					final List<String> extraLore = new ArrayList<String>();
 
 					try {
 						for (String lore : extraLore2) {
-							extraLore.add(ChatColor.translateAlternateColorCodes('&', lore));
+							extraLore.add(LocalUtils.colorize( lore));
 						}
 					} catch (Error | Exception re52) {
 					}
@@ -322,6 +337,8 @@ public class GunYMLLoader {
 			g.setDuribility(f2.getInt("durability"));
 		if (f2.contains("price"))
 			g.setPrice(f2.getDouble("price"));
+		if (f2.contains("allowInShop"))
+			g.setEnableShop(f2.getBoolean("allowInShop"));
 		if (f2.contains("isAutomatic"))
 			g.setAutomatic(f2.getBoolean("isAutomatic"));
 		if (f2.contains("enableBetterModelScopes"))
@@ -333,6 +350,10 @@ public class GunYMLLoader {
 			g.setEnableSwayMovementModifier(f2.getBoolean("sway.moveModifier"));
 		if (f2.contains("sway.runModifier"))
 			g.setEnableSwayRunModifier(f2.getBoolean("sway.runModifier"));
+		if (f2.contains("DestructableMaterials")) {
+			g.getBreakableMaterials().clear();
+			g.getBreakableMaterials().addAll(getMaterials(f2.getStringList("DestructableMaterials")));
+		}
 
 		List<String> sounds = null;
 
@@ -487,7 +508,7 @@ public class GunYMLLoader {
 							final String name = f2.getString("name");
 							main.getLogger().info("-Loading Attachment: " + name);
 							final String displayname = f2.contains("displayname")
-									? ChatColor.translateAlternateColorCodes('&', f2.getString("displayname"))
+									? LocalUtils.colorize( f2.getString("displayname"))
 									: (ChatColor.GOLD + name);
 							final List<String> extraLore2 = f2.contains("lore") ? f2.getStringList("lore") : null;
 
@@ -509,7 +530,7 @@ public class GunYMLLoader {
 							final List<String> extraLore = new ArrayList<String>();
 							try {
 								for (String lore : extraLore2) {
-									extraLore.add(ChatColor.translateAlternateColorCodes('&', lore));
+									extraLore.add(LocalUtils.colorize( lore));
 								}
 							} catch (Error | Exception re52) {
 							}
@@ -540,5 +561,28 @@ public class GunYMLLoader {
 			if(!QAMain.verboseLoadingLogging)
 				main.getLogger().info("-Loaded "+items+" Attachment types.");
 		}
+	}
+
+	public static @NotNull List<Material> getMaterials(@NotNull List<String> list) {
+		List<Material> materials = new ArrayList<>();
+
+		for (String s : list) {
+			if (s.equals("MATERIAL_NAME_HERE")) continue;
+
+			try {
+				Material material = Material.getMaterial(s.toUpperCase());
+
+				if (material == null) {
+					QAMain.getInstance().getLogger().warning("Invalid material name: " + s + ".");
+					continue;
+				}
+
+				materials.add(material);
+			} catch (Error | Exception ignored) {
+				QAMain.getInstance().getLogger().warning("Invalid material name: " + s + ".");
+			}
+		}
+
+		return materials;
 	}
 }

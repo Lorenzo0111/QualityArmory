@@ -11,6 +11,8 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class GunYML extends ArmoryYML {
@@ -74,6 +76,7 @@ public class GunYML extends ArmoryYML {
 		verify("sway.unscopedModifier", 1);
 		verify("firing_knockback", 0);
 		verify("KilledByMessage", "%player% was shot by %killer% using a %name%");
+		verify("DestructableMaterials", Collections.singletonList("MATERIAL_NAME_HERE"));
 	}
 
 	public GunYML setReloadingSound(String sound) {

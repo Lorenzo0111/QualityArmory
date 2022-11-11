@@ -7,6 +7,7 @@ import me.zombie_striker.customitemmanager.MaterialStorage;
 import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.ammo.Ammo;
 import me.zombie_striker.qg.api.QACustomItemInteractEvent;
+import me.zombie_striker.qg.api.QAGunGiveEvent;
 import me.zombie_striker.qg.api.QualityArmory;
 import me.zombie_striker.qg.attachments.AttachmentBase;
 import me.zombie_striker.qg.guns.Gun;
@@ -16,6 +17,7 @@ import me.zombie_striker.qg.handlers.BulletWoundHandler;
 import me.zombie_striker.qg.handlers.EconHandler;
 import me.zombie_striker.qg.handlers.IronsightsHandler;
 import me.zombie_striker.qg.handlers.Update19OffhandChecker;
+import me.zombie_striker.qg.miscitems.Grenade;
 import me.zombie_striker.qg.miscitems.MeleeItems;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
@@ -28,15 +30,14 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.PlayerDeathEvent;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryMoveItemEvent;
-import org.bukkit.event.inventory.InventoryPickupItemEvent;
-import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.event.inventory.*;
 import org.bukkit.event.player.*;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scoreboard.Scoreboard;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 
@@ -81,9 +82,15 @@ public class QAListener implements Listener {
 	public void onHopperpickup(InventoryPickupItemEvent e) {
 		if (e.isCancelled())
 			return;
-		if (e.getInventory().getType() == InventoryType.HOPPER)
+		if (e.getInventory().getType() == InventoryType.HOPPER) {
 			if (QualityArmory.isGun(e.getItem().getItemStack()))
 				e.setCancelled(true);
+
+			if (Grenade.getGrenades().contains(e.getItem())) {
+				e.setCancelled(true);
+				QAMain.DEBUG("Cancelled item pickup event because it was a grenade");
+			}
+		}
 	}
 
 	@EventHandler
@@ -234,6 +241,19 @@ public class QAListener implements Listener {
 			return;
 		String name = null;
 
+		if(e.getClickedInventory() instanceof PlayerInventory) {
+			ItemStack cursor = e.getCursor();
+			final int OFFHAND_SLOT = 40;
+			// null check is done by isGun
+			// offhand slot check also works with hotkey inventory swap (F by default) - tested on 1.16.5
+			if(e.getSlot() == OFFHAND_SLOT && QualityArmory.isGun(cursor)) {
+				e.setCancelled(true);
+				// restore placed item because cancelling an event seems to wipe it.
+				// it will make cursor item look disappeared, but it'll be dropped when inventory is closed
+				e.getView().setCursor(cursor);
+			}
+		}
+
 		if (e.getView().getTitle().startsWith((QAMain.S_craftingBenchName)) || e.getView().getTitle().startsWith((QAMain.S_shopName))) {
 			if (e.getClick().isShiftClick()) {
 				e.setCancelled(true);
@@ -294,7 +314,7 @@ public class QAListener implements Listener {
 				}
 				if (QualityArmory.isAmmo(e.getCurrentItem())) {
 					Ammo g = QualityArmory.getAmmo(e.getCurrentItem());
-					if (g.getPrice() < 0)
+					if (g.getPrice() < 0 || !g.isEnableShop())
 						return;
 					if ((shop && EconHandler.hasEnough(g, (Player) e.getWhoClicked()))
 							|| (!shop && QAMain.lookForIngre((Player) e.getWhoClicked(), g))
@@ -326,7 +346,7 @@ public class QAListener implements Listener {
 					}
 				} else if (QualityArmory.isCustomItem(e.getCurrentItem())) {
 					CustomBaseObject g = QualityArmory.getCustomItem(e.getCurrentItem());
-					if (g.getPrice() < 0)
+					if (g.getPrice() < 0 || !g.isEnableShop())
 						return;
 					if ((shop && EconHandler.hasEnough(g, (Player) e.getWhoClicked()))
 							|| (!shop && QAMain.lookForIngre((Player) e.getWhoClicked(), g))
@@ -338,8 +358,15 @@ public class QAListener implements Listener {
 											.replaceAll("%cost%", "" + g.getPrice()));
 						} else
 							QAMain.removeForIngre((Player) e.getWhoClicked(), g);
+
+						if (g instanceof Gun) {
+							QAGunGiveEvent event = new QAGunGiveEvent(((Player) e.getWhoClicked()), ((Gun) g), QAGunGiveEvent.Cause.SHOP);
+							if (event.isCancelled()) return;
+							g = event.getGun();
+						}
+
 						ItemStack s = CustomItemManager.getItemType("gun").getItem(g.getItemData().getMat(), g.getItemData().getData(), g.getItemData().getVariant());
-						e.getWhoClicked().getInventory().addItem(s);
+						QualityArmory.giveOrDrop(e.getWhoClicked(),s);
 						QAMain.shopsSounds(e, shop);
 						DEBUG("Buy-Item");
 					} else {
@@ -537,6 +564,23 @@ public class QAListener implements Listener {
 		}
 	}
 
+	@EventHandler(priority = EventPriority.LOW)
+	public void onDropReload(PlayerDropItemEvent e) {
+		if (QAMain.reloadOnQ && !QAMain.reloadOnFOnly) {
+			Gun g = QualityArmory.getGun(e.getItemDrop().getItemStack());
+			if (g != null) {
+				e.setCancelled(true);
+				reload(e.getPlayer(),g);
+			}
+		}
+	}
+
+	public static void reload(Player player, Gun g) {
+		if (g.playerHasAmmo(player)) {
+			g.reload(player);
+		}
+	}
+
 	@EventHandler
 	public void onMove(PlayerMoveEvent e) {
 		QAMain.recoilHelperMovedLocation.put(e.getPlayer().getUniqueId(), e.getTo());
@@ -572,25 +616,6 @@ public class QAListener implements Listener {
 	@SuppressWarnings("deprecation")
 	@EventHandler(priority = EventPriority.HIGH)
 	public void onDeath(PlayerDeathEvent e) {
-		if (QAMain.reloadingTasks.containsKey(e.getEntity().getUniqueId())) {
-			for (GunRefillerRunnable r : QAMain.reloadingTasks.get(e.getEntity().getUniqueId())) {
-				if (e.getEntity().getGameMode() != GameMode.CREATIVE) {
-					Gun gun = QualityArmory.getGun(r.getItem());
-					if (gun != null) {
-						Ammo ammotype = gun.getAmmoType();
-						if (ammotype != null) {
-							ItemStack ammo = QualityArmory.getCustomItemAsItemStack(ammotype);
-							ammo.setAmount(r.getAddedAmount());
-							e.getDrops().add(ammo);
-						}
-					}
-				}
-				r.getTask().cancel();
-				DEBUG("Canceling reload task " + r.getTask().getTaskId());
-			}
-		}
-		QAMain.reloadingTasks.remove(e.getEntity().getUniqueId());
-
 		for (ItemStack is : new ArrayList<>(e.getDrops())) {
 			if (is == null)
 				continue;
@@ -784,7 +809,7 @@ public class QAListener implements Listener {
 
 		QACustomItemInteractEvent event = new QACustomItemInteractEvent(e.getPlayer(), object);
 		Bukkit.getPluginManager().callEvent(event);
-		if (event.isCanceled())
+		if (event.isCancelled())
 			return;
 
 		if (QAMain.kickIfDeniedRequest && QAMain.sentResourcepack.containsKey(e.getPlayer().getUniqueId())
@@ -862,6 +887,13 @@ public class QAListener implements Listener {
 				} catch (Error e2) {
 				}
 			}
+			try {
+				if (!IronsightsHandler.isAiming(e.getPlayer()) && event.getPlayer().getInventory().getItemInOffHand().equals(e.getItem())) {
+					e.setCancelled(true);
+					return;
+				}
+			} catch (Throwable ignored) {}
+
 			CustomBaseObject qaItem = QualityArmory.getCustomItem(usedItem);
 			if (qaItem != null) {
 				QAMain.DEBUG(qaItem.getName() + " item is being used!");
@@ -903,7 +935,7 @@ public class QAListener implements Listener {
 		if(QAMain.showAmmoInXPBar) {
 			CustomBaseObject customBase = QualityArmory.getCustomItem(newslot);
 			if (customBase instanceof Gun) {
-				GunUtil.updateXPBar(e.getPlayer(), (Gun) customBase,QualityArmory.getBulletsInGun(newslot));
+				GunUtil.updateXPBar(e.getPlayer(), (Gun) customBase,QualityArmory.getBulletsInHand(e.getPlayer()));
 			}else{
 				e.getPlayer().setTotalExperience(0);
 			}
@@ -920,7 +952,7 @@ public class QAListener implements Listener {
 		}
 		QAMain.reloadingTasks.remove(e.getPlayer().getUniqueId());
 
-		if (QualityArmory.isIronSights(e.getPlayer().getInventory().getItemInMainHand())) {
+		if (QualityArmory.isIronSights(e.getPlayer().getInventory().getItemInHand())) {
 			try {
 				e.getPlayer().getInventory().setItemInMainHand(e.getPlayer().getInventory().getItemInOffHand());
 				e.getPlayer().getInventory().setItemInOffHand(new ItemStack(Material.AIR));
@@ -1054,7 +1086,7 @@ public class QAListener implements Listener {
 							QAMain.DEBUG("Dropped gun is a gun. Checking for has ammo");
 							if (!dealtWithDrop) {
 								if (e.getPlayer().getItemInHand().getType() != Material.AIR) {
-									if ((g.getMaxBullets() - 1) == Gun.getAmount(e.getPlayer().getItemInHand())) {
+									if ((g.getMaxBullets() - 1) == Gun.getAmount(e.getPlayer())) {
 										QAMain.DEBUG("Player is full on ammo. Don't reload");
 										return;
 									}
@@ -1083,6 +1115,11 @@ public class QAListener implements Listener {
 		}
 
 	}
+
+	@EventHandler
+    public void onDrop(@NotNull InventoryClickEvent event) {
+		DEBUG("Detected drop: " + event.getAction());
+    }
 
 	private void DEBUG(String s) {
 		QAMain.DEBUG(s);

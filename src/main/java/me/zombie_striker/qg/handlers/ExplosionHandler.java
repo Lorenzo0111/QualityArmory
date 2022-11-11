@@ -1,5 +1,6 @@
 package me.zombie_striker.qg.handlers;
 
+import me.zombie_striker.qg.hooks.protection.ProtectionHandler;
 import org.bukkit.Location;
 import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Entity;
@@ -14,18 +15,19 @@ public class ExplosionHandler {
 	// Material.COMMAND, Material.COMMAND_CHAIN, Material.COMMAND_MINECART,
 	// Material.COMMAND_REPEATING);
 
-	public static void handleExplosion(Location origin, int radius, int power) {
+	public static boolean handleExplosion(Location origin, int radius, int power) {
 		try{
-			if(WorldGuardSupport.canExplode(origin)) {
-				origin.getWorld().createExplosion(origin, power);
-			}else{
+			if(!ProtectionHandler.canExplode(origin)) {
 				origin.getWorld().createExplosion(origin, 0);
+				return false;
 			}
-			if(false)
-				throw new ClassNotFoundException();
-		}catch(ClassNotFoundException e4){
-			origin.getWorld().createExplosion(origin, power);
+
+			origin.getWorld().createExplosion(origin, Math.max(radius,power));
+		}catch(NoClassDefFoundError e4){
+			origin.getWorld().createExplosion(origin, Math.max(radius,power));
 		}
+
+		return true;
 	}
 	
 	public static void handleAOEExplosion(Entity shooter, Location loc, double damage, double radius) {

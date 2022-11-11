@@ -6,7 +6,9 @@ import me.zombie_striker.qg.api.QualityArmory;
 import me.zombie_striker.qg.guns.Gun;
 import me.zombie_striker.qg.guns.utils.GunUtil;
 
+import me.zombie_striker.qg.listener.QAListener;
 import org.bukkit.*;
+import org.bukkit.entity.Player;
 import org.bukkit.event.*;
 import org.bukkit.event.inventory.PrepareAnvilEvent;
 import org.bukkit.event.player.*;
@@ -64,12 +66,10 @@ public class Update19Events implements Listener {
 			}
 			if (g != null) {
 				e.setCancelled(true);
-				if (g.playerHasAmmo(e.getPlayer())) {
-					g.reload(e.getPlayer());
-					BukkitTask task = GunUtil.rapidfireshooters.get(e.getPlayer().getUniqueId());
-					if (task != null)
-						task.cancel();
-				}
+				QAListener.reload(e.getPlayer(),g);
+				BukkitTask task = GunUtil.rapidfireshooters.get(e.getPlayer().getUniqueId());
+				if (task != null)
+					task.cancel();
 			}
 
 		} else {

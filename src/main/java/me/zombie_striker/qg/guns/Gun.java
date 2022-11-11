@@ -1,5 +1,6 @@
 package me.zombie_striker.qg.guns;
 
+import de.tr7zw.nbtapi.NBTItem;
 import me.zombie_striker.customitemmanager.*;
 import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.ammo.Ammo;
@@ -14,6 +15,7 @@ import me.zombie_striker.qg.guns.utils.GunUtil;
 import me.zombie_striker.qg.guns.utils.WeaponSounds;
 import me.zombie_striker.qg.guns.utils.WeaponType;
 import me.zombie_striker.qg.handlers.Update19OffhandChecker;
+import me.zombie_striker.qg.utils.LocalUtils;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -80,6 +82,7 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
 	private boolean enableMuzzleSmoke = false;
 	private double knockbackPower = 0;
 	private int slownessPower = 0;
+	private final List<Material> breakableMaterials = new ArrayList<>();
 
 	private String reloadingSound = WeaponSounds.RELOAD_MAG_OUT.getSoundName();
 	private String chargingSound = WeaponSounds.RELOAD_BOLT.getSoundName();
@@ -116,7 +119,7 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
 	public Gun(String name, MaterialStorage id, WeaponType type, boolean h, Ammo am, double acc, double swaymult,
 			   int maxBullets, float damage, boolean isAutomatic, int durib, String ws, List<String> extralore,
 			   String displayname, double cost, ItemStack[] ing) {
-		super(name, id, ChatColor.translateAlternateColorCodes('&', displayname), extralore, true);
+		super(name, id, LocalUtils.colorize(displayname), extralore, true);
 		this.type = type;
 		this.hasIronSights = h;
 		this.ammotype = am;
@@ -133,7 +136,7 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
 		this.setPrice(cost);
 
 		//this.extralore = extralore;
-		//this.displayname = ChatColor.translateAlternateColorCodes('&', displayname);
+		//this.displayname = LocalUtils.colorize(displayname);
 	}
 
 	public Gun(String name, MaterialStorage id) {
@@ -143,11 +146,11 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
 	@SuppressWarnings("deprecation")
 	public static boolean USE_THIS_INSTEAD_OF_INDEVIDUAL_SHOOT_METHODS(Gun g, Player player, double acc, boolean holdingRMB) {
 		boolean offhand = QualityArmory.isIronSights(player.getInventory().getItemInHand());
-		if ((!offhand && getAmount(player.getInventory().getItemInHand()) > 0)
+		if ((!offhand && getAmount(player) > 0)
 				|| (offhand && Update19OffhandChecker.hasAmountOFfhandGreaterthan(player, 0))) {
 			QAWeaponPrepareShootEvent shootevent = new QAWeaponPrepareShootEvent(player, g);
 			Bukkit.getPluginManager().callEvent(shootevent);
-			if (shootevent.isCanceled())
+			if (shootevent.isCancelled())
 				return false;
 			GunUtil.basicShoot(offhand, g, player, acc,  holdingRMB);
 			return true;
@@ -155,43 +158,34 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
 		return false;
 	}
 
-	public static int getAmount(ItemStack is) {
-		if (is != null) {
-			if (is.hasItemMeta() && is.getItemMeta().hasLore()) {
-				for (String lore : is.getItemMeta().getLore()) {
-					if (lore.contains(QAMain.S_ITEM_BULLETS)) {
-						return Integer.parseInt(lore.split(":")[1].split("/")[0].trim());
-					}
-				}
-				return 0;
-			}
+	public static int getAmount(Player player) {
+		ItemStack is = player.getInventory().getItemInMainHand();
+		if (is.getType().isAir()) return 0;
+
+		NBTItem item = new NBTItem(is);
+		if (item.hasKey("ammo")) {
+			return item.getInteger("ammo");
 		}
+
 		return 0;
 	}
 
-	public static void updateAmmo(Gun g, ItemMeta current, int amount) {
-		if (((current == null || !current.hasLore())))
-			return;
-		List<String> lore = current.getLore();
-		updateAmmo(g, lore, amount);
-		current.setLore(lore);
-		return;
+	public static void updateAmmo(Gun g, ItemStack current, int amount) {
+		NBTItem item = new NBTItem(current);
+		item.setInteger("ammo", amount);
+		item.applyNBT(current);
 	}
 
-	public static void updateAmmo(Gun g, List<String> lore, int amount) {
-		for (int i = 0; i < lore.size(); i++) {
-			if (lore.get(i).startsWith(QAMain.S_ITEM_BULLETS)) {
-				lore.set(i, QAMain.S_ITEM_BULLETS + ": " + (amount) + "/" + (g.getMaxBullets()));
-				break;
-			}
-		}
-		return;
+	public static void updateAmmo(Gun g, Player player, int amount) {
+		ItemStack current = player.getInventory().getItemInMainHand();
+		NBTItem item = new NBTItem(current);
+		item.setInteger("ammo", amount);
+		item.applyNBT(current);
 	}
 
 	public static List<String> getGunLore(Gun g, ItemStack current, int amount) {
 		List<String> lore = (current != null && current.hasItemMeta() && current.getItemMeta().hasLore()) ? current.getItemMeta().getLore() : new ArrayList<>();
 		OLD_ItemFact.addVariantData(null, lore, g);
-		lore.add(QAMain.S_ITEM_BULLETS + ": " + (amount) + "/" + (g.getMaxBullets()));
 		if (QAMain.ENABLE_LORE_INFO) {
 			lore.add(QAMain.S_ITEM_DAMAGE + ": " + g.getDamage());
 			lore.add(QAMain.S_ITEM_DPS + ": "
@@ -211,7 +205,9 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
 
 		if (QAMain.enableDurability)
 			if (current == null) {
-				lore.add(QAMain.S_ITEM_DURIB + ":" + g.getDurability() + "/" + g.getDurability());
+				double k = ((double) g.getDamage()) / g.getDurability();
+				ChatColor c = k > 0.5 ? ChatColor.DARK_GREEN : k > 0.25 ? ChatColor.GOLD : ChatColor.DARK_RED;
+				lore.add(c + QAMain.S_ITEM_DURIB + ":" + g.getDurability() + "/" + g.getDurability());
 			} else {
 				lore = setDurabilityDamage(g, lore, getDamage(current));
 			}
@@ -264,7 +260,7 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
 		double k = ((double) damage) / g.getDurability();
 		ChatColor c = k > 0.5 ? ChatColor.DARK_GREEN : k > 0.25 ? ChatColor.GOLD : ChatColor.DARK_RED;
 		for (int j = 0; j < lore.size(); j++) {
-			if (ChatColor.stripColor(lore.get(j)).contains(QAMain.S_ITEM_DURIB)) {
+			if (ChatColor.stripColor(lore.get(j)).contains(ChatColor.stripColor(QAMain.S_ITEM_DURIB))) {
 				lore.set(j, c + QAMain.S_ITEM_DURIB + ":" + damage + "/" + g.getDurability());
 				foundLine = true;
 				break;
@@ -356,6 +352,7 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
 		this.setCustomLore(g.getCustomLore());
 		this.weaponSounds = g.weaponSounds;
 		this.setPrice(g.getPrice());
+		this.setEnableShop(g.isEnableShop());
 		this.delayBetweenShots = g.delayBetweenShots;
 		this.shotsPerBullet = g.shotsPerBullet;
 		this.firerate = g.firerate;
@@ -623,7 +620,6 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
 	}
 
 	public double getSway() {
-		// TODO Auto-generated method stub
 		return acc;
 	}
 
@@ -632,7 +628,6 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
 	}
 
 	public double getMovementMultiplier() {
-		// TODO Auto-generated method stub
 		return swaymultiplier;
 	}
 
@@ -805,6 +800,10 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
 			player.getPlayer().sendMessage(QAMain.S_NOPERM);
 			return true;
 		}
+		if (QAMain.perWeaponPermission && !player.getPlayer().hasPermission("qualityarmory.usegun." + getName())) {
+			player.getPlayer().sendMessage(QAMain.S_NOPERM);
+			return true;
+		}
 
 		QAMain.DEBUG("Dups check");
 		QAMain.checkforDups(player.getPlayer(), usedItem);
@@ -849,7 +848,7 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
 			if (!isAutomatic() && GunUtil.rapidfireshooters.containsKey(player.getPlayer().getUniqueId())) {
 				GunUtil.rapidfireshooters.remove(player.getPlayer().getUniqueId()).cancel();
 				if (QAMain.enableReloadWhenOutOfAmmo) {
-					if (getAmount(usedItem) <= 0) {
+					if (getAmount(player) <= 0) {
 						if (offhand) {
 							player.getPlayer().setItemInHand(player.getPlayer().getInventory().getItemInOffHand());
 							player.getPlayer().getInventory().setItemInOffHand(null);
@@ -857,9 +856,9 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
 							offhand = false;
 						}
 						if (QAMain.allowGunReload) {
-							QualityArmory.sendHotbarGunAmmoCount(player.getPlayer(), this, usedItem, ((getMaxBullets() != getAmount(usedItem))
+							QualityArmory.sendHotbarGunAmmoCount(player.getPlayer(), this, usedItem, ((getMaxBullets() != getAmount(player))
 									&& GunUtil.hasAmmo(player.getPlayer(), this)));
-							if ((getMaxBullets() != getAmount(usedItem))) {
+							if ((getMaxBullets() != getAmount(player))) {
 								QAMain.DEBUG("Ammo full");
 							} else if (playerHasAmmo(player.getPlayer())) {
 								QAMain.DEBUG("Trying to reload WITH AUTORELOAD. player has ammo");
@@ -876,7 +875,7 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
 				}
 			} else {
 				QAMain.DEBUG("About to fire single shot");
-				if (getAmount(usedItem) <= 0) {
+				if (getAmount(player) <= 0) {
 					QAMain.DEBUG("Out of ammo");
 
 					if(GunUtil.rapidfireshooters.containsKey(player.getUniqueId()))
@@ -893,7 +892,7 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
 						}
 						if (QAMain.allowGunReload) {
 							QualityArmory.sendHotbarGunAmmoCount(player.getPlayer(), this, usedItem,
-									((getMaxBullets() != getAmount(usedItem))
+									((getMaxBullets() != getAmount(player))
 											&& GunUtil.hasAmmo(player.getPlayer(), this)));
 							if (playerHasAmmo(player.getPlayer())) {
 								QAMain.DEBUG("Trying to reload WITH AUTORELOAD. player has ammo");
@@ -916,12 +915,12 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
 						}
 						lastRMB.put(player.getUniqueId(),System.currentTimeMillis());
 					}
-					shoot(player.getPlayer(), automaticfiring);
-					if(getKnockbackPower() != 0){
+					if(!GunUtil.isDelay(this,player) && getKnockbackPower() != 0){
 						Vector currentVelocity = player.getVelocity();
 						currentVelocity.add(player.getLocation().getDirection().normalize().multiply(-getKnockbackPower()));
 						player.setVelocity(currentVelocity);
 					}
+					shoot(player.getPlayer(), automaticfiring);
 				}else{
 					player.getPlayer().playSound(player.getPlayer().getLocation(),WeaponSounds.METALHIT.getSoundName(),1,1);
 					QAMain.DEBUG("Durablility less than 0");
@@ -1030,7 +1029,7 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
 				} else {
 					if (QAMain.allowGunReload) {
 						QualityArmory.sendHotbarGunAmmoCount(player.getPlayer(), this, usedItem,
-								((getMaxBullets() != getAmount(usedItem))
+								((getMaxBullets() != getAmount(player))
 										&& GunUtil.hasAmmo(player.getPlayer(), this)));
 						if (playerHasAmmo(player.getPlayer())) {
 							QAMain.DEBUG("Trying to reload. player has ammo");
@@ -1118,5 +1117,65 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
 	}
 	public void setChargingSound(String chargingSound) {
 		this.chargingSound = chargingSound;
+	}
+
+	public List<Material> getBreakableMaterials() {
+		return breakableMaterials;
+	}
+
+	@Override
+	public String toString() {
+		return "Gun{" +
+				"glowEffect=" + glowEffect +
+				", unlimitedAmmo=" + unlimitedAmmo +
+				", lastshot=" + lastshot +
+				", supports18=" + supports18 +
+				", nightVisionOnScope=" + nightVisionOnScope +
+				", customProjectile=" + customProjectile +
+				", velocity=" + velocity +
+				", explosionRadius=" + explosionRadius +
+				", recoil=" + recoil +
+				", type=" + type +
+				", hasIronSights=" + hasIronSights +
+				", zoomLevel=" + zoomLevel +
+				", ammotype=" + ammotype +
+				", acc=" + acc +
+				", swaymultiplier=" + swaymultiplier +
+				", swayUnscopedMultiplier=" + swayUnscopedMultiplier +
+				", maxbull=" + maxbull +
+				", damage=" + damage +
+				", durib=" + durib +
+				", isAutomatic=" + isAutomatic +
+				", headshotMultiplier=" + headshotMultiplier +
+				", isPrimaryWeapon=" + isPrimaryWeapon +
+				", useOffhandOverride=" + useOffhandOverride +
+				", weaponSounds=" + weaponSounds +
+				", volume=" + volume +
+				", delayBetweenShots=" + delayBetweenShots +
+				", shotsPerBullet=" + shotsPerBullet +
+				", firerate=" + firerate +
+				", reloadTime=" + reloadTime +
+				", ch=" + ch +
+				", rh=" + rh +
+				", enableSwayMovementModifier=" + enableSwayMovementModifier +
+				", enableSwaySneakModifier=" + enableSwaySneakModifier +
+				", enableSwayRunModifier=" + enableSwayRunModifier +
+				", maxDistance=" + maxDistance +
+				", particle=" + particle +
+				", particle_data=" + particle_data +
+				", particle_r=" + particle_r +
+				", particle_g=" + particle_g +
+				", particle_b=" + particle_b +
+				", particle_material=" + particle_material +
+				", lightl=" + lightl +
+				", enableMuzzleSmoke=" + enableMuzzleSmoke +
+				", knockbackPower=" + knockbackPower +
+				", slownessPower=" + slownessPower +
+				", breakableMaterials=" + breakableMaterials +
+				", reloadingSound='" + reloadingSound + '\'' +
+				", chargingSound='" + chargingSound + '\'' +
+				", killedByMessage='" + killedByMessage + '\'' +
+				", lastRMB=" + lastRMB +
+				'}';
 	}
 }

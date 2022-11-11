@@ -1,6 +1,6 @@
 package me.zombie_striker.customitemmanager.qa.versions.V1_14;
 
-import me.clip.placeholderapi.PlaceholderAPI;
+import com.cryptomorin.xseries.XMaterial;
 import me.zombie_striker.customitemmanager.*;
 import me.zombie_striker.customitemmanager.qa.AbstractCustomGunItem;
 import me.zombie_striker.qg.QAMain;
@@ -33,8 +33,10 @@ import java.util.*;
 
 public class CustomGunItem extends AbstractCustomGunItem {
 
+	private boolean overrideAttackSpeed = true;
+
 	public CustomGunItem(){
-		CustomItemManager.setResourcepack("https://www.dropbox.com/s/cnh7mjc88mqprjd/QualityArmoryV2.1.8.zip?dl=1");
+		CustomItemManager.setResourcepack("https://github.com/ZombieStriker/QualityArmory-Resourcepack/releases/download/latest/QualityArmory.zip");
 	}
 
 	public static MaterialStorage m(int d) {
@@ -87,8 +89,10 @@ public class CustomGunItem extends AbstractCustomGunItem {
 			im.setLore(lore);
 
 
-			AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "generic.attackSpeed", 0, AttributeModifier.Operation.ADD_NUMBER);
-			im.addAttributeModifier(Attribute.GENERIC_ATTACK_SPEED, modifier);
+			if (overrideAttackSpeed) {
+				AttributeModifier modifier = new AttributeModifier(base.getUuid(), "generic.attackSpeed", 0, AttributeModifier.Operation.ADD_NUMBER);
+				im.addAttributeModifier(Attribute.GENERIC_ATTACK_SPEED, modifier);
+			}
 
 			if (QAMain.ITEM_enableUnbreakable) {
 				try {
@@ -167,6 +171,8 @@ public class CustomGunItem extends AbstractCustomGunItem {
 
 		List<String> stringsGrenades = Arrays.asList(new String[]{getIngString(Material.IRON_INGOT, 0, 6),
 				getIngString(MultiVersionLookup.getGunpowder(), 0, 10)});
+		List<String> stringsAmmoBag = Arrays.asList(new String[]{getIngString(Material.STRING, 0, 2),
+				getIngString(Material.LEATHER, 0, 6)});
 
 		List<String> stringsAmmo = Arrays.asList(new String[]{getIngString(Material.IRON_INGOT, 0, 1),
 				getIngString(MultiVersionLookup.getGunpowder(), 0, 1), getIngString(Material.REDSTONE, 0, 1)});
@@ -206,7 +212,7 @@ public class CustomGunItem extends AbstractCustomGunItem {
 				.createAmmo(false, dataFolder, false, "default_flamerfuel", "fuel", "&fFlamerFuel", null,
 						Material.BLAZE_POWDER, 0,
 						Arrays.asList(new String[]{getIngString(Material.BLAZE_ROD, 0, 1),}), 1, 1, 64, 2)
-				.setVariant(1).done();
+				.done();
 
 		//BACKPACK GREEN
 		QualityArmory.registerNewUsedExpansionItem(MaterialStorage.getMS(Material.PHANTOM_MEMBRANE,11,0));
@@ -293,6 +299,8 @@ public class CustomGunItem extends AbstractCustomGunItem {
 								+ ChatColor.DARK_GRAY + " before exploding.",
 						ChatColor.DARK_RED + "<!>Will Explode Even If Not Thrown<!>"),
 				m(15), stringsGrenades, 100, WeaponType.GRENADES, 100, 1).set(false, "radius", 10).setMaterial(Material.CROSSBOW).done();
+		GunYMLCreator.createMisc(false, dataFolder, false, "default_ammobag", "ammobag", "&7Ammo Bag",
+				Arrays.asList(ChatColor.DARK_GRAY + "[Left-Click] to unload", ChatColor.DARK_GRAY + "[Right-Click] to load"), m(85), stringsAmmoBag, 100, WeaponType.AMMO_BAG, 0, 1000).set(false, "max", 6).done();
 		GunYMLCreator
 				.createNewDefaultGun(dataFolder, "dragunov", "Dragunov", 16, stringsMetalRif,
 						WeaponType.SNIPER, null, true, "762", 7, 12, 2100).setMaterial(Material.CROSSBOW)
@@ -427,8 +435,6 @@ public class CustomGunItem extends AbstractCustomGunItem {
 				.setReloadingHandler(ReloadingManager.SINGLE_RELOAD).setDistance(500).setParticle(0.3, 0.9, 0.3, Material.COAL_BLOCK).setMaterial(Material.CROSSBOW)
 				.setRecoil(5).setKilledByMessage("%player% was nuked by %killer% using a %name%").done();
 
-		GunYMLCreator.createNewDefaultGun(dataFolder, "10mmpistol", "10mm Pistol", 34, strings10mm,
-				WeaponType.PISTOL, null, true, "9mm", 3, 12, 700).setReloadingHandler(ReloadingManager.SLIDE_RELOAD).setIsSecondaryWeapon(true).setMaterial(Material.CROSSBOW).done();
 
 		GunYMLCreator
 				.createNewDefaultGun(dataFolder, "instituterifle", "Institute Rifle", 35,
@@ -593,7 +599,7 @@ public class CustomGunItem extends AbstractCustomGunItem {
 				.createNewDefaultGun(dataFolder, "vz58", "VZ.58", 4, stringsMetalRif, WeaponType.RIFLE,
 						null, true, "762", 3, 30, 4500)
 				.setSway(0.2).setFullyAutomatic(2).setBulletsPerShot(1).setVariant(1).setMaterial(Material.CROSSBOW).done();
-		GunYMLCreator.createNewDefaultGun(dataFolder, "cz65", "CZ.75", 2, stringsPistol, WeaponType.PISTOL,
+		GunYMLCreator.createNewDefaultGun(dataFolder, "cz75", "CZ.75", 2, stringsPistol, WeaponType.PISTOL,
 				null, true, "9mm", 3, 12, 700).setIsSecondaryWeapon(true).setVariant(1).setMaterial(Material.CROSSBOW).done();
 
 		GunYMLCreator
@@ -708,20 +714,20 @@ public class CustomGunItem extends AbstractCustomGunItem {
 		GunYMLCreator
 				.createMisc(false, dataFolder, false, "default_molotov", "molotov",
 						"&7Molotov",
-						Arrays.asList(ChatColor.DARK_GRAY + "[LMB] to light",
-								ChatColor.DARK_GRAY + "[RMB] to throw",
-								ChatColor.DARK_GRAY + "Molotovs explode on contact",
-								ChatColor.DARK_RED + "<!>Will Not Explode If Not Thrown<!>"),
+						Arrays.asList("&8[LMB] to light",
+								"&8[RMB] to throw",
+								"&8Molotovs explode on contact",
+								"&4<!>Will Not Explode If Not Thrown<!>"),
 						m(80), stringsGrenades, 100, WeaponType.MOLOTOV, 100, 1)
 				.set(false, "radius", 5).done();
 
 		GunYMLCreator
 				.createMisc(false, dataFolder, false, "default_proxymine", "proxymine",
 						"&7Proxy-Mine",
-						Arrays.asList(ChatColor.DARK_GRAY + "[LMB] to activate",
-								ChatColor.DARK_GRAY + "[RMB] to throw",
-								ChatColor.DARK_GRAY + "Proxy-Mines explode after being thrown by pressing [SHIFT]",
-								ChatColor.DARK_RED + "<!>Will Not Explode If Not Thrown<!>"),
+						Arrays.asList("&8[LMB] to activate",
+								"&8[RMB] to throw",
+								"&8Proxy-Mines explode after being thrown by pressing [SHIFT]",
+								"&4<!>Will Not Explode If Not Thrown<!>"),
 						m(81), stringsGrenades, 100, WeaponType.PROXYMINES, 100, 1)
 				.set(false, "radius", 5).done();
 
@@ -759,4 +765,12 @@ public class CustomGunItem extends AbstractCustomGunItem {
 		return m.toString() + "," + durability + "," + amount;
 	}
 
+	public boolean isOverrideAttackSpeed() {
+		return overrideAttackSpeed;
+	}
+
+	public CustomGunItem setOverrideAttackSpeed(boolean overrideAttackSpeed) {
+		this.overrideAttackSpeed = overrideAttackSpeed;
+		return this;
+	}
 }

@@ -3,16 +3,17 @@ package me.zombie_striker.qg.config;
 import com.google.common.base.Charsets;
 import com.google.common.collect.Maps;
 import com.google.common.io.Files;
-import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
- 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.*;
 import java.util.*;
 import java.util.logging.Level;
  
 public class CommentYamlConfiguration extends YamlConfiguration {
+    private File file;
 	
     private Map<Integer, String> comments = Maps.newHashMap();
     @Override
@@ -36,7 +37,7 @@ public class CommentYamlConfiguration extends YamlConfiguration {
  
     @Override
     public void save(File file) throws IOException {
-        Validate.notNull(file, "File cannot be null");
+        Objects.requireNonNull(file, "File cannot be null");
         Files.createParentDirs(file);
         String data = this.saveToString();
         if (comments.size() != 0) {
@@ -61,20 +62,38 @@ public class CommentYamlConfiguration extends YamlConfiguration {
             writer.write(data);
         }
     }
- 
-    @Override
-    protected String buildHeader() {
-        return "";
+
+    public Object getOrSet(String path, Object val) {
+        if(!this.contains(path)){
+            this.set(path, val);
+            if (file != null) {
+                try {
+                    this.save(file);
+                } catch (IOException ignored) {}
+            }
+            return val;
+        }
+        return this.get(path);
     }
  
     @Override
+    @Deprecated
+    protected @NotNull String buildHeader() {
+        return "";
+    }
+
     protected String parseHeader(String input) {
         return "";
     }
- 
-    public static YamlConfiguration loadConfiguration(File file) {
-        Validate.notNull(file, "File cannot be null");
-        YamlConfiguration config = new CommentYamlConfiguration();
+
+    public void setFile(File file) {
+        this.file = file;
+    }
+
+    public static CommentYamlConfiguration loadConfiguration(File file) {
+        Objects.requireNonNull(file, "File cannot be null");
+        CommentYamlConfiguration config = new CommentYamlConfiguration();
+        config.setFile(file);
         if(!file.exists())
 			try {
 				file.createNewFile();
