@@ -261,7 +261,7 @@
         <dependency>
             <groupId>com.github.BeYkeRYkt.LightAPI</groupId>
             <artifactId>lightapi-bukkit-common</artifactId>
-            <version>5.2.0-Bukkit</version>
+            <version>5.3.0-Bukkit</version>
             <scope>provided</scope>
         </dependency>
 
