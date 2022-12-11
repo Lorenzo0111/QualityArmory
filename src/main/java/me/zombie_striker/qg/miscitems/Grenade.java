@@ -5,6 +5,7 @@ import java.util.List;
 
 import me.zombie_striker.customitemmanager.CustomBaseObject;
 import me.zombie_striker.customitemmanager.CustomItemManager;
+import me.zombie_striker.qg.api.QAThrowableExplodeEvent;
 import me.zombie_striker.qg.hooks.protection.ProtectionHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.Effect;
@@ -125,7 +126,9 @@ public class Grenade extends CustomBaseObject implements ThrowableItems {
 					h.getHolder().remove();
 				}
 				if (QAMain.enableExplosionDamage) {
-					ExplosionHandler.handleExplosion(h.getHolder().getLocation(), 3, 1);
+					QAThrowableExplodeEvent event = new QAThrowableExplodeEvent(Grenade.this, h.getHolder().getLocation());
+					Bukkit.getPluginManager().callEvent(event);
+					if (!event.isCancelled()) ExplosionHandler.handleExplosion(h.getHolder().getLocation(), 3, 1);
 					QAMain.DEBUG("Using default explosions");
 				}
 				try {

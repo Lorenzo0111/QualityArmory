@@ -2,6 +2,7 @@ package me.zombie_striker.qg.miscitems;
 
 import me.zombie_striker.customitemmanager.MaterialStorage;
 import me.zombie_striker.qg.QAMain;
+import me.zombie_striker.qg.api.QAThrowableExplodeEvent;
 import me.zombie_striker.qg.guns.utils.WeaponSounds;
 import me.zombie_striker.qg.handlers.ExplosionHandler;
 import org.bukkit.Bukkit;
@@ -53,7 +54,9 @@ public class StickyGrenades extends Grenade {
 							holder.getHolder().remove();
 						}
 						if (QAMain.enableExplosionDamage) {
-							ExplosionHandler.handleExplosion(holder.getHolder().getLocation(), 3, 1);
+							QAThrowableExplodeEvent event = new QAThrowableExplodeEvent(StickyGrenades.this, holder.getHolder().getLocation());
+							Bukkit.getPluginManager().callEvent(event);
+							if (!event.isCancelled()) ExplosionHandler.handleExplosion(holder.getHolder().getLocation(), 3, 1);
 							QAMain.DEBUG("Using default explosions");
 						}
 						try {

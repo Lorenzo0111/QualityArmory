@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import me.zombie_striker.qg.QAMain;
+import me.zombie_striker.qg.api.QAProjectileExplodeEvent;
 import me.zombie_striker.qg.api.QualityArmory;
 import me.zombie_striker.qg.guns.Gun;
 import me.zombie_striker.qg.guns.utils.GunUtil;
@@ -12,11 +13,7 @@ import me.zombie_striker.qg.handlers.ExplosionHandler;
 import me.zombie_striker.qg.handlers.MultiVersionLookup;
 import me.zombie_striker.qg.handlers.ParticleHandlers;
 
-import org.bukkit.Effect;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Sound;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -73,7 +70,9 @@ public class HomingRocketProjectile implements RealtimeCalculationProjectile {
 
 					if (GunUtil.isSolid(RPGLOCATION.getBlock(), RPGLOCATION) || entityNear || distance < 0) {
 						if (QAMain.enableExplosionDamage) {
-							ExplosionHandler.handleExplosion(RPGLOCATION, 4, 2);
+							QAProjectileExplodeEvent event = new QAProjectileExplodeEvent(HomingRocketProjectile.this, RPGLOCATION);
+							Bukkit.getPluginManager().callEvent(event);
+							if (!event.isCancelled()) ExplosionHandler.handleExplosion(RPGLOCATION, 4, 2);
 						}
 						try {
 							player.getWorld().playSound(RPGLOCATION, WeaponSounds.WARHEAD_EXPLODE.getName(), 10, 0.9f);

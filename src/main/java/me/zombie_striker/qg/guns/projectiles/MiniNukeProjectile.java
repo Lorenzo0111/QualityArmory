@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import me.zombie_striker.qg.QAMain;
+import me.zombie_striker.qg.api.QAProjectileExplodeEvent;
 import me.zombie_striker.qg.guns.Gun;
 import me.zombie_striker.qg.guns.utils.GunUtil;
 import me.zombie_striker.qg.guns.utils.WeaponSounds;
@@ -11,10 +12,7 @@ import me.zombie_striker.qg.handlers.ExplosionHandler;
 import me.zombie_striker.qg.handlers.MultiVersionLookup;
 import me.zombie_striker.qg.handlers.ParticleHandlers;
 
-import org.bukkit.Effect;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
-import org.bukkit.Sound;
+import org.bukkit.*;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -54,7 +52,9 @@ public MiniNukeProjectile() {
 
 				if (GunUtil.isSolid(s.getBlock(), s) || entityNear || distance < 0) {
 					if (QAMain.enableExplosionDamage) {
-						ExplosionHandler.handleExplosion(s, Math.toIntExact(Math.round(g.getExplosionRadius())), 2);
+						QAProjectileExplodeEvent event = new QAProjectileExplodeEvent(MiniNukeProjectile.this, s);
+						Bukkit.getPluginManager().callEvent(event);
+						if (!event.isCancelled()) ExplosionHandler.handleExplosion(s, Math.toIntExact(Math.round(g.getExplosionRadius())), 2);
 					}
 					try {
 						player.getWorld().playSound(s, WeaponSounds.WARHEAD_EXPLODE.getSoundName(), 10, 0.9f);
