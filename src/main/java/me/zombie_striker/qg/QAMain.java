@@ -1,5 +1,6 @@
 package me.zombie_striker.qg;
 
+import de.tr7zw.changeme.nbtapi.utils.MinecraftVersion;
 import me.zombie_striker.customitemmanager.CustomBaseObject;
 import me.zombie_striker.customitemmanager.CustomItemManager;
 import me.zombie_striker.customitemmanager.MaterialStorage;
@@ -650,6 +651,10 @@ public class QAMain extends JavaPlugin {
 		if(!this.getDataFolder().exists()){
 			this.getDataFolder().mkdirs();
 		}
+
+		MinecraftVersion.replaceLogger(this.getLogger());
+		MinecraftVersion.disableUpdateCheck();
+
 		ProtectionHandler.init();
 
 		AntiCheatHook.registerHook("Spartan", SpartanHook.class);

@@ -1,3 +1,6 @@
+2.0.8.1
+  - Fixed NBTAPI dependency
+
 2.0.8
   - Fixed mimic support
   - Added explode event

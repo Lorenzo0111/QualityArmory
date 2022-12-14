@@ -1,6 +1,6 @@
 package me.zombie_striker.qg.guns;
 
-import de.tr7zw.nbtapi.NBTItem;
+import de.tr7zw.changeme.nbtapi.NBTItem;
 import me.zombie_striker.customitemmanager.*;
 import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.ammo.Ammo;
