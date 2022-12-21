@@ -160,7 +160,7 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
 
 	public static int getAmount(Player player) {
 		ItemStack is = player.getInventory().getItemInMainHand();
-		if (is.getType().isAir()) return 0;
+		if (is.getType().equals(Material.AIR)) return 0;
 
 		NBTItem item = new NBTItem(is);
 		if (item.hasKey("ammo")) {
