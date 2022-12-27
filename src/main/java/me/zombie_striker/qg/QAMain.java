@@ -34,7 +34,6 @@ import me.zombie_striker.qg.hooks.PlaceholderAPIHook;
 import me.zombie_striker.qg.hooks.anticheat.AntiCheatHook;
 import me.zombie_striker.qg.hooks.anticheat.MatrixHook;
 import me.zombie_striker.qg.hooks.QuickShopHook;
-import me.zombie_striker.qg.hooks.anticheat.SpartanHook;
 import me.zombie_striker.qg.hooks.anticheat.VulcanHook;
 import me.zombie_striker.qg.hooks.protection.ProtectionHandler;
 import me.zombie_striker.qg.listener.QAListener;
@@ -657,7 +656,6 @@ public class QAMain extends JavaPlugin {
 
 		ProtectionHandler.init();
 
-		AntiCheatHook.registerHook("Spartan", SpartanHook.class);
 		AntiCheatHook.registerHook("Matrix", MatrixHook.class);
 		AntiCheatHook.registerHook("Vulcan", VulcanHook.class);
 
@@ -944,11 +942,7 @@ public class QAMain extends JavaPlugin {
 		if (getServer().getPluginManager().isPluginEnabled("ProtocolLib")) {
 			hasProtocolLib = true;
 			ProtocolLibHandler.initRemoveArmswing();
-			if (Bukkit.getPluginManager().isPluginEnabled("NBTAPI")) {
-				ProtocolLibHandler.initAimBow();
-			} else {
-				this.getLogger().warning("ProtocolLib is installed but NBTAPI is not loaded. Please install it to use the AimBow feature.");
-			}
+			ProtocolLibHandler.initAimBow();
 		}
 
 		if (getServer().getPluginManager().isPluginEnabled("Sentinel"))

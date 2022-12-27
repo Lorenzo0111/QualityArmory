@@ -75,11 +75,6 @@
         </repository>
 
         <repository>
-            <id>Sparky</id>
-            <url>https://nexus.sparky.ac/repository/Sparky/</url>
-        </repository>
-
-        <repository>
             <id>PlayPro</id>
             <url>https://maven.playpro.com/</url>
         </repository>
@@ -131,14 +126,6 @@
                     <artifactId>bukkit</artifactId>
                 </exclusion>
             </exclusions>
-        </dependency>
-
-        <!-- Spartan -->
-        <dependency>
-            <groupId>me.vagdedes.spartan</groupId>
-            <artifactId>SpartanAPI</artifactId>
-            <version>5.0</version>
-            <scope>provided</scope>
         </dependency>
 
         <!-- Matrix -->

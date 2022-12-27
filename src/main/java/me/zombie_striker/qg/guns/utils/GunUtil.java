@@ -603,7 +603,12 @@ public class GunUtil {
 		} else {
 			slot = player.getInventory().getHeldItemSlot();
 		}
-		Gun.updateAmmo(g, firstGunInstance, amount);
+
+		QAMain.DEBUG("Ammo amount: " + amount);
+		QAMain.DEBUG("Slot: " + slot);
+		QAMain.DEBUG("Item: " + firstGunInstance);
+		Gun.updateAmmo(g, player, amount);
+		QAMain.DEBUG("New ammo: " + Gun.getAmount(player));
 		if (slot == -1) {
 			try {
 				if (QualityArmory.isIronSights(player.getItemInHand())) {

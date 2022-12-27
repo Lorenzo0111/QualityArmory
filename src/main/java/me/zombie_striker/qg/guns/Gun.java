@@ -159,7 +159,10 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
 	}
 
 	public static int getAmount(Player player) {
-		ItemStack is = player.getInventory().getItemInMainHand();
+		return getAmount(player.getInventory().getItemInHand());
+	}
+
+	public static int getAmount(ItemStack is) {
 		if (is.getType().equals(Material.AIR)) return 0;
 
 		NBTItem item = new NBTItem(is);
@@ -177,7 +180,7 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
 	}
 
 	public static void updateAmmo(Gun g, Player player, int amount) {
-		ItemStack current = player.getInventory().getItemInMainHand();
+		ItemStack current = player.getInventory().getItemInHand();
 		NBTItem item = new NBTItem(current);
 		item.setInteger("ammo", amount);
 		item.applyNBT(current);
@@ -920,7 +923,7 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
 						currentVelocity.add(player.getLocation().getDirection().normalize().multiply(-getKnockbackPower()));
 						player.setVelocity(currentVelocity);
 					}
-					shoot(player.getPlayer(), automaticfiring);
+					QAMain.DEBUG("" + shoot(player.getPlayer(), automaticfiring));
 				}else{
 					player.getPlayer().playSound(player.getPlayer().getLocation(),WeaponSounds.METALHIT.getSoundName(),1,1);
 					QAMain.DEBUG("Durablility less than 0");
