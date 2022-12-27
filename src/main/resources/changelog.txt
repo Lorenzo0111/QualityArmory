@@ -1,3 +1,6 @@
+2.0.8.2
+  - Fixed severe ammo issue. Ammo was not being properly consumed when firing weapons
+
 2.0.8.1
   - Fixed NBTAPI dependency
 
