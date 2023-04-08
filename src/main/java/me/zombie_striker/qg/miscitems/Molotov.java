@@ -58,8 +58,7 @@ public class Molotov extends Grenade {
 					h.getHolder().getWorld().playEffect(h.getHolder().getLocation(), Effect.valueOf("CLOUD"), 0);
 					h.getHolder().getWorld().playSound(h.getHolder().getLocation(), Sound.valueOf("EXPLODE"), 3, 0.7f);
 				}
-				if(!(h.getHolder() instanceof Player)&&h.getHolder().isOnGround())
-				k++;
+				if(!(h.getHolder() instanceof Player)&& (h.getHolder().isOnGround() || h.getHolder().isInWater())) k++;
 				QAMain.DEBUG("Fireticks");
 				if (k == 40) {
 					if (h.getHolder() instanceof Item) {

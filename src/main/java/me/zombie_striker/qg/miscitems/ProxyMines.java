@@ -93,7 +93,7 @@ public class ProxyMines extends Grenade {
 						}
 						Player thro = Bukkit.getPlayer(h.getOwner());
 						try {
-							for (Entity e : h.getHolder().getNearbyEntities(radius/2, radius/2, radius/2)) {
+							for (Entity e : h.getHolder().getNearbyEntities(radius, radius, radius)) {
 								if (e instanceof LivingEntity) {
 									double dam = (dmageLevel / e.getLocation().distance(h.getHolder().getLocation()));
 									QAMain.DEBUG("Grenade-Damaging " + e.getName() + " : " + dam + " DAM.");

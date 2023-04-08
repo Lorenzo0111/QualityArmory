@@ -300,7 +300,7 @@ public class QualityArmory {
 
 	@Nullable
 	public static Gun getGunInHand(@NotNull HumanEntity entity) {
-		ItemStack stack = entity.getInventory().getItemInMainHand();
+		ItemStack stack = entity.getInventory().getItemInHand();
 		if (stack == null || stack.getType().equals(Material.AIR)) return null;
 
 		if (isGun(stack)) return getGun(stack);

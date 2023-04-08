@@ -476,6 +476,7 @@ public class GunUtil {
 		}
 
 		if (regularshoot) {
+			QAMain.DEBUG("Handling shoot and gun damage.");
 			GunUtil.shootHandler(g, player);
 			playShoot(g, player);
 			if (QAMain.enableRecoil)
@@ -606,9 +607,6 @@ public class GunUtil {
 
 		QAMain.DEBUG("Ammo amount: " + amount);
 		QAMain.DEBUG("Slot: " + slot);
-		QAMain.DEBUG("Item: " + firstGunInstance);
-		Gun.updateAmmo(g, player, amount);
-		QAMain.DEBUG("New ammo: " + Gun.getAmount(player));
 		if (slot == -1) {
 			try {
 				if (QualityArmory.isIronSights(player.getItemInHand())) {
@@ -623,6 +621,8 @@ public class GunUtil {
 		} else {
 			player.getInventory().setItem(slot, firstGunInstance);
 		}
+		Gun.updateAmmo(g, player, amount);
+		QAMain.DEBUG("New ammo: " + Gun.getAmount(player));
 	}
 
 	public static void updateXPBar(Player player, Gun g, int amount) {
