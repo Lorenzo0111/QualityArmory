@@ -93,6 +93,7 @@ public class QAMain extends JavaPlugin {
 	public static List<String> namesToBypass = new ArrayList<>();
 	public static List<Material> interactableBlocks = new ArrayList<>();
 	public static List<Material> destructableBlocks = new ArrayList<Material>();
+	public static int regenDestructableBlocksAfter = -1;
 	public static boolean enableInteractChests = false;
 	public static boolean DEBUG = false;
 	public static Object bulletTrail;
@@ -1102,6 +1103,7 @@ public class QAMain extends JavaPlugin {
 		List<String> destarray = (List<String>) a("DestructableMaterials",
 				Collections.singletonList("MATERIAL_NAME_HERE"));
 		destructableBlocks.addAll(GunYMLLoader.getMaterials(destarray));
+		regenDestructableBlocksAfter = (int) a("RegenDestructableBlocksAfter", regenDestructableBlocksAfter);
 
 		for (Material m : Material.values())
 			if (m.isBlock())

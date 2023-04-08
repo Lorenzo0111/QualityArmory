@@ -1,3 +1,9 @@
+2.0.9
+  - Fixed ammo reload
+  - Added block regen feature
+  - Fixed ammo duplication
+  - Fixed grenades and mines
+
 2.0.8.2
   - Fixed severe ammo issue. Ammo was not being properly consumed when firing weapons
 

@@ -35,6 +35,29 @@ public class CoreProtectHook {
         }
     }
 
+    public static void logPlace(Block block, Player player) {
+        try {
+            if (!logPlace0(block, player)) {
+                QAMain.DEBUG("CoreProtect failed to log place: Returned false");
+            }
+        } catch (Throwable e) {
+            QAMain.DEBUG("Error while logging break to CoreProtect: " + e.getMessage());
+        }
+    }
+
+    @SuppressWarnings("deprecation")
+    private static boolean logPlace0(Block block, Player player) {
+        if (getCoreProtect() == null) return false;
+
+        QAMain.DEBUG("Logging break to CoreProtect");
+
+        try {
+            return getCoreProtect().logPlacement(player.getName(), block.getLocation(), block.getType(), block.getBlockData());
+        } catch (Exception ignored) {
+            return getCoreProtect().logPlacement(player.getName(), block.getLocation(), block.getType(), block.getData());
+        }
+    }
+
     private static @Nullable CoreProtectAPI getCoreProtect() {
         if (api == null) {
 

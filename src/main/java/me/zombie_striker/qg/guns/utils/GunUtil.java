@@ -31,11 +31,7 @@ import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import ru.beykerykt.minecraft.lightapi.common.LightAPI;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class GunUtil {
@@ -374,14 +370,35 @@ public class GunUtil {
 					ParticleHandlers.spawnGunParticles(g, start);
 				}
 
+				final Map<Block,Material> regenBlocks = new HashMap<>();
 				for (Block l : blocksThatWillBreak) {
 					QAMain.DEBUG("Breaking " + l.getX() + " " + l.getY() + " " + l.getZ() + ": " + l.getType());
 					QAWeaponDamageBlockEvent event = new QAWeaponDamageBlockEvent(p,g,l);
 					Bukkit.getPluginManager().callEvent(event);
 					if (!event.isCancelled()) {
-						l.breakNaturally();
+						if (!l.getType().isAir()) regenBlocks.put(l,l.getType());
+						if (QAMain.regenDestructableBlocksAfter > 0) {
+							l.setType(Material.AIR);
+						} else {
+							l.breakNaturally();
+						}
 						CoreProtectHook.logBreak(l,p);
 					}
+				}
+
+				if (QAMain.regenDestructableBlocksAfter > 0) {
+					QAMain.DEBUG("Scheduling replacement of " + regenBlocks.size() + " blocks");
+					new BukkitRunnable() {
+						@Override
+						public void run() {
+							QAMain.DEBUG("Replacing " + regenBlocks.size() + " blocks");
+
+							for (Block l : regenBlocks.keySet()) {
+								l.setType(regenBlocks.get(l));
+								CoreProtectHook.logPlace(l,p);
+							}
+						}
+					}.runTaskLater(QAMain.getInstance(), QAMain.regenDestructableBlocksAfter * 20L);
 				}
 			}
 

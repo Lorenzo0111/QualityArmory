@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>me.zombie_striker</groupId>
     <artifactId>QualityArmory</artifactId>
-    <version>2.0.8.2</version>
+    <version>2.0.9</version>
     <name>QualityArmory</name>
 
     <properties>
@@ -147,7 +147,7 @@
         <dependency>
             <groupId>com.github.TownyAdvanced</groupId>
             <artifactId>Towny</artifactId>
-            <version>0.98.6.15</version>
+            <version>0.99.0.0</version>
             <scope>provided</scope>
         </dependency>
 
@@ -199,7 +199,7 @@
         <dependency>
             <groupId>org.maxgamer</groupId>
             <artifactId>QuickShop</artifactId>
-            <version>5.1.1.2</version>
+            <version>5.1.2.0</version>
             <scope>provided</scope>
         </dependency>
 
