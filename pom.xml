@@ -270,7 +270,7 @@
         <dependency>
             <groupId>com.github.LoneDev6</groupId>
             <artifactId>api-itemsadder</artifactId>
-            <version>3.2.5</version>
+            <version>3.4.1-r4</version>
             <scope>provided</scope>
         </dependency>
 
