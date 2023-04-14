@@ -156,6 +156,7 @@ public class QAMain extends JavaPlugin {
 	public static boolean perWeaponPermission = false;
 
 	public static boolean allowGunHitEntities = false;
+	public static boolean anticheatFix = false;
 
 	public static String S_NOPERM = "&c You do not have permission to do that.";
 
@@ -973,6 +974,8 @@ public class QAMain extends JavaPlugin {
 		overrideAnvil = (boolean) a("overrideAnvil", false);
 
 		showCrashMessage = (boolean) a("showPossibleCrashHelpMessage", showCrashMessage);
+
+		anticheatFix = (boolean) a("anticheatFix", anticheatFix);
 
 		verboseLoadingLogging = (boolean) a("verboseItemLogging", verboseLoadingLogging);
 

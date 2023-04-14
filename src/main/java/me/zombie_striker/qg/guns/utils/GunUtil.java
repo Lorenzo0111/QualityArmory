@@ -268,13 +268,22 @@ public class GunUtil {
 									+ ((LivingEntity) hitTarget).getHealth() + "/"
 									+ ((LivingEntity) hitTarget).getMaxHealth() + " :" + damageMAX + " DAM)");
 						}
-
-						if (hitTarget instanceof Damageable) {
-							((Damageable) hitTarget).damage(damageMAX, p);
-						} else if (hitTarget instanceof EnderDragon) {
-							((EnderDragon) hitTarget).damage(damageMAX, p);
-						} else if (hitTarget instanceof EnderDragonPart) {
-							((EnderDragonPart) hitTarget).damage(damageMAX, p);
+						if(QAMain.anticheatFix){
+							if (hitTarget instanceof Damageable) {
+								((Damageable) hitTarget).damage(damageMAX);
+							} else if (hitTarget instanceof EnderDragon) {
+								((EnderDragon) hitTarget).damage(damageMAX);
+							} else if (hitTarget instanceof EnderDragonPart) {
+								((EnderDragonPart) hitTarget).damage(damageMAX);
+							}
+						}else {
+							if (hitTarget instanceof Damageable) {
+								((Damageable) hitTarget).damage(damageMAX, p);
+							} else if (hitTarget instanceof EnderDragon) {
+								((EnderDragon) hitTarget).damage(damageMAX, p);
+							} else if (hitTarget instanceof EnderDragonPart) {
+								((EnderDragonPart) hitTarget).damage(damageMAX, p);
+							}
 						}
 
 
