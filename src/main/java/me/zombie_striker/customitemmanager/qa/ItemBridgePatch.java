@@ -2,7 +2,7 @@ package me.zombie_striker.customitemmanager.qa;
 
 import com.jojodmo.itembridge.ItemBridge;
 import com.jojodmo.itembridge.ItemBridgeListener;
-import me.zombie_striker.qg.api.QualityArmory;
+import me.zombie_striker.qualityarmory.api.QualityArmory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 

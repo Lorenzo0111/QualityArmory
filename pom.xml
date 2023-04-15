@@ -40,7 +40,7 @@
 
         <repository>
             <id>citizens-repo</id>
-            <url>https://repo.citizensnpcs.co</url>
+            <url>https://maven.citizensnpcs.co/repo</url>
         </repository>
 
         <repository>
@@ -170,9 +170,15 @@
         <dependency>
             <groupId>org.mcmonkey</groupId>
             <artifactId>sentinel</artifactId>
-            <version>1.8.5</version>
+            <version>2.7.3-SNAPSHOT</version>
             <type>jar</type>
             <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <!-- ProtocolLib -->
@@ -222,10 +228,16 @@
         <!-- Citzens -->
         <dependency>
             <groupId>net.citizensnpcs</groupId>
-            <artifactId>citizens</artifactId>
-            <version>2.0.24-SNAPSHOT</version>
+            <artifactId>citizens-main</artifactId>
+            <version>2.0.30-SNAPSHOT</version>
             <type>jar</type>
             <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <!-- Parties -->
@@ -355,15 +367,15 @@
                     <relocations>
                         <relocation>
                             <pattern>com.cryptomorin.xseries</pattern>
-                            <shadedPattern>me.zombie_striker.qg.xseries</shadedPattern>
+                            <shadedPattern>me.zombie_striker.qualityarmory.xseries</shadedPattern>
                         </relocation>
                         <relocation>
                             <pattern>org.codemc.worldguardwrapper</pattern>
-                            <shadedPattern>me.zombie_striker.qg.hooks.protection.worldguard</shadedPattern>
+                            <shadedPattern>me.zombie_striker.qualityarmory.hooks.protection.worldguard</shadedPattern>
                         </relocation>
                         <relocation>
                             <pattern>de.tr7zw.changeme.nbtapi</pattern>
-                            <shadedPattern>me.zombie_striker.qg.nbt</shadedPattern>
+                            <shadedPattern>me.zombie_striker.qualityarmory.nbt</shadedPattern>
                         </relocation>
                     </relocations>
                 </configuration>

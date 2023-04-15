@@ -1,30 +1,20 @@
 package me.zombie_striker.customitemmanager;
 
+import me.zombie_striker.qualityarmory.data.PriorityDataMap;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
 public class CustomBaseObject {
 
 	private final UUID uuid = UUID.randomUUID();
-	private String name;
-	private MaterialStorage base;
-	private List<String> lore;
-	private String displayname;
-	private boolean customAnimations;
+	private final String name;
+	private final MaterialStorage base;
 
-	private String soundOnEquip;
-	private String soundOnHit;
-
-	private double price;
-	private boolean enableShop = true;
-
-	Object[] ing = null;
-	int craftingReturn = 1;
-
-	public int maxItemStack = 1;
+	private HashMap<String, Object> data = new HashMap<>();
 
 	public CustomBaseObject(String name, MaterialStorage storage, String displayname, List<String> lore, boolean hasAimAnimations) {
 		this.name = name;

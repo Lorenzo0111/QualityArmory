@@ -1,9 +1,6 @@
 package me.zombie_striker.customitemmanager;
 
-import me.zombie_striker.qg.QAMain;
-import me.zombie_striker.qg.handlers.MultiVersionLookup;
-import me.zombie_striker.qg.handlers.SkullHandler;
-import org.bukkit.Bukkit;
+import me.zombie_striker.qualityarmory.QAMain;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
@@ -17,28 +14,28 @@ public class MaterialStorage {
 	private static final MaterialStorage EMPTY = new MaterialStorage(null, 0, 0);
 
 	private static List<MaterialStorage> store = new ArrayList<MaterialStorage>();
-	private int d;
-	private Material m;
+	private int data;
+	private Material material;
 	private int variant = 0;
 	private String specialValues = null;
 	private String specialValues2 = null;
 
-	private MaterialStorage(Material m, int d) {
-		this.m = m;
-		this.d = d;
+	private MaterialStorage(Material material, int data) {
+		this.material = material;
+		this.data = data;
 	}
 
-	private MaterialStorage(Material m, int d, int var) {
-		this(m, d, var, null);
+	private MaterialStorage(Material material, int data, int var) {
+		this(material, data, var, null);
 	}
 
-	private MaterialStorage(Material m, int d, int var, String extraData) {
-		this(m, d, var, extraData, null);
+	private MaterialStorage(Material material, int data, int var, String extraData) {
+		this(material, data, var, extraData, null);
 	}
 
-	private MaterialStorage(Material m, int d, int var, String extraData, String ed2) {
-		this.m = m;
-		this.d = d;
+	private MaterialStorage(Material material, int data, int var, String extraData, String ed2) {
+		this.material = material;
+		this.data = data;
 		this.variant = var;
 		this.specialValues = extraData;
 		this.specialValues2 = ed2;
@@ -63,7 +60,7 @@ public class MaterialStorage {
 	}
 
 	private static boolean matchesMaterials(MaterialStorage k, Material m, int d) {
-		return (k.m == m && (k.d == d || k.d == -1));
+		return (k.material == m && (k.data == d || k.data == -1));
 	}
 
 	public static boolean matchVariants(MaterialStorage k, int var) {
@@ -130,7 +127,7 @@ public class MaterialStorage {
 	}
 
 	public int getData() {
-		return d;
+		return data;
 	}
 
 	public boolean hasSpecialValue() {
@@ -158,7 +155,7 @@ public class MaterialStorage {
 	}
 
 	public Material getMat() {
-		return m;
+		return material;
 	}
 
 	public boolean hasVariant() {
@@ -172,8 +169,8 @@ public class MaterialStorage {
 	@Override
 	public String toString() {
 		return "MaterialStorage{" +
-				"d=" + d +
-				", m=" + m +
+				"d=" + data +
+				", m=" + material +
 				", variant=" + variant +
 				", specialValues='" + specialValues + '\'' +
 				", specialValues2='" + specialValues2 + '\'' +
@@ -185,11 +182,11 @@ public class MaterialStorage {
 		if (this == o) return true;
 		if (o == null || getClass() != o.getClass()) return false;
 		MaterialStorage that = (MaterialStorage) o;
-		return d == that.d && variant == that.variant && m == that.m && Objects.equals(specialValues, that.specialValues) && Objects.equals(specialValues2, that.specialValues2);
+		return data == that.data && variant == that.variant && material == that.material && Objects.equals(specialValues, that.specialValues) && Objects.equals(specialValues2, that.specialValues2);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(d, m, variant, specialValues, specialValues2);
+		return Objects.hash(data, material, variant, specialValues, specialValues2);
 	}
 }

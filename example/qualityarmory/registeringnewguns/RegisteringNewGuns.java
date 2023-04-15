@@ -2,13 +2,13 @@ package example.qualityarmory.registeringnewguns;
 
 import org.bukkit.Material;
 
-import me.zombie_striker.qg.guns.utils.WeaponSounds;
-import me.zombie_striker.qg.guns.utils.WeaponType;
+import me.zombie_striker.qualityarmory.guns.utils.WeaponSounds;
+import me.zombie_striker.qualityarmory.guns.utils.WeaponType;
 
 public class RegisteringNewGuns {
 
 	public void onEnable() {
-		me.zombie_striker.qg.api.QualityArmory
+		me.zombie_striker.qualityarmory.api.QualityArmory
 				.createAndLoadNewGun("test_gun", "&cTest Gun", Material.DIAMOND_AXE, 28, WeaponType.RIFLE,
 						WeaponSounds.GUN_AUTO, true, "762", 3, 30, 1000)
 				.setFullyAutomatic(3).setBulletsPerShot(10).setParticle(0, 0, 1).done();
