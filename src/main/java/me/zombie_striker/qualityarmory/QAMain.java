@@ -34,6 +34,7 @@ import me.zombie_striker.qualityarmory.hooks.anticheat.MatrixHook;
 import me.zombie_striker.qualityarmory.hooks.QuickShopHook;
 import me.zombie_striker.qualityarmory.hooks.anticheat.VulcanHook;
 import me.zombie_striker.qualityarmory.hooks.protection.ProtectionHandler;
+import me.zombie_striker.qualityarmory.interfaces.ISettingsReloader;
 import me.zombie_striker.qualityarmory.listener.QAListener;
 import me.zombie_striker.qualityarmory.listener.Update19Events;
 import me.zombie_striker.qualityarmory.listener.Update19resourcepackhandler;
@@ -107,6 +108,12 @@ public class QAMain extends JavaPlugin {
      */
     private final HashMap<String, Object> settings = new HashMap<>();
 
+    /**
+     * Everything that requires settings that may be changed in game should be in this list.
+     */
+    private final List<ISettingsReloader> reloadableSettingsInstances = new LinkedList<>();
+
+
 
     public MessagesYML messagesYml;
     public CommentYamlConfiguration resourcepackwhitelist;
@@ -143,40 +150,7 @@ public class QAMain extends JavaPlugin {
         int sInt = Integer.parseInt(secondChar.toString());
         return sInt >= secondVersion;
     }
-
-    public static void toggleNightVision(Player player, Gun g, boolean add) {
-        if (add) {
-            if (g.getZoomWhenIronSights() > 0) {
-                currentlyScoping.add(player.getUniqueId());
-                player.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 1200, g.getZoomWhenIronSights()));
-            }
-            if (g.hasNightVision()) {
-                currentlyScoping.add(player.getUniqueId());
-                player.addPotionEffect(new PotionEffect(PotionEffectType.NIGHT_VISION, 1200, 3));
-            }
-        } else {
-            if (currentlyScoping.contains(player.getUniqueId())) {
-                if (player.hasPotionEffect(PotionEffectType.SLOW) && (g == null || g.getZoomWhenIronSights() > 0))
-                    player.removePotionEffect(PotionEffectType.SLOW);
-                boolean potionEff = false;
-                try {
-                    potionEff = player.hasPotionEffect(PotionEffectType.NIGHT_VISION)
-                            && (g == null || g.hasNightVision())
-                            && player.getPotionEffect(PotionEffectType.NIGHT_VISION).getAmplifier() == 3;
-                } catch (Error | Exception e3452) {
-                    for (PotionEffect pe : player.getActivePotionEffects())
-                        if (pe.getType() == PotionEffectType.NIGHT_VISION)
-                            potionEff = (g == null || g.hasNightVision()) && pe.getAmplifier() == 3;
-                }
-                if (potionEff)
-                    player.removePotionEffect(PotionEffectType.NIGHT_VISION);
-                currentlyScoping.remove(player.getUniqueId());
-            }
-        }
-
-    }
-
-    public static void DEBUG(String message) {
+    public void DEBUG(String message) {
         if (DEBUG)
             Bukkit.broadcast(prefix + ChatColor.GREEN + " [DEBUG] " + ChatColor.RESET + message, "qualityarmory.debugmessages");
     }
@@ -189,26 +163,6 @@ public class QAMain extends JavaPlugin {
             }
         }
         return sb;
-    }
-
-    public static void shopsSounds(InventoryClickEvent e, boolean shop) {
-
-        if (shop) {
-            try {
-                ((Player) e.getWhoClicked()).playSound(e.getWhoClicked().getLocation(), Sound.BLOCK_ANVIL_USE, 0.7f, 1);
-            } catch (Error e2) {
-                ((Player) e.getWhoClicked()).playSound(e.getWhoClicked().getLocation(), Sound.valueOf("ANVIL_USE"),
-                        0.7f, 1);
-            }
-        } else {
-            try {
-                ((Player) e.getWhoClicked()).playSound(e.getWhoClicked().getLocation(), MultiVersionLookup.getHarp(),
-                        0.7f, 1);
-            } catch (Error e2) {
-                ((Player) e.getWhoClicked()).playSound(e.getWhoClicked().getLocation(), Sound.valueOf("NOTE_PIANO"),
-                        0.7f, 1);
-            }
-        }
     }
 
     public static boolean lookForIngre(Player player, CustomBaseObject a) {
@@ -303,163 +257,11 @@ public class QAMain extends JavaPlugin {
         return true;
     }
 
-    public static void checkforDups(Player p, ItemStack... curr) {
-        for (ItemStack curs : curr)
-            for (int i = 0; i < p.getInventory().getSize(); i++) {
-                ItemStack cont = p.getInventory().getItem(i);
-                if (cont != null)
-                    if (curs != null && OLD_ItemFact.sameGun(cont, curs))
-                        if (!cont.equals(curs))
-                            p.getInventory().setItem(i, null);
-
-            }
-    }
-
     public static MaterialStorage m(int d) {
         return MaterialStorage.getMS(Material.DIAMOND_AXE, d, 0);
     }
-
-    public static Inventory createShop(int page) {
-        return createCustomInventory(page, true);
-    }
-
-    public static Inventory createCraft(int page) {
-        return createCustomInventory(page, false);
-    }
-
-
-    private static boolean addToGUI(CustomBaseObject obj, Inventory gui, boolean shop) {
-        if (shop && (obj.getPrice() < 0 || !obj.isEnableShop()))
-            return false;
-        if (!shop && obj.getIngredientsRaw() == null)
-            return false;
-        try {
-            ItemStack is = CustomItemManager.getItemType("gun").getItem(obj.getItemData().getMat(), obj.getItemData().getData(), obj.getItemData().getVariant());
-            is.setAmount(obj.getCraftingReturn());
-            if (is.getAmount() <= 0)
-                is.setAmount(1);
-            ItemMeta im = is.getItemMeta();
-            List<String> lore = im.hasLore() ? im.getLore() : new ArrayList<>();
-            if (shop) {
-                lore.addAll(OLD_ItemFact.addShopLore(obj));
-            } else {
-                lore.addAll(OLD_ItemFact.getCraftingLore(obj));
-            }
-            im.setLore(lore);
-            is.setItemMeta(im);
-            gui.addItem(is);
-            return true;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
-
-
-    public static Inventory createCustomInventory(int page, boolean shopping) {
-        Inventory shopMenu = Bukkit.createInventory(null, 9 * 6, (shopping ? S_shopName : S_craftingBenchName) + page);
-        List<Gun> gunslistr = new ArrayList<>(gunRegister.values());
-        Collections.sort(gunslistr);
-        int basei = 0;
-        int index = (page * 9 * 5);
-        int maxIndex = (index + (9 * 5));
-
-        shopMenu.setItem((9 * 6) - 1 - 8, prevButton);
-        shopMenu.setItem((9 * 6) - 1, nextButton);
-
-        if (basei + gunslistr.size() < index) {
-            basei += gunslistr.size();
-        } else {
-            for (Gun g : gunslistr) {
-                if (basei < index) {
-                    basei++;
-                    continue;
-                }
-                basei++;
-                if (index >= maxIndex)
-                    break;
-                if (addToGUI(g, shopMenu, shopping))
-                    index++;
-            }
-        }
-        if (basei + ammoRegister.values().size() < index) {
-            basei += ammoRegister.values().size();
-        } else {
-            for (CustomBaseObject ammo : ammoRegister.values()) {
-                if (basei < index) {
-                    basei++;
-                    continue;
-                }
-                basei++;
-                if (index >= maxIndex)
-                    break;
-                if (addToGUI(ammo, shopMenu, shopping))
-                    index++;
-            }
-        }
-        if (basei + miscRegister.values().size() < index) {
-            basei += miscRegister.values().size();
-        } else {
-            for (CustomBaseObject abo : miscRegister.values()) {
-                if (basei < index) {
-                    basei++;
-                    continue;
-                }
-                basei++;
-                if (index >= maxIndex)
-                    break;
-                if (addToGUI(abo, shopMenu, shopping))
-                    index++;
-            }
-        }
-        if (basei + armorRegister.values().size() < index) {
-            basei += armorRegister.values().size();
-        } else {
-            for (ArmorObject armor : armorRegister.values()) {
-                if (basei < index) {
-                    basei++;
-                    continue;
-                }
-                basei++;
-                if (index >= maxIndex)
-                    break;
-                if (addToGUI(armor, shopMenu, shopping))
-                    index++;
-            }
-        }
-        return shopMenu;
-    }
-
-    public static void registerCraftEntityNames(HashMap<MaterialStorage, ?> regMaps) {
-        if (null != regMaps && !regMaps.isEmpty()) {
-            for (Object item : regMaps.values()) {
-                try {
-                    Object[] itemStacks = ((CustomBaseObject) item).getIngredientsRaw();
-                    if (null != itemStacks && itemStacks.length > 0) {
-                        for (Object itemStack : itemStacks) {
-                            String itemName = ((ItemStack) itemStack).getType().name();
-                            String showName = LocalUtils.colorize((String) QAMain.messagesYml.a("EntityType." + itemName, itemName));
-                            craftingEntityNames.put(itemName, showName);
-                        }
-                    }
-                } catch (Exception e) {
-                    //
-                }
-            }
-        }
-    }
-
     @Override
     public void onDisable() {
-        for (Entry<MaterialStorage, CustomBaseObject> misc : miscRegister.entrySet()) {
-            if (misc instanceof ThrowableItems) {
-                for (Entry<Entity, ThrowableHolder> e : ThrowableItems.throwItems.entrySet()) {
-                    if (e.getKey() instanceof Item)
-                        e.getKey().remove();
-                }
-            }
-        }
-
         for (Scoreboard s : coloredGunScoreboard)
             for (Team t : s.getTeams())
                 t.unregister();
@@ -564,12 +366,6 @@ public class QAMain extends JavaPlugin {
         }
 
         Metrics metrics = new Metrics(this, 1699);
-
-        metrics.addCustomChart(new Metrics.SimplePie("GunCount", () -> gunRegister.size() + ""));
-        metrics.addCustomChart(
-                new Metrics.SimplePie("uses_default_resourcepack", () -> overrideURL + ""));
-        metrics.addCustomChart(
-                new Metrics.SimplePie("has_an_expansion_pack", () -> (expansionPacks.size() > 0) + ""));
     }
 
     @SuppressWarnings({"unchecked", "deprecation"})
