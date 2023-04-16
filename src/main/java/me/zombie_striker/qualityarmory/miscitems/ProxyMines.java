@@ -3,7 +3,7 @@ package me.zombie_striker.qualityarmory.miscitems;
 import me.zombie_striker.customitemmanager.MaterialStorage;
 import me.zombie_striker.qualityarmory.QAMain;
 import me.zombie_striker.qualityarmory.api.events.QAThrowableExplodeEvent;
-import me.zombie_striker.qualityarmory.guns.utils.WeaponSounds;
+import me.zombie_striker.qualityarmory.guns.WeaponSounds;
 import me.zombie_striker.qualityarmory.utils.ExplosionUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Effect;

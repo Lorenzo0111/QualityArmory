@@ -1,13 +1,12 @@
 package me.zombie_striker.qualityarmory.npcs;
 
-import org.bukkit.event.EventHandler;
-import org.bukkit.plugin.java.JavaPlugin;
-
 import me.zombie_striker.qualityarmory.QAMain;
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
 import net.citizensnpcs.api.util.DataKey;
+import org.bukkit.event.EventHandler;
+import org.bukkit.plugin.java.JavaPlugin;
 
 @TraitName("gunnertrait") // convenience annotation in recent CitizensAPI versions for specifying trait
 							// name
@@ -21,10 +20,7 @@ public class GunnerTrait extends Trait {
 
 	public GunnerTrait() {
 		super("gunnertrait");
-		plugin = QAMain.getInstance();
 	}
-
-	JavaPlugin plugin = null;
 
 	boolean SomeSetting = false;
 
@@ -69,7 +65,6 @@ public class GunnerTrait extends Trait {
 	// This would be a good place to load configurable defaults for new NPCs.
 	@Override
 	public void onAttach() {
-		plugin.getServer().getLogger().info(npc.getName() + "has been assigned MyTrait!");
 	}
 
 	// Run code when the NPC is despawned. This is called before the entity actually

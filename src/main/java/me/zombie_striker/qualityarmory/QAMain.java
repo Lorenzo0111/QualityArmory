@@ -2,72 +2,45 @@ package me.zombie_striker.qualityarmory;
 
 import de.tr7zw.changeme.nbtapi.utils.MinecraftVersion;
 import me.zombie_striker.customitemmanager.CustomBaseObject;
-import me.zombie_striker.customitemmanager.CustomItemManager;
 import me.zombie_striker.customitemmanager.MaterialStorage;
-import me.zombie_striker.customitemmanager.qa.AbstractCustomGunItem;
 import me.zombie_striker.customitemmanager.qa.ItemBridgePatch;
-import me.zombie_striker.customitemmanager.qa.versions.V1_13.CustomGunItem;
-import me.zombie_striker.qualityarmory.ammo.Ammo;
-import me.zombie_striker.qualityarmory.api.events.QAGunGiveEvent;
 import me.zombie_striker.qualityarmory.api.QualityArmory;
-import me.zombie_striker.qualityarmory.armor.ArmorObject;
-import me.zombie_striker.qualityarmory.attachments.AttachmentBase;
 import me.zombie_striker.qualityarmory.boundingbox.BoundingBoxManager;
 import me.zombie_striker.qualityarmory.commands.QualityArmoryCommand;
 import me.zombie_striker.qualityarmory.config.CommentYamlConfiguration;
-import me.zombie_striker.qualityarmory.config.GunYMLCreator;
-import me.zombie_striker.qualityarmory.config.GunYMLLoader;
 import me.zombie_striker.qualityarmory.config.MessagesYML;
-import me.zombie_striker.qualityarmory.guns.Gun;
-import me.zombie_striker.qualityarmory.guns.projectiles.*;
-import me.zombie_striker.qualityarmory.guns.reloaders.M1GarandReloader;
-import me.zombie_striker.qualityarmory.guns.reloaders.SlideReloader;
-import me.zombie_striker.qualityarmory.guns.utils.GunRefillerRunnable;
-import me.zombie_striker.qualityarmory.handlers.*;
-import me.zombie_striker.qualityarmory.guns.chargers.*;
-import me.zombie_striker.qualityarmory.guns.reloaders.PumpactionReloader;
-import me.zombie_striker.qualityarmory.guns.reloaders.SingleBulletReloader;
+import me.zombie_striker.qualityarmory.handlers.ChestShopHandler;
+import me.zombie_striker.qualityarmory.handlers.EconHandler;
 import me.zombie_striker.qualityarmory.hooks.MimicHookHandler;
 import me.zombie_striker.qualityarmory.hooks.PlaceholderAPIHook;
+import me.zombie_striker.qualityarmory.hooks.QuickShopHook;
 import me.zombie_striker.qualityarmory.hooks.anticheat.AntiCheatHook;
 import me.zombie_striker.qualityarmory.hooks.anticheat.MatrixHook;
-import me.zombie_striker.qualityarmory.hooks.QuickShopHook;
 import me.zombie_striker.qualityarmory.hooks.anticheat.VulcanHook;
 import me.zombie_striker.qualityarmory.hooks.protection.ProtectionHandler;
+import me.zombie_striker.qualityarmory.interfaces.IEconomy;
 import me.zombie_striker.qualityarmory.interfaces.ISettingsReloader;
 import me.zombie_striker.qualityarmory.listener.QAListener;
-import me.zombie_striker.qualityarmory.listener.Update19Events;
-import me.zombie_striker.qualityarmory.listener.Update19resourcepackhandler;
-import me.zombie_striker.qualityarmory.miscitems.ThrowableItems;
-import me.zombie_striker.qualityarmory.miscitems.ThrowableItems.ThrowableHolder;
 import me.zombie_striker.qualityarmory.npcs.Gunner;
 import me.zombie_striker.qualityarmory.npcs.GunnerTrait;
 import me.zombie_striker.qualityarmory.npcs_sentinel.SentinelQAHandler;
 import me.zombie_striker.qualityarmory.utils.LocalUtils;
 import me.zombie_striker.qualityarmory.utils.ParticleUtil;
-import org.bukkit.*;
-import org.bukkit.command.BlockCommandSender;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.logging.Level;
@@ -81,7 +54,6 @@ public class QAMain extends JavaPlugin {
 
     private HashMap<String, String> craftingEntityNames = new HashMap<>();
     private HashMap<UUID, Location> recoilHelperMovedLocation = new HashMap<>();
-    private HashMap<UUID, List<GunRefillerRunnable>> reloadingTasks = new HashMap<>();
     private HashMap<UUID, Long> sentResourcepack = new HashMap<>();
     private ArrayList<UUID> resourcepackReq = new ArrayList<>();
     private List<Gunner> gunners = new ArrayList<>();
@@ -97,6 +69,7 @@ public class QAMain extends JavaPlugin {
     private boolean DEBUG = false;
     private String prefix = ChatColor.GOLD + "[" + ChatColor.GRAY + "QualityArmory" + ChatColor.GOLD + "]" + ChatColor.RESET;
 
+    private final List<CustomBaseObject> customItems = new ArrayList<>();
 
     /**
      * Represents all the settings used by the plugin, as specified in the config.yml.
@@ -113,7 +86,10 @@ public class QAMain extends JavaPlugin {
      */
     private final List<ISettingsReloader> reloadableSettingsInstances = new LinkedList<>();
 
-
+    /**
+     * Handlers for different plugins. Things like Vault.
+     */
+    private IEconomy economyHandler;
 
     public MessagesYML messagesYml;
     public CommentYamlConfiguration resourcepackwhitelist;
@@ -134,22 +110,22 @@ public class QAMain extends JavaPlugin {
     private boolean hasViaRewind;
     private boolean hasViaVersion;
     private boolean hasProtocolLib;
+    private boolean hasVault;
 
     public static boolean isVersionHigherThan(int mainVersion, int secondVersion) {
         String firstChar = SERVER_VERSION.substring(1, 2);
         int fInt = Integer.parseInt(firstChar);
-        if (fInt < mainVersion)
-            return false;
+        if (fInt < mainVersion) return false;
         StringBuilder secondChar = new StringBuilder();
         for (int i = 3; i < 10; i++) {
-            if (SERVER_VERSION.charAt(i) == '_' || SERVER_VERSION.charAt(i) == '.')
-                break;
+            if (SERVER_VERSION.charAt(i) == '_' || SERVER_VERSION.charAt(i) == '.') break;
             secondChar.append(SERVER_VERSION.charAt(i));
         }
 
         int sInt = Integer.parseInt(secondChar.toString());
         return sInt >= secondVersion;
     }
+
     public void DEBUG(String message) {
         if (DEBUG)
             Bukkit.broadcast(prefix + ChatColor.GREEN + " [DEBUG] " + ChatColor.RESET + message, "qualityarmory.debugmessages");
@@ -165,31 +141,23 @@ public class QAMain extends JavaPlugin {
         return sb;
     }
 
-    public static boolean lookForIngre(Player player, CustomBaseObject a) {
-        return lookForIngre(player, a.getIngredientsRaw());
-    }
-
     @SuppressWarnings("deprecation")
     public static boolean lookForIngre(Player player, Object[] ings) {
-        if (ings == null)
-            return true;
+        if (ings == null) return true;
         boolean[] bb = new boolean[ings.length];
         for (ItemStack is : player.getInventory().getContents()) {
             if (is != null) {
                 for (int i = 0; i < ings.length; i++) {
-                    if (bb[i])
-                        continue;
+                    if (bb[i]) continue;
                     if (ings[i] instanceof ItemStack) {
                         ItemStack check = (ItemStack) ings[i];
-                        if (is.getType() == check.getType()
-                                && (check.getDurability() == 0 || is.getDurability() == check.getDurability())) {
-                            if (is.getAmount() >= check.getAmount())
-                                bb[i] = true;
+                        if (is.getType() == check.getType() && (check.getDurability() == 0 || is.getDurability() == check.getDurability())) {
+                            if (is.getAmount() >= check.getAmount()) bb[i] = true;
                             break;
                         }
                     } else if (ings[i] instanceof String) {
-                        CustomBaseObject base = QualityArmory.getCustomItemByName((String) ings[i]);
-                        if (QualityArmory.getCustomItem(is) == base) {
+                        CustomBaseObject base = QualityArmory.getInstance().getCustomItemByName((String) ings[i]);
+                        if (QualityArmory.getInstance().getCustomItem(is) == base) {
                             bb[i] = true;
                             break;
                         }
@@ -199,29 +167,22 @@ public class QAMain extends JavaPlugin {
             }
         }
         for (boolean b : bb) {
-            if (!b)
-                return false;
+            if (!b) return false;
         }
         return true;
     }
 
-    public static boolean removeForIngredient(Player player, CustomBaseObject a) {
-        return removeForIngredient(player, a.getIngredientsRaw());
-    }
-
     @SuppressWarnings("deprecation")
     public static boolean removeForIngredient(Player player, Object[] ingredients) {
-        if (ingredients == null)
-            return true;
+        if (ingredients == null) return true;
         boolean[] bb = new boolean[ingredients.length];
         for (ItemStack is : player.getInventory().getContents()) {
             if (is != null) {
-                CustomBaseObject obj = QualityArmory.getCustomItem(is);
+                CustomBaseObject obj = QualityArmory.getInstance().getCustomItem(is);
                 for (int i = 0; i < ingredients.length; i++) {
-                    if (bb[i])
-                        continue;
+                    if (bb[i]) continue;
                     if (obj != null) {
-                        if (ingredients[i] instanceof String && QualityArmory.getCustomItemByName((String) ingredients[i]) == obj) {
+                        if (ingredients[i] instanceof String && QualityArmory.getInstance().getCustomItemByName((String) ingredients[i]) == obj) {
                             for (int slot = 0; slot < player.getInventory().getContents().length; slot++) {
                                 if (player.getInventory().getItem(slot).equals(is)) {
                                     player.getInventory().setItem(slot, new ItemStack(Material.AIR));
@@ -251,8 +212,7 @@ public class QAMain extends JavaPlugin {
             }
         }
         for (boolean b : bb) {
-            if (!b)
-                return false;
+            if (!b) return false;
         }
         return true;
     }
@@ -260,6 +220,7 @@ public class QAMain extends JavaPlugin {
     public static MaterialStorage m(int d) {
         return MaterialStorage.getMS(Material.DIAMOND_AXE, d, 0);
     }
+
     @Override
     public void onDisable() {
         for (Scoreboard s : coloredGunScoreboard)
@@ -275,15 +236,6 @@ public class QAMain extends JavaPlugin {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    public Object a(String path, Object def) {
-        if (getConfig().contains(path)) {
-            return getConfig().get(path);
-        }
-        getConfig().set(path, def);
-        saveTheConfig = true;
-        return def;
     }
 
     @Override
@@ -310,12 +262,15 @@ public class QAMain extends JavaPlugin {
             this.getLogger().info("Found PlaceholderAPI. Loaded support");
         }
 
-        try {
-            if (Bukkit.getPluginManager().isPluginEnabled("Mimic")) {
-                MimicHookHandler.register();
-                this.getLogger().info("Found Mimic. Loaded support");
-            }
-        } catch (Exception | Error ignored) {
+        if (Bukkit.getPluginManager().isPluginEnabled("Vault")) {
+            this.hasVault = true;
+            this.economyHandler = new EconHandler();
+            this.economyHandler.setupEconomy();
+            this.getLogger().info("Found Vault. Loaded support");
+        }
+        if (Bukkit.getPluginManager().isPluginEnabled("Mimic")) {
+            MimicHookHandler.register();
+            this.getLogger().info("Found Mimic. Loaded support");
         }
 
         try {
@@ -341,13 +296,23 @@ public class QAMain extends JavaPlugin {
         if (getServer().getPluginManager().isPluginEnabled("Citizens")) {
             try {
                 // Register your trait with Citizens.
-                net.citizensnpcs.api.CitizensAPI.getTraitFactory()
-                        .registerTrait(net.citizensnpcs.api.trait.TraitInfo.create(GunnerTrait.class));
+                net.citizensnpcs.api.CitizensAPI.getTraitFactory().registerTrait(net.citizensnpcs.api.trait.TraitInfo.create(GunnerTrait.class));
             } catch (Error | Exception e4) {
                 getLogger().log(Level.WARNING, "Citizens 2.0 failed to register gunner trait (Ignore this.)");
             }
         }
 
+        if (getServer().getPluginManager().isPluginEnabled("Parties")) hasParties = true;
+        if (Bukkit.getPluginManager().isPluginEnabled("ViaRewind")) hasViaRewind = true;
+        if (Bukkit.getPluginManager().isPluginEnabled("ViaVersion")) hasViaVersion = true;
+        if (getServer().getPluginManager().isPluginEnabled("ProtocolLib")) {
+            hasProtocolLib = true;
+        }
+
+        if (getServer().getPluginManager().isPluginEnabled("Sentinel")) try {
+            org.mcmonkey.sentinel.SentinelPlugin.integrations.add(new SentinelQAHandler());
+        } catch (Error | Exception e4) {
+        }
 
         if (Bukkit.getPluginManager().isPluginEnabled("ChestShop"))
             Bukkit.getPluginManager().registerEvents(new ChestShopHandler(), this);
@@ -355,12 +320,13 @@ public class QAMain extends JavaPlugin {
         QualityArmoryCommand qac = new QualityArmoryCommand(this);
         getCommand("QualityArmory").setExecutor(qac);
         getCommand("QualityArmory").setTabCompleter(qac);
-        Bukkit.getPluginManager().registerEvents(new QAListener(), this);
-        Bukkit.getPluginManager().registerEvents(new Update19resourcepackhandler(), this);
-        Bukkit.getPluginManager().registerEvents(new Update19Events(), this);
+
+        QAListener qaListener = new QAListener(this);
+        this.reloadableSettingsInstances.add(qaListener);
+        Bukkit.getPluginManager().registerEvents(qaListener, this);
 
         try {
-            if ((boolean) getSettingIfPresent("autoUpdate",true))
+            if ((boolean) getSettingIfPresent("autoUpdate", true))
                 GithubUpdater.autoUpdate(this, "ZombieStriker", "QualityArmory", "QualityArmory.jar");
         } catch (Exception e) {
         }
@@ -371,40 +337,20 @@ public class QAMain extends JavaPlugin {
     @SuppressWarnings({"unchecked", "deprecation"})
     public void reloadVals() {
         reloadConfig();
-        DEBUG = (boolean) a("ENABLE-DEBUG", false);
-
-        new BoltactionCharger();
-        new BreakactionCharger();
-        new PumpactionCharger();
-        new RevolverCharger();
-        new BurstFireCharger();
-        new DelayedBurstFireCharger();
-        new PushbackCharger();
-        new RequireAimCharger();
-
-        new PumpactionReloader();
-        new SingleBulletReloader();
-        new SlideReloader();
-        new M1GarandReloader();
-
-        new MiniNukeProjectile();
-        new ExplodingRoundProjectile();
-        new HomingRocketProjectile();
-        new RocketProjectile();
-        new FireProjectile();
+        DEBUG = (boolean) getSettingIfPresent("ENABLE-DEBUG", false);
 
         interactableBlocks.clear();
         craftingEntityNames.clear();
 
         // attachmentRegister.clear();
 //Chris: Support more language file lang/message_xx.yml
-        language = (String) a("language", "en");
+        language = (String) getSettingIfPresent("language", "en");
         File langFolder = new File(getDataFolder(), "lang");
         if (langFolder.exists() && !langFolder.isDirectory()) {
             langFolder.delete();
         }
         langFolder.mkdir();
-        messagesYml = new MessagesYML(language, new File(langFolder, "message_" + language + ".yml"));
+        messagesYml = new MessagesYML(this, language, new File(langFolder, "message_" + language + ".yml"));
         prefix = LocalUtils.colorize((String) messagesYml.a("Prefix", prefix));
 
         resourcepackwhitelist = CommentYamlConfiguration.loadConfiguration(new File(getDataFolder(), "resourcepackwhitelist.yml"));
@@ -415,30 +361,6 @@ public class QAMain extends JavaPlugin {
             saveDefaultConfig();
             reloadConfig();
         }
-
-        if (getServer().getPluginManager().isPluginEnabled("Parties"))
-            hasParties = true;
-        if (Bukkit.getPluginManager().isPluginEnabled("ViaRewind"))
-            hasViaRewind = true;
-        if (Bukkit.getPluginManager().isPluginEnabled("ViaVersion"))
-            hasViaVersion = true;
-        if (getServer().getPluginManager().isPluginEnabled("ProtocolLib")) {
-            hasProtocolLib = true;
-        }
-
-        if (getServer().getPluginManager().isPluginEnabled("Sentinel"))
-            try {
-                org.mcmonkey.sentinel.SentinelPlugin.integrations.add(new SentinelQAHandler());
-            } catch (Error | Exception e4) {
-            }
-
-
-        // Skull texture
-        GunYMLLoader.loadAmmo(this);
-        GunYMLLoader.loadMisc(this);
-        GunYMLLoader.loadGuns(this);
-        GunYMLLoader.loadAttachments(this);
-        GunYMLLoader.loadArmor(this);
 
         BoundingBoxManager.initEntityTypeBoundingBoxes();
     }
@@ -471,12 +393,9 @@ public class QAMain extends JavaPlugin {
             } catch (Exception e2) {
                 e2.printStackTrace();
             }
-            if (temp == null)
-                continue;
-            if (k.length > 1)
-                temp.setDurability(Short.parseShort(k[1]));
-            if (k.length > 2)
-                temp.setAmount(Integer.parseInt(k[2]));
+            if (temp == null) continue;
+            if (k.length > 1) temp.setDurability(Short.parseShort(k[1]));
+            if (k.length > 2) temp.setAmount(Integer.parseInt(k[2]));
             list[i] = temp;
         }
         return list;
@@ -487,13 +406,11 @@ public class QAMain extends JavaPlugin {
     }
 
 
-
     @Override
     public void reloadConfig() {
         if (configFile == null) {
             configFile = new File(this.getDataFolder(), "config.yml");
-            if (!this.getDataFolder().exists())
-                this.getDataFolder().mkdirs();
+            if (!this.getDataFolder().exists()) this.getDataFolder().mkdirs();
             if (!configFile.exists()) {
                 try {
                     configFile.createNewFile();
@@ -576,10 +493,54 @@ public class QAMain extends JavaPlugin {
     }
 
     public Object getSettingIfPresent(String key, Object defaultValue) {
-        if (getSettings().containsKey(key))
-            return getSettings().get(key);
+        if (getSettings().containsKey(key)) return getSettings().get(key);
         getSettings().put(key, defaultValue);
         saveSettings = true;
         return defaultValue;
+    }
+
+    public void registerSettingReloader(ISettingsReloader settingsReloader) {
+        this.reloadableSettingsInstances.add(settingsReloader);
+    }
+
+    public String getPrefix() {
+        return prefix;
+    }
+
+    public boolean hasParties() {
+        return hasParties;
+    }
+
+    public boolean hasProtocolLib() {
+        return hasProtocolLib;
+    }
+
+    public boolean hasViaRewind() {
+        return hasViaRewind;
+    }
+
+    public boolean hasViaVersion() {
+        return hasViaVersion;
+    }
+
+    public boolean hasVault() {
+        return hasVault;
+    }
+
+    public List<CustomBaseObject> getCustomItems() {
+        return customItems;
+    }
+
+    public void registerCustomItem(CustomBaseObject customItem) {
+        this.customItems.add(customItem);
+    }
+
+    public void setSetting(ConfigKey setting, Object val) {
+        this.settings.put(setting.getKey(), val);
+        saveSettings = true;
+    }
+
+    public IEconomy getEconHandler() {
+        return economyHandler;
     }
 }

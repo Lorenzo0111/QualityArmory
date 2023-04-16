@@ -1,5 +1,12 @@
 package me.zombie_striker.qualityarmory.npcs.goals;
 
+import me.zombie_striker.qualityarmory.guns.Gun;
+import me.zombie_striker.qualityarmory.guns.utils.GunUtil;
+import me.zombie_striker.qualityarmory.npcs.Gunner;
+import net.citizensnpcs.api.CitizensAPI;
+import net.citizensnpcs.api.ai.Goal;
+import net.citizensnpcs.api.ai.GoalSelector;
+import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -9,14 +16,6 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.util.Vector;
-
-import me.zombie_striker.qualityarmory.guns.Gun;
-import me.zombie_striker.qualityarmory.guns.utils.GunUtil;
-import me.zombie_striker.qualityarmory.npcs.Gunner;
-import net.citizensnpcs.api.CitizensAPI;
-import net.citizensnpcs.api.ai.Goal;
-import net.citizensnpcs.api.ai.GoalSelector;
-import net.citizensnpcs.api.npc.NPC;
 
 public class Gunnergoal implements Goal {
 
@@ -69,18 +68,6 @@ public class Gunnergoal implements Goal {
 		Location test = ((Player) npc.getEntity()).getEyeLocation().clone();
 		int stepi = 4;
 		Vector step = npc.getEntity().getLocation().getDirection().normalize().multiply(1.0 / stepi);
-		/*for (int dist = 0; dist < diste * stepi; dist++) {
-			test.add(step);
-			if (BoundingBoxUtil.closeEnough(target, test)) {
-				break;
-			}
-			boolean solid = GunUtil.isSolid(test.getBlock(), test);
-			if (solid /* || GunUtil.isBreakable(test.getBlock(), test) * /) {
-				if (setTargetNullifSolid)
-					target = null;
-				return false;
-			}
-		}*/
 
 		return true;
 	}
@@ -145,17 +132,6 @@ public class Gunnergoal implements Goal {
 				if (target == null) {
 					Bukkit.broadcastMessage("Shooting no target");
 				}
-				// Bukkit.broadcastMessage("run1");
-				// new BukkitRunnable() {
-				// public void run() {
-				// GunUtil.shoot(g, (Player) npc.getEntity(), g.getSway(), g.getDamage(), 1,
-				// g.getMaxDistance());
-				// GunUtil.playShoot(g, null, (Player) npc.getEntity());
-				// Bukkit.broadcastMessage("run");
-				// }
-				// }.runTaskTimer(Main.getInstance(), 10 / g.getBulletsPerShot(), 10 /
-				// g.getBulletsPerShot());
-
 			}
 		}
 	}

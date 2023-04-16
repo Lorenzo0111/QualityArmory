@@ -1,7 +1,8 @@
 package me.zombie_striker.qualityarmory.miscitems;
 
-import java.util.List;
-
+import me.zombie_striker.customitemmanager.MaterialStorage;
+import me.zombie_striker.qualityarmory.QAMain;
+import me.zombie_striker.qualityarmory.guns.WeaponSounds;
 import me.zombie_striker.qualityarmory.hooks.protection.ProtectionHandler;
 import org.bukkit.Effect;
 import org.bukkit.Sound;
@@ -12,9 +13,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import me.zombie_striker.qualityarmory.QAMain;
-import me.zombie_striker.customitemmanager.MaterialStorage;
-import me.zombie_striker.qualityarmory.guns.utils.WeaponSounds;
+import java.util.List;
 
 public class IncendaryGrenades extends Grenade {
 

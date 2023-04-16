@@ -1,27 +1,24 @@
 package me.zombie_striker.qualityarmory.handlers;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
-
+import com.comphenix.protocol.PacketType;
+import com.comphenix.protocol.ProtocolLibrary;
+import com.comphenix.protocol.ProtocolManager;
+import com.comphenix.protocol.events.ListenerPriority;
+import com.comphenix.protocol.events.PacketAdapter;
+import com.comphenix.protocol.events.PacketContainer;
+import com.comphenix.protocol.events.PacketEvent;
 import com.cryptomorin.xseries.ReflectionUtils;
-import com.cryptomorin.xseries.XMaterial;
-import com.mojang.datafixers.util.Pair;
-import de.tr7zw.changeme.nbtapi.NBTItem;
+import me.zombie_striker.qualityarmory.QAMain;
+import me.zombie_striker.qualityarmory.api.QualityArmory;
 import me.zombie_striker.qualityarmory.interfaces.IHandler;
 import me.zombie_striker.qualityarmory.utils.ReflectionsUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
-import com.comphenix.protocol.*;
-import com.comphenix.protocol.events.*;
-
-import me.zombie_striker.qualityarmory.QAMain;
-import me.zombie_striker.qualityarmory.api.QualityArmory;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 public class ProtocolLibHandler implements IHandler {
 
@@ -70,8 +67,8 @@ public class ProtocolLibHandler implements IHandler {
 									return;
 								}
 								if (state == 0) {
-									if (QualityArmory.isGun(targ.getItemInHand())
-											|| QualityArmory.isIronSights(targ.getItemInHand())) {
+									if (QualityArmory.getInstance().isGun(targ.getItemInHand())
+											|| QualityArmory.getInstance().isIronSights(targ.getItemInHand())) {
 										event.setCancelled(true);
 									}
 								}
@@ -83,6 +80,7 @@ public class ProtocolLibHandler implements IHandler {
 
 	}
 
+	/*
 	public static void initAimBow(QAMain main) {
 		if (protocolManager == null)
 			protocolManager = ProtocolLibrary.getProtocolManager();
@@ -120,7 +118,7 @@ public class ProtocolLibHandler implements IHandler {
 							return;
 						}
 						if (who.getItemInHand() != null && who.getItemInHand().getType().name().equals("CROSSBOW") &&
-								QualityArmory.isIronSights(who.getItemInHand()) &&
+								QualityArmory.getInstance().isIronSights(who.getItemInHand()) &&
 								ironsights.toString().contains("crossbow")) {
 							Object is = null;
 
@@ -190,7 +188,7 @@ public class ProtocolLibHandler implements IHandler {
 					}
 				});
 
-	}
+	}*/
 
 	private static Object getCraftItemStack(ItemStack is) throws NoSuchMethodException {
 		if (nbtFactClass == null) {
@@ -229,7 +227,6 @@ public class ProtocolLibHandler implements IHandler {
 
 	@Override
 	public void init(QAMain main) {
-		initAimBow(main);
 		initRemoveArmswing(main);
 	}
 }

@@ -3,13 +3,13 @@ package me.zombie_striker.qualityarmory.commands;
 import me.zombie_striker.customitemmanager.CustomBaseObject;
 import me.zombie_striker.customitemmanager.CustomItemManager;
 import me.zombie_striker.customitemmanager.MaterialStorage;
+import me.zombie_striker.qualityarmory.ConfigKey;
 import me.zombie_striker.qualityarmory.QAMain;
 import me.zombie_striker.qualityarmory.ammo.Ammo;
 import me.zombie_striker.qualityarmory.api.QualityArmory;
 import me.zombie_striker.qualityarmory.api.events.QAGunGiveEvent;
 import me.zombie_striker.qualityarmory.armor.ArmorObject;
 import me.zombie_striker.qualityarmory.attachments.AttachmentBase;
-import me.zombie_striker.qualityarmory.config.GunYMLCreator;
 import me.zombie_striker.qualityarmory.guns.Gun;
 import me.zombie_striker.qualityarmory.utils.LocalUtils;
 import org.bukkit.Bukkit;
@@ -19,22 +19,23 @@ import org.bukkit.World;
 import org.bukkit.command.*;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.SkullMeta;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 public class QualityArmoryCommand implements CommandExecutor, TabCompleter {
 
     private QAMain main;
+
+
+    private String changelog = null;
+
+
 
     public QualityArmoryCommand(QAMain qaMain) {
         this.main = qaMain;
@@ -113,8 +114,8 @@ public class QualityArmoryCommand implements CommandExecutor, TabCompleter {
         if (command.getName().equalsIgnoreCase("QualityArmory")) {
             if (args.length > 0) {
                 if (args[0].equalsIgnoreCase("version")) {
-                    sender.sendMessage(prefix + ChatColor.WHITE + " This server is using version " + ChatColor.GREEN
-                            + this.getDescription().getVersion() + ChatColor.WHITE + " of QualityArmory");
+                    sender.sendMessage(main.getPrefix()+ " This server is using version " + ChatColor.GREEN
+                            + main.getDescription().getVersion() + ChatColor.WHITE + " of QualityArmory");
                     sender.sendMessage("--==Changelog==--");
                     if (changelog == null) {
                         StringBuilder builder = new StringBuilder();
@@ -150,61 +151,15 @@ public class QualityArmoryCommand implements CommandExecutor, TabCompleter {
                 }
                 if (args[0].equalsIgnoreCase("debug")) {
                     if (sender.hasPermission("qualityarmory.debug")) {
-                        DEBUG = !DEBUG;
-                        sender.sendMessage(prefix + "Console debugging set to " + DEBUG);
+                        boolean debug = !(boolean)main.getSetting(ConfigKey.SETTING_DEBUG.getKey());
+                        main.setSetting(ConfigKey.SETTING_DEBUG,debug);
+                        sender.sendMessage(main.getPrefix() + "Console debugging set to " + debug);
                     } else {
-                        sender.sendMessage(prefix + ChatColor.RED + S_NOPERM);
+                        sender.sendMessage(main.getPrefix() + ChatColor.RED + S_NOPERM);
                         return true;
                     }
                     return true;
 
-                }
-                if (args[0].equalsIgnoreCase("dumpItem")) {
-                    if (sender.hasPermission("qualityarmory.debug")) {
-                        if (!(sender instanceof Player)) {
-                            return true;
-                        }
-                        Gun gun = QualityArmory.getGunInHand(((Player) sender));
-                        if (gun == null) {
-                            sender.sendMessage(prefix + ChatColor.RED + "You need to hold a gun to do this.");
-                            return true;
-                        }
-
-                        sender.sendMessage(prefix + ChatColor.YELLOW + gun.toString());
-                    } else {
-                        sender.sendMessage(prefix + ChatColor.RED + S_NOPERM);
-                        return true;
-                    }
-                    return true;
-
-                }
-                if (args[0].equalsIgnoreCase("createNewAmmo")) {
-                    if (sender.hasPermission("qualityarmory.createnewitem")) {
-                        if (args.length >= 2) {
-                            ItemStack itemInHand = ((Player) sender).getItemInHand();
-                            if (itemInHand == null) {
-                                sender.sendMessage(prefix + " You need to hold an item that will be used as ammo.");
-
-                                return true;
-                            }
-                            GunYMLCreator.createSkullAmmo(true, getDataFolder(), false, "custom_" + args[1], args[1],
-                                    args[1], Collections.singletonList("Custom_item"), itemInHand.getType(),
-                                    itemInHand.getDurability(),
-                                    (itemInHand.getType() == MultiVersionLookup.getSkull()
-                                            ? ((SkullMeta) itemInHand.getItemMeta()).getOwner()
-                                            : null),
-                                    null, 100, 1, 64);
-                            sender.sendMessage(prefix + " A new ammo type has been created.");
-                            sender.sendMessage(
-                                    prefix + " You will need to use /qa reload for the new ammo type to appear.");
-                        } else {
-                            sendHelp(sender);
-                        }
-                    } else {
-                        sender.sendMessage(prefix + ChatColor.RED + S_NOPERM);
-                        return true;
-                    }
-                    return true;
                 }
                 if (args[0].equalsIgnoreCase("sendResourcepack")) {
                     Player player = null;
@@ -244,24 +199,6 @@ public class QualityArmoryCommand implements CommandExecutor, TabCompleter {
                     player.sendMessage(prefix + S_RESOURCEPACK_BYPASS);
 
                     return true;
-                }
-
-
-                if (args[0].equalsIgnoreCase("listItemIds")) {
-                    if (sender.hasPermission("qualityarmory.getmaterialsused")) {
-                        for (CustomBaseObject g : miscRegister.values())
-                            sender.sendMessage(ChatColor.GREEN + g.getName() + ": " + ChatColor.WHITE
-                                    + g.getItemData().getMat().name() + " : " + g.getItemData().getData());
-                        for (Gun g : gunRegister.values())
-                            sender.sendMessage(ChatColor.GOLD + g.getName() + ": " + ChatColor.WHITE
-                                    + g.getItemData().getMat().name() + " : " + g.getItemData().getData());
-                        for (Ammo g : ammoRegister.values())
-                            sender.sendMessage(ChatColor.AQUA + g.getName() + ": " + ChatColor.WHITE
-                                    + g.getItemData().getMat().name() + " : " + g.getItemData().getData());
-                    } else {
-                        sender.sendMessage(prefix + ChatColor.RED + S_NOPERM);
-                        return true;
-                    }
                 }
                 if (args[0].equalsIgnoreCase("reload")) {
                     if (sender.hasPermission("qualityarmory.reload")) {
@@ -498,12 +435,11 @@ public class QualityArmoryCommand implements CommandExecutor, TabCompleter {
     }
 
     public void sendHelp(CommandSender sender) {
-        sender.sendMessage(LocalUtils.colorize(prefix + " Commands:"));
+        sender.sendMessage(LocalUtils.colorize(main.getPrefix() + " Commands:"));
         sender.sendMessage(ChatColor.GOLD + "/QA give <Item> <player> <amount>:" + ChatColor.GRAY
                 + " Gives the sender the item specified (guns, ammo, misc.)");
         sender.sendMessage(ChatColor.GOLD + "/QA craft:" + ChatColor.GRAY + " Opens the crafting menu.");
         sender.sendMessage(ChatColor.GOLD + "/QA shop: " + ChatColor.GRAY + "Opens the shop menu");
-
         sender.sendMessage(ChatColor.GOLD + "/QA getResourcepack: " + ChatColor.GRAY
                 + "Sends the link to the resourcepack. Disables the resourcepack prompts until /qa sendResourcepack is used");
         sender.sendMessage(ChatColor.GOLD + "/QA sendResourcepack: " + ChatColor.GRAY
@@ -514,9 +450,6 @@ public class QualityArmoryCommand implements CommandExecutor, TabCompleter {
         // and data for all items.");
         if (sender.hasPermission("qualityarmory.reload"))
             sender.sendMessage(ChatColor.GOLD + "/QA reload: " + ChatColor.GRAY + "reloads all values in QA.");
-        if (sender.hasPermission("qualityarmory.createnewitem")) {
-            sender.sendMessage(ChatColor.GOLD + "/QA createNewAmmo <name>: " + ChatColor.GRAY
-                    + "Creates a new ammo type using the item in your hand as a template");
         }
     }
 

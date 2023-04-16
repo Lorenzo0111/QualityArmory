@@ -1,7 +1,7 @@
 package me.zombie_striker.qualityarmory.attachments;
 
-import me.zombie_striker.qualityarmory.QAMain;
 import me.zombie_striker.customitemmanager.MaterialStorage;
+import me.zombie_striker.qualityarmory.QAMain;
 import me.zombie_striker.qualityarmory.guns.Gun;
 
 public class AttachmentBase extends Gun {

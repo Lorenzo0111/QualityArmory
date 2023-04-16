@@ -1,17 +1,16 @@
 package me.zombie_striker.qualityarmory.ammo;
 
-import java.util.List;
-
 import me.zombie_striker.customitemmanager.CustomBaseObject;
 import me.zombie_striker.customitemmanager.CustomItemManager;
+import me.zombie_striker.customitemmanager.MaterialStorage;
+import me.zombie_striker.qualityarmory.QAMain;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import me.zombie_striker.qualityarmory.QAMain;
-import me.zombie_striker.customitemmanager.MaterialStorage;
+import java.util.List;
 
 public class Ammo extends CustomBaseObject{
 
