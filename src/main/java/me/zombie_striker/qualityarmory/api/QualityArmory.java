@@ -269,19 +269,6 @@ public class QualityArmory {
 		return amount;
 	}
 
-	public CustomBaseObject getCustomItemByName(String name){
-		CustomBaseObject b = null;
-		if((b=getAmmoByName(name))!=null)
-			return b;
-		if((b=getGunByName(name))!=null)
-			return b;
-		if((b=getArmorByName(name))!=null)
-			return b;
-		if((b=getMiscByName(name))!=null)
-			return b;
-		return null;
-	}
-
 
 	@SuppressWarnings("deprecation")
 	public boolean isAmmo(ItemStack is) {
@@ -322,31 +309,6 @@ public class QualityArmory {
 		return false;
 	}
 
-	public ArmorObject getArmorByName(String name) {
-		for (ArmorObject g : QAMain.armorRegister.values()) {
-			if (g.getName().equals(name))
-				return g;
-		}
-		return null;
-	}
-
-	public CustomBaseObject getMiscByName(String name) {
-		for (CustomBaseObject g : QAMain.miscRegister.values()) {
-			if (g.getName().equals(name))
-				return g;
-		}
-		return null;
-	}
-
-	public Gun getGunByName(String name) {
-		for (Gun g : QAMain.gunRegister.values()) {
-			if (g.getName().equals(name))
-				return g;
-		}
-		return null;
-	}
-
-
 	public void sendHotbarGunAmmoCount(final Player p, final CustomBaseObject gun,
 			ItemStack usedItem, boolean reloading) {
 		Gun g = null;
@@ -357,7 +319,7 @@ public class QualityArmory {
 		}else{
 			g = (Gun) gun;
 		}
-		sendHotbarGunAmmoCount(p,gun,usedItem,reloading,QualityArmory.getBulletsInHand(p),g.getMaxBullets());
+		sendHotbarGunAmmoCount(p,gun,usedItem,reloading,getBulletsInHand(p),g.getMaxBullets());
 	}
 		public void sendHotbarGunAmmoCount(final Player p, final CustomBaseObject gun,
 				ItemStack usedItem, boolean reloading, int currentAmountInGun, int maxAmount) {
@@ -506,7 +468,7 @@ public class QualityArmory {
 			return true;
 		for (int i = 0; i < player.getInventory().getSize(); i++) {
 			ItemStack is = player.getInventory().getItem(i);
-			if (is != null && QualityArmory.isAmmo(is)&&QualityArmory.getAmmo(is).equals(a)) {
+			if (is != null && isAmmo(is)&&getAmmo(is).equals(a)) {
 				int temp = is.getAmount();
 				if (remaining < is.getAmount()) {
 					is.setAmount(is.getAmount() - remaining);
@@ -524,8 +486,8 @@ public class QualityArmory {
 		if (remaining > 0) {
 			for (int i = 0; i < player.getInventory().getSize(); i++) {
 				ItemStack is = player.getInventory().getItem(i);
-				if (QualityArmory.isAmmoBag(is)) {
-					AmmoBag ab = (AmmoBag) QualityArmory.getCustomItem(is);
+				if (isAmmoBag(is)) {
+					AmmoBag ab = (AmmoBag) getCustomItem(is);
 					if (ab == null) continue;
 
 					Ammo ammoType = ab.getAmmoType(is);

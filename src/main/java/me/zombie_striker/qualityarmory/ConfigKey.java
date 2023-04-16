@@ -9,7 +9,8 @@ public enum ConfigKey {
 
     SETTING_ENABLEDCRAFTING("enableCraftingWeapons"),
     SETTING_ENABLESHOP("enableShopCommand"),
-    SETTING_DEBUG("enableDebugMessages")
+    SETTING_DEBUG("enableDebugMessages"),
+    SETTING_HEADSHOT_MULTIPLIER("headshotMultiplier")
     ;
 
     private final String key;

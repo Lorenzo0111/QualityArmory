@@ -9,6 +9,8 @@ import me.zombie_striker.qualityarmory.boundingbox.BoundingBoxManager;
 import me.zombie_striker.qualityarmory.commands.QualityArmoryCommand;
 import me.zombie_striker.qualityarmory.config.CommentYamlConfiguration;
 import me.zombie_striker.qualityarmory.config.MessagesYML;
+import me.zombie_striker.qualityarmory.handlers.BulletHandler;
+import me.zombie_striker.qualityarmory.handlers.BulletSwayHandler;
 import me.zombie_striker.qualityarmory.handlers.ChestShopHandler;
 import me.zombie_striker.qualityarmory.handlers.EconHandler;
 import me.zombie_striker.qualityarmory.hooks.MimicHookHandler;
@@ -24,6 +26,7 @@ import me.zombie_striker.qualityarmory.listener.QAListener;
 import me.zombie_striker.qualityarmory.npcs.Gunner;
 import me.zombie_striker.qualityarmory.npcs.GunnerTrait;
 import me.zombie_striker.qualityarmory.npcs_sentinel.SentinelQAHandler;
+import me.zombie_striker.qualityarmory.utils.BlockCollisionUtil;
 import me.zombie_striker.qualityarmory.utils.LocalUtils;
 import me.zombie_striker.qualityarmory.utils.ParticleUtil;
 import org.bukkit.Bukkit;
@@ -111,6 +114,21 @@ public class QAMain extends JavaPlugin {
     private boolean hasViaVersion;
     private boolean hasProtocolLib;
     private boolean hasVault;
+    private BulletSwayHandler bulletSwayHandler;
+    private BlockCollisionUtil blockCollisionHandler;
+    private BulletHandler bulletHandler;
+
+    public BulletHandler getBulletHandler() {
+        return bulletHandler;
+    }
+
+    public BulletSwayHandler getBulletSwayHandler() {
+        return bulletSwayHandler;
+    }
+
+    public BlockCollisionUtil getBlockCollisionHandler() {
+        return blockCollisionHandler;
+    }
 
     public static boolean isVersionHigherThan(int mainVersion, int secondVersion) {
         String firstChar = SERVER_VERSION.substring(1, 2);
@@ -325,6 +343,10 @@ public class QAMain extends JavaPlugin {
         this.reloadableSettingsInstances.add(qaListener);
         Bukkit.getPluginManager().registerEvents(qaListener, this);
 
+        this.bulletSwayHandler = new BulletSwayHandler();
+        this.blockCollisionHandler = new BlockCollisionUtil();
+        this.bulletHandler = new BulletHandler(this);
+
         try {
             if ((boolean) getSettingIfPresent("autoUpdate", true))
                 GithubUpdater.autoUpdate(this, "ZombieStriker", "QualityArmory", "QualityArmory.jar");
@@ -332,6 +354,8 @@ public class QAMain extends JavaPlugin {
         }
 
         Metrics metrics = new Metrics(this, 1699);
+
+
     }
 
     @SuppressWarnings({"unchecked", "deprecation"})
