@@ -114,6 +114,7 @@ public class QAMain extends JavaPlugin {
     private BlockCollisionUtil blockCollisionHandler;
     private BulletHandler bulletHandler;
     private GunDataHandler gunDataHandler;
+    private ControlHandler controlHandler;
     private final List<IHandler> handlers = new ArrayList<>();
 
     public BulletHandler getBulletHandler() {
@@ -344,6 +345,7 @@ public class QAMain extends JavaPlugin {
         this.handlers.add(this.blockCollisionHandler = new BlockCollisionUtil());
         this.handlers.add(this.bulletHandler = new BulletHandler(this));
         this.handlers.add(this.gunDataHandler = new GunDataHandler());
+        this.handlers.add(this.controlHandler = new ControlHandler());
 
         this.handlers.add(new InvisibleBlockForAutomaticHandler());
 

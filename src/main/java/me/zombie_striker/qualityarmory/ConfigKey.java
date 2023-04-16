@@ -7,6 +7,8 @@ public enum ConfigKey {
     CUSTOMITEM_DISPLAYNAME("displayname"),
     CUSTOMITEM_DAMAGE("bulletDamage"),
     CUSTOMITEM_SPEED("bulletSpeed"),
+    CUSTOMITEM_AUTOMATIC_FIRING("isAutomaticFiring"),
+    CUSTOMITEM_BULLETS_PER_SECOND("bulletsPerSecond"),
 
 
     SETTING_ENABLEDCRAFTING("enableCraftingWeapons"),
