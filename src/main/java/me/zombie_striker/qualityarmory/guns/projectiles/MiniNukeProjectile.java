@@ -8,8 +8,8 @@ import me.zombie_striker.qualityarmory.api.events.QAProjectileExplodeEvent;
 import me.zombie_striker.qualityarmory.guns.Gun;
 import me.zombie_striker.qualityarmory.guns.utils.GunUtil;
 import me.zombie_striker.qualityarmory.guns.utils.WeaponSounds;
-import me.zombie_striker.qualityarmory.handlers.ExplosionHandler;
-import me.zombie_striker.qualityarmory.handlers.ParticleHandlers;
+import me.zombie_striker.qualityarmory.utils.ExplosionUtil;
+import me.zombie_striker.qualityarmory.utils.ParticleUtil;
 
 import org.bukkit.*;
 import org.bukkit.entity.Entity;
@@ -32,7 +32,7 @@ public MiniNukeProjectile() {
 				for (int tick = 0; tick < Math.round(0.99+g.getVelocityForRealtimeCalculations()); tick++) {
 				distance--;
 				s.add(dir);
-				ParticleHandlers.spawnGunParticles(g, s);
+				ParticleUtil.spawnGunParticles(g, s);
 				try {
 					player.getWorld().playSound(s, MultiVersionLookup.getDragonGrowl(), 1, 2f);
 
@@ -53,17 +53,17 @@ public MiniNukeProjectile() {
 					if (QAMain.enableExplosionDamage) {
 						QAProjectileExplodeEvent event = new QAProjectileExplodeEvent(MiniNukeProjectile.this, s);
 						Bukkit.getPluginManager().callEvent(event);
-						if (!event.isCancelled()) ExplosionHandler.handleExplosion(s, Math.toIntExact(Math.round(g.getExplosionRadius())), 2);
+						if (!event.isCancelled()) ExplosionUtil.handleExplosion(s, Math.toIntExact(Math.round(g.getExplosionRadius())), 2);
 					}
 					try {
 						player.getWorld().playSound(s, WeaponSounds.WARHEAD_EXPLODE.getSoundName(), 10, 0.9f);
 						player.getWorld().playSound(s, Sound.ENTITY_GENERIC_EXPLODE, 8, 0.7f);
-						ParticleHandlers.spawnMushroomCloud(s);
+						ParticleUtil.spawnMushroomCloud(s);
 						new BukkitRunnable() {
 
 							@Override
 							public void run() {
-								ParticleHandlers.spawnMushroomCloud(s);
+								ParticleUtil.spawnMushroomCloud(s);
 							}
 						}.runTaskLater(QAMain.getInstance(), 10);
 
@@ -71,7 +71,7 @@ public MiniNukeProjectile() {
 						s.getWorld().playEffect(s, Effect.valueOf("CLOUD"), 0);
 						player.getWorld().playSound(s, Sound.valueOf("EXPLODE"), 8, 0.7f);
 					}
-					ExplosionHandler.handleAOEExplosion(player, s, g.getDamage(), g.getExplosionRadius());
+					ExplosionUtil.handleAOEExplosion(player, s, g.getDamage(), g.getExplosionRadius());
 					cancel();
 					return;
 				}

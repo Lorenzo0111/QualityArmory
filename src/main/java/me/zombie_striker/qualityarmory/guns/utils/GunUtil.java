@@ -18,6 +18,9 @@ import me.zombie_striker.qualityarmory.guns.Gun;
 import me.zombie_striker.qualityarmory.handlers.*;
 import me.zombie_striker.qualityarmory.hooks.CoreProtectHook;
 import me.zombie_striker.qualityarmory.hooks.protection.ProtectionHandler;
+import me.zombie_striker.qualityarmory.utils.BlockCollisionUtil;
+import me.zombie_striker.qualityarmory.utils.IronsightsUtil;
+import me.zombie_striker.qualityarmory.utils.ParticleUtil;
 import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
@@ -43,7 +46,7 @@ public class GunUtil {
 	}
 
 	public static void shootHandler(Gun g, Player p, int numberOfBullets) {
-		double sway = g.getSway() * AimManager.getSway(g, p.getUniqueId());
+		double sway = g.getSway() * AimHandler.getSway(g, p.getUniqueId());
 		if (g.usesCustomProjctiles()) {
 			for (int i = 0; i < numberOfBullets; i++) {
 				Vector go = p.getLocation().getDirection().normalize();
@@ -314,7 +317,7 @@ public class GunUtil {
 				List<Player> nonheard = start.getWorld().getPlayers();
 				nonheard.remove(p);
 				if (g.useMuzzleSmoke())
-					ParticleHandlers.spawnMuzzleSmoke(p, start.clone().add(step.clone().multiply(7)));
+					ParticleUtil.spawnMuzzleSmoke(p, start.clone().add(step.clone().multiply(7)));
 				double distSqrt = maxEntityDistance;
 				Vector stepSmoke = normalizedDirection.clone().multiply(QAMain.smokeSpacing);
 				for (double dist = 0; dist < distSqrt; dist += QAMain.smokeSpacing) {
@@ -373,7 +376,7 @@ public class GunUtil {
 							}
 						}
 					}*/
-					ParticleHandlers.spawnGunParticles(g, start);
+					ParticleUtil.spawnGunParticles(g, start);
 				}
 
 				final Map<Block,Material> regenBlocks = new HashMap<>();
@@ -488,7 +491,7 @@ public class GunUtil {
 			return;
 		}
 
-		ItemStack firstGunInstance = IronsightsHandler.getItemAiming(player);
+		ItemStack firstGunInstance = IronsightsUtil.getItemAiming(player);
 
 		boolean regularshoot = true;
 
@@ -520,7 +523,7 @@ public class GunUtil {
 					}
 
 					if(!holdingRMB){
-						if ((!g.hasIronSights() || !IronsightsHandler.isAiming(player)) && ((player.isSneaking() == QAMain.SwapSneakToSingleFire))) {
+						if ((!g.hasIronSights() || !IronsightsUtil.isAiming(player)) && ((player.isSneaking() == QAMain.SwapSneakToSingleFire))) {
 							cancel();
 							QAMain.DEBUG("Stopping Automatic Firing");
 							rapidfireshooters.remove(player.getUniqueId());
@@ -528,7 +531,7 @@ public class GunUtil {
 						}
 					}
 
-					ItemStack temp = IronsightsHandler.getItemAiming(player);
+					ItemStack temp = IronsightsUtil.getItemAiming(player);
 
 					if (QAMain.enableDurability && g.getDamage(temp) <= 0) {
 						player.playSound(player.getLocation(), WeaponSounds.METALHIT.getSoundName(), 1, 1);
@@ -804,18 +807,6 @@ public class GunUtil {
 		// player.getLocation().setDirection(vector);
 		player.teleport(current);
 		player.setVelocity(temp);
-	}
-
-	public static boolean isBreakable(Block b, Location l) {
-		if (b.getType().name().contains("GLASS"))
-			return true;
-		return false;
-
-	}
-
-	@SuppressWarnings("deprecation")
-	public static boolean isSolid(Block b, Location l) {
-		return BlockCollisionUtil.isSolid(b, l);
 	}
 
 	@NotNull

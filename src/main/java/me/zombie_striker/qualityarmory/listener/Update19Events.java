@@ -1,4 +1,4 @@
-package me.zombie_striker.qualityarmory.handlers;
+package me.zombie_striker.qualityarmory.listener;
 
 import me.zombie_striker.customitemmanager.CustomItemManager;
 import me.zombie_striker.qualityarmory.QAMain;

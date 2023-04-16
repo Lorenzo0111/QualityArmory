@@ -4,7 +4,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Ageable;
 import org.bukkit.entity.Entity;
 
-import me.zombie_striker.qualityarmory.handlers.BoundingBoxUtil;
+import me.zombie_striker.qualityarmory.utils.BoundingBoxUtil;
 
 public class DefaultHumanoidBoundingBox implements AbstractBoundingBox{
 

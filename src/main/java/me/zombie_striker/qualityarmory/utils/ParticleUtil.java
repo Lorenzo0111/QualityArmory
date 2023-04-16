@@ -1,4 +1,4 @@
-package me.zombie_striker.qualityarmory.handlers;
+package me.zombie_striker.qualityarmory.utils;
 
 import com.cryptomorin.xseries.ReflectionUtils;
 import me.zombie_striker.qualityarmory.QAMain;
@@ -11,7 +11,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import ru.beykerykt.minecraft.lightapi.common.LightAPI;
 
-public class ParticleHandlers {
+public class ParticleUtil {
 
 	private static boolean is13 = true;
 

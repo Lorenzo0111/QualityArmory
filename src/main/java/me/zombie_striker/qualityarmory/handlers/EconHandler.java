@@ -1,6 +1,7 @@
 package me.zombie_striker.qualityarmory.handlers;
 
 import me.zombie_striker.customitemmanager.CustomBaseObject;
+import me.zombie_striker.qualityarmory.QAMain;
 import me.zombie_striker.qualityarmory.interfaces.IEconomy;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -38,5 +39,10 @@ public class EconHandler implements IEconomy {
 	}
 	public void deposit(int cost, Player player) {
 		econ.depositPlayer(player, cost);
+	}
+
+	@Override
+	public void init(QAMain main) {
+		setupEconomy();
 	}
 }

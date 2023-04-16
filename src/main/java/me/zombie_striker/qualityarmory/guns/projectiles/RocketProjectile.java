@@ -7,8 +7,8 @@ import me.zombie_striker.qualityarmory.QAMain;
 import me.zombie_striker.qualityarmory.api.events.QAProjectileExplodeEvent;
 import me.zombie_striker.qualityarmory.guns.Gun;
 import me.zombie_striker.qualityarmory.guns.utils.GunUtil;
-import me.zombie_striker.qualityarmory.handlers.ExplosionHandler;
-import me.zombie_striker.qualityarmory.handlers.ParticleHandlers;
+import me.zombie_striker.qualityarmory.utils.ExplosionUtil;
+import me.zombie_striker.qualityarmory.utils.ParticleUtil;
 
 import org.bukkit.*;
 import org.bukkit.entity.Entity;
@@ -31,7 +31,7 @@ public class RocketProjectile implements RealtimeCalculationProjectile {
 				for (int tick = 0; tick < g.getVelocityForRealtimeCalculations(); tick++) {
 					distance--;
 					s.add(dir);
-					ParticleHandlers.spawnGunParticles(g, s);
+					ParticleUtil.spawnGunParticles(g, s);
 					boolean entityNear = false;
 					try {
 						List<Entity> e2 = new ArrayList<>(s.getWorld().getNearbyEntities(s, 1, 1, 1));
@@ -50,7 +50,7 @@ public class RocketProjectile implements RealtimeCalculationProjectile {
 						if (QAMain.enableExplosionDamage) {
 							QAProjectileExplodeEvent event = new QAProjectileExplodeEvent(RocketProjectile.this, explode);
 							Bukkit.getPluginManager().callEvent(event);
-							if (!event.isCancelled()) explodeDamage = ExplosionHandler.handleExplosion(explode, 4, 2);
+							if (!event.isCancelled()) explodeDamage = ExplosionUtil.handleExplosion(explode, 4, 2);
 						}
 						try {
 							//player.getWorld().playSound(s, WeaponSounds.WARHEAD_EXPLODE.getSoundName(), 10, 0.9f);
@@ -61,7 +61,7 @@ public class RocketProjectile implements RealtimeCalculationProjectile {
 							s.getWorld().playEffect(s, Effect.valueOf("CLOUD"), 0);
 							player.getWorld().playSound(s, Sound.valueOf("EXPLODE"), 8, 0.7f);
 						}
-						if (explodeDamage) ExplosionHandler.handleAOEExplosion(player, s, g.getDamage(), g.getExplosionRadius());
+						if (explodeDamage) ExplosionUtil.handleAOEExplosion(player, s, g.getDamage(), g.getExplosionRadius());
 						cancel();
 						return;
 					}

@@ -1,11 +1,11 @@
-package me.zombie_striker.qualityarmory.handlers;
+package me.zombie_striker.qualityarmory.utils;
 
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
-public class HotbarMessager {
+public class HotbarMessagerUtil {
 
 	/**
 	 * Sends the hotbar message 'message' to the player 'player'

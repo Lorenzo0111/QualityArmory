@@ -1,6 +1,6 @@
 package me.zombie_striker.qualityarmory.boundingbox;
 
-import me.zombie_striker.qualityarmory.handlers.BoundingBoxUtil;
+import me.zombie_striker.qualityarmory.utils.BoundingBoxUtil;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.util.Vector;

@@ -21,7 +21,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import me.zombie_striker.qualityarmory.QAMain;
 import me.zombie_striker.customitemmanager.MaterialStorage;
 import me.zombie_striker.qualityarmory.guns.utils.WeaponSounds;
-import me.zombie_striker.qualityarmory.handlers.ExplosionHandler;
+import me.zombie_striker.qualityarmory.utils.ExplosionUtil;
 
 public class Grenade extends CustomBaseObject implements ThrowableItems {
 	private static final List<Entity> GRENADES = new ArrayList<>();
@@ -128,7 +128,7 @@ public class Grenade extends CustomBaseObject implements ThrowableItems {
 				if (QAMain.enableExplosionDamage) {
 					QAThrowableExplodeEvent event = new QAThrowableExplodeEvent(Grenade.this, h.getHolder().getLocation());
 					Bukkit.getPluginManager().callEvent(event);
-					if (!event.isCancelled()) ExplosionHandler.handleExplosion(h.getHolder().getLocation(), 3, 1);
+					if (!event.isCancelled()) ExplosionUtil.handleExplosion(h.getHolder().getLocation(), 3, 1);
 					QAMain.DEBUG("Using default explosions");
 				}
 				try {

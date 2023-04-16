@@ -9,6 +9,8 @@ import com.cryptomorin.xseries.ReflectionUtils;
 import com.cryptomorin.xseries.XMaterial;
 import com.mojang.datafixers.util.Pair;
 import de.tr7zw.changeme.nbtapi.NBTItem;
+import me.zombie_striker.qualityarmory.interfaces.IHandler;
+import me.zombie_striker.qualityarmory.utils.ReflectionsUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -21,7 +23,7 @@ import com.comphenix.protocol.events.*;
 import me.zombie_striker.qualityarmory.QAMain;
 import me.zombie_striker.qualityarmory.api.QualityArmory;
 
-public class ProtocolLibHandler {
+public class ProtocolLibHandler implements IHandler {
 
 	private static ProtocolManager protocolManager;
 
@@ -31,11 +33,11 @@ public class ProtocolLibHandler {
 	private static Class nbtFactClass = null;
 	private static Method nbtFactmethod = null;
 
-	public static void initRemoveArmswing() {
+	public static void initRemoveArmswing(QAMain main) {
 		if (protocolManager == null)
 			protocolManager = ProtocolLibrary.getProtocolManager();
 		protocolManager.addPacketListener(
-				new PacketAdapter(QAMain.getInstance(), ListenerPriority.NORMAL, PacketType.Play.Client.ARM_ANIMATION) {
+				new PacketAdapter(main, ListenerPriority.NORMAL, PacketType.Play.Client.ARM_ANIMATION) {
 
 					@SuppressWarnings("deprecation")
 					public void onPacketReceiving(PacketEvent event) {
@@ -81,11 +83,11 @@ public class ProtocolLibHandler {
 
 	}
 
-	public static void initAimBow() {
+	public static void initAimBow(QAMain main) {
 		if (protocolManager == null)
 			protocolManager = ProtocolLibrary.getProtocolManager();
 		protocolManager.addPacketListener(
-				new PacketAdapter(QAMain.getInstance(), ListenerPriority.NORMAL, PacketType.Play.Server.ENTITY_EQUIPMENT) {
+				new PacketAdapter(main, ListenerPriority.NORMAL, PacketType.Play.Server.ENTITY_EQUIPMENT) {
 					@Override
 					public void onPacketSending(PacketEvent event) {
 						final Player sender = event.getPlayer();
@@ -183,7 +185,7 @@ public class ProtocolLibHandler {
 
 
 								}
-							}.runTaskLater(QAMain.getInstance(), 1);
+							}.runTaskLater(main, 1);
 						}
 					}
 				});
@@ -223,5 +225,11 @@ public class ProtocolLibHandler {
 		} catch (InvocationTargetException e) {
 			e.printStackTrace();
 		}
+	}
+
+	@Override
+	public void init(QAMain main) {
+		initAimBow(main);
+		initRemoveArmswing(main);
 	}
 }

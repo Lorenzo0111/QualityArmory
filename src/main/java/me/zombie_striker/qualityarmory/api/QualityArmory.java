@@ -7,8 +7,8 @@ import java.util.List;
 import java.util.Map.Entry;
 
 import me.zombie_striker.customitemmanager.*;
-import me.zombie_striker.qualityarmory.handlers.HotbarMessager;
-import me.zombie_striker.qualityarmory.handlers.IronsightsHandler;
+import me.zombie_striker.qualityarmory.utils.HotbarMessagerUtil;
+import me.zombie_striker.qualityarmory.utils.IronsightsUtil;
 import me.zombie_striker.qualityarmory.hooks.protection.ProtectionHandler;
 import me.zombie_striker.qualityarmory.miscitems.AmmoBag;
 import me.zombie_striker.qualityarmory.utils.LocalUtils;
@@ -395,15 +395,15 @@ public class QualityArmory {
 	public static boolean isIronSights(ItemStack is) {
 		if (is == null)
 			return false;
-		if (is.getType() == IronsightsHandler.ironsightsMaterial)
+		if (is.getType() == IronsightsUtil.ironsightsMaterial)
 			try{
 				if(!is.hasItemMeta() || !is.getItemMeta().hasCustomModelData())
 					return false;
-				if(is.getItemMeta().getCustomModelData() == IronsightsHandler
+				if(is.getItemMeta().getCustomModelData() == IronsightsUtil
 				.ironsightsData)
 					return true;
 			}catch (Error|Exception e4){
-				if(is.getDurability() == IronsightsHandler.ironsightsData)
+				if(is.getDurability() == IronsightsUtil.ironsightsData)
 					return true;
 			}
 		return false;
@@ -511,7 +511,7 @@ public class QualityArmory {
 				} else {
 					message = LocalUtils.colorize(message);
 				}
-				HotbarMessager.sendHotBarMessage(p, message);
+				HotbarMessagerUtil.sendHotBarMessage(p, message);
 			} catch (Error | Exception e5) {
 			}
 		}

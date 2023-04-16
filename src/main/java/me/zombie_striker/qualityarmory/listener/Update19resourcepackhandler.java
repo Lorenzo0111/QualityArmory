@@ -1,4 +1,4 @@
-package me.zombie_striker.qualityarmory.handlers;
+package me.zombie_striker.qualityarmory.listener;
 
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;

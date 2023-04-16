@@ -13,7 +13,7 @@ import me.zombie_striker.qualityarmory.guns.Gun;
 import me.zombie_striker.qualityarmory.guns.utils.GunRefillerRunnable;
 import me.zombie_striker.qualityarmory.guns.utils.GunUtil;
 import me.zombie_striker.qualityarmory.handlers.EconHandler;
-import me.zombie_striker.qualityarmory.handlers.IronsightsHandler;
+import me.zombie_striker.qualityarmory.utils.IronsightsUtil;
 import me.zombie_striker.qualityarmory.miscitems.Grenade;
 import me.zombie_striker.qualityarmory.miscitems.MeleeItems;
 import org.bukkit.*;
@@ -130,7 +130,7 @@ public class QAListener implements Listener {
 										.contains(QAMain.S_RELOADING_MESSAGE))
 									return;
 
-								IronsightsHandler.aim(e.getPlayer());
+								IronsightsUtil.aim(e.getPlayer());
 								new BukkitRunnable() {
 									@Override
 									public void run() {
@@ -149,7 +149,7 @@ public class QAListener implements Listener {
 						}
 					}
 				} else {
-					if (IronsightsHandler.isAiming(e.getPlayer())) {
+					if (IronsightsUtil.isAiming(e.getPlayer())) {
 						new BukkitRunnable() {
 
 							@Override
@@ -164,7 +164,7 @@ public class QAListener implements Listener {
 							}
 						}.runTaskLater(QAMain.getInstance(), 5);
 
-						IronsightsHandler.unAim(e.getPlayer());
+						IronsightsUtil.unAim(e.getPlayer());
 						QAMain.DEBUG("Swap gun back to main hand");
 					}
 				}
@@ -584,7 +584,7 @@ public class QAListener implements Listener {
 			if (e.getEntity().getKiller() != null && e.getEntity().getKiller() instanceof Player) {
 				Player killer = e.getEntity().getKiller();
 				if (e.getDeathMessage().contains(" using ")) {
-					CustomBaseObject base = IronsightsHandler.getGunUsed(killer);
+					CustomBaseObject base = IronsightsUtil.getGunUsed(killer);
 					if (base instanceof Gun) {
 						e.setDeathMessage(((Gun) base).getDeathMessage()
 								.replaceAll("%player%", e.getEntity().getDisplayName())
@@ -844,7 +844,7 @@ public class QAListener implements Listener {
 				}.runTaskLater(QAMain.getInstance(), 0);
 			}
 
-			ItemStack usedItem = IronsightsHandler.getItemAiming(e.getPlayer());
+			ItemStack usedItem = IronsightsUtil.getItemAiming(e.getPlayer());
 
 			// Send the resourcepack if the player does not have it.
 			if (QAMain.shouldSend && !QAMain.resourcepackReq.contains(e.getPlayer().getUniqueId())) {
@@ -852,17 +852,17 @@ public class QAListener implements Listener {
 				QualityArmory.sendResourcepack(e.getPlayer(), true);
 			}
 
-			if (IronsightsHandler.isAiming(e.getPlayer())) {
+			if (IronsightsUtil.isAiming(e.getPlayer())) {
 				QAMain.DEBUG("Player is aiming!");
 				try {
 					if ((e.getAction() == Action.RIGHT_CLICK_AIR
 							|| e.getAction() == Action.RIGHT_CLICK_BLOCK) == (QAMain.SWAP_TO_LMB_SHOOT)) {
 						e.setCancelled(true);
-						Gun g = IronsightsHandler.getGunUsed(e.getPlayer());
+						Gun g = IronsightsUtil.getGunUsed(e.getPlayer());
 						QAMain.DEBUG("Swapping " + g.getName() + " from offhand to main hand to reload!");
 						if (GunUtil.rapidfireshooters.containsKey(e.getPlayer().getUniqueId()))
 							GunUtil.rapidfireshooters.remove(e.getPlayer().getUniqueId()).cancel();
-						IronsightsHandler.unAim(e.getPlayer());
+						IronsightsUtil.unAim(e.getPlayer());
 						if (QAMain.enableIronSightsON_RIGHT_CLICK || !e.getPlayer().isSneaking()) {
 							QAMain.toggleNightVision(e.getPlayer(), g, false);
 						}
@@ -873,7 +873,7 @@ public class QAListener implements Listener {
 				}
 			}
 			try {
-				if (!IronsightsHandler.isAiming(e.getPlayer()) && event.getPlayer().getInventory().getItemInOffHand().equals(e.getItem())) {
+				if (!IronsightsUtil.isAiming(e.getPlayer()) && event.getPlayer().getInventory().getItemInOffHand().equals(e.getItem())) {
 					e.setCancelled(true);
 					return;
 				}

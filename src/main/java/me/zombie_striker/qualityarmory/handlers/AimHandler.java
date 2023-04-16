@@ -9,6 +9,7 @@ import me.zombie_striker.qualityarmory.QAMain;
 import me.zombie_striker.qualityarmory.api.QualityArmory;
 import me.zombie_striker.qualityarmory.guns.Gun;
 
+import me.zombie_striker.qualityarmory.interfaces.IHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -18,7 +19,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 
-public class AimManager extends BukkitRunnable implements Listener {
+public class AimHandler extends BukkitRunnable implements Listener, IHandler {
 	private static final Map<UUID, Double> SWAYS = new HashMap<>();
 	private static final Map<UUID, Long> LAST_MOVEMENT = new HashMap<>();
 
@@ -28,8 +29,7 @@ public class AimManager extends BukkitRunnable implements Listener {
 		return gun.getSway()*Math.pow(SWAYS.get(uuid),gun.getMovementMultiplier());
 	}
 	
-	public AimManager() {
-		this.runTaskTimerAsynchronously(QAMain.getInstance(), 10, 10);
+	public AimHandler() {
 	}
 
 	@Override
@@ -77,5 +77,11 @@ public class AimManager extends BukkitRunnable implements Listener {
 	public void onQuit(@NotNull PlayerQuitEvent e) {
 		LAST_MOVEMENT.remove(e.getPlayer().getUniqueId());
 		SWAYS.remove(e.getPlayer().getUniqueId());
+	}
+
+	@Override
+	public void init(QAMain main) {
+		Bukkit.getPluginManager().registerEvents(this,main);
+		this.runTaskTimerAsynchronously(main, 10, 10);
 	}
 }

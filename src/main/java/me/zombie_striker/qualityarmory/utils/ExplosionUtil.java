@@ -1,4 +1,4 @@
-package me.zombie_striker.qualityarmory.handlers;
+package me.zombie_striker.qualityarmory.utils;
 
 import me.zombie_striker.qualityarmory.hooks.protection.ProtectionHandler;
 import org.bukkit.Location;
@@ -6,7 +6,7 @@ import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Entity;
 
 
-public class ExplosionHandler {
+public class ExplosionUtil {
 	public static boolean handleExplosion(Location origin, int radius, int power) {
 		try{
 			if(!ProtectionHandler.canExplode(origin)) {

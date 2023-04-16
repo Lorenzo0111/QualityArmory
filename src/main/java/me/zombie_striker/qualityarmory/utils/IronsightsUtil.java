@@ -1,13 +1,12 @@
-package me.zombie_striker.qualityarmory.handlers;
+package me.zombie_striker.qualityarmory.utils;
 
 import me.zombie_striker.qualityarmory.QAMain;
 import me.zombie_striker.qualityarmory.api.QualityArmory;
 import me.zombie_striker.qualityarmory.guns.Gun;
-import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-public class IronsightsHandler {
+public class IronsightsUtil {
 
 	public static void aim(Player player){
 			if(!QualityArmory.isIronSights(player.getItemInHand())){

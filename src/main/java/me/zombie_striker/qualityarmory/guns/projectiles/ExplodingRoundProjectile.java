@@ -7,8 +7,8 @@ import me.zombie_striker.qualityarmory.QAMain;
 import me.zombie_striker.qualityarmory.guns.Gun;
 import me.zombie_striker.qualityarmory.guns.utils.GunUtil;
 import me.zombie_striker.qualityarmory.guns.utils.WeaponSounds;
-import me.zombie_striker.qualityarmory.handlers.ExplosionHandler;
-import me.zombie_striker.qualityarmory.handlers.ParticleHandlers;
+import me.zombie_striker.qualityarmory.utils.ExplosionUtil;
+import me.zombie_striker.qualityarmory.utils.ParticleUtil;
 
 import org.bukkit.Effect;
 import org.bukkit.GameMode;
@@ -35,7 +35,7 @@ public class ExplodingRoundProjectile implements RealtimeCalculationProjectile {
 				for (int tick = 0; tick < g.getVelocityForRealtimeCalculations(); tick++) {
 					distance--;
 					s.add(dir);
-					ParticleHandlers.spawnGunParticles(g, s);
+					ParticleUtil.spawnGunParticles(g, s);
 					boolean entityNear = false;
 					try {
 						List<Entity> e2 = new ArrayList<>(s.getWorld().getNearbyEntities(s, 1, 1, 1));
@@ -47,8 +47,8 @@ public class ExplodingRoundProjectile implements RealtimeCalculationProjectile {
 					}
 
 					if (GunUtil.isSolid(s.getBlock(), s) || entityNear || distance < 0) {
-						ExplosionHandler.handleAOEExplosion(player, s, g.getDamage(), g.getExplosionRadius());
-						ParticleHandlers.spawnExplosion(s);
+						ExplosionUtil.handleAOEExplosion(player, s, g.getDamage(), g.getExplosionRadius());
+						ParticleUtil.spawnExplosion(s);
 						try {
 							player.getWorld().playSound(s, WeaponSounds.WARHEAD_EXPLODE.getSoundName(), 10, 1.5f);
 							player.getWorld().playSound(s, Sound.ENTITY_GENERIC_EXPLODE, 8, 0.7f);

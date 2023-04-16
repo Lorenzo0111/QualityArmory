@@ -1,4 +1,4 @@
-package me.zombie_striker.qualityarmory.handlers;
+package me.zombie_striker.qualityarmory.utils;
 
 
 import java.lang.reflect.Field;

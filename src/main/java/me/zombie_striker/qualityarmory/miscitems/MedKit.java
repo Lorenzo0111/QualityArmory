@@ -9,7 +9,7 @@ import java.util.UUID;
 import me.zombie_striker.customitemmanager.CustomBaseObject;
 import me.zombie_striker.customitemmanager.CustomItemManager;
 import me.zombie_striker.qualityarmory.api.QualityArmory;
-import me.zombie_striker.qualityarmory.handlers.HotbarMessager;
+import me.zombie_striker.qualityarmory.utils.HotbarMessagerUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -93,14 +93,14 @@ public class MedKit extends CustomBaseObject implements ArmoryBaseObject {
 				levelbar.append(ChatColor.BLACK);
 				levelbar.append(QualityArmory.repeat(":", totalBars - healthBars));
 				try {
-					HotbarMessager.sendHotBarMessage(healer, ChatColor.RED + "[" + levelbar.toString() + ChatColor.RED
+					HotbarMessagerUtil.sendHotBarMessage(healer, ChatColor.RED + "[" + levelbar.toString() + ChatColor.RED
 							+ "] " + new DecimalFormat("##0.#").format((p2 + percent)) + " percent!");
 				} catch (Exception e2) {
 				}
 
 			} else {
 				try {
-					HotbarMessager.sendHotBarMessage(healer, QAMain.S_FULLYHEALED);
+					HotbarMessagerUtil.sendHotBarMessage(healer, QAMain.S_FULLYHEALED);
 				} catch (Error | Exception e5) {
 				}
 			}
@@ -131,7 +131,7 @@ public class MedKit extends CustomBaseObject implements ArmoryBaseObject {
 			levelbar.append(ChatColor.BLACK);
 			levelbar.append(QualityArmory.repeat(":", totalBars - healthBars));
 
-			HotbarMessager.sendHotBarMessage(healer,
+			HotbarMessagerUtil.sendHotBarMessage(healer,
 					ChatColor.RED + QAMain.S_MEDKIT_HEALING + "[" + levelbar.toString() + ChatColor.RED + "] "
 							+ QAMain.S_MEDKIT_BLEEDING + " " + (newRate < 0 ? ChatColor.DARK_RED : ChatColor.GRAY)
 							+ new DecimalFormat("##0.##").format(newRate) + ChatColor.GRAY + "+"

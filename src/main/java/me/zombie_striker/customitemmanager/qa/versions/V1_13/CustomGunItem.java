@@ -10,7 +10,7 @@ import me.zombie_striker.qualityarmory.guns.Gun;
 import me.zombie_striker.qualityarmory.guns.projectiles.ProjectileManager;
 import me.zombie_striker.qualityarmory.guns.utils.WeaponSounds;
 import me.zombie_striker.qualityarmory.guns.utils.WeaponType;
-import me.zombie_striker.qualityarmory.handlers.IronsightsHandler;
+import me.zombie_striker.qualityarmory.utils.IronsightsUtil;
 import me.zombie_striker.qualityarmory.guns.chargers.ChargingManager;
 import me.zombie_striker.qualityarmory.guns.reloaders.ReloadingManager;
 import org.bukkit.Bukkit;
@@ -105,16 +105,16 @@ public class CustomGunItem extends AbstractCustomGunItem {
 		if(!ironconfig.contains("displayname")){
 			ironconfig.set("material",Material.DIAMOND_AXE.name());
 			ironconfig.set("id",21);
-			ironconfig.set("displayname",IronsightsHandler.ironsightsDisplay);
+			ironconfig.set("displayname", IronsightsUtil.ironsightsDisplay);
 			try {
 				ironconfig.save(ironsights);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
-		IronsightsHandler.ironsightsMaterial = Material.matchMaterial(ironconfig.getString("material"));
-		IronsightsHandler.ironsightsData = ironconfig.getInt("id");
-		IronsightsHandler.ironsightsDisplay = ironconfig.getString("displayname");
+		IronsightsUtil.ironsightsMaterial = Material.matchMaterial(ironconfig.getString("material"));
+		IronsightsUtil.ironsightsData = ironconfig.getInt("id");
+		IronsightsUtil.ironsightsDisplay = ironconfig.getString("displayname");
 	}
 
 	@Override

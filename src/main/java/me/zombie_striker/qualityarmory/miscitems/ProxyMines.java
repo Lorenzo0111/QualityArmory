@@ -4,7 +4,7 @@ import me.zombie_striker.customitemmanager.MaterialStorage;
 import me.zombie_striker.qualityarmory.QAMain;
 import me.zombie_striker.qualityarmory.api.events.QAThrowableExplodeEvent;
 import me.zombie_striker.qualityarmory.guns.utils.WeaponSounds;
-import me.zombie_striker.qualityarmory.handlers.ExplosionHandler;
+import me.zombie_striker.qualityarmory.utils.ExplosionUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Effect;
 import org.bukkit.Sound;
@@ -77,7 +77,7 @@ public class ProxyMines extends Grenade {
 						if (QAMain.enableExplosionDamage) {
 							QAThrowableExplodeEvent event = new QAThrowableExplodeEvent(ProxyMines.this, h.getHolder().getLocation());
 							Bukkit.getPluginManager().callEvent(event);
-							if (!event.isCancelled()) ExplosionHandler.handleExplosion(h.getHolder().getLocation(), Math.toIntExact(Math.round(radius/2)), 1);
+							if (!event.isCancelled()) ExplosionUtil.handleExplosion(h.getHolder().getLocation(), Math.toIntExact(Math.round(radius/2)), 1);
 							QAMain.DEBUG("Using default explosions");
 						}
 						try {

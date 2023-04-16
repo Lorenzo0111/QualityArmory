@@ -9,8 +9,8 @@ import me.zombie_striker.qualityarmory.api.QualityArmory;
 import me.zombie_striker.qualityarmory.guns.Gun;
 import me.zombie_striker.qualityarmory.guns.utils.GunUtil;
 import me.zombie_striker.qualityarmory.guns.utils.WeaponSounds;
-import me.zombie_striker.qualityarmory.handlers.ExplosionHandler;
-import me.zombie_striker.qualityarmory.handlers.ParticleHandlers;
+import me.zombie_striker.qualityarmory.utils.ExplosionUtil;
+import me.zombie_striker.qualityarmory.utils.ParticleUtil;
 
 import org.bukkit.*;
 import org.bukkit.block.Block;
@@ -48,7 +48,7 @@ public class HomingRocketProjectile implements RealtimeCalculationProjectile {
 							}
 						}
 					}
-					ParticleHandlers.spawnGunParticles(g, RPGLOCATION);
+					ParticleUtil.spawnGunParticles(g, RPGLOCATION);
 					try {
 						player.getWorld().playSound(RPGLOCATION, MultiVersionLookup.getDragonGrowl(), 1, 2f);
 
@@ -71,7 +71,7 @@ public class HomingRocketProjectile implements RealtimeCalculationProjectile {
 						if (QAMain.enableExplosionDamage) {
 							QAProjectileExplodeEvent event = new QAProjectileExplodeEvent(HomingRocketProjectile.this, RPGLOCATION);
 							Bukkit.getPluginManager().callEvent(event);
-							if (!event.isCancelled()) ExplosionHandler.handleExplosion(RPGLOCATION, 4, 2);
+							if (!event.isCancelled()) ExplosionUtil.handleExplosion(RPGLOCATION, 4, 2);
 						}
 						try {
 							player.getWorld().playSound(RPGLOCATION, WeaponSounds.WARHEAD_EXPLODE.getName(), 10, 0.9f);
@@ -82,7 +82,7 @@ public class HomingRocketProjectile implements RealtimeCalculationProjectile {
 							RPGLOCATION.getWorld().playEffect(RPGLOCATION, Effect.valueOf("CLOUD"), 0);
 							player.getWorld().playSound(RPGLOCATION, Sound.valueOf("EXPLODE"), 8, 0.7f);
 						}
-						ExplosionHandler.handleAOEExplosion(player, RPGLOCATION, g.getDamage(), g.getExplosionRadius());
+						ExplosionUtil.handleAOEExplosion(player, RPGLOCATION, g.getDamage(), g.getExplosionRadius());
 						cancel();
 						return;
 					}

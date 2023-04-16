@@ -1,4 +1,4 @@
-package me.zombie_striker.qualityarmory.handlers;
+package me.zombie_striker.qualityarmory.utils;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
