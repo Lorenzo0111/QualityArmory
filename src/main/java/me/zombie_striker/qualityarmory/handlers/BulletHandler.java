@@ -46,6 +46,8 @@ public class BulletHandler implements IHandler, ISettingsReloader {
         for (Entity entity : center.getWorld().getNearbyEntities(center, bullet.getSpeed(), bullet.getSpeed(), bullet.getSpeed())) {
             if (!(entity instanceof Damageable))
                 continue;
+            if (entity.getUniqueId().equals(bullet.getShooter()))
+                continue;
             AbstractBoundingBox abstractBoundingBox = BoundingBoxManager.getBoundingBox(entity);
 
             double distanceToEntity = bullet.getBulletLocation().distance(entity.getLocation());
@@ -54,7 +56,7 @@ public class BulletHandler implements IHandler, ISettingsReloader {
             if (closestDistance > distanceToEntity) {
                 if (proposedLocationOfMob.distanceSquared(entity.getLocation()) < abstractBoundingBox.maximumCheckingDistance(entity)) {
                     if (abstractBoundingBox.intersects(null, proposedLocationOfMob, entity)) {
-                        headshot = abstractBoundingBox.allowsHeadshots()&&abstractBoundingBox.intersectsHead(proposedLocationOfMob,entity);
+                        headshot = abstractBoundingBox.allowsHeadshots() && abstractBoundingBox.intersectsHead(proposedLocationOfMob, entity);
                         closestEntity = entity;
                         closestDistance = distanceToEntity;
                     }
@@ -63,9 +65,9 @@ public class BulletHandler implements IHandler, ISettingsReloader {
         }
 
         if (closestEntity != null) {
-            if(headshot){
-                ((Damageable) closestEntity).damage(bullet.getDamage()*headshotMultiplier);
-            }else {
+            if (headshot) {
+                ((Damageable) closestEntity).damage(bullet.getDamage() * headshotMultiplier);
+            } else {
                 ((Damageable) closestEntity).damage(bullet.getDamage());
             }
         }
@@ -105,6 +107,6 @@ public class BulletHandler implements IHandler, ISettingsReloader {
 
     @Override
     public void reloadSettings(QAMain main) {
-        this.headshotMultiplier= (float) qaMain.getSettingIfPresent(ConfigKey.SETTING_HEADSHOT_MULTIPLIER.getKey(),2.0);
+        this.headshotMultiplier = (float) qaMain.getSettingIfPresent(ConfigKey.SETTING_HEADSHOT_MULTIPLIER.getKey(), 2.0);
     }
 }

@@ -35,4 +35,8 @@ public class CustomBaseObject {
 	public UUID getUuid() {
 		return uuid;
 	}
+
+	public Object getData(String key) {
+		return this.data.get(key);
+	}
 }

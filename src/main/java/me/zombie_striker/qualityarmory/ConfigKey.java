@@ -5,6 +5,8 @@ public enum ConfigKey {
     CUSTOMITEM_AMMOTYPE("ammoType"),
     CUSTOMITEM_LORE("lore"),
     CUSTOMITEM_DISPLAYNAME("displayname"),
+    CUSTOMITEM_DAMAGE("bulletDamage"),
+    CUSTOMITEM_SPEED("bulletSpeed"),
 
 
     SETTING_ENABLEDCRAFTING("enableCraftingWeapons"),

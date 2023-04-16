@@ -15,6 +15,6 @@ public class Gun extends CustomBaseObject implements Comparable<Gun> {
 
 	@Override
 	public int compareTo(@NotNull Gun o) {
-		return 0;
+		return this.getName().compareTo(o.getName());
 	}
 }

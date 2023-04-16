@@ -9,10 +9,7 @@ import me.zombie_striker.qualityarmory.boundingbox.BoundingBoxManager;
 import me.zombie_striker.qualityarmory.commands.QualityArmoryCommand;
 import me.zombie_striker.qualityarmory.config.CommentYamlConfiguration;
 import me.zombie_striker.qualityarmory.config.MessagesYML;
-import me.zombie_striker.qualityarmory.handlers.BulletHandler;
-import me.zombie_striker.qualityarmory.handlers.BulletSwayHandler;
-import me.zombie_striker.qualityarmory.handlers.ChestShopHandler;
-import me.zombie_striker.qualityarmory.handlers.EconHandler;
+import me.zombie_striker.qualityarmory.handlers.*;
 import me.zombie_striker.qualityarmory.hooks.MimicHookHandler;
 import me.zombie_striker.qualityarmory.hooks.PlaceholderAPIHook;
 import me.zombie_striker.qualityarmory.hooks.QuickShopHook;
@@ -21,6 +18,7 @@ import me.zombie_striker.qualityarmory.hooks.anticheat.MatrixHook;
 import me.zombie_striker.qualityarmory.hooks.anticheat.VulcanHook;
 import me.zombie_striker.qualityarmory.hooks.protection.ProtectionHandler;
 import me.zombie_striker.qualityarmory.interfaces.IEconomy;
+import me.zombie_striker.qualityarmory.interfaces.IHandler;
 import me.zombie_striker.qualityarmory.interfaces.ISettingsReloader;
 import me.zombie_striker.qualityarmory.listener.QAListener;
 import me.zombie_striker.qualityarmory.npcs.Gunner;
@@ -89,10 +87,6 @@ public class QAMain extends JavaPlugin {
      */
     private final List<ISettingsReloader> reloadableSettingsInstances = new LinkedList<>();
 
-    /**
-     * Handlers for different plugins. Things like Vault.
-     */
-    private IEconomy economyHandler;
 
     public MessagesYML messagesYml;
     public CommentYamlConfiguration resourcepackwhitelist;
@@ -114,9 +108,13 @@ public class QAMain extends JavaPlugin {
     private boolean hasViaVersion;
     private boolean hasProtocolLib;
     private boolean hasVault;
+
+    private IEconomy economyHandler;
     private BulletSwayHandler bulletSwayHandler;
     private BlockCollisionUtil blockCollisionHandler;
     private BulletHandler bulletHandler;
+    private GunDataHandler gunDataHandler;
+    private final List<IHandler> handlers = new ArrayList<>();
 
     public BulletHandler getBulletHandler() {
         return bulletHandler;
@@ -332,8 +330,7 @@ public class QAMain extends JavaPlugin {
         } catch (Error | Exception e4) {
         }
 
-        if (Bukkit.getPluginManager().isPluginEnabled("ChestShop"))
-            Bukkit.getPluginManager().registerEvents(new ChestShopHandler(), this);
+        if (Bukkit.getPluginManager().isPluginEnabled("ChestShop")) this.handlers.add(new ChestShopHandler());
 
         QualityArmoryCommand qac = new QualityArmoryCommand(this);
         getCommand("QualityArmory").setExecutor(qac);
@@ -343,9 +340,12 @@ public class QAMain extends JavaPlugin {
         this.reloadableSettingsInstances.add(qaListener);
         Bukkit.getPluginManager().registerEvents(qaListener, this);
 
-        this.bulletSwayHandler = new BulletSwayHandler();
-        this.blockCollisionHandler = new BlockCollisionUtil();
-        this.bulletHandler = new BulletHandler(this);
+        this.handlers.add(this.bulletSwayHandler = new BulletSwayHandler());
+        this.handlers.add(this.blockCollisionHandler = new BlockCollisionUtil());
+        this.handlers.add(this.bulletHandler = new BulletHandler(this));
+        this.handlers.add(this.gunDataHandler = new GunDataHandler());
+
+        this.handlers.add(new InvisibleBlockForAutomaticHandler());
 
         try {
             if ((boolean) getSettingIfPresent("autoUpdate", true))
@@ -356,6 +356,9 @@ public class QAMain extends JavaPlugin {
         Metrics metrics = new Metrics(this, 1699);
 
 
+        for (IHandler handler : handlers) {
+            handler.init(this);
+        }
     }
 
     @SuppressWarnings({"unchecked", "deprecation"})
@@ -566,5 +569,13 @@ public class QAMain extends JavaPlugin {
 
     public IEconomy getEconHandler() {
         return economyHandler;
+    }
+
+    public List<IHandler> getHandlers() {
+        return handlers;
+    }
+
+    public GunDataHandler getGunDataHandler() {
+        return gunDataHandler;
     }
 }
