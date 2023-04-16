@@ -9,7 +9,8 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.*;
-import java.util.*;
+import java.util.Map;
+import java.util.Objects;
 import java.util.logging.Level;
  
 public class CommentYamlConfiguration extends YamlConfiguration {

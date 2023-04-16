@@ -2,7 +2,7 @@ package me.zombie_striker.qualityarmory.miscitems;
 
 import me.zombie_striker.customitemmanager.MaterialStorage;
 import me.zombie_striker.qualityarmory.QAMain;
-import me.zombie_striker.qualityarmory.guns.utils.WeaponSounds;
+import me.zombie_striker.qualityarmory.guns.WeaponSounds;
 import me.zombie_striker.qualityarmory.hooks.protection.ProtectionHandler;
 import org.bukkit.Effect;
 import org.bukkit.Particle;

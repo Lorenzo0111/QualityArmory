@@ -1,30 +1,30 @@
 package me.zombie_striker.qualityarmory.config;
 
+import me.zombie_striker.qualityarmory.QAMain;
+import org.bukkit.configuration.file.FileConfiguration;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
-
-import me.zombie_striker.qualityarmory.QAMain;
-import org.bukkit.configuration.file.FileConfiguration;
 
 public class MessagesYML {
 
 	private FileConfiguration c;
 	private File s;
 
-	public MessagesYML(File f) {
-		this(null, f);
+	public MessagesYML(QAMain main, File f) {
+		this(main, null, f);
 	}
 
-	public MessagesYML(String id, File f) {
+	public MessagesYML(QAMain main,String id, File f) {
 		s = f;
 		if (!f.getParentFile().exists()) {
 			f.getParentFile().mkdirs();
 		}
 
 		if(!s.exists()) {
-			try (InputStream stream = QAMain.getInstance().getResource("lang/messages_" + id + ".yml")) {
+			try (InputStream stream = main.getResource("lang/messages_" + id + ".yml")) {
 				if (stream == null) {
 					createFile();
 				} else {

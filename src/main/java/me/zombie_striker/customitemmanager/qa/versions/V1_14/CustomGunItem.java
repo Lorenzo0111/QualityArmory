@@ -1,6 +1,8 @@
 package me.zombie_striker.customitemmanager.qa.versions.V1_14;
 
-import me.zombie_striker.customitemmanager.*;
+import me.zombie_striker.customitemmanager.CustomBaseObject;
+import me.zombie_striker.customitemmanager.CustomItemManager;
+import me.zombie_striker.customitemmanager.MaterialStorage;
 import me.zombie_striker.customitemmanager.qa.AbstractCustomGunItem;
 import me.zombie_striker.qualityarmory.QAMain;
 import me.zombie_striker.qualityarmory.ammo.Ammo;
@@ -8,12 +10,12 @@ import me.zombie_striker.qualityarmory.api.QualityArmory;
 import me.zombie_striker.qualityarmory.armor.ArmorObject;
 import me.zombie_striker.qualityarmory.config.GunYMLCreator;
 import me.zombie_striker.qualityarmory.guns.Gun;
+import me.zombie_striker.qualityarmory.guns.WeaponSounds;
+import me.zombie_striker.qualityarmory.guns.chargers.ChargingManager;
 import me.zombie_striker.qualityarmory.guns.projectiles.ProjectileManager;
-import me.zombie_striker.qualityarmory.guns.utils.WeaponSounds;
+import me.zombie_striker.qualityarmory.guns.reloaders.ReloadingManager;
 import me.zombie_striker.qualityarmory.guns.utils.WeaponType;
 import me.zombie_striker.qualityarmory.utils.IronsightsUtil;
-import me.zombie_striker.qualityarmory.guns.chargers.ChargingManager;
-import me.zombie_striker.qualityarmory.guns.reloaders.ReloadingManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -26,7 +28,10 @@ import org.bukkit.inventory.meta.SkullMeta;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 public class CustomGunItem extends AbstractCustomGunItem {
 

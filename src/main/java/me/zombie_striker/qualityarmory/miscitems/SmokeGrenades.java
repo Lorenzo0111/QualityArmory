@@ -1,7 +1,8 @@
 package me.zombie_striker.qualityarmory.miscitems;
 
-import java.util.List;
-
+import me.zombie_striker.customitemmanager.MaterialStorage;
+import me.zombie_striker.qualityarmory.QAMain;
+import me.zombie_striker.qualityarmory.guns.WeaponSounds;
 import me.zombie_striker.qualityarmory.hooks.protection.ProtectionHandler;
 import org.bukkit.Effect;
 import org.bukkit.Sound;
@@ -14,9 +15,7 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import me.zombie_striker.qualityarmory.QAMain;
-import me.zombie_striker.customitemmanager.MaterialStorage;
-import me.zombie_striker.qualityarmory.guns.utils.WeaponSounds;
+import java.util.List;
 
 public class SmokeGrenades extends Grenade {
 

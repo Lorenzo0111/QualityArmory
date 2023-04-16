@@ -1,5 +1,9 @@
 package me.zombie_striker.qualityarmory.npcs_sentinel;
 
+import me.zombie_striker.qualityarmory.QAMain;
+import me.zombie_striker.qualityarmory.api.QualityArmory;
+import me.zombie_striker.qualityarmory.guns.Gun;
+import me.zombie_striker.qualityarmory.guns.utils.GunUtil;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -7,11 +11,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.util.Vector;
 import org.mcmonkey.sentinel.SentinelIntegration;
 import org.mcmonkey.sentinel.SentinelTrait;
-
-import me.zombie_striker.qualityarmory.QAMain;
-import me.zombie_striker.qualityarmory.api.QualityArmory;
-import me.zombie_striker.qualityarmory.guns.Gun;
-import me.zombie_striker.qualityarmory.guns.utils.GunUtil;
 
 import java.util.HashMap;
 import java.util.UUID;
@@ -29,13 +28,13 @@ public class SentinelQAHandler extends SentinelIntegration {
 	@SuppressWarnings("deprecation")
 	@Override
 	public boolean tryAttack(SentinelTrait st, LivingEntity ent) {
-		QAMain.DEBUG("Sentinel about to shoot!");
+		QualityArmory.getInstance().DEBUG("Sentinel about to shoot!");
 		if (!(st.getLivingEntity() instanceof Player)) {
 			return false;
 		}
 		ItemStack itm = ((Player) st.getLivingEntity()).getItemInHand();
-		Gun g = QualityArmory.getGun(itm);
-		QAMain.DEBUG("Getting gun! gun = "+g);
+		Gun g = QualityArmory.getInstance().getGun(itm);
+		QualityArmory.getInstance().DEBUG("Getting gun! gun = "+g);
 		if (g == null)
 			return false;
 		// CSDirector direc = (CSDirector)
@@ -88,7 +87,7 @@ public class SentinelQAHandler extends SentinelIntegration {
 		}
 
 		GunUtil.playShoot(g, (Player) st.getLivingEntity());
-		QAMain.DEBUG("Sentinel shooting!");
+		QualityArmory.getInstance().DEBUG("Sentinel shooting!");
 		if(st.needsAmmo){
 			int amount = Gun.getAmount((Player) st.getLivingEntity()) - 1;
 			ItemMeta im = itm.getItemMeta();
@@ -99,7 +98,7 @@ public class SentinelQAHandler extends SentinelIntegration {
 		 ((Player) st.getLivingEntity()).setItemInHand(itm);
 		if (st.rangedChase) {
 			st.attackHelper.rechase();
-			QAMain.DEBUG("Sentinel rechase");
+			QualityArmory.getInstance().DEBUG("Sentinel rechase");
 		}
 		return true;
 	}

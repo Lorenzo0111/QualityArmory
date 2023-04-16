@@ -1,17 +1,17 @@
 package me.zombie_striker.qualityarmory.npcs;
 
 import me.zombie_striker.customitemmanager.CustomItemManager;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Player;
-
 import me.zombie_striker.qualityarmory.QAMain;
+import me.zombie_striker.qualityarmory.api.QualityArmory;
 import me.zombie_striker.qualityarmory.guns.Gun;
 import me.zombie_striker.qualityarmory.npcs.goals.Gunnergoal;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.npc.skin.SkinnableEntity;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Player;
 
 public class Gunner {
 
@@ -29,7 +29,7 @@ public class Gunner {
 		// new BukkitRunnable() {
 		// @Override
 		// public void run() {
-		Gun g = me.zombie_striker.qualityarmory.api.QualityArmory.getGunByName(gun);
+		Gun g = QualityArmory.getInstance().getGunByName(gun);
 		if (g == null) {
 			Bukkit.broadcastMessage("gun is null");
 		} else {

@@ -1,10 +1,10 @@
 package me.zombie_striker.qualityarmory.boundingbox;
 
-import java.util.HashMap;
-import java.util.UUID;
-
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+
+import java.util.HashMap;
+import java.util.UUID;
 
 public class BoundingBoxManager {
 

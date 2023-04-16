@@ -1,12 +1,13 @@
 package me.zombie_striker.qualityarmory.miscitems;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import me.zombie_striker.customitemmanager.CustomBaseObject;
 import me.zombie_striker.customitemmanager.CustomItemManager;
+import me.zombie_striker.customitemmanager.MaterialStorage;
+import me.zombie_striker.qualityarmory.QAMain;
 import me.zombie_striker.qualityarmory.api.events.QAThrowableExplodeEvent;
+import me.zombie_striker.qualityarmory.guns.WeaponSounds;
 import me.zombie_striker.qualityarmory.hooks.protection.ProtectionHandler;
+import me.zombie_striker.qualityarmory.utils.ExplosionUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Effect;
 import org.bukkit.GameMode;
@@ -18,10 +19,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import me.zombie_striker.qualityarmory.QAMain;
-import me.zombie_striker.customitemmanager.MaterialStorage;
-import me.zombie_striker.qualityarmory.guns.utils.WeaponSounds;
-import me.zombie_striker.qualityarmory.utils.ExplosionUtil;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Grenade extends CustomBaseObject implements ThrowableItems {
 	private static final List<Entity> GRENADES = new ArrayList<>();

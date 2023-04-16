@@ -1,16 +1,11 @@
 package me.zombie_striker.qualityarmory.npcs.goals;
 
+import net.citizensnpcs.api.ai.*;
 import net.citizensnpcs.api.ai.event.CancelReason;
+import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.util.Vector;
-
-import net.citizensnpcs.api.ai.EntityTarget;
-import net.citizensnpcs.api.ai.Navigator;
-import net.citizensnpcs.api.ai.NavigatorParameters;
-import net.citizensnpcs.api.ai.PathStrategy;
-import net.citizensnpcs.api.ai.TargetType;
-import net.citizensnpcs.api.npc.NPC;
 
 import java.util.function.Function;
 
