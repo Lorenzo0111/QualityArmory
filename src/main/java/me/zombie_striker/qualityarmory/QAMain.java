@@ -115,6 +115,7 @@ public class QAMain extends JavaPlugin {
     private BulletHandler bulletHandler;
     private GunDataHandler gunDataHandler;
     private ControlHandler controlHandler;
+    private KeyFrameGunHandler keyFrameGunHandler;
     private final List<IHandler> handlers = new ArrayList<>();
 
     public BulletHandler getBulletHandler() {
@@ -346,6 +347,7 @@ public class QAMain extends JavaPlugin {
         this.handlers.add(this.bulletHandler = new BulletHandler(this));
         this.handlers.add(this.gunDataHandler = new GunDataHandler());
         this.handlers.add(this.controlHandler = new ControlHandler());
+        this.handlers.add(this.keyFrameGunHandler = new KeyFrameGunHandler());
 
         this.handlers.add(new InvisibleBlockForAutomaticHandler());
 
@@ -579,5 +581,13 @@ public class QAMain extends JavaPlugin {
 
     public GunDataHandler getGunDataHandler() {
         return gunDataHandler;
+    }
+
+    public ControlHandler getControlHandler() {
+        return controlHandler;
+    }
+
+    public KeyFrameGunHandler getKeyFrameGunHandler() {
+        return keyFrameGunHandler;
     }
 }

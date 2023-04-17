@@ -9,6 +9,8 @@ public enum ConfigKey {
     CUSTOMITEM_SPEED("bulletSpeed"),
     CUSTOMITEM_AUTOMATIC_FIRING("isAutomaticFiring"),
     CUSTOMITEM_BULLETS_PER_SECOND("bulletsPerSecond"),
+    CUSTOMITEM_RELOAD_SEQUENTIALLY("reloadOneBulletAtATime"),
+    CUSTOMITEM_RELOAD_TIME("reloadTimeInTicks"),
 
 
     SETTING_ENABLEDCRAFTING("enableCraftingWeapons"),
