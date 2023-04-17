@@ -12,6 +12,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
@@ -90,13 +91,36 @@ public class ControlHandler implements IHandler, Listener {
             return;
         if(QualityArmory.getInstance().isGun(event.getPlayer().getInventory().getItemInMainHand())){
             Gun gun = QualityArmory.getInstance().getGun(event.getPlayer().getInventory().getItemInMainHand());
+            event.setCancelled(true);
             if(event.getAction()== Action.LEFT_CLICK_AIR||event.getAction()==Action.LEFT_CLICK_BLOCK) {
                 if ((boolean) gun.getData(ConfigKey.CUSTOMITEM_AUTOMATIC_FIRING.getKey())) {
                     triggerRapidFire(event.getPlayer(), 20 / ((int) gun.getData(ConfigKey.CUSTOMITEM_BULLETS_PER_SECOND.getKey())));
                 } else {
                     triggerShoot(event.getPlayer());
                 }
+            }else if(event.getAction()==Action.RIGHT_CLICK_AIR||event.getAction()==Action.RIGHT_CLICK_BLOCK){
+                UUID gunuuid = qaMain.getGunDataHandler().getGunID(event.getPlayer().getInventory().getItemInMainHand());
+                if(qaMain.getGunDataHandler().isPlayingAnimation(gunuuid)){
+                    return;
+                }
+                /**
+                 * TODO: Toggle Scope
+                 */
             }
+        }
+    }
+    @EventHandler
+    public void onSwap(PlayerSwapHandItemsEvent event){
+        if(event.getPlayer().getInventory().getItemInMainHand()==null)
+            return;
+        if(QualityArmory.getInstance().isGun(event.getPlayer().getInventory().getItemInMainHand())) {
+            Gun gun = QualityArmory.getInstance().getGun(event.getPlayer().getInventory().getItemInMainHand());
+            event.setCancelled(true);
+            UUID gunuuid = qaMain.getGunDataHandler().getGunID(event.getPlayer().getInventory().getItemInMainHand());
+            if(qaMain.getGunDataHandler().isPlayingAnimation(gunuuid)){
+                return;
+            }
+            qaMain.getGunDataHandler().playAnimation(event.getPlayer(),gunuuid, (String) gun.getData(ConfigKey.CUSTOMITEM_RELOAD_ANIMATION.getKey()),event.getPlayer().getInventory().getHeldItemSlot());
         }
     }
 }

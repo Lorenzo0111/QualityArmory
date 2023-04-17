@@ -67,7 +67,7 @@ public class KeyFrameGunHandler implements IHandler {
     }
 
     private void generateAnimations(File keyframeFolder) {
-        new AnimationBuilder(keyframeFolder, "reload_single", 20).setAction(0,AnimationGunAction.CANCEL_IF_AMMO_FULL).setSound(1, WeaponSounds.RELOAD_BULLET.getSoundName()).setAction(20, AnimationGunAction.INCREMENT_BULLET).save();
+        new AnimationBuilder(keyframeFolder, "reload_single", 5).setAction(0,AnimationGunAction.CANCEL_IF_AMMO_FULL).setSound(1, WeaponSounds.RELOAD_BULLET.getSoundName()).setAction(5, AnimationGunAction.INCREMENT_BULLET).save();
         new AnimationBuilder(keyframeFolder, "reload_ak", 60).setAction(0,AnimationGunAction.CANCEL_IF_AMMO_FULL).setAction(1,AnimationGunAction.DROP_ALL_AMMO).setSound(1, WeaponSounds.RELOAD_AK47.getSoundName()).setSound(40, WeaponSounds.RELOAD_MAG_IN.getSoundName()).setSound(60, WeaponSounds.RELOAD_MAG_CLICK.getSoundName()).setAction(60, AnimationGunAction.RELOAD_ALL).save();
         new AnimationBuilder(keyframeFolder, "reload_default", 60).setAction(0,AnimationGunAction.CANCEL_IF_AMMO_FULL).setAction(1,AnimationGunAction.DROP_ALL_AMMO).setSound(1, WeaponSounds.RELOAD_MAG_OUT.getSoundName()).setSound(40, WeaponSounds.RELOAD_MAG_IN.getSoundName()).setSound(60, WeaponSounds.RELOAD_MAG_CLICK.getSoundName()).setAction(60, AnimationGunAction.RELOAD_ALL).save();
 

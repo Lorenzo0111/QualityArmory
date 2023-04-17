@@ -12,6 +12,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
@@ -22,7 +23,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-public class GunDataHandler implements IHandler {
+public class GunDataHandler implements IHandler, Listener {
 
     private final HashMap<UUID, Integer> gunBulletCount = new HashMap<>();
     private final HashMap<UUID, Ammo> ammoUsedPerGun = new HashMap<>();
