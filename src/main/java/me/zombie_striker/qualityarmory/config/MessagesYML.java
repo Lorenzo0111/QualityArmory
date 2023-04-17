@@ -2,6 +2,7 @@ package me.zombie_striker.qualityarmory.config;
 
 import me.zombie_striker.qualityarmory.QAMain;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Player;
 
 import java.io.File;
 import java.io.IOException;
@@ -40,8 +41,15 @@ public class MessagesYML {
 			e.printStackTrace();
 		}
 	}
+	public String addPlaceHolders(String message, Object... replaceWithArray){
+		String result = message;
+		for(int i = 0; i < replaceWithArray.length;i+=2){
+			result=result.replaceAll((String) replaceWithArray[i], (String) replaceWithArray[i+1]);
+		}
+		return result;
+	}
 
-	public Object a(String path, Object val){
+	public Object getOrSet(String path, Object val){
 		if(!c.contains(path)){
 			c.set(path, val);
 			save();

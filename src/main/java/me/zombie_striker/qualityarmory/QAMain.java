@@ -88,10 +88,10 @@ public class QAMain extends JavaPlugin {
     private final List<ISettingsReloader> reloadableSettingsInstances = new LinkedList<>();
 
 
-    public MessagesYML messagesYml;
+    private MessagesYML messagesYml;
     public CommentYamlConfiguration resourcepackwhitelist;
-    public String language = "en";
-    public List<Scoreboard> coloredGunScoreboard = new ArrayList<Scoreboard>();
+    private String language = "en";
+    private List<Scoreboard> coloredGunScoreboard = new ArrayList<Scoreboard>();
 
     static {
         String name = Bukkit.getServer().getClass().getName();
@@ -382,7 +382,7 @@ public class QAMain extends JavaPlugin {
         }
         langFolder.mkdir();
         messagesYml = new MessagesYML(this, language, new File(langFolder, "message_" + language + ".yml"));
-        prefix = LocalUtils.colorize((String) messagesYml.a("Prefix", prefix));
+        prefix = LocalUtils.colorize((String) messagesYml.getOrSet("Prefix", prefix));
 
         resourcepackwhitelist = CommentYamlConfiguration.loadConfiguration(new File(getDataFolder(), "resourcepackwhitelist.yml"));
         namesToBypass = (List<String>) resourcepackwhitelist.getOrSet("Names_Of_players_to_bypass", namesToBypass);
@@ -589,5 +589,9 @@ public class QAMain extends JavaPlugin {
 
     public KeyFrameGunHandler getKeyFrameGunHandler() {
         return keyFrameGunHandler;
+    }
+
+    public MessagesYML getMessagesYml() {
+        return messagesYml;
     }
 }

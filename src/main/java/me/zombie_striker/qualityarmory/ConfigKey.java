@@ -16,7 +16,8 @@ public enum ConfigKey {
     SETTING_ENABLEDCRAFTING("enableCraftingWeapons"),
     SETTING_ENABLESHOP("enableShopCommand"),
     SETTING_DEBUG("enableDebugMessages"),
-    SETTING_HEADSHOT_MULTIPLIER("headshotMultiplier")
+    SETTING_HEADSHOT_MULTIPLIER("headshotMultiplier"),
+    SETTING_KICK_IF_RESOURCEPACK_NOT_ACCEPT("kickIfDeclineResourcepack")
     ;
 
     private final String key;
