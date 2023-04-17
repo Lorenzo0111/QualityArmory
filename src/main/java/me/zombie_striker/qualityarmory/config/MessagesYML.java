@@ -13,10 +13,6 @@ public class MessagesYML {
 	private FileConfiguration c;
 	private File s;
 
-	public MessagesYML(QAMain main, File f) {
-		this(main, null, f);
-	}
-
 	public MessagesYML(QAMain main,String id, File f) {
 		s = f;
 		if (!f.getParentFile().exists()) {
