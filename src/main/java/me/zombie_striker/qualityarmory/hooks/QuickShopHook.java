@@ -24,7 +24,7 @@ public class QuickShopHook implements Listener {
         if(protectionCheckingLocation != null && event.getBlock().getLocation().equals(protectionCheckingLocation)) {
             protectionCheckingLocation = null;
 
-            if (QualityArmory.isCustomItem(event.getPlayer().getInventory().getItemInMainHand()))
+            if (QualityArmory.getInstance().isCustomItem(event.getPlayer().getInventory().getItemInMainHand()))
                 event.setCancelled(false);
         }
     }

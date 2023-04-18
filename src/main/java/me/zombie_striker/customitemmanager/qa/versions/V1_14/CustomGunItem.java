@@ -52,7 +52,7 @@ public class CustomGunItem extends AbstractCustomGunItem {
 
 	@Override
 	public ItemStack getItem(MaterialStorage ms) {
-		CustomBaseObject base = QualityArmory.getCustomItem(ms);
+		CustomBaseObject base = QualityArmory.getInstance().getCustomItem(ms);
 		if(base==null)
 			return null;
 		String displayname = base.getDisplayName();
@@ -121,8 +121,6 @@ public class CustomGunItem extends AbstractCustomGunItem {
 			}
 			is.setItemMeta(im);
 		} else {
-			QAMain.getInstance().getLogger()
-					.warning(QAMain.prefix + " ItemMeta is null for " + base.getName() + ". I have");
 		}
 		is.setAmount(1);
 		return is;
@@ -130,27 +128,11 @@ public class CustomGunItem extends AbstractCustomGunItem {
 
 	@Override
 	public boolean isCustomItem(ItemStack is) {
-		return QualityArmory.isCustomItem(is);
+		return QualityArmory.getInstance().isCustomItem(is);
 	}
 
 	@Override
 	public void initIronsights(File dataFolder) {
-		File ironsights = new File(dataFolder, "default_ironsightstoggleitem.yml");
-		YamlConfiguration ironconfig = YamlConfiguration.loadConfiguration(ironsights);
-		if (!ironconfig.contains("displayname")) {
-			ironconfig.set("material", Material.CROSSBOW.name());
-			ironconfig.set("id", 68);
-			ironconfig.set("displayname", IronsightsUtil.ironsightsDisplay);
-			try {
-				ironconfig.save(ironsights);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-		IronsightsUtil.ironsightsMaterial = Material.matchMaterial(ironconfig.getString("material"));
-		IronsightsUtil.ironsightsData = ironconfig.getInt("id");
-		IronsightsUtil.ironsightsDisplay = ironconfig.getString("displayname");
-
 	}
 
 	@Override

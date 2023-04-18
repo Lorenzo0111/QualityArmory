@@ -4,6 +4,7 @@ import me.zombie_striker.customitemmanager.CustomBaseObject;
 import me.zombie_striker.customitemmanager.CustomItemManager;
 import me.zombie_striker.customitemmanager.MaterialStorage;
 import me.zombie_striker.qualityarmory.ConfigKey;
+import me.zombie_striker.qualityarmory.MessageKey;
 import me.zombie_striker.qualityarmory.QAMain;
 import me.zombie_striker.qualityarmory.ammo.Ammo;
 import me.zombie_striker.qualityarmory.api.QualityArmory;
@@ -76,19 +77,10 @@ public class QualityArmoryCommand implements CommandExecutor, TabCompleter {
         if (args.length == 2) {
             List<String> s = new ArrayList<String>();
             if (args[0].equalsIgnoreCase("give") || args[0].equalsIgnoreCase("drop")) {
-                for (Map.Entry<MaterialStorage, Gun> e : gunRegister.entrySet()) {
-                    if (e.getValue() instanceof AttachmentBase) {
-                        if (b(e.getValue().getName(), args[1]))
-                            s.add(e.getValue().getName());
-                    } else if (b(e.getValue().getName(), args[1]))
-                        s.add(e.getValue().getName());
+                for (CustomBaseObject e : main.getCustomItems()) {
+                    if (b(e.getName(), args[1]))
+                        s.add(e.getName());
                 }
-                for (Map.Entry<MaterialStorage, Ammo> e : ammoRegister.entrySet())
-                    if (b(e.getValue().getName(), args[1]))
-                        s.add(e.getValue().getName());
-                for (Map.Entry<MaterialStorage, CustomBaseObject> e : miscRegister.entrySet())
-                    if (b(e.getValue().getName(), args[1]))
-                        s.add(e.getValue().getName());
             }
             return s;
         } else if (args.length == 3) {
@@ -152,29 +144,13 @@ public class QualityArmoryCommand implements CommandExecutor, TabCompleter {
                         main.setSetting(ConfigKey.SETTING_DEBUG,debug);
                         sender.sendMessage(main.getPrefix() + "Console debugging set to " + debug);
                     } else {
-                        sender.sendMessage(main.getPrefix() + ChatColor.RED + S_NOPERM);
+                        sender.sendMessage(main.getPrefix() + ChatColor.RED + main.getMessagesYml().getOrSet(MessageKey.NO_PERM_COMMAND.getKey(), "You do not have permission to use this command."));
                         return true;
                     }
                     return true;
 
                 }
-                if (args[0].equalsIgnoreCase("sendResourcepack")) {
-                    Player player = null;
-                    if (args.length > 1 && sender.hasPermission("qualityarmory.sendresourcepack.other")) {
-                        player = Bukkit.getPlayer(args[1]);
-                        if (player == null) {
-                            sender.sendMessage(main.getPrefix()  + " This player does not exist.");
-                            return true;
-                        }
-                    } else {
-                        player = (Player) sender;
-                    }
-                    namesToBypass.remove(player.getName());
-                    resourcepackwhitelist.set("Names_Of_players_to_bypass", namesToBypass);
-                    sender.sendMessage(main.getPrefix()  + S_RESOURCEPACK_OPTIN);
-                    QualityArmory.sendResourcepack(player, true);
-                    return true;
-                }
+
                 if (args[0].equalsIgnoreCase("getResourcepack")) {
                     Player player = null;
                     if (args.length > 1) {
@@ -186,59 +162,32 @@ public class QualityArmoryCommand implements CommandExecutor, TabCompleter {
                     } else {
                         player = (Player) sender;
                     }
-                    if (!namesToBypass.contains(player.getName())) {
-                        namesToBypass.add(player.getName());
-                        resourcepackwhitelist.set("Names_Of_players_to_bypass", namesToBypass);
-                    }
-
-                    player.sendMessage(main.getPrefix()  + S_RESOURCEPACK_DOWNLOAD);
                     player.sendMessage(CustomItemManager.getResourcepack());
-                    player.sendMessage(main.getPrefix()  + S_RESOURCEPACK_BYPASS);
-
                     return true;
                 }
                 if (args[0].equalsIgnoreCase("reload")) {
                     if (sender.hasPermission("qualityarmory.reload")) {
-                        reloadConfig();
-                        reloadVals();
-                        sender.sendMessage(main.getPrefix()  + S_RELOAD);
+                        main.reloadConfig();
+                        main.reloadVals();
+                        sender.sendMessage(main.getPrefix()  + main.getMessagesYml().getOrSet(MessageKey.RELOAD_MESSAGE.getKey(), "The plugin has been reloaded."));
                         return true;
                     } else {
-                        sender.sendMessage(main.getPrefix()  + ChatColor.RED + S_NOPERM);
+                        sender.sendMessage(main.getPrefix()  + ChatColor.RED + main.getMessagesYml().getOrSet(MessageKey.NO_PERM_COMMAND.getKey(), "You do not have permission to use this command."));
                         return true;
                     }
                 }
 
                 if (args[0].equalsIgnoreCase("drop")) {
                     if (!sender.hasPermission("qualityarmory.drop")) {
-                        sender.sendMessage(main.getPrefix()  + ChatColor.RED + S_NOPERM);
+                        sender.sendMessage(main.getPrefix()  + ChatColor.RED + main.getMessagesYml().getOrSet(MessageKey.NO_PERM_COMMAND.getKey(), "You do not have permission to use this command."));
                         return true;
                     }
                     if (args.length == 1) {
-                        sender.sendMessage(main.getPrefix()  + " The item name is required");
-                        StringBuilder sb = new StringBuilder();
-                        sb.append("Valid items: ");
-                        for (Gun g : gunRegister.values()) {
-                            sb.append(g.getName() + ", ");
-                        }
-                        sb.append(ChatColor.GRAY);
-                        for (Ammo g : ammoRegister.values()) {
-                            sb.append(g.getName() + ", ");
-                        }
-                        sb.append(ChatColor.WHITE);
-                        for (CustomBaseObject g : miscRegister.values()) {
-                            sb.append(g.getName() + ", ");
-                        }
-                        sb.append(ChatColor.GRAY);
-                        for (ArmorObject g : armorRegister.values()) {
-                            sb.append(g.getName() + ", ");
-                        }
-                        sb.append(ChatColor.WHITE);
-                        sender.sendMessage(main.getPrefix()  + sb.toString());
+                        sender.sendMessage(main.getPrefix()  + " The item name is required. Press [Tab] to autocomplete.");
                         return true;
                     }
 
-                    CustomBaseObject g = QualityArmory.getCustomItemByName(args[1]);
+                    CustomBaseObject g = QualityArmory.getInstance().getCustomItemByName(args[1]);
                     if (g != null) {
                         Location loc = null;
                         Location relLoc = null;
@@ -304,33 +253,11 @@ public class QualityArmoryCommand implements CommandExecutor, TabCompleter {
 
                 if (args[0].equalsIgnoreCase("give")) {
                     if (!sender.hasPermission("qualityarmory.give")) {
-                        sender.sendMessage(main.getPrefix() + ChatColor.RED + S_NOPERM);
+                        sender.sendMessage(main.getPrefix() + ChatColor.RED + main.getMessagesYml().getOrSet(MessageKey.NO_PERM_COMMAND.getKey(), "You do not have permission to use this command."));
                         return true;
                     }
                     if (args.length == 1) {
-                        sender.sendMessage(prefix + " The item name is required");
-                        StringBuilder sb = new StringBuilder();
-                        sb.append("Valid items: ");
-                        for (Gun g : gunRegister.values()) {
-                            sb.append(g.getName() + ", ");
-                        }
-                        sb.append(ChatColor.GRAY);
-                        for (Ammo g : ammoRegister.values()) {
-                            sb.append(g.getName() + ", ");
-                        }
-                        sb.append(ChatColor.WHITE);
-                        for (CustomBaseObject g : miscRegister.values()) {
-                            sb.append(g.getName() + ", ");
-                        }
-                        sb.append(ChatColor.GRAY);
-                        for (ArmorObject g : armorRegister.values()) {
-                            sb.append(g.getName() + ", ");
-                        }
-                        sb.append(ChatColor.WHITE);
-                        // for (AttachmentBase g : attachmentRegister.values()) {
-                        // sb.append(g.getAttachmentName() + ",");
-                        // }
-                        sender.sendMessage(main.getPrefix() + sb.toString());
+                        sender.sendMessage(main.getPrefix() + " The item name is required. Press [Tab] to get list.");
                         return true;
                     }
 
@@ -379,15 +306,6 @@ public class QualityArmoryCommand implements CommandExecutor, TabCompleter {
             }
             if (sender instanceof Player) {
                 final Player player = (Player) sender;
-                if (args.length >= 1 && args[0].equalsIgnoreCase("override")) {
-                    resourcepackReq.add(player.getUniqueId());
-                    sender.sendMessage(main.getPrefix() + " Overriding resourcepack requirement.");
-                    return true;
-                }
-                if (shouldSend && !resourcepackReq.contains(player.getUniqueId())) {
-                    QualityArmory.sendResourcepack(((Player) sender), true);
-                    return true;
-                }
                 if (args.length == 0) {
                     sendHelp(player);
                     return true;
@@ -395,7 +313,7 @@ public class QualityArmoryCommand implements CommandExecutor, TabCompleter {
                 if (enableCrafting)
                     if (args[0].equalsIgnoreCase("craft")) {
                         if (!sender.hasPermission("qualityarmory.craft")) {
-                            sender.sendMessage(main.getPrefix() + ChatColor.RED + S_NOPERM);
+                            sender.sendMessage(main.getPrefix() + ChatColor.RED + main.getMessagesYml().getOrSet(MessageKey.NO_PERM_COMMAND.getKey(), "You do not have permission to use this command."));
                             return true;
                         }
                         player.openInventory(createCraft(0));
@@ -416,7 +334,7 @@ public class QualityArmoryCommand implements CommandExecutor, TabCompleter {
                         }
 
                         if (!sender.hasPermission("qualityarmory.shop")) {
-                            sender.sendMessage(main.getPrefix() + ChatColor.RED + S_NOPERM);
+                            sender.sendMessage(main.getPrefix() + ChatColor.RED + main.getMessagesYml().getOrSet(MessageKey.NO_PERM_COMMAND.getKey(), "You do not have permission to use this command."));
                             return true;
                         }
                         player.openInventory(createShop(0));

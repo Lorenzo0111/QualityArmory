@@ -10,7 +10,7 @@ import me.zombie_striker.qualityarmory.commands.QualityArmoryCommand;
 import me.zombie_striker.qualityarmory.config.CommentYamlConfiguration;
 import me.zombie_striker.qualityarmory.config.MessagesYML;
 import me.zombie_striker.qualityarmory.handlers.*;
-import me.zombie_striker.qualityarmory.hooks.MimicHookHandler;
+import me.zombie_striker.qualityarmory.hooks.MimicHookImpl;
 import me.zombie_striker.qualityarmory.hooks.PlaceholderAPIHook;
 import me.zombie_striker.qualityarmory.hooks.QuickShopHook;
 import me.zombie_striker.qualityarmory.hooks.anticheat.AntiCheatHook;
@@ -55,7 +55,6 @@ public class QAMain extends JavaPlugin {
 
     private HashMap<String, String> craftingEntityNames = new HashMap<>();
     private HashMap<UUID, Location> recoilHelperMovedLocation = new HashMap<>();
-    private HashMap<UUID, Long> sentResourcepack = new HashMap<>();
     private ArrayList<UUID> resourcepackReq = new ArrayList<>();
     private List<Gunner> gunners = new ArrayList<>();
     private List<String> namesToBypass = new ArrayList<>();
@@ -258,6 +257,7 @@ public class QAMain extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        QualityArmory.setInstance(this);
         if (!this.getDataFolder().exists()) {
             this.getDataFolder().mkdirs();
         }
@@ -276,7 +276,8 @@ public class QAMain extends JavaPlugin {
         }
 
         if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
-            new PlaceholderAPIHook().register();
+            PlaceholderAPIHook hook = new PlaceholderAPIHook();
+            this.handlers.add(hook);
             this.getLogger().info("Found PlaceholderAPI. Loaded support");
         }
 
@@ -287,7 +288,7 @@ public class QAMain extends JavaPlugin {
             this.getLogger().info("Found Vault. Loaded support");
         }
         if (Bukkit.getPluginManager().isPluginEnabled("Mimic")) {
-            MimicHookHandler.register();
+            this.handlers.add(new MimicHookImpl());
             this.getLogger().info("Found Mimic. Loaded support");
         }
 

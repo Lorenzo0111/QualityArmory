@@ -87,7 +87,7 @@ public class QAListener implements Listener, ISettingsReloader {
 			final int OFFHAND_SLOT = 40;
 			// null check is done by isGun
 			// offhand slot check also works with hotkey inventory swap (F by default) - tested on 1.16.5
-			if(e.getSlot() == OFFHAND_SLOT && QualityArmory.isGun(cursor)) {
+			if(e.getSlot() == OFFHAND_SLOT && QualityArmory.getInstance().isGun(cursor)) {
 				e.setCancelled(true);
 				// restore placed item because cancelling an event seems to wipe it.
 				// it will make cursor item look disappeared, but it'll be dropped when inventory is closed
@@ -185,8 +185,8 @@ public class QAListener implements Listener, ISettingsReloader {
 									Sound.valueOf("ANVIL_BREAK"), 1, 1);
 						}
 					}
-				} else if (QualityArmory.isCustomItem(e.getCurrentItem())) {
-					CustomBaseObject g = QualityArmory.getCustomItem(e.getCurrentItem());
+				} else if (QualityArmory.getInstance().isCustomItem(e.getCurrentItem())) {
+					CustomBaseObject g = QualityArmory.getInstance().getCustomItem(e.getCurrentItem());
 					if (g.getPrice() < 0 || !g.isEnableShop())
 						return;
 					if ((shop && main.getEconHandler().hasEnough(g, (Player) e.getWhoClicked()))
@@ -299,7 +299,7 @@ public class QAListener implements Listener, ISettingsReloader {
 			return;
 		} else if (QualityArmory.getInstance().isCustomItem(e.getCurrentItem())) {
 			CustomBaseObject base = null;
-			if ((base = QualityArmory.getInstance().getCustomItem(e.getCurrentItem())) == QualityArmory.getCustomItem(e.getCursor())) {
+			if ((base = QualityArmory.getInstance().getCustomItem(e.getCurrentItem())) == QualityArmory.getInstance().getCustomItem(e.getCursor())) {
 				//Cursor and click are same custom item.
 				if (e.getCursor() != null && e.getCurrentItem() != null && base != null)
 					if (e.getCursor().getAmount() + e.getCurrentItem().getAmount() <= base.getMaxItemStack()) {
@@ -328,29 +328,14 @@ public class QAListener implements Listener, ISettingsReloader {
 		}
 	}
 
-	@EventHandler
-	public void onResourcepackStatusEvent(PlayerResourcePackStatusEvent event) {
-		QAMain.sentResourcepack.remove(event.getPlayer().getUniqueId());
-		if (event.getStatus() == PlayerResourcePackStatusEvent.Status.ACCEPTED
-				|| event.getStatus() == PlayerResourcePackStatusEvent.Status.SUCCESSFULLY_LOADED) {
-			QAMain.resourcepackReq.add(event.getPlayer().getUniqueId());
-		}else if (QAMain.kickIfDeniedRequest) {
-			Bukkit.getScheduler().runTask(QAMain.getInstance(), () -> event.getPlayer().kickPlayer(QAMain.S_KICKED_FOR_RESOURCEPACK));
-		}
-
-		if (event.getStatus() == PlayerResourcePackStatusEvent.Status.DECLINED) {
-			QAMain.resourcepackReq.add(event.getPlayer().getUniqueId()); // Add to the list, so it doesn't keep spamming the title
-		}
-	}
-
 
 	@SuppressWarnings("deprecation")
 	@EventHandler
 	public void onSwig(PlayerAnimationEvent e) {
 		if (e.getAnimationType() == PlayerAnimationType.ARM_SWING) {
-			if (e.getPlayer().getItemInHand() != null && QualityArmory.isGun(e.getPlayer().getInventory().getItemInMainHand()))
+			if (e.getPlayer().getItemInHand() != null && QualityArmory.getInstance().isGun(e.getPlayer().getInventory().getItemInMainHand()))
 				e.setCancelled(true);
-			if (e.getPlayer().getInventory().getItemInOffHand() != null && QualityArmory.isGun(e.getPlayer().getInventory().getItemInOffHand()))
+			if (e.getPlayer().getInventory().getItemInOffHand() != null && QualityArmory.getInstance().isGun(e.getPlayer().getInventory().getItemInOffHand()))
 				e.setCancelled(true);
 		}
 	}

@@ -18,6 +18,7 @@ import me.zombie_striker.qualityarmory.miscitems.AmmoBag;
 import me.zombie_striker.qualityarmory.utils.HotbarMessagerUtil;
 import me.zombie_striker.qualityarmory.utils.IronsightsUtil;
 import me.zombie_striker.qualityarmory.utils.LocalUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -27,10 +28,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.util.StringUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
+import java.util.Collection;
 import java.util.Map.Entry;
 
 public class QualityArmory {
@@ -52,27 +55,6 @@ public class QualityArmory {
 
     public static QualityArmory getInstance() {
         return inst;
-    }
-
-
-    public GunYML createAndLoadNewGun(String name, String displayname, Material material, int id,
-                                      WeaponType type, WeaponSounds sound, boolean hasIronSights, String ammotype, int damage, int maxBullets,
-                                      int cost) {
-        File newGunsDir = new File(main.getDataFolder(), "newGuns");
-        final File gunFile = new File(newGunsDir, name);
-        new BukkitRunnable() {
-            public void run() {
-                GunYMLLoader.loadGuns(main, gunFile);
-            }
-        }.runTaskLater(main, 1);
-        return GunYMLCreator.createNewCustomGun(main.getDataFolder(), name, name, displayname, id, null,
-                type, sound, hasIronSights, ammotype, damage, maxBullets, cost).setMaterial(material);
-    }
-
-    public GunYML createNewGunYML(String name, String displayname, Material material, int id, WeaponType type,
-                                  WeaponSounds sound, boolean hasIronSights, String ammotype, int damage, int maxBullets, int cost) {
-        return GunYMLCreator.createNewCustomGun(main.getDataFolder(), name, name, displayname, id, null,
-                type, sound, hasIronSights, ammotype, damage, maxBullets, cost);
     }
 
 
@@ -134,8 +116,6 @@ public class QualityArmory {
             return getGun(is);
         if (isAmmo(is))
             return getAmmo(is);
-        if (isArmor(is))
-            return getArmor(is);
         if (isMisc(is))
             return getMisc(is);
         return null;
@@ -272,119 +252,7 @@ public class QualityArmory {
         return QAMain.miscRegister.containsKey(storage) && QAMain.miscRegister.get(storage) instanceof AmmoBag;
     }
 
-    @SuppressWarnings("deprecation")
-    public boolean isIronSights(ItemStack is) {
-        if (is == null)
-            return false;
-        if (is.getType() == IronsightsUtil.ironsightsMaterial)
-            try {
-                if (!is.hasItemMeta() || !is.getItemMeta().hasCustomModelData())
-                    return false;
-                if (is.getItemMeta().getCustomModelData() == IronsightsUtil
-                        .ironsightsData)
-                    return true;
-            } catch (Error | Exception e4) {
-                if (is.getDurability() == IronsightsUtil.ironsightsData)
-                    return true;
-            }
-        return false;
-    }
 
-    public void sendHotbarGunAmmoCount(final Player p, final CustomBaseObject gun,
-                                       ItemStack usedItem, boolean reloading) {
-        Gun g = null;
-        AttachmentBase base = null;
-        if (gun instanceof AttachmentBase) {
-            base = (AttachmentBase) gun;
-            g = base.getBaseGun();
-        } else {
-            g = (Gun) gun;
-        }
-        sendHotbarGunAmmoCount(p, gun, usedItem, reloading, getBulletsInHand(p), g.getMaxBullets());
-    }
-
-    public void sendHotbarGunAmmoCount(final Player p, final CustomBaseObject gun,
-                                       ItemStack usedItem, boolean reloading, int currentAmountInGun, int maxAmount) {
-
-        final Gun g;
-        AttachmentBase base = null;
-        if (gun instanceof AttachmentBase) {
-            base = (AttachmentBase) gun;
-            g = base.getBaseGun();
-        } else {
-            g = (Gun) gun;
-        }
-
-        int ammoamount = getAmmoInInventory(p, g.getAmmoType());
-
-        if (QAMain.showOutOfAmmoOnTitle && ammoamount <= 0 && Gun.getAmount(p) < 1) {
-            p.sendTitle(" ", QAMain.S_OUT_OF_AMMO, 0, 20, 1);
-        } else if (QAMain.showReloadOnTitle && reloading) {
-            for (int i = 1; i < g.getReloadTime() * 20; i += 2) {
-                final int id = i;
-                new BukkitRunnable() {
-                    @Override
-                    public void run() {
-                        StringBuilder sb = new StringBuilder();
-                        sb.append(ChatColor.GRAY);
-                        sb.append(repeat("#", (int) (20 * (1.0 * id / (20 * g.getReloadTime())))));
-                        sb.append(ChatColor.DARK_GRAY);
-                        sb.append(repeat("#", (int) (20 - ((int) (20.0 * id / (20 * g.getReloadTime()))))));
-                        p.sendTitle(QAMain.S_RELOADING_MESSAGE, sb.toString(), 0, 4, 0);
-                    }
-                }.runTaskLater(main, i);
-            }
-        } else {
-
-            try {
-                String message = QAMain.S_HOTBAR_FORMAT;
-
-                if (QAMain.disableHotBarMessageOnOutOfAmmo && QAMain.disableHotBarMessageOnReload
-                        && QAMain.disableHotBarMessageOnShoot)
-                    return;
-                if (reloading && QAMain.disableHotBarMessageOnReload)
-                    return;
-                if (ammoamount <= 0 && QAMain.disableHotBarMessageOnOutOfAmmo)
-                    return;
-                if (!reloading && ammoamount > 0 && QAMain.disableHotBarMessageOnShoot)
-                    return;
-
-                if (message.contains("%name%"))
-                    message = message.replace("%name%",
-                            (base != null ? base.getDisplayName() : g.getDisplayName()));
-                if (message.contains("%amount%"))
-                    message = message.replace("%amount%", currentAmountInGun + "");
-                if (message.contains("%max%"))
-                    message = message.replace("%max%", maxAmount + "");
-
-                if (message.contains("%state%"))
-                    message = message.replace("%state%", reloading ? QAMain.S_RELOADING_MESSAGE
-                            : ammoamount <= 0 ? QAMain.S_OUT_OF_AMMO : QAMain.S_MAX_FOUND);
-                if (message.contains("%total%"))
-                    message = message.replace("%total%", "" + ammoamount);
-
-                if (QAMain.unknownTranslationKeyFixer) {
-                    message = ChatColor.stripColor(message);
-                } else {
-                    message = LocalUtils.colorize(message);
-                }
-                HotbarMessagerUtil.sendHotBarMessage(p, message);
-            } catch (Error | Exception e5) {
-            }
-        }
-    }
-
-    public boolean isOverLimitForPrimaryWeapons(Gun g, Player p) {
-        int count = 0;
-        for (ItemStack is : p.getInventory().getContents()) {
-            if (is != null && isGun(is)) {
-                Gun g2 = getGun(is);
-                if (g2.isPrimaryWeapon() == g.isPrimaryWeapon())
-                    count++;
-            }
-        }
-        return count >= (g.isPrimaryWeapon() ? QAMain.primaryWeaponLimit : QAMain.secondaryWeaponLimit);
-    }
 
     public ItemStack getCustomItemAsItemStack(String name) {
         return getCustomItemAsItemStack(getCustomItemByName(name));
@@ -494,5 +362,17 @@ public class QualityArmory {
     @Deprecated
     public void DEBUG(String s) {
         main.DEBUG(s);
+    }
+
+    public CustomBaseObject getCustomItemByName(String itemId) {
+        for(CustomBaseObject cbo : main.getCustomItems()){
+            if(cbo.getName().equalsIgnoreCase(itemId))
+                return cbo;
+        }
+        return null;
+    }
+
+    public Collection<CustomBaseObject> getCustomItemsAsList() {
+        return main.getCustomItems();
     }
 }

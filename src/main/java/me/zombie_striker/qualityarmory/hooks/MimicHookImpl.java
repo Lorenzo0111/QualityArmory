@@ -3,6 +3,7 @@ package me.zombie_striker.qualityarmory.hooks;
 import me.zombie_striker.customitemmanager.CustomBaseObject;
 import me.zombie_striker.qualityarmory.QAMain;
 import me.zombie_striker.qualityarmory.api.QualityArmory;
+import me.zombie_striker.qualityarmory.interfaces.IHandler;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.ServicePriority;
 import org.jetbrains.annotations.NotNull;
@@ -14,12 +15,12 @@ import ru.endlesscode.mimic.items.BukkitItemsRegistry;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
-public class MimicHookImpl implements BukkitItemsRegistry {
+public class MimicHookImpl implements BukkitItemsRegistry, IHandler {
 
     @NotNull
     @Override
     public Collection<String> getKnownIds() {
-        return QualityArmory.getCustomItemsAsList().stream()
+        return QualityArmory.getInstance().getCustomItemsAsList().stream()
                 .map(CustomBaseObject::getName)
                 .collect(Collectors.toList());
     }
@@ -27,7 +28,7 @@ public class MimicHookImpl implements BukkitItemsRegistry {
     @Nullable
     @Override
     public ItemStack getItem(@NotNull String itemId, @Nullable Object payload, int amount) {
-        ItemStack item = QualityArmory.getCustomItemAsItemStack(itemId);
+        ItemStack item = QualityArmory.getInstance().getCustomItemAsItemStack(itemId);
         if (item == null) return null;
 
         item.setAmount(amount);
@@ -37,18 +38,18 @@ public class MimicHookImpl implements BukkitItemsRegistry {
     @Nullable
     @Override
     public String getItemId(@NotNull ItemStack item) {
-        CustomBaseObject i = QualityArmory.getCustomItem(item);
+        CustomBaseObject i = QualityArmory.getInstance().getCustomItem(item);
         return i == null ? null : i.getName();
     }
 
     @Override
     public boolean isItemExists(@NotNull String itemId) {
-        return QualityArmory.getCustomItemByName(itemId) != null;
+        return QualityArmory.getInstance().getCustomItemByName(itemId) != null;
     }
 
-    public void register() {
-        try {
-            Mimic.getInstance().registerItemsRegistry(this, MimicApiLevel.CURRENT, QAMain.getInstance(), ServicePriority.Normal);
-        } catch (Throwable ignored) {}
+    @Override
+    public void init(QAMain main) {
+        Mimic.getInstance().registerItemsRegistry(this, MimicApiLevel.CURRENT, main, ServicePriority.Normal);
+
     }
 }

@@ -1,58 +1,19 @@
 package me.zombie_striker.qualityarmory.miscitems;
 
+import me.zombie_striker.customitemmanager.CustomBaseObject;
+import me.zombie_striker.customitemmanager.MaterialStorage;
 import org.bukkit.entity.Entity;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.util.HashMap;
 import java.util.UUID;
 
-public interface ThrowableItems extends ArmoryBaseObject {
+public class ThrowableItems extends CustomBaseObject {
 
 	HashMap<Entity, ThrowableHolder> throwItems = new HashMap<>();
-	
-	class ThrowableHolder {
-		private Entity holder;
-		private UUID owner;
-		private Grenade grenade;
 
-		private BukkitTask timer;
-
-		public ThrowableHolder(UUID owner, Entity holder, Grenade grenade) {
-			this.holder = holder;
-			this.owner = owner;
-			this.grenade = grenade;
-		}
-
-		public void setHolder(Entity e) {
-			this.holder = e;
-		}
-
-		public Entity getHolder() {
-			return holder;
-		}
-
-		public void setTimer(BukkitTask bt) {
-			this.timer = bt;
-		}
-
-		public BukkitTask getTask() {
-			return timer;
-		}
-
-		public UUID getOwner() {
-			return owner;
-		}
-
-		public Grenade getGrenade() {
-			return grenade;
-		}
-
-		public void setGrenade(Grenade grenade) {
-			this.grenade = grenade;
-		}
+	public ThrowableItems(String name, MaterialStorage storage) {
+		super(name, storage);
 	}
 
-
-	double getThrowSpeed();
-	void setThrowSpeed(double throwspeed);
 }

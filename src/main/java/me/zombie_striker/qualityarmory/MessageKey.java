@@ -2,7 +2,9 @@ package me.zombie_striker.qualityarmory;
 
 public enum MessageKey {
     PREFIX("Prefix"),
-    KICK_ON_DECLINE_RESOURCEPACK("DeclineResourcepackKickMessage")
+    KICK_ON_DECLINE_RESOURCEPACK("DeclineResourcepackKickMessage"),
+    RELOAD_MESSAGE("ReloadMessage"),
+    NO_PERM_COMMAND("NoPermissionMessage"),
     ;
 
     private final String key;

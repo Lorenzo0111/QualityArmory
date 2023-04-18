@@ -16,6 +16,6 @@ public class ItemBridgePatch  implements ItemBridgeListener {
 
 	@Override
 	public ItemStack fetchItemStack(String item) {
-		return QualityArmory.getCustomItemAsItemStack(item);
+		return QualityArmory.getInstance().getCustomItemAsItemStack(item);
 	}
 }
