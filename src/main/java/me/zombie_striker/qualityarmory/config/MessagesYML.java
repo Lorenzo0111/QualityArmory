@@ -2,7 +2,6 @@ package me.zombie_striker.qualityarmory.config;
 
 import me.zombie_striker.qualityarmory.QAMain;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.entity.Player;
 
 import java.io.File;
 import java.io.IOException;

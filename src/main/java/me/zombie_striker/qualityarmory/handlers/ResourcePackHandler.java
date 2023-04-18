@@ -11,8 +11,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerResourcePackStatusEvent;
 
-import java.util.HashMap;
-
 public class ResourcePackHandler implements IHandler, Listener {
     private QAMain main;
     @EventHandler

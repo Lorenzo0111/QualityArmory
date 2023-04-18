@@ -28,8 +28,9 @@ public class DefaultHumanoidBoundingBox implements AbstractBoundingBox{
 		this.bodyWidthRadius_baby = b_bodyRadius;
 		this.headTopHeight_baby = b_headTopHeight;
 	}
-	
-	@Override
+
+
+    @Override
 	public boolean intersects(Entity shooter, Location check, Entity base) {
 		if (base instanceof Ageable && !((Ageable) base).isAdult() ){
 			boolean intersectsBody = BoundingBoxUtil.within2DWidth(base,check,bodyWidthRadius_baby,bodyWidthRadius_baby);

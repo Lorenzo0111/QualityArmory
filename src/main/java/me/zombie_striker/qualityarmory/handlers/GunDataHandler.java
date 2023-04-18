@@ -2,10 +2,10 @@ package me.zombie_striker.qualityarmory.handlers;
 
 import me.zombie_striker.qualityarmory.ConfigKey;
 import me.zombie_striker.qualityarmory.QAMain;
-import me.zombie_striker.qualityarmory.ammo.Ammo;
 import me.zombie_striker.qualityarmory.api.QualityArmory;
 import me.zombie_striker.qualityarmory.data.AnimationGunAction;
 import me.zombie_striker.qualityarmory.data.AnimationKeyFrame;
+import me.zombie_striker.qualityarmory.guns.Ammo;
 import me.zombie_striker.qualityarmory.guns.Gun;
 import me.zombie_striker.qualityarmory.interfaces.IHandler;
 import org.bukkit.Bukkit;

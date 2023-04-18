@@ -1,6 +1,7 @@
 package me.zombie_striker.qualityarmory.hooks;
 
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
+import me.zombie_striker.qualityarmory.ConfigKey;
 import me.zombie_striker.qualityarmory.QAMain;
 import me.zombie_striker.qualityarmory.api.QualityArmory;
 import me.zombie_striker.qualityarmory.guns.Gun;
@@ -39,9 +40,9 @@ public class PlaceholderAPIHook extends PlaceholderExpansion implements IHandler
 
         switch (params.toLowerCase()) {
             case "ammo_type":
-                return gun.getAmmoType().getDisplayName();
+                return (String) gun.getData(ConfigKey.CUSTOMITEM_AMMOTYPE.getKey());
             case "ammo_amount":
-                return String.valueOf(QualityArmory.getInstance().getAmmoInInventory(player,gun.getAmmoType()));
+                return String.valueOf(QualityArmory.getInstance().getAmmoInInventory(player,(String) gun.getData(ConfigKey.CUSTOMITEM_AMMOTYPE.getKey())));
         }
         return null;
     }

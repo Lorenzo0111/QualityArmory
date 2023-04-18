@@ -11,6 +11,7 @@ public enum ConfigKey {
     CUSTOMITEM_BULLETS_PER_SECOND("bulletsPerSecond"),
     CUSTOMITEM_RELOAD_ANIMATION("animation.reload"),
     CUSTOMITEM_RELOAD_TIME("reloadTimeInTicks"),
+    CUSTOMITEM_MAX_ITEM_STACK("maxItemStack"),
 
 
     SETTING_ENABLEDCRAFTING("enableCraftingWeapons"),

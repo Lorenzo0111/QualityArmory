@@ -1,9 +1,6 @@
 package me.zombie_striker.qualityarmory.guns;
 
 import org.bukkit.Location;
-import org.bukkit.entity.Damageable;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
 import org.bukkit.util.Vector;
 
 import java.util.UUID;

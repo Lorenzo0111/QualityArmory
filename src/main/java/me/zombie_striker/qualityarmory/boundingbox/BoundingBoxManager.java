@@ -10,7 +10,7 @@ public class BoundingBoxManager {
 
 	//private static DefaultHumanoidBoundingBox DEFUALT = new DefaultHumanoidBoundingBox();
 	private static PlayerBoundingBox PLAYER = new PlayerBoundingBox();
-	private static DefaultHumanoidBoundingBox HUMANOID = new DefaultHumanoidBoundingBox();
+	private static DefaultHumanoidBoundingBox HUMANOID = new DefaultHumanoidBoundingBox(1.4,0.45,0.5);
 	private static DefaultHumanoidBoundingBox WITHER_SKELETON = new DefaultHumanoidBoundingBox(1.8, 0.45, 2.4);
 	private static DefaultHumanoidBoundingBox VILLAGER = new DefaultHumanoidBoundingBox(1.4, 0.45, 2);
 	private static DefaultHumanoidBoundingBox CREEPER = new DefaultHumanoidBoundingBox(1.2, 0.4, 1.7);
@@ -70,7 +70,6 @@ public class BoundingBoxManager {
 			setEntityTypeBoundingBox(EntityType.SKELETON, HUMANOID);
 			setEntityTypeBoundingBox(EntityType.ZOMBIE, HUMANOID);
 			setEntityTypeBoundingBox(EntityType.BLAZE, HUMANOID);
-			setEntityTypeBoundingBox(MultiVersionLookup.getZombiePig(), HUMANOID);
 			setEntityTypeBoundingBox(EntityType.SNOWMAN, HUMANOID);
 
 			setEntityTypeBoundingBox(EntityType.ENDERMAN, ENDERMAN);
@@ -158,6 +157,14 @@ public class BoundingBoxManager {
 
 			//1.15
 			setEntityTypeBoundingBox(EntityType.BEE, BAT);
+
+			//1.16
+			setEntityTypeBoundingBox(EntityType.PANDA, COW);
+
+			//1.17
+			setEntityTypeBoundingBox(EntityType.ZOMBIFIED_PIGLIN, HUMANOID);
+			setEntityTypeBoundingBox(EntityType.PIGLIN, HUMANOID);
+			setEntityTypeBoundingBox(EntityType.PIGLIN_BRUTE, HUMANOID);
 		} catch (Error | Exception e4) {
 		}
 

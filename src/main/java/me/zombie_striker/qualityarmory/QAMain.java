@@ -13,17 +13,12 @@ import me.zombie_striker.qualityarmory.handlers.*;
 import me.zombie_striker.qualityarmory.hooks.MimicHookImpl;
 import me.zombie_striker.qualityarmory.hooks.PlaceholderAPIHook;
 import me.zombie_striker.qualityarmory.hooks.QuickShopHook;
-import me.zombie_striker.qualityarmory.hooks.anticheat.AntiCheatHook;
 import me.zombie_striker.qualityarmory.hooks.anticheat.MatrixHook;
 import me.zombie_striker.qualityarmory.hooks.anticheat.VulcanHook;
 import me.zombie_striker.qualityarmory.hooks.protection.ProtectionHandler;
 import me.zombie_striker.qualityarmory.interfaces.IEconomy;
 import me.zombie_striker.qualityarmory.interfaces.IHandler;
 import me.zombie_striker.qualityarmory.interfaces.ISettingsReloader;
-import me.zombie_striker.qualityarmory.listener.QAListener;
-import me.zombie_striker.qualityarmory.npcs.Gunner;
-import me.zombie_striker.qualityarmory.npcs.GunnerTrait;
-import me.zombie_striker.qualityarmory.npcs_sentinel.SentinelQAHandler;
 import me.zombie_striker.qualityarmory.utils.BlockCollisionUtil;
 import me.zombie_striker.qualityarmory.utils.LocalUtils;
 import me.zombie_striker.qualityarmory.utils.ParticleUtil;
@@ -56,7 +51,6 @@ public class QAMain extends JavaPlugin {
     private HashMap<String, String> craftingEntityNames = new HashMap<>();
     private HashMap<UUID, Location> recoilHelperMovedLocation = new HashMap<>();
     private ArrayList<UUID> resourcepackReq = new ArrayList<>();
-    private List<Gunner> gunners = new ArrayList<>();
     private List<String> namesToBypass = new ArrayList<>();
     private List<Material> interactableBlocks = new ArrayList<>();
     private List<Material> destructableBlocks = new ArrayList<Material>();
@@ -244,10 +238,6 @@ public class QAMain extends JavaPlugin {
             for (Team t : s.getTeams())
                 t.unregister();
 
-        for (Gunner g : gunners) {
-            g.dispose();
-        }
-
         try {
             resourcepackwhitelist.save(new File(getDataFolder(), "resourcepackwhitelist.yml"));
         } catch (IOException e) {
@@ -267,8 +257,15 @@ public class QAMain extends JavaPlugin {
 
         ProtectionHandler.init();
 
-        AntiCheatHook.registerHook("Matrix", MatrixHook.class);
-        AntiCheatHook.registerHook("Vulcan", VulcanHook.class);
+
+        if (Bukkit.getPluginManager().isPluginEnabled("Matrix")) {
+            this.handlers.add(new MatrixHook());
+            this.getLogger().info("Found Matrix. Loaded anticheat support.");
+        }
+        if (Bukkit.getPluginManager().isPluginEnabled("Vulcan")) {
+            this.handlers.add(new VulcanHook());
+            this.getLogger().info("Found Vulcan. Loaded anticheat support.");
+        }
 
         if (Bukkit.getPluginManager().isPluginEnabled("QuickShop")) {
             Bukkit.getPluginManager().registerEvents(new QuickShopHook(), this);
@@ -310,17 +307,6 @@ public class QAMain extends JavaPlugin {
             }
         }.runTaskLater(this, 1);
 
-        // check if Citizens is present and enabled.
-
-        if (getServer().getPluginManager().isPluginEnabled("Citizens")) {
-            try {
-                // Register your trait with Citizens.
-                net.citizensnpcs.api.CitizensAPI.getTraitFactory().registerTrait(net.citizensnpcs.api.trait.TraitInfo.create(GunnerTrait.class));
-            } catch (Error | Exception e4) {
-                getLogger().log(Level.WARNING, "Citizens 2.0 failed to register gunner trait (Ignore this.)");
-            }
-        }
-
         if (getServer().getPluginManager().isPluginEnabled("Parties")) hasParties = true;
         if (Bukkit.getPluginManager().isPluginEnabled("ViaRewind")) hasViaRewind = true;
         if (Bukkit.getPluginManager().isPluginEnabled("ViaVersion")) hasViaVersion = true;
@@ -328,20 +314,11 @@ public class QAMain extends JavaPlugin {
             hasProtocolLib = true;
         }
 
-        if (getServer().getPluginManager().isPluginEnabled("Sentinel")) try {
-            org.mcmonkey.sentinel.SentinelPlugin.integrations.add(new SentinelQAHandler());
-        } catch (Error | Exception e4) {
-        }
-
         if (Bukkit.getPluginManager().isPluginEnabled("ChestShop")) this.handlers.add(new ChestShopHandler());
 
         QualityArmoryCommand qac = new QualityArmoryCommand(this);
         getCommand("QualityArmory").setExecutor(qac);
         getCommand("QualityArmory").setTabCompleter(qac);
-
-        QAListener qaListener = new QAListener(this);
-        this.reloadableSettingsInstances.add(qaListener);
-        Bukkit.getPluginManager().registerEvents(qaListener, this);
 
         this.handlers.add(this.bulletSwayHandler = new BulletSwayHandler());
         this.handlers.add(this.blockCollisionHandler = new BlockCollisionUtil());

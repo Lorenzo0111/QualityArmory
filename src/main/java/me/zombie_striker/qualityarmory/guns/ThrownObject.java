@@ -1,6 +1,5 @@
 package me.zombie_striker.qualityarmory.guns;
 
-import me.zombie_striker.qualityarmory.miscitems.Grenade;
 import org.bukkit.entity.Entity;
 import org.bukkit.scheduler.BukkitTask;
 

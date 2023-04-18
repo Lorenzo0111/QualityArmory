@@ -1,6 +1,5 @@
 package me.zombie_striker.qualityarmory.interfaces;
 
-import me.zombie_striker.customitemmanager.CustomBaseObject;
 import org.bukkit.entity.Player;
 
 public interface IEconomy extends IHandler {

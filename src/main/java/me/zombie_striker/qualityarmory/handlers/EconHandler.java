@@ -1,6 +1,5 @@
 package me.zombie_striker.qualityarmory.handlers;
 
-import me.zombie_striker.customitemmanager.CustomBaseObject;
 import me.zombie_striker.qualityarmory.QAMain;
 import me.zombie_striker.qualityarmory.interfaces.IEconomy;
 import net.milkbowl.vault.economy.Economy;

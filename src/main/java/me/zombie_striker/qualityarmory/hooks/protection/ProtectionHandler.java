@@ -29,7 +29,7 @@ public class ProtectionHandler {
             try {
                 Constructor<? extends ProtectionHook> constructor = entry.getValue().getConstructor();
 
-                hook(entry.getKey(), constructor::newInstance);
+               // hook(entry.getKey(), constructor::newInstance);
             } catch (Throwable ignored) {}
         }
     }
@@ -46,13 +46,13 @@ public class ProtectionHandler {
         return compatibilities.stream().allMatch(compatibility -> compatibility.canBreak(target));
     }
 
-    public static void hook(String plugin, CompatibilityConstructor constructor) throws InvocationTargetException, InstantiationException, IllegalAccessException {
+    /*public static void hook(String plugin, CompatibilityConstructor constructor) throws InvocationTargetException, InstantiationException, IllegalAccessException {
         if (Bukkit.getPluginManager().isPluginEnabled(plugin) && (boolean) QAMain.getInstance().a("hooks." + plugin, !plugin.equalsIgnoreCase("WorldGuard"))) {
             compatibilities.add(constructor.create());
 
             QAMain.getInstance().getLogger().info("Hooked with " + plugin + "!");
         }
-    }
+    }*/
 
     @FunctionalInterface
     private interface CompatibilityConstructor {

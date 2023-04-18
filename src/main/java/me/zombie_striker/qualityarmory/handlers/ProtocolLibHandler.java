@@ -67,8 +67,7 @@ public class ProtocolLibHandler implements IHandler {
 									return;
 								}
 								if (state == 0) {
-									if (QualityArmory.getInstance().isGun(targ.getItemInHand())
-											|| QualityArmory.getInstance().isIronSights(targ.getItemInHand())) {
+									if (QualityArmory.getInstance().isGun(targ.getItemInHand())) {
 										event.setCancelled(true);
 									}
 								}

@@ -7,13 +7,19 @@ import org.jetbrains.annotations.NotNull;
 
 public class Gun extends CustomBaseObject implements Comparable<Gun> {
 
-	public Gun(String name, MaterialStorage storage, String displayname, int maxBullets) {
+	public Gun(String name, MaterialStorage storage, String displayname, int maxBullets, String ammotype) {
 		super(name, storage);
 		this.setData(ConfigKey.CUSTOMITEM_DISPLAYNAME.getKey(), displayname);
 		this.setData(ConfigKey.CUSTOMITEM_MAXBULLETS.getKey(), maxBullets);
+		this.setData(ConfigKey.CUSTOMITEM_AMMOTYPE.getKey(), ammotype);
 	}
 
-	@Override
+    public Gun(String name, MaterialStorage currentMaterial, String displayname) {
+        super(name,currentMaterial);
+		this.setData(ConfigKey.CUSTOMITEM_DISPLAYNAME.getKey(), displayname);
+    }
+
+    @Override
 	public int compareTo(@NotNull Gun o) {
 		return this.getName().compareTo(o.getName());
 	}

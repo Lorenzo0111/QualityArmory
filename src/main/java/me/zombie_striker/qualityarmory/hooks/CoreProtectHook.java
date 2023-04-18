@@ -1,6 +1,6 @@
 package me.zombie_striker.qualityarmory.hooks;
 
-import me.zombie_striker.qualityarmory.QAMain;
+import me.zombie_striker.qualityarmory.api.QualityArmory;
 import net.coreprotect.CoreProtect;
 import net.coreprotect.CoreProtectAPI;
 import org.bukkit.Bukkit;
@@ -15,10 +15,10 @@ public class CoreProtectHook {
     public static void logBreak(Block block, Player player) {
         try {
             if (!logBreak0(block, player)) {
-                QAMain.DEBUG("CoreProtect failed to log break: Returned false");
+                QualityArmory.getInstance().DEBUG("CoreProtect failed to log break: Returned false");
             }
         } catch (Throwable e) {
-            QAMain.DEBUG("Error while logging break to CoreProtect: " + e.getMessage());
+            QualityArmory.getInstance().DEBUG("Error while logging break to CoreProtect: " + e.getMessage());
         }
     }
 
@@ -26,7 +26,7 @@ public class CoreProtectHook {
     private static boolean logBreak0(Block block, Player player) {
         if (getCoreProtect() == null) return false;
 
-        QAMain.DEBUG("Logging break to CoreProtect");
+        QualityArmory.getInstance().DEBUG("Logging break to CoreProtect");
 
         try {
             return getCoreProtect().logRemoval(player.getName(), block.getLocation(), block.getType(), block.getBlockData());
@@ -38,10 +38,10 @@ public class CoreProtectHook {
     public static void logPlace(Block block, Player player) {
         try {
             if (!logPlace0(block, player)) {
-                QAMain.DEBUG("CoreProtect failed to log place: Returned false");
+                QualityArmory.getInstance().DEBUG("CoreProtect failed to log place: Returned false");
             }
         } catch (Throwable e) {
-            QAMain.DEBUG("Error while logging break to CoreProtect: " + e.getMessage());
+            QualityArmory.getInstance().DEBUG("Error while logging break to CoreProtect: " + e.getMessage());
         }
     }
 
@@ -49,7 +49,7 @@ public class CoreProtectHook {
     private static boolean logPlace0(Block block, Player player) {
         if (getCoreProtect() == null) return false;
 
-        QAMain.DEBUG("Logging break to CoreProtect");
+        QualityArmory.getInstance().DEBUG("Logging break to CoreProtect");
 
         try {
             return getCoreProtect().logPlacement(player.getName(), block.getLocation(), block.getType(), block.getBlockData());
