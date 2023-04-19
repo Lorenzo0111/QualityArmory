@@ -38,7 +38,9 @@ public class BulletHandler implements IHandler, ISettingsReloader {
             return true;
         if(Double.isInfinite(bullet.getSpeed()))
             return true;
-        if(bullet.getDistanceTraveled()>1000)
+        if(bullet.getDistanceTraveled()>200)
+            return true;
+        if(!bullet.getBulletLocation().getWorld().isChunkLoaded(bullet.getBulletLocation().getChunk()))
             return true;
         Vector directionToCenter = bullet.getDirection().clone().multiply(bullet.getSpeed() / 2);
         Location center = bullet.getBulletLocation().clone().add(directionToCenter);
@@ -75,8 +77,8 @@ public class BulletHandler implements IHandler, ISettingsReloader {
         }
 
         Location particleLocation = bullet.getBulletLocation().clone();
-        Vector shortDistance = bullet.getDirection().multiply(0.1);
-        double stepBeforeParticle = 0.5;
+        Vector shortDistance = bullet.getDirection().clone().multiply(0.1);
+        double stepBeforeParticle = 1.5;
         double count = 0.0;
         Block lastBlock = null;
         for (double i = 0; i < closestDistance; i += 0.1) {
@@ -106,7 +108,6 @@ public class BulletHandler implements IHandler, ISettingsReloader {
         for (Bullet bullet : bullets) {
             if (this.tick(bullet)) {
                 this.bullets.remove(bullet);
-                Bukkit.broadcastMessage("Removing Bullet");
             }
         }
     }
