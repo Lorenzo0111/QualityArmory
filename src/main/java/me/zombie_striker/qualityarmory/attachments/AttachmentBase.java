@@ -9,21 +9,14 @@ import me.zombie_striker.qualityarmory.guns.Gun;
 public class AttachmentBase extends Gun {
 
 	private MaterialStorage base;
-	private String newName = null;
 
-	public AttachmentBase(MaterialStorage baseItem, MaterialStorage currentMaterial, String name, String displayname) {
-		super(displayname, currentMaterial, displayname);
+	public AttachmentBase(MaterialStorage baseItem, MaterialStorage currentMaterial, String name) {
+		super(name, currentMaterial);
 		this.base = baseItem;
-		this.newName = name;
 	}
 
 	public MaterialStorage getBase() {
 		return base;
-	}
-
-	@Override
-	public String getName() {
-		return newName;
 	}
 
 }

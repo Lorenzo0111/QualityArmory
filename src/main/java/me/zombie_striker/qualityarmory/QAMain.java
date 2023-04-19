@@ -9,6 +9,7 @@ import me.zombie_striker.qualityarmory.boundingbox.BoundingBoxManager;
 import me.zombie_striker.qualityarmory.commands.QualityArmoryCommand;
 import me.zombie_striker.qualityarmory.config.CommentYamlConfiguration;
 import me.zombie_striker.qualityarmory.config.MessagesYML;
+import me.zombie_striker.qualityarmory.guns.WeaponSounds;
 import me.zombie_striker.qualityarmory.handlers.*;
 import me.zombie_striker.qualityarmory.hooks.MimicHookImpl;
 import me.zombie_striker.qualityarmory.hooks.PlaceholderAPIHook;
@@ -39,7 +40,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 import java.util.Map.Entry;
-import java.util.logging.Level;
 
 public class QAMain extends JavaPlugin {
 
@@ -109,6 +109,7 @@ public class QAMain extends JavaPlugin {
     private GunDataHandler gunDataHandler;
     private ControlHandler controlHandler;
     private KeyFrameGunHandler keyFrameGunHandler;
+    private ItemHandler itemHandler;
     private final List<IHandler> handlers = new ArrayList<>();
 
     public BulletHandler getBulletHandler() {
@@ -326,6 +327,8 @@ public class QAMain extends JavaPlugin {
         this.handlers.add(this.gunDataHandler = new GunDataHandler());
         this.handlers.add(this.controlHandler = new ControlHandler());
         this.handlers.add(this.keyFrameGunHandler = new KeyFrameGunHandler());
+        this.handlers.add(this.itemHandler = new ItemHandler());
+
 
         this.handlers.add(new InvisibleBlockForAutomaticHandler());
 
@@ -341,6 +344,17 @@ public class QAMain extends JavaPlugin {
         for (IHandler handler : handlers) {
             handler.init(this);
         }
+
+        File resourceDir = new File(getDataFolder(), "resources");
+        buildResources(resourceDir);
+
+        ResourceLoader loader = new ResourceLoader(resourceDir, this);
+        loader.loadResources();
+    }
+
+    private void buildResources(File resourceDir) {
+        new ResourceBuilder(new File(resourceDir, "ak47.yml"), ResourceType.GUN, "ak47").setMaterialData(MaterialStorage.getMS(Material.CROSSBOW, 1, 0)).setDefaultGunValues("AK-47", 37, "762", true, 4.0F, 20, WeaponSounds.GUN_AK47.getSoundName()).build();
+
     }
 
     @SuppressWarnings({"unchecked", "deprecation"})
@@ -567,6 +581,10 @@ public class QAMain extends JavaPlugin {
 
     public KeyFrameGunHandler getKeyFrameGunHandler() {
         return keyFrameGunHandler;
+    }
+
+    public ItemHandler getItemHandler() {
+        return itemHandler;
     }
 
     public MessagesYML getMessagesYml() {

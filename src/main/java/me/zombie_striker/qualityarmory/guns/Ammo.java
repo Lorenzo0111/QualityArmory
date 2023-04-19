@@ -13,6 +13,10 @@ public class Ammo extends CustomBaseObject implements Comparable<Ammo> {
         this.setData(ConfigKey.CUSTOMITEM_AMMOTYPE.getKey(), ammotype);
     }
 
+    public Ammo(String name, MaterialStorage storage) {
+        super(name, storage);
+    }
+
     @Override
     public int compareTo(@NotNull Ammo o) {
         return getName().compareTo(o.getName());

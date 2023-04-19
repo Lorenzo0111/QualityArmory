@@ -76,13 +76,9 @@ public class GunDataHandler implements IHandler, Listener {
         }
         return null;
     }
-    public void registerGun(Gun gun, ItemStack is){
-        UUID gunuuid = getGunID(is);
-        if(gunuuid==null){
-            //TODO: Generate UUID
-        }
-        this.gunBulletCount.put(gunuuid,0);
-        this.gunType.put(gunuuid,gun);
+    public void registerGun(Gun gun, UUID uuid){
+        this.gunBulletCount.put(uuid,0);
+        this.gunType.put(uuid,gun);
     }
 
     public boolean isPlayingAnimation(UUID gun) {

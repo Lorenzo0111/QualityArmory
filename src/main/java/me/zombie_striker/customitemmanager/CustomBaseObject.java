@@ -39,4 +39,23 @@ public class CustomBaseObject {
 	public Object getData(String key) {
 		return this.data.get(key);
 	}
+	public int getDataInt(String key) {
+		if(containsData(key))
+			return (int) getData(key);
+		return -1;
+	}
+	public double getDataDouble(String key) {
+		if(containsData(key))
+			return (double) getData(key);
+		return -1;
+	}
+	public boolean getDataBoolean(String key) {
+		if(containsData(key))
+			return (boolean) getData(key);
+		return false;
+	}
+
+	public boolean containsData(String key) {
+		return this.data.containsKey(key);
+	}
 }

@@ -10,7 +10,7 @@ public class BoundingBoxManager {
 
 	//private static DefaultHumanoidBoundingBox DEFUALT = new DefaultHumanoidBoundingBox();
 	private static PlayerBoundingBox PLAYER = new PlayerBoundingBox();
-	private static DefaultHumanoidBoundingBox HUMANOID = new DefaultHumanoidBoundingBox(1.4,0.45,0.5);
+	private static DefaultHumanoidBoundingBox HUMANOID = new DefaultHumanoidBoundingBox(1.4,0.45,1.9);
 	private static DefaultHumanoidBoundingBox WITHER_SKELETON = new DefaultHumanoidBoundingBox(1.8, 0.45, 2.4);
 	private static DefaultHumanoidBoundingBox VILLAGER = new DefaultHumanoidBoundingBox(1.4, 0.45, 2);
 	private static DefaultHumanoidBoundingBox CREEPER = new DefaultHumanoidBoundingBox(1.2, 0.4, 1.7);

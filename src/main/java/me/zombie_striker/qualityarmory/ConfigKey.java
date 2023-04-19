@@ -12,6 +12,8 @@ public enum ConfigKey {
     CUSTOMITEM_RELOAD_ANIMATION("animation.reload"),
     CUSTOMITEM_RELOAD_TIME("reloadTimeInTicks"),
     CUSTOMITEM_MAX_ITEM_STACK("maxItemStack"),
+    CUSTOMITEM_FIRING_SOUND("firingSound"),
+
 
 
     SETTING_ENABLEDCRAFTING("enableCraftingWeapons"),

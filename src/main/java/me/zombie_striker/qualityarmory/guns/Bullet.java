@@ -11,10 +11,11 @@ public class Bullet {
     private Vector direction;
     private UUID shooter;
     private float damage;
-    private float speed;
+    private double speed;
     private float internalVelocity = 1.0F;
+    private double distanceTraveled = 0;
 
-    public Bullet(Location starting, Vector direction, UUID shooter, float damage, float speed) {
+    public Bullet(Location starting, Vector direction, UUID shooter, float damage, double speed) {
         this.bulletLocation = starting;
         this.damage = damage;
         this.direction = direction;
@@ -42,7 +43,7 @@ public class Bullet {
         return bulletLocation;
     }
 
-    public float getSpeed() {
+    public double getSpeed() {
     return speed;
     }
 
@@ -52,5 +53,13 @@ public class Bullet {
 
     public void setInternalVelocity(float internalVelocity) {
         this.internalVelocity = internalVelocity;
+    }
+
+    public double getDistanceTraveled() {
+        return distanceTraveled;
+    }
+
+    public void setDistanceTraveled(double distanceTraveled) {
+        this.distanceTraveled = distanceTraveled;
     }
 }

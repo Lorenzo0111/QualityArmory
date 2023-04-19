@@ -14,9 +14,8 @@ public class Gun extends CustomBaseObject implements Comparable<Gun> {
 		this.setData(ConfigKey.CUSTOMITEM_AMMOTYPE.getKey(), ammotype);
 	}
 
-    public Gun(String name, MaterialStorage currentMaterial, String displayname) {
+    public Gun(String name, MaterialStorage currentMaterial) {
         super(name,currentMaterial);
-		this.setData(ConfigKey.CUSTOMITEM_DISPLAYNAME.getKey(), displayname);
     }
 
     @Override

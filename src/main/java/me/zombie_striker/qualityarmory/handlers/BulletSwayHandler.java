@@ -29,8 +29,9 @@ public class BulletSwayHandler implements Listener, IHandler {
     }
 
     public Vector getSway(Player player){
-        Vector v = new Vector(0,0,0);
-        for(MoveEntry moveEntry : lastMoved.get(player)){
+        Vector v = new Vector(0,0.01,0);
+        if(lastMoved.containsKey(player.getUniqueId()))
+        for(MoveEntry moveEntry : lastMoved.get(player.getUniqueId())){
             Vector temp = moveEntry.getDistanceMoved();
             temp.multiply(1.0*(System.currentTimeMillis()-moveEntry.getTime())/1000.0);
             v.add(temp);

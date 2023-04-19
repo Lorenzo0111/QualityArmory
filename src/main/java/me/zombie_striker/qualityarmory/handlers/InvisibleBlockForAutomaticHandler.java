@@ -21,7 +21,7 @@ public class InvisibleBlockForAutomaticHandler implements Listener, IHandler {
 
     @EventHandler
     public void onMove(PlayerMoveEvent event) {
-        Block targetblock = event.getPlayer().getTargetBlockExact(5, FluidCollisionMode.NEVER);
+        Block targetblock = event.getPlayer().getTargetBlock(null,4);
         if (!QualityArmory.getInstance().isGun(event.getPlayer().getInventory().getItemInMainHand())) {
             if (fakeBlock.containsKey(event.getPlayer().getUniqueId())) {
                 Location prev = fakeBlock.remove(event.getPlayer().getUniqueId());

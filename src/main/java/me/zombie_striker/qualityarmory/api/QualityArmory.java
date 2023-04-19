@@ -72,11 +72,12 @@ public class QualityArmory {
 
 
     public CustomBaseObject getCustomItem(ItemStack is) {
-        if (is.getItemMeta().hasCustomModelData())
-            for (CustomBaseObject cbo : main.getCustomItems()) {
-                if (cbo.getItemData().getMat() == is.getType() && cbo.getItemData().getData() == is.getItemMeta().getCustomModelData())
-                    return cbo;
-            }
+        if (is != null && is.hasItemMeta())
+            if (is.getItemMeta().hasCustomModelData())
+                for (CustomBaseObject cbo : main.getCustomItems()) {
+                    if (cbo.getItemData().getMat() == is.getType() && cbo.getItemData().getData() == is.getItemMeta().getCustomModelData())
+                        return cbo;
+                }
         return null;
     }
 
@@ -280,7 +281,8 @@ public class QualityArmory {
 
     public CustomBaseObject getCustomItemByName(String itemId) {
         for (CustomBaseObject cbo : main.getCustomItems()) {
-            if (cbo.getName().equalsIgnoreCase(itemId)) return cbo;
+            if (cbo != null && cbo.getName() != null)
+                if (cbo.getName().equalsIgnoreCase(itemId)) return cbo;
         }
         return null;
     }
@@ -289,4 +291,7 @@ public class QualityArmory {
         return main.getCustomItems();
     }
 
+    public QAMain getPluginInstance() {
+    return main;
+    }
 }

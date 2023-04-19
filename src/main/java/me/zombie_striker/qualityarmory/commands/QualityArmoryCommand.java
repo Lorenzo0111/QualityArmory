@@ -56,7 +56,6 @@ public class QualityArmoryCommand implements CommandExecutor, TabCompleter {
                     s.add("reload");
             if (sender.hasPermission("qualityarmory.createnewitem")) {
             }
-
             return s;
         }
         if (args.length == 2) {
@@ -261,26 +260,8 @@ public class QualityArmoryCommand implements CommandExecutor, TabCompleter {
                             return true;
                         }
 
-                        ItemStack temp;
-
-                        if (g instanceof Gun) {
-                            QAGunGiveEvent event = new QAGunGiveEvent(who, (Gun) g, QAGunGiveEvent.Cause.COMMAND);
-                            Bukkit.getPluginManager().callEvent(event);
-                            if (event.isCancelled()) return true;
-
-                            g = event.getGun();
-                            temp = CustomItemManager.getItemType("gun").getItem(g.getItemData().getMat(), g.getItemData().getData(), g.getItemData().getVariant());
-                            who.getInventory().addItem(temp);
-                        } else if (g instanceof Ammo) {
-                            int amount = (int) g.getData(ConfigKey.CUSTOMITEM_MAX_ITEM_STACK.getKey());
-                            if (args.length > 3)
-                                amount = Integer.parseInt(args[3]);
-                            QualityArmory.getInstance().addAmmoToInventory(who, (Ammo) g, amount);
-                        } else {
-                            temp = CustomItemManager.getItemType("gun").getItem(g.getItemData().getMat(), g.getItemData().getData(), g.getItemData().getVariant());
-                            temp.setAmount(1);
-                            who.getInventory().addItem(temp);
-                        }
+                        ItemStack gun = main.getItemHandler().createItemStack(g);
+                        who.getInventory().addItem(gun);
 
                         sender.sendMessage(main.getPrefix() + " Adding " + g.getName() + " to " + (sender == who ? "your" : who.getName() + "'s") + " inventory");
                     } else {
