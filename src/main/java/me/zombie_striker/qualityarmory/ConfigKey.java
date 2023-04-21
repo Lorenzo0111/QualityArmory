@@ -20,8 +20,8 @@ public enum ConfigKey {
     SETTING_ENABLESHOP("enableShopCommand"),
     SETTING_DEBUG("enableDebugMessages"),
     SETTING_HEADSHOT_MULTIPLIER("headshotMultiplier"),
-    SETTING_KICK_IF_RESOURCEPACK_NOT_ACCEPT("kickIfDeclineResourcepack")
-    ;
+    SETTING_KICK_IF_RESOURCEPACK_NOT_ACCEPT("kickIfDeclineResourcepack"),
+    BULLETS_PER_SHOT("bulletsPerShot");
 
     private final String key;
 

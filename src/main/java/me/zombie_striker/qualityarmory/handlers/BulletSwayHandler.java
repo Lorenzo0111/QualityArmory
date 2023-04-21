@@ -36,6 +36,7 @@ public class BulletSwayHandler implements Listener, IHandler {
             temp.multiply(1.0*(System.currentTimeMillis()-moveEntry.getTime())/1000.0);
             v.add(temp);
         }
+        v=v.add(new Vector(((Math.random()*2)-1),((Math.random()*2)-1),((Math.random()*2)-1)));
         v=v.normalize();
         return v;
     }

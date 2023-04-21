@@ -24,6 +24,12 @@ public class ResourceBuilder {
         return this;
     }
 
+    public ResourceBuilder setDefaultAmmoValues(String displayname, int maxStackSize, String ammotype){
+        setData(ConfigKey.CUSTOMITEM_AMMOTYPE,ammotype);
+        setData(ConfigKey.CUSTOMITEM_DISPLAYNAME,displayname);
+        setData(ConfigKey.CUSTOMITEM_MAX_ITEM_STACK,maxStackSize);
+        return this;
+    }
     public ResourceBuilder setDefaultGunValues(String displayname, int ammoMax, String ammotype, boolean automaticFiring, float damage, float bulletspeed, String sound){
         setData(ConfigKey.CUSTOMITEM_AMMOTYPE,ammotype);
         setData(ConfigKey.CUSTOMITEM_DISPLAYNAME,displayname);

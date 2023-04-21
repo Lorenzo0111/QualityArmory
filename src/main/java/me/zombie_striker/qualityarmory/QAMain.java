@@ -353,8 +353,25 @@ public class QAMain extends JavaPlugin {
     }
 
     private void buildResources(File resourceDir) {
-        new ResourceBuilder(new File(resourceDir, "ak47.yml"), ResourceType.GUN, "ak47").setMaterialData(MaterialStorage.getMS(Material.CROSSBOW, 1, 0)).setDefaultGunValues("AK-47", 37, "762", true, 4.0F, 20, WeaponSounds.GUN_AK47.getSoundName()).build();
+        new ResourceBuilder(new File(resourceDir,"9mm.yml"),ResourceType.AMMO,"9mm").setMaterialData(MaterialStorage.getMS(Material.PHANTOM_MEMBRANE,1,0)).setDefaultAmmoValues("9mm ammo",50,"9mm").build();
+        new ResourceBuilder(new File(resourceDir,"556.yml"),ResourceType.AMMO,"556").setMaterialData(MaterialStorage.getMS(Material.PHANTOM_MEMBRANE,2,0)).setDefaultAmmoValues("5.56 ammo",50,"556").build();
+        new ResourceBuilder(new File(resourceDir,"762.yml"),ResourceType.AMMO,"762").setMaterialData(MaterialStorage.getMS(Material.PHANTOM_MEMBRANE,3,0)).setDefaultAmmoValues("7.62 ammo",50,"762").build();
+        new ResourceBuilder(new File(resourceDir,"slugshell.yml"),ResourceType.AMMO,"slugshell").setMaterialData(MaterialStorage.getMS(Material.PHANTOM_MEMBRANE,4,0)).setDefaultAmmoValues("Slug Shell ammo",25,"shell").build();
 
+        new ResourceBuilder(new File(resourceDir, "p30.yml"), ResourceType.GUN, "p30").setMaterialData(MaterialStorage.getMS(Material.CROSSBOW, 1, 0)).setDefaultGunValues("P30", 12, "9mm", false, 4.0F, 20, WeaponSounds.GUN_SMALL.getSoundName()).build();
+        new ResourceBuilder(new File(resourceDir, "pkp.yml"), ResourceType.GUN, "pkp").setMaterialData(MaterialStorage.getMS(Material.CROSSBOW, 2, 0)).setDefaultGunValues("PKP", 50, "762", true, 4.0F, 20, WeaponSounds.GUN_BIG.getSoundName()).build();
+        new ResourceBuilder(new File(resourceDir, "mp5.yml"), ResourceType.GUN, "mp5").setMaterialData(MaterialStorage.getMS(Material.CROSSBOW, 3, 0)).setDefaultGunValues("MP5", 40, "9mm", true, 4.0F, 20, WeaponSounds.GUN_SMALL_AUTO.getSoundName()).build();
+        new ResourceBuilder(new File(resourceDir, "ak47.yml"), ResourceType.GUN, "ak47").setMaterialData(MaterialStorage.getMS(Material.CROSSBOW, 4, 0)).setDefaultGunValues("AK-47", 37, "762", true, 4.0F, 20, WeaponSounds.GUN_AK47.getSoundName()).build();
+        new ResourceBuilder(new File(resourceDir, "aug.yml"), ResourceType.GUN, "aug").setMaterialData(MaterialStorage.getMS(Material.CROSSBOW, 5, 0)).setDefaultGunValues("AUG", 30, "556", true, 4.0F, 20, WeaponSounds.GUN_MEDIUM.getSoundName()).build();
+        new ResourceBuilder(new File(resourceDir, "m4.yml"), ResourceType.GUN, "M4").setMaterialData(MaterialStorage.getMS(Material.CROSSBOW, 6, 0)).setDefaultGunValues("M4", 40, "556", true, 4.0F, 20, WeaponSounds.GUN_MEDIUM.getSoundName()).build();
+        new ResourceBuilder(new File(resourceDir, "remington870.yml"), ResourceType.GUN, "remington870").setMaterialData(MaterialStorage.getMS(Material.CROSSBOW, 7, 0)).setDefaultGunValues("Remington 870", 8, "shell", false, 1.0F, 20, WeaponSounds.GUN_SHOTGUN.getSoundName()).setData(ConfigKey.BULLETS_PER_SHOT,5).build();
+        new ResourceBuilder(new File(resourceDir, "fnfal.yml"), ResourceType.GUN, "fnfal").setMaterialData(MaterialStorage.getMS(Material.CROSSBOW, 8, 0)).setDefaultGunValues("FN-FAL", 30, "762", true, 4.0F, 20, WeaponSounds.GUN_MEDIUM.getSoundName()).build();
+        new ResourceBuilder(new File(resourceDir, "xm1014.yml"), ResourceType.GUN, "xm1014").setMaterialData(MaterialStorage.getMS(Material.CROSSBOW, 9, 0)).setDefaultGunValues("XM1014", 8, "shell", false, 1.1F, 20, WeaponSounds.GUN_SHOTGUN.getSoundName()).setData(ConfigKey.BULLETS_PER_SHOT,6).build();
+        new ResourceBuilder(new File(resourceDir, "ump.yml"), ResourceType.GUN, "ump").setMaterialData(MaterialStorage.getMS(Material.CROSSBOW, 10, 0)).setDefaultGunValues("UMP", 27, "9mm", true, 4.0F, 20, WeaponSounds.GUN_SMALL_AUTO.getSoundName()).build();
+        new ResourceBuilder(new File(resourceDir, "sw1911.yml"), ResourceType.GUN, "sw1911").setMaterialData(MaterialStorage.getMS(Material.CROSSBOW, 11, 0)).setDefaultGunValues("SW-1911", 12, "9mm", false, 4.0F, 20, WeaponSounds.GUN_SMALL.getSoundName()).build();
+        new ResourceBuilder(new File(resourceDir, "m40.yml"), ResourceType.GUN, "m40").setMaterialData(MaterialStorage.getMS(Material.CROSSBOW, 12, 0)).setDefaultGunValues("M40", 15, "762", false, 6.0F, 20, WeaponSounds.GUN_MEDIUM.getSoundName()).build();
+        new ResourceBuilder(new File(resourceDir, "enfield.yml"), ResourceType.GUN, "enfield").setMaterialData(MaterialStorage.getMS(Material.CROSSBOW, 13, 0)).setDefaultGunValues("Enfield", 6, "9mm", false, 5.0F, 20, WeaponSounds.GUN_MEDIUM.getSoundName()).build();
+        new ResourceBuilder(new File(resourceDir, "mauser.yml"), ResourceType.GUN, "mauser").setMaterialData(MaterialStorage.getMS(Material.CROSSBOW, 14, 0)).setDefaultGunValues("Mauser C96", 16, "9mm", false, 4.0F, 20, WeaponSounds.GUN_MAUSER.getSoundName()).build();
     }
 
     @SuppressWarnings({"unchecked", "deprecation"})
