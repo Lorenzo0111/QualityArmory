@@ -20,6 +20,7 @@ public class CustomBaseObject {
 
 	private double price;
 	private boolean enableShop = true;
+	private boolean enableCrafting = true;
 
 	Object[] ing = null;
 	int craftingReturn = 1;
@@ -94,8 +95,16 @@ public class CustomBaseObject {
 		return enableShop;
 	}
 
+	public boolean isEnableCrafting() {
+		return enableCrafting;
+	}
+
 	public void setEnableShop(boolean enableShop) {
 		this.enableShop = enableShop;
+	}
+
+	public void setEnableCrafting(boolean enableCrafting) {
+		this.enableCrafting = enableCrafting;
 	}
 
 	public void setIngredients(ItemStack[] ing) {
