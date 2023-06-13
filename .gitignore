@@ -7,3 +7,4 @@
 *.iml
 dependency-reduced-pom.xml
 server/
+run/

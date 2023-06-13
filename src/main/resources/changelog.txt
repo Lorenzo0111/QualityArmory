@@ -1,3 +1,6 @@
+2.0.10
+  - 1.20 support
+
 2.0.9
   - Fixed ammo reload
   - Added block regen feature

@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>me.zombie_striker</groupId>
     <artifactId>QualityArmory</artifactId>
-    <version>2.0.9</version>
+    <version>2.0.10</version>
     <name>QualityArmory</name>
 
     <properties>
@@ -40,7 +40,7 @@
 
         <repository>
             <id>citizens-repo</id>
-            <url>https://repo.citizensnpcs.co</url>
+            <url>https://maven.citizensnpcs.co/repo</url>
         </repository>
 
         <repository>
@@ -103,7 +103,7 @@
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>1.19.4-R0.1-SNAPSHOT</version>
+            <version>1.20-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
 
@@ -111,7 +111,7 @@
         <dependency>
             <groupId>com.github.cryptomorin</groupId>
             <artifactId>XSeries</artifactId>
-            <version>9.1.0</version>
+            <version>9.4.0</version>
         </dependency>
 
         <!-- Vault API -->
@@ -170,7 +170,7 @@
         <dependency>
             <groupId>org.mcmonkey</groupId>
             <artifactId>sentinel</artifactId>
-            <version>1.8.5</version>
+            <version>2.7.3-SNAPSHOT</version>
             <type>jar</type>
             <scope>provided</scope>
         </dependency>
@@ -186,7 +186,7 @@
         <dependency>
             <groupId>de.tr7zw</groupId>
             <artifactId>item-nbt-api</artifactId>
-            <version>2.11.2</version>
+            <version>2.11.3</version>
         </dependency>
 
         <dependency>
@@ -222,8 +222,8 @@
         <!-- Citzens -->
         <dependency>
             <groupId>net.citizensnpcs</groupId>
-            <artifactId>citizens</artifactId>
-            <version>2.0.24-SNAPSHOT</version>
+            <artifactId>citizens-main</artifactId>
+            <version>2.0.30-SNAPSHOT</version>
             <type>jar</type>
             <scope>provided</scope>
         </dependency>
