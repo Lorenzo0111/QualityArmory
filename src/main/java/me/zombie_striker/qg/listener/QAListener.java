@@ -1116,10 +1116,6 @@ public class QAListener implements Listener {
 
 	}
 
-	@EventHandler
-    public void onDrop(@NotNull InventoryClickEvent event) {
-		DEBUG("Detected drop: " + event.getAction());
-    }
 
 	private void DEBUG(String s) {
 		QAMain.DEBUG(s);

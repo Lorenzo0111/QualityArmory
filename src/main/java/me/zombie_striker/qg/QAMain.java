@@ -1627,6 +1627,7 @@ public class QAMain extends JavaPlugin {
 
 							g = event.getGun();
 							temp = CustomItemManager.getItemType("gun").getItem(g.getItemData().getMat(),g.getItemData().getData(),g.getItemData().getVariant());
+							Gun.updateAmmo((Gun) g, temp, ((Gun) g).getMaxBullets());
 							who.getInventory().addItem(temp);
 						} else if (g instanceof Ammo) {
 							int amount = ((Ammo) g).getMaxItemStack();
