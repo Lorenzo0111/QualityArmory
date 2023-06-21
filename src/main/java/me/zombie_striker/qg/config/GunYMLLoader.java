@@ -339,6 +339,8 @@ public class GunYMLLoader {
 			g.setPrice(f2.getDouble("price"));
 		if (f2.contains("allowInShop"))
 			g.setEnableShop(f2.getBoolean("allowInShop"));
+		if (f2.contains("allowCrafting"))
+			g.setEnableCrafting(f2.getBoolean("allowCrafting"));
 		if (f2.contains("isAutomatic"))
 			g.setAutomatic(f2.getBoolean("isAutomatic"));
 		if (f2.contains("enableBetterModelScopes"))
