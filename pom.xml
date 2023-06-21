@@ -103,7 +103,7 @@
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>1.20-R0.1-SNAPSHOT</version>
+            <version>1.20.1-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
 
@@ -147,7 +147,7 @@
         <dependency>
             <groupId>com.github.TownyAdvanced</groupId>
             <artifactId>Towny</artifactId>
-            <version>0.99.0.0</version>
+            <version>0.99.2.2</version>
             <scope>provided</scope>
         </dependency>
 
@@ -162,7 +162,7 @@
         <dependency>
             <groupId>me.clip</groupId>
             <artifactId>placeholderapi</artifactId>
-            <version>2.11.2</version>
+            <version>2.11.3</version>
             <scope>provided</scope>
         </dependency>
 
@@ -270,7 +270,7 @@
         <dependency>
             <groupId>com.github.LoneDev6</groupId>
             <artifactId>api-itemsadder</artifactId>
-            <version>3.2.5</version>
+            <version>3.4.1-r4</version>
             <scope>provided</scope>
         </dependency>
 
@@ -284,7 +284,7 @@
         <dependency>
             <groupId>com.github.TechFortress</groupId>
             <artifactId>GriefPrevention</artifactId>
-            <version>16.18</version>
+            <version>16.18.1</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>
