@@ -11,6 +11,7 @@ public class GithubUpdater {
 
 	public static boolean autoUpdate(final Plugin main, String author, String githubProject, String jarname) {
 		if (main.getDescription().getVersion().endsWith("SNAPSHOT")) {
+			QAMain.getInstance().getLogger().info("[Updater] You are using a BETA version of the plugin. Updater is disabled, please check updates manually.");
 			return false;
 		}
 
