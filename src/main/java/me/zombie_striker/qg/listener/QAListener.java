@@ -915,8 +915,12 @@ public class QAListener implements Listener {
 		ItemStack prev = e.getPlayer().getInventory().getItem(e.getPreviousSlot());
 		ItemStack newslot = e.getPlayer().getInventory().getItem(e.getNewSlot());
 		if (QualityArmory.isIronSights(prev) && QualityArmory.isCustomItem(e.getPlayer().getInventory().getItemInOffHand())) {
+			int ammoCount = Gun.getAmount(e.getPlayer());
+
 			e.getPlayer().getInventory().setItem(e.getPreviousSlot(), e.getPlayer().getInventory().getItemInOffHand());
 			e.getPlayer().getInventory().setItemInOffHand(null);
+
+			Gun.updateAmmo(null, e.getPlayer().getInventory().getItem(e.getPreviousSlot()), ammoCount);
 		}
 		if (QualityArmory.isCustomItem(prev)) {
 			CustomBaseObject customBase = QualityArmory.getCustomItem(prev);
@@ -929,6 +933,10 @@ public class QAListener implements Listener {
 				((ArmoryBaseObject) customBase).onSwapTo(e.getPlayer(), newslot);
 				if (customBase.getSoundOnEquip() != null)
 					e.getPlayer().getWorld().playSound(e.getPlayer().getLocation(), customBase.getSoundOnEquip(), 1, 1);
+			}
+
+			if (customBase instanceof Gun && e.getPlayer().isSneaking() && ((Gun) customBase).hasIronSights()) {
+				Bukkit.getScheduler().runTaskLater(QAMain.getInstance(), () -> IronsightsHandler.aim(e.getPlayer()), 1);
 			}
 		}
 
