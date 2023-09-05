@@ -40,16 +40,13 @@ public class Update19Events implements Listener {
 		if (QAMain.reloadOnF || QAMain.reloadOnFOnly) {
 			if (QualityArmory.isIronSights(e.getOffHandItem())) {
 				e.setCancelled(true);
-				e.getPlayer().getInventory().setItemInMainHand(e.getMainHandItem());
-				e.getPlayer().getInventory().setItemInOffHand(null);
+				IronsightsHandler.unAim(e.getPlayer());
 				BukkitTask task = GunUtil.rapidfireshooters.get(e.getPlayer().getUniqueId());
 				if (task != null)
 					task.cancel();
 				return;
 			} else if (QualityArmory.isGun(e.getMainHandItem())) {
 				e.setCancelled(true);
-				e.getPlayer().getInventory().setItemInMainHand(e.getMainHandItem());
-				e.getPlayer().getInventory().setItemInOffHand(null);
 				BukkitTask task = GunUtil.rapidfireshooters.get(e.getPlayer().getUniqueId());
 				if (task != null)
 					task.cancel();
