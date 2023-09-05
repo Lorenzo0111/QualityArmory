@@ -10,8 +10,8 @@ public class QACustomItemInteractEvent extends Event implements Cancellable {
 	private static final HandlerList handlers = new HandlerList();
 
 	private boolean cancel = false;
-	private Player player;
-	private CustomBaseObject g;
+	private final Player player;
+	private final CustomBaseObject g;
 
 	public QACustomItemInteractEvent(Player p, CustomBaseObject g) {
 		this.player = p;

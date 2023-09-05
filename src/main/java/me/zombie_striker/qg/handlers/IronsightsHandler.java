@@ -2,6 +2,7 @@ package me.zombie_striker.qg.handlers;
 
 import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.api.QualityArmory;
+import me.zombie_striker.qg.api.WeaponInteractEvent;
 import me.zombie_striker.qg.guns.Gun;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
@@ -30,6 +31,7 @@ public class IronsightsHandler {
 				if (player.getItemInHand() != null && QualityArmory.isGun(player.getItemInHand())) {
 					Gun gun = QualityArmory.getGun(player.getItemInHand());
 					QAMain.toggleNightvision(player, gun, true);
+					Bukkit.getPluginManager().callEvent(new WeaponInteractEvent(player, gun, WeaponInteractEvent.InteractType.AIM));
 				}
 				final int ammo = Gun.getAmount(player);
 
@@ -43,6 +45,7 @@ public class IronsightsHandler {
 				if (player.getInventory().getItemInOffHand() != null && QualityArmory.isGun(player.getInventory().getItemInOffHand())) {
 					Gun gun = QualityArmory.getGun(player.getInventory().getItemInOffHand());
 					QAMain.toggleNightvision(player, null, false);
+					Bukkit.getPluginManager().callEvent(new WeaponInteractEvent(player, gun, WeaponInteractEvent.InteractType.UNAIM));
 				}
 
 				final int ammo = Gun.getAmount(player);

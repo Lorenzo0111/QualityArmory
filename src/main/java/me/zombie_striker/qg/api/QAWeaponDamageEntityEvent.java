@@ -10,14 +10,13 @@ import me.zombie_striker.qg.guns.Gun;
 
 public class QAWeaponDamageEntityEvent extends Event implements Cancellable {
 	private static final HandlerList handlers = new HandlerList();
-
-	private boolean cancel = false;
-	private Player player;
-	private Gun g;
-	private Entity damaged;
+	private final Player player;
+	private final Gun g;
+	private final Entity damaged;
 	private boolean wasHeadshot = false;
 	private double damage;
 	private boolean hasProtection = false;
+	private boolean cancel = false;
 
 	public QAWeaponDamageEntityEvent(Player p, Gun g, Entity damaged, boolean wasHeadshot, double damage, boolean hasProtection) {
 		this.player = p;

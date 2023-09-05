@@ -9,10 +9,9 @@ import me.zombie_striker.qg.guns.Gun;
 
 public class QAWeaponPrepareShootEvent extends Event implements Cancellable {
 	private static final HandlerList handlers = new HandlerList();
-
+	private final Player player;
+	private final Gun g;
 	private boolean cancel = false;
-	private Player player;
-	private Gun g;
 
 	public QAWeaponPrepareShootEvent(Player p, Gun g) {
 		this.player = p;

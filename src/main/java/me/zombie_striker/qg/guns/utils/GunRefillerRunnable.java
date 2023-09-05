@@ -4,8 +4,10 @@ import me.zombie_striker.customitemmanager.OLD_ItemFact;
 import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.ammo.Ammo;
 import me.zombie_striker.qg.api.QualityArmory;
+import me.zombie_striker.qg.api.WeaponInteractEvent;
 import me.zombie_striker.qg.guns.Gun;
 import me.zombie_striker.qg.handlers.Update19OffhandChecker;
+import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -148,6 +150,7 @@ public class GunRefillerRunnable {
                 }
 
 
+                Bukkit.getPluginManager().callEvent(new WeaponInteractEvent(player, g, WeaponInteractEvent.InteractType.RELOAD));
                 if (!QAMain.reloadingTasks.containsKey(player.getUniqueId())) {
                     return;
                 }

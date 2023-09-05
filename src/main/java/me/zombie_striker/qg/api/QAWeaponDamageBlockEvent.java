@@ -10,11 +10,10 @@ import org.bukkit.event.HandlerList;
 
 public class QAWeaponDamageBlockEvent extends Event implements Cancellable {
 	private static final HandlerList handlers = new HandlerList();
-
-	private boolean cancel = false;
 	private final Player player;
 	private final Gun g;
 	private final Block damaged;
+	private boolean cancel = false;
 
 	public QAWeaponDamageBlockEvent(Player p, Gun g, Block damaged) {
 		this.player = p;
