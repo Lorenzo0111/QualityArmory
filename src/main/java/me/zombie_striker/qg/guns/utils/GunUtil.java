@@ -310,7 +310,7 @@ public class GunUtil {
 
 				}
 			} else {
-				QAMain.DEBUG("No enities hit.");
+				QAMain.DEBUG("No entities hit.");
 			}
 			time3 = System.currentTimeMillis();
 			if (QAMain.enableBulletTrails) {
@@ -586,11 +586,13 @@ public class GunUtil {
 					} else {
 						slot = player.getInventory().getHeldItemSlot();
 					}
-					Gun.updateAmmo(g, player, amount);
+					QAMain.DEBUG("----- ----- ----- Updating ammo");
+					temp.setItemMeta(im);
+					Gun.updateAmmo(g, temp, amount);
 					if(QAMain.showAmmoInXPBar){
 						updateXPBar(player,g,amount);
 					}
-					temp.setItemMeta(im);
+
 					if (slot == -1) {
 						try {
 							if (QualityArmory.isIronSights(player.getItemInHand())) {
