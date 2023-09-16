@@ -14,6 +14,7 @@ import me.zombie_striker.qg.guns.utils.GunRefillerRunnable;
 import me.zombie_striker.qg.guns.utils.GunUtil;
 import me.zombie_striker.qg.guns.utils.WeaponSounds;
 import me.zombie_striker.qg.guns.utils.WeaponType;
+import me.zombie_striker.qg.handlers.IronsightsHandler;
 import me.zombie_striker.qg.handlers.Update19OffhandChecker;
 import me.zombie_striker.qg.utils.LocalUtils;
 import org.bukkit.*;
@@ -159,7 +160,7 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
     }
 
     public static int getAmount(Player player) {
-        return getAmount(player.getInventory().getItemInHand());
+        return getAmount(IronsightsHandler.isAiming(player) ? player.getInventory().getItemInOffHand() : player.getInventory().getItemInMainHand());
     }
 
     public static int getAmount(ItemStack is) {
