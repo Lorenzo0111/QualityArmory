@@ -160,7 +160,7 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
     }
 
     public static int getAmount(Player player) {
-        return getAmount(IronsightsHandler.isAiming(player) ? player.getInventory().getItemInOffHand() : player.getInventory().getItemInMainHand());
+        return getAmount(QualityArmory.isIronSights(player.getInventory().getItemInHand()) ? player.getInventory().getItemInOffHand() : player.getInventory().getItemInHand());
     }
 
     public static int getAmount(ItemStack is) {

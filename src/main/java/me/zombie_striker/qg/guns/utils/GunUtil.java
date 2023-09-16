@@ -541,7 +541,7 @@ public class GunUtil {
 						return;
 					}
 
-					int amount = Gun.getAmount(player);
+					int amount = Gun.getAmount(temp);
 					if(holdingRMB && !QAMain.SWAP_TO_LMB_SHOOT){
 						if(System.currentTimeMillis()-g.getLastTimeRMB(player) > 310){
 							rapidfireshooters.remove(player.getUniqueId());
