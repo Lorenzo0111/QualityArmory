@@ -218,10 +218,6 @@ public class ProtocolLibHandler {
 		yawpack.getDoubles().write(1, player.getEyeLocation().getY() + newDirection.getY());
 		yawpack.getDoubles().write(2, player.getEyeLocation().getZ() + newDirection.getZ());
 		yawpack.getBooleans().write(0, false);
-		try {
-			protocolManager.sendServerPacket(player, yawpack);
-		} catch (InvocationTargetException e) {
-			e.printStackTrace();
-		}
+		protocolManager.sendServerPacket(player, yawpack);
 	}
 }
