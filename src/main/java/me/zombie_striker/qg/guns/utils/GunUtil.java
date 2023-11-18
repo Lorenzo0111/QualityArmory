@@ -586,15 +586,13 @@ public class GunUtil {
 					if (amount < 0)
 						amount = 0;
 
-					ItemMeta im = temp.getItemMeta();
 					int slot;
 					if (offhand) {
 						slot = -1;
 					} else {
 						slot = player.getInventory().getHeldItemSlot();
 					}
-					temp.setItemMeta(im);
-					Gun.updateAmmo(g, temp, amount);
+					Gun.updateAmmo(g, player.getItemInHand(), amount);
 					if(QAMain.showAmmoInXPBar){
 						updateXPBar(player,g,amount);
 					}
