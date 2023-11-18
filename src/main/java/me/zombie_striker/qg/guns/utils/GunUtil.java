@@ -515,6 +515,13 @@ public class GunUtil {
 
 				@Override
 				public void run() {
+					if (!player.isOnline()) {
+						QAMain.DEBUG("Stopping Automatic Firing because player left");
+						rapidfireshooters.remove(player.getUniqueId());
+						cancel();
+						return;
+					}
+
 					if ((g.getChargingHandler() != null && g.getChargingHandler().isCharging(player)) || GunRefillerRunnable.isReloading(player)) {
 						QAMain.DEBUG("Cancelling rapid fire shoot due to charging or reloading.");
 						rapidfireshooters.remove(player.getUniqueId());
