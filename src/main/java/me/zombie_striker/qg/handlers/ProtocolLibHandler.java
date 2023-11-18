@@ -9,6 +9,7 @@ import com.cryptomorin.xseries.ReflectionUtils;
 import com.cryptomorin.xseries.XMaterial;
 import com.mojang.datafixers.util.Pair;
 import de.tr7zw.changeme.nbtapi.NBTItem;
+import me.zombie_striker.qg.guns.Gun;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -122,7 +123,8 @@ public class ProtocolLibHandler {
 								ironsights.toString().contains("crossbow")) {
 							Object is = null;
 
-							if (!QualityArmory.getGun(who.getInventory().getItemInOffHand()).hasBetterAimingAnimations())
+							Gun gun = QualityArmory.getGun(who.getInventory().getItemInOffHand());
+							if (gun == null || !gun.hasBetterAimingAnimations())
 								return;
 
 							try {
