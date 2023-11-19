@@ -238,7 +238,7 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
     public static int getDamage(ItemStack is) {
         if (is != null && is.hasItemMeta() && is.getItemMeta().hasLore())
             for (String lore : is.getItemMeta().getLore()) {
-                if (ChatColor.stripColor(lore).startsWith(QAMain.S_ITEM_DURIB)) {
+                if (ChatColor.stripColor(lore).startsWith(ChatColor.stripColor(QAMain.S_ITEM_DURIB))) {
                     return Integer.parseInt(lore.split(":")[1].split("/")[0].trim());
                 }
             }
