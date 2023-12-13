@@ -60,8 +60,8 @@ public class SkullHandler {
 		Collection<Property> textures64 = propertyMap.get("textures");
 		String tex64 = null;
 		for (Property p : textures64) {
-			if (p.getName().equals("textures")) {
-				tex64 = p.getValue();
+			if (p.name().equals("textures")) {
+				tex64 = p.value();
 				break;
 			}
 		}
@@ -85,8 +85,8 @@ public class SkullHandler {
 		Collection<Property> textures64 = propertyMap.get("textures");
 		String tex64 = null;
 		for (Property p : textures64) {
-			if (p.getName().equals("textures")) {
-				tex64 = p.getValue();
+			if (p.name().equals("textures")) {
+				tex64 = p.value();
 				break;
 			}
 		}
