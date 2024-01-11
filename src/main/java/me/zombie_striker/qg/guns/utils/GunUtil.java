@@ -515,6 +515,13 @@ public class GunUtil {
 
 				@Override
 				public void run() {
+					if (!player.isOnline()) {
+						QAMain.DEBUG("Stopping Automatic Firing because player left");
+						rapidfireshooters.remove(player.getUniqueId());
+						cancel();
+						return;
+					}
+
 					if ((g.getChargingHandler() != null && g.getChargingHandler().isCharging(player)) || GunRefillerRunnable.isReloading(player)) {
 						QAMain.DEBUG("Cancelling rapid fire shoot due to charging or reloading.");
 						rapidfireshooters.remove(player.getUniqueId());
@@ -579,15 +586,13 @@ public class GunUtil {
 					if (amount < 0)
 						amount = 0;
 
-					ItemMeta im = temp.getItemMeta();
 					int slot;
 					if (offhand) {
 						slot = -1;
 					} else {
 						slot = player.getInventory().getHeldItemSlot();
 					}
-					temp.setItemMeta(im);
-					Gun.updateAmmo(g, temp, amount);
+					Gun.updateAmmo(g, player.getItemInHand(), amount);
 					if(QAMain.showAmmoInXPBar){
 						updateXPBar(player,g,amount);
 					}

@@ -2,6 +2,7 @@ package me.zombie_striker.qg.ammo;
 
 import java.util.List;
 
+import com.cryptomorin.xseries.XMaterial;
 import me.zombie_striker.customitemmanager.CustomBaseObject;
 import me.zombie_striker.customitemmanager.CustomItemManager;
 import org.bukkit.ChatColor;
@@ -60,7 +61,7 @@ public class Ammo extends CustomBaseObject implements ArmoryBaseObject{
 		AmmoType.addAmmo(this, name);
 	}
 
-	
+
 	public boolean hasCustomSkin() {
 		return ! NO_SKIN_STRING.equals(base64SkinURL);
 	}
@@ -107,7 +108,7 @@ public class Ammo extends CustomBaseObject implements ArmoryBaseObject{
 		Block b = e.getTargetBlock(null,6);
 		if (usedItem.getType() == Material.DIAMOND_HOE
 				&& (b.getType() == Material.DIRT
-						||b.getType() == Material.GRASS
+						||b.getType() == XMaterial.GRASS_BLOCK.parseMaterial()
 						|| b.getType() == MultiVersionLookup.getGrassPath()
 						|| b.getType() == MultiVersionLookup.getMycil()))
 			return true;
