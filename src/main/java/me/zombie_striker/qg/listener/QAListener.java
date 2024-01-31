@@ -361,6 +361,7 @@ public class QAListener implements Listener {
 
 						if (g instanceof Gun) {
 							QAGunGiveEvent event = new QAGunGiveEvent(((Player) e.getWhoClicked()), ((Gun) g), QAGunGiveEvent.Cause.SHOP);
+							Bukkit.getPluginManager().callEvent(event);
 							if (event.isCancelled()) return;
 							g = event.getGun();
 						}
