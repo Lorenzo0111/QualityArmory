@@ -501,7 +501,7 @@ public class QAMain extends JavaPlugin {
 
 
     public static Inventory createCustomInventory(int page, boolean shopping) {
-        Inventory shopMenu = Bukkit.createInventory(null, 9 * 6, (shopping ? S_shopName : S_craftingBenchName) + page);
+        Inventory shopMenu = new QAInventoryHolder((shopping ? S_shopName : S_craftingBenchName) + page).getInventory();
         List<Gun> gunslistr = gunRegister.values().stream()
                 .filter(CustomBaseObject::isEnableCrafting)
                 .collect(Collectors.toList());
