@@ -1,3 +1,10 @@
+2.0.12
+  - 1.20.4 support
+  - Fixed reload while aiming
+  - Fixed QAGunGiveEvent not being called by iLoopBreak
+  - Fixed GUI management
+  - Fixed offhand management
+
 2.0.11
   - 1.20.2 support
   - Fixed ProtocolLib support
