@@ -21,34 +21,29 @@ import java.util.Objects;
 public class AmmoBag extends CustomBaseObject implements ArmoryBaseObject {
     private final int maxAmmo;
 
-    public AmmoBag(MaterialStorage ms, String name, String displayname, ItemStack[] ings, int max, int cost) {
-        super(name,ms,displayname,null,false);
+    public AmmoBag(final MaterialStorage ms, final String name, final String displayname, final ItemStack[] ings, final int max,
+            final int cost) {
+        super(name, ms, displayname, null, false);
         super.setIngredients(ings);
         this.setPrice(cost);
         this.maxAmmo = max;
     }
 
     @Override
-    public int getCraftingReturn() {
-        return 1;
-    }
-
+    public int getCraftingReturn() { return 1; }
 
     @Override
-    public boolean is18Support() {
-        return false;
-    }
+    public boolean is18Support() { return false; }
 
     @Override
-    public void set18Supported(boolean b) {
-    }
+    public void set18Supported(final boolean b) {}
 
     @Override
-    public boolean onRMB(Player shooter, ItemStack usedItem) {
+    public boolean onRMB(final Player shooter, final ItemStack usedItem) {
         boolean needsEdit = false;
-        Ammo ammoType = getAmmoType(usedItem);
+        Ammo ammoType = this.getAmmoType(usedItem);
         if (ammoType == null) {
-            for (ItemStack is : shooter.getInventory().getContents()) {
+            for (final ItemStack is : shooter.getInventory().getContents()) {
                 if (QualityArmory.isAmmo(is)) {
                     ammoType = QualityArmory.getAmmo(is);
                     needsEdit = true;
@@ -57,12 +52,12 @@ public class AmmoBag extends CustomBaseObject implements ArmoryBaseObject {
             }
         }
 
-        int newAmmoCount = getAmmo(usedItem);
+        int newAmmoCount = this.getAmmo(usedItem);
 
         if (ammoType != null) {
-            int inInv = QualityArmory.getAmmoInInventory(shooter, ammoType, true);
-            int newCount = Math.min(inInv + newAmmoCount, maxAmmo);
-            int toRemove = Math.max(0,newCount - newAmmoCount);
+            final int inInv = QualityArmory.getAmmoInInventory(shooter, ammoType, true);
+            final int newCount = Math.min(inInv + newAmmoCount, this.maxAmmo);
+            final int toRemove = Math.max(0, newCount - newAmmoCount);
 
             if (toRemove > 0) {
                 QualityArmory.removeAmmoFromInventory(shooter, ammoType, toRemove);
@@ -72,24 +67,22 @@ public class AmmoBag extends CustomBaseObject implements ArmoryBaseObject {
         }
 
         if (needsEdit) {
-            updateTypeLore(usedItem, ammoType);
-            updateAmmoLore(usedItem, newAmmoCount);
+            this.updateTypeLore(usedItem, ammoType);
+            this.updateAmmoLore(usedItem, newAmmoCount);
         }
 
         return true;
     }
 
     @Override
-    public boolean onShift(Player shooter, ItemStack usedItem, boolean toggle) {
-        return false;
-    }
+    public boolean onShift(final Player shooter, final ItemStack usedItem, final boolean toggle) { return false; }
 
     @Override
-    public boolean onLMB(Player shooter, ItemStack usedItem) {
-        int ammo = getAmmo(usedItem);
+    public boolean onLMB(final Player shooter, final ItemStack usedItem) {
+        final int ammo = this.getAmmo(usedItem);
         if (ammo > 0) {
-            updateAmmoLore(usedItem, 0);
-            Ammo ammoType = getAmmoType(usedItem);
+            this.updateAmmoLore(usedItem, 0);
+            final Ammo ammoType = this.getAmmoType(usedItem);
             if (ammoType != null) {
                 QualityArmory.addAmmoToInventory(shooter, ammoType, ammo);
             }
@@ -100,21 +93,18 @@ public class AmmoBag extends CustomBaseObject implements ArmoryBaseObject {
 
     @Override
     public ItemStack getItemStack() {
-        return CustomItemManager.getItemType("gun").getItem(this.getItemData().getMat(),this.getItemData().getData(),this.getItemData().getVariant());
+        return CustomItemManager.getItemType("gun").getItem(this.getItemData().getMat(), this.getItemData().getData(),
+                this.getItemData().getVariant());
     }
 
     @Override
-    public boolean onSwapTo(Player shooter, ItemStack usedItem) {
-        return false;
-    }
+    public boolean onSwapTo(final Player shooter, final ItemStack usedItem) { return false; }
 
     @Override
-    public boolean onSwapAway(Player shooter, ItemStack usedItem) {
-        return false;
-    }
+    public boolean onSwapAway(final Player shooter, final ItemStack usedItem) { return false; }
 
-    public void updateAmmoLore(@NotNull ItemStack item, int newAmmo) {
-        ItemMeta meta = item.getItemMeta();
+    public void updateAmmoLore(@NotNull final ItemStack item, final int newAmmo) {
+        final ItemMeta meta = item.getItemMeta();
         Objects.requireNonNull(meta);
 
         boolean foundLine = false;
@@ -127,22 +117,22 @@ public class AmmoBag extends CustomBaseObject implements ArmoryBaseObject {
 
         for (int i = 0; i < lore.size(); i++) {
             if (ChatColor.stripColor(lore.get(i)).contains(ChatColor.stripColor(QAMain.bagAmmo))) {
-                lore.set(i, QAMain.bagAmmo + newAmmo + "/" + maxAmmo);
+                lore.set(i, QAMain.bagAmmo + newAmmo + "/" + this.maxAmmo);
                 foundLine = true;
                 break;
             }
         }
 
         if (!foundLine) {
-            lore.add(QAMain.bagAmmo + newAmmo + "/" + maxAmmo);
+            lore.add(QAMain.bagAmmo + newAmmo + "/" + this.maxAmmo);
         }
 
         meta.setLore(lore);
         item.setItemMeta(meta);
     }
 
-    public void updateTypeLore(@NotNull ItemStack item, Ammo type) {
-        ItemMeta meta = item.getItemMeta();
+    public void updateTypeLore(@NotNull final ItemStack item, final Ammo type) {
+        final ItemMeta meta = item.getItemMeta();
         Objects.requireNonNull(meta);
 
         boolean foundLine = false;
@@ -169,20 +159,20 @@ public class AmmoBag extends CustomBaseObject implements ArmoryBaseObject {
         item.setItemMeta(meta);
     }
 
-    public int getAmmo(@NotNull ItemStack item) {
-        ItemMeta meta = item.getItemMeta();
+    public int getAmmo(@NotNull final ItemStack item) {
+        final ItemMeta meta = item.getItemMeta();
         Objects.requireNonNull(meta);
         if (!meta.hasLore()) {
             return 0;
         }
 
-        List<String> lore = meta.getLore();
+        final List<String> lore = meta.getLore();
         Objects.requireNonNull(lore);
 
-        for (String value : lore) {
+        for (final String value : lore) {
             if (ChatColor.stripColor(value).contains(ChatColor.stripColor(QAMain.bagAmmo))) {
-                String s = value.replace(QAMain.bagAmmo, "");
-                String[] split = s.split("/");
+                final String s = value.replace(QAMain.bagAmmo, "");
+                final String[] split = s.split("/");
                 return Integer.parseInt(split[0]);
             }
         }
@@ -190,19 +180,19 @@ public class AmmoBag extends CustomBaseObject implements ArmoryBaseObject {
         return 0;
     }
 
-    public @Nullable Ammo getAmmoType(@NotNull ItemStack item) {
-        ItemMeta meta = item.getItemMeta();
+    public @Nullable Ammo getAmmoType(@NotNull final ItemStack item) {
+        final ItemMeta meta = item.getItemMeta();
         Objects.requireNonNull(meta);
         if (!meta.hasLore()) {
             return null;
         }
 
-        List<String> lore = meta.getLore();
+        final List<String> lore = meta.getLore();
         Objects.requireNonNull(lore);
 
-        for (String value : lore) {
+        for (final String value : lore) {
             if (ChatColor.stripColor(value).contains(ChatColor.stripColor(QAMain.bagAmmoType))) {
-                String s = value.replace(QAMain.bagAmmoType, "");
+                final String s = value.replace(QAMain.bagAmmoType, "");
                 return QualityArmory.getAmmoByName(s);
             }
         }

@@ -1,14 +1,16 @@
 package me.zombie_striker.qg.hooks.protection.implementation;
 
+import java.util.Objects;
+
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+
 import com.bekvon.bukkit.residence.Residence;
 import com.bekvon.bukkit.residence.containers.Flags;
 import com.bekvon.bukkit.residence.protection.ClaimedResidence;
 import com.bekvon.bukkit.residence.protection.ResidenceManager;
-import me.zombie_striker.qg.hooks.protection.ProtectionHook;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
 
-import java.util.Objects;
+import me.zombie_striker.qg.hooks.protection.ProtectionHook;
 
 public class ResidenceHook implements ProtectionHook {
     private final ResidenceManager manager;
@@ -18,20 +20,20 @@ public class ResidenceHook implements ProtectionHook {
     }
 
     @Override
-    public boolean canPvp(Location location) {
-        ClaimedResidence res = manager.getByLoc(location);
+    public boolean canPvp(final Location location) {
+        final ClaimedResidence res = this.manager.getByLoc(location);
         return res == null || res.getPermissions().has(Flags.pvp, false);
     }
 
     @Override
-    public boolean canExplode(Location location) {
-        ClaimedResidence res = manager.getByLoc(location);
+    public boolean canExplode(final Location location) {
+        final ClaimedResidence res = this.manager.getByLoc(location);
         return res == null || res.getPermissions().has(Flags.explode, false);
     }
 
     @Override
-    public boolean canBreak(Location location) {
-        ClaimedResidence res = manager.getByLoc(location);
+    public boolean canBreak(final Location location) {
+        final ClaimedResidence res = this.manager.getByLoc(location);
         return res == null || res.getPermissions().has(Flags.build, false);
     }
 

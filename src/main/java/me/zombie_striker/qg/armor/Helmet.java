@@ -8,15 +8,15 @@ import me.zombie_striker.customitemmanager.MaterialStorage;
 
 public class Helmet extends ArmorObject {
 
-	public Helmet(String name, String displayname, List<String> lore, ItemStack[] ing, MaterialStorage st,
-				  double cost) {
-		this(name, displayname, lore, ing, st, cost, cost > 0);
-	}
+    public Helmet(final String name, final String displayname, final List<String> lore, final ItemStack[] ing, final MaterialStorage st,
+            final double cost) {
+        this(name, displayname, lore, ing, st, cost, cost > 0);
+    }
 
-	public Helmet(String name, String displayname, List<String> lore, ItemStack[] ing, MaterialStorage st,
-			double cost, boolean allowInShop) {
-		super(name, displayname, lore, ing, st, cost);
-		this.setEnableShop(allowInShop);
-	}
+    public Helmet(final String name, final String displayname, final List<String> lore, final ItemStack[] ing, final MaterialStorage st,
+            final double cost, final boolean allowInShop) {
+        super(name, displayname, lore, ing, st, cost);
+        this.setEnableShop(allowInShop);
+    }
 
 }

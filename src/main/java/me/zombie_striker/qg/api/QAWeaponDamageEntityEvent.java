@@ -9,63 +9,47 @@ import org.bukkit.event.HandlerList;
 import me.zombie_striker.qg.guns.Gun;
 
 public class QAWeaponDamageEntityEvent extends Event implements Cancellable {
-	private static final HandlerList handlers = new HandlerList();
-	private final Player player;
-	private final Gun g;
-	private final Entity damaged;
-	private boolean wasHeadshot = false;
-	private double damage;
-	private boolean hasProtection = false;
-	private boolean cancel = false;
+    private static final HandlerList handlers = new HandlerList();
+    private final Player player;
+    private final Gun g;
+    private final Entity damaged;
+    private boolean wasHeadshot = false;
+    private double damage;
+    private boolean hasProtection = false;
+    private boolean cancel = false;
 
-	public QAWeaponDamageEntityEvent(Player p, Gun g, Entity damaged, boolean wasHeadshot, double damage, boolean hasProtection) {
-		this.player = p;
-		this.g = g;
-		this.damage = damage;
-		this.wasHeadshot = wasHeadshot;
-		this.damaged = damaged;
-		this.hasProtection = hasProtection;
-	}
-	
-	public double getDamage() {
-		return damage;
-	}
-	public void setDamage(double d) {
-		this.damage =d ;
-	}
-	public Entity getDamaged() {
-		return damaged;
-	}
-	public boolean isHeadshot() {
-		return wasHeadshot;
-	}
-	public boolean hadProtection() {
-		return hasProtection;
-	}
+    public QAWeaponDamageEntityEvent(final Player p, final Gun g, final Entity damaged, final boolean wasHeadshot, final double damage,
+            final boolean hasProtection) {
+        this.player = p;
+        this.g = g;
+        this.damage = damage;
+        this.wasHeadshot = wasHeadshot;
+        this.damaged = damaged;
+        this.hasProtection = hasProtection;
+    }
 
-	public Gun getGun() {
-		return g;
-	}
+    public double getDamage() { return this.damage; }
 
-	public Player getPlayer() {
-		return player;
-	}
+    public void setDamage(final double d) { this.damage = d; }
 
-	@Override
-	public boolean isCancelled() {
-		return cancel;
-	}
+    public Entity getDamaged() { return this.damaged; }
 
-	@Override
-	public void setCancelled(boolean canceled) {
-		this.cancel = canceled;
-	}
+    public boolean isHeadshot() { return this.wasHeadshot; }
 
-	public HandlerList getHandlers() {
-		return handlers;
-	}
+    public boolean hadProtection() { return this.hasProtection; }
 
-	public static HandlerList getHandlerList() {
-		return handlers;
-	}
+    public Gun getGun() { return this.g; }
+
+    public Player getPlayer() { return this.player; }
+
+    @Override
+    public boolean isCancelled() { return this.cancel; }
+
+    @Override
+    public void setCancelled(final boolean canceled) { this.cancel = canceled; }
+
+    @Override
+    public HandlerList getHandlers() { return QAWeaponDamageEntityEvent.handlers; }
+
+    public static HandlerList getHandlerList() { return QAWeaponDamageEntityEvent.handlers; }
 }

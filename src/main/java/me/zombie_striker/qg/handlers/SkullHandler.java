@@ -38,83 +38,84 @@ public class SkullHandler {
     /**
      * Return a skull that has a custom texture specified by url.
      *
-     * @param url
-     *            skin url
+     * @param url skin url
      * @return itemstack
      */
-    public static ItemStack getCustomSkull(String url) {
-        byte[] encodedData = Base64.getUrlEncoder().encode(String.format("{textures:{SKIN:{url:\"%s\"}}}", url).getBytes());//new Base64().encode(String.format("{textures:{SKIN:{url:\"%s\"}}}", url).getBytes()));
-        return getCustomSkull64(encodedData);
+    public static ItemStack getCustomSkull(final String url) {
+        final byte[] encodedData = Base64.getUrlEncoder().encode(String.format("{textures:{SKIN:{url:\"%s\"}}}", url).getBytes());// new
+        // Base64().encode(String.format("{textures:{SKIN:{url:\"%s\"}}}",
+        // url).getBytes()));
+        return SkullHandler.getCustomSkull64(encodedData);
     }
 
     /**
      * Return a skull that has a custom texture specified by url.
      *
-     * @param url
-     *            skin url
+     * @param url skin url
      * @return itemstack
      */
     @SuppressWarnings("deprecation")
-    public static ItemStack getCustomSkull64(byte[] url64) {
+    public static ItemStack getCustomSkull64(final byte[] url64) {
 
-        GameProfile profile = new GameProfile(UUID.randomUUID(), null);
-        PropertyMap propertyMap = profile.getProperties();
+        final GameProfile profile = new GameProfile(UUID.randomUUID(), null);
+        final PropertyMap propertyMap = profile.getProperties();
         if (propertyMap == null) {
             throw new IllegalStateException("Profile doesn't contain a property map");
         }
-        String encodedData = new String(url64);
+        final String encodedData = new String(url64);
         propertyMap.put("textures", new Property("textures", encodedData));
-        ItemStack head = new ItemStack(MultiVersionLookup.getSkull(), 1, (short) 3);
-        ItemMeta headMeta = head.getItemMeta();
-        Class<?> headMetaClass = headMeta.getClass();
+        final ItemStack head = new ItemStack(MultiVersionLookup.getSkull(), 1, (short) 3);
+        final ItemMeta headMeta = head.getItemMeta();
+        final Class<?> headMetaClass = headMeta.getClass();
         ReflectionsUtil.getField(headMetaClass, "profile", GameProfile.class).set(headMeta, profile);
         head.setItemMeta(headMeta);
         return head;
     }
 
-    public static String getURL(ItemStack is) {
+    public static String getURL(final ItemStack is) {
         if (is.getType() != MultiVersionLookup.getSkull())
             return null;
-        ItemMeta headMeta = is.getItemMeta();
-        Class<?> headMetaClass = headMeta.getClass();
-        GameProfile prof = ReflectionsUtil.getField(headMetaClass, "profile", GameProfile.class).get(headMeta);
-        PropertyMap propertyMap = prof.getProperties();
-        Collection<Property> textures64 = propertyMap.get("textures");
-        String tex64 = getTexture(textures64);
+        final ItemMeta headMeta = is.getItemMeta();
+        final Class<?> headMetaClass = headMeta.getClass();
+        final GameProfile prof = ReflectionsUtil.getField(headMetaClass, "profile", GameProfile.class).get(headMeta);
+        final PropertyMap propertyMap = prof.getProperties();
+        final Collection<Property> textures64 = propertyMap.get("textures");
+        final String tex64 = SkullHandler.getTexture(textures64);
         if (tex64 != null) {
             byte[] decode = null;
             decode = Base64.getDecoder().decode(tex64);
-            String string = new String(decode);
-            String parsed = string.split("SKIN:{url:\"")[1].split("\"}}}")[0];
+            final String string = new String(decode);
+            final String parsed = string.split("SKIN:{url:\"")[1].split("\"}}}")[0];
             return parsed;
         }
         return null;
     }
 
-    public static String getURL64(ItemStack is) {
+    public static String getURL64(final ItemStack is) {
         if (is.getType() != MultiVersionLookup.getSkull())
             return null;
-        ItemMeta headMeta = is.getItemMeta();
-        Class<?> headMetaClass = headMeta.getClass();
-        GameProfile prof = ReflectionsUtil.getField(headMetaClass, "profile", GameProfile.class).get(headMeta);
-        PropertyMap propertyMap = prof.getProperties();
-        Collection<Property> textures64 = propertyMap.get("textures");
-        String tex64 = getTexture(textures64);
+        final ItemMeta headMeta = is.getItemMeta();
+        final Class<?> headMetaClass = headMeta.getClass();
+        final GameProfile prof = ReflectionsUtil.getField(headMetaClass, "profile", GameProfile.class).get(headMeta);
+        final PropertyMap propertyMap = prof.getProperties();
+        final Collection<Property> textures64 = propertyMap.get("textures");
+        final String tex64 = SkullHandler.getTexture(textures64);
         if (tex64 != null) {
             return tex64;
         }
         return null;
     }
 
-    private static String getTexture(Collection<Property> properties) {
+    private static String getTexture(final Collection<Property> properties) {
         try {
-            for (Property p : properties) {
-                String name = (String) GET_NAME.invoke(p);
+            for (final Property p : properties) {
+                final String name = (String) SkullHandler.GET_NAME.invoke(p);
                 if (name.equals("textures")) {
-                    return (String) GET_VALUE.invoke(p);
+                    return (String) SkullHandler.GET_VALUE.invoke(p);
                 }
             }
-        } catch (Exception | Error ignored) {}
+        } catch (Exception | Error ignored) {
+        }
 
         return null;
     }

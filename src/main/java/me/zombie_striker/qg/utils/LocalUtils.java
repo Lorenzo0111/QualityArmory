@@ -13,38 +13,36 @@ public class LocalUtils {
 
     static {
         try {
-            Class<?> CLASS_CHAT_COLOR_BUNGEE = Class.forName("net.md_5.bungee.api.ChatColor");
+            final Class<?> CLASS_CHAT_COLOR_BUNGEE = Class.forName("net.md_5.bungee.api.ChatColor");
             CLASS_CHAT_COLOR_BUNGEE.getDeclaredMethod("of", String.class);
-            hexColorSupport = true;
-        }catch (Throwable e) {
-            hexColorSupport = false;
+            LocalUtils.hexColorSupport = true;
+        } catch (final Throwable e) {
+            LocalUtils.hexColorSupport = false;
         }
     }
 
-    private static String translateAlternateHexColorCodes(Character c,String string){
+    private static String translateAlternateHexColorCodes(final Character c, String string) {
         string = ChatColor.translateAlternateColorCodes(c, string);
-        if(string.length() < 7 || !string.contains("#")) return string;
-        Matcher matcher = Pattern.compile("&#[A-Fa-f0-9]{6}").matcher(string);
+        if (string.length() < 7 || !string.contains("#"))
+            return string;
+        final Matcher matcher = Pattern.compile("&#[A-Fa-f0-9]{6}").matcher(string);
         while (matcher.find()) {
-            String match = matcher.group(0);
+            final String match = matcher.group(0);
             string = string.replace(match, net.md_5.bungee.api.ChatColor.of(match).toString());
         }
         return string;
     }
 
-    public static String colorize(String string){
-        return hexColorSupport ? translateAlternateHexColorCodes('&',string) : ChatColor.translateAlternateColorCodes('&', string);
+    public static String colorize(final String string) {
+        return LocalUtils.hexColorSupport ? LocalUtils.translateAlternateHexColorCodes('&', string)
+                : ChatColor.translateAlternateColorCodes('&', string);
     }
 
-    public static List<String> colorize(List<String> strings){
+    public static List<String> colorize(final List<String> strings) {
         return strings.stream().map(LocalUtils::colorize).collect(Collectors.toList());
     }
 
-    public static String[] colorize(String... strings){
-        return Stream.of(strings).map(LocalUtils::colorize).toArray(String[]::new);
-    }
+    public static String[] colorize(final String... strings) { return Stream.of(strings).map(LocalUtils::colorize).toArray(String[]::new); }
 
-    public static boolean isHexColorSupported() {
-        return hexColorSupport;
-    }
+    public static boolean isHexColorSupported() { return LocalUtils.hexColorSupport; }
 }

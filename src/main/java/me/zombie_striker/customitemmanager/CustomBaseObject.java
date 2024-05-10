@@ -1,139 +1,97 @@
 package me.zombie_striker.customitemmanager;
 
-import org.bukkit.inventory.ItemStack;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import org.bukkit.inventory.ItemStack;
+
 public class CustomBaseObject {
 
-	private final UUID uuid = UUID.randomUUID();
-	private String name;
-	private MaterialStorage base;
-	private List<String> lore;
-	private String displayname;
-	private boolean customAnimations;
+    private final UUID uuid = UUID.randomUUID();
+    private final String name;
+    private final MaterialStorage base;
+    private List<String> lore;
+    private String displayname;
+    private boolean customAnimations;
 
-	private String soundOnEquip;
-	private String soundOnHit;
+    private String soundOnEquip;
+    private String soundOnHit;
 
-	private double price;
-	private boolean enableShop = true;
-	private boolean enableCrafting = true;
+    private double price;
+    private boolean enableShop = true;
+    private boolean enableCrafting = true;
 
-	Object[] ing = null;
-	int craftingReturn = 1;
+    Object[] ing = null;
+    int craftingReturn = 1;
 
-	public int maxItemStack = 1;
+    public int maxItemStack = 1;
 
-	public CustomBaseObject(String name, MaterialStorage storage, String displayname, List<String> lore, boolean hasAimAnimations) {
-		this.name = name;
-		this.base = storage;
-		this.displayname = displayname;
-		this.lore = lore;
-		this.customAnimations = hasAimAnimations;
-	}
+    public CustomBaseObject(final String name, final MaterialStorage storage, final String displayname, final List<String> lore,
+            final boolean hasAimAnimations) {
+        this.name = name;
+        this.base = storage;
+        this.displayname = displayname;
+        this.lore = lore;
+        this.customAnimations = hasAimAnimations;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public String getName() { return this.name; }
 
-	public MaterialStorage getItemData() {
-		return base;
-	}
+    public MaterialStorage getItemData() { return this.base; }
 
-	public List<String> getCustomLore() {
-		if(lore==null) return new ArrayList<>();
-		return new ArrayList<>(lore);
-	}
+    public List<String> getCustomLore() {
+        if (this.lore == null)
+            return new ArrayList<>();
+        return new ArrayList<>(this.lore);
+    }
 
-	public void setCustomLore(List<String> lore) {
-		this.lore = lore;
-	}
+    public void setCustomLore(final List<String> lore) { this.lore = lore; }
 
-	public String getDisplayName() {
-		return displayname;
-	}
+    public String getDisplayName() { return this.displayname; }
 
-	public void setDisplayname(String displayname) {this.displayname = displayname;
-	}
+    public void setDisplayname(final String displayname) { this.displayname = displayname; }
 
-	public void enableBetterAimingAnimations(boolean b) {
-		this.customAnimations = b;
-	}
+    public void enableBetterAimingAnimations(final boolean b) { this.customAnimations = b; }
 
-	boolean hasBetterAimingAnimations() {
-		return this.customAnimations;
-	}
+    public boolean hasBetterAimingAnimations() { return this.customAnimations; }
 
-	public String getSoundOnEquip() {
-		return soundOnEquip;
-	}
+    public String getSoundOnEquip() { return this.soundOnEquip; }
 
-	public String getSoundOnHit() {
-		return soundOnHit;
-	}
+    public String getSoundOnHit() { return this.soundOnHit; }
 
-	public void setSoundOnHit(String sound) {
-		this.soundOnHit = sound;
-	}
+    public void setSoundOnHit(final String sound) { this.soundOnHit = sound; }
 
-	public void setSoundOnEquip(String sound) {
-		this.soundOnEquip = sound;
-	}
+    public void setSoundOnEquip(final String sound) { this.soundOnEquip = sound; }
 
-	public double getPrice() {
-		return price;
-	}
+    public double getPrice() { return this.price; }
 
-	public void setPrice(double price) {
-		this.price = price;
-	}
+    public void setPrice(final double price) { this.price = price; }
 
-	public boolean isEnableShop() {
-		return enableShop;
-	}
+    public boolean isEnableShop() { return this.enableShop; }
 
-	public boolean isEnableCrafting() {
-		return enableCrafting;
-	}
+    public boolean isEnableCrafting() { return this.enableCrafting; }
 
-	public void setEnableShop(boolean enableShop) {
-		this.enableShop = enableShop;
-	}
+    public void setEnableShop(final boolean enableShop) { this.enableShop = enableShop; }
 
-	public void setEnableCrafting(boolean enableCrafting) {
-		this.enableCrafting = enableCrafting;
-	}
+    public void setEnableCrafting(final boolean enableCrafting) { this.enableCrafting = enableCrafting; }
 
-	public void setIngredients(ItemStack[] ing) {
-		this.ing = ing;
-	}
-	public void setIngredientsRaw(Object[] ing) {
-		this.ing = ing;
-	}
-	@Deprecated
-	public ItemStack[] getIngredients(){
-		return (ItemStack[]) ing;
-	}
-	public Object[] getIngredientsRaw(){
-		return ing;
-	}
-	public int getCraftingReturn(){
-		return craftingReturn;
-	}
-	public void setCraftingReturn(int amount){
-		this.craftingReturn = amount;
-	}
-	public int getMaxItemStack(){
-		return maxItemStack;
-	}
-	public void setMaxItemStack(int amount){
-		maxItemStack = amount;
-	}
+    public void setIngredients(final ItemStack[] ing) { this.ing = ing; }
 
-	public UUID getUuid() {
-		return uuid;
-	}
+    public void setIngredientsRaw(final Object[] ing) { this.ing = ing; }
+
+    @Deprecated
+    public ItemStack[] getIngredients() { return (ItemStack[]) this.ing; }
+
+    public Object[] getIngredientsRaw() { return this.ing; }
+
+    public int getCraftingReturn() { return this.craftingReturn; }
+
+    public void setCraftingReturn(final int amount) { this.craftingReturn = amount; }
+
+    public int getMaxItemStack() { return this.maxItemStack; }
+
+    public void setMaxItemStack(final int amount) { this.maxItemStack = amount; }
+
+    public UUID getUuid() { return this.uuid; }
 }

@@ -1,0 +1,11 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "type": "shell",
+            "label": "Start server",
+            "command": "cd C:/Users/EuSouVoce/Desktop/testserver/ && C:/JBR-17/bin/java.exe -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=1000 --XXaltjvm=dcevm -javaagent:C:/JBR-17/lib/hotswap/hotswap-agent.jar -XX:+AllowEnhancedClassRedefinition -XX:HotswapAgent=fatjar -Xlog:redefine+class*=info -DPurpur.IReallyDontWantSpark=true -jar C:/Users/EuSouVoce/Desktop/testserver/purpur.jar --log-pattern debug.log nogui",
+            "problemMatcher": []
+        }
+    ]
+}

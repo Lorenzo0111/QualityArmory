@@ -9,45 +9,32 @@ import org.bukkit.event.HandlerList;
 import me.zombie_striker.qg.guns.Gun;
 
 public class QAHeadShotEvent extends Event implements Cancellable {
-	private static final HandlerList handlers = new HandlerList();
-	private final Entity damaged;
-	private final Player player;
-	private final Gun g;
-	private boolean cancel = false;
+    private static final HandlerList handlers = new HandlerList();
+    private final Entity damaged;
+    private final Player player;
+    private final Gun g;
+    private boolean cancel = false;
 
-	public QAHeadShotEvent(Entity damaged, Player p, Gun g) {
-		this.player = p;
-		this.g = g;
-		this.damaged = damaged;
-	}
+    public QAHeadShotEvent(final Entity damaged, final Player p, final Gun g) {
+        this.player = p;
+        this.g = g;
+        this.damaged = damaged;
+    }
 
-	public Gun getGun() {
-		return g;
-	}
+    public Gun getGun() { return this.g; }
 
-	public Entity getDamagedEntity() {
-		return damaged;
-	}
+    public Entity getDamagedEntity() { return this.damaged; }
 
-	public Player getShooter() {
-		return player;
-	}
+    public Player getShooter() { return this.player; }
 
-	@Override
-	public boolean isCancelled() {
-		return cancel;
-	}
+    @Override
+    public boolean isCancelled() { return this.cancel; }
 
-	@Override
-	public void setCancelled(boolean canceled) {
-		this.cancel = canceled;
-	}
+    @Override
+    public void setCancelled(final boolean canceled) { this.cancel = canceled; }
 
-	public HandlerList getHandlers() {
-		return handlers;
-	}
+    @Override
+    public HandlerList getHandlers() { return QAHeadShotEvent.handlers; }
 
-	public static HandlerList getHandlerList() {
-		return handlers;
-	}
+    public static HandlerList getHandlerList() { return QAHeadShotEvent.handlers; }
 }

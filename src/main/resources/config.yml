@@ -9,7 +9,6 @@ Enable_Creation_Of_Default_Files: true
 unknownTranslationKeyFixer: false
 enable_permssionsToShoot: false
 
-
 #Resourcepack settings.
 
 useDefaultResourcepack: true

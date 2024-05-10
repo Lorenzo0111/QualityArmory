@@ -1,10 +1,11 @@
 package me.zombie_striker.qg.api;
 
-import me.zombie_striker.qg.miscitems.ThrowableItems;
 import org.bukkit.Location;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
+
+import me.zombie_striker.qg.miscitems.ThrowableItems;
 
 public class QAThrowableExplodeEvent extends Event implements Cancellable {
     private static final HandlerList handlers = new HandlerList();
@@ -13,34 +14,23 @@ public class QAThrowableExplodeEvent extends Event implements Cancellable {
     private final Location location;
     private boolean cancel = false;
 
-    public QAThrowableExplodeEvent(ThrowableItems throwable, Location location) {
+    public QAThrowableExplodeEvent(final ThrowableItems throwable, final Location location) {
         this.throwable = throwable;
         this.location = location;
     }
 
-    public ThrowableItems getThrowable() {
-        return throwable;
-    }
+    public ThrowableItems getThrowable() { return this.throwable; }
 
-    public Location getLocation() {
-        return location;
-    }
+    public Location getLocation() { return this.location; }
 
     @Override
-    public boolean isCancelled() {
-        return cancel;
-    }
+    public boolean isCancelled() { return this.cancel; }
 
     @Override
-    public void setCancelled(boolean canceled) {
-        this.cancel = canceled;
-    }
+    public void setCancelled(final boolean canceled) { this.cancel = canceled; }
 
-    public HandlerList getHandlers() {
-        return handlers;
-    }
+    @Override
+    public HandlerList getHandlers() { return QAThrowableExplodeEvent.handlers; }
 
-    public static HandlerList getHandlerList() {
-        return handlers;
-    }
+    public static HandlerList getHandlerList() { return QAThrowableExplodeEvent.handlers; }
 }

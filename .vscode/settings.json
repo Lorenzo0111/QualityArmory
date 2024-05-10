@@ -1,0 +1,20 @@
+{
+    "java.compile.nullAnalysis.mode": "disabled",
+    "java.format.settings.url": ".vscode/java-formatter.xml",
+    "java.configuration.updateBuildConfiguration": "automatic",
+    "cSpell.enabled": false,
+    "docwriter.progress.trackTypes": true,
+    "docwriter.progress.trackFunctions": true,
+    "docwriter.progress.trackMethods": true,
+    "docwriter.progress.trackClasses": true,
+    "yaml.schemas": {
+        "https://json.schemastore.org/bukkit-plugin.json": "file:///c%3A/projetos/eventosIG/src/main/resources/plugin.yml"
+    },"java.configuration.runtimes": [
+        
+        {
+            "name": "JavaSE-21", // replace version by 8, 11 or 17
+            "path": "C:\\JBR-21\\",
+
+          },
+    ]
+}

@@ -1,0 +1,13 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Bukkit", // you can put anything here
+            "request": "attach",
+            "hostName": "localhost",
+            "port": 1000 // choose any port here, but put the same in tasks.json
+            
+        }
+    ]
+}
