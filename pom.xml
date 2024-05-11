@@ -7,6 +7,12 @@
     <artifactId>QualityArmory</artifactId>
     <version>2.1.0</version>
     <name>QualityArmory</name>
+    <pluginRepositories>
+        <pluginRepository>
+            <id>bytecode.space</id>
+            <url>https://repo.bytecode.space/repository/maven-public/</url>
+        </pluginRepository>
+    </pluginRepositories>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -84,30 +90,35 @@
     <dependencies>
 
         <!-- MCAPI -->
-        <dependency>
+<!--         <dependency>
             <groupId>com.mojang</groupId>
             <artifactId>authlib</artifactId>
             <version>5.0.51</version>
             <scope>provided</scope>
         </dependency>
-
+ -->
         <!-- Mojang DataFixer -->
-        <dependency>
+ <!--        <dependency>
             <groupId>com.mojang</groupId>
             <artifactId>datafixerupper</artifactId>
             <version>1.0.20</version>
             <scope>provided</scope>
         </dependency>
-
+  -->       <dependency>
+            <groupId>ca.bkaw.nms</groupId>
+            <artifactId>forktest-nms</artifactId>
+            <version>1.20.6-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
         <!--Spigot
         API-->
-        <dependency>
+        <!-- <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
             <version>1.20.6-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
-
+ -->
         <!-- XSeries for Reflection -->
         <dependency>
             <groupId>com.github.cryptomorin</groupId>
@@ -323,7 +334,41 @@
         </resources>
 
         <plugins>
-            <!-- Sets the Java version to 8 -->
+            <plugin>
+                <groupId>ca.bkaw</groupId>
+                <artifactId>paper-nms-maven-plugin</artifactId>
+                <version>1.4.3</version>
+                
+                <executions>
+                    
+                    <execution>
+                        <phase>process-classes</phase>
+                        <goals>
+                            <goal>remap</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <devBundle>
+                        <!-- The artifact id of the resulting dependency -->
+                        <id>forktest-nms</id>
+                        <!-- The repository to download the dev-bundle from -->
+                        <repository>
+                            <id>myrepo</id>
+                            <url>https://repo.papermc.io/repository/maven-public/</url>
+                        </repository>
+                        <!-- The artifact to download -->
+                        <artifact>
+                            <groupId>io.papermc.paper</groupId>
+                            <artifactId>dev-bundle</artifactId>
+                            <version>1.20.6-R0.1-20240510.191506-39</version>
+                            <!-- ${gameVersion} will be replaced with the game version to use -->
+                        </artifact>
+                    </devBundle>
+                </configuration>
+            
+            </plugin>
+            <!-- Sets the Java version to 21 -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -336,13 +381,14 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version>3.2.2</version>
-            </plugin>
-            <plugin>
-                <artifactId>maven-deploy-plugin</artifactId>
-                <version>3.1.1</version>
+                <version>3.4.1</version>
                 <configuration>
-                    <!--altDeploymentRepository>internal.repo::default::file://${project.build.directory}/mvn-repo</altDeploymentRepository-->
+                    <archive>
+                        <manifestEntries>
+                            <paperweight-mappings-namespace>mojang</paperweight-mappings-namespace>
+                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                        </manifestEntries>
+                    </archive>
                 </configuration>
             </plugin>
             <plugin>
