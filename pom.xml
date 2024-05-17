@@ -105,8 +105,8 @@
             <scope>provided</scope>
         </dependency>
   -->   <dependency>
-            <groupId>ca.bkaw.nms</groupId>
-            <artifactId>dev-bundle</artifactId>
+            <groupId>ca.bkaw</groupId>
+            <artifactId>paper-nms</artifactId>
             <version>1.20.6-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
@@ -337,36 +337,7 @@
             <plugin>
                 <groupId>ca.bkaw</groupId>
                 <artifactId>paper-nms-maven-plugin</artifactId>
-                <version>1.4.3</version>
-                
-                <executions>
-                    
-                    <execution>
-                        <phase>process-classes</phase>
-                        <goals>
-                            <goal>remap</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <devBundle>
-                        <!-- The artifact id of the resulting dependency -->
-                        <id>dev-bundle</id>
-                        <!-- The repository to download the dev-bundle from -->
-                        <repository>
-                            <id>myrepo</id>
-                            <url>https://repo.papermc.io/repository/maven-public/</url>
-                        </repository>
-                        <!-- The artifact to download -->
-                        <artifact>
-                            <groupId>io.papermc.paper</groupId>
-                            <artifactId>dev-bundle</artifactId>
-                            <version>1.20.6-R0.1-20240510.191506-39</version>
-                            <!-- ${gameVersion} will be replaced with the game version to use -->
-                        </artifact>
-                    </devBundle>
-                </configuration>
-            
+                <version>1.4.4</version>
             </plugin>
             <!-- Sets the Java version to 21 -->
             <plugin>

@@ -292,10 +292,11 @@ public class QAMain extends JavaPlugin {
     private static QAMain main;
 
     static {
-        String name = Bukkit.getServer().getClass().getName();
-        name = name.substring(name.indexOf("craftbukkit.") + "craftbukkit.".length());
-        name = name.substring(0, name.indexOf("."));
-        SERVER_VERSION = name;
+        // String name = Bukkit.getServer().getClass().getName();
+        // name = name.substring(name.indexOf("craftbukkit.") +
+        // "craftbukkit.".length());
+        // name = name.substring(0, name.indexOf("."));
+        SERVER_VERSION = "v1_20_R6";
     }
 
     private TreeFellerHandler tfh = null;
