@@ -3,6 +3,7 @@ package me.zombie_striker.qg.guns.projectiles;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.cryptomorin.xseries.particles.XParticle;
 import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.api.QAProjectileExplodeEvent;
 import me.zombie_striker.qg.api.QualityArmory;
@@ -77,7 +78,7 @@ public class HomingRocketProjectile implements RealtimeCalculationProjectile {
 						try {
 							player.getWorld().playSound(RPGLOCATION, WeaponSounds.WARHEAD_EXPLODE.getName(), 10, 0.9f);
 							player.getWorld().playSound(RPGLOCATION, Sound.ENTITY_GENERIC_EXPLODE, 8, 0.7f);
-							RPGLOCATION.getWorld().spawnParticle(org.bukkit.Particle.EXPLOSION_HUGE, RPGLOCATION, 0);
+							RPGLOCATION.getWorld().spawnParticle(XParticle.EXPLOSION_EMITTER.get(), RPGLOCATION, 0);
 
 						} catch (Error e3) {
 							RPGLOCATION.getWorld().playEffect(RPGLOCATION, Effect.valueOf("CLOUD"), 0);

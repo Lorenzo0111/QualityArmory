@@ -1,9 +1,9 @@
 package me.zombie_striker.qg.miscitems;
 
+import com.cryptomorin.xseries.particles.XParticle;
 import me.zombie_striker.customitemmanager.MaterialStorage;
 import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.api.QAThrowableExplodeEvent;
-import me.zombie_striker.qg.guns.utils.WeaponSounds;
 import me.zombie_striker.qg.handlers.ExplosionHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.Effect;
@@ -11,8 +11,6 @@ import org.bukkit.GameMode;
 import org.bukkit.Sound;
 import org.bukkit.entity.*;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.List;
@@ -60,7 +58,7 @@ public class StickyGrenades extends Grenade {
 							QAMain.DEBUG("Using default explosions");
 						}
 						try {
-							holder.getHolder().getWorld().spawnParticle(org.bukkit.Particle.EXPLOSION_HUGE,
+							holder.getHolder().getWorld().spawnParticle(XParticle.EXPLOSION_EMITTER.get(),
 									holder.getHolder().getLocation(), 0);
 							holder.getHolder().getWorld().playSound(holder.getHolder().getLocation(), Sound.ENTITY_GENERIC_EXPLODE, 8,
 									0.7f);

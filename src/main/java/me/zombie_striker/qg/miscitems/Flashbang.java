@@ -2,13 +2,13 @@ package me.zombie_striker.qg.miscitems;
 
 import java.util.List;
 
+import com.cryptomorin.xseries.particles.XParticle;
 import org.bukkit.Effect;
 import org.bukkit.Sound;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -41,7 +41,7 @@ public class Flashbang extends Grenade {
 			@Override
 			public void run() {
 				try {
-					h.getHolder().getWorld().spawnParticle(org.bukkit.Particle.EXPLOSION_HUGE,
+					h.getHolder().getWorld().spawnParticle(XParticle.EXPLOSION_EMITTER.get(),
 							h.getHolder().getLocation(), 0);
 					h.getHolder().getWorld().playSound(h.getHolder().getLocation(), WeaponSounds.FLASHBANG.getSoundName(),
 							3f, 1f);

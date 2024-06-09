@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.UUID;
 
+import com.cryptomorin.xseries.XPotion;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
@@ -52,8 +53,8 @@ public class BulletWoundHandler {
 							if (bloodlevel / QAMain.bulletWound_initialbloodamount <= 0.75)
 
 								try {
-									online.removePotionEffect(PotionEffectType.CONFUSION);
-									online.addPotionEffect(new PotionEffect(PotionEffectType.CONFUSION, 499, 3));
+									online.removePotionEffect(XPotion.NAUSEA.getPotionEffectType());
+									online.addPotionEffect(new PotionEffect(XPotion.NAUSEA.getPotionEffectType(), 499, 3));
 								} catch (Error | Exception e4) {
 								}
 							if (bloodlevel / QAMain.bulletWound_initialbloodamount <= 0.40)

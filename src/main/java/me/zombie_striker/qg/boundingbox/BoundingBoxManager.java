@@ -3,6 +3,7 @@ package me.zombie_striker.qg.boundingbox;
 import java.util.HashMap;
 import java.util.UUID;
 
+import com.cryptomorin.xseries.XEntityType;
 import me.zombie_striker.qg.handlers.MultiVersionLookup;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -72,7 +73,7 @@ public class BoundingBoxManager {
 			setEntityTypeBoundingBox(EntityType.ZOMBIE, HUMANOID);
 			setEntityTypeBoundingBox(EntityType.BLAZE, HUMANOID);
 			setEntityTypeBoundingBox(MultiVersionLookup.getZombiePig(), HUMANOID);
-			setEntityTypeBoundingBox(EntityType.SNOWMAN, HUMANOID);
+			setEntityTypeBoundingBox(XEntityType.SNOW_GOLEM.get(), HUMANOID);
 
 			setEntityTypeBoundingBox(EntityType.ENDERMAN, ENDERMAN);
 
@@ -107,7 +108,7 @@ public class BoundingBoxManager {
 			setEntityTypeBoundingBox(EntityType.WOLF, WOLF);
 
 			setEntityTypeBoundingBox(EntityType.COW, COW);
-			setEntityTypeBoundingBox(EntityType.MUSHROOM_COW, COW);
+			setEntityTypeBoundingBox(XEntityType.MOOSHROOM.get(), COW);
 			setEntityTypeBoundingBox(EntityType.SHEEP, COW);
 
 

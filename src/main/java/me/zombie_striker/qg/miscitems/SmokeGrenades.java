@@ -2,6 +2,7 @@ package me.zombie_striker.qg.miscitems;
 
 import java.util.List;
 
+import com.cryptomorin.xseries.particles.XParticle;
 import me.zombie_striker.qg.hooks.protection.ProtectionHandler;
 import org.bukkit.Effect;
 import org.bukkit.Sound;
@@ -42,7 +43,7 @@ public class SmokeGrenades extends Grenade {
 			@Override
 			public void run() {
 				try {
-					h.getHolder().getWorld().spawnParticle(org.bukkit.Particle.EXPLOSION_HUGE,
+					h.getHolder().getWorld().spawnParticle(XParticle.EXPLOSION_EMITTER.get(),
 							h.getHolder().getLocation(), 0);
 					if (k % 2 == 0)
 						h.getHolder().getWorld().playSound(h.getHolder().getLocation(),

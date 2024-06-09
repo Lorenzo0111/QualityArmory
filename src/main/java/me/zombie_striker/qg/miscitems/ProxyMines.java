@@ -1,5 +1,6 @@
 package me.zombie_striker.qg.miscitems;
 
+import com.cryptomorin.xseries.particles.XParticle;
 import me.zombie_striker.customitemmanager.MaterialStorage;
 import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.api.QAThrowableExplodeEvent;
@@ -14,8 +15,6 @@ import org.bukkit.entity.Item;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
@@ -83,7 +82,7 @@ public class ProxyMines extends Grenade {
 							QAMain.DEBUG("Using default explosions");
 						}
 						try {
-							h.getHolder().getWorld().spawnParticle(org.bukkit.Particle.EXPLOSION_HUGE,
+							h.getHolder().getWorld().spawnParticle(XParticle.EXPLOSION_EMITTER.get(),
 									h.getHolder().getLocation(), 0);
 							h.getHolder().getWorld().playSound(h.getHolder().getLocation(), Sound.ENTITY_GENERIC_EXPLODE, 8,
 									0.7f);

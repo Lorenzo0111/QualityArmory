@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-import com.cryptomorin.xseries.ReflectionUtils;
+import com.cryptomorin.xseries.reflection.XReflection;
 import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.api.QualityArmory;
 import me.zombie_striker.qg.guns.Gun;
@@ -43,7 +43,7 @@ public class AimManager extends BukkitRunnable implements Listener {
 				if (p.isSprinting() && g.isEnableSwayRunModifier()) {
 					sway *= QAMain.swayModifier_Run;
 				}
-				if (ReflectionUtils.supports(9) && !QualityArmory.isIronSights(p.getInventory().getItemInMainHand())) {
+				if (XReflection.supports(9) && !QualityArmory.isIronSights(p.getInventory().getItemInMainHand())) {
 					sway *= g.getSwayUnscopedMultiplier();
 				}
 			}
