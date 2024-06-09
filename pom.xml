@@ -88,37 +88,12 @@
     </repositories>
 
     <dependencies>
-
-        <!-- MCAPI -->
-<!--         <dependency>
-            <groupId>com.mojang</groupId>
-            <artifactId>authlib</artifactId>
-            <version>5.0.51</version>
-            <scope>provided</scope>
-        </dependency>
- -->
-        <!-- Mojang DataFixer -->
- <!--        <dependency>
-            <groupId>com.mojang</groupId>
-            <artifactId>datafixerupper</artifactId>
-            <version>1.0.20</version>
-            <scope>provided</scope>
-        </dependency>
-  -->   <dependency>
+  <dependency>
             <groupId>ca.bkaw</groupId>
             <artifactId>paper-nms</artifactId>
             <version>1.20.6-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
-        <!--Spigot
-        API-->
-        <!-- <dependency>
-            <groupId>org.spigotmc</groupId>
-            <artifactId>spigot-api</artifactId>
-            <version>1.20.6-R0.1-SNAPSHOT</version>
-            <scope>provided</scope>
-        </dependency>
- -->
         <!-- XSeries for Reflection -->
         <dependency>
             <groupId>com.github.cryptomorin</groupId>

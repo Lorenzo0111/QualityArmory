@@ -292,11 +292,7 @@ public class QAMain extends JavaPlugin {
     private static QAMain main;
 
     static {
-        // String name = Bukkit.getServer().getClass().getName();
-        // name = name.substring(name.indexOf("craftbukkit.") +
-        // "craftbukkit.".length());
-        // name = name.substring(0, name.indexOf("."));
-        SERVER_VERSION = "v1_20_R6";
+        SERVER_VERSION = QAMain.getFormattedVersion();
     }
 
     private TreeFellerHandler tfh = null;
@@ -305,6 +301,24 @@ public class QAMain extends JavaPlugin {
     private boolean saveTheConfig = false;
 
     public static QAMain getInstance() { return QAMain.main; }
+
+    private static String getFormattedVersion() {
+        final String bukkitVersion = Bukkit.getBukkitVersion();
+        // Exemplo de bukkitVersion: "1.16.5-R0.1-SNAPSHOT"
+
+        // Extrai a versão principal
+        final String[] parts = bukkitVersion.split("-");
+        String version = parts[0]; // "1.16.5"
+
+        // Remove os pontos e substitui por underscores
+        version = version.replace('.', '_'); // "1_16_5"
+
+        // Extrai o número de revisão
+        final String revision = parts.length > 1 ? parts[1] : "R0";
+
+        // Combina a versão e a revisão no formato "x_xx_Rx"
+        return version + "_" + revision;
+    }
 
     public static boolean isVersionHigherThan(final int mainVersion, final int secondVersion) {
         final String firstChar = QAMain.SERVER_VERSION.substring(1, 2);
@@ -759,7 +773,7 @@ public class QAMain extends JavaPlugin {
 
         try {
             if (QAMain.AUTOUPDATE)
-                GithubUpdater.autoUpdate(this, "ZombieStriker", "QualityArmory", "QualityArmory.jar");
+                GithubUpdater.autoUpdate(this, "EuSouVoce", "QualityArmory", "QualityArmory.jar");
         } catch (final Exception e) {
         }
 

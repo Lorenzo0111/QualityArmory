@@ -1,0 +1,76 @@
+Prefix: "&8[&2QualityArmory&8]&r"
+NoPermAnvilMessage:
+  " &a Você não tem permissão para usar esta bancada de armas. Shift+Clique para acessar a Bigorna."
+NoPerm: "&c Sem permissão para tal."
+Reload: "Armas e configurações foram recarregadas."
+ShopName: "Página da loja de armas:"
+NoMoney: "Você não tem dinheiro para comprar isto."
+CraftingBenchName: "Armory Crafting-Bench Page:"
+Missing_Ingredients: "&cVocê não possui os ingredientes para fabricar isto."
+NoResourcepackMessage1: "&c&l Baixando Resourcepack..."
+NoResourcepackMessage2: "&f Aceite o Resourcepack para jogar!"
+Lore_Ammo: "&aMunição"
+lore_bullets: "&aBalas"
+Lore_Damage: "&aDano"
+Lore_Durib: "Durabilidade"
+Lore_ingredients: "Ingredientes"
+Lore_Variants: "&7Variação:"
+Lore_Price: "&6Preço: "
+Lore_DamagePerSecond: "&2DPS"
+Lore_Crafts: "Fabrica"
+Lore_Returns: "Retorna"
+Reloading_Message: "[Recarregando...]"
+State_AmmoCount: "[%total%]"
+State_OutOfAmmo: "[Sem Munição]"
+HotbarMessage: "%name% = %amount%/%max% %state%"
+Kick_message_if_player_denied_request:
+  "&c Você foi kickado pois não\
+  \ aceitou o pacote de recursos. \n&f Se você quer entrar no servidor, edite na lista a opção \
+  \ \"Pacotes de Recursos\" e defina para \"Aceitar\" ou \"Perguntar\""
+Lore-LMB-Single: "§8[ESQ] modo semi"
+Lore-LMB-FullAuto: "§8[Shift]+[DIR] modo automático"
+Lore-RMB-Reload: "§8[DIR] Recarrega"
+Lore-Ironsights-RMB: "§8[DIR] Abrir Mira"
+Lore-Ironsights-Sneak: "§8[SHIFT] Abrir Mira"
+Lore-Reload-Dropitem: "§8[Q] recarregar"
+Lore-Reload-RMB: "§8[DIR] recarregar"
+Lore-Helmet-RMB: "§8[DIR] equipar capacete."
+Shop_Confirm: "&aVocê comprou %item% por $%cost%!"
+Resourcepack_InCaseOfCrash: "Caso o Resourcepack trave seu cliente, rejeite a solicitação e use /qa getResourcepack para baixar o ResourcePack."
+Resourcepack_Download: "Baixe este Resourcepack e o ative para aproveitar ao máximo sua experiência."
+Resourcepack_NowBypass: "Ao executar este comando você não será mais cobrado de aceitar ou não o ResourcePack"
+Resourcepack_NowOptIn: "Ao executar este comando você sera cobrado para aceitar o ResourcePack"
+grenadeAlreadyPulled: "Você já retirou o pino."
+grenadePull: " Retire o pino primeiro..."
+Medkit-FullyHealed: "&fVocê está totalmente curado.Não há necessidade disso agora!"
+Medkit-Healing: "Curando"
+Medkit-Bleeding: "Taxa de Sangramento:"
+Medkit-HEALING_HEARTS_AMOUNT: 1.0
+Medkit-HEALING_WEAPPING_DELAY_IN_SECONDS: 6.0
+Medkit-Lore_RMB: "&f[DIR] para se curar!"
+Bleeding:
+  Losingconsciousness: "&cVocê está perdendo a consciência devido à perca de sangue!"
+  StartBleeding: "&cVocê está sangrando!Encontre um medkit para parar o sangramento!"
+  ProtectedByKevlar: "&aSeu colete Kevlar protegeu você daquela bala!"
+gui:
+  prevPage: "&6Página Anterior:"
+  nextPage: "&6Próxima Página:"
+AmmoBag:
+  current: "&aMunição: "
+  type: "&aTipo: "
+EntityType:
+  IRON_INGOT: IRON_INGOT
+  REDSTONE: REDSTONE
+  GOLD_INGOT: GOLD_INGOT
+  BLAZE_POWDER: BLAZE_POWDER
+  OAK_PLANKS: OAK_PLANKS
+  WHITE_WOOL: WHITE_WOOL
+  WHITE_DYE: WHITE_DYE
+  GUNPOWDER: GUNPOWDER
+  BLAZE_ROD: BLAZE_ROD
+  TNT: TNT
+  NETHER_STAR: NETHER_STAR
+  STRING: STRING
+  LEATHER: LEATHER
+  GOLDEN_APPLE: GOLDEN_APPLE
+  OBSIDIAN: OBSIDIAN
