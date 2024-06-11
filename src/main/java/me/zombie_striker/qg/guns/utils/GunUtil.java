@@ -268,7 +268,7 @@ public class GunUtil {
 									+ ((LivingEntity) hitTarget).getHealth() + "/"
 									+ ((LivingEntity) hitTarget).getMaxHealth() + " :" + damageMAX + " DAM)");
 						}
-						if(QAMain.anticheatFix){
+						if(QAMain.anticheatFix || p.hasMetadata("NPC")) {
 							if (hitTarget instanceof Damageable) {
 								((Damageable) hitTarget).damage(damageMAX);
 							} else if (hitTarget instanceof EnderDragon) {
