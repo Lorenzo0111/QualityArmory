@@ -20,6 +20,11 @@
 
     <repositories>
 
+        <repository>
+            <id>repo-imperiogames</id>
+            <name>Repositório do Império Games</name>
+            <url>http://repo.imperio.games/public</url>
+          </repository>
 
         <repository>
             <id>spigot-repo</id>
@@ -91,7 +96,7 @@
   <dependency>
             <groupId>ca.bkaw</groupId>
             <artifactId>paper-nms</artifactId>
-            <version>1.20.6-SNAPSHOT</version>
+            <version>1.21-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <!-- XSeries for Reflection -->
@@ -322,6 +327,9 @@
                 <configuration>
                     <source>21</source>
                     <target>21</target>
+                    <compilerArgs>
+                        <arg>-Xlint:-deprecation</arg>
+                    </compilerArgs>
                 </configuration>
             </plugin>
             <plugin>

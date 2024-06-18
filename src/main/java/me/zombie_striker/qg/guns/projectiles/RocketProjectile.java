@@ -13,6 +13,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
+import com.cryptomorin.xseries.particles.XParticle;
+
 import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.api.QAProjectileExplodeEvent;
 import me.zombie_striker.qg.guns.Gun;
@@ -59,7 +61,7 @@ public class RocketProjectile implements RealtimeCalculationProjectile {
                             // player.getWorld().playSound(s, WeaponSounds.WARHEAD_EXPLODE.getSoundName(),
                             // 10, 0.9f);
                             player.getWorld().playSound(s, Sound.ENTITY_GENERIC_EXPLODE, 8, 0.7f);
-                            s.getWorld().spawnParticle(org.bukkit.Particle.EXPLOSION_HUGE, s, 0);
+                            s.getWorld().spawnParticle(XParticle.EXPLOSION_EMITTER.get(), s, 0);
 
                         } catch (final Error e3) {
                             s.getWorld().playEffect(s, Effect.valueOf("CLOUD"), 0);

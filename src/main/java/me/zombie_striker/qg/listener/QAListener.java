@@ -211,6 +211,7 @@ public class QAListener implements Listener {
     public void onBlockBreak(final BlockBreakEvent e) {
         if (e.isCancelled())
             return;
+
         if (e.getPlayer().getInventory().getItemInMainHand() != null
                 && (QualityArmory.isCustomItem(e.getPlayer().getInventory().getItemInMainHand()))) {
             e.setCancelled(true);
@@ -249,8 +250,9 @@ public class QAListener implements Listener {
     @SuppressWarnings("deprecation")
     @EventHandler(priority = EventPriority.LOWEST)
     public void oninvClick(final InventoryClickEvent e) {
-        if (e.isCancelled())
+        if (e.isCancelled() || e.getWhoClicked().hasMetadata("NPC"))
             return;
+
         String name = null;
 
         if (e.getClickedInventory() instanceof PlayerInventory) {
@@ -490,7 +492,7 @@ public class QAListener implements Listener {
 
     @EventHandler
     public void onPickup(final EntityPickupItemEvent e) {
-        if (e.isCancelled() || (e.getEntity() instanceof Player) == false)
+        if (e.isCancelled() || (e.getEntity() instanceof Player) == false || e.getEntity().hasMetadata("NPC"))
             return;
         if (QualityArmory.isCustomItem(e.getItem().getItemStack())) {
             if (QAMain.shouldSend && !QAMain.namesToBypass.contains(e.getEntity().getName())
@@ -602,7 +604,11 @@ public class QAListener implements Listener {
     }
 
     @EventHandler
-    public void onMove(final PlayerMoveEvent e) { QAMain.recoilHelperMovedLocation.put(e.getPlayer().getUniqueId(), e.getTo()); }
+    public void onMove(final PlayerMoveEvent e) {
+        if (e.getPlayer().hasMetadata("NPC"))
+            return;
+        QAMain.recoilHelperMovedLocation.put(e.getPlayer().getUniqueId(), e.getTo());
+    }
 
     @EventHandler
     public void onHeadPlace(final BlockPlaceEvent e) {
@@ -612,9 +618,10 @@ public class QAListener implements Listener {
 
     @EventHandler
     public void onDeathChat(final PlayerDeathEvent e) {
+        if (e.getPlayer().hasMetadata("NPC"))
+            return;
         if (QAMain.changeDeathMessages) {
-            if (e.getEntity().getKiller() != null && e.getEntity().getKiller() instanceof Player) {
-                final Player killer = e.getEntity().getKiller();
+            if (e.getEntity().getKiller() != null && e.getEntity().getKiller() instanceof final Player killer) {
                 if (e.getDeathMessage().contains(" using ")) {
                     final CustomBaseObject base = IronsightsHandler.getGunUsed(killer);
                     if (base instanceof Gun) {
@@ -678,6 +685,8 @@ public class QAListener implements Listener {
     public void onClickMONITOR(final PlayerInteractEvent e) {
         if (e.isCancelled())
             return;
+        if (e.getPlayer().hasMetadata("NPC"))
+            return;
         if (QAMain.ignoreSkipping)
             return;
 
@@ -735,6 +744,8 @@ public class QAListener implements Listener {
 
     @EventHandler
     public void onAnvilClick(final PlayerInteractEvent e) {
+        if (e.getPlayer().hasMetadata("NPC"))
+            return;
         if (e.getAction() == Action.RIGHT_CLICK_BLOCK && e.getClickedBlock().getType() == Material.ANVIL && QAMain.overrideAnvil
                 && !e.getPlayer().isSneaking()) {
             QAMain.DEBUG("ANVIL InteractEvent Called");
@@ -758,6 +769,8 @@ public class QAListener implements Listener {
     @SuppressWarnings({ "deprecation" })
     @EventHandler(priority = EventPriority.LOWEST)
     public void onClick(final PlayerInteractEvent e) {
+        if (e.getPlayer().hasMetadata("NPC"))
+            return;
         QAMain.DEBUG(
                 "InteractEvent Called. Custom item used = " + QualityArmory.isCustomItem(e.getPlayer().getInventory().getItemInMainHand()));
         if (!CustomItemManager.isUsingCustomData()) {
@@ -928,6 +941,8 @@ public class QAListener implements Listener {
     public void swap(final PlayerItemHeldEvent e) {
         if (e.isCancelled())
             return;
+        if (e.getPlayer().hasMetadata("NPC"))
+            return;
         final ItemStack prev = e.getPlayer().getInventory().getItem(e.getPreviousSlot());
         final ItemStack newslot = e.getPlayer().getInventory().getItem(e.getNewSlot());
         if (QualityArmory.isIronSights(prev) && QualityArmory.isCustomItem(e.getPlayer().getInventory().getItemInOffHand())) {
@@ -968,6 +983,8 @@ public class QAListener implements Listener {
 
     @EventHandler
     public void onQuit(final PlayerQuitEvent e) {
+        if (e.getPlayer().hasMetadata("NPC"))
+            return;
         QAMain.resourcepackReq.remove(e.getPlayer().getUniqueId());
         if (QAMain.reloadingTasks.containsKey(e.getPlayer().getUniqueId())) {
             for (final GunRefillerRunnable r : QAMain.reloadingTasks.get(e.getPlayer().getUniqueId())) {
@@ -987,6 +1004,8 @@ public class QAListener implements Listener {
 
     @EventHandler
     public void onJoin(final PlayerJoinEvent e) {
+        if (e.getPlayer().hasMetadata("NPC"))
+            return;
         if (/* Bukkit.getVersion().contains("1.8") || */ Bukkit.getVersion().contains("1.7")) {
             Bukkit.broadcastMessage(QAMain.prefix + " QualityArmory does not support versions older than 1.9, and may crash clients");
             Bukkit.broadcastMessage(
@@ -1031,6 +1050,8 @@ public class QAListener implements Listener {
     @EventHandler
     public void onDrop(final PlayerDropItemEvent e) {
         if (e.isCancelled())
+            return;
+        if (e.getPlayer().hasMetadata("NPC"))
             return;
         if (QAMain.showOutOfAmmoOnItem) {
             if (QualityArmory.isGun(e.getItemDrop().getItemStack())) {
