@@ -11,6 +11,8 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
+import com.cryptomorin.xseries.XPotion;
+
 import me.zombie_striker.qg.QAMain;
 
 public class BulletWoundHandler {
@@ -52,8 +54,8 @@ public class BulletWoundHandler {
                             if (bloodlevel / QAMain.bulletWound_initialbloodamount <= 0.75)
 
                                 try {
-                                    online.removePotionEffect(PotionEffectType.NAUSEA);
-                                    online.addPotionEffect(new PotionEffect(PotionEffectType.NAUSEA, 499, 3));
+                                    online.removePotionEffect(XPotion.NAUSEA.getPotionEffectType());
+                                    online.addPotionEffect(new PotionEffect(XPotion.NAUSEA.getPotionEffectType(), 499, 3));
                                 } catch (Error | Exception e4) {
                                 }
                             if (bloodlevel / QAMain.bulletWound_initialbloodamount <= 0.40)

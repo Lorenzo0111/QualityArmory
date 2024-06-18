@@ -6,7 +6,6 @@ import java.util.List;
 import org.bukkit.Bukkit;
 import org.bukkit.Effect;
 import org.bukkit.GameMode;
-import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
@@ -14,6 +13,8 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
+
+import com.cryptomorin.xseries.particles.XParticle;
 
 import me.zombie_striker.customitemmanager.CustomBaseObject;
 import me.zombie_striker.customitemmanager.CustomItemManager;
@@ -129,7 +130,7 @@ public class Grenade extends CustomBaseObject implements ThrowableItems {
                     QAMain.DEBUG("Using default explosions");
                 }
                 try {
-                    h.getHolder().getWorld().spawnParticle(Particle.EXPLOSION_EMITTER, h.getHolder().getLocation(), 0);
+                    h.getHolder().getWorld().spawnParticle(XParticle.EXPLOSION_EMITTER.get(), h.getHolder().getLocation(), 0);
                     h.getHolder().getWorld().playSound(h.getHolder().getLocation(), Sound.ENTITY_GENERIC_EXPLODE, 8, 0.7f);
                 } catch (final Error e3) {
                     h.getHolder().getWorld().playEffect(h.getHolder().getLocation(), Effect.valueOf("CLOUD"), 0);

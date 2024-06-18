@@ -15,10 +15,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
+import com.cryptomorin.xseries.XPotion;
+
+import de.tr7zw.changeme.nbtapi.NBT;
 import de.tr7zw.changeme.nbtapi.NBTItem;
 import me.zombie_striker.customitemmanager.ArmoryBaseObject;
 import me.zombie_striker.customitemmanager.CustomBaseObject;
@@ -170,7 +172,7 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
             return 0;
 
         final NBTItem item = new NBTItem(is);
-        if (item.hasTag("ammo")) {
+        if (item.hasKey("ammo")) {
             return item.getInteger("ammo");
         }
 
@@ -178,9 +180,9 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
     }
 
     public static void updateAmmo(final Gun g, final ItemStack current, final int amount) {
-        final NBTItem item = new NBTItem(current);
-        item.setInteger("ammo", amount);
-        item.applyNBT(current);
+        NBT.modify(current, nbt -> {
+            nbt.setInteger("ammo", amount);
+        });
     }
 
     public static void updateAmmo(final Gun g, final Player player, final int amount) {
@@ -614,10 +616,10 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
         if (this.getSoundOnEquip() != null)
             shooter.getWorld().playSound(shooter.getLocation(), this.getSoundOnEquip(), 1, 1);
         if (this.getSlownessPower() > 0) {
-            if (shooter.hasPotionEffect(PotionEffectType.SLOWNESS))
-                if (shooter.getPotionEffect(PotionEffectType.SLOWNESS).getAmplifier() != this.getSlownessPower())
-                    shooter.removePotionEffect(PotionEffectType.SLOWNESS);
-            shooter.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, Integer.MAX_VALUE, this.getSlownessPower()));
+            if (shooter.hasPotionEffect(XPotion.SLOWNESS.getPotionEffectType()))
+                if (shooter.getPotionEffect(XPotion.SLOWNESS.getPotionEffectType()).getAmplifier() != this.getSlownessPower())
+                    shooter.removePotionEffect(XPotion.SLOWNESS.getPotionEffectType());
+            shooter.addPotionEffect(new PotionEffect(XPotion.SLOWNESS.getPotionEffectType(), Integer.MAX_VALUE, this.getSlownessPower()));
         }
         return false;
     }
@@ -625,9 +627,9 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
     @Override
     public boolean onSwapAway(final Player shooter, final ItemStack usedItem) {
         if (this.getSlownessPower() > 0) {
-            if (shooter.hasPotionEffect(PotionEffectType.SLOWNESS))
-                if (shooter.getPotionEffect(PotionEffectType.SLOWNESS).getAmplifier() == this.getSlownessPower())
-                    shooter.removePotionEffect(PotionEffectType.SLOWNESS);
+            if (shooter.hasPotionEffect(XPotion.SLOWNESS.getPotionEffectType()))
+                if (shooter.getPotionEffect(XPotion.SLOWNESS.getPotionEffectType()).getAmplifier() == this.getSlownessPower())
+                    shooter.removePotionEffect(XPotion.SLOWNESS.getPotionEffectType());
         }
         return false;
     }

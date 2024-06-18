@@ -18,11 +18,11 @@ import com.comphenix.protocol.events.ListenerPriority;
 import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
-import com.cryptomorin.xseries.ReflectionUtils;
 import com.cryptomorin.xseries.XMaterial;
+import com.cryptomorin.xseries.reflection.XReflection;
 import com.mojang.datafixers.util.Pair;
 
-import de.tr7zw.changeme.nbtapi.NBTItem;
+import de.tr7zw.changeme.nbtapi.NBT;
 import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.api.QualityArmory;
 import me.zombie_striker.qg.guns.Gun;
@@ -139,21 +139,19 @@ public class ProtocolLibHandler {
                             } catch (final NoSuchMethodException e) {
                             }
 
-                            final NBTItem item = new NBTItem(who.getInventory().getItemInOffHand());
-                            item.setBoolean("Charged", true);
-                            Bukkit.getVersion();
-                            if (XMaterial.supports(16)) {
+                            NBT.modify(who.getInventory().getItemInOffHand(), nbt -> {
+                                nbt.setBoolean("Charged", true);
+                            });
 
-                                @SuppressWarnings("unchecked")
-                                // EquipmentSlot
-                                final List<Object> list = (List<Object>) slot;
-                                for (final Object o : new ArrayList<>(list)) {
-                                    if (o.toString().contains("MAINHAND")) { // Is mainhand
-                                        final Pair<?, ?> pair = (Pair<?, ?>) o;
-                                        final Pair<?, ?> newpair = new Pair<>(pair.getFirst(), is);
-                                        list.set(list.indexOf(pair), newpair); // switch mainhand to offhand
-                                    } else if (o.toString().contains("OFFHAND")) { // is offhand
-                                        list.remove(list.indexOf(o)); // removes from offhand
+                            if (XMaterial.supports(16)) {
+                                final List list = (List) slot;
+                                for (final Object o : new ArrayList(list)) {
+                                    if (o.toString().contains("MAINHAND")) {
+                                        final Pair pair = (Pair) o;
+                                        final Pair newpair = new Pair(pair.getFirst(), is);
+                                        list.set(list.indexOf(pair), newpair);
+                                    } else if (o.toString().contains("OFFHAND")) {
+                                        list.remove(list.indexOf(o));
                                     }
                                 }
                                 event.getPacket().getModifier().write(1, list);
@@ -203,8 +201,8 @@ public class ProtocolLibHandler {
 
     private static Object getCraftItemStack(final ItemStack is) throws NoSuchMethodException {
         if (ProtocolLibHandler.nbtFactClass == null) {
-            ProtocolLibHandler.nbtFactClass = ReflectionUtils.getCraftClass("inventory.CraftItemStack");
-            final Class<?>[] c = new Class[1];
+            ProtocolLibHandler.nbtFactClass = XReflection.getCraftClass("inventory.CraftItemStack");
+            final Class[] c = new Class[1];
             c[0] = ItemStack.class;
             ProtocolLibHandler.nbtFactmethod = ProtocolLibHandler.nbtFactClass.getMethod("asNMSCopy", c);
         }
@@ -220,7 +218,7 @@ public class ProtocolLibHandler {
             ProtocolLibHandler.protocolManager = ProtocolLibrary.getProtocolManager();
         final PacketContainer yawpack = ProtocolLibHandler.protocolManager.createPacket(PacketType.Play.Server.LOOK_AT, false);
         if (ProtocolLibHandler.enumArgumentAnchor_EYES == null) {
-            ProtocolLibHandler.class_ArgumentAnchor = ReflectionUtils.getNMSClass("commands.arguments", "ArgumentAnchor$Anchor");
+            ProtocolLibHandler.class_ArgumentAnchor = XReflection.getNMSClass("commands.arguments", "ArgumentAnchor$Anchor");
             ProtocolLibHandler.enumArgumentAnchor_EYES = ReflectionsUtil.getEnumConstant(ProtocolLibHandler.class_ArgumentAnchor, "EYES");
         }
         yawpack.getModifier().write(4, ProtocolLibHandler.enumArgumentAnchor_EYES);

@@ -7,7 +7,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Effect;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
-import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -60,7 +59,7 @@ public class RocketProjectile implements RealtimeCalculationProjectile {
                             // player.getWorld().playSound(s, WeaponSounds.WARHEAD_EXPLODE.getSoundName(),
                             // 10, 0.9f);
                             player.getWorld().playSound(s, Sound.ENTITY_GENERIC_EXPLODE, 8, 0.7f);
-                            s.getWorld().spawnParticle(Particle.EXPLOSION_EMITTER, s, 0);
+                            s.getWorld().spawnParticle(org.bukkit.Particle.EXPLOSION_HUGE, s, 0);
 
                         } catch (final Error e3) {
                             s.getWorld().playEffect(s, Effect.valueOf("CLOUD"), 0);

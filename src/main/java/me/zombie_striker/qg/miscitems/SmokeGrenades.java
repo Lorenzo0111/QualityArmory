@@ -2,9 +2,7 @@ package me.zombie_striker.qg.miscitems;
 
 import java.util.List;
 
-import me.zombie_striker.qg.hooks.protection.ProtectionHandler;
 import org.bukkit.Effect;
-import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
@@ -15,9 +13,12 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import me.zombie_striker.qg.QAMain;
+import com.cryptomorin.xseries.particles.XParticle;
+
 import me.zombie_striker.customitemmanager.MaterialStorage;
+import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.guns.utils.WeaponSounds;
+import me.zombie_striker.qg.hooks.protection.ProtectionHandler;
 
 public class SmokeGrenades extends Grenade {
 
@@ -43,7 +44,7 @@ public class SmokeGrenades extends Grenade {
             @Override
             public void run() {
                 try {
-                    h.getHolder().getWorld().spawnParticle(Particle.EXPLOSION_EMITTER, h.getHolder().getLocation(), 0);
+                    h.getHolder().getWorld().spawnParticle(XParticle.EXPLOSION_EMITTER.get(), h.getHolder().getLocation(), 0);
                     if (this.k % 2 == 0)
                         h.getHolder().getWorld().playSound(h.getHolder().getLocation(), WeaponSounds.HISS.getSoundName(), 2f, 1f);
                 } catch (final Error e3) {

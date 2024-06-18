@@ -8,13 +8,14 @@ import org.bukkit.Effect;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
+
+import com.cryptomorin.xseries.particles.XParticle;
 
 import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.api.QAProjectileExplodeEvent;
@@ -81,7 +82,7 @@ public class HomingRocketProjectile implements RealtimeCalculationProjectile {
                         try {
                             player.getWorld().playSound(this.RPGLOCATION, WeaponSounds.WARHEAD_EXPLODE.getName(), 10, 0.9f);
                             player.getWorld().playSound(this.RPGLOCATION, Sound.ENTITY_GENERIC_EXPLODE, 8, 0.7f);
-                            this.RPGLOCATION.getWorld().spawnParticle(Particle.EXPLOSION_EMITTER, this.RPGLOCATION, 0);
+                            this.RPGLOCATION.getWorld().spawnParticle(XParticle.EXPLOSION_EMITTER.get(), this.RPGLOCATION, 0);
 
                         } catch (final Error e3) {
                             this.RPGLOCATION.getWorld().playEffect(this.RPGLOCATION, Effect.valueOf("CLOUD"), 0);

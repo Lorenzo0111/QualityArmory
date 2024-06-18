@@ -5,7 +5,6 @@ import java.util.List;
 import org.bukkit.Bukkit;
 import org.bukkit.Effect;
 import org.bukkit.GameMode;
-import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.entity.AbstractArrow;
 import org.bukkit.entity.Arrow;
@@ -14,6 +13,8 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
+
+import com.cryptomorin.xseries.particles.XParticle;
 
 import me.zombie_striker.customitemmanager.MaterialStorage;
 import me.zombie_striker.qg.QAMain;
@@ -67,7 +68,8 @@ public class StickyGrenades extends Grenade {
                             QAMain.DEBUG("Using default explosions");
                         }
                         try {
-                            holder.getHolder().getWorld().spawnParticle(Particle.EXPLOSION_EMITTER, holder.getHolder().getLocation(), 0);
+                            holder.getHolder().getWorld().spawnParticle(XParticle.EXPLOSION_EMITTER.get(), holder.getHolder().getLocation(),
+                                    0);
                             holder.getHolder().getWorld().playSound(holder.getHolder().getLocation(), Sound.ENTITY_GENERIC_EXPLODE, 8,
                                     0.7f);
                         } catch (final Error e3) {

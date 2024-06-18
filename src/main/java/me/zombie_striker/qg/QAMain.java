@@ -43,6 +43,9 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
 
+import com.cryptomorin.xseries.XPotion;
+import com.cryptomorin.xseries.reflection.XReflection;
+
 import de.tr7zw.changeme.nbtapi.utils.MinecraftVersion;
 import me.zombie_striker.customitemmanager.CustomBaseObject;
 import me.zombie_striker.customitemmanager.CustomItemManager;
@@ -112,7 +115,6 @@ public class QAMain extends JavaPlugin {
     private static String changelog = null;
 
     public static final int ViaVersionIdfor_1_8 = 106;
-    private static final String SERVER_VERSION;
     public static HashMap<MaterialStorage, Gun> gunRegister = new LinkedHashMap<>();
     public static HashMap<MaterialStorage, Ammo> ammoRegister = new LinkedHashMap<>();
     public static HashMap<MaterialStorage, CustomBaseObject> miscRegister = new LinkedHashMap<>();
@@ -291,10 +293,6 @@ public class QAMain extends JavaPlugin {
     public static List<UUID> currentlyScoping = new ArrayList<>();
     private static QAMain main;
 
-    static {
-        SERVER_VERSION = QAMain.getFormattedVersion();
-    }
-
     private TreeFellerHandler tfh = null;
     private FileConfiguration config;
     private File configFile;
@@ -302,56 +300,24 @@ public class QAMain extends JavaPlugin {
 
     public static QAMain getInstance() { return QAMain.main; }
 
-    private static String getFormattedVersion() {
-        final String bukkitVersion = Bukkit.getBukkitVersion();
-        // Exemplo de bukkitVersion: "1.16.5-R0.1-SNAPSHOT"
-
-        // Extrai a versão principal
-        final String[] parts = bukkitVersion.split("-");
-        String version = parts[0]; // "1.16.5"
-
-        // Remove os pontos e substitui por underscores
-        version = version.replace('.', '_'); // "1_16_5"
-
-        // Extrai o número de revisão
-        final String revision = parts.length > 1 ? parts[1] : "R0";
-
-        // Combina a versão e a revisão no formato "x_xx_Rx"
-        return version + "_" + revision;
-    }
-
     public static boolean isVersionHigherThan(final int mainVersion, final int secondVersion) {
-        final String firstChar = QAMain.SERVER_VERSION.substring(1, 2);
-        final int fInt = Integer.parseInt(firstChar);
-        if (fInt < mainVersion)
-            return false;
-        final StringBuilder secondChar = new StringBuilder();
-        for (int i = 3; i < 10; i++) {
-            if (QAMain.SERVER_VERSION.charAt(i) == '_' || QAMain.SERVER_VERSION.charAt(i) == '.')
-                break;
-            secondChar.append(QAMain.SERVER_VERSION.charAt(i));
-        }
-
-        final int sInt = Integer.parseInt(secondChar.toString());
-        if (sInt < secondVersion)
-            return false;
-        return true;
+        return XReflection.supports(secondVersion);
     }
 
     public static void toggleNightvision(final Player player, final Gun g, final boolean add) {
         if (add) {
             if (g.getZoomWhenIronSights() > 0) {
                 QAMain.currentlyScoping.add(player.getUniqueId());
-                player.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 1200, g.getZoomWhenIronSights()));
+                player.addPotionEffect(new PotionEffect(XPotion.SLOWNESS.getPotionEffectType(), 1200, g.getZoomWhenIronSights()));
             }
             if (g.hasnightVision()) {
                 QAMain.currentlyScoping.add(player.getUniqueId());
-                player.addPotionEffect(new PotionEffect(PotionEffectType.NIGHT_VISION, 1200, 3));
+                player.addPotionEffect(new PotionEffect(XPotion.NIGHT_VISION.getPotionEffectType(), 1200, 3));
             }
         } else {
             if (QAMain.currentlyScoping.contains(player.getUniqueId())) {
-                if (player.hasPotionEffect(PotionEffectType.SLOWNESS) && (g == null || g.getZoomWhenIronSights() > 0))
-                    player.removePotionEffect(PotionEffectType.SLOWNESS);
+                if (player.hasPotionEffect(XPotion.SLOWNESS.getPotionEffectType()) && (g == null || g.getZoomWhenIronSights() > 0))
+                    player.removePotionEffect(XPotion.SLOWNESS.getPotionEffectType());
                 boolean potionEff = false;
                 try {
                     potionEff = player.hasPotionEffect(PotionEffectType.NIGHT_VISION) && (g == null || g.hasnightVision())

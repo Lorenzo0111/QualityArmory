@@ -2,9 +2,7 @@ package me.zombie_striker.qg.miscitems;
 
 import java.util.List;
 
-import me.zombie_striker.qg.hooks.protection.ProtectionHandler;
 import org.bukkit.Effect;
-import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
@@ -13,9 +11,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import me.zombie_striker.qg.QAMain;
+import com.cryptomorin.xseries.particles.XParticle;
+
 import me.zombie_striker.customitemmanager.MaterialStorage;
+import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.guns.utils.WeaponSounds;
+import me.zombie_striker.qg.hooks.protection.ProtectionHandler;
 
 public class IncendaryGrenades extends Grenade {
 
@@ -42,7 +43,7 @@ public class IncendaryGrenades extends Grenade {
             @Override
             public void run() {
                 try {
-                    h.getHolder().getWorld().spawnParticle(Particle.EXPLOSION_EMITTER, h.getHolder().getLocation(), 0);
+                    h.getHolder().getWorld().spawnParticle(XParticle.EXPLOSION_EMITTER.get(), h.getHolder().getLocation(), 0);
                     for (int i = 0; i < 4; i++) {
                         // TODO: Check: This goes in three directions, and one stays still
                         h.getHolder().getWorld().spawnParticle(org.bukkit.Particle.LAVA, h.getHolder().getLocation(), i);

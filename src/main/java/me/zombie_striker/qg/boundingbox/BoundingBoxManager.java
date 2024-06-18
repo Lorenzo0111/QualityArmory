@@ -6,6 +6,8 @@ import java.util.UUID;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 
+import com.cryptomorin.xseries.XEntityType;
+
 import me.zombie_striker.qg.handlers.MultiVersionLookup;
 
 public class BoundingBoxManager {
@@ -74,7 +76,7 @@ public class BoundingBoxManager {
             BoundingBoxManager.setEntityTypeBoundingBox(EntityType.ZOMBIE, BoundingBoxManager.HUMANOID);
             BoundingBoxManager.setEntityTypeBoundingBox(EntityType.BLAZE, BoundingBoxManager.HUMANOID);
             BoundingBoxManager.setEntityTypeBoundingBox(MultiVersionLookup.getZombiePig(), BoundingBoxManager.HUMANOID);
-            BoundingBoxManager.setEntityTypeBoundingBox(EntityType.SNOW_GOLEM, BoundingBoxManager.HUMANOID);
+            BoundingBoxManager.setEntityTypeBoundingBox(XEntityType.SNOW_GOLEM.get(), BoundingBoxManager.HUMANOID);
 
             BoundingBoxManager.setEntityTypeBoundingBox(EntityType.ENDERMAN, BoundingBoxManager.ENDERMAN);
 
@@ -109,7 +111,7 @@ public class BoundingBoxManager {
             BoundingBoxManager.setEntityTypeBoundingBox(EntityType.WOLF, BoundingBoxManager.WOLF);
 
             BoundingBoxManager.setEntityTypeBoundingBox(EntityType.COW, BoundingBoxManager.COW);
-            BoundingBoxManager.setEntityTypeBoundingBox(EntityType.MOOSHROOM, BoundingBoxManager.COW);
+            BoundingBoxManager.setEntityTypeBoundingBox(XEntityType.MOOSHROOM.get(), BoundingBoxManager.COW);
             BoundingBoxManager.setEntityTypeBoundingBox(EntityType.SHEEP, BoundingBoxManager.COW);
 
             BoundingBoxManager.setEntityTypeBoundingBox(EntityType.HORSE, BoundingBoxManager.HORSE);
