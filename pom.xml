@@ -23,7 +23,7 @@
         <repository>
             <id>repo-imperiogames</id>
             <name>Repositório do Império Games</name>
-            <url>http://repo.imperio.games/public</url>
+            <url>https://repo.imperio.games/public</url>
           </repository>
 
         <repository>
