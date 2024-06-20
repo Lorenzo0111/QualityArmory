@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>me.zombie_striker</groupId>
     <artifactId>QualityArmory</artifactId>
-    <version>2.1.0</version>
+    <version>2.2.0</version>
     <name>QualityArmory</name>
     <pluginRepositories>
         <pluginRepository>
@@ -178,7 +178,7 @@
         <dependency>
             <groupId>de.tr7zw</groupId>
             <artifactId>item-nbt-api</artifactId>
-            <version>2.12.4</version>
+            <version>2.13.1-SNAPSHOT</version>
         </dependency>
 
         <dependency>
@@ -314,11 +314,11 @@
         </resources>
 
         <plugins>
-            <plugin>
+            <!-- <plugin>
                 <groupId>ca.bkaw</groupId>
                 <artifactId>paper-nms-maven-plugin</artifactId>
                 <version>1.4.4</version>
-            </plugin>
+            </plugin> -->
             <!-- Sets the Java version to 21 -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -378,12 +378,8 @@
     </build>
     <distributionManagement>
         <repository>
-            <id>codemc-releases</id>
-            <url>https://repo.codemc.io/repository/maven-releases/</url>
+            <id>repo-imperiogames</id>
+            <url>https://repo.imperio.games/public/</url>
         </repository>
-        <snapshotRepository>
-            <id>codemc-snapshots</id>
-            <url>https://repo.codemc.io/repository/maven-snapshots/</url>
-        </snapshotRepository>
     </distributionManagement>
 </project>

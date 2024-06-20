@@ -78,7 +78,7 @@ public class MaterialStorage {
 
     public static MaterialStorage getMS(final ItemStack is, final int variant) {
 
-        if (is == null) {
+        if (is == null || is.getItemMeta() == null) {
             return MaterialStorage.EMPTY;
         }
 
@@ -88,13 +88,17 @@ public class MaterialStorage {
         if (extraData != null)
             temp = SkullHandler.getURL64(is);
         try {
-            return MaterialStorage.getMS(is.getType(), is.getItemMeta().hasCustomModelData() ? is.getItemMeta().getCustomModelData() : 0,
-                    variant,
-                    is.getType() == MultiVersionLookup.getSkull() ? ((SkullMeta) is.getItemMeta()).getOwningPlayer().getName() : null,
-                    temp);
+            if (is.getItemMeta() != null)
+                return MaterialStorage.getMS(is.getType(),
+                        is.getItemMeta().hasCustomModelData() ? is.getItemMeta().getCustomModelData() : 0, variant,
+                        is.getType() == MultiVersionLookup.getSkull() ? ((SkullMeta) is.getItemMeta()).getOwningPlayer().getName() : null,
+                        temp);
 
         } catch (Error | Exception e4) {
+            if (QAMain.DEBUG)
+                e4.printStackTrace();
         }
+
         return MaterialStorage.getMS(is.getType(), ((Damageable) is.getItemMeta()).getDamage(), variant,
                 is.getType() == MultiVersionLookup.getSkull() ? ((SkullMeta) is.getItemMeta()).getOwningPlayer().getName() : null, temp);
     }
