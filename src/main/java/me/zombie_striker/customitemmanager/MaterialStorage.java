@@ -82,8 +82,10 @@ public class MaterialStorage {
             return MaterialStorage.EMPTY;
         }
 
-        final String extraData = is.getType() == MultiVersionLookup.getSkull() ? ((SkullMeta) is.getItemMeta()).getOwningPlayer().getName()
-                : null;
+        final String extraData = is.getType() == MultiVersionLookup.getSkull() ? (((SkullMeta) is.getItemMeta()).hasOwner())
+                ? ((SkullMeta) is.getItemMeta()).getOwningPlayer() != null ? ((SkullMeta) is.getItemMeta()).getOwningPlayer().getName()
+                        : null
+                : null : null;
         String temp = null;
         if (extraData != null)
             temp = SkullHandler.getURL64(is);
