@@ -114,7 +114,8 @@ public class MaterialStorage {
                             final int id = Integer.parseInt(lore.split(QAMain.S_ITEM_VARIANTS_NEW)[1].trim());
                             return id;
                         } catch (Error | Exception e4) {
-                            e4.printStackTrace();
+                            if (QAMain.DEBUG)
+                                e4.printStackTrace();
                             return 0;
                         }
                     } else if (lore.startsWith(QAMain.S_ITEM_VARIANTS_LEGACY)) {
@@ -122,7 +123,8 @@ public class MaterialStorage {
                             final int id = Integer.parseInt(lore.split(QAMain.S_ITEM_VARIANTS_LEGACY)[1].trim());
                             return id;
                         } catch (Error | Exception e4) {
-                            e4.printStackTrace();
+                            if (QAMain.DEBUG)
+                                e4.printStackTrace();
                             return 0;
                         }
                     }

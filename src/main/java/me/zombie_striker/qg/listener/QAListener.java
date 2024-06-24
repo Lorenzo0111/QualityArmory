@@ -92,29 +92,42 @@ public class QAListener implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onHopperpickup(final InventoryPickupItemEvent e) {
-        if (e.isCancelled())
-            return;
-        if (e.getInventory().getType() == InventoryType.HOPPER) {
-            if (QualityArmory.isGun(e.getItem().getItemStack()))
-                e.setCancelled(true);
+        try {
 
-            if (Grenade.getGrenades().contains(e.getItem())) {
-                e.setCancelled(true);
-                QAMain.DEBUG("Cancelled item pickup event because it was a grenade");
+            if (e.isCancelled())
+                return;
+            if (e.getInventory().getType() == InventoryType.HOPPER) {
+                if (QualityArmory.isGun(e.getItem().getItemStack()))
+                    e.setCancelled(true);
+
+                if (Grenade.getGrenades().contains(e.getItem())) {
+                    e.setCancelled(true);
+                    QAMain.DEBUG("Cancelled item pickup event because it was a grenade");
+                }
             }
+        } catch (final Exception exc) {
+            if (QAMain.DEBUG)
+                exc.printStackTrace();
         }
+
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onHopper(final InventoryMoveItemEvent e) {
-        if (e.isCancelled())
-            return;
-        if (e.getSource().getType() == InventoryType.HOPPER || e.getSource().getType() == InventoryType.DISPENSER
-                || e.getSource().getType() == InventoryType.DROPPER)
-            if (QualityArmory.isGun(e.getItem()))
-                e.setCancelled(true);
+        try {
+
+            if (e.isCancelled())
+                return;
+            if (e.getSource().getType() == InventoryType.HOPPER || e.getSource().getType() == InventoryType.DISPENSER
+                    || e.getSource().getType() == InventoryType.DROPPER)
+                if (QualityArmory.isGun(e.getItem()))
+                    e.setCancelled(true);
+        } catch (final Exception exc) {
+            if (QAMain.DEBUG)
+                exc.printStackTrace();
+        }
     }
 
     @EventHandler

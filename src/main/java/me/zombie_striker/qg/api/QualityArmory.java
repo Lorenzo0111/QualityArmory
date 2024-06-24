@@ -314,11 +314,13 @@ public class QualityArmory {
 
     public static boolean isGun(final ItemStack is) { return (is != null && QAMain.gunRegister.containsKey(MaterialStorage.getMS(is))); }
 
+    @Nullable
     public static Ammo getAmmo(final ItemStack is) {
         final int var = MaterialStorage.getVariant(is);
-        if (QAMain.ammoRegister.containsKey(MaterialStorage.getMS(is, var)))
-            return QAMain.ammoRegister.get(MaterialStorage.getMS(is, var));
+        // if (QAMain.ammoRegister.containsKey(MaterialStorage.getMS(is, var)))
+        // return QAMain.ammoRegister.get(MaterialStorage.getMS(is, var));
         return QAMain.ammoRegister.get(MaterialStorage.getMS(is, var));
+        // return null;
     }
 
     public static Ammo getAmmoByName(final String name) {

@@ -1,6 +1,7 @@
 {
     "version": "0.2.0",
     "configurations": [
+        
         {
             "type": "java",
             "name": "Bukkit", // you can put anything here
