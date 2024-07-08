@@ -140,29 +140,21 @@
         <dependency>
             <groupId>org.codemc.worldguardwrapper</groupId>
             <artifactId>worldguardwrapper</artifactId>
-            <version>1.2.0-SNAPSHOT</version>
+            <version>1.2.1-SNAPSHOT</version>
         </dependency>
 
         <!-- Towny -->
         <dependency>
             <groupId>com.github.TownyAdvanced</groupId>
             <artifactId>Towny</artifactId>
-            <version>0.99.5.0</version>
-            <scope>provided</scope>
-        </dependency>
-
-        <!-- ViaVersion API -->
-        <dependency>
-            <groupId>us.myles</groupId>
-            <artifactId>viaversion</artifactId>
-            <version>3.2.1</version>
+            <version>0.100.3.0</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>me.clip</groupId>
             <artifactId>placeholderapi</artifactId>
-            <version>2.11.3</version>
+            <version>2.11.6</version>
             <scope>provided</scope>
         </dependency>
 
@@ -170,7 +162,7 @@
         <dependency>
             <groupId>org.mcmonkey</groupId>
             <artifactId>sentinel</artifactId>
-            <version>2.7.3-SNAPSHOT</version>
+            <version>2.9.0-SNAPSHOT</version>
             <type>jar</type>
             <scope>provided</scope>
         </dependency>
@@ -180,6 +172,13 @@
             <groupId>com.comphenix.protocol</groupId>
             <artifactId>ProtocolLib</artifactId>
             <version>5.1.0</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.viaversion</groupId>
+            <artifactId>viaversion-api</artifactId>
+            <version>5.0.1</version>
             <scope>provided</scope>
         </dependency>
 
@@ -199,7 +198,7 @@
         <dependency>
             <groupId>org.maxgamer</groupId>
             <artifactId>QuickShop</artifactId>
-            <version>5.1.2.2</version>
+            <version>5.1.2.5</version>
             <scope>provided</scope>
         </dependency>
 
@@ -223,7 +222,7 @@
         <dependency>
             <groupId>net.citizensnpcs</groupId>
             <artifactId>citizens-main</artifactId>
-            <version>2.0.30-SNAPSHOT</version>
+            <version>2.0.35-SNAPSHOT</version>
             <type>jar</type>
             <scope>provided</scope>
         </dependency>
@@ -232,14 +231,14 @@
         <dependency>
             <groupId>com.alessiodp.parties</groupId>
             <artifactId>parties-api</artifactId>
-            <version>3.2.4</version>
+            <version>3.2.15</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>net.coreprotect</groupId>
             <artifactId>coreprotect</artifactId>
-            <version>21.3</version>
+            <version>22.4</version>
             <scope>provided</scope>
         </dependency>
 
@@ -253,24 +252,23 @@
 
         <!-- ItemBridge -->
         <dependency>
-            <groupId>com.jojodmo</groupId>
+            <groupId>com.github.jojodmo</groupId>
             <artifactId>ItemBridge</artifactId>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/libs/ItemBridge.jar</systemPath>
-            <version>IDK</version>
+            <scope>provided</scope>
+            <version>2acbb8ffe8</version>
         </dependency>
 
         <dependency>
             <groupId>org.jetbrains</groupId>
             <artifactId>annotations</artifactId>
-            <version>24.0.1</version>
+            <version>24.1.0</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>com.github.LoneDev6</groupId>
             <artifactId>api-itemsadder</artifactId>
-            <version>3.4.1-r4</version>
+            <version>3.6.1</version>
             <scope>provided</scope>
         </dependency>
 
@@ -284,7 +282,7 @@
         <dependency>
             <groupId>com.github.TechFortress</groupId>
             <artifactId>GriefPrevention</artifactId>
-            <version>16.18.1</version>
+            <version>16.18.4</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>

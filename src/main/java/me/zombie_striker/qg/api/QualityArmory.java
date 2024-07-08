@@ -94,7 +94,7 @@ public class QualityArmory {
 	}
 
 
-	@SuppressWarnings("deprecation")
+	@SuppressWarnings({"deprecation", "unchecked"})
 	public static void sendResourcepack(final Player player, final boolean warning) {
 		new BukkitRunnable() {
 			@Override
@@ -124,8 +124,8 @@ public class QualityArmory {
 								try {
 									if (QAMain.hasViaVersion) {
 										QAMain.DEBUG(
-												"Has Viaversion: " + us.myles.ViaVersion.bukkit.util.ProtocolSupportUtil
-														.getProtocolVersion(player) + " 1.8=" + QAMain.ViaVersionIdfor_1_8);
+												"Has Viaversion: " + com.viaversion.viaversion.api.Via.getAPI()
+														.getPlayerVersion(player) + " 1.8=" + QAMain.ViaVersionIdfor_1_8);
 
 									}
 								} catch (Error | Exception re4) {

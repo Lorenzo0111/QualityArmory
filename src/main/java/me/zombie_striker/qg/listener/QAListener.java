@@ -473,7 +473,7 @@ public class QAListener implements Listener {
 		}
 	}
 
-	@SuppressWarnings("deprecation")
+	@SuppressWarnings({"deprecation", "unchecked"})
 	@EventHandler
 	public void onPickup(PlayerPickupItemEvent e) {
 		if (e.isCancelled())
@@ -488,8 +488,8 @@ public class QAListener implements Listener {
 				Gun g = QualityArmory.getGun(e.getItem().getItemStack());
 				try {
 					if (QAMain.AutoDetectResourcepackVersion && !QAMain.MANUALLYSELECT18) {
-						if (us.myles.ViaVersion.bukkit.util.ProtocolSupportUtil
-								.getProtocolVersion(e.getPlayer()) < QAMain.ViaVersionIdfor_1_8) {
+						if (com.viaversion.viaversion.api.Via.getAPI()
+								.getPlayerVersion(e.getPlayer()) < QAMain.ViaVersionIdfor_1_8) {
 							if (!g.is18Support()) {
 								for (Gun g2 : QAMain.gunRegister.values()) {
 									if (g2.is18Support()) {
@@ -513,8 +513,8 @@ public class QAListener implements Listener {
 								}
 							}
 						} else {
-							if (us.myles.ViaVersion.bukkit.util.ProtocolSupportUtil
-									.getProtocolVersion(e.getPlayer()) >= QAMain.ViaVersionIdfor_1_8) {
+							if (com.viaversion.viaversion.api.Via.getAPI()
+									.getPlayerVersion(e.getPlayer()) >= QAMain.ViaVersionIdfor_1_8) {
 								if (g.is18Support()) {
 									for (Gun g2 : QAMain.gunRegister.values()) {
 										if (!g2.is18Support()) {
