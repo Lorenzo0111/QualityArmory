@@ -1662,6 +1662,25 @@ public class QAMain extends JavaPlugin {
                             sender.sendMessage(prefix + ChatColor.RED + S_NOPERM);
                             return true;
                         }
+
+                        if (args.length == 2) {
+                            CustomBaseObject g = QualityArmory.getCustomItemByName(args[1]);
+                            if (g == null) {
+                                player.openInventory(createCraft(0));
+                                return true;
+                            }
+
+                            if (!lookForIngre(player, g)) {
+                                player.sendMessage(QAMain.prefix + QAMain.S_missingIngredients);
+                                return true;
+                            }
+
+                            removeForIngre(player, g);
+                            player.getInventory().addItem(QualityArmory.getCustomItemAsItemStack(g));
+
+                            return true;
+                        }
+
                         player.openInventory(createCraft(0));
                         return true;
 
@@ -1697,9 +1716,9 @@ public class QAMain extends JavaPlugin {
 
     public void sendHelp(CommandSender sender) {
         sender.sendMessage(LocalUtils.colorize(prefix + " Commands:"));
-        sender.sendMessage(ChatColor.GOLD + "/QA give <Item> <player> <amount>:" + ChatColor.GRAY
+        sender.sendMessage(ChatColor.GOLD + "/QA give <Item> [player] [amount]:" + ChatColor.GRAY
                 + " Gives the sender the item specified (guns, ammo, misc.)");
-        sender.sendMessage(ChatColor.GOLD + "/QA craft:" + ChatColor.GRAY + " Opens the crafting menu.");
+        sender.sendMessage(ChatColor.GOLD + "/QA craft [Item]:" + ChatColor.GRAY + " Opens the crafting menu.");
         sender.sendMessage(ChatColor.GOLD + "/QA shop: " + ChatColor.GRAY + "Opens the shop menu");
 
         sender.sendMessage(ChatColor.GOLD + "/QA getResourcepack: " + ChatColor.GRAY
