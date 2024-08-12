@@ -2,6 +2,9 @@ package me.zombie_striker.qg;
 
 import com.cryptomorin.xseries.XPotion;
 import com.cryptomorin.xseries.reflection.XReflection;
+
+
+import de.tr7zw.changeme.nbtapi.NBT;
 import de.tr7zw.changeme.nbtapi.utils.MinecraftVersion;
 import me.zombie_striker.customitemmanager.CustomBaseObject;
 import me.zombie_striker.customitemmanager.CustomItemManager;
@@ -643,6 +646,12 @@ public class QAMain extends JavaPlugin {
         main = this;
         if (!this.getDataFolder().exists()) {
             this.getDataFolder().mkdirs();
+        }
+
+        if (!NBT.preloadApi()) {
+            getLogger().warning("NBT-API wasn't initialized properly, disabling the plugin");
+            getPluginLoader().disablePlugin(this);
+            return;
         }
 
         MinecraftVersion.replaceLogger(this.getLogger());

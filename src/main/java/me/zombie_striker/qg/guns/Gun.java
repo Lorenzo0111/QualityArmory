@@ -146,7 +146,7 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
 
     @SuppressWarnings("deprecation")
     public static boolean USE_THIS_INSTEAD_OF_INDEVIDUAL_SHOOT_METHODS(Gun g, Player player, double acc, boolean holdingRMB) {
-        boolean offhand = QualityArmory.isIronSights(player.getInventory().getItemInHand());
+        boolean offhand = QualityArmory.isIronSights(player.getInventory().getItemInMainHand());
         if ((!offhand && getAmount(player) > 0)
                 || (offhand && Update19OffhandChecker.hasAmountOFfhandGreaterthan(player, 0))) {
             QAWeaponPrepareShootEvent shootevent = new QAWeaponPrepareShootEvent(player, g);
@@ -160,7 +160,7 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
     }
 
     public static int getAmount(Player player) {
-        return getAmount(player.getInventory().getItemInHand());
+        return getAmount(player.getInventory().getItemInMainHand());
     }
 
     public static int getAmount(ItemStack is) {
@@ -176,7 +176,7 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
     }
 
     public static void updateAmmo(Gun g, Player player, int amount) {
-        ItemStack current = player.getInventory().getItemInHand();
+        ItemStack current = player.getInventory().getItemInMainHand();
         updateAmmo(g, current, amount);
     }
 
