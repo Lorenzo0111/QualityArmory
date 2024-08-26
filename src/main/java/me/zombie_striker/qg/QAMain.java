@@ -649,7 +649,7 @@ public class QAMain extends JavaPlugin {
         }
 
         if (!NBT.preloadApi()) {
-            getLogger().warning("NBT-API wasn't initialized properly, disabling the plugin");
+            getLogger().severe("NBT-API wasn't initialized properly, disabling the plugin");
             getPluginLoader().disablePlugin(this);
             return;
         }
