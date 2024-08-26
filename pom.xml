@@ -13,33 +13,24 @@
     </properties>
 
     <repositories>
-
         <repository>
             <id>spigot-repo</id>
             <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
         </repository>
+
         <repository>
             <id>jitpack.io</id>
             <url>https://jitpack.io</url>
         </repository>
+
         <repository>
             <id>chestshop-repo</id>
             <url>https://repo.minebench.de/</url>
         </repository>
 
         <repository>
-            <id>vault-repo</id>
-            <url>https://nexus.hc.to/content/repositories/pub_releases</url>
-        </repository>
-
-        <repository>
             <id>viaversion-repo</id>
             <url>https://repo.viaversion.com</url>
-        </repository>
-
-        <repository>
-            <id>citizens-repo</id>
-            <url>https://maven.citizensnpcs.co/repo</url>
         </repository>
 
         <repository>
@@ -58,8 +49,8 @@
         </repository>
 
         <repository>
-            <id>everything</id>
-            <url>https://repo.citizensnpcs.co/</url>
+            <id>citizens-repo</id>
+            <url>https://maven.citizensnpcs.co/repo</url>
         </repository>
 
         <repository>
@@ -279,7 +270,7 @@
         </dependency>
 
         <dependency>
-            <groupId>com.github.TechFortress</groupId>
+            <groupId>com.github.GriefPrevention</groupId>
             <artifactId>GriefPrevention</artifactId>
             <version>16.18.4</version>
             <scope>provided</scope>
