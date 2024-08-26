@@ -1,5 +1,9 @@
+2.0.15
+  - Fixed 1.21 support
+  - Fixed BurstFire charging
+
 2.0.14.1
-  - Fixed 1.21 incompatibility
+  - Fixed 1.21 support
 
 2.0.14
   - 1.21 support

@@ -81,8 +81,8 @@ public class DelayedBurstFireCharger implements ChargingHandler {
 				} else {
 					slot = player.getInventory().getHeldItemSlot();
 				}
-				Gun.updateAmmo(g, player, amount);
 				stack.setItemMeta(im);
+				Gun.updateAmmo(g, stack, amount);
 				if (slot == -1) {
 					try {
 						if (QualityArmory.isIronSights(player.getItemInHand())) {
