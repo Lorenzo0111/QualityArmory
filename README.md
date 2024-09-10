@@ -12,7 +12,7 @@ To add QA to your project using maven, copy the following into the POM.xml.
 ```xml
 <repository>
     <id>codemc-repo</id>
-    <url>https://repo.codemc.org/repository/maven-public/</url>
+    <url>https://repo.codemc.io/repository/maven-public/</url>
 </repository>
 
 <dependency>
