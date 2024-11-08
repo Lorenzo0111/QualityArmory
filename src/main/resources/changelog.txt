@@ -1,3 +1,9 @@
+2.0.16
+  - Fixed invalid air drop
+  - 1.21.3 support
+  - Fixed craft amount
+  - Added force resourcepack support
+
 2.0.15
   - Fixed 1.21 support
   - Fixed BurstFire charging

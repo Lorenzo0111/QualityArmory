@@ -1685,7 +1685,10 @@ public class QAMain extends JavaPlugin {
                             }
 
                             removeForIngre(player, g);
-                            player.getInventory().addItem(QualityArmory.getCustomItemAsItemStack(g));
+                            ItemStack result = QualityArmory.getCustomItemAsItemStack(g);
+                            result.setAmount(g.getCraftingReturn());
+
+                            player.getInventory().addItem(result);
 
                             return true;
                         }

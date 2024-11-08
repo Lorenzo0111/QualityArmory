@@ -130,7 +130,10 @@ public class QualityArmory {
 									}
 								} catch (Error | Exception re4) {
 								}
-								player.setResourcePack(CustomItemManager.getResourcepack());
+
+								if (QAMain.isVersionHigherThan(1, 19))
+									player.setResourcePack(CustomItemManager.getResourcepack(), null, QAMain.kickIfDeniedRequest);
+                                else player.setResourcePack(CustomItemManager.getResourcepack());
 
 							} catch (Error | Exception e4) {
 
@@ -643,7 +646,7 @@ public class QualityArmory {
 		return OLD_ItemFact.getIronSights();
 	}
 
-	
+
 
 
 	public static int getAmmoInInventory(Player player, Ammo a) {
