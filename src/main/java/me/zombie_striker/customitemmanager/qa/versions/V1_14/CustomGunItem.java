@@ -1,5 +1,8 @@
 package me.zombie_striker.customitemmanager.qa.versions.V1_14;
 
+import com.cryptomorin.xseries.profiles.builder.XSkull;
+import com.cryptomorin.xseries.profiles.objects.ProfileInputType;
+import com.cryptomorin.xseries.profiles.objects.Profileable;
 import me.zombie_striker.customitemmanager.*;
 import me.zombie_striker.customitemmanager.qa.AbstractCustomGunItem;
 import me.zombie_striker.qg.QAMain;
@@ -15,7 +18,6 @@ import me.zombie_striker.qg.handlers.IronsightsHandler;
 import me.zombie_striker.qg.handlers.MultiVersionLookup;
 import me.zombie_striker.qg.guns.chargers.ChargingManager;
 import me.zombie_striker.qg.guns.reloaders.ReloadingManager;
-import me.zombie_striker.qg.handlers.SkullHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -24,7 +26,6 @@ import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.inventory.meta.SkullMeta;
 
 import java.io.File;
 import java.io.IOException;
@@ -70,12 +71,18 @@ public class CustomGunItem extends AbstractCustomGunItem {
 
 			if (base instanceof Ammo) {
 				boolean setSkull = false;
-				if (((Ammo) base).isSkull() && ((Ammo) base).hasCustomSkin()) {
+
+				if (((Ammo) base).hasCustomSkin()) {
 					setSkull = true;
-					is = SkullHandler.getCustomSkull64(((Ammo) base).getCustomSkin().getBytes());
+					is = XSkull.createItem()
+							.profile(Profileable.of(ProfileInputType.BASE64, ((Ammo) base).getCustomSkin()))
+							.apply();
 				}
+
 				if (((Ammo) base).isSkull() && !setSkull) {
-					((SkullMeta) im).setOwner(((Ammo) base).getSkullOwner());
+					is = XSkull.createItem()
+							.profile(Profileable.of(ProfileInputType.USERNAME, ((Ammo) base).getSkullOwner()))
+							.apply();
 				}
 			}
 

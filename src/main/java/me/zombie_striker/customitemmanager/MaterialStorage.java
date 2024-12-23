@@ -1,9 +1,10 @@
 package me.zombie_striker.customitemmanager;
 
+import com.cryptomorin.xseries.profiles.PlayerProfiles;
+import com.cryptomorin.xseries.profiles.builder.XSkull;
+import com.mojang.authlib.GameProfile;
 import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.handlers.MultiVersionLookup;
-import me.zombie_striker.qg.handlers.SkullHandler;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
@@ -82,6 +83,7 @@ public class MaterialStorage {
 		return getMS(is, getVariant(is));
 	}
 
+	@SuppressWarnings("UnstableApiUsage")
 	public static MaterialStorage getMS(ItemStack is, int variant) {
 
 		if (is == null) {
@@ -91,8 +93,11 @@ public class MaterialStorage {
 		String extraData = is.getType() == MultiVersionLookup.getSkull() ? ((SkullMeta) is.getItemMeta()).getOwner()
 				: null;
 		String temp = null;
-		if (extraData != null)
-			temp = SkullHandler.getURL64(is);
+		if (extraData != null) {
+			GameProfile profile = XSkull.of(is).getProfile();
+			if (profile != null)
+				temp = PlayerProfiles.getTextureValue(profile);
+		}
 		try {
 			return getMS(is.getType(), is.getItemMeta().hasCustomModelData() ? is.getItemMeta().getCustomModelData() : 0, variant,
 					is.getType() == MultiVersionLookup.getSkull() ? ((SkullMeta) is.getItemMeta()).getOwner() : null, temp);

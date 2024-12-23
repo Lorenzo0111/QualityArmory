@@ -639,7 +639,7 @@ public class QualityArmory {
 
 	public static ItemStack getCustomItemAsItemStack(CustomBaseObject obj) {
 		if (obj == null) return null;
-		return CustomItemManager.getItemType("gun").getItem(obj.getItemData().getMat(),obj.getItemData().getData(),obj.getItemData().getVariant());
+		return CustomItemManager.getItemType("gun").getItem(obj.getItemData());
 	}
 
 	public static ItemStack getIronSightsItemStack() {
