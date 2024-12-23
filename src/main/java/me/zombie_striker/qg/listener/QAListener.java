@@ -248,6 +248,12 @@ public class QAListener implements Listener {
 				// restore placed item because cancelling an event seems to wipe it.
 				// it will make cursor item look disappeared, but it'll be dropped when inventory is closed
 				e.getView().setCursor(cursor);
+			} else {
+				ItemStack item = e.getCurrentItem();
+
+				if (e.getSlot() == OFFHAND_SLOT && QualityArmory.isGun(item)) {
+					e.setCancelled(true);
+				}
 			}
 		}
 
