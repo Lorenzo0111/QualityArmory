@@ -177,7 +177,7 @@ public class GunUtil {
 
 
 			if (hitTarget != null) {
-				if (!(hitTarget instanceof Player) || QualityArmory.allowGunsInRegion(hitTarget.getLocation())) {
+				if (QualityArmory.allowGunsInRegion(hitTarget.getLocation())) {
 
 					boolean headshot = hitBox.allowsHeadshots() && hitBox.intersectsHead(bulletHitLoc, hitTarget);
 					if (headshot) {

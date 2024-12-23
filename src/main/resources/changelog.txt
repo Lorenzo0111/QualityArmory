@@ -1,6 +1,7 @@
 2.0.17
   - 1.21.4 support
   - Fixed gun duplication
+  - Fixed gun protection
 
 2.0.16
   - Fixed invalid air drop
