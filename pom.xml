@@ -140,8 +140,8 @@
 
         <!-- Towny -->
         <dependency>
-            <groupId>com.github.TownyAdvanced</groupId>
-            <artifactId>Towny</artifactId>
+            <groupId>com.palmergames.bukkit.towny</groupId>
+            <artifactId>towny</artifactId>
             <version>0.100.3.0</version>
             <scope>provided</scope>
         </dependency>
