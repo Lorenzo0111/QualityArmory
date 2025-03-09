@@ -4,6 +4,7 @@ import com.cryptomorin.xseries.profiles.builder.XSkull;
 import com.cryptomorin.xseries.profiles.objects.ProfileInputType;
 import com.cryptomorin.xseries.profiles.objects.Profileable;
 import me.zombie_striker.customitemmanager.*;
+import me.zombie_striker.customitemmanager.pack.MultiVersionPackProvider;
 import me.zombie_striker.customitemmanager.qa.AbstractCustomGunItem;
 import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.ammo.Ammo;
@@ -36,7 +37,11 @@ public class CustomGunItem extends AbstractCustomGunItem {
 	private boolean overrideAttackSpeed = true;
 
 	public CustomGunItem(){
-		CustomItemManager.setResourcepack("https://github.com/ZombieStriker/QualityArmory-Resourcepack/releases/download/latest/QualityArmory.zip");
+		Map<Integer, String> versions = new HashMap<>();
+		versions.put(0, "https://github.com/ZombieStriker/QualityArmory-Resourcepack/releases/download/latest/QualityArmory.zip");
+		versions.put(21, "https://github.com/ZombieStriker/QualityArmory-Resourcepack/releases/download/latest/QualityArmory-21.zip");
+
+		CustomItemManager.setResourcepack(new MultiVersionPackProvider(versions));
 	}
 
 	public static MaterialStorage m(int d) {

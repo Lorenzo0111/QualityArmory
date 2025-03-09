@@ -1,3 +1,6 @@
+2.0.18
+  - Fixed resourcepack for 1.21.4
+
 2.0.17
   - 1.21.4 support
   - Fixed gun duplication

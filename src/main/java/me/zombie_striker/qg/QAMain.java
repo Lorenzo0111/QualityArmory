@@ -10,6 +10,8 @@ import me.zombie_striker.customitemmanager.CustomBaseObject;
 import me.zombie_striker.customitemmanager.CustomItemManager;
 import me.zombie_striker.customitemmanager.MaterialStorage;
 import me.zombie_striker.customitemmanager.OLD_ItemFact;
+import me.zombie_striker.customitemmanager.pack.MultiVersionPackProvider;
+import me.zombie_striker.customitemmanager.pack.StaticPackProvider;
 import me.zombie_striker.customitemmanager.qa.AbstractCustomGunItem;
 import me.zombie_striker.customitemmanager.qa.ItemBridgePatch;
 import me.zombie_striker.customitemmanager.qa.versions.V1_13.CustomGunItem;
@@ -1159,12 +1161,20 @@ public class QAMain extends JavaPlugin {
         ((AbstractCustomGunItem) CustomItemManager.getItemType("gun")).initIronsights(getDataFolder());
 
         if (overrideURL) {
-            CustomItemManager.setResourcepack((String) a("DefaultResourcepack", CustomItemManager.getResourcepack()));
+            if (!getConfig().contains("DefaultResourcepack")) {
+                getConfig().set("DefaultResourcepack", CustomItemManager.getResourcepackProvider().serialize());
+                saveTheConfig = true;
+            } else {
+                if (getConfig().get("DefaultResourcepack") instanceof String)
+                    CustomItemManager.setResourcepack(new StaticPackProvider(getConfig().getString("DefaultResourcepack")));
+                else {
+                    CustomItemManager.setResourcepack(new MultiVersionPackProvider(getConfig().getConfigurationSection("DefaultResourcepack")));
+                }
+            }
         } else {
             if (!getConfig().contains("DefaultResourcepack")
                     || !getConfig().getString("DefaultResourcepack").equals(CustomItemManager.getResourcepack())) {
-                getConfig().set("DefaultResourcepack", CustomItemManager.getResourcepack());
-                CustomItemManager.setResourcepack(CustomItemManager.getResourcepack());
+                getConfig().set("DefaultResourcepack", CustomItemManager.getResourcepackProvider().serialize());
                 saveTheConfig = true;
             }
         }
@@ -1446,7 +1456,7 @@ public class QAMain extends JavaPlugin {
                     }
 
                     player.sendMessage(prefix + S_RESOURCEPACK_DOWNLOAD);
-                    player.sendMessage(CustomItemManager.getResourcepack());
+                    player.sendMessage(CustomItemManager.getResourcepack(player));
                     player.sendMessage(prefix + S_RESOURCEPACK_BYPASS);
 
                     return true;

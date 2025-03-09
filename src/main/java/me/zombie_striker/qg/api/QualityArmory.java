@@ -132,12 +132,12 @@ public class QualityArmory {
 								}
 
 								if (QAMain.isVersionHigherThan(1, 19))
-									player.setResourcePack(CustomItemManager.getResourcepack(), null, QAMain.kickIfDeniedRequest);
-                                else player.setResourcePack(CustomItemManager.getResourcepack());
+									player.setResourcePack(CustomItemManager.getResourcepack(player), null, QAMain.kickIfDeniedRequest);
+                                else player.setResourcePack(CustomItemManager.getResourcepack(player));
 
 							} catch (Error | Exception e4) {
 
-								player.setResourcePack(CustomItemManager.getResourcepack());
+								player.setResourcePack(CustomItemManager.getResourcepack(player));
 							}
 
 							if (!QAMain.isVersionHigherThan(1, 9)) {

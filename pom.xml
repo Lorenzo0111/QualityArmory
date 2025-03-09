@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>me.zombie_striker</groupId>
     <artifactId>QualityArmory</artifactId>
-    <version>2.0.18-SNAPSHOT</version>
+    <version>2.0.18</version>
     <name>QualityArmory</name>
 
     <properties>
@@ -172,7 +172,7 @@
         <dependency>
             <groupId>com.viaversion</groupId>
             <artifactId>viaversion-api</artifactId>
-            <version>5.0.1</version>
+            <version>5.2.1</version>
             <scope>provided</scope>
         </dependency>
 

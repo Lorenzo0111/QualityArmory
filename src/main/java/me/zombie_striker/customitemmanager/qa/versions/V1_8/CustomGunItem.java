@@ -1,6 +1,7 @@
 package me.zombie_striker.customitemmanager.qa.versions.V1_8;
 
 import me.zombie_striker.customitemmanager.*;
+import me.zombie_striker.customitemmanager.pack.StaticPackProvider;
 import me.zombie_striker.customitemmanager.qa.AbstractCustomGunItem;
 import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.api.QualityArmory;
@@ -28,7 +29,7 @@ import java.util.List;
 public class CustomGunItem extends AbstractCustomGunItem {
 
 	public CustomGunItem(){
-		CustomItemManager.setResourcepack("https://www.dropbox.com/s/pjoeg5e8l3byauf/QualityArmory1.8v1.0.3.zip?dl=1");
+		CustomItemManager.setResourcepack(new StaticPackProvider("https://www.dropbox.com/s/pjoeg5e8l3byauf/QualityArmory1.8v1.0.3.zip?dl=1"));
 	}
 	@Override
 	public ItemStack getItem(Material material, int data, int variant) {
