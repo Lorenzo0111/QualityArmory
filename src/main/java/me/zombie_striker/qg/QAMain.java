@@ -53,6 +53,7 @@ import org.bukkit.*;
 import org.bukkit.command.BlockCommandSender;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -1168,7 +1169,16 @@ public class QAMain extends JavaPlugin {
                 if (getConfig().get("DefaultResourcepack") instanceof String)
                     CustomItemManager.setResourcepack(new StaticPackProvider(getConfig().getString("DefaultResourcepack")));
                 else {
-                    CustomItemManager.setResourcepack(new MultiVersionPackProvider(getConfig().getConfigurationSection("DefaultResourcepack")));
+                    ConfigurationSection packSection = getConfig().getConfigurationSection("DefaultResourcepack");
+                    if (packSection != null) {
+                        if (packSection.contains("21")) {
+                            packSection.set("21.4", packSection.getString("21"));
+                            packSection.set("21", null);
+                            saveTheConfig = true;
+                        }
+
+                        CustomItemManager.setResourcepack(new MultiVersionPackProvider(packSection));
+                    }
                 }
             }
         } else {

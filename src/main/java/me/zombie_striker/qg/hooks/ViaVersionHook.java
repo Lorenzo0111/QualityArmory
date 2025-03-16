@@ -8,8 +8,8 @@ import org.bukkit.entity.Player;
 
 public final class ViaVersionHook {
 
-    public static int getVersion(Player player) {
-        if (!QAMain.hasViaVersion) return XReflection.MINOR_NUMBER;
+    public static String getVersion(Player player) {
+        if (!QAMain.hasViaVersion) return XReflection.MINOR_NUMBER + "." + XReflection.PATCH_NUMBER;
 
         try {
             int version = Via.getAPI().getPlayerVersion(player.getUniqueId());
@@ -17,10 +17,13 @@ public final class ViaVersionHook {
                     .stream()
                     .filter(pv -> pv.getVersion() == version)
                     .findFirst()
-                    .map(pv -> Integer.parseInt(pv.getName().split("\\.")[1]))
-                    .orElse(XReflection.MINOR_NUMBER);
+                    .map(pv -> {
+                        String[] split = pv.getName().split("\\.");
+                        return split[1] + "." + split[2];
+                    })
+                .orElse(XReflection.MINOR_NUMBER + "." + XReflection.PATCH_NUMBER);
         } catch (Exception | Error e) {
-            return XReflection.MINOR_NUMBER;
+            return XReflection.MINOR_NUMBER + "." + XReflection.PATCH_NUMBER;
         }
     }
 }

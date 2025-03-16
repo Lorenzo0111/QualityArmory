@@ -1,3 +1,6 @@
+2.0.19
+  - Fixed resourcepack for 1.21.x
+
 2.0.18
   - Fixed resourcepack for 1.21.4
 

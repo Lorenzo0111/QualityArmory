@@ -13,29 +13,26 @@ import java.util.Map;
  * Make sure to put a default version at index 0.
  */
 public class MultiVersionPackProvider implements ResourcepackProvider {
-    private final Map<Integer, String> versions;
+    private final Map<String, String> versions;
 
-    public MultiVersionPackProvider(Map<Integer, String> versions) {
+    public MultiVersionPackProvider(Map<String, String> versions) {
         this.versions = versions;
     }
 
     public MultiVersionPackProvider(ConfigurationSection config) {
-        Map<Integer, String> versions = new HashMap<>();
-        config.getKeys(false).forEach(key -> versions.put(Integer.parseInt(key), config.getString(key)));
+        Map<String, String> versions = new HashMap<>();
+        config.getKeys(false).forEach(key -> versions.put(key, config.getString(key)));
         this.versions = versions;
     }
 
     @Override
     public String getFor(@Nullable Player player) {
-        int version = ViaVersionHook.getVersion(player);
-        return versions.getOrDefault(version, versions.get(0));
+        String version = ViaVersionHook.getVersion(player);
+        return versions.getOrDefault(version, versions.get("0"));
     }
 
     @Override
     public Object serialize() {
-        Map<String, String> map = new HashMap<>();
-        versions.forEach((k, v) -> map.put(k.toString(), v));
-
-        return map;
+        return new HashMap<>(versions);
     }
 }

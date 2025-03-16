@@ -37,9 +37,9 @@ public class CustomGunItem extends AbstractCustomGunItem {
 	private boolean overrideAttackSpeed = true;
 
 	public CustomGunItem(){
-		Map<Integer, String> versions = new HashMap<>();
-		versions.put(0, "https://github.com/ZombieStriker/QualityArmory-Resourcepack/releases/download/latest/QualityArmory.zip");
-		versions.put(21, "https://github.com/ZombieStriker/QualityArmory-Resourcepack/releases/download/latest/QualityArmory-21.zip");
+		Map<String, String> versions = new HashMap<>();
+		versions.put("0", "https://github.com/ZombieStriker/QualityArmory-Resourcepack/releases/download/latest/QualityArmory.zip");
+		versions.put("21.4", "https://github.com/ZombieStriker/QualityArmory-Resourcepack/releases/download/latest/QualityArmory-21.zip");
 
 		CustomItemManager.setResourcepack(new MultiVersionPackProvider(versions));
 	}
