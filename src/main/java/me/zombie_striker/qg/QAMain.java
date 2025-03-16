@@ -1183,7 +1183,7 @@ public class QAMain extends JavaPlugin {
             }
         } else {
             if (!getConfig().contains("DefaultResourcepack")
-                    || !getConfig().getString("DefaultResourcepack").equals(CustomItemManager.getResourcepack())) {
+                    || !getConfig().getString("DefaultResourcepack").equals(CustomItemManager.getResourcepack(null))) {
                 getConfig().set("DefaultResourcepack", CustomItemManager.getResourcepackProvider().serialize());
                 saveTheConfig = true;
             }
