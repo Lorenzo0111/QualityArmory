@@ -27,6 +27,8 @@ public class MultiVersionPackProvider implements ResourcepackProvider {
 
     @Override
     public String getFor(@Nullable Player player) {
+        if (player == null) return versions.get("0");
+
         String version = ViaVersionHook.getVersion(player);
         return versions.getOrDefault(version, versions.get("0"));
     }
