@@ -1172,7 +1172,7 @@ public class QAMain extends JavaPlugin {
                     ConfigurationSection packSection = getConfig().getConfigurationSection("DefaultResourcepack");
                     if (packSection != null) {
                         if (packSection.contains("21")) {
-                            packSection.set("21.4", packSection.getString("21"));
+                            packSection.set("21-4", packSection.getString("21"));
                             packSection.set("21", null);
                             saveTheConfig = true;
                         }

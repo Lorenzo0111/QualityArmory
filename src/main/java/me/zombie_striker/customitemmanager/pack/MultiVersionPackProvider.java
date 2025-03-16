@@ -30,7 +30,7 @@ public class MultiVersionPackProvider implements ResourcepackProvider {
         if (player == null) return versions.get("0");
 
         String version = ViaVersionHook.getVersion(player);
-        return versions.getOrDefault(version, versions.get("0"));
+        return versions.getOrDefault(version.replace(".", "-"), versions.get("0"));
     }
 
     @Override
