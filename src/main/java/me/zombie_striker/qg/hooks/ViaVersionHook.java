@@ -18,8 +18,8 @@ public final class ViaVersionHook {
                     .filter(pv -> pv.getVersion() == version)
                     .findFirst()
                     .map(pv -> {
-                        String[] split = pv.getName().split("\\.");
-                        return split[1] + "." + split[2];
+                        String[] split = pv.getIncludedVersions().iterator().next().split("\\.");
+                        return split[1] + "." + (split.length > 2 ? split[2] : "0");
                     })
                 .orElse(XReflection.MINOR_NUMBER + "." + XReflection.PATCH_NUMBER);
         } catch (Exception | Error e) {

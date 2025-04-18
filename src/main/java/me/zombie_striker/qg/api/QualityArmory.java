@@ -345,9 +345,9 @@ public class QualityArmory {
 		int amount = 0;
 
 		for (ItemStack is : player.getInventory().getContents()) {
-			if (is == null || is.getType().equals(Material.AIR)) continue;
+			if (is == null || is.getType().equals(Material.AIR) || !isMisc(is)) continue;
 
-			CustomBaseObject customItem = getCustomItem(is);
+			CustomBaseObject customItem = getMisc(is);
 			if (customItem instanceof AmmoBag) {
 				Ammo ammoType = ((AmmoBag) customItem).getAmmoType(is);
 				if (ammoType == null || !ammoType.equals(a)) continue;

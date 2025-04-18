@@ -86,7 +86,7 @@
         <dependency>
             <groupId>de.tr7zw</groupId>
             <artifactId>item-nbt-api</artifactId>
-            <version>2.14.1</version>
+            <version>2.15.0</version>
         </dependency>
 
         <!-- WorldGuard Wrapper -->
@@ -288,6 +288,7 @@
                     <include>changelog.txt</include>
                     <include>plugin.yml</include>
                     <include>config.yml</include>
+                    <include>META-INF/.mojang-mapped</include>
                 </includes>
             </resource>
             <resource>
