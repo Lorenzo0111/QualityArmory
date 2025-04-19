@@ -794,7 +794,7 @@ public class GunUtil {
 	}
 
 	private static void addRecoilWithTeleport(Player player, Gun g, boolean useHighRecoil) {
-		Location tempCur = (QAMain.recoilHelperMovedLocation.get(player.getUniqueId()));
+		Location tempCur = QAMain.useMoveForRecoil ? (QAMain.recoilHelperMovedLocation.get(player.getUniqueId())) : null;
 		final Location current;
 		if (tempCur == null) {
 			current = player.getLocation();
@@ -813,6 +813,8 @@ public class GunUtil {
 		// player.getLocation().setDirection(vector);
 		player.teleport(current);
 		player.setVelocity(temp);
+
+		QAMain.recoilHelperMovedLocation.put(player.getUniqueId(), current);
 	}
 
 	public static boolean isBreakable(Block b, Location l) {

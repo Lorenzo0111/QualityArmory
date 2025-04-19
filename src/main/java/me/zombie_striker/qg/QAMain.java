@@ -161,6 +161,7 @@ public class QAMain extends JavaPlugin {
     public static boolean kickIfDeniedRequest = false;
     public static boolean showAmmoInXPBar = false;
     public static boolean perWeaponPermission = false;
+    public static boolean useMoveForRecoil = true;
 
     public static boolean allowGunHitEntities = false;
     public static boolean anticheatFix = false;
@@ -1014,6 +1015,8 @@ public class QAMain extends JavaPlugin {
 
         showAmmoInXPBar = (boolean) a("showAmmoInXPBar", false);
         perWeaponPermission = (boolean) a("perWeaponPermission", false);
+
+        useMoveForRecoil = (boolean) a("useMoveForRecoil", useMoveForRecoil);
 
         enableExplosionDamage = (boolean) a("enableExplosionDamage", false);
         enableExplosionDamageDrop = (boolean) a("enableExplosionDamageDrop", false);
