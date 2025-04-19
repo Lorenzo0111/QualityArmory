@@ -18,6 +18,7 @@ import me.zombie_striker.qg.guns.Gun;
 import me.zombie_striker.qg.handlers.*;
 import me.zombie_striker.qg.hooks.CoreProtectHook;
 import me.zombie_striker.qg.hooks.protection.ProtectionHandler;
+import me.zombie_striker.qg.utils.BlockRegenData;
 import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
@@ -380,13 +381,13 @@ public class GunUtil {
 					ParticleHandlers.spawnGunParticles(g, start);
 				}
 
-				final Map<Block,Material> regenBlocks = new HashMap<>();
+				final Map<Block, BlockRegenData> regenBlocks = new HashMap<>();
 				for (Block l : blocksThatWillBreak) {
 					QAMain.DEBUG("Breaking " + l.getX() + " " + l.getY() + " " + l.getZ() + ": " + l.getType());
 					QAWeaponDamageBlockEvent event = new QAWeaponDamageBlockEvent(p,g,l);
 					Bukkit.getPluginManager().callEvent(event);
 					if (!event.isCancelled()) {
-						if (!l.getType().isAir()) regenBlocks.put(l,l.getType());
+						if (!l.getType().equals(Material.AIR)) regenBlocks.put(l,new BlockRegenData(l));
 						if (QAMain.regenDestructableBlocksAfter > 0) {
 							l.setType(Material.AIR);
 						} else {
@@ -404,7 +405,7 @@ public class GunUtil {
 							QAMain.DEBUG("Replacing " + regenBlocks.size() + " blocks");
 
 							for (Block l : regenBlocks.keySet()) {
-								l.setType(regenBlocks.get(l));
+								regenBlocks.get(l).place(l.getLocation());
 								CoreProtectHook.logPlace(l,p);
 							}
 						}
@@ -659,6 +660,7 @@ public class GunUtil {
 	}
 
 	public static void updateXPBar(Player player, Gun g, int amount) {
+		if (g == null || player == null) return;
 		player.setLevel(amount);
 
 		if (amount > 0) {

@@ -7,6 +7,7 @@
   - Added headshot blacklist
   - Fixed ammo in exp bar
   - Fixed medkit
+  - Fixed block regen
 
 2.0.18
   - Fixed resourcepack for 1.21.4
