@@ -660,7 +660,12 @@ public class GunUtil {
 
 	public static void updateXPBar(Player player, Gun g, int amount) {
 		player.setLevel(amount);
-		// Todo exp
+
+		if (amount > 0) {
+			player.setExp(Math.min((float) amount / (float) g.getMaxBullets(), 1));
+		} else {
+			player.setExp(0);
+		}
 	}
 
 	public static void playShoot(final Gun g, final Player player) {

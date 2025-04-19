@@ -637,6 +637,11 @@ public class QAListener implements Listener {
 			}
 		}
 
+		if (QAMain.showAmmoInXPBar) {
+			e.setDroppedExp(0);
+			e.setNewTotalExp(0);
+		}
+
 		if (e.getDeathMessage() != null
 				&& e.getDeathMessage().contains(QualityArmory.getIronSightsItemStack().getItemMeta().getDisplayName())) {
 			try {
@@ -950,9 +955,10 @@ public class QAListener implements Listener {
 		if(QAMain.showAmmoInXPBar) {
 			CustomBaseObject customBase = QualityArmory.getCustomItem(newslot);
 			if (customBase instanceof Gun) {
-				GunUtil.updateXPBar(e.getPlayer(), (Gun) customBase,QualityArmory.getBulletsInHand(e.getPlayer()));
+				GunUtil.updateXPBar(e.getPlayer(), (Gun) customBase,Gun.getAmount(newslot));
 			}else{
-				e.getPlayer().setTotalExperience(0);
+				e.getPlayer().setExp(0);
+				e.getPlayer().setLevel(0);
 			}
 		}
 	}
