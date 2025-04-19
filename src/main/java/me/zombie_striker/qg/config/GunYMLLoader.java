@@ -4,6 +4,7 @@ import me.zombie_striker.customitemmanager.CustomBaseObject;
 import me.zombie_striker.customitemmanager.MaterialStorage;
 import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.ammo.Ammo;
+import me.zombie_striker.qg.ammo.AmmoBox;
 import me.zombie_striker.qg.ammo.AmmoType;
 import me.zombie_striker.qg.armor.Helmet;
 import me.zombie_striker.qg.attachments.AttachmentBase;
@@ -219,6 +220,8 @@ public class GunYMLLoader {
 								QAMain.miscRegister.put(ms, base=new MedKit(ms, name, displayname, materails, price));
 							if (wt == WeaponType.AMMO_BAG)
 								QAMain.miscRegister.put(ms, base=new AmmoBag(ms, name, displayname, materails, f2.getInt("max", 5), price));
+							if (wt == WeaponType.AMMO_BOX)
+								QAMain.miscRegister.put(ms, base=new AmmoBox(ms, name, displayname, materails, price, f2.getInt("max", 100), f2.getString("ammo_type_name", "invalid")));
 							if (wt == WeaponType.MELEE) {
 								QAMain.miscRegister.put(ms,
 										base = new MeleeItems(ms, name, displayname, materails, price, damage));

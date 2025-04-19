@@ -16,6 +16,7 @@ import me.zombie_striker.customitemmanager.qa.AbstractCustomGunItem;
 import me.zombie_striker.customitemmanager.qa.ItemBridgePatch;
 import me.zombie_striker.customitemmanager.qa.versions.V1_13.CustomGunItem;
 import me.zombie_striker.qg.ammo.Ammo;
+import me.zombie_striker.qg.ammo.AmmoBox;
 import me.zombie_striker.qg.api.QAGunGiveEvent;
 import me.zombie_striker.qg.api.QualityArmory;
 import me.zombie_striker.qg.armor.ArmorObject;
@@ -1634,6 +1635,13 @@ public class QAMain extends JavaPlugin {
                             if (args.length > 3)
                                 amount = Integer.parseInt(args[3]);
                             QualityArmory.addAmmoToInventory(who, (Ammo) g, amount);
+                        } else if (g instanceof AmmoBox) {
+                            temp = CustomItemManager.getItemType("gun").getItem(g.getItemData());
+                            ((AmmoBox) g).updateAmmoLore(temp, ((AmmoBox) g).getMaxAmmoCount());
+                            ItemMeta meta = temp.getItemMeta();
+                            meta.setMaxStackSize(1);
+                            temp.setItemMeta(meta);
+                            who.getInventory().addItem(temp);
                         } else {
                             temp = CustomItemManager.getItemType("gun").getItem(g.getItemData().getMat(), g.getItemData().getData(), g.getItemData().getVariant());
                             temp.setAmount(g.getCraftingReturn());
