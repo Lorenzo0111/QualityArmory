@@ -3,6 +3,8 @@
   - 1.21.5 support
   - Fixed towny explosions
   - Fixed slowness issue
+  - Add option to disable recoil based on move
+  - Added headshot blacklist
 
 2.0.18
   - Fixed resourcepack for 1.21.4

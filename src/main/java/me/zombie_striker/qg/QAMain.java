@@ -149,6 +149,7 @@ public class QAMain extends JavaPlugin {
     public static double bulletWound_BloodIncreasePerSecond = 0.01;
     public static double bulletWound_MedkitBloodlossHealRate = 0.05;
     public static String headshot_sound = WeaponSounds.XP_ORG_PICKUP.getSoundName();
+    public static List<EntityType> headshotBlacklist = new ArrayList<>();
     public static boolean HeadshotOneHit = true;
     public static boolean headshotPling = true;
     public static boolean headshotGoreSounds = true;
@@ -1040,6 +1041,16 @@ public class QAMain extends JavaPlugin {
         headshotPling = (boolean) a("Enable_Headshot_Notification_Sound", headshotPling);
         headshot_sound = (String) a("Headshot_Notification_Sound", headshot_sound);
         headshotGoreSounds = (boolean) a("Enable_Headshot_Sounds", headshotGoreSounds);
+
+        headshotBlacklist.clear();
+
+        List<String> blacklist = (List<String>) a("Headshot_Blacklist", new ArrayList<String>());
+        for (String s : blacklist) {
+            try {
+                headshotBlacklist.add(EntityType.valueOf(s));
+            } catch (Error | Exception e4) {
+            }
+        }
 
         autoarm = (boolean) a("Enable_AutoArm_Grenades", autoarm);
 

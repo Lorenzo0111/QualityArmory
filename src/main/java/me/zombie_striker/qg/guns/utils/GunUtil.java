@@ -207,10 +207,11 @@ public class GunUtil {
 						}
 					}
 
-					double damageMAX = damage * (bulletProtection ? 0.1 : 1)
-							* ((headshot && !negateHeadshot) ? (QAMain.HeadshotOneHit ? 50 * g.getHeadshotMultiplier() : g.getHeadshotMultiplier())
-							: 1);
-
+                    double damageMAX = damage * (bulletProtection ? 0.1 : 1)
+                            * ((headshot && !negateHeadshot) ? (
+                            QAMain.HeadshotOneHit && !QAMain.headshotBlacklist.contains(hitTarget.getType())
+                                    ? 50 * g.getHeadshotMultiplier() : g.getHeadshotMultiplier())
+                            : 1);
 
 					QAWeaponDamageEntityEvent shootevent = new QAWeaponDamageEntityEvent(p, g, hitTarget, headshot,
 							damage, bulletProtection);
