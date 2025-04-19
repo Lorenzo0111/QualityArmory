@@ -925,6 +925,7 @@ public class QAListener implements Listener {
 
 			e.getPlayer().getInventory().setItem(e.getPreviousSlot(), e.getPlayer().getInventory().getItemInOffHand());
 			e.getPlayer().getInventory().setItemInOffHand(null);
+			QAMain.toggleNightvision(e.getPlayer(), null, false);
 
 			Gun.updateAmmo(null, e.getPlayer().getInventory().getItem(e.getPreviousSlot()), ammoCount);
 		}
