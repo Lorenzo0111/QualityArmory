@@ -1,9 +1,7 @@
 package me.zombie_striker.qg.miscitems;
 
 import java.text.DecimalFormat;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.UUID;
 
 import me.zombie_striker.customitemmanager.CustomBaseObject;
@@ -13,21 +11,21 @@ import me.zombie_striker.qg.handlers.HotbarMessager;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffectType;
 
 import me.zombie_striker.customitemmanager.ArmoryBaseObject;
 import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.customitemmanager.MaterialStorage;
 import me.zombie_striker.qg.handlers.BulletWoundHandler;
+import com.cryptomorin.xseries.XPotion;
 
 public class MedKit extends CustomBaseObject implements ArmoryBaseObject {
 
-	List<UUID> medkitHeartUsage = new ArrayList<>();
 	HashMap<UUID, Long> lastTimeHealed = new HashMap<>();
 	HashMap<UUID, Double> PercentTimeHealed = new HashMap<>();
 
-
 	public MedKit(MaterialStorage ms, String name, String displayname, ItemStack[] ings, int cost) {
-		super(name,ms,displayname,null,false);
+		super(name, ms, displayname, null, false);
 		super.setIngredients(ings);
 		this.setPrice(cost);
 	}
@@ -36,7 +34,6 @@ public class MedKit extends CustomBaseObject implements ArmoryBaseObject {
 	public int getCraftingReturn() {
 		return 1;
 	}
-
 
 	@Override
 	public boolean is18Support() {
@@ -68,21 +65,10 @@ public class MedKit extends CustomBaseObject implements ArmoryBaseObject {
 				if (p2 + percent < 100) {
 					PercentTimeHealed.put(healer.getUniqueId(), p2 + percent);
 				} else {
-					healer.playSound(healer.getLocation(),getSoundOnEquip(),1,1);
+					healer.playSound(healer.getLocation(), getSoundOnEquip(), 1, 1);
 					healer.setHealth(Math.min(healer.getMaxHealth(), healer.getHealth() + QAMain.S_MEDKIT_HEAL_AMOUNT));
 					PercentTimeHealed.remove(healer.getUniqueId());
 					lastTimeHealed.remove(healer.getUniqueId());
-					/*
-					 * try { HotbarMessager.sendHotBarMessage(healer, Main.S_MEDKIT_HEALINGHEARTS);
-					 * } catch (Error | Exception e5) { }
-					 */
-
-					/*
-					 * medkitHeartUsage.add(healer.getUniqueId()); new BukkitRunnable() {
-					 * 
-					 * @Override public void run() { medkitHeartUsage.remove(healer.getUniqueId());
-					 * } }.runTaskLater(Main.getInstance(), (long) (20 * Main.S_MEDKIT_HEARTDELAY));
-					 */
 				}
 
 				int totalBars = 25;
@@ -123,6 +109,19 @@ public class MedKit extends CustomBaseObject implements ArmoryBaseObject {
 				? BulletWoundHandler.bleedoutMultiplier.get(healer.getUniqueId())
 				: 0;
 
+		if (newRate >= 0) {
+			BulletWoundHandler.bleedoutMultiplier.remove(healer.getUniqueId());
+			BulletWoundHandler.bloodLevel.remove(healer.getUniqueId());
+
+			try {
+				healer.removePotionEffect(XPotion.NAUSEA.getPotionEffectType());
+				healer.removePotionEffect(PotionEffectType.BLINDNESS);
+			} catch (Error | Exception e4) {
+			}
+
+			return true;
+		}
+
 		try {
 			int totalBars = 25;
 			int healthBars = (int) (percentBlood * totalBars);
@@ -151,13 +150,12 @@ public class MedKit extends CustomBaseObject implements ArmoryBaseObject {
 	@Override
 	public boolean onLMB(Player e, ItemStack usedItem) {
 		return false;
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public ItemStack getItemStack() {
-		return CustomItemManager.getItemType("gun").getItem(this.getItemData().getMat(),this.getItemData().getData(),this.getItemData().getVariant());
+		return CustomItemManager.getItemType("gun").getItem(this.getItemData().getMat(), this.getItemData().getData(),
+				this.getItemData().getVariant());
 	}
 
 	@Override

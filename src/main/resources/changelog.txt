@@ -6,6 +6,7 @@
   - Add option to disable recoil based on move
   - Added headshot blacklist
   - Fixed ammo in exp bar
+  - Fixed medkit
 
 2.0.18
   - Fixed resourcepack for 1.21.4
