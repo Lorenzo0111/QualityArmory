@@ -6,9 +6,13 @@
 
 * [Main Configuration](config/main.md)
 * [ResourcePack Configuration](config/resourcepack.md)
-* [Creating a Gun](config/gun/README.md)
-  * [Gun Configuration](config/gun/config.md)
-  * [Creating the Model](config/gun/model.md)
+
+## Items Config <a href="#items" id="items"></a>
+
+* [ResourcePack Model](items/model.md)
+* [Gun Configuration](items/gun.md)
+* [Ammo Configuration](items/ammo.md)
+* [Armor Configuration](items/armor.md)
 
 ## Developers
 

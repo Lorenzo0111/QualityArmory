@@ -1,6 +1,12 @@
 # Gun Configuration
 
-These are all the fields used by a gun with their description.
+Creating a gun requires many steps, from configuring the settings to creating the model.&#x20;
+
+{% hint style="info" %}
+I suggest copying another gun's configuration as a reference
+{% endhint %}
+
+These are all the fields used by a gun with their description:
 
 * `name`: The internal, unique identifier for the weapon used in commands (e.g., `/qa give cz75`). It's recommended to keep this lowercase and without space
 * **`displayname`**: The name shown on the item in-game. Supports standard Minecraft color codes (e.g., `&6`).
