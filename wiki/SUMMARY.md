@@ -16,7 +16,7 @@
 
 ## Developers
 
-* [Adding the Dependency](developers/adding-the-dependency.md)
+* [Adding the Dependency](developers/dependency.md)
 * [QualityArmory API](developers/api.md)
 
 ## Downloads
