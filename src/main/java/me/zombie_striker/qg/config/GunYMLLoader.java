@@ -17,7 +17,6 @@ import me.zombie_striker.qg.utils.LocalUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Particle;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
@@ -27,89 +26,84 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 public class GunYMLLoader {
 
 	public static void loadAmmo(QAMain main) {
+		File ammoFolder = new File(main.getDataFolder(), "ammo");
+		if (!ammoFolder.exists()) return;
 
-		if (new File(main.getDataFolder(), "ammo").exists()) {
-			int items = 0;
-			for (File f : new File(main.getDataFolder(), "ammo").listFiles()) {
-				try {
-					if (f.getName().contains("yml")) {
-						FileConfiguration f2 = YamlConfiguration.loadConfiguration(f);
-						if ((!f2.contains("invalid")) || !f2.getBoolean("invalid")) {
-							Material m = f2.contains("material") ? Material.matchMaterial(f2.getString("material"))
-									: Material.DIAMOND_AXE;
-							int variant = f2.contains("variant") ? f2.getInt("variant") : 0;
-							final String name = f2.getString("name");
-							if(QAMain.verboseLoadingLogging)
-							main.getLogger().info("-Loading AmmoType: " + name);
+		File[] files = ammoFolder.listFiles();
+		if (files == null || files.length == 0) return;
 
-							String extraData = null;
-							if (f2.contains("skull_owner")) {
-								extraData = f2.getString("skull_owner");
-							}
-							String ed2 = null;
-							if (f2.contains("skull_owner_custom_url")
-									&& !f2.getString("skull_owner_custom_url").equals(Ammo.NO_SKIN_STRING)) {
-								ed2 = f2.getString("skull_owner_custom_url");
-							}
+		int items = 0;
 
-							final MaterialStorage ms = MaterialStorage.getMS(m, f2.getInt("id"), variant, extraData,
-									ed2);
-							final ItemStack[] materails = main
-									.convertIngredients(f2.getStringList("craftingRequirements"));
-							final String displayname = f2.contains("displayname")
-									? LocalUtils.colorize( f2.getString("displayname"))
-									: (ChatColor.WHITE + name);
-							final List<String> extraLore2 = f2.contains("lore") ? f2.getStringList("lore") : null;
-							final List<String> extraLore = new ArrayList<String>();
-							try {
-								for (String lore : extraLore2) {
-									extraLore.add(LocalUtils.colorize( lore));
-								}
-							} catch (Error | Exception re52) {
-							}
+		for (File file : files) {
+			if (!file.getName().endsWith(".yml")) continue;
 
-							final double price = f2.contains("price") ? f2.getDouble("price") : 100;
-							final boolean allowInShop = f2.getBoolean("allowInShop", true) && price > 0;
+			try {
+				FileConfiguration config = YamlConfiguration.loadConfiguration(file);
+				if (config.getBoolean("invalid", false)) continue;
 
-							int amountA = f2.getInt("maxAmount");
-							if(f2.contains("maxItemStack")) {
-								amountA=(f2.getInt("maxItemStack"));
-							}
-							double piercing = f2.getDouble("piercingSeverity");
-
-							Ammo da = new Ammo(name, displayname, extraLore, ms, amountA, false, 1, price, materails,
-									piercing);
-
-							da.setEnableShop(allowInShop);
-							da.setCustomLore(extraLore);
-
-							QAMain.ammoRegister.put(ms, da);
-							items++;
-
-							if (extraData != null) {
-								da.setSkullOwner(extraData);
-							}
-							if (ed2 != null) {
-								da.setCustomSkin(ed2);
-							}
-							if (f2.contains("craftingReturnAmount")) {
-								da.setCraftingReturn(f2.getInt("craftingReturnAmount"));
-							}
-
-						}
-					}
-				} catch (Exception e) {
-					e.printStackTrace();
+				String name = config.getString("name");
+				if(QAMain.verboseLoadingLogging) {
+					main.getLogger().info("-Loading AmmoType: " + name);
 				}
+
+				String displayname = config.contains("displayname")
+						? LocalUtils.colorize(config.getString("displayname"))
+						: (ChatColor.WHITE + name);
+
+				List<String> coloredLore = config.getStringList("lore").stream()
+						.map(LocalUtils::colorize)
+						.collect(Collectors.toList());
+
+				int id = config.getInt("id");
+
+				int variant = config.getInt("variant", 0);
+
+				ItemStack[] ingredients = main.convertIngredients(config.getStringList("craftingRequirements"));
+
+				int returnAmount = config.getInt("craftingReturnAmount", 1);
+
+				double price = config.getDouble("price", 100.0);
+
+				boolean allowInShop = config.getBoolean("allowInShop", true) && price > 0;
+
+				int maxAmount = config.contains("maxItemStack")
+						? config.getInt("maxItemStack")
+						: config.getInt("maxAmount");
+
+				Material material = Material.matchMaterial(config.getString("material", "DIAMOND_AXE"));
+
+				String skullOwner = config.getString("skull_owner", null);;
+				String skullUrl = config.getString("skull_owner_custom_url", null);
+				if (Ammo.NO_SKIN_STRING.equals(skullUrl)) skullUrl = null;
+
+				double piercing = config.getDouble("piercingSeverity", 1.0);
+
+				MaterialStorage ms = MaterialStorage.getMS(material, id, variant, skullOwner, skullUrl);
+
+				Ammo ammo = new Ammo(name, displayname, coloredLore, ms, maxAmount,
+						false, 1, price, ingredients, piercing
+				);
+
+				ammo.setEnableShop(allowInShop);
+				if (skullOwner != null) ammo.setSkullOwner(skullOwner);
+				if (skullUrl != null) ammo.setCustomSkin(skullUrl);
+				if (returnAmount > 0) ammo.setCraftingReturn(returnAmount);
+
+				QAMain.ammoRegister.put(ms, ammo);
+				items++;
+
+			} catch (Exception e) {
+				e.printStackTrace(System.err);
 			}
-			if(!QAMain.verboseLoadingLogging)
-				main.getLogger().info("-Loaded "+items+" Ammo types.");
+		}
 
-
+		if(!QAMain.verboseLoadingLogging) {
+			main.getLogger().info("-Loaded " + items + " Ammo types.");
 		}
 	}
 
