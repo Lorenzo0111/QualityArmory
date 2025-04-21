@@ -176,108 +176,117 @@ public class GunYMLLoader {
 	}
 
 	public static void loadMisc(QAMain main) {
-		if (new File(main.getDataFolder(), "misc").exists()) {
-			int items = 0;
-			for (File f : new File(main.getDataFolder(), "misc").listFiles()) {
-				try {
-					if (f.getName().contains("yml")) {
-						FileConfiguration f2 = YamlConfiguration.loadConfiguration(f);
-						if ((!f2.contains("invalid")) || !f2.getBoolean("invalid")) {
-							final String name = f2.getString("name");
-							if (QAMain.verboseLoadingLogging)
-								main.getLogger().info("-Loading Misc: " + name);
+		File miscFolder = new File(main.getDataFolder(), "misc");
+		if (!miscFolder.exists()) return;
 
-							Material m = f2.contains("material") ? Material.matchMaterial(f2.getString("material"))
-									: Material.DIAMOND_AXE;
-							int variant = f2.contains("variant") ? f2.getInt("variant") : 0;
-							final MaterialStorage ms = MaterialStorage.getMS(m, f2.getInt("id"), variant);
-							final ItemStack[] materails = main
-									.convertIngredients(f2.getStringList("craftingRequirements"));
-							final String displayname = f2.contains("displayname")
-									? LocalUtils.colorize( f2.getString("displayname"))
-									: (ChatColor.WHITE + name);
-							final List<String> rawLore = f2.contains("lore") ? f2.getStringList("lore") : null;
-							final List<String> lore = new ArrayList<String>();
-							try {
-								for (String lore2 : rawLore) {
-									lore.add(LocalUtils.colorize( lore2));
-								}
-							} catch (Error | Exception re52) {
-							}
+		File[] files = miscFolder.listFiles();
+		if (files == null || files.length == 0) return;
 
-							final int price = f2.contains("price") ? f2.getInt("price") : 100;
-							final boolean allowInShop = f2.getBoolean("allowInShop", true) && price > 0;
+		int items = 0;
 
-							int damage = f2.contains("damage") ? f2.getInt("damage") : 1;
-							// int durib = f2.contains("durability") ? f2.getInt("durability") : 1000;
+		for (File file : files) {
+			if (!file.getName().endsWith(".yml")) continue;
 
-							WeaponType wt = WeaponType.getByName(f2.getString("MiscType"));
+			try {
+				FileConfiguration config = YamlConfiguration.loadConfiguration(file);
+				if (config.getBoolean("invalid", false)) continue;
 
-							double radius = f2.contains("radius") ? f2.getDouble("radius") : 0;
-							items++;
-
-							CustomBaseObject base = null;
-
-
-							String soundEquip =  f2.contains("sound_equip")? f2.getString("sound_equip"):null;
-							String soundHit =  f2.contains("sound_meleehit")? f2.getString("sound_meleehit"):null;
-
-							if (wt == WeaponType.MEDKIT)
-								QAMain.miscRegister.put(ms, base=new MedKit(ms, name, displayname, materails, price));
-							if (wt == WeaponType.AMMO_BAG)
-								QAMain.miscRegister.put(ms, base=new AmmoBag(ms, name, displayname, materails, f2.getInt("max", 5), price));
-							if (wt == WeaponType.MELEE) {
-								QAMain.miscRegister.put(ms,
-										base = new MeleeItems(ms, name, displayname, materails, price, damage));
-								base.setSoundOnEquip(soundEquip);
-								base.setSoundOnHit(soundHit);
-								base.setCustomLore(lore);
-							}
-							if (wt == WeaponType.GRENADES)
-								QAMain.miscRegister.put(ms,
-										base=new Grenade(materails, price, damage, radius, name, displayname, lore, ms));
-							if (wt == WeaponType.SMOKE_GRENADES)
-								QAMain.miscRegister.put(ms, base=new SmokeGrenades(materails, price, damage, radius, name,
-										displayname, lore, ms));
-							if (wt == WeaponType.INCENDARY_GRENADES)
-								QAMain.miscRegister.put(ms, base=new IncendaryGrenades(materails, price, damage, radius,
-										name, displayname, lore, ms));
-							if (wt == WeaponType.PROXYMINES)
-								QAMain.miscRegister.put(ms, base=new ProxyMines(materails, price, damage, radius,
-										name, displayname, lore, ms));
-							if (wt == WeaponType.STICKYGRENADE)
-								QAMain.miscRegister.put(ms, base=new StickyGrenades(materails, price, damage, radius,
-										name, displayname, lore, ms));
-							if (wt == WeaponType.MOLOTOV)
-								QAMain.miscRegister.put(ms, base=new Molotov(materails, price, damage, radius,
-										name, displayname, lore, ms));
-							if (wt == WeaponType.FLASHBANGS)
-								QAMain.miscRegister.put(ms,
-										base=new Flashbang(materails, price, damage, radius, name, displayname, lore, ms));
-
-
-							if(base!=null) {
-								base.setCustomLore(lore);
-								base.setIngredients(materails);
-								base.setEnableShop(allowInShop);
-							}
-
-							if(f2.contains("maxItemStack"))
-								base.setMaxItemStack(f2.getInt("maxItemStack"));
-							if(base instanceof ThrowableItems) {
-								ThrowableItems throwableItems = (ThrowableItems) base;
-								if (f2.contains("ThrowSpeed"))
-									throwableItems.setThrowSpeed(f2.getDouble("ThrowSpeed"));
-							}
-
-						}
-					}
-				} catch (Exception e) {
-					e.printStackTrace();
+				String name = config.getString("name");
+				if (QAMain.verboseLoadingLogging) {
+					main.getLogger().info("-Loading Misc: " + name);
 				}
+
+				String displayname = config.contains("displayname")
+						? LocalUtils.colorize( config.getString("displayname"))
+						: (ChatColor.WHITE + name);
+
+				List<String> lore = config.getStringList("lore").stream()
+						.map(LocalUtils::colorize)
+						.collect(Collectors.toList());
+
+				int id = config.getInt("id");
+
+				int variant = config.getInt("variant", 0);
+
+				ItemStack[] ingredients = main.convertIngredients(config.getStringList("craftingRequirements"));
+
+				int price = config.contains("price") ? config.getInt("price") : 100;
+				boolean allowInShop = config.getBoolean("allowInShop", true) && price > 0;
+
+				Material material = Material.matchMaterial(config.getString("material", "DIAMOND_AXE"));
+
+				MaterialStorage ms = MaterialStorage.getMS(material, id, variant);
+
+				int damage = config.getInt("damage", 1);
+
+				WeaponType wt = WeaponType.getByName(config.getString("MiscType"));
+
+				double radius = config.getDouble("radius", 0.0);
+
+				String soundEquip = config.getString("sound_equip", null);
+				String soundHit = config.getString("sound_meleehit", null);
+
+				CustomBaseObject base = null;
+				switch (wt) {
+					case MEDKIT:
+						base = new MedKit(ms, name, displayname, ingredients, price);
+						break;
+					case AMMO_BAG:
+						base = new AmmoBag(ms, name, displayname, ingredients, config.getInt("max", 5), price);
+						break;
+					case MELEE:
+						base = new MeleeItems(ms, name, displayname, ingredients, price, damage);
+						base.setSoundOnEquip(soundEquip);
+						base.setSoundOnHit(soundHit);
+						break;
+					case GRENADES:
+						base = new Grenade(ingredients, price, damage, radius, name, displayname, lore, ms);
+						break;
+					case SMOKE_GRENADES:
+						base = new SmokeGrenades(ingredients, price, damage, radius, name, displayname, lore, ms);
+						break;
+					case INCENDARY_GRENADES:
+						base = new IncendaryGrenades(ingredients, price, damage, radius, name, displayname, lore, ms);
+						break;
+					case PROXYMINES:
+						base = new ProxyMines(ingredients, price, damage, radius, name, displayname, lore, ms);
+						break;
+					case STICKYGRENADE:
+						base = new StickyGrenades(ingredients, price, damage, radius, name, displayname, lore, ms);
+						break;
+					case MOLOTOV:
+						base = new Molotov(ingredients, price, damage, radius, name, displayname, lore, ms);
+						break;
+					case FLASHBANGS:
+						base = new Flashbang(ingredients, price, damage, radius, name, displayname, lore, ms);
+						break;
+				}
+
+				if (base == null) continue;
+
+				base.setCustomLore(lore);
+				base.setIngredients(ingredients);
+				base.setEnableShop(allowInShop);
+
+				if(config.contains("maxItemStack"))
+					base.setMaxItemStack(config.getInt("maxItemStack"));
+
+				if (base instanceof ThrowableItems) {
+					ThrowableItems throwableItems = (ThrowableItems) base;
+					if (config.contains("ThrowSpeed"))
+						throwableItems.setThrowSpeed(config.getDouble("ThrowSpeed"));
+				}
+
+				QAMain.miscRegister.put(ms, base);
+				items++;
+
+			} catch (Exception e) {
+				e.printStackTrace(System.err);
 			}
-			if(!QAMain.verboseLoadingLogging)
-				main.getLogger().info("-Loaded "+items+" Misc.");
+		}
+
+		if(!QAMain.verboseLoadingLogging) {
+			main.getLogger().info("-Loaded " + items + " Misc.");
 		}
 	}
 
