@@ -1,223 +1,271 @@
 package me.zombie_striker.qg.handlers;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
-
-import com.cryptomorin.xseries.XMaterial;
+import com.comphenix.protocol.PacketType;
+import com.comphenix.protocol.ProtocolLibrary;
+import com.comphenix.protocol.ProtocolManager;
+import com.comphenix.protocol.events.ListenerPriority;
+import com.comphenix.protocol.events.PacketAdapter;
+import com.comphenix.protocol.events.PacketContainer;
+import com.comphenix.protocol.events.PacketEvent;
+import com.comphenix.protocol.wrappers.EnumWrappers;
+import com.comphenix.protocol.wrappers.Pair;
 import com.cryptomorin.xseries.reflection.XReflection;
-import com.mojang.datafixers.util.Pair;
-import de.tr7zw.changeme.nbtapi.NBT;
+import me.zombie_striker.qg.QAMain;
+import me.zombie_striker.qg.api.QualityArmory;
 import me.zombie_striker.qg.guns.Gun;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.CrossbowMeta;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
-import com.comphenix.protocol.*;
-import com.comphenix.protocol.events.*;
-
-import me.zombie_striker.qg.QAMain;
-import me.zombie_striker.qg.api.QualityArmory;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ProtocolLibHandler {
 
-	private static ProtocolManager protocolManager;
-	private static Class<?> nbtFactClass = null;
-	private static Method nbtFactmethod = null;
+    private static ProtocolManager protocolManager;
 
-	public static void initRemoveArmswing() {
-		if (protocolManager == null)
-			protocolManager = ProtocolLibrary.getProtocolManager();
-		protocolManager.addPacketListener(
-				new PacketAdapter(QAMain.getInstance(), ListenerPriority.NORMAL, PacketType.Play.Client.ARM_ANIMATION) {
+    public static void initRemoveArmswing() {
+        if (protocolManager == null)
+            protocolManager = ProtocolLibrary.getProtocolManager();
+        protocolManager.addPacketListener(
+                new PacketAdapter(QAMain.getInstance(), ListenerPriority.NORMAL, PacketType.Play.Client.ARM_ANIMATION) {
 
-					@SuppressWarnings("deprecation")
-					public void onPacketReceiving(PacketEvent event) {
-						final Player player = event.getPlayer();
+                    @SuppressWarnings("deprecation")
+                    public void onPacketReceiving(PacketEvent event) {
+                        final Player player = event.getPlayer();
 
-						boolean tempplayer =  false;
-						try{
-							player.getVehicle();
-						}catch (UnsupportedOperationException e){
-							tempplayer=true;
-						}
-						if(tempplayer)
-							return;
+                        boolean tempplayer = false;
+                        try {
+                            player.getVehicle();
+                        } catch (UnsupportedOperationException e) {
+                            tempplayer = true;
+                        }
+                        if (tempplayer)
+                            return;
 
-						if (event.getPacketType() == PacketType.Play.Client.ARM_ANIMATION
-								&& player.getVehicle() != null) {
-							try {
+                        if (event.getPacketType() == PacketType.Play.Client.ARM_ANIMATION
+                                && player.getVehicle() != null) {
+                            try {
 
-								byte state = event.getPacket().getBytes().readSafely(0);
-								int entityID = event.getPacket().getIntegers().readSafely(0);
-								Player targ = null;
-								for (Player p : Bukkit.getOnlinePlayers()) {
-									if (p.getEntityId() == entityID) {
-										targ = p;
-										break;
-									}
-								}
-								if (targ == null) {
-									Bukkit.broadcastMessage("The ID for the entity is incorrect");
-									return;
-								}
-								if (state == 0) {
-									if (QualityArmory.isGun(targ.getItemInHand())
-											|| QualityArmory.isIronSights(targ.getItemInHand())) {
-										event.setCancelled(true);
-									}
-								}
-							} catch (Error | Exception e) {
-							}
-						}
-					}
-				});
+                                byte state = event.getPacket().getBytes().readSafely(0);
+                                int entityID = event.getPacket().getIntegers().readSafely(0);
+                                Player targ = null;
+                                for (Player p : Bukkit.getOnlinePlayers()) {
+                                    if (p.getEntityId() == entityID) {
+                                        targ = p;
+                                        break;
+                                    }
+                                }
+                                if (targ == null) {
+                                    Bukkit.broadcastMessage("The ID for the entity is incorrect");
+                                    return;
+                                }
+                                if (state == 0) {
+                                    if (QualityArmory.isGun(targ.getItemInHand())
+                                            || QualityArmory.isIronSights(targ.getItemInHand())) {
+                                        event.setCancelled(true);
+                                    }
+                                }
+                            } catch (Error | Exception ignored) {
+                            }
+                        }
+                    }
+                });
+    }
 
-	}
+    @SuppressWarnings("deprecation")
+    public static void initAimBow() {
+        if (protocolManager == null)
+            protocolManager = ProtocolLibrary.getProtocolManager();
 
-	public static void initAimBow() {
-		if (protocolManager == null)
-			protocolManager = ProtocolLibrary.getProtocolManager();
-		protocolManager.addPacketListener(
-				new PacketAdapter(QAMain.getInstance(), ListenerPriority.NORMAL, PacketType.Play.Server.ENTITY_EQUIPMENT) {
-					@Override
-					public void onPacketSending(PacketEvent event) {
-						final Player sender = event.getPlayer();
-						int id = (int) event.getPacket().getModifier().read(0);
-						Object slot;
-						final Object ironsights;
-						if(XMaterial.supports(16)){
-							slot = event.getPacket().getModifier().read(1);
-							ironsights = slot;//event.getPacket().getModifier().read(2);
-						}else{
-							slot = event.getPacket().getModifier().read(1);
-							ironsights = event.getPacket().getModifier().read(2);
-						}
-						if ((id) == sender.getEntityId()) {
-							return;
-						}
-						Player who = null;
-						for (Player player : sender.getWorld().getPlayers()) {
-							if (player.getEntityId() == (int) id) {
-								who = player;
-								break;
-							}
-						}
-						if (who == null)
-							return;
-						if (!slot.toString().contains("MAINHAND")) {
-							if (QualityArmory.isIronSights(who.getInventory().getItemInMainHand())) {
-								event.setCancelled(true);
-							}
-							return;
-						}
-						if (who.getItemInHand() != null && who.getItemInHand().getType().name().equals("CROSSBOW") &&
-								QualityArmory.isIronSights(who.getItemInHand()) &&
-								ironsights.toString().contains("crossbow")) {
-							Object is = null;
+        protocolManager.addPacketListener(
+                new PacketAdapter(QAMain.getInstance(), ListenerPriority.NORMAL, PacketType.Play.Server.ENTITY_EQUIPMENT) {
+                    @Override
+                    public void onPacketSending(PacketEvent event) {
+                        QAMain.DEBUG("Processing ENTITY_EQUIPMENT packet");
+                        final Player sender = event.getPlayer();
+                        final int entityId = event.getPacket().getIntegers().read(0);
 
-							Gun gun = QualityArmory.getGun(who.getInventory().getItemInOffHand());
-							if (gun == null || !gun.hasBetterAimingAnimations())
-								return;
+                        // Ignore own entity packet
+                        if (entityId == sender.getEntityId()) {
+                            QAMain.DEBUG("Ignoring own entity packet");
+                            return;
+                        }
 
-							try {
-								is = getCraftItemStack(who.getInventory().getItemInOffHand());
-							} catch (NoSuchMethodException e) {}
+                        // Find target player from entity ID
+                        Player targetPlayer = null;
 
-							NBT.modify(who.getInventory().getItemInOffHand(), nbt -> {
-								nbt.setBoolean("Charged",true);
-							});
+                        for (Player player : sender.getWorld().getPlayers()) {
+                            if (player.getEntityId() == entityId) {
+                                targetPlayer = player;
+                                break;
+                            }
+                        }
 
-							if(XMaterial.supports(16)){
-								List list = (List) slot;
-								for(Object o : new ArrayList(list)){
-									if(o.toString().contains("MAINHAND")) {
-										Pair pair = (Pair) o;
-										Pair newpair = new Pair(pair.getFirst(), is);
-										list.set(list.indexOf(pair), newpair);
-									}else if(o.toString().contains("OFFHAND")) {
-										list.remove(list.indexOf(o));
-									}
-								}
-								event.getPacket().getModifier().write(1, list);
-							}else{
-								event.getPacket().getModifier().write(2, is);
-							}
+                        if (targetPlayer == null) {
+                            QAMain.DEBUG("Target player not found for entity ID: " + entityId);
+                            return;
+                        }
 
-							if(!XMaterial.supports(16))
-							new BukkitRunnable() {
-								public void run() {
-									try {
-										PacketContainer pc2 = protocolManager
-												.createPacket(PacketType.Play.Server.ENTITY_EQUIPMENT);
+                        // Check if player has crossbow with iron sights
+                        ItemStack mainHandItem = targetPlayer.getItemInHand();
+                        if (mainHandItem == null || !mainHandItem.getType().name().equals("CROSSBOW") ||
+                                !QualityArmory.isIronSights(mainHandItem)) {
+                            QAMain.DEBUG("Player doesn't have crossbow with iron sights");
+                            return;
+                        }
 
-										//EnumItemSlot e = EnumItemSlot.OFFHAND;
+                        // Check for gun in offhand
+                        Gun gun = QualityArmory.getGun(targetPlayer.getInventory().getItemInOffHand());
+                        if (gun == null || !gun.hasBetterAimingAnimations()) {
+                            QAMain.DEBUG("No valid gun found in offhand with better aiming animations");
+                            return;
+                        }
 
-										Object neededSlot = null;
-										Object[] enums = slot.getClass().getEnumConstants();
-										for (Object k : enums) {
-											String name = (String) k.getClass().getMethod("name").invoke(k, new Class[0]);
-											if (name.contains("OFFHAND")) {
-												neededSlot = k;
-												break;
-											}
-										}
-										if(XMaterial.supports(16)){
-											pc2.getModifier().write(0, id)
-													.write(1, ironsights);
+                        // Handle different Minecraft versions
+                        if (XReflection.supports(16)) {
+                            handleModern1_16PacketFormat(event, targetPlayer);
+                        } else {
+                            handleLegacyPacketFormat(event, targetPlayer, entityId);
+                        }
+                   }
 
-										}else {
-											pc2.getModifier().write(0, id)
-													.write(1, neededSlot)
-													.write(2, ironsights);
-										}
+                    /**
+                     * Handle Minecraft 1.16+ packet format
+                     */
+                    private void handleModern1_16PacketFormat(PacketEvent event, Player targetPlayer) {
+                        QAMain.DEBUG("Using Minecraft 1.16+ packet handling");
+                        List<Pair<EnumWrappers.ItemSlot, ItemStack>> equipmentList =
+                                event.getPacket().getSlotStackPairLists().read(0);
 
-										protocolManager.sendServerPacket(event.getPlayer(), pc2);
-									} catch (Exception e) {
-										e.printStackTrace();
-									}
+                        boolean hasMainHandEntry = false;
+                        for (Pair<EnumWrappers.ItemSlot, ItemStack> entry : equipmentList) {
+                            if (entry.getFirst().equals(EnumWrappers.ItemSlot.MAINHAND)) {
+                                hasMainHandEntry = true;
+                                break;
+                            }
+                        }
+
+                        if (!hasMainHandEntry) {
+                            QAMain.DEBUG("No MAINHAND entry found in equipment list");
+                            return;
+                        }
+
+                        // Modify the equipment list
+                        List<Pair<EnumWrappers.ItemSlot, ItemStack>> modifiableList = new ArrayList<>(equipmentList);
+                        boolean modified = false;
+
+                        for (int i = 0; i < modifiableList.size(); i++) {
+                            Pair<EnumWrappers.ItemSlot, ItemStack> pair = modifiableList.get(i);
+                            if (pair.getFirst().equals(EnumWrappers.ItemSlot.MAINHAND)) {
+                                // Replace mainhand item with offhand gun
+                                ItemStack offhandItem = prepareOffhandItemForPacket(targetPlayer);
+                                Pair<EnumWrappers.ItemSlot, ItemStack> newPair = new Pair<>(pair.getFirst(), offhandItem);
+                                modifiableList.set(i, newPair);
+                                QAMain.DEBUG("Replaced MAINHAND entry with offhand item");
+                                modified = true;
+                            } else if (pair.getFirst().equals(EnumWrappers.ItemSlot.OFFHAND)) {
+                                // Remove offhand entry
+                                modifiableList.remove(i);
+                                i--; // Adjust index after removal
+                                QAMain.DEBUG("Removed OFFHAND entry");
+                                modified = true;
+                            }
+                        }
+
+                        if (modified) {
+                            QAMain.DEBUG("Writing modified equipment list to packet");
+                            event.getPacket().getSlotStackPairLists().write(0, modifiableList);
+                        }
+                    }
+
+                    /**
+                     * Handle pre-1.16 packet format
+                     */
+                    private void handleLegacyPacketFormat(PacketEvent event, Player targetPlayer, int entityId) {
+                        QAMain.DEBUG("Using pre-1.16 packet handling");
+                        EnumWrappers.ItemSlot slot = event.getPacket().getItemSlots().read(1);
+                        ItemStack itemStack = event.getPacket().getItemModifier().read(2);
+
+                        // Check if not main hand and iron sights are active
+                        if (!slot.toString().contains("MAINHAND")) {
+                            QAMain.DEBUG("Not main hand slot: " + slot);
+                            if (QualityArmory.isIronSights(targetPlayer.getInventory().getItemInMainHand())) {
+                                QAMain.DEBUG("Player using iron sights, cancelling packet");
+                                event.setCancelled(true);
+                            }
+                            return;
+                        }
+
+                        // Only proceed if the packet contains a crossbow
+                        if (!itemStack.toString().contains("crossbow")) {
+                            QAMain.DEBUG("Packet doesn't contain crossbow");
+                            return;
+                        }
+
+                        event.getPacket().getItemModifier().write(2, prepareOffhandItemForPacket(targetPlayer));
+
+                        // Schedule task to send offhand packet
+                        final ItemStack finalItemStack = itemStack;
+
+                        new BukkitRunnable() {
+                            public void run() {
+                                try {
+                                    PacketContainer pc2 = protocolManager.createPacket(PacketType.Play.Server.ENTITY_EQUIPMENT);
+
+                                    pc2.getIntegers().write(0, entityId);
+                                    pc2.getItemSlots().write(1, slot);
+                                    pc2.getItemModifier().write(2, finalItemStack);
+
+                                    protocolManager.sendServerPacket(event.getPlayer(), pc2);
+                                } catch (Exception e) {
+                                    QAMain.DEBUG("Error sending offhand packet: " + e.getMessage());
+                                    e.printStackTrace();
+                                }
+                            }
+                        }.runTaskLater(QAMain.getInstance(), 1);
+                    }
+
+                    /**
+                     * Prepare the offhand item for the packet (add charged projectile if crossbow)
+                     */
+                    private ItemStack prepareOffhandItemForPacket(Player player) {
+                        ItemStack clone = player.getInventory().getItemInOffHand().clone();
+
+                        ItemMeta meta = clone.getItemMeta();
+                        if (meta instanceof CrossbowMeta) {
+                            QAMain.DEBUG("Item is a crossbow, adding charged projectile");
+                            CrossbowMeta crossbowMeta = (CrossbowMeta) meta;
+                            crossbowMeta.addChargedProjectile(new ItemStack(Material.ARROW));
+                            clone.setItemMeta(crossbowMeta);
+                        }
+
+                        QAMain.DEBUG("Prepared offhand item for packet: " + clone);
+                        return clone;
+                    }
+                });
+    }
 
 
-								}
-							}.runTaskLater(QAMain.getInstance(), 1);
-						}
-					}
-				});
-
-	}
-
-	private static Object getCraftItemStack(ItemStack is) throws NoSuchMethodException {
-		if (nbtFactClass == null) {
-			nbtFactClass = XReflection.getCraftClass("inventory.CraftItemStack");
-			Class[] c = new Class[1];
-			c[0] = ItemStack.class;
-			nbtFactmethod = nbtFactClass.getMethod("asNMSCopy", c);
-		}
-		try {
-			return nbtFactmethod.invoke(nbtFactClass, is);
-		} catch (InvocationTargetException | IllegalAccessException e) {
-			return null;
-		}
-	}
-
-
-	public static void sendYawChange(Player player, Vector newDirection) {
-		try {
-			if (protocolManager == null)
-				protocolManager = ProtocolLibrary.getProtocolManager();
-			final PacketContainer yawpack = protocolManager.createPacket(PacketType.Play.Server.LOOK_AT, false);
-			yawpack.getIntegers().write(0, 1);
-			yawpack.getDoubles().write(0, player.getEyeLocation().getX() + newDirection.getX());
-			yawpack.getDoubles().write(1, player.getEyeLocation().getY() + newDirection.getY());
-			yawpack.getDoubles().write(2, player.getEyeLocation().getZ() + newDirection.getZ());
-			yawpack.getBooleans().write(0, false);
-			protocolManager.sendServerPacket(player, yawpack);
-		} catch (Exception e) {
-			QAMain.DEBUG("An error occurred while sending a yaw change packet to " + player.getName());
-			QAMain.DEBUG(e.getMessage());
-		}
-	}
+    public static void sendYawChange(Player player, Vector newDirection) {
+        try {
+            if (protocolManager == null)
+                protocolManager = ProtocolLibrary.getProtocolManager();
+            final PacketContainer yawpack = protocolManager.createPacket(PacketType.Play.Server.LOOK_AT, false);
+            yawpack.getIntegers().write(0, 1);
+            yawpack.getDoubles().write(0, player.getEyeLocation().getX() + newDirection.getX());
+            yawpack.getDoubles().write(1, player.getEyeLocation().getY() + newDirection.getY());
+            yawpack.getDoubles().write(2, player.getEyeLocation().getZ() + newDirection.getZ());
+            yawpack.getBooleans().write(0, false);
+            protocolManager.sendServerPacket(player, yawpack);
+        } catch (Exception e) {
+            QAMain.DEBUG("An error occurred while sending a yaw change packet to " + player.getName());
+            QAMain.DEBUG(e.getMessage());
+        }
+    }
 }
