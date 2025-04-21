@@ -1,200 +1,176 @@
 package me.zombie_striker.customitemmanager;
 
-import com.cryptomorin.xseries.profiles.PlayerProfiles;
-import com.cryptomorin.xseries.profiles.builder.XSkull;
-import com.mojang.authlib.GameProfile;
-import me.zombie_striker.qg.QAMain;
-import me.zombie_striker.qg.handlers.MultiVersionLookup;
-import org.bukkit.Material;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.SkullMeta;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.Damageable;
+import org.bukkit.inventory.meta.SkullMeta;
+
+import com.cryptomorin.xseries.profiles.PlayerProfiles;
+import com.cryptomorin.xseries.profiles.builder.XSkull;
+import com.mojang.authlib.GameProfile;
+
+import me.zombie_striker.qg.QAMain;
+import me.zombie_striker.qg.handlers.MultiVersionLookup;
+
 public class MaterialStorage {
 
-	private static final MaterialStorage EMPTY = new MaterialStorage(null, 0, 0);
+    private static final MaterialStorage EMPTY = new MaterialStorage(null, 0, 0);
 
-	private static List<MaterialStorage> store = new ArrayList<MaterialStorage>();
-	private int d;
-	private Material m;
-	private int variant = 0;
-	private String specialValues = null;
-	private String specialValues2 = null;
+    private static List<MaterialStorage> store = new ArrayList<MaterialStorage>();
+    private final int d;
+    private final Material m;
+    private int variant = 0;
+    private String specialValues = null;
+    private String specialValues2 = null;
 
-	private MaterialStorage(Material m, int d) {
-		this.m = m;
-		this.d = d;
-	}
+    private MaterialStorage(final Material m, final int d) {
+        this.m = m;
+        this.d = d;
+    }
 
-	private MaterialStorage(Material m, int d, int var) {
-		this(m, d, var, null);
-	}
+    private MaterialStorage(final Material m, final int d, final int var) { this(m, d, var, null); }
 
-	private MaterialStorage(Material m, int d, int var, String extraData) {
-		this(m, d, var, extraData, null);
-	}
+    private MaterialStorage(final Material m, final int d, final int var, final String extraData) { this(m, d, var, extraData, null); }
 
-	private MaterialStorage(Material m, int d, int var, String extraData, String ed2) {
-		this.m = m;
-		this.d = d;
-		this.variant = var;
-		this.specialValues = extraData;
-		this.specialValues2 = ed2;
-	}
+    private MaterialStorage(final Material m, final int d, final int var, final String extraData, final String ed2) {
+        this.m = m;
+        this.d = d;
+        this.variant = var;
+        this.specialValues = extraData;
+        this.specialValues2 = ed2;
+    }
 
-	public static MaterialStorage getMS(Material m, int d, int var) {
-		return getMS(m, d, var, null);
-	}
+    public static MaterialStorage getMS(final Material m, final int d, final int var) { return MaterialStorage.getMS(m, d, var, null); }
 
-	public static MaterialStorage getMS(Material m, int d, int var, String extraValue) {
-		return getMS(m, d, var, extraValue, null);
-	}
+    public static MaterialStorage getMS(final Material m, final int d, final int var, final String extraValue) {
+        return MaterialStorage.getMS(m, d, var, extraValue, null);
+    }
 
-	public static MaterialStorage getMS(Material m, int d, int var, String extraValue, String ev2) {
-		for (MaterialStorage k : store) {
-			if (matchesMaterials(k, m, d)) if (matchVariants(k, var)) if (matchHeads(k, extraValue, ev2))
-				return k;
-		}
-		MaterialStorage mm = new MaterialStorage(m, d, var, extraValue, ev2);
-		store.add(mm);
-		return mm;
-	}
+    public static MaterialStorage getMS(final Material m, final int d, final int var, final String extraValue, final String ev2) {
+        for (final MaterialStorage k : MaterialStorage.store) {
+            if (MaterialStorage.matchesMaterials(k, m, d))
+                if (MaterialStorage.matchVariants(k, var))
+                    if (MaterialStorage.matchHeads(k, extraValue, ev2))
+                        return k;
+        }
+        final MaterialStorage mm = new MaterialStorage(m, d, var, extraValue, ev2);
+        MaterialStorage.store.add(mm);
+        return mm;
+    }
 
-	private static boolean matchesMaterials(MaterialStorage k, Material m, int d) {
-		return (k.m == m && (k.d == d || k.d == -1));
-	}
+    private static boolean matchesMaterials(final MaterialStorage k, final Material m, final int d) {
+        return (k.m == m && (k.d == d || k.d == -1));
+    }
 
-	public static boolean matchVariants(MaterialStorage k, int var) {
-		return (!k.hasVariant() && var == 0) || (k.variant == var);
-	}
+    public static boolean matchVariants(final MaterialStorage k, final int var) {
+        return (!k.hasVariant() && var == 0) || (k.variant == var);
+    }
 
-	public static boolean matchHeads(MaterialStorage k, String ex1, String ex2) {
-		boolean exb1 = (!k.hasSpecialValue() || k.hasSpecialValue2()
-				|| (ex1 != null && (ex1.equals("-1") || k.getSpecialValue().equals(ex1))));
-		boolean exb2 = (!k.hasSpecialValue2()
-				|| (ex2 != null && (ex2.equals("-1") || k.getSpecialValue2().equals(ex2))));
-		return exb1 && exb2;
-	}
+    public static boolean matchHeads(final MaterialStorage k, final String ex1, final String ex2) {
+        final boolean exb1 = (!k.hasSpecialValue() || k.hasSpecialValue2()
+                || (ex1 != null && (ex1.equals("-1") || k.getSpecialValue().equals(ex1))));
+        final boolean exb2 = (!k.hasSpecialValue2() || (ex2 != null && (ex2.equals("-1") || k.getSpecialValue2().equals(ex2))));
+        return exb1 && exb2;
+    }
 
-	public static MaterialStorage getMS(ItemStack is) {
-		return getMS(is, getVariant(is));
-	}
+    public static MaterialStorage getMS(final ItemStack is) { return MaterialStorage.getMS(is, MaterialStorage.getVariant(is)); }
 
-	@SuppressWarnings("UnstableApiUsage")
-	public static MaterialStorage getMS(ItemStack is, int variant) {
+    @SuppressWarnings("UnstableApiUsage")
+    public static MaterialStorage getMS(final ItemStack is, final int variant) {
 
-		if (is == null) {
-			return EMPTY;
-		}
+        if (is == null || is.getItemMeta() == null) {
+            return MaterialStorage.EMPTY;
+        }
 
-		String extraData = is.getType() == MultiVersionLookup.getSkull() ? ((SkullMeta) is.getItemMeta()).getOwner()
-				: null;
-		String temp = null;
-		if (extraData != null) {
-			GameProfile profile = XSkull.of(is).getProfile();
-			if (profile != null)
-				temp = PlayerProfiles.getTextureValue(profile);
-		}
-		try {
-			return getMS(is.getType(), is.getItemMeta().hasCustomModelData() ? is.getItemMeta().getCustomModelData() : 0, variant,
-					is.getType() == MultiVersionLookup.getSkull() ? ((SkullMeta) is.getItemMeta()).getOwner() : null, temp);
+        final String extraData = is.getType() == MultiVersionLookup.getSkull() ? ((SkullMeta) is.getItemMeta()).getOwner() : null;
+        String temp = null;
+        if (extraData != null) {
+            final GameProfile profile = XSkull.of(is).getProfile();
+            if (profile != null)
+                temp = PlayerProfiles.getTextureValue(profile);
+        }
+        try {
+            return MaterialStorage.getMS(is.getType(), is.getItemMeta().hasCustomModelData() ? is.getItemMeta().getCustomModelData() : 0, variant,
+                    is.getType() == MultiVersionLookup.getSkull() ? ((SkullMeta) is.getItemMeta()).getOwner() : null, temp);
 
-		} catch (Error | Exception e4) {
-		}
-		return getMS(is.getType(), is.getDurability(), variant,
-				is.getType() == MultiVersionLookup.getSkull() ? ((SkullMeta) is.getItemMeta()).getOwner() : null, temp);
-	}
+        } catch (Error | Exception e4) {
+            if (QAMain.DEBUG)
+                e4.printStackTrace();
+        }
 
-	public static int getVariant(ItemStack is) {
-		if (is != null)
-			if (is.hasItemMeta() && is.getItemMeta().hasLore()) {
-				for (String lore : is.getItemMeta().getLore()) {
-					if (lore.startsWith(QAMain.S_ITEM_VARIANTS_NEW)) {
-						try {
-							int id = Integer.parseInt(lore.split(QAMain.S_ITEM_VARIANTS_NEW)[1].trim());
-							return id;
-						} catch (Error | Exception e4) {
-							e4.printStackTrace();
-							return 0;
-						}
-					} else if (lore.startsWith(QAMain.S_ITEM_VARIANTS_LEGACY)) {
-						try {
-							int id = Integer.parseInt(lore.split(QAMain.S_ITEM_VARIANTS_LEGACY)[1].trim());
-							return id;
-						} catch (Error | Exception e4) {
-							e4.printStackTrace();
-							return 0;
-						}
-					}
-				}
-			}
-		return 0;
-	}
+        return MaterialStorage.getMS(is.getType(), ((Damageable) is.getItemMeta()).getDamage(), variant,
+                is.getType() == MultiVersionLookup.getSkull() ? ((SkullMeta) is.getItemMeta()).getOwningPlayer().getName() : null, temp);
+    }
 
-	public int getData() {
-		return d;
-	}
+    public static int getVariant(final ItemStack is) {
+        if (is != null)
+            if (is.hasItemMeta() && is.getItemMeta().hasLore()) {
+                for (final String lore : is.getItemMeta().getLore()) {
+                    if (lore.startsWith(QAMain.S_ITEM_VARIANTS_NEW)) {
+                        try {
+                            final int id = Integer.parseInt(lore.split(QAMain.S_ITEM_VARIANTS_NEW)[1].trim());
+                            return id;
+                        } catch (Error | Exception e4) {
+                            if (QAMain.DEBUG)
+                                e4.printStackTrace();
+                            return 0;
+                        }
+                    } else if (lore.startsWith(QAMain.S_ITEM_VARIANTS_LEGACY)) {
+                        try {
+                            final int id = Integer.parseInt(lore.split(QAMain.S_ITEM_VARIANTS_LEGACY)[1].trim());
+                            return id;
+                        } catch (Error | Exception e4) {
+                            if (QAMain.DEBUG)
+                                e4.printStackTrace();
+                            return 0;
+                        }
+                    }
+                }
+            }
+        return 0;
+    }
 
-	public boolean hasSpecialValue() {
-		return specialValues != null;
-	}
+    public int getData() { return this.d; }
 
-	public String getSpecialValue() {
-		return specialValues;
-	}
+    public boolean hasSpecialValue() { return this.specialValues != null; }
 
-	public void setSpecialValue(String s) {
-		this.specialValues = s;
-	}
+    public String getSpecialValue() { return this.specialValues; }
 
-	public boolean hasSpecialValue2() {
-		return specialValues2 != null;
-	}
+    public void setSpecialValue(final String s) { this.specialValues = s; }
 
-	public String getSpecialValue2() {
-		return specialValues2;
-	}
+    public boolean hasSpecialValue2() { return this.specialValues2 != null; }
 
-	public void setSpecialValue2(String s) {
-		this.specialValues2 = s;
-	}
+    public String getSpecialValue2() { return this.specialValues2; }
 
-	public Material getMat() {
-		return m;
-	}
+    public void setSpecialValue2(final String s) { this.specialValues2 = s; }
 
-	public boolean hasVariant() {
-		return variant > 0;
-	}
+    public Material getMat() { return this.m; }
 
-	public int getVariant() {
-		return variant;
-	}
+    public boolean hasVariant() { return this.variant > 0; }
 
-	@Override
-	public String toString() {
-		return "MaterialStorage{" +
-				"d=" + d +
-				", m=" + m +
-				", variant=" + variant +
-				", specialValues='" + specialValues + '\'' +
-				", specialValues2='" + specialValues2 + '\'' +
-				'}';
-	}
+    public int getVariant() { return this.variant; }
 
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (o == null || getClass() != o.getClass()) return false;
-		MaterialStorage that = (MaterialStorage) o;
-		return d == that.d && variant == that.variant && m == that.m && Objects.equals(specialValues, that.specialValues) && Objects.equals(specialValues2, that.specialValues2);
-	}
+    @Override
+    public String toString() {
+        return "MaterialStorage{" + "d=" + this.d + ", m=" + this.m + ", variant=" + this.variant + ", specialValues='" + this.specialValues
+                + '\'' + ", specialValues2='" + this.specialValues2 + '\'' + '}';
+    }
 
-	@Override
-	public int hashCode() {
-		return Objects.hash(d, m, variant, specialValues, specialValues2);
-	}
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o)
+            return true;
+        if (o == null || this.getClass() != o.getClass())
+            return false;
+        final MaterialStorage that = (MaterialStorage) o;
+        return this.d == that.d && this.variant == that.variant && this.m == that.m
+                && Objects.equals(this.specialValues, that.specialValues) && Objects.equals(this.specialValues2, that.specialValues2);
+    }
+
+    @Override
+    public int hashCode() { return Objects.hash(this.d, this.m, this.variant, this.specialValues, this.specialValues2); }
 }

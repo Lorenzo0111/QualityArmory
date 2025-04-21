@@ -14,159 +14,159 @@ import me.zombie_striker.qg.handlers.MultiVersionLookup;
 
 public class ArmoryYML {
 
-	FileConfiguration fileConfig;
-	File file;
-	public boolean saveNow = false;
+    FileConfiguration fileConfig;
+    File file;
+    public boolean saveNow = false;
 
-	public ArmoryYML(File file) {
-		this.file = file;
-		if (!file.getParentFile().exists())
-			file.getParentFile().mkdirs();
-		if (!file.exists())
-			try {
-				file.createNewFile();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		fileConfig = CommentYamlConfiguration.loadConfiguration(file);
-	}
+    public ArmoryYML(final File file) {
+        this.file = file;
+        if (!file.getParentFile().exists())
+            file.getParentFile().mkdirs();
+        if (!file.exists())
+            try {
+                file.createNewFile();
+            } catch (final IOException e) {
+                e.printStackTrace();
+            }
+        this.fileConfig = CommentYamlConfiguration.loadConfiguration(file);
+    }
 
-	public Object get(String path) {
-		return fileConfig.get(path);
-	}
-	public long getLong(String path) {
-		return fileConfig.getLong(path);
-	}
+    public Object get(final String path) { return this.fileConfig.get(path); }
 
-	public boolean contains(String path) {
-		return fileConfig.contains(path);
-	}
+    public long getLong(final String path) { return this.fileConfig.getLong(path); }
 
-	public ArmoryYML set(String name, Object v) {
-		return set(false, name,v);
-	}
-	public ArmoryYML set(boolean force, String name, Object v) {
-		long lastmodifiedFile = file.lastModified();
-		long lastmodifiedInternal = contains("lastModifiedByQA") ? getLong("lastModifiedByQA") :  (  contains("AllowUserModifications") && fileConfig.getBoolean("AllowUserModifications") ? 0 : System.currentTimeMillis());
+    public boolean contains(final String path) { return this.fileConfig.contains(path); }
 
-		if(!force && lastmodifiedFile-lastmodifiedInternal > 5000) {
-			return this; //The file has been changed sometime after QA made any changes.
-		}
-		if (!contains(name) || !get(name).equals(v)) {
-			fileConfig.set(name, v);
-			saveNow = true;
-		}
-		return this;
-	}
-	public ArmoryYML verify(String name, Object v) {
-		if (!contains(name)) {
-			fileConfig.set(name, v);
-			saveNow = true;
-		}
-		return this;
-	}
-	
-	public void done() {
-		verifyAllTagsExist();
-		if (saveNow) {
-			save();
-		}
-	}
+    public ArmoryYML set(final String name, final Object v) { return this.set(false, name, v); }
 
-	public void save() {
-		try {
-			putTimeStamp();
-			fileConfig.save(file);
-			saveNow = false;
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
+    public ArmoryYML set(final boolean force, final String name, final Object v) {
+        final long lastmodifiedFile = this.file.lastModified();
+        final long lastmodifiedInternal = this.contains("lastModifiedByQA") ? this.getLong("lastModifiedByQA")
+                : (this.contains("AllowUserModifications") && this.fileConfig.getBoolean("AllowUserModifications") ? 0
+                        : System.currentTimeMillis());
 
-	@SuppressWarnings("deprecation")
-	public ArmoryYML setSkullType(String skullowner) {
-		set("id", org.bukkit.SkullType.PLAYER.ordinal());
-		set( "material", MultiVersionLookup.getSkull().name());
-		set( "skull_owner", skullowner);
-		set( "skull_owner_custom_url", Ammo.NO_SKIN_STRING);
-		return this;
-	}
+        if (!force && lastmodifiedFile - lastmodifiedInternal > 5000) {
+            return this; // The file has been changed sometime after QA made any changes.
+        }
+        if (!this.contains(name) || !this.get(name).equals(v)) {
+            this.fileConfig.set(name, v);
+            this.saveNow = true;
+        }
+        return this;
+    }
 
-	public ArmoryYML setInvalid(boolean invalid) {
-		set( "invalid", invalid);
-		return this;
-	}
+    public ArmoryYML verify(final String name, final Object v) {
+        if (!this.contains(name)) {
+            this.fileConfig.set(name, v);
+            this.saveNow = true;
+        }
+        return this;
+    }
 
-	public ArmoryYML setLore(List<String> lore) {
-		set( "lore", lore);
-		return this;
-	}
-	public ArmoryYML setLore(String... lore) {
-		set( "lore", lore);
-		return this;
-	}
+    public void done() {
+        this.verifyAllTagsExist();
+        if (this.saveNow) {
+            this.save();
+        }
+    }
 
-	public ArmoryYML setVariant(int var) {
-		set( "variant", var);
-		return this;
-	}
+    public void save() {
+        try {
+            this.putTimeStamp();
+            this.fileConfig.save(this.file);
+            this.saveNow = false;
+        } catch (final IOException e) {
+            e.printStackTrace();
+        }
+    }
 
-	public ArmoryYML setDurability(int durib) {
-		set( "durability", durib);
-		return this;
-	}
+    @SuppressWarnings("deprecation")
+    public ArmoryYML setSkullType(final String skullowner) {
+        this.set("id", org.bukkit.SkullType.PLAYER.ordinal());
+        this.set("material", MultiVersionLookup.getSkull().name());
+        this.set("skull_owner", skullowner);
+        this.set("skull_owner_custom_url", Ammo.NO_SKIN_STRING);
+        return this;
+    }
 
-	public ArmoryYML setPrice(int cost) {
-		set( "price", cost);
-		return this;
-	}
-	public ArmoryYML setSoundOnEquip(String sound) {
-		set( "sound_equip", sound);
-		return this;
-	}
-	public ArmoryYML setSoundOnHit(String sound) {
-		set( "sound_meleehit", sound);
-		return this;
-	}
+    public ArmoryYML setInvalid(final boolean invalid) {
+        this.set("invalid", invalid);
+        return this;
+    }
 
-	public ArmoryYML setMaterial(Material mat) {
-		set( "material", mat.name());
-		return this;
-	}
-	public ArmoryYML setWeaponSound(WeaponSounds sound) {
-		set( "weaponsounds", sound.getSoundName());
-		return this;
-	}
-	public ArmoryYML setMaxItemStack(int amount){
-		set("maxItemStack", amount);
-		return this;
-	}
+    public ArmoryYML setLore(final List<String> lore) {
+        this.set("lore", lore);
+        return this;
+    }
 
-	public void verifyAllTagsExist() {
-		if(contains("AllowUserModifications")){
-			boolean allowChanges = (boolean) get("AllowUserModifications");
-			set(true,"AllowUserModifications",null);
-			if(!allowChanges)
-			putTimeStamp();
-		}
-		verify("invalid", false);
-		verify("weaponsounds", WeaponSounds.getSoundByType(WeaponType.RIFLE));
-		verify("damage", 3);
+    public ArmoryYML setLore(final String... lore) {
+        this.set("lore", lore);
+        return this;
+    }
 
-		verify("durability", 1000);
+    public ArmoryYML setVariant(final int var) {
+        this.set("variant", var);
+        return this;
+    }
 
-		verify("price", 1000);
-		verify("maxItemStack", 1);
-	}
+    public ArmoryYML setDurability(final int durib) {
+        this.set("durability", durib);
+        return this;
+    }
 
-	public ArmoryYML putTimeStamp(){
-			fileConfig.set("lastModifiedByQA", System.currentTimeMillis());
-			saveNow = true;
-		return this;
-	}
-	public long getTimestamp(){
-		return contains("lastModifiedByQA") ? (long) get("lastModifiedByQA"): 0;
-	}
+    public ArmoryYML setPrice(final int cost) {
+        this.set("price", cost);
+        return this;
+    }
 
+    public ArmoryYML setSoundOnEquip(final String sound) {
+        this.set("sound_equip", sound);
+        return this;
+    }
+
+    public ArmoryYML setSoundOnHit(final String sound) {
+        this.set("sound_meleehit", sound);
+        return this;
+    }
+
+    public ArmoryYML setMaterial(final Material mat) {
+        this.set("material", mat.name());
+        return this;
+    }
+
+    public ArmoryYML setWeaponSound(final WeaponSounds sound) {
+        this.set("weaponsounds", sound.getSoundName());
+        return this;
+    }
+
+    public ArmoryYML setMaxItemStack(final int amount) {
+        this.set("maxItemStack", amount);
+        return this;
+    }
+
+    public void verifyAllTagsExist() {
+        if (this.contains("AllowUserModifications")) {
+            final boolean allowChanges = (boolean) this.get("AllowUserModifications");
+            this.set(true, "AllowUserModifications", null);
+            if (!allowChanges)
+                this.putTimeStamp();
+        }
+        this.verify("invalid", false);
+        this.verify("weaponsounds", WeaponSounds.getSoundByType(WeaponType.RIFLE));
+        this.verify("damage", 3);
+
+        this.verify("durability", 1000);
+
+        this.verify("price", 1000);
+        this.verify("maxItemStack", 1);
+    }
+
+    public ArmoryYML putTimeStamp() {
+        this.fileConfig.set("lastModifiedByQA", System.currentTimeMillis());
+        this.saveNow = true;
+        return this;
+    }
+
+    public long getTimestamp() { return this.contains("lastModifiedByQA") ? (long) this.get("lastModifiedByQA") : 0; }
 
 }

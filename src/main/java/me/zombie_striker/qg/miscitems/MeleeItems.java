@@ -13,70 +13,58 @@ import org.bukkit.inventory.ItemStack;
 import me.zombie_striker.customitemmanager.ArmoryBaseObject;
 import me.zombie_striker.customitemmanager.MaterialStorage;
 
-public class MeleeItems extends CustomBaseObject implements ArmoryBaseObject{
+public class MeleeItems extends CustomBaseObject implements ArmoryBaseObject {
 
-	List<UUID> medkitHeartUsage = new ArrayList<>();
-	HashMap<UUID, Long> lastTimeHealed = new HashMap<>();
-	HashMap<UUID, Double> PercentTimeHealed = new HashMap<>();
+    List<UUID> medkitHeartUsage = new ArrayList<>();
+    HashMap<UUID, Long> lastTimeHealed = new HashMap<>();
+    HashMap<UUID, Double> PercentTimeHealed = new HashMap<>();
 
-	int damage = 1;
+    int damage = 1;
 
-	public MeleeItems(MaterialStorage ms, String name, String displayname, ItemStack[] ings, int cost, int damage) {
-		super(name,ms,displayname,null,false);
-		this.setPrice(cost);
-		super.setIngredients(ings);
-		this.damage = damage;
-	}
+    public MeleeItems(final MaterialStorage ms, final String name, final String displayname, final ItemStack[] ings, final int cost,
+            final int damage) {
+        super(name, ms, displayname, null, false);
+        this.setPrice(cost);
+        super.setIngredients(ings);
+        this.damage = damage;
+    }
 
+    @Override
+    public int getCraftingReturn() { return 1; }
 
-	@Override
-	public int getCraftingReturn() {
-		return 1;
-	}
+    public int getDamage() { return this.damage; }
 
+    @Override
+    public boolean is18Support() { return false; }
 
-	public int getDamage() {
-		return damage;
-	}
-	@Override
-	public boolean is18Support() {
-		return false;
-	}
+    @Override
+    public void set18Supported(final boolean b) {}
 
-	@Override
-	public void set18Supported(boolean b) {		
-	}
+    @Override
+    public boolean onRMB(final Player e, final ItemStack usedItem) { return true; }
 
-	@Override
-	public boolean onRMB(Player e, ItemStack usedItem) {
-		return true;
-	}
+    @Override
+    public boolean onShift(final Player shooter, final ItemStack usedItem, final boolean toggle) { return false; }
 
-	@Override
-	public boolean onShift(Player shooter, ItemStack usedItem, boolean toggle) {
-		return false;
-	}
+    @Override
+    public boolean onLMB(final Player e, final ItemStack usedItem) {
+        // TODO Auto-generated method stub
+        return false;
+    }
 
-	@Override
-	public boolean onLMB(Player e, ItemStack usedItem) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-	@Override
-	public ItemStack getItemStack() {
-		return CustomItemManager.getItemType("gun").getItem(this.getItemData().getMat(),this.getItemData().getData(),this.getItemData().getVariant());
-	}
+    @Override
+    public ItemStack getItemStack() {
+        return CustomItemManager.getItemType("gun").getItem(this.getItemData().getMat(), this.getItemData().getData(),
+                this.getItemData().getVariant());
+    }
 
+    @Override
+    public boolean onSwapTo(final Player shooter, final ItemStack usedItem) {
+        if (this.getSoundOnEquip() != null)
+            shooter.getWorld().playSound(shooter.getLocation(), this.getSoundOnEquip(), 1, 1);
+        return false;
+    }
 
-	@Override
-	public boolean onSwapTo(Player shooter, ItemStack usedItem) {
-		if (getSoundOnEquip() != null)
-			shooter.getWorld().playSound(shooter.getLocation(), getSoundOnEquip(), 1, 1);
-		return false;
-	}
-
-	@Override
-	public boolean onSwapAway(Player shooter, ItemStack usedItem) {
-		return false;
-	}
+    @Override
+    public boolean onSwapAway(final Player shooter, final ItemStack usedItem) { return false; }
 }

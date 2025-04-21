@@ -1,35 +1,23 @@
 package me.zombie_striker.qg.boundingbox;
 
-import me.zombie_striker.qg.handlers.BoundingBoxUtil;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
 
-public class NullBoundingBox implements AbstractBoundingBox{
-	
-	@Override
-	public boolean intersects(Entity shooter, Location check, Entity base) {
-		return false;
-	}
+public class NullBoundingBox implements AbstractBoundingBox {
 
-	@Override
-	public boolean allowsHeadshots() {
-		return true;
-	}
+    @Override
+    public boolean intersects(final Entity shooter, final Location check, final Entity base) { return false; }
 
-	@Override
-	public boolean intersectsHead(Location check, Entity base) {
-		return false;
-	}
+    @Override
+    public boolean allowsHeadshots() { return true; }
 
-	@Override
-	public boolean intersectsBody(Location check, Entity base) {
-		return false;
-	}
+    @Override
+    public boolean intersectsHead(final Location check, final Entity base) { return false; }
 
-	@Override
-	public double maximumCheckingDistance(Entity base) {
-		return 0;
-	}
+    @Override
+    public boolean intersectsBody(final Location check, final Entity base) { return false; }
+
+    @Override
+    public double maximumCheckingDistance(final Entity base) { return 0; }
 
 }

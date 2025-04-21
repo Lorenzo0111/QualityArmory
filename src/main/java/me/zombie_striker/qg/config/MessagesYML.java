@@ -5,67 +5,66 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 
-import me.zombie_striker.qg.QAMain;
 import org.bukkit.configuration.file.FileConfiguration;
+
+import me.zombie_striker.qg.QAMain;
 
 public class MessagesYML {
 
-	private FileConfiguration c;
-	private File s;
+    private final FileConfiguration c;
+    private final File s;
 
-	public MessagesYML(File f) {
-		this(null, f);
-	}
+    public MessagesYML(final File f) { this(null, f); }
 
-	public MessagesYML(String id, File f) {
-		s = f;
-		if (!f.getParentFile().exists()) {
-			f.getParentFile().mkdirs();
-		}
+    public MessagesYML(final String id, final File f) {
+        this.s = f;
+        if (!f.getParentFile().exists()) {
+            f.getParentFile().mkdirs();
+        }
 
-		if(!s.exists()) {
-			try (InputStream stream = QAMain.getInstance().getResource("lang/messages_" + id + ".yml")) {
-				if (stream == null) {
-					createFile();
-				} else {
-					Files.copy(stream, s.toPath());
-				}
-			} catch (Throwable ignored) {
-				createFile();
-			}
-		}
-		c = CommentYamlConfiguration.loadConfiguration(s);
-	}
+        if (!this.s.exists()) {
+            try (InputStream stream = QAMain.getInstance().getResource("lang/messages_" + id + ".yml")) {
+                if (stream == null) {
+                    this.createFile();
+                } else {
+                    Files.copy(stream, this.s.toPath());
+                }
+            } catch (final Throwable ignored) {
+                this.createFile();
+            }
+        }
+        this.c = CommentYamlConfiguration.loadConfiguration(this.s);
+    }
 
-	private void createFile() {
-		try {
-			s.createNewFile();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
+    private void createFile() {
+        try {
+            this.s.createNewFile();
+        } catch (final IOException e) {
+            e.printStackTrace();
+        }
+    }
 
-	public Object a(String path, Object val){
-		if(!c.contains(path)){
-			c.set(path, val);
-			save();
-			return val;
-		}
-		return c.get(path);
-	}
-	public void set(String path, Object val) {
-		c.set(path, val);
-		save();
-	}
-	public void save(){
-		try {
-			c.save(s);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-	
-	public FileConfiguration getConfig() {
-		return c;
-	}
+    public Object a(final String path, final Object val) {
+        if (!this.c.contains(path)) {
+            this.c.set(path, val);
+            this.save();
+            return val;
+        }
+        return this.c.get(path);
+    }
+
+    public void set(final String path, final Object val) {
+        this.c.set(path, val);
+        this.save();
+    }
+
+    public void save() {
+        try {
+            this.c.save(this.s);
+        } catch (final IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public FileConfiguration getConfig() { return this.c; }
 }

@@ -1,28 +1,26 @@
 package me.zombie_striker.qg.config;
 
-import me.zombie_striker.qg.guns.utils.WeaponType;
-
 import java.io.File;
 
-public class MiscYML extends ArmoryYML{
+import me.zombie_striker.qg.guns.utils.WeaponType;
 
-	private WeaponType misctype;
+public class MiscYML extends ArmoryYML {
 
-	public MiscYML(File file) {
-		super(file);
-	}
+    @SuppressWarnings("unused")
+    private WeaponType misctype;
 
-	public void setMiscType(WeaponType misctype) {
-		set("MiscType",misctype.name());
-		this.misctype = misctype;
-	}
-	public void setThrowSpeed(double speed){
-		set("ThrowSpeed",1.5);
-	}
+    public MiscYML(final File file) { super(file); }
 
-	@Override
-	public void verifyAllTagsExist() {
-		super.verifyAllTagsExist();
-		verify("ThrowSpeed",1.5);
-	}
+    public void setMiscType(final WeaponType misctype) {
+        this.set("MiscType", misctype.name());
+        this.misctype = misctype;
+    }
+
+    public void setThrowSpeed(final double speed) { this.set("ThrowSpeed", 1.5); }
+
+    @Override
+    public void verifyAllTagsExist() {
+        super.verifyAllTagsExist();
+        this.verify("ThrowSpeed", 1.5);
+    }
 }

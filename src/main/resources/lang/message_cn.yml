@@ -1,26 +1,26 @@
 Prefix: "&8[&2质量军械库&8]&r"
-NoPermAnvilMessage: ' &a你没有权限使用这个军火库.右键单击进入铁砧.'
-NoPerm: '&c你没有权限使用这个命令'
-ShopName: '武器商店页面:'
-CraftingBenchName: '枪械合成页面:'
+NoPermAnvilMessage: " &a你没有权限使用这个军火库.右键单击进入铁砧."
+NoPerm: "&c你没有权限使用这个命令"
+ShopName: "武器商店页面:"
+CraftingBenchName: "枪械合成页面:"
 Missing_Ingredients: 你没有足够的材料来制作它
-NoResourcepackMessage1: ' &c&l载入材质包中...'
-NoResourcepackMessage2: ' &f请接受下载材质包来看到枪械正确的外观'
-Lore_Ammo: '&a弹药'
-lore_bullets: '&a子弹'
-Lore_Damage: '&a伤害'
+NoResourcepackMessage1: " &c&l载入材质包中..."
+NoResourcepackMessage2: " &f请接受下载材质包来看到枪械正确的外观"
+Lore_Ammo: "&a弹药"
+lore_bullets: "&a子弹"
+Lore_Damage: "&a伤害"
 Lore_Durib: 耐久度
 Lore_ingredients: 材料
-Lore_Variants: '&7变种:'
-Lore_Price: '&6价格: '
-Lore_DamagePerSecond: '&2每秒伤害'
+Lore_Variants: "&7变种:"
+Lore_Price: "&6价格: "
+Lore_DamagePerSecond: "&2每秒伤害"
 Lore_Crafts: 制造数量
 Lore_Returns: 获得数量
-Reloading_Message: '[装填中...]'
-State_AmmoCount: '[%total%]'
-State_OutOfAmmo: '[弹药已耗尽]'
-HotbarMessage: '%name% = %amount%/%max% %state%'
-Kick_message_if_player_denied_request: '&c 你被踢出服务器，因为你没有接受安装材质包'
+Reloading_Message: "[装填中...]"
+State_AmmoCount: "[%total%]"
+State_OutOfAmmo: "[弹药已耗尽]"
+HotbarMessage: "%name% = %amount%/%max% %state%"
+Kick_message_if_player_denied_request: "&c 你被踢出服务器，因为你没有接受安装材质包"
 Lore-LMB-Single: §8[左键] 点射
 Lore-LMB-FullAuto: §8[Shift]+[左键] 连续射击
 Lore-RMB-Reload: §8[右键] 装填弹药
@@ -29,21 +29,21 @@ Lore-Ironsights-Sneak: §8[Shift] 瞄准
 Lore-Reload-Dropitem: §8[F] 换弹
 Lore-Reload-RMB: §8[右键] 换弹
 Lore-Helmet-RMB: §8[右键] 装备头盔
-Shop_Confirm: '&a花费了 $%cost% 购买了 %item% ！'
+Shop_Confirm: "&a花费了 $%cost% 购买了 %item% ！"
 Resourcepack_InCaseOfCrash: 如果自动下载材质包时造成客户端崩溃,请拒绝材质包下载请求,并输入指令/qa getResourcepack来下载材质包.
 Resourcepack_Download: 下载材质包来查看枪械外观(下载可能需要一段时间)
 Resourcepack_NowBypass: 通过使用这个指令,你已经将材质包添加到白名单中,你将不会收到材质包下载请求.
 Resourcepack_NowOptIn: 通过使用这个指令, 你已经将材质包从白名单中移除.你将会收到材质包下载请求.
-Medkit-FullyHealed: '&f你很健康，不需要使用这个物品！'
+Medkit-FullyHealed: "&f你很健康，不需要使用这个物品！"
 Medkit-Healing: 治疗中
-Medkit-Bleeding: '失血速率:'
+Medkit-Bleeding: "失血速率:"
 Medkit-HEALING_HEARTS_AMOUNT: 1.0
 Medkit-HEALING_WEAPPING_DELAY_IN_SECONDS: 6.0
-Medkit-Lore_RMB: '&f[右键] 治疗自己！'
+Medkit-Lore_RMB: "&f[右键] 治疗自己！"
 Bleeding:
-  Losingconsciousness: '&c你因流血正在失去知觉！'
-  StartBleeding: '&c你正在流血！找一个医疗包来止血！'
-  ProtectedByKevlar: '&a防弹衣可以减少子弹对你造成的伤害！'
+  Losingconsciousness: "&c你因流血正在失去知觉！"
+  StartBleeding: "&c你正在流血！找一个医疗包来止血！"
+  ProtectedByKevlar: "&a防弹衣可以减少子弹对你造成的伤害！"
 EntityType:
   IRON_INGOT: 铁锭
   GUNPOWDER: 火药

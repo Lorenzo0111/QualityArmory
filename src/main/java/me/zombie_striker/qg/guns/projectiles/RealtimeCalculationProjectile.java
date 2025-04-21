@@ -8,7 +8,7 @@ import me.zombie_striker.qg.guns.Gun;
 
 public interface RealtimeCalculationProjectile {
 
-	public String getName();
-	
-	public void spawn(final Gun g, final Location starting, final Player player, final Vector dir);
+    public String getName();
+
+    public void spawn(final Gun g, final Location starting, final Player player, final Vector dir);
 }

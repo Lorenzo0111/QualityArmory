@@ -16,6 +16,7 @@ import java.util.UUID;
 public class BurstFireCharger implements ChargingHandler {
 
     public static HashMap<UUID, BukkitTask> shooters = new HashMap<>();
+    public static HashMap<UUID, BukkitTask> shooters = new HashMap<>();
 
     public BurstFireCharger() {
         ChargingManager.add(this);

@@ -1,13 +1,8 @@
 package me.zombie_striker.qg.guns.utils;
 
-import me.zombie_striker.customitemmanager.OLD_ItemFact;
-import me.zombie_striker.qg.QAMain;
-import me.zombie_striker.qg.ammo.Ammo;
-import me.zombie_striker.qg.api.QualityArmory;
-import me.zombie_striker.qg.api.WeaponInteractEvent;
-import me.zombie_striker.qg.guns.Gun;
-import me.zombie_striker.qg.handlers.IronsightsHandler;
-import me.zombie_striker.qg.handlers.Update19OffhandChecker;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -16,31 +11,35 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
-import java.util.ArrayList;
-import java.util.List;
+import me.zombie_striker.qg.QAMain;
+import me.zombie_striker.qg.ammo.Ammo;
+import me.zombie_striker.qg.api.QualityArmory;
+import me.zombie_striker.qg.api.WeaponInteractEvent;
+import me.zombie_striker.qg.guns.Gun;
+import me.zombie_striker.qg.handlers.IronsightsHandler;
 
 public class GunRefillerRunnable {
 
     private static List<GunRefillerRunnable> allGunRefillers = new ArrayList<>();
 
-    public static boolean hasItemReloaded(Player reloader, ItemStack is) {
-        for (GunRefillerRunnable s : allGunRefillers) {
+    public static boolean hasItemReloaded(final Player reloader, final ItemStack is) {
+        for (final GunRefillerRunnable s : GunRefillerRunnable.allGunRefillers) {
             if (is.isSimilar(s.reloadedItem))
                 if (reloader == null || reloader.equals(s.reloader)) {
-                    if (!s.getTask().isCancelled()) return true;
+                    if (!s.getTask().isCancelled())
+                        return true;
                 }
         }
         return false;
     }
 
-    public static boolean hasItemReloaded(ItemStack is) {
-        return hasItemReloaded(null, is);
-    }
+    public static boolean hasItemReloaded(final ItemStack is) { return GunRefillerRunnable.hasItemReloaded(null, is); }
 
-    public static boolean isReloading(Player reloader) {
-        for (GunRefillerRunnable s : allGunRefillers) {
+    public static boolean isReloading(final Player reloader) {
+        for (final GunRefillerRunnable s : GunRefillerRunnable.allGunRefillers) {
             if (reloader == null || reloader.equals(s.reloader)) {
-                if (!s.getTask().isCancelled()) return true;
+                if (!s.getTask().isCancelled())
+                    return true;
             }
         }
         return false;
@@ -52,24 +51,17 @@ public class GunRefillerRunnable {
     private int addedAmount = 0;
     private Player reloader = null;
 
-    public int getOriginalAmount() {
-        return originalAmount;
-    }
+    public int getOriginalAmount() { return this.originalAmount; }
 
-    public int getAddedAmount() {
-        return addedAmount;
-    }
+    public int getAddedAmount() { return this.addedAmount; }
 
-    public BukkitTask getTask() {
-        return r;
-    }
+    public BukkitTask getTask() { return this.r; }
 
-    public ItemStack getItem() {
-        return reloadedItem;
-    }
+    public ItemStack getItem() { return this.reloadedItem; }
 
     public GunRefillerRunnable(final Player player, final ItemStack modifiedOriginalItem, final Gun g, final int slot,
-                               final int originalAmount, final int reloadAmount, double seconds, Ammo ammo, int subtractAmount, boolean removeAmmo) {
+            final int originalAmount, final int reloadAmount, final double seconds, final Ammo ammo, final int subtractAmount,
+            final boolean removeAmmo) {
         final GunRefillerRunnable gg = this;
         gg.reloader = player;
 
@@ -78,10 +70,10 @@ public class GunRefillerRunnable {
 
         this.reloadedItem = modifiedOriginalItem.clone();
 
-        r = new BukkitRunnable() {
+        this.r = new BukkitRunnable() {
             @Override
             public void run() {
-                ItemMeta newim = modifiedOriginalItem.getItemMeta();
+                final ItemMeta newim = modifiedOriginalItem.getItemMeta();
                 boolean shouldContinue = player.getInventory().getHeldItemSlot() == slot;
 
                 if (shouldContinue && removeAmmo) {
@@ -102,7 +94,7 @@ public class GunRefillerRunnable {
                                 player.getWorld().playSound(player.getLocation(), Sound.valueOf("BLOCK_LEVER_CLICK"), 5, 1);
                             }
                         }
-                    } catch (Error e2) {
+                    } catch (final Error e2) {
                         try {
                             player.getWorld().playSound(player.getLocation(), Sound.valueOf("CLICK"), 5, 1);
                         } catch (Error | Exception e3) {
@@ -113,18 +105,19 @@ public class GunRefillerRunnable {
 
                 newim.setDisplayName(g.getDisplayName());
                 modifiedOriginalItem.setItemMeta(newim);
-                if (shouldContinue) Gun.updateAmmo(g, modifiedOriginalItem, reloadAmount);
+                if (shouldContinue)
+                    Gun.updateAmmo(g, modifiedOriginalItem, reloadAmount);
 
-                ItemStack current = player.getInventory().getItem(slot);
+                final ItemStack current = player.getInventory().getItem(slot);
                 int newSlot = slot;
                 boolean different = false;
-                if (current == null || !current.equals(reloadedItem)) {
+                if (current == null || !current.equals(GunRefillerRunnable.this.reloadedItem)) {
                     newSlot = -8;
                     different = true;
                     for (int i = 0; i < player.getInventory().getSize(); i++) {
-                        ItemStack check = player.getInventory().getItem(i);
+                        final ItemStack check = player.getInventory().getItem(i);
                         if (check != null) {
-                            Gun g2 = QualityArmory.getGun(check);
+                            final Gun g2 = QualityArmory.getGun(check);
                             if (g2 != null && g2 == g) {
                                 if (check.getItemMeta().getDisplayName().contains(QAMain.S_RELOADING_MESSAGE)) {
                                     newSlot = i;
@@ -138,7 +131,6 @@ public class GunRefillerRunnable {
                 if (newSlot > -2) {
                     player.getInventory().setItem(newSlot, modifiedOriginalItem);
 
-
                     if (!different && player.isSneaking() && g.hasIronSights() && !QAMain.enableIronSightsON_RIGHT_CLICK) {
                         IronsightsHandler.aim(player);
                         QAMain.toggleNightvision(player, g, true);
@@ -151,15 +143,14 @@ public class GunRefillerRunnable {
                     }
                 }
 
-
                 Bukkit.getPluginManager().callEvent(new WeaponInteractEvent(player, g, WeaponInteractEvent.InteractType.RELOAD));
                 if (!QAMain.reloadingTasks.containsKey(player.getUniqueId())) {
                     return;
                 }
-                List<GunRefillerRunnable> rr = QAMain.reloadingTasks.get(player.getUniqueId());
+                final List<GunRefillerRunnable> rr = QAMain.reloadingTasks.get(player.getUniqueId());
                 rr.remove(GunRefillerRunnable.this);
-                reloadedItem = null;
-                allGunRefillers.remove(gg);
+                GunRefillerRunnable.this.reloadedItem = null;
+                GunRefillerRunnable.allGunRefillers.remove(gg);
 
                 if (rr.isEmpty()) {
                     QAMain.reloadingTasks.remove(player.getUniqueId());
@@ -169,12 +160,12 @@ public class GunRefillerRunnable {
             }
         }.runTaskLater(QAMain.getInstance(), (long) (20 * seconds));
 
-        allGunRefillers.add(gg);
+        GunRefillerRunnable.allGunRefillers.add(gg);
 
         if (!QAMain.reloadingTasks.containsKey(player.getUniqueId())) {
             QAMain.reloadingTasks.put(player.getUniqueId(), new ArrayList<GunRefillerRunnable>());
         }
-        List<GunRefillerRunnable> rr = QAMain.reloadingTasks.get(player.getUniqueId());
+        final List<GunRefillerRunnable> rr = QAMain.reloadingTasks.get(player.getUniqueId());
         rr.add(this);
         QAMain.reloadingTasks.put(player.getUniqueId(), rr);
     }

@@ -1,15 +1,15 @@
 package me.zombie_striker.qg.handlers;
 
-import me.zombie_striker.customitemmanager.CustomBaseObject;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
+import me.zombie_striker.customitemmanager.CustomBaseObject;
 import net.milkbowl.vault.economy.Economy;
 
 public class EconHandler {
-	
-	public static Economy econ;
+
+    public static Economy econ;
 
 	public static boolean setupEconomy() {
 		if (Bukkit.getServer().getPluginManager().getPlugin("Vault") == null) return false;

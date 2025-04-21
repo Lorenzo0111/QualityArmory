@@ -1,21 +1,20 @@
 package me.zombie_striker.qg.handlers;
 
+import org.bukkit.Bukkit;
+import org.bukkit.Material;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+
 import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.api.QualityArmory;
 import me.zombie_striker.qg.api.WeaponInteractEvent;
 import me.zombie_striker.qg.guns.Gun;
-import org.bukkit.*;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class IronsightsHandler {
 
-	public static Material ironsightsMaterial = Material.DIAMOND_AXE;
-	public static int ironsightsData = 21;
-	public static String ironsightsDisplay = "Iron Sights Enabled";
+    public static Material ironsightsMaterial = Material.DIAMOND_AXE;
+    public static int ironsightsData = 21;
+    public static String ironsightsDisplay = "Iron Sights Enabled";
 
 
 	public static void aim(Player player){
@@ -35,44 +34,46 @@ public class IronsightsHandler {
 				}
 				final int ammo = Gun.getAmount(player);
 
-				player.getInventory().setItemInOffHand(player.getItemInHand());
-				player.setItemInHand(QualityArmory.getIronSightsItemStack());
-				Gun.updateAmmo(null, player, ammo);
-			}
-	}
-	public static void unAim(Player player){
-			if(QualityArmory.isIronSights(player.getItemInHand())){
-				if (player.getInventory().getItemInOffHand() != null && QualityArmory.isGun(player.getInventory().getItemInOffHand())) {
-					Gun gun = QualityArmory.getGun(player.getInventory().getItemInOffHand());
-					QAMain.toggleNightvision(player, null, false);
-					Bukkit.getPluginManager().callEvent(new WeaponInteractEvent(player, gun, WeaponInteractEvent.InteractType.UNAIM));
-				}
+            player.getInventory().setItemInOffHand(player.getInventory().getItemInMainHand());
+            player.getInventory().setItemInMainHand(QualityArmory.getIronSightsItemStack());
+            Gun.updateAmmo(null, player, ammo);
+        }
+    }
 
-				final int ammo = Gun.getAmount(player);
+    public static void unAim(final Player player) {
+        if (QualityArmory.isIronSights(player.getInventory().getItemInMainHand())) {
+            if (player.getInventory().getItemInOffHand() != null && QualityArmory.isGun(player.getInventory().getItemInOffHand())) {
+                final Gun gun = QualityArmory.getGun(player.getInventory().getItemInOffHand());
+                QAMain.toggleNightvision(player, null, false);
+                Bukkit.getPluginManager().callEvent(new WeaponInteractEvent(player, gun, WeaponInteractEvent.InteractType.UNAIM));
+            }
 
-				player.getInventory().setItemInMainHand(player.getInventory().getItemInOffHand());
-				player.getInventory().setItemInOffHand(null);
-				//offHandStorage.remove(player);
+            final int ammo = Gun.getAmount(player);
 
-				Gun.updateAmmo(null, player, ammo);
-			}
-	}
+            player.getInventory().setItemInMainHand(player.getInventory().getItemInOffHand());
+            player.getInventory().setItemInOffHand(null);
+            // offHandStorage.remove(player);
 
-	public static boolean isAiming(Player player){
-			if(QualityArmory.isIronSights(player.getItemInHand())){
-				return true;
-			}
-		return false;
-	}
-	public static ItemStack getItemAiming(Player player) {
-			if (!QualityArmory.isIronSights(player.getItemInHand())) {
-				return player.getItemInHand();
-			} else {
-				return player.getInventory().getItemInOffHand();
-			}
-	}
-	public static Gun getGunUsed(Player player){
-		return QualityArmory.getGun(getItemAiming(player));
-	}
-	public static void setItemAiming(Player player){}
+            Gun.updateAmmo(null, player, ammo);
+        }
+    }
+
+    public static boolean isAiming(final Player player) {
+        if (QualityArmory.isIronSights(player.getInventory().getItemInMainHand())) {
+            return true;
+        }
+        return false;
+    }
+
+    public static ItemStack getItemAiming(final Player player) {
+        if (!QualityArmory.isIronSights(player.getInventory().getItemInMainHand())) {
+            return player.getInventory().getItemInMainHand();
+        } else {
+            return player.getInventory().getItemInOffHand();
+        }
+    }
+
+    public static Gun getGunUsed(final Player player) { return QualityArmory.getGun(IronsightsHandler.getItemAiming(player)); }
+
+    public static void setItemAiming(final Player player) {}
 }

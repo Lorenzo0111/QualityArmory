@@ -1,6 +1,7 @@
 package me.zombie_striker.qg.hooks.protection.implementation;
 
-import me.zombie_striker.qg.hooks.protection.ProtectionHook;
+import java.util.Optional;
+
 import org.bukkit.Location;
 import org.codemc.worldguardwrapper.WorldGuardWrapper;
 import org.codemc.worldguardwrapper.flag.IWrappedFlag;
@@ -8,7 +9,7 @@ import org.codemc.worldguardwrapper.flag.WrappedState;
 import org.codemc.worldguardwrapper.region.IWrappedRegion;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Optional;
+import me.zombie_striker.qg.hooks.protection.ProtectionHook;
 
 public class WorldGuardHook implements ProtectionHook {
     private final WorldGuardWrapper worldGuard;
@@ -17,56 +18,56 @@ public class WorldGuardHook implements ProtectionHook {
     private final IWrappedFlag<WrappedState> blockBreak;
 
     public WorldGuardHook() {
-        worldGuard = WorldGuardWrapper.getInstance();
-        pvp = worldGuard.getFlag("PVP", WrappedState.class).orElse(createFlag("PVP"));
-        explosion = worldGuard.getFlag("OTHER-EXPLOSION", WrappedState.class).orElse(createFlag("OTHER-EXPLOSION"));
-        blockBreak = worldGuard.getFlag("BLOCK-BREAK", WrappedState.class).orElse(createFlag("BLOCK-BREAK"));
+        this.worldGuard = WorldGuardWrapper.getInstance();
+        this.pvp = this.worldGuard.getFlag("PVP", WrappedState.class).orElse(this.createFlag("PVP"));
+        this.explosion = this.worldGuard.getFlag("OTHER-EXPLOSION", WrappedState.class).orElse(this.createFlag("OTHER-EXPLOSION"));
+        this.blockBreak = this.worldGuard.getFlag("BLOCK-BREAK", WrappedState.class).orElse(this.createFlag("BLOCK-BREAK"));
     }
 
+    @SuppressWarnings("unchecked")
     @Override
-    public boolean canPvp(@NotNull Location location) {
-        for (IWrappedRegion k : worldGuard.getRegions(location)) {
-            Object wrappedState = k.getFlag(pvp).orElse(WrappedState.ALLOW);
-            if(wrappedState.getClass().equals(Optional.class)) {
+    public boolean canPvp(@NotNull final Location location) {
+        for (final IWrappedRegion k : this.worldGuard.getRegions(location)) {
+            Object wrappedState = k.getFlag(this.pvp).orElse(WrappedState.ALLOW);
+            if (wrappedState.getClass().equals(Optional.class)) {
                 wrappedState = ((Optional<WrappedState>) wrappedState).orElse(WrappedState.ALLOW);
             }
-            if (wrappedState.equals(WrappedState.DENY)) return false;
+            if (wrappedState.equals(WrappedState.DENY))
+                return false;
         }
 
         return true;
     }
 
     @Override
-    public boolean canExplode(@NotNull Location location) {
-        for (IWrappedRegion k : worldGuard.getRegions(location)) {
-            WrappedState wrappedState = k.getFlag(explosion).orElse(WrappedState.ALLOW);
-            if (wrappedState.equals(WrappedState.DENY)) return false;
+    public boolean canExplode(@NotNull final Location location) {
+        for (final IWrappedRegion k : this.worldGuard.getRegions(location)) {
+            final WrappedState wrappedState = k.getFlag(this.explosion).orElse(WrappedState.ALLOW);
+            if (wrappedState.equals(WrappedState.DENY))
+                return false;
         }
 
         return true;
     }
 
     @Override
-    public boolean canBreak(Location location) {
-        for (IWrappedRegion k : worldGuard.getRegions(location)) {
-            WrappedState wrappedState = k.getFlag(blockBreak).orElse(WrappedState.ALLOW);
-            if (wrappedState.equals(WrappedState.DENY)) return false;
+    public boolean canBreak(final Location location) {
+        for (final IWrappedRegion k : this.worldGuard.getRegions(location)) {
+            final WrappedState wrappedState = k.getFlag(this.blockBreak).orElse(WrappedState.ALLOW);
+            if (wrappedState.equals(WrappedState.DENY))
+                return false;
         }
 
         return true;
     }
 
-    private IWrappedFlag<WrappedState> createFlag(String name) {
+    private IWrappedFlag<WrappedState> createFlag(final String name) {
         return new IWrappedFlag<WrappedState>() {
             @Override
-            public String getName() {
-                return name;
-            }
+            public String getName() { return name; }
 
             @Override
-            public Optional<WrappedState> getDefaultValue() {
-                return Optional.of(WrappedState.ALLOW);
-            }
+            public Optional<WrappedState> getDefaultValue() { return Optional.of(WrappedState.ALLOW); }
         };
     }
 }

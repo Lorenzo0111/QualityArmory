@@ -10,51 +10,37 @@ import me.zombie_striker.customitemmanager.ArmoryBaseObject;
 
 public interface ThrowableItems extends ArmoryBaseObject {
 
-	HashMap<Entity, ThrowableHolder> throwItems = new HashMap<>();
-	
-	class ThrowableHolder {
-		private Entity holder;
-		private UUID owner;
-		private Grenade grenade;
+    HashMap<Entity, ThrowableHolder> throwItems = new HashMap<>();
 
-		private BukkitTask timer;
+    class ThrowableHolder {
+        private Entity holder;
+        private final UUID owner;
+        private Grenade grenade;
 
-		public ThrowableHolder(UUID owner, Entity holder, Grenade grenade) {
-			this.holder = holder;
-			this.owner = owner;
-			this.grenade = grenade;
-		}
+        private BukkitTask timer;
 
-		public void setHolder(Entity e) {
-			this.holder = e;
-		}
+        public ThrowableHolder(final UUID owner, final Entity holder, final Grenade grenade) {
+            this.holder = holder;
+            this.owner = owner;
+            this.grenade = grenade;
+        }
 
-		public Entity getHolder() {
-			return holder;
-		}
+        public void setHolder(final Entity e) { this.holder = e; }
 
-		public void setTimer(BukkitTask bt) {
-			this.timer = bt;
-		}
+        public Entity getHolder() { return this.holder; }
 
-		public BukkitTask getTask() {
-			return timer;
-		}
+        public void setTimer(final BukkitTask bt) { this.timer = bt; }
 
-		public UUID getOwner() {
-			return owner;
-		}
+        public BukkitTask getTask() { return this.timer; }
 
-		public Grenade getGrenade() {
-			return grenade;
-		}
+        public UUID getOwner() { return this.owner; }
 
-		public void setGrenade(Grenade grenade) {
-			this.grenade = grenade;
-		}
-	}
+        public Grenade getGrenade() { return this.grenade; }
 
+        public void setGrenade(final Grenade grenade) { this.grenade = grenade; }
+    }
 
-	double getThrowSpeed();
-	void setThrowSpeed(double throwspeed);
+    double getThrowSpeed();
+
+    void setThrowSpeed(double throwspeed);
 }

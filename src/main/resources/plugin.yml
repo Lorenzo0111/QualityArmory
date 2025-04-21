@@ -12,7 +12,7 @@ permissions:
     children:
       qualityarmory.admin: true
   qualityarmory.admin:
-    description: 'Gives access to all admin commands for QA'
+    description: "Gives access to all admin commands for QA"
     children:
       qualityarmory.give: true
       qualityarmory.drop: true
@@ -24,12 +24,36 @@ permissions:
       qualityarmory.default: true
       qualityarmory.debugmessages: true
   qualityarmory.default:
-    description: 'Gives access to all QualityArmory default commands such as shooting crafting and shopping'
+    description: "Gives access to all QualityArmory default commands such as shooting crafting and shopping"
     children:
       qualityarmory.craft: true
       qualityarmory.shop: true
       qualityarmory.usegun: true
-softdepend: [Vault, PlaceholderAPI, ChestShop, Parties, WorldGuard, ViaVersion, ViaRewind, LightAPI, Citizens, ProtocolLib, SunLight-Core, ItemBridge, Sentinel, Spartan, Towny, Residence, Matrix, QuickShop, Vulcan, CoreProtect, Mimic, GriefPrevention]
+softdepend:
+  [
+    Vault,
+    PlaceholderAPI,
+    ChestShop,
+    Parties,
+    WorldGuard,
+    ViaVersion,
+    ViaRewind,
+    LightAPI,
+    Citizens,
+    ProtocolLib,
+    SunLight-Core,
+    ItemBridge,
+    Sentinel,
+    Spartan,
+    Towny,
+    Residence,
+    Matrix,
+    QuickShop,
+    Vulcan,
+    CoreProtect,
+    Mimic,
+    GriefPrevention,
+  ]
 authors:
   - Zombie_Striker
   - Lorenzo0111

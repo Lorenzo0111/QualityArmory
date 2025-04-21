@@ -1,9 +1,10 @@
 package me.zombie_striker.qg.api;
 
-import me.zombie_striker.qg.guns.Gun;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
+
+import me.zombie_striker.qg.guns.Gun;
 
 public class WeaponInteractEvent extends Event {
     private static final HandlerList handlers = new HandlerList();
@@ -11,35 +12,24 @@ public class WeaponInteractEvent extends Event {
     private final Gun g;
     private final InteractType type;
 
-    public WeaponInteractEvent(Player p, Gun g, InteractType type) {
+    public WeaponInteractEvent(final Player p, final Gun g, final InteractType type) {
         this.player = p;
         this.g = g;
         this.type = type;
     }
 
-    public Gun getGun() {
-        return g;
-    }
+    public Gun getGun() { return this.g; }
 
-    public Player getPlayer() {
-        return player;
-    }
+    public Player getPlayer() { return this.player; }
 
-    public InteractType getType() {
-        return type;
-    }
+    public InteractType getType() { return this.type; }
 
-    public HandlerList getHandlers() {
-        return handlers;
-    }
+    @Override
+    public HandlerList getHandlers() { return WeaponInteractEvent.handlers; }
 
-    public static HandlerList getHandlerList() {
-        return handlers;
-    }
+    public static HandlerList getHandlerList() { return WeaponInteractEvent.handlers; }
 
     public enum InteractType {
-        AIM,
-        UNAIM,
-        RELOAD
+        AIM, UNAIM, RELOAD
     }
 }
