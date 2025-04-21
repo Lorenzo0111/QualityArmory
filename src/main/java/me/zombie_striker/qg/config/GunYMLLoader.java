@@ -145,7 +145,7 @@ public class GunYMLLoader {
 
 				ItemStack[] ingredients = main.convertIngredients(config.getStringList("craftingRequirements"));
 
-				int price = config.getInt("price", 100);
+				double price = config.getDouble("price", 100.0);
 				boolean allowInShop = config.getBoolean("allowInShop", true) && price > 0;
 
 				double minProtectionHeight = config.getDouble("minProtectionHeight");
