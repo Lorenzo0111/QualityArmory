@@ -77,7 +77,7 @@ public class GunYMLLoader {
 
 				Material material = Material.matchMaterial(config.getString("material", "DIAMOND_AXE"));
 
-				String skullOwner = config.getString("skull_owner", null);;
+				String skullOwner = config.getString("skull_owner", null);
 				String skullUrl = config.getString("skull_owner_custom_url", null);
 				if (Ammo.NO_SKIN_STRING.equals(skullUrl)) skullUrl = null;
 
@@ -108,57 +108,70 @@ public class GunYMLLoader {
 	}
 
 	public static void loadArmor(QAMain main) {
-		if (new File(main.getDataFolder(), "armor").exists()) {
-			int items = 0;
+		File armorFolder = new File(main.getDataFolder(), "armor");
+		if (!armorFolder.exists()) return;
 
-			for (File f : new File(main.getDataFolder(), "armor").listFiles()) {
-				try {
-					if (f.getName().contains("yml")) {
-						FileConfiguration f2 = YamlConfiguration.loadConfiguration(f);
-						if ((!f2.contains("invalid")) || !f2.getBoolean("invalid")) {
-							final String name = f2.getString("name");
-							if(QAMain.verboseLoadingLogging)
-							main.getLogger().info("-Loading Armor: " + name);
+		File[] files = armorFolder.listFiles();
+		if (files == null || files.length == 0) return;
 
-							Material m = f2.contains("material") ? Material.matchMaterial(f2.getString("material"))
-									: Material.DIAMOND_AXE;
-							int variant = f2.contains("variant") ? f2.getInt("variant") : 0;
-							final MaterialStorage ms = MaterialStorage.getMS(m, f2.getInt("id"), variant);
-							final ItemStack[] materails = main
-									.convertIngredients(f2.getStringList("craftingRequirements"));
-							final String displayname = f2.contains("displayname")
-									? LocalUtils.colorize( f2.getString("displayname"))
-									: (ChatColor.WHITE + name);
-							final List<String> rawLore = f2.contains("lore") ? f2.getStringList("lore") : null;
-							final List<String> lore = new ArrayList<String>();
-							try {
-								for (String lore2 : rawLore) {
-									lore.add(LocalUtils.colorize( lore2));
-								}
-							} catch (Error | Exception re52) {
-							}
+		int items = 0;
 
-							final int price = f2.contains("price") ? f2.getInt("price") : 100;
-							final boolean allowInShop = f2.getBoolean("allowInShop", true) && price > 0;
+		for (File file : files) {
+			if (!file.getName().endsWith(".yml")) continue;
 
-							WeaponType wt = WeaponType.getByName(f2.getString("MiscType"));
+			try {
+				FileConfiguration config = YamlConfiguration.loadConfiguration(file);
+				if (config.getBoolean("invalid", false)) continue;
 
-							if (wt == WeaponType.HELMET) {
-								Helmet helmet = new Helmet(name,displayname,lore,materails,ms,price,allowInShop);
-								helmet.setHeightMax(f2.getDouble("maxProtectionHeight"));
-								helmet.setHeightMin(f2.getDouble("minProtectionHeight"));
-								helmet.setProtection(f2.getInt("protection", 0));
-								QAMain.armorRegister.put(ms, helmet);
-								items++;
-							}
-						}
-					}
-				} catch (Exception e) {
-					e.printStackTrace();
+				WeaponType wt = WeaponType.getByName(config.getString("MiscType"));
+				if (wt != WeaponType.HELMET) continue;
+
+				String name = config.getString("name");
+				if(QAMain.verboseLoadingLogging) {
+					main.getLogger().info("-Loading Armor: " + name);
 				}
+
+				String displayname = config.contains("displayname")
+						? LocalUtils.colorize(config.getString("displayname"))
+						: (ChatColor.WHITE + name);
+
+				List<String> lore = config.getStringList("lore").stream()
+						.map(LocalUtils::colorize)
+						.collect(Collectors.toList());
+
+				int id = config.getInt("id");
+
+				int variant = config.getInt("variant", 0);
+
+				ItemStack[] ingredients = main.convertIngredients(config.getStringList("craftingRequirements"));
+
+				int price = config.getInt("price", 100);
+				boolean allowInShop = config.getBoolean("allowInShop", true) && price > 0;
+
+				double minProtectionHeight = config.getDouble("minProtectionHeight");
+				double maxProtectionHeight = config.getDouble("maxProtectionHeight");
+				int protection = config.getInt("protection", 0);
+
+				Material material = Material.matchMaterial(config.getString("material", "DIAMOND_AXE"));
+
+				MaterialStorage ms = MaterialStorage.getMS(material, id, variant);
+
+				Helmet helmet = new Helmet(name, displayname, lore, ingredients, ms, price, allowInShop);
+
+				helmet.setHeightMin(minProtectionHeight);
+				helmet.setHeightMax(maxProtectionHeight);
+				helmet.setProtection(protection);
+
+                QAMain.armorRegister.put(ms, helmet);
+                items++;
+
+            } catch (Exception e) {
+				e.printStackTrace(System.err);
 			}
-			if(!QAMain.verboseLoadingLogging)
-				main.getLogger().info("-Loaded "+items+" Armor types.");
+		}
+
+		if(!QAMain.verboseLoadingLogging) {
+			main.getLogger().info("-Loaded " + items + " Armor types.");
 		}
 	}
 
