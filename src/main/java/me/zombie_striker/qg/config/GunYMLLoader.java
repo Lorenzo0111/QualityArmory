@@ -290,6 +290,34 @@ public class GunYMLLoader {
 		}
 	}
 
+	public static void loadGuns(QAMain main) {
+		File gunsFolder = new File(main.getDataFolder(), "newGuns");
+		if (!gunsFolder.exists()) return;
+
+		File[] files = gunsFolder.listFiles();
+		if (files == null || files.length == 0) return;
+
+		int items = 0;
+
+		for (File file : files) {
+			FileConfiguration config = YamlConfiguration.loadConfiguration(file);
+
+			if (CrackshotLoader.isCrackshotGun(config)) {
+				main.getLogger().info("-Converting Crackshot: " + file.getName());
+				List<Gun> guns = CrackshotLoader.loadCrackshotGuns(config);
+				CrackshotLoader.createYMLForGuns(guns, main.getDataFolder());
+				continue;
+			}
+
+			loadGun(main, file);
+			items++;
+		}
+
+		if(!QAMain.verboseLoadingLogging) {
+			main.getLogger().info("-Loaded " + items + " Gun types.");
+		}
+	}
+
 	public static void loadGun(QAMain main, File file) {
 		if (!file.getName().endsWith(".yml")) return;
 
@@ -494,25 +522,6 @@ public class GunYMLLoader {
 				g.setParticles(particle, partr, partg, partb, partm, partdata);
 			} catch (Error | Exception er5) {
 			}
-		}
-	}
-
-	public static void loadGuns(QAMain main) {
-		if (new File(main.getDataFolder(), "newGuns").exists()) {
-			int items = 0;
-			for (File f : new File(main.getDataFolder(), "newGuns").listFiles()) {
-				FileConfiguration f2 = YamlConfiguration.loadConfiguration(f);
-				if (CrackshotLoader.isCrackshotGun(f2)) {
-					main.getLogger().info("-Converting Crackshot: " + f.getName());
-					List<Gun> guns = CrackshotLoader.loadCrackshotGuns(f2);
-					CrackshotLoader.createYMLForGuns(guns, main.getDataFolder());
-					continue;
-				}
-				loadGun(main, f);
-				items++;
-			}
-			if(!QAMain.verboseLoadingLogging)
-				main.getLogger().info("-Loaded "+items+" Gun types.");
 		}
 	}
 
