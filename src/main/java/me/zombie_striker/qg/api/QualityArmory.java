@@ -44,7 +44,7 @@ public class QualityArmory {
 		final File gunFile = new File(newGunsDir, name);
 		new BukkitRunnable() {
 			public void run() {
-				GunYMLLoader.loadGuns(QAMain.getInstance(), gunFile);
+				GunYMLLoader.loadGun(QAMain.getInstance(), gunFile);
 			}
 		}.runTaskLater(QAMain.getInstance(), 1);
 		return GunYMLCreator.createNewCustomGun(QAMain.getInstance().getDataFolder(), name, name, displayname, id, null,

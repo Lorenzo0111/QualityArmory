@@ -290,46 +290,47 @@ public class GunYMLLoader {
 		}
 	}
 
-	public static void loadGuns(QAMain main, File f) {
-			if (f.getName().contains("yml")) {
-				FileConfiguration f2 = YamlConfiguration.loadConfiguration(f);
-				if ((!f2.contains("invalid")) || !f2.getBoolean("invalid")) {
-					final String name = f2.getString("name");
-					if(QAMain.verboseLoadingLogging)
-					main.getLogger().info("-Loading Gun: " + name);
+	public static void loadGun(QAMain main, File file) {
+		if (!file.getName().endsWith(".yml")) return;
 
-					Material m = f2.contains("material") ? Material.matchMaterial(f2.getString("material"))
-							: Material.DIAMOND_AXE;
-					int variant = f2.contains("variant") ? f2.getInt("variant") : 0;
-					final MaterialStorage ms = MaterialStorage.getMS(m, f2.getInt("id"), variant);
-					WeaponType weatype = f2.contains("guntype") ? WeaponType.valueOf(f2.getString("guntype"))
-							: WeaponType.valueOf(f2.getString("weapontype"));
-					final ItemStack[] materails = main.convertIngredients(f2.getStringList("craftingRequirements"));
+		FileConfiguration config = YamlConfiguration.loadConfiguration(file);
+		if (config.getBoolean("invalid", false)) return;
 
-					final String displayname = f2.contains("displayname")
-							? LocalUtils.colorize( f2.getString("displayname"))
-							: (ChatColor.GOLD + name);
-					final List<String> extraLore2 = f2.contains("lore") ? f2.getStringList("lore") : null;
-					final List<String> extraLore = new ArrayList<String>();
+		String name = config.getString("name");
+		if(QAMain.verboseLoadingLogging) {
+			main.getLogger().info("-Loading Gun: " + name);
+		}
 
-					try {
-						for (String lore : extraLore2) {
-							extraLore.add(LocalUtils.colorize( lore));
-						}
-					} catch (Error | Exception re52) {
-					}
-					if (weatype.isGun()) {
-						Gun g = new Gun(name, ms);
-						g.setDisplayname(displayname);
-						g.setCustomLore(extraLore);
-						g.setIngredients(materails);
-						QAMain.gunRegister.put(ms, g);
-						loadGunSettings(g, f2);
-					}
+		Material material = Material.matchMaterial(config.getString("material", "DIAMOND_AXE"));
 
-				}
-			}
+		int id = config.getInt("id");
 
+		int variant = config.getInt("variant", 0);
+
+		MaterialStorage ms = MaterialStorage.getMS(material, id, variant);
+
+		WeaponType gunType = config.contains("guntype")
+				? WeaponType.getByName(config.getString("guntype"))
+				: WeaponType.getByName(config.getString("weapontype"));
+
+		ItemStack[] ingredients = main.convertIngredients(config.getStringList("craftingRequirements"));
+
+		String displayname = config.contains("displayname")
+				? LocalUtils.colorize(config.getString("displayname"))
+				: (ChatColor.GOLD + name);
+
+		List<String> lore = config.getStringList("lore").stream()
+				.map(LocalUtils::colorize)
+				.collect(Collectors.toList());
+
+		if (gunType.isGun()) {
+			Gun gun = new Gun(name, ms);
+			gun.setDisplayname(displayname);
+			gun.setCustomLore(lore);
+			gun.setIngredients(ingredients);
+			QAMain.gunRegister.put(ms, gun);
+			loadGunSettings(gun, config);
+		}
 	}
 
 	@SuppressWarnings("unchecked")
@@ -507,7 +508,7 @@ public class GunYMLLoader {
 					CrackshotLoader.createYMLForGuns(guns, main.getDataFolder());
 					continue;
 				}
-				loadGuns(main, f);
+				loadGun(main, f);
 				items++;
 			}
 			if(!QAMain.verboseLoadingLogging)
