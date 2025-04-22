@@ -323,24 +323,16 @@ public class GunYMLLoader {
 		FileConfiguration config = YamlConfiguration.loadConfiguration(file);
 		if (config.getBoolean("invalid", false)) return false;
 
+		String typeName = config.contains("guntype")
+				? config.getString("guntype")
+				: config.getString("weapontype");
+
+		if (!WeaponType.getByName(typeName).isGun()) return false;
+
 		String name = config.getString("name");
 		if(QAMain.verboseLoadingLogging) {
 			main.getLogger().info("-Loading Gun: " + name);
 		}
-
-		Material material = Material.matchMaterial(config.getString("material", "DIAMOND_AXE"));
-
-		int id = config.getInt("id");
-
-		int variant = config.getInt("variant", 0);
-
-		MaterialStorage ms = MaterialStorage.getMS(material, id, variant);
-
-		WeaponType gunType = config.contains("guntype")
-				? WeaponType.getByName(config.getString("guntype"))
-				: WeaponType.getByName(config.getString("weapontype"));
-
-		ItemStack[] ingredients = main.convertIngredients(config.getStringList("craftingRequirements"));
 
 		String displayname = config.contains("displayname")
 				? LocalUtils.colorize(config.getString("displayname"))
@@ -350,8 +342,15 @@ public class GunYMLLoader {
 				.map(LocalUtils::colorize)
 				.collect(Collectors.toList());
 
+		int id = config.getInt("id");
 
-		if (!gunType.isGun()) return false;
+		int variant = config.getInt("variant", 0);
+
+		ItemStack[] ingredients = main.convertIngredients(config.getStringList("craftingRequirements"));
+
+		Material material = Material.matchMaterial(config.getString("material", "DIAMOND_AXE"));
+
+		MaterialStorage ms = MaterialStorage.getMS(material, id, variant);
 
 		Gun gun = new Gun(name, ms);
 		gun.setDisplayname(displayname);
