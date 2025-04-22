@@ -519,68 +519,74 @@ public class GunYMLLoader {
 	}
 
 	public static void loadAttachments(QAMain main) {
-		if (new File(main.getDataFolder(), "attachments").exists()) {
-			int items = 0;
-			for (File f : new File(main.getDataFolder(), "attachments").listFiles()) {
-				try {
-					if (f.getName().contains("yml")) {
-						FileConfiguration f2 = YamlConfiguration.loadConfiguration(f);
-						if ((!f2.contains("invalid")) || !f2.getBoolean("invalid")) {
-							final String name = f2.getString("name");
-							main.getLogger().info("-Loading Attachment: " + name);
-							final String displayname = f2.contains("displayname")
-									? LocalUtils.colorize( f2.getString("displayname"))
-									: (ChatColor.GOLD + name);
-							final List<String> extraLore2 = f2.contains("lore") ? f2.getStringList("lore") : null;
+		File attachmentsFolder = new File(main.getDataFolder(), "attachments");
+		if (!attachmentsFolder.exists()) return;
 
-							Material m = f2.contains("material") ? Material.matchMaterial(f2.getString("material"))
-									: Material.DIAMOND_AXE;
-							int variant = f2.contains("variant") ? f2.getInt("variant") : 0;
-							final MaterialStorage ms = MaterialStorage.getMS(m, f2.getInt("id"), variant);
+		File[] files = attachmentsFolder.listFiles();
+		if (files == null || files.length == 0) return;
 
-							// Gun baseGun = null;
-							MaterialStorage baseGunM = null;
-							String base = f2.getString("baseGun");
-							for (Entry<MaterialStorage, Gun> g : QAMain.gunRegister.entrySet()) {
-								if (g.getValue().getName().equalsIgnoreCase(base)) {
-									// baseGun = g.getValue();
-									baseGunM = g.getKey();
-								}
-							}
+		int items = 0;
 
-							final List<String> extraLore = new ArrayList<String>();
-							try {
-								for (String lore : extraLore2) {
-									extraLore.add(LocalUtils.colorize( lore));
-								}
-							} catch (Error | Exception re52) {
-							}
-							if(baseGunM==null){
-								main.getLogger().info("--Failed to load "+name+" attachment because the base \""+base+"\" does not exist.");
-								continue;
-							}
+		for (File file : files) {
+			if (!file.getName().endsWith(".yml")) continue;
 
-							AttachmentBase attach = new AttachmentBase(baseGunM, ms, name, displayname);
-							QAMain.gunRegister.put(ms, attach);
-							items++;
+			try {
+				FileConfiguration config = YamlConfiguration.loadConfiguration(file);
+				if (config.getBoolean("invalid", false)) continue;
 
-							attach.setCustomLore(extraLore);
-
-							final Object[] materials = main
-									.convertIngredientsRaw(f2.getStringList("craftingRequirements"));
-							attach.setIngredientsRaw(materials);
-
-							// QAMain.attachmentRegister.put(ms, attach);
-							loadGunSettings(attach, f2);
-						}
-
-					}
-				} catch (Exception e) {
-					e.printStackTrace();
+				String name = config.getString("name");
+				if (QAMain.verboseLoadingLogging) {
+					main.getLogger().info("-Loading Attachment: " + name);
 				}
+
+				String displayname = config.contains("displayname")
+						? LocalUtils.colorize(config.getString("displayname"))
+						: (ChatColor.GOLD + name);
+
+				List<String> lore = config.getStringList("lore").stream()
+						.map(LocalUtils::colorize)
+						.collect(Collectors.toList());
+
+				int id = config.getInt("id");
+
+				int variant = config.getInt("variant", 0);
+
+				Object[] rawIngredients = main.convertIngredientsRaw(config.getStringList("craftingRequirements"));
+
+				Material material = Material.matchMaterial(config.getString("material", "DIAMOND_AXE"));
+
+				MaterialStorage ms = MaterialStorage.getMS(material, id, variant);
+
+				MaterialStorage baseGunM = null;
+				String base = config.getString("baseGun");
+				if (base != null) {
+					for (Entry<MaterialStorage, Gun> entry : QAMain.gunRegister.entrySet())
+						if (entry.getValue().getName().equalsIgnoreCase(base))
+							baseGunM = entry.getKey();
+				}
+
+				if (baseGunM == null) {
+					main.getLogger().info("--Failed to load " + name + " attachment because the base \"" + base + "\" does not exist.");
+					continue;
+				}
+
+				AttachmentBase attach = new AttachmentBase(baseGunM, ms, name, displayname);
+
+				attach.setCustomLore(lore);
+				attach.setIngredientsRaw(rawIngredients);
+
+				loadGunSettings(attach, config);
+
+				QAMain.gunRegister.put(ms, attach);
+				items++;
+
+			} catch (Exception e) {
+				e.printStackTrace(System.err);
 			}
-			if(!QAMain.verboseLoadingLogging)
-				main.getLogger().info("-Loaded "+items+" Attachment types.");
+		}
+
+		if (!QAMain.verboseLoadingLogging) {
+			main.getLogger().info("-Loaded " + items + " Attachment types.");
 		}
 	}
 
