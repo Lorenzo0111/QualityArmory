@@ -309,8 +309,7 @@ public class GunYMLLoader {
 				continue;
 			}
 
-			loadGun(main, file);
-			items++;
+			if (loadGun(main, file)) items++;
 		}
 
 		if(!QAMain.verboseLoadingLogging) {
@@ -318,11 +317,11 @@ public class GunYMLLoader {
 		}
 	}
 
-	public static void loadGun(QAMain main, File file) {
-		if (!file.getName().endsWith(".yml")) return;
+	public static boolean loadGun(QAMain main, File file) {
+		if (!file.getName().endsWith(".yml")) return false;
 
 		FileConfiguration config = YamlConfiguration.loadConfiguration(file);
-		if (config.getBoolean("invalid", false)) return;
+		if (config.getBoolean("invalid", false)) return false;
 
 		String name = config.getString("name");
 		if(QAMain.verboseLoadingLogging) {
@@ -351,14 +350,18 @@ public class GunYMLLoader {
 				.map(LocalUtils::colorize)
 				.collect(Collectors.toList());
 
-		if (gunType.isGun()) {
-			Gun gun = new Gun(name, ms);
-			gun.setDisplayname(displayname);
-			gun.setCustomLore(lore);
-			gun.setIngredients(ingredients);
-			QAMain.gunRegister.put(ms, gun);
-			loadGunSettings(gun, config);
-		}
+
+		if (!gunType.isGun()) return false;
+
+		Gun gun = new Gun(name, ms);
+		gun.setDisplayname(displayname);
+		gun.setCustomLore(lore);
+		gun.setIngredients(ingredients);
+
+		QAMain.gunRegister.put(ms, gun);
+		loadGunSettings(gun, config);
+
+		return true;
 	}
 
 	@SuppressWarnings("unchecked")
