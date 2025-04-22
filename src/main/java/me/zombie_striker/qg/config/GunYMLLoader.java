@@ -47,7 +47,7 @@ public class GunYMLLoader {
 				if (config.getBoolean("invalid", false)) continue;
 
 				String name = config.getString("name");
-				if(QAMain.verboseLoadingLogging) {
+				if (QAMain.verboseLoadingLogging) {
 					main.getLogger().info("-Loading AmmoType: " + name);
 				}
 
@@ -102,7 +102,7 @@ public class GunYMLLoader {
 			}
 		}
 
-		if(!QAMain.verboseLoadingLogging) {
+		if (!QAMain.verboseLoadingLogging) {
 			main.getLogger().info("-Loaded " + items + " Ammo types.");
 		}
 	}
@@ -127,7 +127,7 @@ public class GunYMLLoader {
 				if (wt != WeaponType.HELMET) continue;
 
 				String name = config.getString("name");
-				if(QAMain.verboseLoadingLogging) {
+				if (QAMain.verboseLoadingLogging) {
 					main.getLogger().info("-Loading Armor: " + name);
 				}
 
@@ -162,15 +162,15 @@ public class GunYMLLoader {
 				helmet.setHeightMax(maxProtectionHeight);
 				helmet.setProtection(protection);
 
-                QAMain.armorRegister.put(ms, helmet);
-                items++;
+				QAMain.armorRegister.put(ms, helmet);
+				items++;
 
-            } catch (Exception e) {
+			} catch (Exception e) {
 				e.printStackTrace(System.err);
 			}
 		}
 
-		if(!QAMain.verboseLoadingLogging) {
+		if (!QAMain.verboseLoadingLogging) {
 			main.getLogger().info("-Loaded " + items + " Armor types.");
 		}
 	}
@@ -268,7 +268,7 @@ public class GunYMLLoader {
 				base.setIngredients(ingredients);
 				base.setEnableShop(allowInShop);
 
-				if(config.contains("maxItemStack"))
+				if (config.contains("maxItemStack"))
 					base.setMaxItemStack(config.getInt("maxItemStack"));
 
 				if (base instanceof ThrowableItems) {
@@ -285,7 +285,7 @@ public class GunYMLLoader {
 			}
 		}
 
-		if(!QAMain.verboseLoadingLogging) {
+		if (!QAMain.verboseLoadingLogging) {
 			main.getLogger().info("-Loaded " + items + " Misc.");
 		}
 	}
@@ -312,7 +312,7 @@ public class GunYMLLoader {
 			if (loadGun(main, file)) items++;
 		}
 
-		if(!QAMain.verboseLoadingLogging) {
+		if (!QAMain.verboseLoadingLogging) {
 			main.getLogger().info("-Loaded " + items + " Gun types.");
 		}
 	}
@@ -330,7 +330,7 @@ public class GunYMLLoader {
 		if (!WeaponType.getByName(typeName).isGun()) return false;
 
 		String name = config.getString("name");
-		if(QAMain.verboseLoadingLogging) {
+		if (QAMain.verboseLoadingLogging) {
 			main.getLogger().info("-Loading Gun: " + name);
 		}
 
@@ -365,28 +365,18 @@ public class GunYMLLoader {
 
 	private static void loadGunSettings(Gun gun, FileConfiguration cfg) {
 
-		if (cfg.contains("ammotype"))
-			gun.setAmmo(AmmoType.getAmmo(cfg.getString("ammotype")));
-		if (cfg.contains("sway.defaultValue"))
-			gun.setSway(cfg.getDouble("sway.defaultValue"));
+		if (cfg.contains("ammotype")) gun.setAmmo(AmmoType.getAmmo(cfg.getString("ammotype")));
+		if (cfg.contains("sway.defaultValue")) gun.setSway(cfg.getDouble("sway.defaultValue"));
 		if (cfg.contains("sway.defaultMultiplier"))
 			gun.setSwayMultiplier(cfg.getDouble("sway.defaultMultiplier"));
-		if (cfg.contains("enableIronSights"))
-			gun.setHasIronsights(cfg.getBoolean("enableIronSights"));
-		if (cfg.contains("maxbullets"))
-			gun.setMaxBullets(cfg.getInt("maxbullets"));
-		if (cfg.contains("damage"))
-			gun.setDurabilityDamage(cfg.getInt("damage"));
-		if (cfg.contains("durability"))
-			gun.setDuribility(cfg.getInt("durability"));
-		if (cfg.contains("price"))
-			gun.setPrice(cfg.getDouble("price"));
-		if (cfg.contains("allowInShop"))
-			gun.setEnableShop(cfg.getBoolean("allowInShop"));
-		if (cfg.contains("allowCrafting"))
-			gun.setEnableCrafting(cfg.getBoolean("allowCrafting"));
-		if (cfg.contains("isAutomatic"))
-			gun.setAutomatic(cfg.getBoolean("isAutomatic"));
+		if (cfg.contains("enableIronSights")) gun.setHasIronsights(cfg.getBoolean("enableIronSights"));
+		if (cfg.contains("maxbullets")) gun.setMaxBullets(cfg.getInt("maxbullets"));
+		if (cfg.contains("damage")) gun.setDurabilityDamage(cfg.getInt("damage"));
+		if (cfg.contains("durability")) gun.setDuribility(cfg.getInt("durability"));
+		if (cfg.contains("price")) gun.setPrice(cfg.getDouble("price"));
+		if (cfg.contains("allowInShop")) gun.setEnableShop(cfg.getBoolean("allowInShop"));
+		if (cfg.contains("allowCrafting")) gun.setEnableCrafting(cfg.getBoolean("allowCrafting"));
+		if (cfg.contains("isAutomatic")) gun.setAutomatic(cfg.getBoolean("isAutomatic"));
 		if (cfg.contains("enableBetterModelScopes"))
 			gun.enableBetterAimingAnimations(cfg.getBoolean("enableBetterModelScopes"));
 
@@ -408,7 +398,6 @@ public class GunYMLLoader {
 
 			if (raw instanceof String)
 				sounds.add(cfg.getString("weaponsounds"));
-			
 			else if (raw instanceof List<?>) {
 				List<?> list = (List<?>) raw;
 				for (Object item : list)
@@ -416,18 +405,13 @@ public class GunYMLLoader {
 						sounds.add((String) item);
 			}
 		}
-		
+
 		if (sounds.isEmpty()) sounds.add(WeaponSounds.getSoundByType(gun.getWeaponType()));
 		gun.setSounds(sounds);
 
-		if (cfg.contains("weaponsounds_volume"))
-			gun.setVolume(cfg.getDouble("weaponsounds_volume"));
-
-		if (cfg.contains("addMuzzleSmoke"))
-			gun.setUseMuzzleSmoke(cfg.getBoolean("addMuzzleSmoke"));
-
-		if (cfg.contains("delayForReload"))
-			gun.setReloadingTimeInSeconds(cfg.getDouble("delayForReload"));
+		if (cfg.contains("weaponsounds_volume")) gun.setVolume(cfg.getDouble("weaponsounds_volume"));
+		if (cfg.contains("addMuzzleSmoke")) gun.setUseMuzzleSmoke(cfg.getBoolean("addMuzzleSmoke"));
+		if (cfg.contains("delayForReload")) gun.setReloadingTimeInSeconds(cfg.getDouble("delayForReload"));
 
 		String glowColorName = cfg.getString("drop-glow-color");
 		if (glowColorName != null && !glowColorName.equalsIgnoreCase("none")) {
@@ -448,21 +432,17 @@ public class GunYMLLoader {
 				gun.setRealtimeVelocity(cfg.getDouble("CustomProjectiles.Velocity"));
 		}
 
-		if (cfg.contains("recoil"))
-			gun.setRecoil(cfg.getDouble("recoil"));
+		if (cfg.contains("recoil")) gun.setRecoil(cfg.getDouble("recoil"));
 		if (cfg.contains("headshotMultiplier"))
 			gun.setHeadshotMultiplier(cfg.getDouble("headshotMultiplier"));
-		if (cfg.contains("unlimitedAmmo"))
-			gun.setUnlimitedAmmo(cfg.getBoolean("unlimitedAmmo"));
-		if (cfg.contains("LightLeveOnShoot"))
-			gun.setLightOnShoot(cfg.getInt("LightLeveOnShoot"));
-		if (cfg.contains("firerate"))
-			gun.setFireRate(cfg.getInt("firerate"));
+		if (cfg.contains("unlimitedAmmo")) gun.setUnlimitedAmmo(cfg.getBoolean("unlimitedAmmo"));
+		if (cfg.contains("LightLeveOnShoot")) gun.setLightOnShoot(cfg.getInt("LightLeveOnShoot"));
+		if (cfg.contains("firerate")) gun.setFireRate(cfg.getInt("firerate"));
 
 		if (cfg.contains("ReloadingHandler")) {
 			gun.setReloadingHandler(ReloadingManager.getHandler(cfg.getString("ReloadingHandler")));
 
-			if(gun.getReloadingingHandler() != null)
+			if (gun.getReloadingingHandler() != null)
 				gun.setReloadingSound(gun.getReloadingingHandler().getDefaultReloadingSound());
 		}
 
@@ -470,34 +450,25 @@ public class GunYMLLoader {
 		if (chargingHandler != null && !chargingHandler.equalsIgnoreCase("none")) {
 			gun.setChargingHandler(ChargingManager.getHandler(chargingHandler));
 
-			if(gun.getChargingHandler() != null)
+			if (gun.getChargingHandler() != null)
 				gun.setChargingSound(gun.getChargingHandler().getDefaultChargingSound());
 		}
 
-		if (cfg.contains("delayForShoot"))
-			gun.setDelayBetweenShots(cfg.getDouble("delayForShoot"));
-		if (cfg.contains("bullets-per-shot"))
-			gun.setBulletsPerShot(cfg.getInt("bullets-per-shot"));
-		if (cfg.contains("maxBulletDistance"))
-			gun.setMaxDistance(cfg.getInt("maxBulletDistance"));
+		if (cfg.contains("delayForShoot")) gun.setDelayBetweenShots(cfg.getDouble("delayForShoot"));
+		if (cfg.contains("bullets-per-shot")) gun.setBulletsPerShot(cfg.getInt("bullets-per-shot"));
+		if (cfg.contains("maxBulletDistance")) gun.setMaxDistance(cfg.getInt("maxBulletDistance"));
 		if (cfg.contains("Version_18_Support"))
 			gun.set18Supported(cfg.getBoolean("Version_18_Support"));
-		if (cfg.contains("hasNightVisionOnScope"))
-			gun.setNightVision(cfg.getBoolean("hasNightVisionOnScope"));
-		if (cfg.contains("isPrimaryWeapon"))
-			gun.setIsPrimary(cfg.getBoolean("isPrimaryWeapon"));
-		if (cfg.contains("setZoomLevel"))
-			gun.setZoomLevel(cfg.getInt("setZoomLevel"));
-		if(cfg.contains("firing_knockback"))
-			gun.setKnockbackPower(cfg.getDouble("firing_knockback"));
-		if(cfg.contains("slownessOnEquip"))
-			gun.setSlownessPower(cfg.getInt("slownessOnEquip"));
-		if(cfg.contains("weaponsounds_reloadingSound"))
+		if (cfg.contains("hasNightVisionOnScope")) gun.setNightVision(cfg.getBoolean("hasNightVisionOnScope"));
+		if (cfg.contains("isPrimaryWeapon")) gun.setIsPrimary(cfg.getBoolean("isPrimaryWeapon"));
+		if (cfg.contains("setZoomLevel")) gun.setZoomLevel(cfg.getInt("setZoomLevel"));
+		if (cfg.contains("firing_knockback")) gun.setKnockbackPower(cfg.getDouble("firing_knockback"));
+		if (cfg.contains("slownessOnEquip")) gun.setSlownessPower(cfg.getInt("slownessOnEquip"));
+		if (cfg.contains("weaponsounds_reloadingSound"))
 			gun.setReloadingSound(cfg.getString("weaponsounds_reloadingSound"));
-		if(cfg.contains("weaponsounds_chargingSound"))
+		if (cfg.contains("weaponsounds_chargingSound"))
 			gun.setChargingSound(cfg.getString("weaponsounds_chargingSound"));
-		if(cfg.contains("maxItemStack"))
-			gun.setMaxItemStack(cfg.getInt("maxItemStack"));
+		if (cfg.contains("maxItemStack")) gun.setMaxItemStack(cfg.getInt("maxItemStack"));
 
 		if (cfg.contains("particles.bullet_particle") || cfg.contains("particles.bullet_particleR")) {
 
@@ -506,7 +477,8 @@ public class GunYMLLoader {
 			double partb = cfg.getDouble("particles.bullet_particleB", 1.0);
 			int partdata = cfg.getInt("particles.bullet_particleData", 0);
 
-			Material partm = Material.matchMaterial(cfg.getString("particles.bullet_particleMaterial", "COAL_BLOCK"));
+			Material partm = Material.matchMaterial(
+					cfg.getString("particles.bullet_particleMaterial", "COAL_BLOCK"));
 			if (partm == null) partm = Material.COAL_BLOCK;
 
 			try {
@@ -566,7 +538,8 @@ public class GunYMLLoader {
 				}
 
 				if (baseGunM == null) {
-					main.getLogger().info("--Failed to load " + name + " attachment because the base \"" + base + "\" does not exist.");
+					main.getLogger().info("--Failed to load " + name
+							+ " attachment because the base \"" + base + "\" does not exist.");
 					continue;
 				}
 
