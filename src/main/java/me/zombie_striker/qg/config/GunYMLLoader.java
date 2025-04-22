@@ -364,15 +364,12 @@ public class GunYMLLoader {
 		return true;
 	}
 
-	@SuppressWarnings("unchecked")
 	private static void loadGunSettings(Gun g, FileConfiguration f2) {
 
 		if (f2.contains("ammotype"))
 			g.setAmmo(AmmoType.getAmmo(f2.getString("ammotype")));
-
-		if (f2.contains("sway.defaultValue")) {
+		if (f2.contains("sway.defaultValue"))
 			g.setSway(f2.getDouble("sway.defaultValue"));
-		}
 		if (f2.contains("sway.defaultMultiplier"))
 			g.setSwayMultiplier(f2.getDouble("sway.defaultMultiplier"));
 		if (f2.contains("enableIronSights"))
@@ -400,65 +397,48 @@ public class GunYMLLoader {
 			g.setEnableSwayMovementModifier(f2.getBoolean("sway.moveModifier"));
 		if (f2.contains("sway.runModifier"))
 			g.setEnableSwayRunModifier(f2.getBoolean("sway.runModifier"));
+
 		if (f2.contains("DestructableMaterials")) {
 			g.getBreakableMaterials().clear();
 			g.getBreakableMaterials().addAll(getMaterials(f2.getStringList("DestructableMaterials")));
 		}
 
-		List<String> sounds = null;
-
+		List<String> sounds = new ArrayList<>();
 		if (f2.contains("weaponsounds")) {
-			Object ss = f2.get("weaponsounds");
-			if (ss instanceof String) {
-				sounds = new ArrayList<>();
+			Object raw = f2.get("weaponsounds");
+
+			if (raw instanceof String)
 				sounds.add(f2.getString("weaponsounds"));
-			} else if (ss instanceof List) {
-				sounds = (List<String>) ss;
+			
+			else if (raw instanceof List<?>) {
+				List<?> list = (List<?>) raw;
+				for (Object item : list)
+					if (item instanceof String)
+						sounds.add((String) item);
 			}
-		} else {
-			sounds = new ArrayList<>();
-			String sound = WeaponSounds.GUN_MEDIUM.getSoundName();
-			if (g.getWeaponType() == WeaponType.PISTOL || g.getWeaponType() == WeaponType.SMG)
-				sound = WeaponSounds.GUN_SMALL.getSoundName();
-			if (g.getWeaponType() == WeaponType.SHOTGUN || g.getWeaponType() == WeaponType.SNIPER)
-				sound = WeaponSounds.GUN_BIG.getSoundName();
-			if (g.getWeaponType() == WeaponType.RPG)
-				sound = WeaponSounds.WARHEAD_LAUNCH.getSoundName();
-			if (g.getWeaponType() == WeaponType.LAZER)
-				sound = WeaponSounds.LAZERSHOOT.getSoundName();
-			sounds = new ArrayList<>();
-			sounds.add(sound);
 		}
+		
+		if (sounds.isEmpty()) sounds.add(WeaponSounds.getSoundByType(g.getWeaponType()));
 		g.setSounds(sounds);
 
 		if (f2.contains("weaponsounds_volume"))
 			g.setVolume(f2.getDouble("weaponsounds_volume"));
 
-		double partr = f2.getDouble("particles.bullet_particleR", 1.0D);
-		double partg = f2.getDouble("particles.bullet_particleG", 1.0D);
-		double partb = f2.getDouble("particles.bullet_particleB", 1.0D);
-		int partdata = f2.getInt("particles.bullet_particleData", 0);
-		Material partm = Material.matchMaterial(f2.getString("particles.bullet_particleMaterial", "COAL_BLOCK"));
+		if (f2.contains("addMuzzleSmoke"))
+			g.setUseMuzzleSmoke(f2.getBoolean("addMuzzleSmoke"));
 
-		if (partm == null) {
-			partm = Material.COAL_BLOCK;
-		}
-
-		if (f2.contains("addMuzzleSmoke")) {
-			boolean addMuzzleSmoke = f2.contains("addMuzzleSmoke") ? f2.getBoolean("addMuzzleSmoke") : false;
-			g.setUseMuzzleSmoke(addMuzzleSmoke);
-		}
 		if (f2.contains("delayForReload"))
 			g.setReloadingTimeInSeconds(f2.getDouble("delayForReload"));
 
-		if (f2.contains("drop-glow-color") && !f2.getString("drop-glow-color").equals("none")) {
-			ChatColor c = ChatColor.WHITE;
+		String glowColorName = f2.getString("drop-glow-color");
+		if (glowColorName != null && !glowColorName.equalsIgnoreCase("none")) {
+			ChatColor chosen = ChatColor.WHITE;
 			for (ChatColor cc : ChatColor.values())
-				if (cc.name().equals(f2.getString("drop-glow-color"))) {
-					c = cc;
+				if (cc.name().equals(glowColorName)) {
+					chosen = cc;
 					break;
 				}
-			g.setGlow(c);
+			g.setGlow(chosen);
 		}
 
 		if (f2.contains("CustomProjectiles.projectileType")) {
@@ -479,18 +459,22 @@ public class GunYMLLoader {
 			g.setLightOnShoot(f2.getInt("LightLeveOnShoot"));
 		if (f2.contains("firerate"))
 			g.setFireRate(f2.getInt("firerate"));
+
 		if (f2.contains("ReloadingHandler")) {
 			g.setReloadingHandler(ReloadingManager.getHandler(f2.getString("ReloadingHandler")));
-			if(g.getReloadingingHandler()!=null){
+
+			if(g.getReloadingingHandler() != null)
 				g.setReloadingSound(g.getReloadingingHandler().getDefaultReloadingSound());
-			}
 		}
-		if (f2.contains("ChargingHandler") && !f2.getString("ChargingHandler").equals("none")) {
-			g.setChargingHandler(ChargingManager.getHandler(f2.getString("ChargingHandler")));
-			if(g.getChargingHandler()!=null){
+
+		String chargingHandler = f2.getString("ChargingHandler");
+		if (chargingHandler != null && !chargingHandler.equalsIgnoreCase("none")) {
+			g.setChargingHandler(ChargingManager.getHandler(chargingHandler));
+
+			if(g.getChargingHandler() != null)
 				g.setChargingSound(g.getChargingHandler().getDefaultChargingSound());
-			}
 		}
+
 		if (f2.contains("delayForShoot"))
 			g.setDelayBetweenShots(f2.getDouble("delayForShoot"));
 		if (f2.contains("bullets-per-shot"))
@@ -516,15 +500,22 @@ public class GunYMLLoader {
 		if(f2.contains("maxItemStack"))
 			g.setMaxItemStack(f2.getInt("maxItemStack"));
 
-
 		if (f2.contains("particles.bullet_particle") || f2.contains("particles.bullet_particleR")) {
+
+			double partr = f2.getDouble("particles.bullet_particleR", 1.0);
+			double partg = f2.getDouble("particles.bullet_particleG", 1.0);
+			double partb = f2.getDouble("particles.bullet_particleB", 1.0);
+			int partdata = f2.getInt("particles.bullet_particleData", 0);
+
+			Material partm = Material.matchMaterial(f2.getString("particles.bullet_particleMaterial", "COAL_BLOCK"));
+			if (partm == null) partm = Material.COAL_BLOCK;
+
 			try {
 				Particle particle = (Particle) (f2.contains("particles.bullet_particle")
 						? Particle.valueOf(f2.getString("particles.bullet_particle"))
 						: QAMain.bulletTrail);
 				g.setParticles(particle, partr, partg, partb, partm, partdata);
-			} catch (Error | Exception er5) {
-			}
+			} catch (Error | Exception ignored) {}
 		}
 	}
 
