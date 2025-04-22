@@ -364,51 +364,51 @@ public class GunYMLLoader {
 		return true;
 	}
 
-	private static void loadGunSettings(Gun g, FileConfiguration f2) {
+	private static void loadGunSettings(Gun gun, FileConfiguration cfg) {
 
-		if (f2.contains("ammotype"))
-			g.setAmmo(AmmoType.getAmmo(f2.getString("ammotype")));
-		if (f2.contains("sway.defaultValue"))
-			g.setSway(f2.getDouble("sway.defaultValue"));
-		if (f2.contains("sway.defaultMultiplier"))
-			g.setSwayMultiplier(f2.getDouble("sway.defaultMultiplier"));
-		if (f2.contains("enableIronSights"))
-			g.setHasIronsights(f2.getBoolean("enableIronSights"));
-		if (f2.contains("maxbullets"))
-			g.setMaxBullets(f2.getInt("maxbullets"));
-		if (f2.contains("damage"))
-			g.setDurabilityDamage(f2.getInt("damage"));
-		if (f2.contains("durability"))
-			g.setDuribility(f2.getInt("durability"));
-		if (f2.contains("price"))
-			g.setPrice(f2.getDouble("price"));
-		if (f2.contains("allowInShop"))
-			g.setEnableShop(f2.getBoolean("allowInShop"));
-		if (f2.contains("allowCrafting"))
-			g.setEnableCrafting(f2.getBoolean("allowCrafting"));
-		if (f2.contains("isAutomatic"))
-			g.setAutomatic(f2.getBoolean("isAutomatic"));
-		if (f2.contains("enableBetterModelScopes"))
-			g.enableBetterAimingAnimations(f2.getBoolean("enableBetterModelScopes"));
+		if (cfg.contains("ammotype"))
+			gun.setAmmo(AmmoType.getAmmo(cfg.getString("ammotype")));
+		if (cfg.contains("sway.defaultValue"))
+			gun.setSway(cfg.getDouble("sway.defaultValue"));
+		if (cfg.contains("sway.defaultMultiplier"))
+			gun.setSwayMultiplier(cfg.getDouble("sway.defaultMultiplier"));
+		if (cfg.contains("enableIronSights"))
+			gun.setHasIronsights(cfg.getBoolean("enableIronSights"));
+		if (cfg.contains("maxbullets"))
+			gun.setMaxBullets(cfg.getInt("maxbullets"));
+		if (cfg.contains("damage"))
+			gun.setDurabilityDamage(cfg.getInt("damage"));
+		if (cfg.contains("durability"))
+			gun.setDuribility(cfg.getInt("durability"));
+		if (cfg.contains("price"))
+			gun.setPrice(cfg.getDouble("price"));
+		if (cfg.contains("allowInShop"))
+			gun.setEnableShop(cfg.getBoolean("allowInShop"));
+		if (cfg.contains("allowCrafting"))
+			gun.setEnableCrafting(cfg.getBoolean("allowCrafting"));
+		if (cfg.contains("isAutomatic"))
+			gun.setAutomatic(cfg.getBoolean("isAutomatic"));
+		if (cfg.contains("enableBetterModelScopes"))
+			gun.enableBetterAimingAnimations(cfg.getBoolean("enableBetterModelScopes"));
 
-		if (f2.contains("sway.sneakModifier"))
-			g.setEnableSwaySneakModifier(f2.getBoolean("sway.sneakModifier"));
-		if (f2.contains("sway.moveModifier"))
-			g.setEnableSwayMovementModifier(f2.getBoolean("sway.moveModifier"));
-		if (f2.contains("sway.runModifier"))
-			g.setEnableSwayRunModifier(f2.getBoolean("sway.runModifier"));
+		if (cfg.contains("sway.sneakModifier"))
+			gun.setEnableSwaySneakModifier(cfg.getBoolean("sway.sneakModifier"));
+		if (cfg.contains("sway.moveModifier"))
+			gun.setEnableSwayMovementModifier(cfg.getBoolean("sway.moveModifier"));
+		if (cfg.contains("sway.runModifier"))
+			gun.setEnableSwayRunModifier(cfg.getBoolean("sway.runModifier"));
 
-		if (f2.contains("DestructableMaterials")) {
-			g.getBreakableMaterials().clear();
-			g.getBreakableMaterials().addAll(getMaterials(f2.getStringList("DestructableMaterials")));
+		if (cfg.contains("DestructableMaterials")) {
+			gun.getBreakableMaterials().clear();
+			gun.getBreakableMaterials().addAll(getMaterials(cfg.getStringList("DestructableMaterials")));
 		}
 
 		List<String> sounds = new ArrayList<>();
-		if (f2.contains("weaponsounds")) {
-			Object raw = f2.get("weaponsounds");
+		if (cfg.contains("weaponsounds")) {
+			Object raw = cfg.get("weaponsounds");
 
 			if (raw instanceof String)
-				sounds.add(f2.getString("weaponsounds"));
+				sounds.add(cfg.getString("weaponsounds"));
 			
 			else if (raw instanceof List<?>) {
 				List<?> list = (List<?>) raw;
@@ -418,19 +418,19 @@ public class GunYMLLoader {
 			}
 		}
 		
-		if (sounds.isEmpty()) sounds.add(WeaponSounds.getSoundByType(g.getWeaponType()));
-		g.setSounds(sounds);
+		if (sounds.isEmpty()) sounds.add(WeaponSounds.getSoundByType(gun.getWeaponType()));
+		gun.setSounds(sounds);
 
-		if (f2.contains("weaponsounds_volume"))
-			g.setVolume(f2.getDouble("weaponsounds_volume"));
+		if (cfg.contains("weaponsounds_volume"))
+			gun.setVolume(cfg.getDouble("weaponsounds_volume"));
 
-		if (f2.contains("addMuzzleSmoke"))
-			g.setUseMuzzleSmoke(f2.getBoolean("addMuzzleSmoke"));
+		if (cfg.contains("addMuzzleSmoke"))
+			gun.setUseMuzzleSmoke(cfg.getBoolean("addMuzzleSmoke"));
 
-		if (f2.contains("delayForReload"))
-			g.setReloadingTimeInSeconds(f2.getDouble("delayForReload"));
+		if (cfg.contains("delayForReload"))
+			gun.setReloadingTimeInSeconds(cfg.getDouble("delayForReload"));
 
-		String glowColorName = f2.getString("drop-glow-color");
+		String glowColorName = cfg.getString("drop-glow-color");
 		if (glowColorName != null && !glowColorName.equalsIgnoreCase("none")) {
 			ChatColor chosen = ChatColor.WHITE;
 			for (ChatColor cc : ChatColor.values())
@@ -438,83 +438,83 @@ public class GunYMLLoader {
 					chosen = cc;
 					break;
 				}
-			g.setGlow(chosen);
+			gun.setGlow(chosen);
 		}
 
-		if (f2.contains("CustomProjectiles.projectileType")) {
-			g.setCustomProjectile(f2.getString("CustomProjectiles.projectileType"));
-			if (f2.contains("CustomProjectiles.explosionRadius"))
-				g.setExplosionRadius(f2.getDouble("CustomProjectiles.explosionRadius"));
-			if (f2.contains("CustomProjectiles.Velocity"))
-				g.setRealtimeVelocity(f2.getDouble("CustomProjectiles.Velocity"));
+		if (cfg.contains("CustomProjectiles.projectileType")) {
+			gun.setCustomProjectile(cfg.getString("CustomProjectiles.projectileType"));
+			if (cfg.contains("CustomProjectiles.explosionRadius"))
+				gun.setExplosionRadius(cfg.getDouble("CustomProjectiles.explosionRadius"));
+			if (cfg.contains("CustomProjectiles.Velocity"))
+				gun.setRealtimeVelocity(cfg.getDouble("CustomProjectiles.Velocity"));
 		}
 
-		if (f2.contains("recoil"))
-			g.setRecoil(f2.getDouble("recoil"));
-		if (f2.contains("headshotMultiplier"))
-			g.setHeadshotMultiplier(f2.getDouble("headshotMultiplier"));
-		if (f2.contains("unlimitedAmmo"))
-			g.setUnlimitedAmmo(f2.getBoolean("unlimitedAmmo"));
-		if (f2.contains("LightLeveOnShoot"))
-			g.setLightOnShoot(f2.getInt("LightLeveOnShoot"));
-		if (f2.contains("firerate"))
-			g.setFireRate(f2.getInt("firerate"));
+		if (cfg.contains("recoil"))
+			gun.setRecoil(cfg.getDouble("recoil"));
+		if (cfg.contains("headshotMultiplier"))
+			gun.setHeadshotMultiplier(cfg.getDouble("headshotMultiplier"));
+		if (cfg.contains("unlimitedAmmo"))
+			gun.setUnlimitedAmmo(cfg.getBoolean("unlimitedAmmo"));
+		if (cfg.contains("LightLeveOnShoot"))
+			gun.setLightOnShoot(cfg.getInt("LightLeveOnShoot"));
+		if (cfg.contains("firerate"))
+			gun.setFireRate(cfg.getInt("firerate"));
 
-		if (f2.contains("ReloadingHandler")) {
-			g.setReloadingHandler(ReloadingManager.getHandler(f2.getString("ReloadingHandler")));
+		if (cfg.contains("ReloadingHandler")) {
+			gun.setReloadingHandler(ReloadingManager.getHandler(cfg.getString("ReloadingHandler")));
 
-			if(g.getReloadingingHandler() != null)
-				g.setReloadingSound(g.getReloadingingHandler().getDefaultReloadingSound());
+			if(gun.getReloadingingHandler() != null)
+				gun.setReloadingSound(gun.getReloadingingHandler().getDefaultReloadingSound());
 		}
 
-		String chargingHandler = f2.getString("ChargingHandler");
+		String chargingHandler = cfg.getString("ChargingHandler");
 		if (chargingHandler != null && !chargingHandler.equalsIgnoreCase("none")) {
-			g.setChargingHandler(ChargingManager.getHandler(chargingHandler));
+			gun.setChargingHandler(ChargingManager.getHandler(chargingHandler));
 
-			if(g.getChargingHandler() != null)
-				g.setChargingSound(g.getChargingHandler().getDefaultChargingSound());
+			if(gun.getChargingHandler() != null)
+				gun.setChargingSound(gun.getChargingHandler().getDefaultChargingSound());
 		}
 
-		if (f2.contains("delayForShoot"))
-			g.setDelayBetweenShots(f2.getDouble("delayForShoot"));
-		if (f2.contains("bullets-per-shot"))
-			g.setBulletsPerShot(f2.getInt("bullets-per-shot"));
-		if (f2.contains("maxBulletDistance"))
-			g.setMaxDistance(f2.getInt("maxBulletDistance"));
-		if (f2.contains("Version_18_Support"))
-			g.set18Supported(f2.getBoolean("Version_18_Support"));
-		if (f2.contains("hasNightVisionOnScope"))
-			g.setNightVision(f2.getBoolean("hasNightVisionOnScope"));
-		if (f2.contains("isPrimaryWeapon"))
-			g.setIsPrimary(f2.getBoolean("isPrimaryWeapon"));
-		if (f2.contains("setZoomLevel"))
-			g.setZoomLevel(f2.getInt("setZoomLevel"));
-		if(f2.contains("firing_knockback"))
-			g.setKnockbackPower(f2.getDouble("firing_knockback"));
-		if(f2.contains("slownessOnEquip"))
-			g.setSlownessPower(f2.getInt("slownessOnEquip"));
-		if(f2.contains("weaponsounds_reloadingSound"))
-			g.setReloadingSound(f2.getString("weaponsounds_reloadingSound"));
-		if(f2.contains("weaponsounds_chargingSound"))
-			g.setChargingSound(f2.getString("weaponsounds_chargingSound"));
-		if(f2.contains("maxItemStack"))
-			g.setMaxItemStack(f2.getInt("maxItemStack"));
+		if (cfg.contains("delayForShoot"))
+			gun.setDelayBetweenShots(cfg.getDouble("delayForShoot"));
+		if (cfg.contains("bullets-per-shot"))
+			gun.setBulletsPerShot(cfg.getInt("bullets-per-shot"));
+		if (cfg.contains("maxBulletDistance"))
+			gun.setMaxDistance(cfg.getInt("maxBulletDistance"));
+		if (cfg.contains("Version_18_Support"))
+			gun.set18Supported(cfg.getBoolean("Version_18_Support"));
+		if (cfg.contains("hasNightVisionOnScope"))
+			gun.setNightVision(cfg.getBoolean("hasNightVisionOnScope"));
+		if (cfg.contains("isPrimaryWeapon"))
+			gun.setIsPrimary(cfg.getBoolean("isPrimaryWeapon"));
+		if (cfg.contains("setZoomLevel"))
+			gun.setZoomLevel(cfg.getInt("setZoomLevel"));
+		if(cfg.contains("firing_knockback"))
+			gun.setKnockbackPower(cfg.getDouble("firing_knockback"));
+		if(cfg.contains("slownessOnEquip"))
+			gun.setSlownessPower(cfg.getInt("slownessOnEquip"));
+		if(cfg.contains("weaponsounds_reloadingSound"))
+			gun.setReloadingSound(cfg.getString("weaponsounds_reloadingSound"));
+		if(cfg.contains("weaponsounds_chargingSound"))
+			gun.setChargingSound(cfg.getString("weaponsounds_chargingSound"));
+		if(cfg.contains("maxItemStack"))
+			gun.setMaxItemStack(cfg.getInt("maxItemStack"));
 
-		if (f2.contains("particles.bullet_particle") || f2.contains("particles.bullet_particleR")) {
+		if (cfg.contains("particles.bullet_particle") || cfg.contains("particles.bullet_particleR")) {
 
-			double partr = f2.getDouble("particles.bullet_particleR", 1.0);
-			double partg = f2.getDouble("particles.bullet_particleG", 1.0);
-			double partb = f2.getDouble("particles.bullet_particleB", 1.0);
-			int partdata = f2.getInt("particles.bullet_particleData", 0);
+			double partr = cfg.getDouble("particles.bullet_particleR", 1.0);
+			double partg = cfg.getDouble("particles.bullet_particleG", 1.0);
+			double partb = cfg.getDouble("particles.bullet_particleB", 1.0);
+			int partdata = cfg.getInt("particles.bullet_particleData", 0);
 
-			Material partm = Material.matchMaterial(f2.getString("particles.bullet_particleMaterial", "COAL_BLOCK"));
+			Material partm = Material.matchMaterial(cfg.getString("particles.bullet_particleMaterial", "COAL_BLOCK"));
 			if (partm == null) partm = Material.COAL_BLOCK;
 
 			try {
-				Particle particle = (Particle) (f2.contains("particles.bullet_particle")
-						? Particle.valueOf(f2.getString("particles.bullet_particle"))
+				Particle particle = (Particle) (cfg.contains("particles.bullet_particle")
+						? Particle.valueOf(cfg.getString("particles.bullet_particle"))
 						: QAMain.bulletTrail);
-				g.setParticles(particle, partr, partg, partb, partm, partdata);
+				gun.setParticles(particle, partr, partg, partb, partm, partdata);
 			} catch (Error | Exception ignored) {}
 		}
 	}
