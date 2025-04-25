@@ -48,7 +48,7 @@ public class GunUtil {
 
 	public static void shootHandler(Gun g, Player p, int numberOfBullets) {
 		double sway = g.getSway() * AimManager.getSway(g, p.getUniqueId());
-		if (g.usesCustomProjctiles()) {
+		if (g.usesCustomProjectiles()) {
 			for (int i = 0; i < numberOfBullets; i++) {
 				Vector go = p.getLocation().getDirection().normalize();
 				go.add(new Vector((Math.random() * 2 * sway) - sway, (Math.random() * 2 * sway) - sway,
@@ -57,7 +57,7 @@ public class GunUtil {
 				g.getCustomProjectile().spawn(g, p.getEyeLocation(), p, two);
 			}
 		} else {
-			shootInstantVector(g, p, sway, g.getDamage(), g.getBulletsPerShot(), g.getMaxDistance());
+			shootInstantVector(g, p, sway, g.getDurabilityDamage(), g.getBulletsPerShot(), g.getMaxDistance());
 		}
 	}
 
@@ -478,7 +478,7 @@ public class GunUtil {
 		QAMain.DEBUG("About to shoot!");
 
 		if (g.getChargingHandler() != null && (g.getChargingHandler().isCharging(player)
-				|| (g.getReloadingingHandler() != null && g.getReloadingingHandler().isReloading(player))))
+				|| (g.getReloadingHandler() != null && g.getReloadingHandler().isReloading(player))))
 			return;
 
 		if (isDelay(g,player)) {
@@ -567,7 +567,7 @@ public class GunUtil {
 
 					boolean regularshoot = true;
 					if (g.getChargingHandler() != null && (!g.getChargingHandler().isCharging(player)
-							&& (g.getReloadingingHandler() == null || !g.getReloadingingHandler().isReloading(player)))) {
+							&& (g.getReloadingHandler() == null || !g.getReloadingHandler().isReloading(player)))) {
 						regularshoot = g.getChargingHandler().shoot(g, player, temp);
 						QAMain.DEBUG(
 								"Charging (rapidfire) shoot debug: " + g.getName() + " = " + (g.getChargingHandler() == null
@@ -745,8 +745,8 @@ public class GunUtil {
 					: Math.min(g.getMaxBullets(), initialAmount + QualityArmory.getAmmoInInventory(player, ammo));
 			final int subtractAmount = reloadAmount - initialAmount;
 
-			if (g.getReloadingingHandler() != null) {
-				seconds = g.getReloadingingHandler().reload(player, g, subtractAmount);
+			if (g.getReloadingHandler() != null) {
+				seconds = g.getReloadingHandler().reload(player, g, subtractAmount);
 			}
 			QAMain.toggleNightvision(player, g, false);
 			//Gun.updateAmmo(g, im, initialAmount);

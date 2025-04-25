@@ -1,6 +1,5 @@
 package me.zombie_striker.qg.npcs_sentinel;
 
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -74,7 +73,7 @@ public class SentinelQAHandler extends SentinelIntegration {
 		lastTimeShot.put(st.getLivingEntity().getUniqueId(),System.currentTimeMillis());
 
 		double sway = g.getSway() * st.accuracy;
-		if (g.usesCustomProjctiles()) {
+		if (g.usesCustomProjectiles()) {
 			for (int i = 0; i < g.getBulletsPerShot(); i++) {
 				Vector go = st.getLivingEntity().getEyeLocation().getDirection().normalize();
 				go.add(new Vector((Math.random() * 2 * sway) - sway, (Math.random() * 2 * sway) - sway,
@@ -84,7 +83,7 @@ public class SentinelQAHandler extends SentinelIntegration {
 						two);
 			}
 		} else {
-			GunUtil.shootInstantVector(g, ((Player) st.getLivingEntity()), sway, g.getDamage(), g.getBulletsPerShot(),
+			GunUtil.shootInstantVector(g, ((Player) st.getLivingEntity()), sway, g.getDurabilityDamage(), g.getBulletsPerShot(),
 					g.getMaxDistance());
 		}
 

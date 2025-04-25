@@ -1,11 +1,10 @@
 package me.zombie_striker.qg.miscitems;
 
-import me.zombie_striker.customitemmanager.MaterialStorage;
-import me.zombie_striker.qg.QAMain;
-import me.zombie_striker.qg.guns.utils.WeaponSounds;
+import java.util.List;
+
+import com.cryptomorin.xseries.particles.XParticle;
 import me.zombie_striker.qg.hooks.protection.ProtectionHandler;
 import org.bukkit.Effect;
-import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
@@ -14,12 +13,14 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.List;
+import me.zombie_striker.qg.QAMain;
+import me.zombie_striker.customitemmanager.MaterialStorage;
+import me.zombie_striker.qg.guns.utils.WeaponSounds;
 
-public class Molotov extends Grenade {
+public class IncendiaryGrenade extends Grenade {
 
-    public Molotov(ItemStack[] ingredients, double cost, double damage, double explosionRadius, String name,
-                   String displayname, List<String> lore, MaterialStorage ms) {
+    public IncendiaryGrenade(ItemStack[] ingredients, double cost, double damage, double explosionRadius, String name,
+                             String displayname, List<String> lore, MaterialStorage ms) {
         super(ingredients, cost, damage, explosionRadius, name, displayname, lore, ms);
     }
 
@@ -41,12 +42,8 @@ public class Molotov extends Grenade {
             @Override
             public void run() {
                 try {
-                    for (int i = 0; i < 8; i++) {
-                        double xoffset = ((Math.random() * 2) - 1) * radius;
-                        double zoffset = ((Math.random() * 2) - 1) * radius;
-                        h.getHolder().getWorld().spawnParticle(Particle.FLAME,
-                                h.getHolder().getLocation().clone().add(xoffset, 0, zoffset), 0);
-                    }
+                    h.getHolder().getWorld().spawnParticle(XParticle.EXPLOSION_EMITTER.get(),
+                            h.getHolder().getLocation(), 0);
                     for (int i = 0; i < 4; i++) {
                         //TODO: Check: This goes in three directions, and one stays still
                         h.getHolder().getWorld().spawnParticle(org.bukkit.Particle.LAVA,
@@ -58,10 +55,14 @@ public class Molotov extends Grenade {
                     h.getHolder().getWorld().playEffect(h.getHolder().getLocation(), Effect.valueOf("CLOUD"), 0);
                     h.getHolder().getWorld().playSound(h.getHolder().getLocation(), Sound.valueOf("EXPLODE"), 3, 0.7f);
                 }
-                if (!(h.getHolder() instanceof Player) && (h.getHolder().isOnGround() || h.getHolder().isInWater()))
-                    k++;
+                k++;
                 QAMain.DEBUG("Fireticks");
-                if (k == 40) {
+                if (k == 1) {
+                    if (h.getHolder() instanceof Player) {
+                        ((LivingEntity) h.getHolder()).setFireTicks(h.getHolder().getMaxFireTicks() / 5);
+                        removeGrenade(((Player) h.getHolder()));
+                    }
+                } else if (k == 40) {
                     if (h.getHolder() instanceof Item) {
                         Grenade.getGrenades().remove(h.getHolder());
                         h.getHolder().remove();

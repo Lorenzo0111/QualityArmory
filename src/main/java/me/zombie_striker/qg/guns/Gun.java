@@ -26,118 +26,117 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparable<Gun> {
-
     private static final String CALCTEXT = ChatColor.DARK_GRAY + "qadata:";
-    public ChatColor glowEffect = null;
-    public boolean unlimitedAmmo = false;
-    // This refers to the last time a gun was shot by a player, on a per-gun basis.
+
+    // Refers to the last time a player shot a gun, on a per-gun basis.
     // Doing this should prevent players from fast-switching to get around
     // bullet-delays
-    public HashMap<UUID, Long> lastshot = new HashMap<>();
-    boolean supports18 = false;
-    boolean nightVisionOnScope = false;
-    RealtimeCalculationProjectile customProjectile = null;
-    double velocity = 2;
-    double explosionRadius = 10;
-    double recoil = 1;
+    private final Map<UUID, Long> lastShot = new HashMap<>();
+    private final Map<UUID, Long> lastRMB = new HashMap<>();
+
     private WeaponType type;
-    private boolean hasIronSights;
-    private int zoomLevel = 0;
     private Ammo ammotype;
-    private double acc;
-    private double swaymultiplier = 2;
-    private double swayUnscopedMultiplier = 1;
-    private int maxbull;
-    private float damage;
-    private int durib = 1000;
-    private boolean isAutomatic;
-    private double headshotMultiplier = 2;
-    private boolean isPrimaryWeapon = true;
-    private boolean useOffhandOverride = true;
-    private List<String> weaponSounds;
-    private double volume = 4;
-    private double delayBetweenShots = 0.25;
-    private int shotsPerBullet = 1;
-    private int firerate = 1;
+    private boolean unlimitedAmmo = false;
+    private int maxBullets;
     private double reloadTime = 1.5;
     private ChargingHandler ch = null;
     private ReloadingHandler rh = null;
-    private boolean enableSwayMovementModifier = true;
-    private boolean enableSwaySneakModifier = true;
-    private boolean enableSwayRunModifier = true;
+    private RealtimeCalculationProjectile customProjectile = null;
+
+    private String reloadingSound = WeaponSounds.RELOAD_MAG_OUT.getSoundName();
+    private String chargingSound = WeaponSounds.RELOAD_BOLT.getSoundName();
+    private List<String> weaponSounds;
+    private double volume = 4;
+
+    private double recoil = 1;
+    private double velocity = 2;
+    private float durabilityDamage;
     private int maxDistance = 150;
+    private int zoomLevel = 0;
+    private boolean hasIronSights;
+    private double delayBetweenShots = 0.25;
+    private int shotsPerBullet = 1;
+    private int fireRate = 1;
+    private boolean isAutomatic;
+    private boolean isPrimaryWeapon = true;
+    private int lightLevelOnShoot = 20;
+    private double explosionRadius = 10;
+
+    private boolean nightVisionOnScope = false;
+    private boolean useOffhandOverride = true;
+    private boolean enableMuzzleSmoke = false;
+    private boolean supports18 = false;
+    private int durability = 1000;
+
     private Particle particle = null;
+    private Material particle_material = Material.COAL_BLOCK;
     private int particle_data = 1;
     private double particle_r = 1;
     private double particle_g = 1;
     private double particle_b = 1;
-    private Material particle_material = Material.COAL_BLOCK;
-    private int lightl = 20;
-    private boolean enableMuzzleSmoke = false;
+    public ChatColor glowEffect = null;
+
     private double knockbackPower = 0;
     private int slownessPower = 0;
+    private double sway;
+    private double swayMultiplier = 2;
+    private double swayUnscopedMultiplier = 1;
+    private double headshotMultiplier = 2;
+    private boolean enableSwayMovementModifier = true;
+    private boolean enableSwaySneakModifier = true;
+    private boolean enableSwayRunModifier = true;
+
     private final List<Material> breakableMaterials = new ArrayList<>();
-
-    private String reloadingSound = WeaponSounds.RELOAD_MAG_OUT.getSoundName();
-    private String chargingSound = WeaponSounds.RELOAD_BOLT.getSoundName();
-
     private String killedByMessage = "%player% was shot by %killer% using a %name%";
 
-    private HashMap<UUID, Long> lastRMB = new HashMap<>();
-
     @Deprecated
-    public Gun(String name, MaterialStorage id, WeaponType type, boolean h, Ammo am, double acc, double swaymult,
-               int maxBullets, float damage, boolean isAutomatic, int durib, String ws, double cost,
-               ItemStack[] ing) {
-        this(name, id, type, h, am, acc, swaymult, maxBullets, damage, isAutomatic, durib, ws,
-                null, ChatColor.GOLD + name, cost, ing);
+    public Gun(String name, MaterialStorage id, WeaponType type, boolean h, Ammo ammo, double sway, double swayMultiplier,
+               int maxBullets, float durabilityDamage, boolean isAutomatic, int durability, String ws, double cost,
+               ItemStack[] ingredients) {
+        this(name, id, type, h, ammo, sway, swayMultiplier, maxBullets, durabilityDamage, isAutomatic, durability, ws,
+                null, ChatColor.GOLD + name, cost, ingredients);
     }
 
     @Deprecated
-    public Gun(String name, MaterialStorage id, WeaponType type, boolean h, Ammo am, double acc, double swaymult,
-               int maxBullets, float damage, boolean isAutomatic, int durib, WeaponSounds ws, double cost,
-               ItemStack[] ing) {
-        this(name, id, type, h, am, acc, swaymult, maxBullets, damage, isAutomatic, durib, ws, null,
-                ChatColor.GOLD + name, cost, ing);
+    public Gun(String name, MaterialStorage id, WeaponType type, boolean h, Ammo ammo, double sway, double swayMultiplier,
+               int maxBullets, float durabilityDamage, boolean isAutomatic, int durability, WeaponSounds ws, double cost,
+               ItemStack[] ingredients) {
+        this(name, id, type, h, ammo, sway, swayMultiplier, maxBullets, durabilityDamage, isAutomatic, durability, ws, null,
+                ChatColor.GOLD + name, cost, ingredients);
     }
 
     @Deprecated
-    public Gun(String name, MaterialStorage id, WeaponType type, boolean h, Ammo am, double acc, double swaymult,
-               int maxBullets, float damage, boolean isAutomatic, int durib, WeaponSounds ws, List<String> extralore,
-               String displayname, double cost, ItemStack[] ing) {
-        this(name, id, type, h, am, acc, swaymult, maxBullets, damage, isAutomatic, durib, ws.getSoundName(),
-                extralore, displayname, cost, ing);
+    public Gun(String name, MaterialStorage id, WeaponType type, boolean h, Ammo ammo, double sway, double swayMultiplier,
+               int maxBullets, float durabilityDamage, boolean isAutomatic, int durability, WeaponSounds ws, List<String> lore,
+               String displayname, double cost, ItemStack[] ingredients) {
+        this(name, id, type, h, ammo, sway, swayMultiplier, maxBullets, durabilityDamage, isAutomatic, durability, ws.getSoundName(),
+                lore, displayname, cost, ingredients);
     }
 
     @Deprecated
-    public Gun(String name, MaterialStorage id, WeaponType type, boolean h, Ammo am, double acc, double swaymult,
-               int maxBullets, float damage, boolean isAutomatic, int durib, String ws, List<String> extralore,
-               String displayname, double cost, ItemStack[] ing) {
-        super(name, id, LocalUtils.colorize(displayname), extralore, true);
+    public Gun(String name, MaterialStorage id, WeaponType type, boolean h, Ammo ammo, double sway, double swayMultiplier,
+               int maxBullets, float durabilityDamage, boolean isAutomatic, int durability, String ws, List<String> lore,
+               String displayname, double cost, ItemStack[] ingredients) {
+        super(name, id, LocalUtils.colorize(displayname), lore, true);
         this.type = type;
         this.hasIronSights = h;
-        this.ammotype = am;
-        this.setIngredients(ing);
-        this.acc = acc;
-        this.maxbull = maxBullets;
-        this.damage = damage;
-        this.durib = durib;
-        this.swaymultiplier = swaymult;
+        this.ammotype = ammo;
+        this.sway = sway;
+        this.maxBullets = maxBullets;
+        this.durabilityDamage = durabilityDamage;
+        this.durability = durability;
+        this.swayMultiplier = swayMultiplier;
         this.isAutomatic = isAutomatic;
-        this.weaponSounds = new ArrayList<String>();
+        this.weaponSounds = new ArrayList<>();
         this.weaponSounds.add(ws);
 
-        this.setPrice(cost);
-
-        //this.extralore = extralore;
-        //this.displayname = LocalUtils.colorize(displayname);
+        setIngredients(ingredients);
+        setPrice(cost);
     }
 
     public Gun(String name, MaterialStorage id) {
@@ -145,7 +144,7 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
     }
 
     @SuppressWarnings("deprecation")
-    public static boolean USE_THIS_INSTEAD_OF_INDEVIDUAL_SHOOT_METHODS(Gun g, Player player, double acc, boolean holdingRMB) {
+    public static boolean USE_THIS_INSTEAD_OF_INDIVIDUAL_SHOOT_METHODS(Gun g, Player player, double acc, boolean holdingRMB) {
         boolean offhand = QualityArmory.isIronSights(player.getInventory().getItemInHand());
         if ((!offhand && getAmount(player) > 0)
                 || (offhand && Update19OffhandChecker.hasAmountOFfhandGreaterthan(player, 0))) {
@@ -187,12 +186,12 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
         List<String> lore = (current != null && current.hasItemMeta() && current.getItemMeta().hasLore()) ? current.getItemMeta().getLore() : new ArrayList<>();
         OLD_ItemFact.addVariantData(null, lore, g);
         if (QAMain.ENABLE_LORE_INFO) {
-            lore.add(QAMain.S_ITEM_DAMAGE + ": " + g.getDamage());
+            lore.add(QAMain.S_ITEM_DAMAGE + ": " + g.getDurabilityDamage());
             lore.add(QAMain.S_ITEM_DPS + ": "
                     + (g.isAutomatic()
-                    ? (2 * g.getFireRate() * g.getDamage()) + ""
+                    ? (2 * g.getFireRate() * g.getDurabilityDamage()) + ""
                     + (g.getBulletsPerShot() > 1 ? "x" + g.getBulletsPerShot() : "")
-                    : "" + ((int) (1.0 / g.getDelayBetweenShotsInSeconds()) * g.getDamage())
+                    : "" + ((int) (1.0 / g.getDelayBetweenShotsInSeconds()) * g.getDurabilityDamage())
                     + (g.getBulletsPerShot() > 1 ? "x" + g.getBulletsPerShot() : "")));
             if (g.getAmmoType() != null)
                 lore.add(QAMain.S_ITEM_AMMO + ": " + g.getAmmoType().getDisplayName());
@@ -205,7 +204,7 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
 
         if (QAMain.enableDurability)
             if (current == null) {
-                double k = ((double) g.getDamage()) / g.getDurability();
+                double k = ((double) g.getDurabilityDamage()) / g.getDurability();
                 ChatColor c = k > 0.5 ? ChatColor.DARK_GREEN : k > 0.25 ? ChatColor.GOLD : ChatColor.DARK_RED;
                 lore.add(c + QAMain.S_ITEM_DURIB + ":" + g.getDurability() + "/" + g.getDurability());
             } else {
@@ -272,7 +271,7 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
         return lore;
     }
 
-    public static int getCalculatedExtraDurib(ItemStack is) {
+    public static int getCalculatedExtraDurability(ItemStack is) {
         if (CustomItemManager.isUsingCustomData())
             return -1;
         if (!is.hasItemMeta() || !is.getItemMeta().hasLore() || is.getItemMeta().getLore().isEmpty())
@@ -285,7 +284,7 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
         return -1;
     }
 
-    public static ItemStack addCalulatedExtraDurib(ItemStack is, int number) {
+    public static ItemStack addCalculatedExtraDurability(ItemStack is, int number) {
         if (CustomItemManager.isUsingCustomData())
             return is;
         ItemMeta im = is.getItemMeta();
@@ -293,7 +292,7 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
         if (lore == null) {
             lore = new ArrayList<>();
         } else {
-            if (getCalculatedExtraDurib(is) != -1)
+            if (getCalculatedExtraDurability(is) != -1)
                 is = removeCalculatedExtra(is);
         }
         lore.add(CALCTEXT + number);
@@ -338,11 +337,11 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
         this.hasIronSights = g.hasIronSights;
         this.zoomLevel = g.zoomLevel;
         this.ammotype = g.ammotype;
-        this.acc = g.acc;
-        this.swaymultiplier = g.swaymultiplier;
-        this.maxbull = g.maxbull;
-        this.damage = g.damage;
-        this.durib = g.durib;
+        this.sway = g.sway;
+        this.swayMultiplier = g.swayMultiplier;
+        this.maxBullets = g.maxBullets;
+        this.durabilityDamage = g.durabilityDamage;
+        this.durability = g.durability;
         this.isAutomatic = g.isAutomatic;
         this.supports18 = g.supports18;
         this.nightVisionOnScope = g.nightVisionOnScope;
@@ -355,36 +354,35 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
         this.setEnableShop(g.isEnableShop());
         this.delayBetweenShots = g.delayBetweenShots;
         this.shotsPerBullet = g.shotsPerBullet;
-        this.firerate = g.firerate;
+        this.fireRate = g.fireRate;
         this.ch = g.ch;
         this.rh = g.rh;
-        this.maxDistance = g.maxbull;
+        this.maxDistance = g.maxDistance;
         this.particle = g.particle;
         this.particle_r = g.particle_r;
         this.particle_g = g.particle_g;
         this.particle_b = g.particle_b;
         this.particle_material = g.particle_material;
         this.particle_data = g.particle_data;
-        this.lightl = g.lightl;
+        this.lightLevelOnShoot = g.lightLevelOnShoot;
         this.enableMuzzleSmoke = g.enableMuzzleSmoke;
         this.glowEffect = g.glowEffect;
         this.unlimitedAmmo = g.unlimitedAmmo;
         this.customProjectile = g.customProjectile;
         this.velocity = g.velocity;
         this.recoil = g.recoil;
-
     }
 
-    public void setHasIronsights(boolean b) {
+    public void setHasIronSights(boolean b) {
         this.hasIronSights = b;
     }
 
-    public void setDuribility(int durib) {
-        this.durib = durib;
+    public void setDurability(int durability) {
+        this.durability = durability;
     }
 
     public void setSwayMultiplier(double multiplier) {
-        this.swaymultiplier = multiplier;
+        this.swayMultiplier = multiplier;
     }
 
     public double getHeadshotMultiplier() {
@@ -407,11 +405,11 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
     }
 
     public int getLightOnShoot() {
-        return lightl;
+        return lightLevelOnShoot;
     }
 
     public void setLightOnShoot(int level) {
-        lightl = level;
+        lightLevelOnShoot = level;
     }
 
     public double getRecoil() {
@@ -454,11 +452,11 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
         this.ammotype = ammo;
     }
 
-    public boolean hasnightVision() {
+    public boolean hasNightVision() {
         return nightVisionOnScope;
     }
 
-    public boolean usesCustomProjctiles() {
+    public boolean usesCustomProjectiles() {
         return customProjectile != null;
     }
 
@@ -503,11 +501,11 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
     }
 
     public int getFireRate() {
-        return firerate;
+        return fireRate;
     }
 
-    public void setFireRate(int firerate) {
-        this.firerate = firerate;
+    public void setFireRate(int fireRate) {
+        this.fireRate = fireRate;
     }
 
     public WeaponType getWeaponType() {
@@ -539,7 +537,7 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
     }
 
     public boolean shoot(Player player, boolean holdingRMB) {
-        return Gun.USE_THIS_INSTEAD_OF_INDEVIDUAL_SHOOT_METHODS(this, player, getSway(), holdingRMB);
+        return Gun.USE_THIS_INSTEAD_OF_INDIVIDUAL_SHOOT_METHODS(this, player, getSway(), holdingRMB);
     }
 
     public void setDeathMessage(String deathMessage) {
@@ -551,11 +549,11 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
     }
 
     public int getMaxBullets() {
-        return maxbull;
+        return maxBullets;
     }
 
     public void setMaxBullets(int amount) {
-        this.maxbull = amount;
+        this.maxBullets = amount;
     }
 
     public boolean playerHasAmmo(Player player) {
@@ -582,26 +580,24 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
     }
 
     public void reload(Player player) {
-        if (getChargingHandler() == null || (getReloadingingHandler() == null || !getReloadingingHandler().isReloading(player)))
+        if (getChargingHandler() == null || (getReloadingHandler() == null || !getReloadingHandler().isReloading(player)))
             GunUtil.basicReload(this, player, hasUnlimitedAmmo(), reloadTime);
     }
 
-    public double getDamage() {
-        return damage;
+    public double getDurabilityDamage() {
+        return durabilityDamage;
     }
 
-
     public void setDurabilityDamage(float damage) {
-        this.damage = damage;
+        this.durabilityDamage = damage;
     }
 
     public int getDurability() {
-        return this.durib;
+        return this.durability;
     }
 
-
-    public void setSwayUnscopedMultiplier(double swaymultiplier) {
-        this.swayUnscopedMultiplier = swaymultiplier;
+    public void setSwayUnscopedMultiplier(double multiplier) {
+        this.swayUnscopedMultiplier = multiplier;
     }
 
     public double getSwayUnscopedMultiplier() {
@@ -623,15 +619,15 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
     }
 
     public double getSway() {
-        return acc;
+        return sway;
     }
 
     public void setSway(double sway) {
-        this.acc = sway;
+        this.sway = sway;
     }
 
     public double getMovementMultiplier() {
-        return swaymultiplier;
+        return swayMultiplier;
     }
 
     @Deprecated
@@ -651,8 +647,8 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
         this.delayBetweenShots = seconds;
     }
 
-    public HashMap<UUID, Long> getLastShotForGun() {
-        return lastshot;
+    public Map<UUID, Long> getLastShotForGun() {
+        return lastShot;
     }
 
     public ChargingHandler getChargingHandler() {
@@ -663,7 +659,7 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
         this.ch = ch;
     }
 
-    public ReloadingHandler getReloadingingHandler() {
+    public ReloadingHandler getReloadingHandler() {
         return rh;
     }
 
@@ -743,7 +739,7 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
     }
 
     @Override
-    public int compareTo(Gun arg0) {
+    public int compareTo(@NotNull Gun arg0) {
         if (QAMain.orderShopByPrice) {
             return (int) (this.getPrice() - arg0.getPrice());
         }
@@ -1124,56 +1120,56 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
     @Override
     public String toString() {
         return "Gun{" +
-                "glowEffect=" + glowEffect +
-                ", unlimitedAmmo=" + unlimitedAmmo +
-                ", lastshot=" + lastshot +
-                ", supports18=" + supports18 +
-                ", nightVisionOnScope=" + nightVisionOnScope +
-                ", customProjectile=" + customProjectile +
-                ", velocity=" + velocity +
-                ", explosionRadius=" + explosionRadius +
-                ", recoil=" + recoil +
+                "lastShot=" + lastShot +
+                ", lastRMB=" + lastRMB +
                 ", type=" + type +
-                ", hasIronSights=" + hasIronSights +
-                ", zoomLevel=" + zoomLevel +
                 ", ammotype=" + ammotype +
-                ", acc=" + acc +
-                ", swaymultiplier=" + swaymultiplier +
-                ", swayUnscopedMultiplier=" + swayUnscopedMultiplier +
-                ", maxbull=" + maxbull +
-                ", damage=" + damage +
-                ", durib=" + durib +
-                ", isAutomatic=" + isAutomatic +
-                ", headshotMultiplier=" + headshotMultiplier +
-                ", isPrimaryWeapon=" + isPrimaryWeapon +
-                ", useOffhandOverride=" + useOffhandOverride +
-                ", weaponSounds=" + weaponSounds +
-                ", volume=" + volume +
-                ", delayBetweenShots=" + delayBetweenShots +
-                ", shotsPerBullet=" + shotsPerBullet +
-                ", firerate=" + firerate +
+                ", unlimitedAmmo=" + unlimitedAmmo +
+                ", maxBullets=" + maxBullets +
                 ", reloadTime=" + reloadTime +
                 ", ch=" + ch +
                 ", rh=" + rh +
-                ", enableSwayMovementModifier=" + enableSwayMovementModifier +
-                ", enableSwaySneakModifier=" + enableSwaySneakModifier +
-                ", enableSwayRunModifier=" + enableSwayRunModifier +
+                ", customProjectile=" + customProjectile +
+                ", reloadingSound='" + reloadingSound + '\'' +
+                ", chargingSound='" + chargingSound + '\'' +
+                ", weaponSounds=" + weaponSounds +
+                ", volume=" + volume +
+                ", recoil=" + recoil +
+                ", velocity=" + velocity +
+                ", durabilityDamage=" + durabilityDamage +
                 ", maxDistance=" + maxDistance +
+                ", zoomLevel=" + zoomLevel +
+                ", hasIronSights=" + hasIronSights +
+                ", delayBetweenShots=" + delayBetweenShots +
+                ", shotsPerBullet=" + shotsPerBullet +
+                ", fireRate=" + fireRate +
+                ", isAutomatic=" + isAutomatic +
+                ", isPrimaryWeapon=" + isPrimaryWeapon +
+                ", lightLevelOnShoot=" + lightLevelOnShoot +
+                ", explosionRadius=" + explosionRadius +
+                ", nightVisionOnScope=" + nightVisionOnScope +
+                ", useOffhandOverride=" + useOffhandOverride +
+                ", enableMuzzleSmoke=" + enableMuzzleSmoke +
+                ", supports18=" + supports18 +
+                ", durability=" + durability +
                 ", particle=" + particle +
+                ", particle_material=" + particle_material +
                 ", particle_data=" + particle_data +
                 ", particle_r=" + particle_r +
                 ", particle_g=" + particle_g +
                 ", particle_b=" + particle_b +
-                ", particle_material=" + particle_material +
-                ", lightl=" + lightl +
-                ", enableMuzzleSmoke=" + enableMuzzleSmoke +
+                ", glowEffect=" + glowEffect +
                 ", knockbackPower=" + knockbackPower +
                 ", slownessPower=" + slownessPower +
+                ", sway=" + sway +
+                ", swayMultiplier=" + swayMultiplier +
+                ", swayUnscopedMultiplier=" + swayUnscopedMultiplier +
+                ", headshotMultiplier=" + headshotMultiplier +
+                ", enableSwayMovementModifier=" + enableSwayMovementModifier +
+                ", enableSwaySneakModifier=" + enableSwaySneakModifier +
+                ", enableSwayRunModifier=" + enableSwayRunModifier +
                 ", breakableMaterials=" + breakableMaterials +
-                ", reloadingSound='" + reloadingSound + '\'' +
-                ", chargingSound='" + chargingSound + '\'' +
                 ", killedByMessage='" + killedByMessage + '\'' +
-                ", lastRMB=" + lastRMB +
                 '}';
     }
 }

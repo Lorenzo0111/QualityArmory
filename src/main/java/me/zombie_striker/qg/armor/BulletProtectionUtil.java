@@ -13,7 +13,7 @@ public class BulletProtectionUtil {
 		if (p.getInventory().getHelmet() != null) {
 			if (me.zombie_striker.qg.api.QualityArmory.isArmor(p.getInventory().getHelmet())) {
 				ArmorObject armor = me.zombie_striker.qg.api.QualityArmory.getArmor(p.getInventory().getHelmet());
-				double offset = (p.isSneaking() ? armor.getShifitngHeightOffset() : 0);
+				double offset = (p.isSneaking() ? armor.getShiftingHeightOffset() : 0);
 				if (bullet.getY() - p.getLocation().getY() > armor.getMinH() + offset) {
 					if (bullet.getY() - p.getLocation().getY() < armor.getMaxH() + offset) {
 						// Within kevlar range

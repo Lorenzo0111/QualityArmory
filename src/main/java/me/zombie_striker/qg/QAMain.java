@@ -282,7 +282,7 @@ public class QAMain extends JavaPlugin {
                 currentlyScoping.add(player.getUniqueId());
                 player.addPotionEffect(new PotionEffect(XPotion.SLOWNESS.getPotionEffectType(), 1200, g.getZoomWhenIronSights()));
             }
-            if (g.hasnightVision()) {
+            if (g.hasNightVision()) {
                 currentlyScoping.add(player.getUniqueId());
                 player.addPotionEffect(new PotionEffect(XPotion.NIGHT_VISION.getPotionEffectType(), 1200, 3));
             }
@@ -293,12 +293,12 @@ public class QAMain extends JavaPlugin {
                 boolean potionEff = false;
                 try {
                     potionEff = player.hasPotionEffect(PotionEffectType.NIGHT_VISION)
-                            && (g == null || g.hasnightVision())
+                            && (g == null || g.hasNightVision())
                             && player.getPotionEffect(PotionEffectType.NIGHT_VISION).getAmplifier() == 3;
                 } catch (Error | Exception e3452) {
                     for (PotionEffect pe : player.getActivePotionEffects())
                         if (pe.getType() == PotionEffectType.NIGHT_VISION)
-                            potionEff = (g == null || g.hasnightVision()) && pe.getAmplifier() == 3;
+                            potionEff = (g == null || g.hasNightVision()) && pe.getAmplifier() == 3;
                 }
                 if (potionEff)
                     player.removePotionEffect(PotionEffectType.NIGHT_VISION);

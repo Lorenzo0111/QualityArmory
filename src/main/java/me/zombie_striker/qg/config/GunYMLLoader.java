@@ -243,16 +243,16 @@ public class GunYMLLoader {
 						base = new Grenade(ingredients, price, damage, radius, name, displayname, lore, ms);
 						break;
 					case SMOKE_GRENADES:
-						base = new SmokeGrenades(ingredients, price, damage, radius, name, displayname, lore, ms);
+						base = new SmokeGrenade(ingredients, price, damage, radius, name, displayname, lore, ms);
 						break;
 					case INCENDARY_GRENADES:
-						base = new IncendaryGrenades(ingredients, price, damage, radius, name, displayname, lore, ms);
+						base = new IncendiaryGrenade(ingredients, price, damage, radius, name, displayname, lore, ms);
 						break;
 					case PROXYMINES:
-						base = new ProxyMines(ingredients, price, damage, radius, name, displayname, lore, ms);
+						base = new ProxyMine(ingredients, price, damage, radius, name, displayname, lore, ms);
 						break;
 					case STICKYGRENADE:
-						base = new StickyGrenades(ingredients, price, damage, radius, name, displayname, lore, ms);
+						base = new StickyGrenade(ingredients, price, damage, radius, name, displayname, lore, ms);
 						break;
 					case MOLOTOV:
 						base = new Molotov(ingredients, price, damage, radius, name, displayname, lore, ms);
@@ -369,10 +369,10 @@ public class GunYMLLoader {
 		if (cfg.contains("sway.defaultValue")) gun.setSway(cfg.getDouble("sway.defaultValue"));
 		if (cfg.contains("sway.defaultMultiplier"))
 			gun.setSwayMultiplier(cfg.getDouble("sway.defaultMultiplier"));
-		if (cfg.contains("enableIronSights")) gun.setHasIronsights(cfg.getBoolean("enableIronSights"));
+		if (cfg.contains("enableIronSights")) gun.setHasIronSights(cfg.getBoolean("enableIronSights"));
 		if (cfg.contains("maxbullets")) gun.setMaxBullets(cfg.getInt("maxbullets"));
 		if (cfg.contains("damage")) gun.setDurabilityDamage(cfg.getInt("damage"));
-		if (cfg.contains("durability")) gun.setDuribility(cfg.getInt("durability"));
+		if (cfg.contains("durability")) gun.setDurability(cfg.getInt("durability"));
 		if (cfg.contains("price")) gun.setPrice(cfg.getDouble("price"));
 		if (cfg.contains("allowInShop")) gun.setEnableShop(cfg.getBoolean("allowInShop"));
 		if (cfg.contains("allowCrafting")) gun.setEnableCrafting(cfg.getBoolean("allowCrafting"));
@@ -442,8 +442,8 @@ public class GunYMLLoader {
 		if (cfg.contains("ReloadingHandler")) {
 			gun.setReloadingHandler(ReloadingManager.getHandler(cfg.getString("ReloadingHandler")));
 
-			if (gun.getReloadingingHandler() != null)
-				gun.setReloadingSound(gun.getReloadingingHandler().getDefaultReloadingSound());
+			if (gun.getReloadingHandler() != null)
+				gun.setReloadingSound(gun.getReloadingHandler().getDefaultReloadingSound());
 		}
 
 		String chargingHandler = cfg.getString("ChargingHandler");

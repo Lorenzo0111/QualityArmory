@@ -19,12 +19,15 @@ import java.util.List;
 import java.util.Objects;
 
 public class AmmoBag extends CustomBaseObject implements ArmoryBaseObject {
+
     private final int maxAmmo;
 
-    public AmmoBag(MaterialStorage ms, String name, String displayname, ItemStack[] ings, int max, int cost) {
-        super(name,ms,displayname,null,false);
-        super.setIngredients(ings);
-        this.setPrice(cost);
+    public AmmoBag(MaterialStorage ms, String name, String displayname, ItemStack[] ingredients, int max, int cost) {
+        super(name, ms, displayname, null, false);
+
+        setIngredients(ingredients);
+        setPrice(cost);
+
         this.maxAmmo = max;
     }
 
@@ -32,7 +35,6 @@ public class AmmoBag extends CustomBaseObject implements ArmoryBaseObject {
     public int getCraftingReturn() {
         return 1;
     }
-
 
     @Override
     public boolean is18Support() {
@@ -62,7 +64,7 @@ public class AmmoBag extends CustomBaseObject implements ArmoryBaseObject {
         if (ammoType != null) {
             int inInv = QualityArmory.getAmmoInInventory(shooter, ammoType, true);
             int newCount = Math.min(inInv + newAmmoCount, maxAmmo);
-            int toRemove = Math.max(0,newCount - newAmmoCount);
+            int toRemove = Math.max(0, newCount - newAmmoCount);
 
             if (toRemove > 0) {
                 QualityArmory.removeAmmoFromInventory(shooter, ammoType, toRemove);
@@ -100,7 +102,7 @@ public class AmmoBag extends CustomBaseObject implements ArmoryBaseObject {
 
     @Override
     public ItemStack getItemStack() {
-        return CustomItemManager.getItemType("gun").getItem(this.getItemData().getMat(),this.getItemData().getData(),this.getItemData().getVariant());
+        return CustomItemManager.getItemType("gun").getItem(this.getItemData().getMat(), this.getItemData().getData(), this.getItemData().getVariant());
     }
 
     @Override

@@ -43,7 +43,7 @@ public class HomingRocketProjectile implements RealtimeCalculationProjectile {
 					if (lookat != null && lookat.getType() != Material.AIR) {
 						if (QualityArmory.isGun(player.getItemInHand())) {
 							Gun g = me.zombie_striker.qg.api.QualityArmory.getGun(player.getItemInHand());
-							if (g.usesCustomProjctiles() && g.getCustomProjectile() instanceof HomingRocketProjectile) {
+							if (g.usesCustomProjectiles() && g.getCustomProjectile() instanceof HomingRocketProjectile) {
 								Vector newDir = lookat.getLocation().clone().subtract(RPGLOCATION).toVector()
 										.normalize();
 								vect = newDir;
@@ -84,7 +84,7 @@ public class HomingRocketProjectile implements RealtimeCalculationProjectile {
 							RPGLOCATION.getWorld().playEffect(RPGLOCATION, Effect.valueOf("CLOUD"), 0);
 							player.getWorld().playSound(RPGLOCATION, Sound.valueOf("EXPLODE"), 8, 0.7f);
 						}
-						ExplosionHandler.handleAOEExplosion(player, RPGLOCATION, g.getDamage(), g.getExplosionRadius());
+						ExplosionHandler.handleAOEExplosion(player, RPGLOCATION, g.getDurabilityDamage(), g.getExplosionRadius());
 						cancel();
 						return;
 					}

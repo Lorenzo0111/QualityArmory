@@ -2,6 +2,7 @@ package me.zombie_striker.qg.miscitems;
 
 import java.text.DecimalFormat;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 import me.zombie_striker.customitemmanager.CustomBaseObject;
@@ -21,152 +22,153 @@ import com.cryptomorin.xseries.XPotion;
 
 public class MedKit extends CustomBaseObject implements ArmoryBaseObject {
 
-	HashMap<UUID, Long> lastTimeHealed = new HashMap<>();
-	HashMap<UUID, Double> PercentTimeHealed = new HashMap<>();
+    private final Map<UUID, Long> lastTimeHealed = new HashMap<>();
+    private final Map<UUID, Double> PercentTimeHealed = new HashMap<>();
 
-	public MedKit(MaterialStorage ms, String name, String displayname, ItemStack[] ings, int cost) {
-		super(name, ms, displayname, null, false);
-		super.setIngredients(ings);
-		this.setPrice(cost);
-	}
+    public MedKit(MaterialStorage ms, String name, String displayname, ItemStack[] ingredients, int cost) {
+        super(name, ms, displayname, null, false);
 
-	@Override
-	public int getCraftingReturn() {
-		return 1;
-	}
+        setIngredients(ingredients);
+        setPrice(cost);
+    }
 
-	@Override
-	public boolean is18Support() {
-		return false;
-	}
+    @Override
+    public int getCraftingReturn() {
+        return 1;
+    }
 
-	@Override
-	public void set18Supported(boolean b) {
-	}
+    @Override
+    public boolean is18Support() {
+        return false;
+    }
 
-	@SuppressWarnings("deprecation")
-	@Override
-	public boolean onRMB(Player e, ItemStack usedItem) {
-		Player healer = e.getPlayer();
-		if (!BulletWoundHandler.bloodLevel.containsKey(healer.getUniqueId())) {
+    @Override
+    public void set18Supported(boolean b) {
+    }
 
-			if (healer.getHealth() < healer.getMaxHealth()) {
+    @SuppressWarnings("deprecation")
+    @Override
+    public boolean onRMB(Player e, ItemStack usedItem) {
+        Player healer = e.getPlayer();
+        if (!BulletWoundHandler.bloodLevel.containsKey(healer.getUniqueId())) {
 
-				if (!lastTimeHealed.containsKey(healer.getUniqueId())
-						|| System.currentTimeMillis() - lastTimeHealed.get(healer.getUniqueId()) > 1500) {
-					PercentTimeHealed.put(healer.getUniqueId(), 0.0);
-				}
-				lastTimeHealed.put(healer.getUniqueId(), System.currentTimeMillis());
+            if (healer.getHealth() < healer.getMaxHealth()) {
 
-				double percent = (100.0 / 3) / QAMain.S_MEDKIT_HEALDELAY;
+                if (!lastTimeHealed.containsKey(healer.getUniqueId())
+                        || System.currentTimeMillis() - lastTimeHealed.get(healer.getUniqueId()) > 1500) {
+                    PercentTimeHealed.put(healer.getUniqueId(), 0.0);
+                }
+                lastTimeHealed.put(healer.getUniqueId(), System.currentTimeMillis());
 
-				double p2 = PercentTimeHealed.get(healer.getUniqueId());
+                double percent = (100.0 / 3) / QAMain.S_MEDKIT_HEALDELAY;
 
-				if (p2 + percent < 100) {
-					PercentTimeHealed.put(healer.getUniqueId(), p2 + percent);
-				} else {
-					healer.playSound(healer.getLocation(), getSoundOnEquip(), 1, 1);
-					healer.setHealth(Math.min(healer.getMaxHealth(), healer.getHealth() + QAMain.S_MEDKIT_HEAL_AMOUNT));
-					PercentTimeHealed.remove(healer.getUniqueId());
-					lastTimeHealed.remove(healer.getUniqueId());
-				}
+                double p2 = PercentTimeHealed.get(healer.getUniqueId());
 
-				int totalBars = 25;
-				double percentLoss = (p2 + percent) / 100;
-				int healthBars = Math.min((int) (percentLoss * totalBars), totalBars);
+                if (p2 + percent < 100) {
+                    PercentTimeHealed.put(healer.getUniqueId(), p2 + percent);
+                } else {
+                    healer.playSound(healer.getLocation(), getSoundOnEquip(), 1, 1);
+                    healer.setHealth(Math.min(healer.getMaxHealth(), healer.getHealth() + QAMain.S_MEDKIT_HEAL_AMOUNT));
+                    PercentTimeHealed.remove(healer.getUniqueId());
+                    lastTimeHealed.remove(healer.getUniqueId());
+                }
 
-				StringBuilder levelbar = new StringBuilder();
-				levelbar.append(ChatColor.WHITE);
-				levelbar.append(QualityArmory.repeat(":", healthBars));
-				levelbar.append(ChatColor.BLACK);
-				levelbar.append(QualityArmory.repeat(":", totalBars - healthBars));
-				try {
-					HotbarMessager.sendHotBarMessage(healer, ChatColor.RED + "[" + levelbar.toString() + ChatColor.RED
-							+ "] " + new DecimalFormat("##0.#").format((p2 + percent)) + " percent!");
-				} catch (Exception e2) {
-				}
+                int totalBars = 25;
+                double percentLoss = (p2 + percent) / 100;
+                int healthBars = Math.min((int) (percentLoss * totalBars), totalBars);
 
-			} else {
-				try {
-					HotbarMessager.sendHotBarMessage(healer, QAMain.S_FULLYHEALED);
-				} catch (Error | Exception e5) {
-				}
-			}
-			return true;
-		}
-		double bloodlevel = BulletWoundHandler.bloodLevel.get(healer.getUniqueId());
-		double percentBlood = Math.max(0, bloodlevel / QAMain.bulletWound_initialbloodamount);
+                StringBuilder levelbar = new StringBuilder();
+                levelbar.append(ChatColor.WHITE);
+                levelbar.append(QualityArmory.repeat(":", healthBars));
+                levelbar.append(ChatColor.BLACK);
+                levelbar.append(QualityArmory.repeat(":", totalBars - healthBars));
+                try {
+                    HotbarMessager.sendHotBarMessage(healer, ChatColor.RED + "[" + levelbar.toString() + ChatColor.RED
+                            + "] " + new DecimalFormat("##0.#").format((p2 + percent)) + " percent!");
+                } catch (Exception e2) {
+                }
 
-		ChatColor severity = percentBlood > 75 ? ChatColor.WHITE
-				: percentBlood > 50 ? ChatColor.GRAY : percentBlood > 25 ? ChatColor.RED : ChatColor.DARK_RED;
-		if (BulletWoundHandler.bleedoutMultiplier.containsKey(healer.getUniqueId())
-				&& BulletWoundHandler.bleedoutMultiplier.get(healer.getUniqueId()) < 0)
-			BulletWoundHandler.bleedoutMultiplier.put(healer.getUniqueId(),
-					Math.min(0, BulletWoundHandler.bleedoutMultiplier.get(healer.getUniqueId())
-							+ QAMain.bulletWound_MedkitBloodlossHealRate));
+            } else {
+                try {
+                    HotbarMessager.sendHotBarMessage(healer, QAMain.S_FULLYHEALED);
+                } catch (Error | Exception e5) {
+                }
+            }
+            return true;
+        }
+        double bloodlevel = BulletWoundHandler.bloodLevel.get(healer.getUniqueId());
+        double percentBlood = Math.max(0, bloodlevel / QAMain.bulletWound_initialbloodamount);
 
-		double newRate = BulletWoundHandler.bleedoutMultiplier.containsKey(healer.getUniqueId())
-				? BulletWoundHandler.bleedoutMultiplier.get(healer.getUniqueId())
-				: 0;
+        ChatColor severity = percentBlood > 75 ? ChatColor.WHITE
+                : percentBlood > 50 ? ChatColor.GRAY : percentBlood > 25 ? ChatColor.RED : ChatColor.DARK_RED;
+        if (BulletWoundHandler.bleedoutMultiplier.containsKey(healer.getUniqueId())
+                && BulletWoundHandler.bleedoutMultiplier.get(healer.getUniqueId()) < 0)
+            BulletWoundHandler.bleedoutMultiplier.put(healer.getUniqueId(),
+                    Math.min(0, BulletWoundHandler.bleedoutMultiplier.get(healer.getUniqueId())
+                            + QAMain.bulletWound_MedkitBloodlossHealRate));
 
-		if (newRate >= 0) {
-			BulletWoundHandler.bleedoutMultiplier.remove(healer.getUniqueId());
-			BulletWoundHandler.bloodLevel.remove(healer.getUniqueId());
+        double newRate = BulletWoundHandler.bleedoutMultiplier.containsKey(healer.getUniqueId())
+                ? BulletWoundHandler.bleedoutMultiplier.get(healer.getUniqueId())
+                : 0;
 
-			try {
-				healer.removePotionEffect(XPotion.NAUSEA.getPotionEffectType());
-				healer.removePotionEffect(PotionEffectType.BLINDNESS);
-			} catch (Error | Exception e4) {
-			}
+        if (newRate >= 0) {
+            BulletWoundHandler.bleedoutMultiplier.remove(healer.getUniqueId());
+            BulletWoundHandler.bloodLevel.remove(healer.getUniqueId());
 
-			return true;
-		}
+            try {
+                healer.removePotionEffect(XPotion.NAUSEA.getPotionEffectType());
+                healer.removePotionEffect(PotionEffectType.BLINDNESS);
+            } catch (Error | Exception e4) {
+            }
 
-		try {
-			int totalBars = 25;
-			int healthBars = (int) (percentBlood * totalBars);
+            return true;
+        }
 
-			StringBuilder levelbar = new StringBuilder();
-			levelbar.append(severity);
-			levelbar.append(QualityArmory.repeat(":", healthBars));
-			levelbar.append(ChatColor.BLACK);
-			levelbar.append(QualityArmory.repeat(":", totalBars - healthBars));
+        try {
+            int totalBars = 25;
+            int healthBars = (int) (percentBlood * totalBars);
 
-			HotbarMessager.sendHotBarMessage(healer,
-					ChatColor.RED + QAMain.S_MEDKIT_HEALING + "[" + levelbar.toString() + ChatColor.RED + "] "
-							+ QAMain.S_MEDKIT_BLEEDING + " " + (newRate < 0 ? ChatColor.DARK_RED : ChatColor.GRAY)
-							+ new DecimalFormat("##0.##").format(newRate) + ChatColor.GRAY + "+"
-							+ QAMain.bulletWound_BloodIncreasePerSecond);
-		} catch (Error | Exception e5) {
-		}
-		return true;
-	}
+            StringBuilder levelbar = new StringBuilder();
+            levelbar.append(severity);
+            levelbar.append(QualityArmory.repeat(":", healthBars));
+            levelbar.append(ChatColor.BLACK);
+            levelbar.append(QualityArmory.repeat(":", totalBars - healthBars));
 
-	@Override
-	public boolean onShift(Player shooter, ItemStack usedItem, boolean toggle) {
-		return false;
-	}
+            HotbarMessager.sendHotBarMessage(healer,
+                    ChatColor.RED + QAMain.S_MEDKIT_HEALING + "[" + levelbar.toString() + ChatColor.RED + "] "
+                            + QAMain.S_MEDKIT_BLEEDING + " " + (newRate < 0 ? ChatColor.DARK_RED : ChatColor.GRAY)
+                            + new DecimalFormat("##0.##").format(newRate) + ChatColor.GRAY + "+"
+                            + QAMain.bulletWound_BloodIncreasePerSecond);
+        } catch (Error | Exception e5) {
+        }
+        return true;
+    }
 
-	@Override
-	public boolean onLMB(Player e, ItemStack usedItem) {
-		return false;
-	}
+    @Override
+    public boolean onShift(Player shooter, ItemStack usedItem, boolean toggle) {
+        return false;
+    }
 
-	@Override
-	public ItemStack getItemStack() {
-		return CustomItemManager.getItemType("gun").getItem(this.getItemData().getMat(), this.getItemData().getData(),
-				this.getItemData().getVariant());
-	}
+    @Override
+    public boolean onLMB(Player e, ItemStack usedItem) {
+        return false;
+    }
 
-	@Override
-	public boolean onSwapTo(Player shooter, ItemStack usedItem) {
-		if (getSoundOnEquip() != null)
-			shooter.getWorld().playSound(shooter.getLocation(), getSoundOnEquip(), 1, 1);
-		return false;
-	}
+    @Override
+    public ItemStack getItemStack() {
+        return CustomItemManager.getItemType("gun").getItem(this.getItemData().getMat(), this.getItemData().getData(),
+                this.getItemData().getVariant());
+    }
 
-	@Override
-	public boolean onSwapAway(Player shooter, ItemStack usedItem) {
-		return false;
-	}
+    @Override
+    public boolean onSwapTo(Player shooter, ItemStack usedItem) {
+        if (getSoundOnEquip() != null)
+            shooter.getWorld().playSound(shooter.getLocation(), getSoundOnEquip(), 1, 1);
+        return false;
+    }
+
+    @Override
+    public boolean onSwapAway(Player shooter, ItemStack usedItem) {
+        return false;
+    }
 }
