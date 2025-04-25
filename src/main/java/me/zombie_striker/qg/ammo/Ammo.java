@@ -11,12 +11,11 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import me.zombie_striker.customitemmanager.ArmoryBaseObject;
 import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.customitemmanager.MaterialStorage;
 import me.zombie_striker.qg.handlers.MultiVersionLookup;
 
-public class Ammo extends CustomBaseObject implements ArmoryBaseObject {
+public class Ammo extends CustomBaseObject {
     public static final String NO_SKIN_STRING = "Dont Use Skin";
 
     private final boolean individualDrop;

@@ -1,6 +1,5 @@
 package me.zombie_striker.qg.listener;
 
-import me.zombie_striker.customitemmanager.ArmoryBaseObject;
 import me.zombie_striker.customitemmanager.CustomBaseObject;
 import me.zombie_striker.customitemmanager.CustomItemManager;
 import me.zombie_striker.customitemmanager.MaterialStorage;
@@ -107,9 +106,7 @@ public class QAListener implements Listener {
 
 		if (QualityArmory.isCustomItem(e.getPlayer().getItemInHand())) {
 			CustomBaseObject base = QualityArmory.getCustomItem(e.getPlayer().getItemInHand());
-			if (base instanceof ArmoryBaseObject) {
-				((ArmoryBaseObject) base).onShift(e.getPlayer(), e.getPlayer().getItemInHand(), e.isSneaking());
-			}
+			base.onShift(e.getPlayer(), e.getPlayer().getItemInHand(), e.isSneaking());
 		}
 
 
@@ -908,10 +905,10 @@ public class QAListener implements Listener {
 			if (qaItem != null) {
 				QAMain.DEBUG(qaItem.getName() + " item is being used!");
 				if (e.getAction() == Action.LEFT_CLICK_AIR || e.getAction() == Action.LEFT_CLICK_BLOCK) {
-					if (((ArmoryBaseObject) qaItem).onLMB(e.getPlayer(), usedItem))
+					if (qaItem.onLMB(e.getPlayer(), usedItem))
 						e.setCancelled(true);
 				} else {
-					if (((ArmoryBaseObject) qaItem).onRMB(e.getPlayer(), usedItem))
+					if (qaItem.onRMB(e.getPlayer(), usedItem))
 						e.setCancelled(true);
 				}
 			}
@@ -935,18 +932,15 @@ public class QAListener implements Listener {
 		}
 		if (QualityArmory.isCustomItem(prev)) {
 			CustomBaseObject customBase = QualityArmory.getCustomItem(prev);
-			if (customBase instanceof ArmoryBaseObject)
-				((ArmoryBaseObject) customBase).onSwapAway(e.getPlayer(), prev);
+			customBase.onSwapAway(e.getPlayer(), prev);
 		}
 		if (QualityArmory.isCustomItem(newslot)) {
 			CustomBaseObject customBase = QualityArmory.getCustomItem(newslot);
-			if (customBase instanceof ArmoryBaseObject) {
-				((ArmoryBaseObject) customBase).onSwapTo(e.getPlayer(), newslot);
-				if (customBase.getSoundOnEquip() != null)
-					e.getPlayer().getWorld().playSound(e.getPlayer().getLocation(), customBase.getSoundOnEquip(), 1, 1);
-			}
+            customBase.onSwapTo(e.getPlayer(), newslot);
+            if (customBase.getSoundOnEquip() != null)
+                e.getPlayer().getWorld().playSound(e.getPlayer().getLocation(), customBase.getSoundOnEquip(), 1, 1);
 
-			if (customBase instanceof Gun && e.getPlayer().isSneaking() && ((Gun) customBase).hasIronSights()) {
+            if (customBase instanceof Gun && e.getPlayer().isSneaking() && ((Gun) customBase).hasIronSights()) {
 				Bukkit.getScheduler().runTaskLater(QAMain.getInstance(), () -> IronsightsHandler.aim(e.getPlayer()), 1);
 			}
 		}

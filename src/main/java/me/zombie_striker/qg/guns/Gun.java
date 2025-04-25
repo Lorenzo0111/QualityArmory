@@ -30,7 +30,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
-public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparable<Gun> {
+public class Gun extends CustomBaseObject implements Comparable<Gun> {
     private static final String CALCTEXT = ChatColor.DARK_GRAY + "qadata:";
 
     // Refers to the last time a player shot a gun, on a per-gun basis.

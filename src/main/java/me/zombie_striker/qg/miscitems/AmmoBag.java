@@ -1,6 +1,5 @@
 package me.zombie_striker.qg.miscitems;
 
-import me.zombie_striker.customitemmanager.ArmoryBaseObject;
 import me.zombie_striker.customitemmanager.CustomBaseObject;
 import me.zombie_striker.customitemmanager.CustomItemManager;
 import me.zombie_striker.customitemmanager.MaterialStorage;
@@ -18,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class AmmoBag extends CustomBaseObject implements ArmoryBaseObject {
+public class AmmoBag extends CustomBaseObject {
 
     private final int maxAmmo;
 

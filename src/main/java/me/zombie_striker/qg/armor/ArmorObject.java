@@ -10,12 +10,11 @@ import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import me.zombie_striker.customitemmanager.ArmoryBaseObject;
 import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.customitemmanager.MaterialStorage;
 import org.bukkit.inventory.meta.ItemMeta;
 
-public class ArmorObject extends CustomBaseObject implements ArmoryBaseObject {
+public class ArmorObject extends CustomBaseObject {
     private static final double SHIFTING_HEIGHT_OFFSET = -0.1;
 
     private int protection = 0;

@@ -1,12 +1,13 @@
 package me.zombie_striker.customitemmanager;
 
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class CustomBaseObject {
+public abstract class CustomBaseObject {
 
     private final UUID uuid = UUID.randomUUID();
     private final String name;
@@ -143,4 +144,21 @@ public class CustomBaseObject {
     public UUID getUuid() {
         return uuid;
     }
+
+
+    public abstract ItemStack getItemStack();
+
+    public abstract boolean is18Support();
+
+    public abstract void set18Supported(boolean b);
+
+    public abstract boolean onRMB(Player shooter, ItemStack usedItem);
+
+    public abstract boolean onShift(Player shooter, ItemStack usedItem, boolean toggle);
+
+    public abstract boolean onLMB(Player shooter, ItemStack usedItem);
+
+    public abstract boolean onSwapTo(Player shooter, ItemStack usedItem);
+
+    public abstract boolean onSwapAway(Player shooter, ItemStack usedItem);
 }
