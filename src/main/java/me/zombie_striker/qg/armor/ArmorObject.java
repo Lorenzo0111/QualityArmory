@@ -16,7 +16,7 @@ import me.zombie_striker.customitemmanager.MaterialStorage;
 import org.bukkit.inventory.meta.ItemMeta;
 
 public class ArmorObject extends CustomBaseObject implements ArmoryBaseObject {
-    private static final double shiftingHeightOffset = -0.1;
+    private static final double SHIFTING_HEIGHT_OFFSET = -0.1;
 
     private int protection = 0;
     private double heightMin = 1;
@@ -65,7 +65,7 @@ public class ArmorObject extends CustomBaseObject implements ArmoryBaseObject {
     }
 
     public double getShiftingHeightOffset() {
-        return shiftingHeightOffset;
+        return SHIFTING_HEIGHT_OFFSET;
     }
 
     @Override

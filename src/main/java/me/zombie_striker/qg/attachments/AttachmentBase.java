@@ -6,35 +6,33 @@ import me.zombie_striker.qg.guns.Gun;
 
 public class AttachmentBase extends Gun {
 
-	private MaterialStorage base;
-	private Gun baseGun;
-	private String newName = null;
+    private final MaterialStorage base;
+    private final Gun baseGun;
+    private final String newName;
 
-	/*
-	 * public AttachmentBase(MaterialStorage baseItem, MaterialStorage attachedItem,
-	 * String newname, String newDisplayname, List<String> lore) {
-	 */
-	public AttachmentBase(MaterialStorage baseItem, MaterialStorage currentMaterial, String name, String displayname) {
-		super(displayname, currentMaterial);
-		this.base = baseItem;
-		baseGun = QAMain.gunRegister.get(baseItem);
-		copyFrom(baseGun);
-		this.setDisplayname(displayname);
-		this.newName = name;
-		// this.ms = attachedItem;
-	}
+    public AttachmentBase(MaterialStorage baseItem, MaterialStorage currentMaterial, String name, String displayname) {
+        super(displayname, currentMaterial);
 
-	public Gun getBaseGun() {
-		return baseGun;
-	}
+        setDisplayname(displayname);
 
-	public MaterialStorage getBase() {
-		return base;
-	}
+        this.base = baseItem;
+        this.newName = name;
 
-	@Override
-	public String getName() {
-		return newName;
-	}
+        baseGun = QAMain.gunRegister.get(baseItem);
+        copyFrom(baseGun);
+    }
+
+    public MaterialStorage getBase() {
+        return base;
+    }
+
+    public Gun getBaseGun() {
+        return baseGun;
+    }
+
+    @Override
+    public String getName() {
+        return newName;
+    }
 
 }

@@ -22,7 +22,7 @@ public class Ammo extends CustomBaseObject implements ArmoryBaseObject {
     private final boolean individualDrop;
     private double piercingDamage = 1;
 
-    private String skullowner = null;
+    private String skullOwner = null;
     private String base64SkinURL = NO_SKIN_STRING;
 
     public Ammo(String name, MaterialStorage ms, int maxAmount, boolean indiDrop, int returnamount,
@@ -70,15 +70,15 @@ public class Ammo extends CustomBaseObject implements ArmoryBaseObject {
     }
 
     public void setSkullOwner(String s) {
-        skullowner = s;
+        skullOwner = s;
     }
 
     public boolean isSkull() {
-        return skullowner != null;
+        return skullOwner != null;
     }
 
     public String getSkullOwner() {
-        return skullowner;
+        return skullOwner;
     }
 
     public double getPiercingDamage() {

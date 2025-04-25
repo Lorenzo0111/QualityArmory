@@ -77,13 +77,13 @@ public class MedKit extends CustomBaseObject implements ArmoryBaseObject {
                 double percentLoss = (p2 + percent) / 100;
                 int healthBars = Math.min((int) (percentLoss * totalBars), totalBars);
 
-                StringBuilder levelbar = new StringBuilder();
-                levelbar.append(ChatColor.WHITE);
-                levelbar.append(QualityArmory.repeat(":", healthBars));
-                levelbar.append(ChatColor.BLACK);
-                levelbar.append(QualityArmory.repeat(":", totalBars - healthBars));
+                StringBuilder levelBar = new StringBuilder();
+                levelBar.append(ChatColor.WHITE);
+                levelBar.append(QualityArmory.repeat(":", healthBars));
+                levelBar.append(ChatColor.BLACK);
+                levelBar.append(QualityArmory.repeat(":", totalBars - healthBars));
                 try {
-                    HotbarMessager.sendHotBarMessage(healer, ChatColor.RED + "[" + levelbar.toString() + ChatColor.RED
+                    HotbarMessager.sendHotBarMessage(healer, ChatColor.RED + "[" + levelBar.toString() + ChatColor.RED
                             + "] " + new DecimalFormat("##0.#").format((p2 + percent)) + " percent!");
                 } catch (Exception e2) {
                 }
@@ -96,8 +96,8 @@ public class MedKit extends CustomBaseObject implements ArmoryBaseObject {
             }
             return true;
         }
-        double bloodlevel = BulletWoundHandler.bloodLevel.get(healer.getUniqueId());
-        double percentBlood = Math.max(0, bloodlevel / QAMain.bulletWound_initialbloodamount);
+        double bloodLevel = BulletWoundHandler.bloodLevel.get(healer.getUniqueId());
+        double percentBlood = Math.max(0, bloodLevel / QAMain.bulletWound_initialbloodamount);
 
         ChatColor severity = percentBlood > 75 ? ChatColor.WHITE
                 : percentBlood > 50 ? ChatColor.GRAY : percentBlood > 25 ? ChatColor.RED : ChatColor.DARK_RED;
@@ -128,14 +128,14 @@ public class MedKit extends CustomBaseObject implements ArmoryBaseObject {
             int totalBars = 25;
             int healthBars = (int) (percentBlood * totalBars);
 
-            StringBuilder levelbar = new StringBuilder();
-            levelbar.append(severity);
-            levelbar.append(QualityArmory.repeat(":", healthBars));
-            levelbar.append(ChatColor.BLACK);
-            levelbar.append(QualityArmory.repeat(":", totalBars - healthBars));
+            StringBuilder levelBar = new StringBuilder();
+            levelBar.append(severity);
+            levelBar.append(QualityArmory.repeat(":", healthBars));
+            levelBar.append(ChatColor.BLACK);
+            levelBar.append(QualityArmory.repeat(":", totalBars - healthBars));
 
             HotbarMessager.sendHotBarMessage(healer,
-                    ChatColor.RED + QAMain.S_MEDKIT_HEALING + "[" + levelbar.toString() + ChatColor.RED + "] "
+                    ChatColor.RED + QAMain.S_MEDKIT_HEALING + "[" + levelBar.toString() + ChatColor.RED + "] "
                             + QAMain.S_MEDKIT_BLEEDING + " " + (newRate < 0 ? ChatColor.DARK_RED : ChatColor.GRAY)
                             + new DecimalFormat("##0.##").format(newRate) + ChatColor.GRAY + "+"
                             + QAMain.bulletWound_BloodIncreasePerSecond);

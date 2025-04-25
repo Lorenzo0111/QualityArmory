@@ -74,8 +74,8 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
     private int durability = 1000;
 
     private Particle particle = null;
-    private Material particle_material = Material.COAL_BLOCK;
-    private int particle_data = 1;
+    private Material particleMaterial = Material.COAL_BLOCK;
+    private int particleData = 1;
     private double particle_r = 1;
     private double particle_g = 1;
     private double particle_b = 1;
@@ -95,36 +95,36 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
     private String killedByMessage = "%player% was shot by %killer% using a %name%";
 
     @Deprecated
-    public Gun(String name, MaterialStorage id, WeaponType type, boolean h, Ammo ammo, double sway, double swayMultiplier,
+    public Gun(String name, MaterialStorage id, WeaponType type, boolean hasIronSights, Ammo ammo, double sway, double swayMultiplier,
                int maxBullets, float durabilityDamage, boolean isAutomatic, int durability, String ws, double cost,
                ItemStack[] ingredients) {
-        this(name, id, type, h, ammo, sway, swayMultiplier, maxBullets, durabilityDamage, isAutomatic, durability, ws,
+        this(name, id, type, hasIronSights, ammo, sway, swayMultiplier, maxBullets, durabilityDamage, isAutomatic, durability, ws,
                 null, ChatColor.GOLD + name, cost, ingredients);
     }
 
     @Deprecated
-    public Gun(String name, MaterialStorage id, WeaponType type, boolean h, Ammo ammo, double sway, double swayMultiplier,
+    public Gun(String name, MaterialStorage id, WeaponType type, boolean hasIronSights, Ammo ammo, double sway, double swayMultiplier,
                int maxBullets, float durabilityDamage, boolean isAutomatic, int durability, WeaponSounds ws, double cost,
                ItemStack[] ingredients) {
-        this(name, id, type, h, ammo, sway, swayMultiplier, maxBullets, durabilityDamage, isAutomatic, durability, ws, null,
+        this(name, id, type, hasIronSights, ammo, sway, swayMultiplier, maxBullets, durabilityDamage, isAutomatic, durability, ws, null,
                 ChatColor.GOLD + name, cost, ingredients);
     }
 
     @Deprecated
-    public Gun(String name, MaterialStorage id, WeaponType type, boolean h, Ammo ammo, double sway, double swayMultiplier,
+    public Gun(String name, MaterialStorage id, WeaponType type, boolean hasIronSights, Ammo ammo, double sway, double swayMultiplier,
                int maxBullets, float durabilityDamage, boolean isAutomatic, int durability, WeaponSounds ws, List<String> lore,
                String displayname, double cost, ItemStack[] ingredients) {
-        this(name, id, type, h, ammo, sway, swayMultiplier, maxBullets, durabilityDamage, isAutomatic, durability, ws.getSoundName(),
+        this(name, id, type, hasIronSights, ammo, sway, swayMultiplier, maxBullets, durabilityDamage, isAutomatic, durability, ws.getSoundName(),
                 lore, displayname, cost, ingredients);
     }
 
     @Deprecated
-    public Gun(String name, MaterialStorage id, WeaponType type, boolean h, Ammo ammo, double sway, double swayMultiplier,
+    public Gun(String name, MaterialStorage id, WeaponType type, boolean hasIronSights, Ammo ammo, double sway, double swayMultiplier,
                int maxBullets, float durabilityDamage, boolean isAutomatic, int durability, String ws, List<String> lore,
                String displayname, double cost, ItemStack[] ingredients) {
         super(name, id, LocalUtils.colorize(displayname), lore, true);
         this.type = type;
-        this.hasIronSights = h;
+        this.hasIronSights = hasIronSights;
         this.ammotype = ammo;
         this.sway = sway;
         this.maxBullets = maxBullets;
@@ -148,9 +148,9 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
         boolean offhand = QualityArmory.isIronSights(player.getInventory().getItemInHand());
         if ((!offhand && getAmount(player) > 0)
                 || (offhand && Update19OffhandChecker.hasAmountOFfhandGreaterthan(player, 0))) {
-            QAWeaponPrepareShootEvent shootevent = new QAWeaponPrepareShootEvent(player, g);
-            Bukkit.getPluginManager().callEvent(shootevent);
-            if (shootevent.isCancelled())
+            QAWeaponPrepareShootEvent shootEvent = new QAWeaponPrepareShootEvent(player, g);
+            Bukkit.getPluginManager().callEvent(shootEvent);
+            if (shootEvent.isCancelled())
                 return false;
             GunUtil.basicShoot(offhand, g, player, acc, holdingRMB);
             return true;
@@ -362,8 +362,8 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
         this.particle_r = g.particle_r;
         this.particle_g = g.particle_g;
         this.particle_b = g.particle_b;
-        this.particle_material = g.particle_material;
-        this.particle_data = g.particle_data;
+        this.particleMaterial = g.particleMaterial;
+        this.particleData = g.particleData;
         this.lightLevelOnShoot = g.lightLevelOnShoot;
         this.enableMuzzleSmoke = g.enableMuzzleSmoke;
         this.glowEffect = g.glowEffect;
@@ -702,11 +702,11 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
     }
 
     public int getParticleData() {
-        return particle_data;
+        return particleData;
     }
 
     public Material getParticleMaterial() {
-        return this.particle_material;
+        return this.particleMaterial;
     }
 
     public void setParticles(Particle p) {
@@ -723,11 +723,11 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
 
     public void setParticles(Particle p, double r, double g, double b, Material m, int data) {
         particle = p;
-        this.particle_data = data;
+        this.particleData = data;
         this.particle_r = r;
         this.particle_g = g;
         this.particle_b = b;
-        this.particle_material = m;
+        this.particleMaterial = m;
     }
 
     public boolean useMuzzleSmoke() {
@@ -831,15 +831,15 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
             QAMain.DEBUG("Fire mode called");
             if (player.getPlayer().getItemInHand().getItemMeta().getDisplayName().contains(QAMain.S_RELOADING_MESSAGE)) {
                 if (!GunRefillerRunnable.hasItemReloaded(player, usedItem)) {
-                    ItemStack tempused = usedItem;
-                    ItemMeta im = tempused.getItemMeta();
+                    ItemStack tempUsed = usedItem;
+                    ItemMeta im = tempUsed.getItemMeta();
                     im.setDisplayName(getDisplayName());
-                    tempused.setItemMeta(im);
+                    tempUsed.setItemMeta(im);
                     if (offhand) {
-                        Update19OffhandChecker.setOffhand(player.getPlayer(), tempused);
+                        Update19OffhandChecker.setOffhand(player.getPlayer(), tempUsed);
                         QAMain.DEBUG("odd. Reloading broke. Removing reloading message from offhand - firing");
                     } else {
-                        player.getPlayer().setItemInHand(tempused);
+                        player.getPlayer().setItemInHand(tempUsed);
                         QAMain.DEBUG("odd. Reloading broke. Removing reloading message from mainhand - firing");
                     }
                 }
@@ -907,11 +907,11 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
                     return true;
                 }
                 if (!QAMain.enableDurability || getDamage(usedItem) > 0) {
-                    boolean automaticfiring = true;
+                    boolean automaticFiring = true;
                     if (!QAMain.SWAP_TO_LMB_SHOOT) {
                         if (lastRMB.containsKey(player.getUniqueId())) {
                             if (System.currentTimeMillis() - lastRMB.get(player.getUniqueId()) <= 600) {
-                                automaticfiring = true;
+                                automaticFiring = true;
                             }
                         }
                         lastRMB.put(player.getUniqueId(), System.currentTimeMillis());
@@ -921,10 +921,10 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
                         currentVelocity.add(player.getLocation().getDirection().normalize().multiply(-getKnockbackPower()));
                         player.setVelocity(currentVelocity);
                     }
-                    QAMain.DEBUG("" + shoot(player.getPlayer(), automaticfiring));
+                    QAMain.DEBUG("" + shoot(player.getPlayer(), automaticFiring));
                 } else {
                     player.getPlayer().playSound(player.getPlayer().getLocation(), WeaponSounds.METALHIT.getSoundName(), 1, 1);
-                    QAMain.DEBUG("Durablility less than 0");
+                    QAMain.DEBUG("Durability less than 0");
                 }
             }
 
@@ -948,16 +948,16 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
                         if (player.getPlayer().getItemInHand().getItemMeta().getDisplayName()
                                 .contains(QAMain.S_RELOADING_MESSAGE)) {
                             if (!GunRefillerRunnable.hasItemReloaded(player, usedItem)) {
-                                ItemStack tempused = usedItem.clone();
-                                ItemMeta im = tempused.getItemMeta();
+                                ItemStack tempUsed = usedItem.clone();
+                                ItemMeta im = tempUsed.getItemMeta();
                                 im.setDisplayName(getDisplayName());
-                                tempused.setItemMeta(im);
+                                tempUsed.setItemMeta(im);
                                 if (offhand) {
-                                    Update19OffhandChecker.setOffhand(player.getPlayer(), tempused);
+                                    Update19OffhandChecker.setOffhand(player.getPlayer(), tempUsed);
                                     QAMain.DEBUG(
                                             "odd. Reloading broke. Removing reloading message from offhand - reload");
                                 } else {
-                                    player.getPlayer().setItemInHand(tempused);
+                                    player.getPlayer().setItemInHand(tempUsed);
                                     QAMain.DEBUG(
                                             "odd. Reloading broke. Removing reloading message from mainhand - reload");
                                 }
@@ -986,7 +986,7 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
                                         || g != checkTo) {
                                     QAMain.toggleNightvision(player.getPlayer(), checkTo, false);
                                     QAMain.DEBUG(
-                                            "Removing nightvision since either the main hand is not ironsights/ offhand gun is null. : "
+                                            "Removing night vision since either the main hand is not ironsights/offhand gun is null. : "
                                                     + (!QualityArmory.isIronSights(player.getPlayer().getItemInHand()))
                                                     + " "
                                                     + ((g = QualityArmory.getGun(Update19OffhandChecker
@@ -1153,8 +1153,8 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
                 ", supports18=" + supports18 +
                 ", durability=" + durability +
                 ", particle=" + particle +
-                ", particle_material=" + particle_material +
-                ", particle_data=" + particle_data +
+                ", particleMaterial=" + particleMaterial +
+                ", particleData=" + particleData +
                 ", particle_r=" + particle_r +
                 ", particle_g=" + particle_g +
                 ", particle_b=" + particle_b +
