@@ -123,11 +123,6 @@ public class CustomGunItem extends AbstractCustomGunItem {
 			if (ms.getData() >= 0)
 				im.setCustomModelData(ms.getData());
 
-			if (is.getType() == Material.CROSSBOW) {
-				//Now the player will hold the crossbow like a gun
-			//	CrossbowMeta im2 = (CrossbowMeta) im;
-			//	im2.addChargedProjectile(new ItemStack(Material.VOID_AIR));
-			}
 			is.setItemMeta(im);
 		} else {
 			QAMain.getInstance().getLogger()
