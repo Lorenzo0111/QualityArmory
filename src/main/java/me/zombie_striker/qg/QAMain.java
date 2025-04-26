@@ -316,8 +316,12 @@ public class QAMain extends JavaPlugin {
     public static Scoreboard registerGlowTeams(Scoreboard sb) {
         if (sb.getTeam("QA_RED") == null) {
             for (ChatColor c : ChatColor.values()) {
-                if (sb.getTeam("QA_" + c.name() + "") == null)
-                    sb.registerNewTeam("QA_" + c.name() + "").setPrefix(c + "");
+                String teamName = "QA_" + c.name() + "";
+                if (sb.getTeam(teamName) == null) {
+                    Team team = sb.registerNewTeam(teamName);
+                    team.setPrefix(c + "");
+                    team.setColor(c);
+                }
             }
         }
         return sb;
