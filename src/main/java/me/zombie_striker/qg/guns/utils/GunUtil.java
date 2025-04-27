@@ -4,6 +4,7 @@ import com.alessiodp.parties.api.Parties;
 import com.alessiodp.parties.api.interfaces.PartiesAPI;
 import com.alessiodp.parties.api.interfaces.Party;
 import com.alessiodp.parties.api.interfaces.PartyPlayer;
+import com.cryptomorin.xseries.XAttribute;
 import me.zombie_striker.customitemmanager.CustomBaseObject;
 import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.ammo.Ammo;
@@ -20,7 +21,6 @@ import me.zombie_striker.qg.hooks.CoreProtectHook;
 import me.zombie_striker.qg.hooks.protection.ProtectionHandler;
 import me.zombie_striker.qg.utils.BlockRegenData;
 import org.bukkit.*;
-import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.block.Block;
 import org.bukkit.entity.*;
@@ -234,9 +234,9 @@ public class GunUtil {
 									for (ItemStack is : new ItemStack[]{player.getInventory().getHelmet(),
 											player.getInventory().getChestplate(), player.getInventory().getLeggings(),
 											player.getInventory().getBoots()}) {
-										if (is != null) {
-											Collection<AttributeModifier> attributes = is.getItemMeta().getAttributeModifiers(Attribute.GENERIC_ARMOR);
-											Collection<AttributeModifier> toughnessAttributes = is.getItemMeta().getAttributeModifiers(Attribute.GENERIC_ARMOR_TOUGHNESS);
+										if (is != null && is.hasItemMeta()) {
+											Collection<AttributeModifier> attributes = is.getItemMeta().getAttributeModifiers(XAttribute.ARMOR.get());
+											Collection<AttributeModifier> toughnessAttributes = is.getItemMeta().getAttributeModifiers(XAttribute.ARMOR_TOUGHNESS.get());
 
 											if (attributes != null && !attributes.isEmpty())
 												for (AttributeModifier a : attributes)
@@ -249,7 +249,7 @@ public class GunUtil {
 
 									QAMain.DEBUG("Applied armor protection: " + defensePoints);
 
-									damageMAX = damageMAX / (1 - Math.min(20, Math.max(defensePoints / 5,
+									damageMAX = damageMAX * (1 - Math.min(20, Math.max(defensePoints / 5,
 											defensePoints - damageMAX / (toughness / 4 + 2))) / 25);
 								} catch (Error | Exception e5) {
 									QAMain.DEBUG("An error has occurred: " + e5.getMessage());

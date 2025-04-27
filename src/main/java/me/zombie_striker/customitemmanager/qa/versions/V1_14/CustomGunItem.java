@@ -1,5 +1,6 @@
 package me.zombie_striker.customitemmanager.qa.versions.V1_14;
 
+import com.cryptomorin.xseries.XAttribute;
 import com.cryptomorin.xseries.profiles.builder.XSkull;
 import com.cryptomorin.xseries.profiles.objects.ProfileInputType;
 import com.cryptomorin.xseries.profiles.objects.Profileable;
@@ -22,7 +23,6 @@ import me.zombie_striker.qg.guns.reloaders.ReloadingManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
@@ -101,8 +101,8 @@ public class CustomGunItem extends AbstractCustomGunItem {
 
 
 			if (overrideAttackSpeed) {
-				AttributeModifier modifier = new AttributeModifier(base.getUuid(), "generic.attackSpeed", 0, AttributeModifier.Operation.ADD_NUMBER);
-				im.addAttributeModifier(Attribute.GENERIC_ATTACK_SPEED, modifier);
+				AttributeModifier modifier = new AttributeModifier(base.getUuid(), XAttribute.ATTACK_SPEED.name(), 0, AttributeModifier.Operation.ADD_NUMBER);
+				im.addAttributeModifier(XAttribute.ATTACK_SPEED.get(), modifier);
 			}
 
 			if (QAMain.ITEM_enableUnbreakable) {
