@@ -319,7 +319,6 @@ public class QAMain extends JavaPlugin {
                 String teamName = "QA_" + c.name() + "";
                 if (sb.getTeam(teamName) == null) {
                     Team team = sb.registerNewTeam(teamName);
-                    team.setPrefix(c + "");
                     team.setColor(c);
                 }
             }

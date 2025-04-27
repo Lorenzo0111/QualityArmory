@@ -1,5 +1,6 @@
 2.0.20
   - Added crossbow animation
+  - Fixed gun glow
 
 2.0.19
   - Fixed resourcepack for 1.21.x
