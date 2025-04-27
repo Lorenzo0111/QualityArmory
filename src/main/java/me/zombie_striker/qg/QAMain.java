@@ -509,74 +509,29 @@ public class QAMain extends JavaPlugin {
                 .filter(CustomBaseObject::isEnableCrafting)
                 .collect(Collectors.toList());
 
+        List<CustomBaseObject> allItems = new ArrayList<>();
+        allItems.addAll(gunslistr);
+        allItems.addAll(ammolistr);
+        allItems.addAll(misclistr);
+        allItems.addAll(armorlistr);
 
-        int basei = 0;
-        int index = (page * 9 * 5);
-        int maxIndex = (index + (9 * 5));
+        List<CustomBaseObject> filteredItems = allItems.stream()
+                .filter(item -> (shopping && item.getPrice() >= 0 && item.isEnableShop()) || 
+                               (!shopping && item.getIngredientsRaw() != null))
+                .collect(Collectors.toList());
+
+        int itemsPerPage = 9 * 5;
+        int startIndex = page * itemsPerPage;
+        int endIndex = Math.min(startIndex + itemsPerPage, filteredItems.size());
 
         shopMenu.setItem((9 * 6) - 1 - 8, prevButton);
         shopMenu.setItem((9 * 6) - 1, nextButton);
 
-        if (basei + gunslistr.size() < index) {
-            basei += gunslistr.size();
-        } else {
-            for (Gun g : gunslistr) {
-                if (basei < index) {
-                    basei++;
-                    continue;
-                }
-                basei++;
-                if (index >= maxIndex)
-                    break;
-                if (addToGUI(g, shopMenu, shopping))
-                    index++;
-            }
+        for (int i = startIndex; i < endIndex; i++) {
+            CustomBaseObject item = filteredItems.get(i);
+            addToGUI(item, shopMenu, shopping);
         }
-        if (basei + ammolistr.size() < index) {
-            basei += ammolistr.size();
-        } else {
-            for (CustomBaseObject ammo : ammolistr) {
-                if (basei < index) {
-                    basei++;
-                    continue;
-                }
-                basei++;
-                if (index >= maxIndex)
-                    break;
-                if (addToGUI(ammo, shopMenu, shopping))
-                    index++;
-            }
-        }
-        if (basei + misclistr.size() < index) {
-            basei += misclistr.size();
-        } else {
-            for (CustomBaseObject abo : misclistr) {
-                if (basei < index) {
-                    basei++;
-                    continue;
-                }
-                basei++;
-                if (index >= maxIndex)
-                    break;
-                if (addToGUI(abo, shopMenu, shopping))
-                    index++;
-            }
-        }
-        if (basei + armorlistr.size() < index) {
-            basei += armorlistr.size();
-        } else {
-            for (ArmorObject armor : armorlistr) {
-                if (basei < index) {
-                    basei++;
-                    continue;
-                }
-                basei++;
-                if (index >= maxIndex)
-                    break;
-                if (addToGUI(armor, shopMenu, shopping))
-                    index++;
-            }
-        }
+
         return shopMenu;
     }
 

@@ -2,6 +2,7 @@
   - Added crossbow animation
   - Fixed gun glow
   - Fixed armor protection
+  - Fixed menu item duplication
 
 2.0.19
   - Fixed resourcepack for 1.21.x
