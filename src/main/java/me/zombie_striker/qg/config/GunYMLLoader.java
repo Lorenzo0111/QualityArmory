@@ -26,295 +26,216 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
 public class GunYMLLoader {
 
 	public static void loadAmmo(QAMain main) {
-		File ammoFolder = new File(main.getDataFolder(), "ammo");
-		if (!ammoFolder.exists()) return;
-
-		File[] files = ammoFolder.listFiles();
-		if (files == null || files.length == 0) return;
-
-		int items = 0;
-
-		for (File file : files) {
-			if (!file.getName().endsWith(".yml")) continue;
-
-			try {
-				FileConfiguration config = YamlConfiguration.loadConfiguration(file);
-				if (config.getBoolean("invalid", false)) continue;
-
-				String name = config.getString("name");
-				if (QAMain.verboseLoadingLogging) {
-					main.getLogger().info("-Loading AmmoType: " + name);
-				}
-
-				String displayname = config.contains("displayname")
-						? LocalUtils.colorize(config.getString("displayname"))
-						: (ChatColor.WHITE + name);
-
-				List<String> coloredLore = config.getStringList("lore").stream()
-						.map(LocalUtils::colorize)
-						.collect(Collectors.toList());
-
-				int id = config.getInt("id");
-
-				int variant = config.getInt("variant", 0);
-
-				ItemStack[] ingredients = main.convertIngredients(config.getStringList("craftingRequirements"));
-
-				int returnAmount = config.getInt("craftingReturnAmount", 1);
-
-				double price = config.getDouble("price", 100.0);
-
-				boolean allowInShop = config.getBoolean("allowInShop", true) && price > 0;
-
-				int maxAmount = config.contains("maxItemStack")
-						? config.getInt("maxItemStack")
-						: config.getInt("maxAmount");
-
-				Material material = Material.matchMaterial(config.getString("material", "DIAMOND_AXE"));
-
-				String skullOwner = config.getString("skull_owner", null);
-				String skullUrl = config.getString("skull_owner_custom_url", null);
-				if (Ammo.NO_SKIN_STRING.equals(skullUrl)) skullUrl = null;
-
-				double piercing = config.getDouble("piercingSeverity", 1.0);
-
-				MaterialStorage ms = MaterialStorage.getMS(material, id, variant, skullOwner, skullUrl);
-
-				Ammo ammo = new Ammo(name, displayname, coloredLore, ms, maxAmount,
-						false, 1, price, ingredients, piercing
-				);
-
-				ammo.setEnableShop(allowInShop);
-				if (skullOwner != null) ammo.setSkullOwner(skullOwner);
-				if (skullUrl != null) ammo.setCustomSkin(skullUrl);
-				if (returnAmount > 0) ammo.setCraftingReturn(returnAmount);
-
-				QAMain.ammoRegister.put(ms, ammo);
-				items++;
-
-			} catch (Exception e) {
-				e.printStackTrace(System.err);
+		loadFolder(main, "ammo", "Ammo", (file, config) -> {
+			String name = config.getString("name");
+			if (QAMain.verboseLoadingLogging) {
+				main.getLogger().info("-Loading AmmoType: " + name);
 			}
-		}
 
-		if (!QAMain.verboseLoadingLogging) {
-			main.getLogger().info("-Loaded " + items + " Ammo types.");
-		}
+			String displayname = config.contains("displayname")
+					? LocalUtils.colorize(config.getString("displayname"))
+					: (ChatColor.WHITE + name);
+
+			List<String> coloredLore = config.getStringList("lore").stream()
+					.map(LocalUtils::colorize)
+					.collect(Collectors.toList());
+
+			int id = config.getInt("id");
+
+			int variant = config.getInt("variant", 0);
+
+			ItemStack[] ingredients = main.convertIngredients(config.getStringList("craftingRequirements"));
+
+			int returnAmount = config.getInt("craftingReturnAmount", 1);
+
+			double price = config.getDouble("price", 100.0);
+
+			boolean allowInShop = config.getBoolean("allowInShop", true) && price > 0;
+
+			int maxAmount = config.contains("maxItemStack")
+					? config.getInt("maxItemStack")
+					: config.getInt("maxAmount");
+
+			Material material = Material.matchMaterial(config.getString("material", "DIAMOND_AXE"));
+
+			String skullOwner = config.getString("skull_owner", null);
+			String skullUrl = config.getString("skull_owner_custom_url", null);
+			if (Ammo.NO_SKIN_STRING.equals(skullUrl)) skullUrl = null;
+
+			double piercing = config.getDouble("piercingSeverity", 1.0);
+
+			MaterialStorage ms = MaterialStorage.getMS(material, id, variant, skullOwner, skullUrl);
+
+			Ammo ammo = new Ammo(name, displayname, coloredLore, ms, maxAmount,
+					false, 1, price, ingredients, piercing
+			);
+
+			ammo.setEnableShop(allowInShop);
+			if (skullOwner != null) ammo.setSkullOwner(skullOwner);
+			if (skullUrl != null) ammo.setCustomSkin(skullUrl);
+			if (returnAmount > 0) ammo.setCraftingReturn(returnAmount);
+
+			QAMain.ammoRegister.put(ms, ammo);
+			return true;
+		});
 	}
 
 	public static void loadArmor(QAMain main) {
-		File armorFolder = new File(main.getDataFolder(), "armor");
-		if (!armorFolder.exists()) return;
+		loadFolder(main, "armor", "Armor", (file, config) -> {
+			WeaponType wt = WeaponType.getByName(config.getString("MiscType"));
+			if (wt != WeaponType.HELMET) return false;
 
-		File[] files = armorFolder.listFiles();
-		if (files == null || files.length == 0) return;
-
-		int items = 0;
-
-		for (File file : files) {
-			if (!file.getName().endsWith(".yml")) continue;
-
-			try {
-				FileConfiguration config = YamlConfiguration.loadConfiguration(file);
-				if (config.getBoolean("invalid", false)) continue;
-
-				WeaponType wt = WeaponType.getByName(config.getString("MiscType"));
-				if (wt != WeaponType.HELMET) continue;
-
-				String name = config.getString("name");
-				if (QAMain.verboseLoadingLogging) {
-					main.getLogger().info("-Loading Armor: " + name);
-				}
-
-				String displayname = config.contains("displayname")
-						? LocalUtils.colorize(config.getString("displayname"))
-						: (ChatColor.WHITE + name);
-
-				List<String> lore = config.getStringList("lore").stream()
-						.map(LocalUtils::colorize)
-						.collect(Collectors.toList());
-
-				int id = config.getInt("id");
-
-				int variant = config.getInt("variant", 0);
-
-				ItemStack[] ingredients = main.convertIngredients(config.getStringList("craftingRequirements"));
-
-				double price = config.getDouble("price", 100.0);
-				boolean allowInShop = config.getBoolean("allowInShop", true) && price > 0;
-
-				double minProtectionHeight = config.getDouble("minProtectionHeight");
-				double maxProtectionHeight = config.getDouble("maxProtectionHeight");
-				int protection = config.getInt("protection", 0);
-
-				Material material = Material.matchMaterial(config.getString("material", "DIAMOND_AXE"));
-
-				MaterialStorage ms = MaterialStorage.getMS(material, id, variant);
-
-				Helmet helmet = new Helmet(name, displayname, lore, ingredients, ms, price, allowInShop);
-
-				helmet.setHeightMin(minProtectionHeight);
-				helmet.setHeightMax(maxProtectionHeight);
-				helmet.setProtection(protection);
-
-				QAMain.armorRegister.put(ms, helmet);
-				items++;
-
-			} catch (Exception e) {
-				e.printStackTrace(System.err);
+			String name = config.getString("name");
+			if (QAMain.verboseLoadingLogging) {
+				main.getLogger().info("-Loading Armor: " + name);
 			}
-		}
 
-		if (!QAMain.verboseLoadingLogging) {
-			main.getLogger().info("-Loaded " + items + " Armor types.");
-		}
+			String displayname = config.contains("displayname")
+					? LocalUtils.colorize(config.getString("displayname"))
+					: (ChatColor.WHITE + name);
+
+			List<String> lore = config.getStringList("lore").stream()
+					.map(LocalUtils::colorize)
+					.collect(Collectors.toList());
+
+			int id = config.getInt("id");
+
+			int variant = config.getInt("variant", 0);
+
+			ItemStack[] ingredients = main.convertIngredients(config.getStringList("craftingRequirements"));
+
+			double price = config.getDouble("price", 100.0);
+			boolean allowInShop = config.getBoolean("allowInShop", true) && price > 0;
+
+			double minProtectionHeight = config.getDouble("minProtectionHeight");
+			double maxProtectionHeight = config.getDouble("maxProtectionHeight");
+			int protection = config.getInt("protection", 0);
+
+			Material material = Material.matchMaterial(config.getString("material", "DIAMOND_AXE"));
+
+			MaterialStorage ms = MaterialStorage.getMS(material, id, variant);
+
+			Helmet helmet = new Helmet(name, displayname, lore, ingredients, ms, price, allowInShop);
+
+			helmet.setHeightMin(minProtectionHeight);
+			helmet.setHeightMax(maxProtectionHeight);
+			helmet.setProtection(protection);
+
+			QAMain.armorRegister.put(ms, helmet);
+			return true;
+		});
 	}
 
 	public static void loadMisc(QAMain main) {
-		File miscFolder = new File(main.getDataFolder(), "misc");
-		if (!miscFolder.exists()) return;
-
-		File[] files = miscFolder.listFiles();
-		if (files == null || files.length == 0) return;
-
-		int items = 0;
-
-		for (File file : files) {
-			if (!file.getName().endsWith(".yml")) continue;
-
-			try {
-				FileConfiguration config = YamlConfiguration.loadConfiguration(file);
-				if (config.getBoolean("invalid", false)) continue;
-
-				String name = config.getString("name");
-				if (QAMain.verboseLoadingLogging) {
-					main.getLogger().info("-Loading Misc: " + name);
-				}
-
-				String displayname = config.contains("displayname")
-						? LocalUtils.colorize( config.getString("displayname"))
-						: (ChatColor.WHITE + name);
-
-				List<String> lore = config.getStringList("lore").stream()
-						.map(LocalUtils::colorize)
-						.collect(Collectors.toList());
-
-				int id = config.getInt("id");
-
-				int variant = config.getInt("variant", 0);
-
-				ItemStack[] ingredients = main.convertIngredients(config.getStringList("craftingRequirements"));
-
-				int price = config.contains("price") ? config.getInt("price") : 100;
-				boolean allowInShop = config.getBoolean("allowInShop", true) && price > 0;
-
-				Material material = Material.matchMaterial(config.getString("material", "DIAMOND_AXE"));
-
-				MaterialStorage ms = MaterialStorage.getMS(material, id, variant);
-
-				int damage = config.getInt("damage", 1);
-
-				WeaponType wt = WeaponType.getByName(config.getString("MiscType"));
-
-				double radius = config.getDouble("radius", 0.0);
-
-				String soundEquip = config.getString("sound_equip", null);
-				String soundHit = config.getString("sound_meleehit", null);
-
-				CustomBaseObject base = null;
-				switch (wt) {
-					case MEDKIT:
-						base = new MedKit(ms, name, displayname, ingredients, price);
-						break;
-					case AMMO_BAG:
-						base = new AmmoBag(ms, name, displayname, ingredients, config.getInt("max", 5), price);
-						break;
-					case MELEE:
-						base = new MeleeItems(ms, name, displayname, ingredients, price, damage);
-						base.setSoundOnEquip(soundEquip);
-						base.setSoundOnHit(soundHit);
-						break;
-					case GRENADES:
-						base = new Grenade(ingredients, price, damage, radius, name, displayname, lore, ms);
-						break;
-					case SMOKE_GRENADES:
-						base = new SmokeGrenade(ingredients, price, damage, radius, name, displayname, lore, ms);
-						break;
-					case INCENDARY_GRENADES:
-						base = new IncendiaryGrenade(ingredients, price, damage, radius, name, displayname, lore, ms);
-						break;
-					case PROXYMINES:
-						base = new ProxyMine(ingredients, price, damage, radius, name, displayname, lore, ms);
-						break;
-					case STICKYGRENADE:
-						base = new StickyGrenade(ingredients, price, damage, radius, name, displayname, lore, ms);
-						break;
-					case MOLOTOV:
-						base = new Molotov(ingredients, price, damage, radius, name, displayname, lore, ms);
-						break;
-					case FLASHBANGS:
-						base = new Flashbang(ingredients, price, damage, radius, name, displayname, lore, ms);
-						break;
-				}
-
-				if (base == null) continue;
-
-				base.setCustomLore(lore);
-				base.setIngredients(ingredients);
-				base.setEnableShop(allowInShop);
-
-				if (config.contains("maxItemStack"))
-					base.setMaxItemStack(config.getInt("maxItemStack"));
-
-				if (base instanceof ThrowableItems) {
-					ThrowableItems throwableItems = (ThrowableItems) base;
-					if (config.contains("ThrowSpeed"))
-						throwableItems.setThrowSpeed(config.getDouble("ThrowSpeed"));
-				}
-
-				QAMain.miscRegister.put(ms, base);
-				items++;
-
-			} catch (Exception e) {
-				e.printStackTrace(System.err);
+		loadFolder(main, "misc", "Misc", (file, config) -> {
+			String name = config.getString("name");
+			if (QAMain.verboseLoadingLogging) {
+				main.getLogger().info("-Loading Misc: " + name);
 			}
-		}
 
-		if (!QAMain.verboseLoadingLogging) {
-			main.getLogger().info("-Loaded " + items + " Misc.");
-		}
+			String displayname = config.contains("displayname")
+					? LocalUtils.colorize(config.getString("displayname"))
+					: (ChatColor.WHITE + name);
+
+			List<String> lore = config.getStringList("lore").stream()
+					.map(LocalUtils::colorize)
+					.collect(Collectors.toList());
+
+			int id = config.getInt("id");
+
+			int variant = config.getInt("variant", 0);
+
+			ItemStack[] ingredients = main.convertIngredients(config.getStringList("craftingRequirements"));
+
+			int price = config.contains("price") ? config.getInt("price") : 100;
+			boolean allowInShop = config.getBoolean("allowInShop", true) && price > 0;
+
+			Material material = Material.matchMaterial(config.getString("material", "DIAMOND_AXE"));
+
+			MaterialStorage ms = MaterialStorage.getMS(material, id, variant);
+
+			int damage = config.getInt("damage", 1);
+
+			WeaponType wt = WeaponType.getByName(config.getString("MiscType"));
+
+			double radius = config.getDouble("radius", 0.0);
+
+			String soundEquip = config.getString("sound_equip", null);
+			String soundHit = config.getString("sound_meleehit", null);
+
+			CustomBaseObject base = null;
+			switch (wt) {
+				case MEDKIT:
+					base = new MedKit(ms, name, displayname, ingredients, price);
+					break;
+				case AMMO_BAG:
+					base = new AmmoBag(ms, name, displayname, ingredients, config.getInt("max", 5), price);
+					break;
+				case MELEE:
+					base = new MeleeItems(ms, name, displayname, ingredients, price, damage);
+					base.setSoundOnEquip(soundEquip);
+					base.setSoundOnHit(soundHit);
+					break;
+				case GRENADES:
+					base = new Grenade(ingredients, price, damage, radius, name, displayname, lore, ms);
+					break;
+				case SMOKE_GRENADES:
+					base = new SmokeGrenade(ingredients, price, damage, radius, name, displayname, lore, ms);
+					break;
+				case INCENDARY_GRENADES:
+					base = new IncendiaryGrenade(ingredients, price, damage, radius, name, displayname, lore, ms);
+					break;
+				case PROXYMINES:
+					base = new ProxyMine(ingredients, price, damage, radius, name, displayname, lore, ms);
+					break;
+				case STICKYGRENADE:
+					base = new StickyGrenade(ingredients, price, damage, radius, name, displayname, lore, ms);
+					break;
+				case MOLOTOV:
+					base = new Molotov(ingredients, price, damage, radius, name, displayname, lore, ms);
+					break;
+				case FLASHBANGS:
+					base = new Flashbang(ingredients, price, damage, radius, name, displayname, lore, ms);
+					break;
+			}
+
+			if (base == null) return false;
+
+			base.setCustomLore(lore);
+			base.setIngredients(ingredients);
+			base.setEnableShop(allowInShop);
+
+			if (config.contains("maxItemStack"))
+				base.setMaxItemStack(config.getInt("maxItemStack"));
+
+			if (base instanceof ThrowableItems) {
+				ThrowableItems throwableItems = (ThrowableItems) base;
+				if (config.contains("ThrowSpeed"))
+					throwableItems.setThrowSpeed(config.getDouble("ThrowSpeed"));
+			}
+
+			QAMain.miscRegister.put(ms, base);
+			return true;
+		});
 	}
 
 	public static void loadGuns(QAMain main) {
-		File gunsFolder = new File(main.getDataFolder(), "newGuns");
-		if (!gunsFolder.exists()) return;
-
-		File[] files = gunsFolder.listFiles();
-		if (files == null || files.length == 0) return;
-
-		int items = 0;
-
-		for (File file : files) {
-			FileConfiguration config = YamlConfiguration.loadConfiguration(file);
-
+		loadFolder(main, "newGuns", "Gun", (file, config) -> {
 			if (CrackshotLoader.isCrackshotGun(config)) {
 				main.getLogger().info("-Converting Crackshot: " + file.getName());
 				List<Gun> guns = CrackshotLoader.loadCrackshotGuns(config);
 				CrackshotLoader.createYMLForGuns(guns, main.getDataFolder());
-				continue;
+				return false;
 			}
 
-			if (loadGun(main, file)) items++;
-		}
-
-		if (!QAMain.verboseLoadingLogging) {
-			main.getLogger().info("-Loaded " + items + " Gun types.");
-		}
+			return loadGun(main, file);
+		});
 	}
 
 	public static boolean loadGun(QAMain main, File file) {
@@ -491,76 +412,54 @@ public class GunYMLLoader {
 	}
 
 	public static void loadAttachments(QAMain main) {
-		File attachmentsFolder = new File(main.getDataFolder(), "attachments");
-		if (!attachmentsFolder.exists()) return;
-
-		File[] files = attachmentsFolder.listFiles();
-		if (files == null || files.length == 0) return;
-
-		int items = 0;
-
-		for (File file : files) {
-			if (!file.getName().endsWith(".yml")) continue;
-
-			try {
-				FileConfiguration config = YamlConfiguration.loadConfiguration(file);
-				if (config.getBoolean("invalid", false)) continue;
-
-				String name = config.getString("name");
-				if (QAMain.verboseLoadingLogging) {
-					main.getLogger().info("-Loading Attachment: " + name);
-				}
-
-				String displayname = config.contains("displayname")
-						? LocalUtils.colorize(config.getString("displayname"))
-						: (ChatColor.GOLD + name);
-
-				List<String> lore = config.getStringList("lore").stream()
-						.map(LocalUtils::colorize)
-						.collect(Collectors.toList());
-
-				int id = config.getInt("id");
-
-				int variant = config.getInt("variant", 0);
-
-				Object[] rawIngredients = main.convertIngredientsRaw(config.getStringList("craftingRequirements"));
-
-				Material material = Material.matchMaterial(config.getString("material", "DIAMOND_AXE"));
-
-				MaterialStorage ms = MaterialStorage.getMS(material, id, variant);
-
-				MaterialStorage baseGunM = null;
-				String base = config.getString("baseGun");
-				if (base != null) {
-					for (Entry<MaterialStorage, Gun> entry : QAMain.gunRegister.entrySet())
-						if (entry.getValue().getName().equalsIgnoreCase(base))
-							baseGunM = entry.getKey();
-				}
-
-				if (baseGunM == null) {
-					main.getLogger().info("--Failed to load " + name
-							+ " attachment because the base \"" + base + "\" does not exist.");
-					continue;
-				}
-
-				AttachmentBase attach = new AttachmentBase(baseGunM, ms, name, displayname);
-
-				attach.setCustomLore(lore);
-				attach.setIngredientsRaw(rawIngredients);
-
-				loadGunSettings(attach, config);
-
-				QAMain.gunRegister.put(ms, attach);
-				items++;
-
-			} catch (Exception e) {
-				e.printStackTrace(System.err);
+		loadFolder(main, "attachments", "Attachment", (file, config) -> {
+			String name = config.getString("name");
+			if (QAMain.verboseLoadingLogging) {
+				main.getLogger().info("-Loading Attachment: " + name);
 			}
-		}
 
-		if (!QAMain.verboseLoadingLogging) {
-			main.getLogger().info("-Loaded " + items + " Attachment types.");
-		}
+			String displayname = config.contains("displayname")
+					? LocalUtils.colorize(config.getString("displayname"))
+					: (ChatColor.GOLD + name);
+
+			List<String> lore = config.getStringList("lore").stream()
+					.map(LocalUtils::colorize)
+					.collect(Collectors.toList());
+
+			int id = config.getInt("id");
+
+			int variant = config.getInt("variant", 0);
+
+			Object[] rawIngredients = main.convertIngredientsRaw(config.getStringList("craftingRequirements"));
+
+			Material material = Material.matchMaterial(config.getString("material", "DIAMOND_AXE"));
+
+			MaterialStorage ms = MaterialStorage.getMS(material, id, variant);
+
+			MaterialStorage baseGunM = null;
+			String base = config.getString("baseGun");
+			if (base != null) {
+				for (Entry<MaterialStorage, Gun> entry : QAMain.gunRegister.entrySet())
+					if (entry.getValue().getName().equalsIgnoreCase(base))
+						baseGunM = entry.getKey();
+			}
+
+			if (baseGunM == null) {
+				main.getLogger().info("--Failed to load " + name
+						+ " attachment because the base \"" + base + "\" does not exist.");
+				return false;
+			}
+
+			AttachmentBase attach = new AttachmentBase(baseGunM, ms, name, displayname);
+
+			attach.setCustomLore(lore);
+			attach.setIngredientsRaw(rawIngredients);
+
+			loadGunSettings(attach, config);
+
+			QAMain.gunRegister.put(ms, attach);
+			return true;
+		});
 	}
 
 	public static @NotNull List<Material> getMaterials(@NotNull List<String> list) {
@@ -584,5 +483,32 @@ public class GunYMLLoader {
 		}
 
 		return materials;
+	}
+
+	private static void loadFolder(QAMain main, String folderName, String logLabel,
+								  BiFunction<File, FileConfiguration, Boolean> configProcessor) {
+		File folder = new File(main.getDataFolder(), folderName);
+		if (!folder.exists()) return;
+
+		File[] files = folder.listFiles((dir, name) -> name.endsWith(".yml"));
+		if (files == null) return;
+
+		int items = 0;
+
+		for (File file : files) {
+			try {
+				FileConfiguration config = YamlConfiguration.loadConfiguration(file);
+				if (config.getBoolean("invalid", false)) continue;
+
+				if (configProcessor.apply(file, config)) items++;
+
+			} catch (Exception e) {
+				e.printStackTrace(System.err);
+			}
+		}
+
+		if (!QAMain.verboseLoadingLogging) {
+			main.getLogger().info("-Loaded " + items + " " + logLabel + " types.");
+		}
 	}
 }
