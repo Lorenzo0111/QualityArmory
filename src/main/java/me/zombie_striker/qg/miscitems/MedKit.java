@@ -13,13 +13,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffectType;
 
-import me.zombie_striker.customitemmanager.ArmoryBaseObject;
 import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.customitemmanager.MaterialStorage;
 import me.zombie_striker.qg.handlers.BulletWoundHandler;
 import com.cryptomorin.xseries.XPotion;
 
-public class MedKit extends CustomBaseObject implements ArmoryBaseObject {
+public class MedKit extends CustomBaseObject {
 
 	HashMap<UUID, Long> lastTimeHealed = new HashMap<>();
 	HashMap<UUID, Double> PercentTimeHealed = new HashMap<>();

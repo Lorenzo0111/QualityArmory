@@ -6,9 +6,7 @@ import java.util.UUID;
 import org.bukkit.entity.Entity;
 import org.bukkit.scheduler.BukkitTask;
 
-import me.zombie_striker.customitemmanager.ArmoryBaseObject;
-
-public interface ThrowableItems extends ArmoryBaseObject {
+public interface ThrowableItems {
 
 	HashMap<Entity, ThrowableHolder> throwItems = new HashMap<>();
 	

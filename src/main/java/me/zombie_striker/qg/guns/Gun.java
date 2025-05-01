@@ -32,7 +32,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
-public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparable<Gun> {
+public class Gun extends CustomBaseObject implements Comparable<Gun> {
 
     private static final String CALCTEXT = ChatColor.DARK_GRAY + "qadata:";
     public ChatColor glowEffect = null;
