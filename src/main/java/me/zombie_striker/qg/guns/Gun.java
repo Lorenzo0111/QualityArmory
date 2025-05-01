@@ -173,9 +173,6 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
         NBT.modify(current, nbt -> {
             nbt.setInteger("ammo", amount);
         });
-        System.out.println(g);
-        System.out.println(current);
-        System.out.println(amount);
 
         if (QAMain.ENABLE_LORE_INFO && g != null) {
             ItemMeta meta = current.getItemMeta();
