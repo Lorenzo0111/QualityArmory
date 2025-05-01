@@ -174,7 +174,7 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
             nbt.setInteger("ammo", amount);
         });
 
-        if (QAMain.ENABLE_LORE_INFO && g != null) {
+        if (QAMain.SHOW_BULLETS_LORE && g != null) {
             ItemMeta meta = current.getItemMeta();
             if (meta == null || !meta.hasLore()) return;
 
@@ -208,7 +208,7 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
         List<String> lore = (current != null && current.hasItemMeta() && current.getItemMeta().hasLore()) ? current.getItemMeta().getLore() : new ArrayList<>();
         OLD_ItemFact.addVariantData(null, lore, g);
         if (QAMain.ENABLE_LORE_INFO) {
-            lore.add(QAMain.S_ITEM_BULLETS + ": " + amount + "/" + g.getMaxBullets());
+            if (QAMain.SHOW_BULLETS_LORE) lore.add(QAMain.S_ITEM_BULLETS + ": " + amount + "/" + g.getMaxBullets());
             lore.add(QAMain.S_ITEM_DAMAGE + ": " + g.getDamage());
             lore.add(QAMain.S_ITEM_DPS + ": "
                     + (g.isAutomatic()
