@@ -10,10 +10,9 @@ import me.zombie_striker.customitemmanager.CustomItemManager;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import me.zombie_striker.customitemmanager.ArmoryBaseObject;
 import me.zombie_striker.customitemmanager.MaterialStorage;
 
-public class MeleeItems extends CustomBaseObject implements ArmoryBaseObject{
+public class MeleeItems extends CustomBaseObject {
 
 	List<UUID> medkitHeartUsage = new ArrayList<>();
 	HashMap<UUID, Long> lastTimeHealed = new HashMap<>();
