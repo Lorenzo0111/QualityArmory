@@ -88,4 +88,6 @@ Below you can find a list of all the options that you can configure and their ex
 * **DestructableMaterials**: `[MATERIAL_NAME_HERE]` - A list of material names (e.g., `GLASS`, `WHITE_WOOL`) that can be broken by bullets if `enableExplosionDamage` is appropriately configured or via specific weapon properties.
 * **RegenDestructableBlocksAfter**: `-1` - The time in server ticks after which a block destroyed by a QualityArmory weapon/explosion will regenerate. `-1` disables regeneration.
 * **overrideAttackSpeed**: `true` - If `true` (primarily for 1.14+), overrides the default item attack speed attribute, potentially allowing faster firing rates.
+* **enable_lore_gun-info_messages**: `true` - If `true`, displays weapon statistics like damage, ammo type, etc., in the item's lore text.
+* **enable_lore_gun-bullets**: `false` - If `true`, displays the bullet amount in the item's lore text. This will make the gun go "up and down" when shooting.
 * **DefaultResourcepack**: Defines the resource pack URLs. Refer to [ResourcePack Configuration](resourcepack.md) for more information.

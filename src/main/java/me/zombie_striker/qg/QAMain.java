@@ -247,6 +247,7 @@ public class QAMain extends JavaPlugin {
     public static boolean hasViaRewind = false;
     public static boolean AUTOUPDATE = true;
     public static boolean SWAP_TO_LMB_SHOOT = true;
+    public static boolean SHOW_BULLETS_LORE = false;
     public static boolean ENABLE_LORE_INFO = true;
     public static boolean ENABLE_LORE_HELP = true;
     public static boolean AutoDetectResourcepackVersion = true;
@@ -995,6 +996,7 @@ public class QAMain extends JavaPlugin {
 
         orderShopByPrice = (boolean) a("Order-Shop-By-Price", orderShopByPrice);
 
+        SHOW_BULLETS_LORE = (boolean) a("enable_lore_gun-bullets", false);
         ENABLE_LORE_INFO = (boolean) a("enable_lore_gun-info_messages", true);
         ENABLE_LORE_HELP = (boolean) a("enable_lore_control-help_messages", true);
 

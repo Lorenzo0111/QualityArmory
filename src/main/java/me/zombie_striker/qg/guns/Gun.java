@@ -173,10 +173,31 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
         NBT.modify(current, nbt -> {
             nbt.setInteger("ammo", amount);
         });
+
+        if (QAMain.SHOW_BULLETS_LORE && g != null) {
+            ItemMeta meta = current.getItemMeta();
+            if (meta == null || !meta.hasLore()) return;
+
+            List<String> lore = meta.getLore();
+            if (lore == null) return;
+
+            for (int i = 0; i < lore.size(); i++) {
+                String loreLine = lore.get(i);
+                if (loreLine.startsWith(QAMain.S_ITEM_BULLETS)) {
+                    lore.set(i, QAMain.S_ITEM_BULLETS + ": " + (amount) + "/" + g.getMaxBullets());
+                    break;
+                }
+            }
+
+            meta.setLore(lore);
+            current.setItemMeta(meta);
+        }
     }
 
     public static void updateAmmo(Gun g, Player player, int amount) {
         ItemStack current = player.getInventory().getItemInHand();
+
+        if (g == null) g = QualityArmory.getGun(current);
         updateAmmo(g, current, amount);
 
         if (QAMain.showAmmoInXPBar)
@@ -187,6 +208,7 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
         List<String> lore = (current != null && current.hasItemMeta() && current.getItemMeta().hasLore()) ? current.getItemMeta().getLore() : new ArrayList<>();
         OLD_ItemFact.addVariantData(null, lore, g);
         if (QAMain.ENABLE_LORE_INFO) {
+            if (QAMain.SHOW_BULLETS_LORE) lore.add(QAMain.S_ITEM_BULLETS + ": " + amount + "/" + g.getMaxBullets());
             lore.add(QAMain.S_ITEM_DAMAGE + ": " + g.getDamage());
             lore.add(QAMain.S_ITEM_DPS + ": "
                     + (g.isAutomatic()
