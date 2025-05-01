@@ -1638,9 +1638,9 @@ public class QAMain extends JavaPlugin {
                         } else if (g instanceof AmmoBox) {
                             temp = CustomItemManager.getItemType("gun").getItem(g.getItemData());
                             ((AmmoBox) g).updateAmmoLore(temp, ((AmmoBox) g).getMaxAmmoCount());
-                            ItemMeta meta = temp.getItemMeta();
-                            meta.setMaxStackSize(1);
-                            temp.setItemMeta(meta);
+                            NBT.modify(temp, nbt -> {
+                                nbt.setUUID("uuid", UUID.randomUUID());
+                            });
                             who.getInventory().addItem(temp);
                         } else {
                             temp = CustomItemManager.getItemType("gun").getItem(g.getItemData().getMat(), g.getItemData().getData(), g.getItemData().getVariant());
