@@ -139,19 +139,70 @@ public abstract class CustomBaseObject {
 	}
 
 
+	/**
+	 * Returns the {@link ItemStack} associated with this custom object.
+	 *
+	 * @return the {@code ItemStack} representing this object.
+	 */
 	public abstract ItemStack getItemStack();
 
+	/**
+	 * Checks whether this object supports Minecraft 1.8 mechanics or compatibility.
+	 *
+	 * @return {@code true} if 1.8 support is enabled; {@code false} otherwise.
+	 */
 	public abstract boolean is18Support();
 
+	/**
+	 * Sets whether this object supports Minecraft 1.8 mechanics or compatibility.
+	 *
+	 * @param b {@code true} to enable 1.8 support; {@code false} to disable it.
+	 */
 	public abstract void set18Supported(boolean b);
 
+	/**
+	 * Called when the player right-clicks (RMB).
+	 *
+	 * @param shooter the player using the item.
+	 * @param usedItem the {@link ItemStack} being used.
+	 * @return {@code true} if the action was successfully handled; {@code false} otherwise.
+	 */
 	public abstract boolean onRMB(Player shooter, ItemStack usedItem);
 
+	/**
+	 * Called when the player toggles shift.
+	 *
+	 * @param shooter the player using the item.
+	 * @param usedItem the {@link ItemStack} being used.
+	 * @param toggle a boolean that can be used to enable or disable a toggleable action/state.
+	 * @return {@code true} if the action was successfully handled; {@code false} otherwise.
+	 */
 	public abstract boolean onShift(Player shooter, ItemStack usedItem, boolean toggle);
 
+	/**
+	 * Called when the player left-clicks (LMB).
+	 *
+	 * @param shooter the player using the item.
+	 * @param usedItem the {@link ItemStack} being used.
+	 * @return {@code true} if the action was successfully handled; {@code false} otherwise.
+	 */
 	public abstract boolean onLMB(Player shooter, ItemStack usedItem);
 
+	/**
+	 * Called when the player swaps to this item (e.g., changes to this item in hand).
+	 *
+	 * @param shooter the player equipping the item.
+	 * @param usedItem the {@link ItemStack} being equipped.
+	 * @return {@code true} if the action was successfully handled; {@code false} otherwise.
+	 */
 	public abstract boolean onSwapTo(Player shooter, ItemStack usedItem);
 
+	/**
+	 * Called when the player swaps away from this item (e.g., changes to a different item).
+	 *
+	 * @param shooter the player unequipping the item.
+	 * @param usedItem the {@link ItemStack} being unequipped.
+	 * @return {@code true} if the action was successfully handled; {@code false} otherwise.
+	 */
 	public abstract boolean onSwapAway(Player shooter, ItemStack usedItem);
 }
