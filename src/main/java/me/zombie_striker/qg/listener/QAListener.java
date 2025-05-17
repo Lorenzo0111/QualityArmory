@@ -26,6 +26,7 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
+import org.bukkit.event.entity.ItemSpawnEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.*;
 import org.bukkit.event.player.*;
@@ -1051,39 +1052,7 @@ public class QAListener implements Listener {
 			if (!QAMain.enableIronSightsON_RIGHT_CLICK)
 				return;
 		}
-		if (QualityArmory.isGun(e.getItemDrop().getItemStack())) {
-			Gun g = QualityArmory.getGun(e.getItemDrop().getItemStack());
-			/*
-			 * if (enableVisibleAmounts) if (isDuplicateGun(e.getItemDrop().getItemStack(),
-			 * e.getPlayer())) { QAMain.DEBUG("Dup gun"); e.setCancelled(true); return; }
-			 */
-			if ((e.getItemDrop().getItemStack().getItemMeta().hasDisplayName()
-					&& e.getItemDrop().getItemStack().getItemMeta().getDisplayName().contains(QAMain.S_RELOADING_MESSAGE))) {
-				if (!GunRefillerRunnable.hasItemReloaded(e.getPlayer(), e.getItemDrop().getItemStack())) {
-					if (g != null) {
-						ItemStack fix = e.getItemDrop().getItemStack();
-						ItemMeta temp = fix.getItemMeta();
-						temp.setDisplayName(g.getDisplayName());
-						fix.setItemMeta(temp);
-						e.getItemDrop().setItemStack(fix);
-						QAMain.DEBUG("Glitched gun. Allow drop");
-						e.setCancelled(false);
-						return;
-					}
-				}
-				// If the gun is glitched, allow dropps. If not, cancel it
-				e.setCancelled(true);
-				QAMain.DEBUG("Canceled thing because player tried to drop gun while reloading.");
-				return;
-			}
-			if (g.getGlow() != null && QAMain.coloredGunScoreboard != null) {
-				for (Scoreboard s : QAMain.coloredGunScoreboard)
-					if (s.getTeam("QA_" + g.getGlow().name() + "") != null)
-						s.getTeam("QA_" + g.getGlow().name() + "").addEntry(e.getItemDrop().getUniqueId().toString());
-				QAMain.DEBUG("Added Glow");
-				e.getItemDrop().setGlowing(true);
-			}
-		}
+
 		QAMain.checkforDups(e.getPlayer(), e.getItemDrop().getItemStack());
 
 		if (QAMain.enableIronSightsON_RIGHT_CLICK) {
@@ -1137,6 +1106,24 @@ public class QAListener implements Listener {
 
 	}
 
+	@EventHandler
+	public void onDrop(ItemSpawnEvent event) {
+		ItemStack item = event.getEntity().getItemStack();
+
+		if (QualityArmory.isGun(item)) {
+			Gun g = QualityArmory.getGun(item);
+			if (g == null) return;
+
+			if (g.getGlow() != null && QAMain.coloredGunScoreboard != null) {
+				for (Scoreboard s : QAMain.coloredGunScoreboard)
+					if (s.getTeam("QA_" + g.getGlow().name()) != null)
+						s.getTeam("QA_" + g.getGlow().name()).addEntry(event.getEntity().getUniqueId().toString());
+
+				QAMain.DEBUG("Added Glow");
+				event.getEntity().setGlowing(true);
+			}
+		}
+	}
 
 	private void DEBUG(String s) {
 		QAMain.DEBUG(s);
