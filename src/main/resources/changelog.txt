@@ -3,6 +3,7 @@
   - Fixed gun glow
   - Fixed armor protection
   - Fixed menu item duplication
+  - Added hit sound
 
 2.0.19
   - Fixed resourcepack for 1.21.x

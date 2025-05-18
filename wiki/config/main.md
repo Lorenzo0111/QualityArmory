@@ -56,6 +56,8 @@ Below you can find a list of all the options that you can configure and their ex
 * **Headshot\_Notification\_Sound**: `entity.experience_orb.pickup` - The specific sound event name to play for a headshot notification.
 * **Enable\_Headshot\_Sounds**: `true` - If `true`, enables additional sounds related to headshots (e.g., impact/gore sounds).
 * **Headshot\_Blacklist**: `[]` - A list of entity types (e.g., `ZOMBIE`, `PLAYER`) that are immune to the special effects of headshots (like instant kill).
+* **Enable\_Hit\_Sound**: `true` - If `true`, plays a sound effect to the shooter when they successfully hit an entity with a bullet.
+* **Hit\_Notification\_Sound**: `entity.experience_orb.pickup` - The specific sound event name to play for a hit notification.
 * **Enable\_AutoArm\_Grenades**: `false` - If `true`, grenades are automatically armed when thrown, bypassing the need to manually "pull the pin" first.
 * **gravityConstantForDropoffCalculations**: `0.05` - The value representing gravity's effect used in calculating bullet trajectory and drop-off.
 * **allowGunReload**: `true` - A master switch to enable or disable all gun reloading mechanics.

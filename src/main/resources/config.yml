@@ -90,7 +90,6 @@ enable_lore_control-help_messages: true
 Enable_Headshot_Instantkill: false
 Enable_Headshot_Notification_Sound: false
 Headshot_Notification_Sound: entity.experience_orb.pickup
-Enable_Headshot_Sounds: true
 gravityConstantForDropoffCalculations: 0.05
 allowGunReload: true
 EnableGlowEffects: false

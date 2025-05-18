@@ -149,10 +149,11 @@ public class QAMain extends JavaPlugin {
     public static double bulletWound_BloodIncreasePerSecond = 0.01;
     public static double bulletWound_MedkitBloodlossHealRate = 0.05;
     public static String headshot_sound = WeaponSounds.XP_ORG_PICKUP.getSoundName();
+    public static String hit_sound = WeaponSounds.XP_ORG_PICKUP.getSoundName();
     public static List<EntityType> headshotBlacklist = new ArrayList<>();
     public static boolean HeadshotOneHit = true;
     public static boolean headshotPling = true;
-    public static boolean headshotGoreSounds = true;
+    public static boolean enableHitSound = false;
     public static boolean showOutOfAmmoOnItem = false;
     public static boolean showOutOfAmmoOnTitle = false;
     public static boolean showReloadOnTitle = false;
@@ -1003,7 +1004,6 @@ public class QAMain extends JavaPlugin {
         HeadshotOneHit = (boolean) a("Enable_Headshot_Instantkill", HeadshotOneHit);
         headshotPling = (boolean) a("Enable_Headshot_Notification_Sound", headshotPling);
         headshot_sound = (String) a("Headshot_Notification_Sound", headshot_sound);
-        headshotGoreSounds = (boolean) a("Enable_Headshot_Sounds", headshotGoreSounds);
 
         headshotBlacklist.clear();
 
@@ -1014,6 +1014,9 @@ public class QAMain extends JavaPlugin {
             } catch (Error | Exception e4) {
             }
         }
+
+        hit_sound = (String) a("Hit_Notification_Sound", hit_sound);
+        enableHitSound = (boolean) a("Enable_Hit_Sound", enableHitSound);
 
         autoarm = (boolean) a("Enable_AutoArm_Grenades", autoarm);
 

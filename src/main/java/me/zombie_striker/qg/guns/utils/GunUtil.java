@@ -196,6 +196,18 @@ public class GunUtil {
 								p.playSound(p.getLocation(), Sound.valueOf("LAVA_POP"), 1, 1);
 							}
 						}
+					} else if (QAMain.enableHitSound) {
+						try {
+							p.playSound(p.getLocation(), QAMain.hit_sound, 2, 1);
+
+							if (!QAMain.isVersionHigherThan(1, 9))
+								try {
+									p.playSound(p.getLocation(), Sound.valueOf("LAVA_POP"), 6, 1);
+								} catch (Error | Exception ignored) {}
+
+						} catch (Error | Exception ignored) {
+							p.playSound(p.getLocation(), Sound.valueOf("LAVA_POP"), 1, 1);
+						}
 					}
 
 					boolean negateHeadshot = false;
