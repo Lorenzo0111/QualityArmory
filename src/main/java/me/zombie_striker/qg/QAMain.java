@@ -90,6 +90,7 @@ public class QAMain extends JavaPlugin {
 
     public static HashMap<String, String> craftingEntityNames = new HashMap<>();
 
+    public static HashMap<UUID, Long> lastWeaponSwitch = new HashMap<>();
     public static Set<EntityType> avoidTypes = new HashSet<>();
     public static HashMap<UUID, Location> recoilHelperMovedLocation = new HashMap<>();
     public static ArrayList<MaterialStorage> expansionPacks = new ArrayList<>();
@@ -166,7 +167,7 @@ public class QAMain extends JavaPlugin {
     public static boolean showAmmoInXPBar = false;
     public static boolean perWeaponPermission = false;
     public static boolean useMoveForRecoil = true;
-
+    public static double weaponSwitchDelay = 0;
     public static boolean allowGunHitEntities = false;
     public static boolean anticheatFix = false;
 
@@ -984,6 +985,8 @@ public class QAMain extends JavaPlugin {
         perWeaponPermission = (boolean) a("perWeaponPermission", false);
 
         useMoveForRecoil = (boolean) a("useMoveForRecoil", useMoveForRecoil);
+
+        weaponSwitchDelay = (double) a("weaponSwitchDelay", 0);
 
         enableExplosionDamage = (boolean) a("enableExplosionDamage", false);
         enableExplosionDamageDrop = (boolean) a("enableExplosionDamageDrop", false);
