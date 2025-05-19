@@ -90,12 +90,14 @@ public class QAMain extends JavaPlugin {
 
     public static HashMap<String, String> craftingEntityNames = new HashMap<>();
 
+    public static HashMap<UUID, Long> lastWeaponSwitch = new HashMap<>();
     public static Set<EntityType> avoidTypes = new HashSet<>();
     public static HashMap<UUID, Location> recoilHelperMovedLocation = new HashMap<>();
     public static ArrayList<MaterialStorage> expansionPacks = new ArrayList<>();
     public static HashMap<UUID, List<GunRefillerRunnable>> reloadingTasks = new HashMap<>();
     public static HashMap<UUID, Long> sentResourcepack = new HashMap<>();
     public static ArrayList<UUID> resourcepackReq = new ArrayList<>();
+    public static List<UUID> resourcepackLoading = new ArrayList<>();
     public static List<Gunner> gunners = new ArrayList<>();
     public static List<String> namesToBypass = new ArrayList<>();
     public static List<Material> interactableBlocks = new ArrayList<>();
@@ -108,6 +110,7 @@ public class QAMain extends JavaPlugin {
     public static boolean shouldSend = true;
     public static boolean sendOnJoin = false;
     public static boolean sendTitleOnJoin = false;
+    public static boolean resourcepackInvincibility = false;
     public static double secondsTilSend = 0.0;
 
     public static boolean orderShopByPrice = false;
@@ -164,7 +167,7 @@ public class QAMain extends JavaPlugin {
     public static boolean showAmmoInXPBar = false;
     public static boolean perWeaponPermission = false;
     public static boolean useMoveForRecoil = true;
-
+    public static double weaponSwitchDelay = 0;
     public static boolean allowGunHitEntities = false;
     public static boolean anticheatFix = false;
 
@@ -954,6 +957,7 @@ public class QAMain extends JavaPlugin {
 
         sendOnJoin = (boolean) a("sendOnJoin", true);
         sendTitleOnJoin = (boolean) a("sendTitleOnJoin", false);
+        resourcepackInvincibility = (boolean) a("resourcepackInvincibility", resourcepackInvincibility);
         secondsTilSend = Double.valueOf(a("SecondsTillRPIsSent", 5.0) + "");
 
         enableBulletTrails = (boolean) a("enableBulletTrails", true);
@@ -981,6 +985,8 @@ public class QAMain extends JavaPlugin {
         perWeaponPermission = (boolean) a("perWeaponPermission", false);
 
         useMoveForRecoil = (boolean) a("useMoveForRecoil", useMoveForRecoil);
+
+        weaponSwitchDelay = (double) a("weaponSwitchDelay", 0);
 
         enableExplosionDamage = (boolean) a("enableExplosionDamage", false);
         enableExplosionDamageDrop = (boolean) a("enableExplosionDamageDrop", false);

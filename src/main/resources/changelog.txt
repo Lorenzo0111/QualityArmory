@@ -4,6 +4,10 @@
   - Fixed armor protection
   - Fixed menu item duplication
   - Added hit sound
+  - Added ability to display ammo count in lore
+  - Added KingdomsX support
+  - Added resourcepack invincibility
+  - Added weapon switch delay
 
 2.0.19
   - Fixed resourcepack for 1.21.x

@@ -855,6 +855,10 @@ public class GunUtil {
 	}
 
 	public static boolean isDelay(Gun g, Player player) {
+        if (QAMain.lastWeaponSwitch.containsKey(player.getUniqueId()) &&
+                System.currentTimeMillis() - QAMain.lastWeaponSwitch.get(player.getUniqueId()) < QAMain.weaponSwitchDelay * 1000)
+            return true;
+
 		int showdelay = ((int) (g.getDelayBetweenShotsInSeconds() * 1000));
 
 		 return (g.getLastShotForGun().containsKey(player.getUniqueId())

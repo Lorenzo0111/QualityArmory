@@ -951,6 +951,8 @@ public class QAListener implements Listener {
 			if (customBase instanceof Gun && e.getPlayer().isSneaking() && ((Gun) customBase).hasIronSights()) {
 				Bukkit.getScheduler().runTaskLater(QAMain.getInstance(), () -> IronsightsHandler.aim(e.getPlayer()), 1);
 			}
+
+			QAMain.lastWeaponSwitch.put(e.getPlayer().getUniqueId(), System.currentTimeMillis());
 		}
 
 		if(QAMain.showAmmoInXPBar) {
@@ -966,7 +968,10 @@ public class QAListener implements Listener {
 
 	@EventHandler
 	public void onQuit(final PlayerQuitEvent e) {
+		QAMain.sentResourcepack.remove(e.getPlayer().getUniqueId());
+		QAMain.resourcepackLoading.remove(e.getPlayer().getUniqueId());
 		QAMain.resourcepackReq.remove(e.getPlayer().getUniqueId());
+
 		if (QAMain.reloadingTasks.containsKey(e.getPlayer().getUniqueId())) {
 			for (GunRefillerRunnable r : QAMain.reloadingTasks.get(e.getPlayer().getUniqueId())) {
 				r.getTask().cancel();
