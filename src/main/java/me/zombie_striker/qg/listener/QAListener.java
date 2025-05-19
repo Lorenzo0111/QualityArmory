@@ -966,7 +966,10 @@ public class QAListener implements Listener {
 
 	@EventHandler
 	public void onQuit(final PlayerQuitEvent e) {
+		QAMain.sentResourcepack.remove(e.getPlayer().getUniqueId());
+		QAMain.resourcepackLoading.remove(e.getPlayer().getUniqueId());
 		QAMain.resourcepackReq.remove(e.getPlayer().getUniqueId());
+
 		if (QAMain.reloadingTasks.containsKey(e.getPlayer().getUniqueId())) {
 			for (GunRefillerRunnable r : QAMain.reloadingTasks.get(e.getPlayer().getUniqueId())) {
 				r.getTask().cancel();

@@ -143,6 +143,7 @@ public class QualityArmory {
 							if (!QAMain.isVersionHigherThan(1, 9)) {
 								QAMain.resourcepackReq.add(player.getUniqueId());
 								QAMain.sentResourcepack.put(player.getUniqueId(), System.currentTimeMillis());
+								QAMain.resourcepackLoading.add(player.getUniqueId());
 							}
 							// If the player is on 1.8, manually add them to the resource list.
 

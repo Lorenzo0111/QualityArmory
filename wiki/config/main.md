@@ -23,6 +23,7 @@ Below you can find a list of all the options that you can configure and their ex
 * **enable\_permssionsToShoot**: `false` - If `true`, players require the permission `qualityarmory.shoot.<gun_name>` to fire specific guns.
 * **sendOnJoin**: `true` - If `true`, automatically prompts players to download the resource pack when they join the server.
 * **sendTitleOnJoin**: `false` - If `true`, displays a title message related to the resource pack when players join.
+* **resourcepackInvincibility**: `false` - If `true`, players are invulnerable for a short time after joining while the resource pack is being applied.
 * **SecondsTillRPIsSent**: `5.0` - The delay in seconds after a player joins before the resource pack prompt is sent (if `sendOnJoin` is true).
 * **enableBulletTrails**: `true` - If `true`, displays particle trails following bullets.
 * **BulletTrailsSpacing**: `0.5` - The distance (in blocks) between particles in a bullet trail.
