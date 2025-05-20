@@ -986,7 +986,7 @@ public class QAMain extends JavaPlugin {
 
         useMoveForRecoil = (boolean) a("useMoveForRecoil", useMoveForRecoil);
 
-        weaponSwitchDelay = (double) a("weaponSwitchDelay", 0);
+        weaponSwitchDelay = (double) a("weaponSwitchDelay", 0.0);
 
         enableExplosionDamage = (boolean) a("enableExplosionDamage", false);
         enableExplosionDamageDrop = (boolean) a("enableExplosionDamageDrop", false);
