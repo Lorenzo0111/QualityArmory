@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map.Entry;
 
 import me.zombie_striker.customitemmanager.*;
+import me.zombie_striker.qg.ammo.AmmoBox;
 import me.zombie_striker.qg.handlers.HotbarMessager;
 import me.zombie_striker.qg.handlers.IronsightsHandler;
 import me.zombie_striker.qg.hooks.protection.ProtectionHandler;
@@ -730,13 +731,19 @@ public class QualityArmory {
 					if (ammoType != null && ammoType.equals(a)) {
 						int amountInBag = ab.getAmmo(is);
 
+						int newAmount = 0;
+
 						if (amountInBag >= remaining) {
-							ab.updateAmmoLore(is, amountInBag - remaining);
+							ab.updateAmmoLore(is, newAmount = (amountInBag - remaining));
 							remaining = 0;
 						} else {
 							ab.updateAmmoLore(is, 0);
 							remaining -= amountInBag;
 						}
+
+						if (newAmount == 0 && ab instanceof AmmoBox)
+							player.getInventory().setItem(i, new ItemStack(Material.AIR));
+
 					}
 
 				}
