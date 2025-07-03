@@ -73,6 +73,12 @@
             <id>glaremasters repo</id>
             <url>https://repo.glaremasters.me/repository/towny/</url>
         </repository>
+
+        <repository>
+            <id>lorenzo0111-releases</id>
+            <name>Lorenzo0111 Repository</name>
+            <url>https://dl.lorenzo0111.me/releases</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -80,7 +86,7 @@
         <dependency>
             <groupId>com.github.cryptomorin</groupId>
             <artifactId>XSeries</artifactId>
-            <version>13.3.2</version>
+            <version>13.3.3</version>
         </dependency>
 
         <dependency>
