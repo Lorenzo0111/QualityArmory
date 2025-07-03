@@ -1,5 +1,6 @@
 package me.zombie_striker.qg.listener;
 
+import com.cryptomorin.xseries.reflection.XReflection;
 import me.zombie_striker.customitemmanager.ArmoryBaseObject;
 import me.zombie_striker.customitemmanager.CustomBaseObject;
 import me.zombie_striker.customitemmanager.CustomItemManager;
@@ -990,18 +991,17 @@ public class QAListener implements Listener {
 
 	@EventHandler
 	public void onJoin(final PlayerJoinEvent e) {
-             String version = Bukkit.getBukkitVersion();
-		                              
-        if (version.startsWith("1.7") || version.startsWith("1.8")) {
-            Bukkit.broadcastMessage(QAMain.prefix + " QualityArmory does not support versions older than 1.9, and may crash clients");
-            Bukkit.broadcastMessage("Since there is no reason to stay on outdated updates, (1.7 and 1.8 have quite a number of exploits) update your server.");
-            if (QAMain.shouldSend) {
-                QAMain.shouldSend = false;
-                Bukkit.broadcastMessage(QAMain.prefix + ChatColor.RED + " Disabling resourcepack.");
-        }
-}			
-		
-if (QAMain.addGlowEffects) {
+		if (XReflection.MINOR_NUMBER == 7) {
+			Bukkit.broadcastMessage(
+					QAMain.prefix + " QualityArmory does not support versions older than 1.9, and may crash clients");
+			Bukkit.broadcastMessage(
+					"Since there is no reason to stay on outdated updates, (1.7 and 1.8 has quite a number of exploits) update your server.");
+			if (QAMain.shouldSend) {
+				QAMain.shouldSend = false;
+				Bukkit.broadcastMessage(QAMain.prefix + ChatColor.RED + " Disabling resourcepack.");
+			}
+		}
+		if (QAMain.addGlowEffects) {
 			new BukkitRunnable() {
 
 				@Override
