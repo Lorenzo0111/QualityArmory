@@ -616,6 +616,13 @@ public class GunUtil {
 							if (QualityArmory.isIronSights(player.getItemInHand())) {
 								player.getInventory().setItemInOffHand(temp);
 								QAMain.DEBUG("Sett Offhand because ironsights in main hand");
+
+								try {
+									// Fix to re-implement the "up and down" animation
+									if (QualityArmory.isIronSights(player.getItemInHand()) && QAMain.SHOW_BULLETS_LORE) {
+										Gun.updateAmmoLore(g, player.getInventory().getItemInOffHand(), amount);
+									}
+								} catch (Exception | Error ignored) {}
 							} else {
 								player.getInventory().setItemInHand(temp);
 								QAMain.DEBUG("Set mainhand because ironsights not in main hand");
