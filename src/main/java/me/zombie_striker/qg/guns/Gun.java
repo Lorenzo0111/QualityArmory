@@ -916,8 +916,7 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
 
                     if (QAMain.enableReloadWhenOutOfAmmo) {
                         if (offhand) {
-                            player.getPlayer().setItemInHand(player.getPlayer().getInventory().getItemInOffHand());
-                            player.getPlayer().getInventory().setItemInOffHand(null);
+                            IronsightsHandler.unAim(player);
                             usedItem = player.getPlayer().getItemInHand();
                             offhand = false;
                         }
