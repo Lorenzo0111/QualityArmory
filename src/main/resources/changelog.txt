@@ -1,3 +1,10 @@
+2.0.21
+  - Reimplemented optional gun animation (enable_lore_gun-bullets must be set to true)
+  - 1.21.6 and 1.21.7 support
+  - Added restoreOffHand option
+  - Added an option to allow direct entity click to shoot (allowGunHitEntities)
+  - Fixed ammo duplication
+
 2.0.20.1
   - Fixed weapon switch delay
 
