@@ -34,7 +34,7 @@ Below you can find a list of all the options that you can configure and their ex
 * **enableReloadingOnDrop**: `false` - If `true`, allows players to reload by pressing their drop key (default 'Q') while holding a gun.
 * **enableReloadingWhenSwapToOffhand**: `true` - If `true`, allows players to reload by pressing their swap-to-offhand key (default 'F') while holding a gun.
 * **enableReloadOnlyWhenSwapToOffhand**: `false` - If `true`, reloading is _only_ possible using the swap-to-offhand key ('F'), disabling other methods like right-click (if applicable).
-* **allowGunHitEntities**: `false` - If `true`, allows guns to register melee damage when hitting entities directly.
+* **allowGunHitEntities**: `true` - If `true`, allows guns to register melee damage when hitting entities directly.
 * **showOutOfAmmoOnTitle**: `false` - If `true`, displays a large title message on the screen when the player tries to shoot with an empty gun.
 * **showReloadingTitle**: `false` - If `true`, displays a large title message on the screen while the player is reloading.
 * **showAmmoInXPBar**: `false` - If `true`, displays the current gun's ammo count in the player's experience bar.

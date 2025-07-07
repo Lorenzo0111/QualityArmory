@@ -168,7 +168,7 @@ public class QAMain extends JavaPlugin {
     public static boolean perWeaponPermission = false;
     public static boolean useMoveForRecoil = true;
     public static double weaponSwitchDelay = 0;
-    public static boolean allowGunHitEntities = false;
+    public static boolean allowGunHitEntities = true;
     public static boolean anticheatFix = false;
 
     public static String S_NOPERM = "&c You do not have permission to do that.";
@@ -702,7 +702,7 @@ public class QAMain extends JavaPlugin {
 
         try {
             if (AUTOUPDATE)
-                GithubUpdater.autoUpdate(this, "ZombieStriker", "QualityArmory", "QualityArmory.jar");
+                GithubUpdater.autoUpdate(this, "Lorenzo0111", "QualityArmory", "QualityArmory.jar");
         } catch (Exception e) {
         }
 
@@ -975,7 +975,7 @@ public class QAMain extends JavaPlugin {
         reloadOnF = (boolean) a("enableReloadingWhenSwapToOffhand", true);
         reloadOnFOnly = (boolean) a("enableReloadOnlyWhenSwapToOffhand", false);
 
-        allowGunHitEntities = (boolean) a("allowGunHitEntities", false);
+        allowGunHitEntities = (boolean) a("allowGunHitEntities", true);
 
 
         // showOutOfAmmoOnItem = (boolean) a("showOutOfAmmoOnItem", false);

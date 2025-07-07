@@ -77,8 +77,7 @@ public class QAListener implements Listener {
 
 					QAMain.DEBUG("Detected interact on entity, running LMB for " + g.getName());
 
-                    if (g.onLMB(d, d.getItemInHand()))
-                        e.setCancelled(true);
+                    g.onLMB(d, d.getItemInHand());
 
 					ignoreClick.remove(d.getUniqueId());
 				}
