@@ -16,16 +16,19 @@ public class IronsightsHandler {
 	public static Material ironsightsMaterial = Material.DIAMOND_AXE;
 	public static int ironsightsData = 21;
 	public static String ironsightsDisplay = "Iron Sights Enabled";
+	public static Map<Player, Integer> beforeSwitch = new HashMap<>();
 
 
 	public static void aim(Player player){
 			if(!QualityArmory.isIronSights(player.getItemInHand())){
 				//offHandStorage.put(player, player.getInventory().getItemInOffHand());
 				if(player.getInventory().getItemInOffHand() != null && !player.getInventory().getItemInOffHand().getType().equals(Material.AIR)){
-					if(player.getInventory().firstEmpty()==-1){
+					int slot = player.getInventory().firstEmpty();
+					if (slot == -1) {
 						player.getWorld().dropItem(player.getLocation(),player.getInventory().getItemInOffHand());
-					}else {
-						player.getInventory().addItem(player.getInventory().getItemInOffHand());
+					} else {
+						player.getInventory().setItem(slot, player.getInventory().getItemInOffHand());
+						if (QAMain.restoreOffHand) beforeSwitch.put(player, slot);
 					}
 				}
 				if (player.getItemInHand() != null && QualityArmory.isGun(player.getItemInHand())) {
@@ -52,7 +55,17 @@ public class IronsightsHandler {
 
 				player.getInventory().setItemInMainHand(player.getInventory().getItemInOffHand());
 				player.getInventory().setItemInOffHand(null);
-				//offHandStorage.remove(player);
+				if(beforeSwitch.containsKey(player)){
+					int slot = beforeSwitch.get(player);
+					if(slot != -1){
+						ItemStack item = player.getInventory().getItem(slot);
+						if(item != null && !item.getType().equals(Material.AIR)){
+							player.getInventory().setItem(slot, null);
+							player.getInventory().setItemInOffHand(item);
+						}
+					}
+					beforeSwitch.remove(player);
+				}
 
 				Gun.updateAmmo(null, player, ammo);
 			}

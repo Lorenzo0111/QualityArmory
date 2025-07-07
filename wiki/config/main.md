@@ -95,3 +95,4 @@ Below you can find a list of all the options that you can configure and their ex
 * **enable_lore_gun-bullets**: `false` - If `true`, displays the bullet amount in the item's lore text. This will make the gun go "up and down" when shooting.
 * **weaponSwitchDelay**: `0` - The delay in seconds before a player can fire after switching weapon. A value of `0` means no delay.
 * **DefaultResourcepack**: Defines the resource pack URLs. Refer to [ResourcePack Configuration](resourcepack.md) for more information.
+* **restoreOffHand**: `false` - If `true`, restores the off-hand item after iron sights are unaimed.

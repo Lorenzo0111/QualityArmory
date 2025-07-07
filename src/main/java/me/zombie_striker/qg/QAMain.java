@@ -265,6 +265,7 @@ public class QAMain extends JavaPlugin {
     public static List<Scoreboard> coloredGunScoreboard = new ArrayList<Scoreboard>();
     public static boolean blockBreakTexture = false;
     public static boolean autoarm = false;
+    public static boolean restoreOffHand = false;
     public static List<UUID> currentlyScoping = new ArrayList<>();
     private static QAMain main;
 
@@ -1068,6 +1069,7 @@ public class QAMain extends JavaPlugin {
 
         changeDeathMessages = (boolean) a("deathmessages.enable", changeDeathMessages);
 
+        restoreOffHand = (boolean) a("restoreOffHand", restoreOffHand);
 
         List<String> avoidTypes = (List<String>) a("impenetrableEntityTypes",
                 Collections.singletonList(EntityType.ARROW.name()));
