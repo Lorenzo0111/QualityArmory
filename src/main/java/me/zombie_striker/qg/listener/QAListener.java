@@ -36,11 +36,13 @@ import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scoreboard.Scoreboard;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 public class QAListener implements Listener {
+	private final List<UUID> ignoreClick = new ArrayList<>();
 
 	@SuppressWarnings("deprecation")
 	@EventHandler
@@ -61,19 +63,26 @@ public class QAListener implements Listener {
 						e.getEntity().getWorld().playSound(e.getEntity().getLocation(), aa.getSoundOnHit(), 1, 1);
 					}
 				}
-			}
-			/*if (QualityArmory.isGun(d.getItemInHand())
-					|| QualityArmory.isIronSights(d.getItemInHand())) {
-				DEBUG("The player " + e.getEntity().getName() + " was Hit with a gun! Damage=" + e.getDamage());
-				Gun g = QualityArmory.getGun(d.getItemInHand());
-				if(g!=null)
-				if(e.getDamage()==1) {
-					if(e.getDamager().getLocation().distanceSquared(e.getEntity().getLocation()) > 36) {
-						e.setDamage(g.getDamage());
-						DEBUG("DEBUG FIX : Correcting damage from 1 to " + g.getDamage());
-					}
+
+				if (QAMain.allowGunHitEntities && QualityArmory.isGun(d.getItemInHand()) && !ignoreClick.contains(d.getUniqueId())) {
+					Gun g = QualityArmory.getGun(d.getItemInHand());
+					if (g == null) return;
+
+					ignoreClick.add(d.getUniqueId());
+
+					QACustomItemInteractEvent event = new QACustomItemInteractEvent(d, g);
+					Bukkit.getPluginManager().callEvent(event);
+					if (event.isCancelled())
+						return;
+
+					QAMain.DEBUG("Detected interact on entity, running LMB for " + g.getName());
+
+                    if (g.onLMB(d, d.getItemInHand()))
+                        e.setCancelled(true);
+
+					ignoreClick.remove(d.getUniqueId());
 				}
-			}*/
+			}
 		}
 	}
 
