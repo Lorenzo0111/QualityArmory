@@ -669,6 +669,13 @@ public class GunUtil {
 		}
 		Gun.updateAmmo(g, player, amount);
 		QAMain.DEBUG("New ammo: " + Gun.getAmount(player));
+
+		try {
+			// Fix to re-implement the "up and down" animation
+			if (QualityArmory.isIronSights(player.getItemInHand()) && QAMain.SHOW_BULLETS_LORE) {
+				Gun.updateAmmoLore(g, player.getInventory().getItemInOffHand(), amount);
+			}
+		} catch (Exception | Error ignored) {}
 	}
 
 	public static void updateXPBar(Player player, Gun g, int amount) {

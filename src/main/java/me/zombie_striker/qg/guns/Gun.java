@@ -174,6 +174,10 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
             nbt.setInteger("ammo", amount);
         });
 
+        Gun.updateAmmoLore(g, current, amount);
+    }
+
+    public static void updateAmmoLore(Gun g, ItemStack current, int amount) {
         if (QAMain.SHOW_BULLETS_LORE && g != null) {
             ItemMeta meta = current.getItemMeta();
             if (meta == null || !meta.hasLore()) return;
