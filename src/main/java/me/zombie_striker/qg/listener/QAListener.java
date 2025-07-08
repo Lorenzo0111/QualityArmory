@@ -64,8 +64,10 @@ public class QAListener implements Listener {
 					}
 				}
 
-				if (QAMain.allowGunHitEntities && QualityArmory.isGun(d.getItemInHand()) && !ignoreClick.contains(d.getUniqueId())) {
-					Gun g = QualityArmory.getGun(d.getItemInHand());
+				if (QAMain.allowGunHitEntities && !ignoreClick.contains(d.getUniqueId())) {
+                    Gun g = QualityArmory.getGun(d.getItemInHand());
+                    if (IronsightsHandler.isAiming(d)) g = IronsightsHandler.getGunUsed(d);
+
 					if (g == null) return;
 
 					ignoreClick.add(d.getUniqueId());
