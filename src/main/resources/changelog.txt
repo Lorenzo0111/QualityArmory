@@ -4,6 +4,7 @@
   - Added restoreOffHand option
   - Added an option to allow direct entity click to shoot (allowGunHitEntities)
   - Fixed ammo duplication
+  - Fixed economy integration
 
 2.0.20.1
   - Fixed weapon switch delay
