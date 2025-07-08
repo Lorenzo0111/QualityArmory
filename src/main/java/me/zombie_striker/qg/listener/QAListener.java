@@ -286,6 +286,11 @@ public class QAListener implements Listener {
 			e.setCancelled(true);
 
 			if (shop) {
+				if (!QAMain.enableEconomy) {
+					try {
+						QAMain.enableEconomy = EconHandler.setupEconomy();
+					} catch (Exception | Error ignored) {}
+				}
 
 				if (!QAMain.enableEconomy) {
 					e.getWhoClicked().closeInventory();
