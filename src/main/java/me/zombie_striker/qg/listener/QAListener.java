@@ -267,6 +267,16 @@ public class QAListener implements Listener {
 					e.setCancelled(true);
 				}
 			}
+
+			try {
+				if (e.getClick() == ClickType.SWAP_OFFHAND &&
+						QualityArmory.isGun(e.getWhoClicked().getInventory().getItemInOffHand()) &&
+				        QualityArmory.isIronSights(e.getWhoClicked().getInventory().getItemInMainHand())) {
+					e.setCancelled(true);
+                    IronsightsHandler.unAim((Player) e.getWhoClicked());
+					return;
+				}
+			} catch (Error | Exception ignored) {}
 		}
 
 		if (!(e.getInventory().getHolder() instanceof QAInventoryHolder)) return;
