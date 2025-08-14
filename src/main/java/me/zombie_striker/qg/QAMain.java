@@ -169,6 +169,7 @@ public class QAMain extends JavaPlugin {
     public static boolean useMoveForRecoil = true;
     public static double weaponSwitchDelay = 0;
     public static boolean allowGunHitEntities = true;
+    public static boolean preventHiddenPlayers = true;
     public static boolean anticheatFix = false;
 
     public static String S_NOPERM = "&c You do not have permission to do that.";
@@ -976,7 +977,7 @@ public class QAMain extends JavaPlugin {
         reloadOnFOnly = (boolean) a("enableReloadOnlyWhenSwapToOffhand", false);
 
         allowGunHitEntities = (boolean) a("allowGunHitEntities", true);
-
+        preventHiddenPlayers = (boolean) a("preventHiddenPlayers", true);
 
         // showOutOfAmmoOnItem = (boolean) a("showOutOfAmmoOnItem", false);
         showOutOfAmmoOnTitle = (boolean) a("showOutOfAmmoOnTitle", false);

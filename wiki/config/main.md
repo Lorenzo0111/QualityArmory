@@ -35,6 +35,7 @@ Below you can find a list of all the options that you can configure and their ex
 * **enableReloadingWhenSwapToOffhand**: `true` - If `true`, allows players to reload by pressing their swap-to-offhand key (default 'F') while holding a gun.
 * **enableReloadOnlyWhenSwapToOffhand**: `false` - If `true`, reloading is _only_ possible using the swap-to-offhand key ('F'), disabling other methods like right-click (if applicable).
 * **allowGunHitEntities**: `true` - If `true`, allows guns to register melee damage when hitting entities directly.
+* **preventHiddenPlayers**: `true` - If `true`, players hidden with the hidePlayer api method will not be able to be hit by bullets.
 * **showOutOfAmmoOnTitle**: `false` - If `true`, displays a large title message on the screen when the player tries to shoot with an empty gun.
 * **showReloadingTitle**: `false` - If `true`, displays a large title message on the screen while the player is reloading.
 * **showAmmoInXPBar**: `false` - If `true`, displays the current gun's ammo count in the player's experience bar.
