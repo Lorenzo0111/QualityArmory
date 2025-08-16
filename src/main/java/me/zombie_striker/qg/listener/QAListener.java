@@ -104,7 +104,7 @@ public class QAListener implements Listener {
 
 	@EventHandler
 	public void onHopper(InventoryMoveItemEvent e) {
-		if (e.isCancelled())
+		if (e.isCancelled() || !QAMain.preventGunsInHoppers)
 			return;
 		if (e.getSource().getType() == InventoryType.HOPPER || e.getSource().getType() == InventoryType.DISPENSER
 				|| e.getSource().getType() == InventoryType.DROPPER)

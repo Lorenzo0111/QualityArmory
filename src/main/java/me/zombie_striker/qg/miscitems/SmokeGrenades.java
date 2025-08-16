@@ -5,6 +5,7 @@ import java.util.List;
 import com.cryptomorin.xseries.particles.XParticle;
 import me.zombie_striker.qg.hooks.protection.ProtectionHandler;
 import org.bukkit.Effect;
+import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
@@ -20,6 +21,7 @@ import me.zombie_striker.customitemmanager.MaterialStorage;
 import me.zombie_striker.qg.guns.utils.WeaponSounds;
 
 public class SmokeGrenades extends Grenade {
+	private boolean useModernParticles = false;
 
 	public SmokeGrenades(ItemStack[] ingg, double cost, double damage, double explosionreadius, String name,
 			String displayname, List<String> lore, MaterialStorage ms) {
@@ -29,11 +31,11 @@ public class SmokeGrenades extends Grenade {
 	@Override
 	public boolean onPull(Player thrower, ItemStack usedItem) {
 		if(!QAMain.autoarm)
-		if (throwItems.containsKey(thrower)) {
-			thrower.sendMessage(QAMain.prefix + QAMain.S_GRENADE_PALREADYPULLPIN);
-			thrower.playSound(thrower.getLocation(), WeaponSounds.RELOAD_BULLET.getSoundName(), 1, 1);
-			return true;
-		}
+            if (throwItems.containsKey(thrower)) {
+                thrower.sendMessage(QAMain.prefix + QAMain.S_GRENADE_PALREADYPULLPIN);
+                thrower.playSound(thrower.getLocation(), WeaponSounds.RELOAD_BULLET.getSoundName(), 1, 1);
+                return true;
+            }
 		thrower.getWorld().playSound(thrower.getLocation(), WeaponSounds.RELOAD_MAG_IN.getSoundName(), 2, 1);
 		final ThrowableHolder h = new ThrowableHolder(thrower.getUniqueId(), thrower, this);
 		h.setTimer(new BukkitRunnable() {
@@ -42,16 +44,67 @@ public class SmokeGrenades extends Grenade {
 
 			@Override
 			public void run() {
-				try {
-					h.getHolder().getWorld().spawnParticle(XParticle.EXPLOSION_EMITTER.get(),
-							h.getHolder().getLocation(), 0);
-					if (k % 2 == 0)
-						h.getHolder().getWorld().playSound(h.getHolder().getLocation(),
-								WeaponSounds.HISS.getSoundName(), 2f, 1f);
-				} catch (Error e3) {
-					h.getHolder().getWorld().playEffect(h.getHolder().getLocation(), Effect.valueOf("CLOUD"), 0);
-					h.getHolder().getWorld().playSound(h.getHolder().getLocation(), Sound.valueOf("EXPLODE"), 3, 0.7f);
+				if (isUseModernParticles()) {
+					try {
+						// Main smoke cloud that gets larger over time
+						double radius = (k / 10.0) + 1.0;
+						int particleCount = Math.max(1, 50 - k);
+
+						// Create a spherical smoke cloud
+						for (int i = 0; i < particleCount * 3; i++) {
+							double angle1 = Math.random() * 2 * Math.PI;
+							double angle2 = Math.random() * 2 * Math.PI;
+
+							double x = radius * Math.sin(angle1) * Math.cos(angle2);
+							double y = Math.abs(radius * Math.sin(angle2));
+							double z = radius * Math.sin(angle1) * Math.sin(angle2);
+
+							Location particleLoc = h.getHolder().getLocation().add(x, y, z);
+
+							// Main smoke particles
+							h.getHolder().getWorld().spawnParticle(XParticle.CAMPFIRE_COSY_SMOKE.get(),
+									particleLoc, 1, 0.2, 0.2, 0.2, 0.01);
+						}
+
+						// Add some gray smoke for density
+						if (k < 40) {
+							for (int i = 0; i < 20 * 3; i++) {
+								double x = (Math.random() - 0.5) * radius * 1.5;
+								double y = Math.random() * radius;
+								double z = (Math.random() - 0.5) * radius * 1.5;
+
+								Location particleLoc = h.getHolder().getLocation().add(x, y, z);
+								h.getHolder().getWorld().spawnParticle(XParticle.LARGE_SMOKE.get(),
+										particleLoc, 1, 0.3, 0.3, 0.3, 0.02);
+							}
+						}
+
+						// Initial explosion flash (first few ticks only)
+						if (k < 5) {
+							h.getHolder().getWorld().spawnParticle(XParticle.EXPLOSION.get(), h.getHolder().getLocation(), 2, 1, 1, 1, 0);
+							h.getHolder().getWorld().spawnParticle(XParticle.POOF.get(), h.getHolder().getLocation(), 10, 2, 2, 2, 0.1);
+						}
+					} catch (Exception | Error e) {
+						// Fallback for older versions or errors
+						h.getHolder().getWorld().playEffect(h.getHolder().getLocation(), Effect.SMOKE, 0);
+					}
+				} else {
+                    try {
+                        h.getHolder().getWorld().spawnParticle(XParticle.EXPLOSION_EMITTER.get(),
+                                h.getHolder().getLocation(), 0);
+                    } catch (Error e3) {
+                        h.getHolder().getWorld().playEffect(h.getHolder().getLocation(), Effect.valueOf("CLOUD"), 0);
+                    }
 				}
+
+                if (k % 2 == 0)
+                    try {
+                            h.getHolder().getWorld().playSound(h.getHolder().getLocation(),
+                                    WeaponSounds.HISS.getSoundName(), 2f, 1f);
+                    } catch (Error e3) {
+                        h.getHolder().getWorld().playSound(h.getHolder().getLocation(), Sound.valueOf("EXPLODE"), 3, 0.7f);
+                    }
+
 				k++;
 				if (k == 1) {
 					if (h.getHolder() instanceof Player) {
@@ -87,4 +140,11 @@ public class SmokeGrenades extends Grenade {
 
 	}
 
+	public boolean isUseModernParticles() {
+		return useModernParticles;
+	}
+
+	public void setUseModernParticles(boolean useModernParticles) {
+		this.useModernParticles = QAMain.isVersionHigherThan(1, 14) && useModernParticles;
+	}
 }

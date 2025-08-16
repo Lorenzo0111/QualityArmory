@@ -684,14 +684,13 @@ public class QualityArmory {
 			}
 		}
 		if (remaining > 0) {
-			if (player.getInventory().firstEmpty() >= 0) {
-				ItemStack is = getCustomItemAsItemStack(a);
-				is.setAmount(remaining);
-				player.getInventory().addItem(is);
-				remaining = 0;
-			}
+			ItemStack is = getCustomItemAsItemStack(a);
+			is.setAmount(remaining);
+			giveOrDrop(player, is);
+			remaining = 0;
 		}
-		return remaining <= 0;
+
+		return true;
 	}
 
 	public static int getBulletsInHand(Player player){

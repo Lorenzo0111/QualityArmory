@@ -7,6 +7,7 @@ import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.handlers.MultiVersionLookup;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 
 import java.util.ArrayList;
@@ -90,7 +91,8 @@ public class MaterialStorage {
 			return EMPTY;
 		}
 
-		String extraData = is.getType() == MultiVersionLookup.getSkull() ? ((SkullMeta) is.getItemMeta()).getOwner()
+		ItemMeta itemMeta = is.getItemMeta();
+		String extraData = is.getType() == MultiVersionLookup.getSkull() ? ((SkullMeta) itemMeta).getOwner()
 				: null;
 		String temp = null;
 		if (extraData != null) {
@@ -99,19 +101,21 @@ public class MaterialStorage {
 				temp = PlayerProfiles.getTextureValue(profile);
 		}
 		try {
-			return getMS(is.getType(), is.getItemMeta().hasCustomModelData() ? is.getItemMeta().getCustomModelData() : 0, variant,
-					is.getType() == MultiVersionLookup.getSkull() ? ((SkullMeta) is.getItemMeta()).getOwner() : null, temp);
+			return getMS(is.getType(), itemMeta.hasCustomModelData() ? itemMeta.getCustomModelData() : 0, variant,
+					is.getType() == MultiVersionLookup.getSkull() ? ((SkullMeta) itemMeta).getOwner() : null, temp);
 
 		} catch (Error | Exception e4) {
 		}
 		return getMS(is.getType(), is.getDurability(), variant,
-				is.getType() == MultiVersionLookup.getSkull() ? ((SkullMeta) is.getItemMeta()).getOwner() : null, temp);
+				is.getType() == MultiVersionLookup.getSkull() ? ((SkullMeta) itemMeta).getOwner() : null, temp);
 	}
 
 	public static int getVariant(ItemStack is) {
-		if (is != null)
-			if (is.hasItemMeta() && is.getItemMeta().hasLore()) {
-				for (String lore : is.getItemMeta().getLore()) {
+		if (is != null && is.hasItemMeta()) {
+			ItemMeta im = is.getItemMeta();
+
+			if (im.hasLore()) {
+				for (String lore : im.getLore()) {
 					if (lore.startsWith(QAMain.S_ITEM_VARIANTS_NEW)) {
 						try {
 							int id = Integer.parseInt(lore.split(QAMain.S_ITEM_VARIANTS_NEW)[1].trim());
@@ -131,6 +135,7 @@ public class MaterialStorage {
 					}
 				}
 			}
+		}
 		return 0;
 	}
 

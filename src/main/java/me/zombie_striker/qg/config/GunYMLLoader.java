@@ -262,6 +262,11 @@ public class GunYMLLoader {
 								if (f2.contains("ThrowSpeed"))
 									throwableItems.setThrowSpeed(f2.getDouble("ThrowSpeed"));
 							}
+							if (base instanceof SmokeGrenades) {
+								SmokeGrenades smokeGrenades = (SmokeGrenades) base;
+								if (f2.contains("useModernParticles"))
+									smokeGrenades.setUseModernParticles(f2.getBoolean("useModernParticles"));
+							}
 
 						}
 					}

@@ -24,5 +24,7 @@ public class MiscYML extends ArmoryYML{
 	public void verifyAllTagsExist() {
 		super.verifyAllTagsExist();
 		verify("ThrowSpeed",1.5);
+		if (misctype == WeaponType.SMOKE_GRENADES)
+			verify("useModernParticles", false);
 	}
 }

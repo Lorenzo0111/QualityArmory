@@ -1,3 +1,9 @@
+2.0.22
+  - Fixed ammo purchase with full inventory
+  - Optimized MaterialStorage
+  - Added flag to disable hopper check (preventGunsInHoppers)
+  - Added new smoke grenade effect (useModernParticles)
+
 2.0.21
   - Reimplemented optional gun animation (enable_lore_gun-bullets must be set to true)
   - 1.21.6 and 1.21.7 support
