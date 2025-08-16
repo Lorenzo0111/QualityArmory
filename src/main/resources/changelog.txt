@@ -3,6 +3,9 @@
   - Optimized MaterialStorage
   - Added flag to disable hopper check (preventGunsInHoppers)
   - Added new smoke grenade effect (useModernParticles)
+  - Fixed entity hit
+  - Fixed IronSights duplication
+  - Added preventHiddenPlayers option
 
 2.0.21
   - Reimplemented optional gun animation (enable_lore_gun-bullets must be set to true)
