@@ -131,10 +131,12 @@ public class GunUtil {
 						Location bulletLocationTest = start.clone();
 						// If the entity is close to the line of fire.
 
-						if (QAMain.preventHiddenPlayers && !p.canSee(e)) {
-							QAMain.DEBUG("Prevented shooting a hidden player: " + e.getName());
-							continue;
-						}
+						try {
+							if (QAMain.preventHiddenPlayers && !p.canSee(e)) {
+								QAMain.DEBUG("Prevented shooting a hidden player: " + e.getName());
+								continue;
+							}
+						} catch (Error | Exception ignored) {}
 
 						if (e instanceof Player) {
 							Player player = (Player) e;
