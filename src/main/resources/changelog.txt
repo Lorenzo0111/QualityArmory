@@ -1,3 +1,6 @@
+2.0.33
+  - Fixed direct entity damage causing double death
+
 2.0.22
   - Fixed ammo purchase with full inventory
   - Optimized MaterialStorage

@@ -68,7 +68,10 @@ public class QAListener implements Listener {
                     Gun g = QualityArmory.getGun(d.getItemInHand());
                     if (IronsightsHandler.isAiming(d)) g = IronsightsHandler.getGunUsed(d);
 
-					if (g == null) return;
+					if (g == null || !d.getLocation().getWorld().equals(e.getEntity().getLocation().getWorld())) return;
+
+					double distance = d.getLocation().distance(e.getEntity().getLocation());
+					if (distance > 5) return;
 
 					ignoreClick.add(d.getUniqueId());
 
@@ -77,11 +80,14 @@ public class QAListener implements Listener {
 					if (event.isCancelled())
 						return;
 
+					e.setCancelled(true);
 					QAMain.DEBUG("Detected interact on entity, running LMB for " + g.getName());
 
-                    g.onLMB(d, d.getItemInHand());
-
-					ignoreClick.remove(d.getUniqueId());
+					Gun finalG = g;
+					Bukkit.getScheduler().runTaskLater(QAMain.getInstance(), () -> {
+						finalG.onLMB(d, d.getItemInHand());
+						ignoreClick.remove(d.getUniqueId());
+					}, 1L);
 				}
 			}
 		}
