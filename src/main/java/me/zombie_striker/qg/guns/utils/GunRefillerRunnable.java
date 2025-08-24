@@ -144,7 +144,8 @@ public class GunRefillerRunnable {
                         QAMain.toggleNightvision(player, g, true);
                     }
 
-                    QualityArmory.sendHotbarGunAmmoCount(player, g, modifiedOriginalItem, false);
+                    if (shouldContinue)
+                        QualityArmory.sendHotbarGunAmmoCount(player, g, modifiedOriginalItem, false);
 
                     if (QAMain.showAmmoInXPBar && shouldContinue) {
                         GunUtil.updateXPBar(player, g, reloadAmount);
