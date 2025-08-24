@@ -1,4 +1,4 @@
-2.0.33
+2.0.23
   - Fixed direct entity damage causing double death
   - Disabled hotbar ammo count if the reload didn't succeed
   - Fixed support for versions before 1.17
