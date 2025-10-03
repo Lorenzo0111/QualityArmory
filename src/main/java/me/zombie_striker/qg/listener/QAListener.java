@@ -17,6 +17,7 @@ import me.zombie_striker.qg.guns.utils.GunUtil;
 import me.zombie_striker.qg.handlers.*;
 import me.zombie_striker.qg.miscitems.Grenade;
 import me.zombie_striker.qg.miscitems.MeleeItems;
+import me.zombie_striker.qg.miscitems.ThrowableItems;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -637,10 +638,10 @@ public class QAListener implements Listener {
 		if (QAMain.changeDeathMessages) {
 			if (e.getEntity().getKiller() != null && e.getEntity().getKiller() instanceof Player) {
 				Player killer = e.getEntity().getKiller();
-				if (e.getDeathMessage().contains(" using ")) {
-					CustomBaseObject base = IronsightsHandler.getGunUsed(killer);
-					if (base instanceof Gun) {
-						e.setDeathMessage(((Gun) base).getDeathMessage()
+				if (e.getDeathMessage() != null && e.getDeathMessage().contains(" using ")) {
+                    Gun base = IronsightsHandler.getGunUsed(killer);
+					if (base != null) {
+						e.setDeathMessage(base.getDeathMessage()
 								.replaceAll("%player%", e.getEntity().getDisplayName())
 								.replaceAll("%killer%", killer.getDisplayName())
 								.replaceAll("%name%", base.getDisplayName())
@@ -655,6 +656,37 @@ public class QAListener implements Listener {
 	@SuppressWarnings("deprecation")
 	@EventHandler(priority = EventPriority.HIGH)
 	public void onDeath(PlayerDeathEvent e) {
+		if (ThrowableItems.throwItems.containsKey(e.getEntity())) {
+			ThrowableItems.ThrowableHolder holder = ThrowableItems.throwItems.get(e.getEntity());
+
+			ItemStack grenadeStack = null;
+            Grenade grenade = null;
+
+			for (ItemStack drop : new ArrayList<>(e.getDrops())) {
+				if (QualityArmory.isMisc(drop)) {
+					CustomBaseObject misc = QualityArmory.getMisc(drop);
+					if (misc instanceof Grenade && misc.equals(holder.getGrenade())) {
+						grenadeStack = drop;
+                        grenade = (Grenade) misc;
+						e.getDrops().remove(drop);
+						break;
+					}
+				}
+			}
+			
+			if (grenadeStack != null) {
+                grenade.throwGrenade(e.getEntity(), null);
+
+				if (grenadeStack.getAmount() > 1) {
+					ItemStack remaining = grenadeStack.clone();
+					remaining.setAmount(grenadeStack.getAmount() - 1);
+					e.getDrops().add(remaining);
+				}
+				
+				DEBUG("Forced throw of armed grenade on player death");
+			}
+		}
+		
 		for (ItemStack is : new ArrayList<>(e.getDrops())) {
 			if (is == null)
 				continue;
