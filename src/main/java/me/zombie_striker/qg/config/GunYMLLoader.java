@@ -154,6 +154,7 @@ public class GunYMLLoader {
 								helmet.setHeightMax(f2.getDouble("maxProtectionHeight"));
 								helmet.setHeightMin(f2.getDouble("minProtectionHeight"));
 								helmet.setProtection(f2.getInt("protection", 0));
+                                helmet.setNegateHeadshots(f2.getBoolean("stopsHeadshots"));
 								QAMain.armorRegister.put(ms, helmet);
 								items++;
 							}

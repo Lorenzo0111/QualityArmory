@@ -222,9 +222,9 @@ public class GunUtil {
 					boolean bulletProtection = false;
 
 					if (hitTarget instanceof Player) {
-						bulletProtection = BulletProtectionUtil.stoppedBullet(p, bulletHitLoc, normalizedDirection);
+						bulletProtection = BulletProtectionUtil.stoppedBullet((Player) hitTarget, bulletHitLoc, normalizedDirection);
 						if (headshot) {
-							negateHeadshot = BulletProtectionUtil.negatesHeadshot(p);
+							negateHeadshot = BulletProtectionUtil.negatesHeadshot((Player) hitTarget);
 						}
 					}
 
