@@ -53,11 +53,10 @@ public class QAListener implements Listener {
 			if ((e.getCause() == DamageCause.ENTITY_ATTACK || e.getCause() == DamageCause.ENTITY_SWEEP_ATTACK)) {
 				// Handle gun firing first, even if event is cancelled (e.g., for invulnerable entities)
 				if (QAMain.allowGunHitEntities && !ignoreClick.contains(d.getUniqueId())) {
-                    Gun g = QualityArmory.getGun(d.getItemInHand());
-                    if (IronsightsHandler.isAiming(d)) g = IronsightsHandler.getGunUsed(d);
+					Gun g = QualityArmory.getGun(d.getItemInHand());
+					if (IronsightsHandler.isAiming(d)) g = IronsightsHandler.getGunUsed(d);
 
 					if (g != null && d.getLocation().getWorld().equals(e.getEntity().getLocation().getWorld())) {
-						double distance = d.getLocation().distance(e.getEntity().getLocation());
 						// Removed the distance > 5 check to allow guns to work at longer ranges
 						// and to fix the issue in Minecraft 1.19.4 where clicking on entities
 						// within a few blocks doesn't properly trigger gun firing
