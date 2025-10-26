@@ -2,7 +2,7 @@ package me.zombie_striker.customitemmanager;
 
 import com.cryptomorin.xseries.profiles.PlayerProfiles;
 import com.cryptomorin.xseries.profiles.builder.XSkull;
-import com.mojang.authlib.GameProfile;
+import com.cryptomorin.xseries.profiles.gameprofile.MojangGameProfile;
 import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.handlers.MultiVersionLookup;
 import org.bukkit.Material;
@@ -96,7 +96,7 @@ public class MaterialStorage {
 				: null;
 		String temp = null;
 		if (extraData != null) {
-			GameProfile profile = XSkull.of(is).getProfile();
+			MojangGameProfile profile = XSkull.of(is).getProfile();
 			if (profile != null)
 				temp = PlayerProfiles.getTextureValue(profile);
 		}

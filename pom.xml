@@ -75,7 +75,7 @@
         <dependency>
             <groupId>com.github.cryptomorin</groupId>
             <artifactId>XSeries</artifactId>
-            <version>13.4.0</version>
+            <version>13.5.1</version>
         </dependency>
 
         <dependency>
