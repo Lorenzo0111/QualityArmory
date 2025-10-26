@@ -48,11 +48,46 @@ public class QAListener implements Listener {
 	@SuppressWarnings("deprecation")
 	@EventHandler
 	public void onHit(EntityDamageByEntityEvent e) {
-		if (e.isCancelled())
-			return;
 		if (e.getDamager() instanceof Player) {
 			Player d = (Player) e.getDamager();
 			if ((e.getCause() == DamageCause.ENTITY_ATTACK || e.getCause() == DamageCause.ENTITY_SWEEP_ATTACK)) {
+				// Handle gun firing first, even if event is cancelled (e.g., for invulnerable entities)
+				if (QAMain.allowGunHitEntities && !ignoreClick.contains(d.getUniqueId())) {
+                    Gun g = QualityArmory.getGun(d.getItemInHand());
+                    if (IronsightsHandler.isAiming(d)) g = IronsightsHandler.getGunUsed(d);
+
+					if (g != null && d.getLocation().getWorld().equals(e.getEntity().getLocation().getWorld())) {
+						double distance = d.getLocation().distance(e.getEntity().getLocation());
+						// Removed the distance > 5 check to allow guns to work at longer ranges
+						// and to fix the issue in Minecraft 1.19.4 where clicking on entities
+						// within a few blocks doesn't properly trigger gun firing
+
+						ignoreClick.add(d.getUniqueId());
+
+						QACustomItemInteractEvent event = new QACustomItemInteractEvent(d, g);
+						Bukkit.getPluginManager().callEvent(event);
+						if (event.isCancelled()) {
+							ignoreClick.remove(d.getUniqueId());
+							return;
+						}
+
+						e.setCancelled(true);
+						QAMain.DEBUG("Detected interact on entity, running LMB for " + g.getName());
+
+						Gun finalG = g;
+						Bukkit.getScheduler().runTaskLater(QAMain.getInstance(), () -> {
+							finalG.onLMB(d, d.getItemInHand());
+							ignoreClick.remove(d.getUniqueId());
+						}, 1L);
+						return; // Exit after handling gun, don't process melee items
+					}
+				}
+
+				// Only check if event is cancelled for melee items
+				if (e.isCancelled())
+					return;
+
+				// Handle melee items
 				if (QualityArmory.isMisc(d.getItemInHand())) {
 					CustomBaseObject aa = QualityArmory.getMisc(d.getItemInHand());
 					if (aa instanceof MeleeItems) {
@@ -63,32 +98,6 @@ public class QAListener implements Listener {
 					if (aa.getSoundOnHit() != null) {
 						e.getEntity().getWorld().playSound(e.getEntity().getLocation(), aa.getSoundOnHit(), 1, 1);
 					}
-				}
-
-				if (QAMain.allowGunHitEntities && !ignoreClick.contains(d.getUniqueId())) {
-                    Gun g = QualityArmory.getGun(d.getItemInHand());
-                    if (IronsightsHandler.isAiming(d)) g = IronsightsHandler.getGunUsed(d);
-
-					if (g == null || !d.getLocation().getWorld().equals(e.getEntity().getLocation().getWorld())) return;
-
-					double distance = d.getLocation().distance(e.getEntity().getLocation());
-					if (distance > 5) return;
-
-					ignoreClick.add(d.getUniqueId());
-
-					QACustomItemInteractEvent event = new QACustomItemInteractEvent(d, g);
-					Bukkit.getPluginManager().callEvent(event);
-					if (event.isCancelled())
-						return;
-
-					e.setCancelled(true);
-					QAMain.DEBUG("Detected interact on entity, running LMB for " + g.getName());
-
-					Gun finalG = g;
-					Bukkit.getScheduler().runTaskLater(QAMain.getInstance(), () -> {
-						finalG.onLMB(d, d.getItemInHand());
-						ignoreClick.remove(d.getUniqueId());
-					}, 1L);
 				}
 			}
 		}
