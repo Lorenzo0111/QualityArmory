@@ -1099,7 +1099,11 @@ public class QAMain extends JavaPlugin {
         registerCraftEntityNames(miscRegister);
         registerCraftEntityNames(armorRegister);
 
-        menuManager = new MenuManager(this);
+        if (menuManager != null) {
+            menuManager.reload();
+        } else {
+            menuManager = new MenuManager(this);
+        }
 
         BoundingBoxManager.initEntityTypeBoundingBoxes();
     }

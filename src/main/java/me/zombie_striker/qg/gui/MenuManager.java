@@ -103,6 +103,8 @@ public class MenuManager {
 
         String filter = category.getFilter();
         List<CustomBaseObject> filtered = allItems.stream().filter(item -> {
+            if (filter == null || filter.isEmpty()) return true;
+
             switch (filter.toUpperCase()) {
                 case "GUN":
                     return item instanceof Gun;

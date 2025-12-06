@@ -28,7 +28,7 @@ categories:
         name: "&c&lExplosives"
         lore:
           - "&7All explosive weapons"
-        filter: "MISC" # must be one of: ALL, GUN, AMMO, ARMOR, MISC
+      filter: "MISC" # must be one of: ALL, GUN, AMMO, ARMOR, MISC
 ```
 
 ## Menu layouts
