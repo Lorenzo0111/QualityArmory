@@ -1,3 +1,7 @@
+2.1.0
+  - 1.21.10 support
+  - Added new fully customizable menu
+
 2.0.24
   - Fixed death message error
   - Fixed grenade throw on death
