@@ -16,10 +16,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class MenuManager {
@@ -43,10 +40,15 @@ public class MenuManager {
 
         menuConfig = YamlConfiguration.loadConfiguration(menuFile);
 
-        InputStream defConfigStream = plugin.getResource("menu.yml");
-        if (defConfigStream != null) {
-            YamlConfiguration defConfig = YamlConfiguration.loadConfiguration(new InputStreamReader(defConfigStream));
-            menuConfig.setDefaults(defConfig);
+        try (InputStream defConfigStream = plugin.getResource("menu.yml")) {
+            if (defConfigStream != null) {
+                try (InputStreamReader reader = new InputStreamReader(defConfigStream)) {
+                    YamlConfiguration defConfig = YamlConfiguration.loadConfiguration(reader);
+                    menuConfig.setDefaults(defConfig);
+                }
+            }
+        } catch (Exception e) {
+            plugin.getLogger().warning("Failed to load default menu configuration: " + e.getMessage());
         }
     }
 
@@ -116,11 +118,29 @@ public class MenuManager {
             }
         }).collect(Collectors.toList());
 
-        return filtered.stream()
+        List<CustomBaseObject> available = filtered.stream()
                 .filter(item -> isShop
                         ? item.getPrice() >= 0 && item.isEnableShop()
-                        : item.getIngredientsRaw() != null)
+                        : item.getIngredientsRaw() != null && item.isEnableCrafting())
                 .collect(Collectors.toList());
+
+        if (isShop && QAMain.orderShopByPrice) {
+            available.sort(
+                    Comparator.comparingDouble(CustomBaseObject::getPrice)
+                            .thenComparing(this::getComparableName, String.CASE_INSENSITIVE_ORDER)
+            );
+        }
+
+        return available;
+    }
+
+    private String getComparableName(CustomBaseObject item) {
+        String displayName = item.getDisplayName();
+        if (displayName != null && !displayName.isEmpty())
+            return displayName;
+
+        String name = item.getName();
+        return name != null ? name : "";
     }
 
     public void openShopMenu(Player player) {

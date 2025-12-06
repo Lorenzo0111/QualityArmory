@@ -28,7 +28,7 @@ categories:
         name: "&c&lExplosives"
         lore:
           - "&7All explosive weapons"
-      filter: "GRENADES" # must match the registry you want to show
+        filter: "MISC" # must be one of: ALL, GUN, AMMO, ARMOR, MISC
 ```
 
 ## Menu layouts
@@ -47,7 +47,7 @@ categories:
 
 ## Buttons & custom items
 
-- `items.previous` / `items.next`: Navigation buttons. Supports `%page%` and `%pages%`.
+- `items.previous` / `items.next`: Navigation buttons. Supports `%prevpage%`, `%nextpage%` and `%pages%`.
 - `items.back`: Returns to the category selector defined by the current mode (shop or crafting).
 - `items.custom`: Maps every non-special symbol used in `structure` to an item. The symbol is the first character of the key. Default `#` is a black stained glass pane. Add more keys for extra fillers or separators:
 
