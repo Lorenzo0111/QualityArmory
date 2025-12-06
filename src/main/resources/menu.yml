@@ -1,0 +1,169 @@
+categories:
+  # Shop categories - define what categories appear in the shop
+  shop:
+    all:
+      name: "&eAll Items"
+      icon:
+        type: "CHEST"
+        name: "&e&lAll Items"
+        lore:
+          - "&7View all available items"
+          - "&7in the shop"
+      filter: "ALL"
+
+    guns:
+      name: "&cGuns"
+      icon:
+        type: "DIAMOND_HOE"
+        name: "&c&lGuns"
+        lore:
+          - "&7Browse all available"
+          - "&7guns and weapons"
+      filter: "GUN"
+
+    ammo:
+      name: "&6Ammunition"
+      icon:
+        type: "ARROW"
+        name: "&6&lAmmunition"
+        lore:
+          - "&7Browse all ammunition"
+          - "&7types for your weapons"
+      filter: "AMMO"
+
+    armor:
+      name: "&bArmor"
+      icon:
+        type: "DIAMOND_CHESTPLATE"
+        name: "&b&lArmor"
+        lore:
+          - "&7Browse protective"
+          - "&7armor and gear"
+      filter: "ARMOR"
+
+    misc:
+      name: "&dMiscellaneous"
+      icon:
+        type: "CLOCK"
+        name: "&d&lMiscellaneous"
+        lore:
+          - "&7Browse miscellaneous"
+          - "&7items and utilities"
+      filter: "MISC"
+
+  # Crafting categories - define what categories appear in crafting menu
+  crafting:
+    all:
+      name: "&eAll Craftable"
+      icon:
+        type: "CRAFTING_TABLE"
+        name: "&e&lAll Craftable Items"
+        lore:
+          - "&7View all items you"
+          - "&7can craft"
+      filter: "ALL"
+
+    guns:
+      name: "&cGuns"
+      icon:
+        type: "DIAMOND_HOE"
+        name: "&c&lCraftable Guns"
+        lore:
+          - "&7Craft powerful weapons"
+          - "&7with the right materials"
+      filter: "GUN"
+
+    ammo:
+      name: "&6Ammunition"
+      icon:
+        type: "ARROW"
+        name: "&6&lCraftable Ammo"
+        lore:
+          - "&7Craft ammunition for"
+          - "&7your weapons"
+      filter: "AMMO"
+
+    armor:
+      name: "&bArmor"
+      icon:
+        type: "DIAMOND_CHESTPLATE"
+        name: "&b&lCraftable Armor"
+        lore:
+          - "&7Craft protective gear"
+          - "&7and armor pieces"
+      filter: "ARMOR"
+
+    misc:
+      name: "&dMiscellaneous"
+      icon:
+        type: "CLOCK"
+        name: "&d&lCraftable Misc"
+        lore:
+          - "&7Craft miscellaneous"
+          - "&7items and utilities"
+      filter: "MISC"
+
+menus:
+  shop_categories:
+    title: "&6&lShop &8- &7Select Category"
+    structure:
+      - "# # # # # # # # #"
+      - "# . . . . . . . #"
+      - "# . . . . . . . #"
+      - "# . . . . . . . #"
+      - "# # # # # # # # #"
+
+  shop_items:
+    title: "&6&lShop &8- &7%category%"
+    structure:
+      - "# # # # # # # # #"
+      - "# . . . . . . . #"
+      - "# . . . . . . . #"
+      - "# . . . . . . . #"
+      - "# . . . . . . . #"
+      - "B # # < # > # # #"
+
+  crafting_categories:
+    title: "&e&lCrafting &8- &7Select Category"
+    structure:
+      - "# # # # # # # # #"
+      - "# . . . . . . . #"
+      - "# . . . . . . . #"
+      - "# . . . . . . . #"
+      - "# # # # # # # # #"
+
+  crafting_items:
+    title: "&e&lCrafting &8- &7%category%"
+    structure:
+      - "# # # # # # # # #"
+      - "# . . . . . . . #"
+      - "# . . . . . . . #"
+      - "# . . . . . . . #"
+      - "# . . . . . . . #"
+      - "B # # < # > # # #"
+
+  items:
+    previous:
+      type: "ARROW"
+      name: "&cPrevious Page"
+      lore:
+        - "&7Click to go to page &e%prevpage%&7/&e%pages%"
+
+    next:
+      type: "ARROW"
+      name: "&aNext Page"
+      lore:
+        - "&7Click to go to page &e%nextpage%&7/&e%pages%"
+
+    back:
+      type: "BARRIER"
+      name: "&cBack to Categories"
+      lore:
+        - "&7Return to category"
+        - "&7selection menu"
+
+    custom:
+      "#":
+        type: "BLACK_STAINED_GLASS_PANE"
+        name: "&r"
+        lore: []

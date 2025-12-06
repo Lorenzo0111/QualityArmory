@@ -1,9 +1,8 @@
 package me.zombie_striker.qg;
 
 import com.cryptomorin.xseries.XPotion;
+import com.cryptomorin.xseries.XSound;
 import com.cryptomorin.xseries.reflection.XReflection;
-
-
 import de.tr7zw.changeme.nbtapi.NBT;
 import de.tr7zw.changeme.nbtapi.utils.MinecraftVersion;
 import me.zombie_striker.customitemmanager.CustomBaseObject;
@@ -25,6 +24,7 @@ import me.zombie_striker.qg.config.CommentYamlConfiguration;
 import me.zombie_striker.qg.config.GunYMLCreator;
 import me.zombie_striker.qg.config.GunYMLLoader;
 import me.zombie_striker.qg.config.MessagesYML;
+import me.zombie_striker.qg.gui.MenuManager;
 import me.zombie_striker.qg.guns.Gun;
 import me.zombie_striker.qg.guns.chargers.*;
 import me.zombie_striker.qg.guns.projectiles.*;
@@ -59,10 +59,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
@@ -75,7 +72,6 @@ import java.io.*;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.logging.Level;
-import java.util.stream.Collectors;
 
 public class QAMain extends JavaPlugin {
 
@@ -229,11 +225,7 @@ public class QAMain extends JavaPlugin {
     public static int primaryWeaponLimit = 2;
     public static int secondaryWeaponLimit = 2;
     public static String prefix = "&8[&2QualityArmory&8]&r";
-    // public Inventory craftingMenu;
-    public static String S_craftingBenchName = "Armory Crafting-Bench Page:";
     public static String S_missingIngredients = "You do not have all the materials needed to craft this.";
-    // public Inventory shopMenu;
-    public static String S_shopName = "Weapons Shop Page:";
     public static String S_noMoney = "You do not have enough money to buy this.";
     public static String S_noEcon = "ECONOMY NOT ENABLED. REPORT THIS TO THE OWNER!";
     public static String S_nextPage = "&6Next Page:";
@@ -241,8 +233,6 @@ public class QAMain extends JavaPlugin {
     public static String bagAmmo = "&aAmmo: ";
     public static String bagAmmoType = "&aAmmo Type: ";
 
-    public static ItemStack prevButton;
-    public static ItemStack nextButton;
     public static MessagesYML m;
     public static CommentYamlConfiguration resourcepackwhitelist;
     public static String language = "en";
@@ -275,6 +265,7 @@ public class QAMain extends JavaPlugin {
     private FileConfiguration config;
     private File configFile;
     private boolean saveTheConfig = false;
+    private static MenuManager menuManager;
 
     public static QAMain getInstance() {
         return main;
@@ -337,23 +328,11 @@ public class QAMain extends JavaPlugin {
         return sb;
     }
 
-    public static void shopsSounds(InventoryClickEvent e, boolean shop) {
-
+    public static void shopsSounds(Player player, boolean shop) {
         if (shop) {
-            try {
-                ((Player) e.getWhoClicked()).playSound(e.getWhoClicked().getLocation(), Sound.BLOCK_ANVIL_USE, 0.7f, 1);
-            } catch (Error e2) {
-                ((Player) e.getWhoClicked()).playSound(e.getWhoClicked().getLocation(), Sound.valueOf("ANVIL_USE"),
-                        0.7f, 1);
-            }
+            XSound.BLOCK_ANVIL_USE.play(player, 0.7f, 1);
         } else {
-            try {
-                ((Player) e.getWhoClicked()).playSound(e.getWhoClicked().getLocation(), MultiVersionLookup.getHarp(),
-                        0.7f, 1);
-            } catch (Error e2) {
-                ((Player) e.getWhoClicked()).playSound(e.getWhoClicked().getLocation(), Sound.valueOf("NOTE_PIANO"),
-                        0.7f, 1);
-            }
+            XSound.BLOCK_NOTE_BLOCK_HARP.play(player, 0.7f, 1);
         }
     }
 
@@ -465,82 +444,12 @@ public class QAMain extends JavaPlugin {
         return MaterialStorage.getMS(Material.DIAMOND_AXE, d, 0);
     }
 
-    public static Inventory createShop(int page) {
-        return createCustomInventory(page, true);
+    public static void openShopMenu(Player player) {
+        if (menuManager != null) menuManager.openShopMenu(player);
     }
 
-    public static Inventory createCraft(int page) {
-        return createCustomInventory(page, false);
-    }
-
-
-    private static boolean addToGUI(CustomBaseObject obj, Inventory gui, boolean shop) {
-        if (shop && (obj.getPrice() < 0 || !obj.isEnableShop()))
-            return false;
-        if (!shop && obj.getIngredientsRaw() == null)
-            return false;
-        try {
-            ItemStack is = CustomItemManager.getItemType("gun").getItem(obj.getItemData().getMat(), obj.getItemData().getData(), obj.getItemData().getVariant());
-            is.setAmount(obj.getCraftingReturn());
-            if (is.getAmount() <= 0)
-                is.setAmount(1);
-            ItemMeta im = is.getItemMeta();
-            List<String> lore = im.hasLore() ? im.getLore() : new ArrayList<>();
-            if (shop) {
-                lore.addAll(OLD_ItemFact.addShopLore(obj));
-            } else {
-                lore.addAll(OLD_ItemFact.getCraftingLore(obj));
-            }
-            im.setLore(lore);
-            is.setItemMeta(im);
-            gui.addItem(is);
-            return true;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
-
-
-    public static Inventory createCustomInventory(int page, boolean shopping) {
-        Inventory shopMenu = new QAInventoryHolder((shopping ? S_shopName : S_craftingBenchName) + page).getInventory();
-        List<Gun> gunslistr = gunRegister.values().stream()
-                .filter(CustomBaseObject::isEnableCrafting)
-                .collect(Collectors.toList());
-        List<Ammo> ammolistr = ammoRegister.values().stream()
-                .filter(CustomBaseObject::isEnableCrafting)
-                .collect(Collectors.toList());
-        List<CustomBaseObject> misclistr = miscRegister.values().stream()
-                .filter(CustomBaseObject::isEnableCrafting)
-                .collect(Collectors.toList());
-        List<ArmorObject> armorlistr = armorRegister.values().stream()
-                .filter(CustomBaseObject::isEnableCrafting)
-                .collect(Collectors.toList());
-
-        List<CustomBaseObject> allItems = new ArrayList<>();
-        allItems.addAll(gunslistr);
-        allItems.addAll(ammolistr);
-        allItems.addAll(misclistr);
-        allItems.addAll(armorlistr);
-
-        List<CustomBaseObject> filteredItems = allItems.stream()
-                .filter(item -> (shopping && item.getPrice() >= 0 && item.isEnableShop()) || 
-                               (!shopping && item.getIngredientsRaw() != null))
-                .collect(Collectors.toList());
-
-        int itemsPerPage = 9 * 5;
-        int startIndex = page * itemsPerPage;
-        int endIndex = Math.min(startIndex + itemsPerPage, filteredItems.size());
-
-        shopMenu.setItem((9 * 6) - 1 - 8, prevButton);
-        shopMenu.setItem((9 * 6) - 1, nextButton);
-
-        for (int i = startIndex; i < endIndex; i++) {
-            CustomBaseObject item = filteredItems.get(i);
-            addToGUI(item, shopMenu, shopping);
-        }
-
-        return shopMenu;
+    public static void openCraftMenu(Player player) {
+        if (menuManager != null) menuManager.openCraftMenu(player);
     }
 
     public static void registerCraftEntityNames(HashMap<MaterialStorage, ?> regMaps) {
@@ -808,9 +717,7 @@ public class QAMain extends JavaPlugin {
         S_ANVIL = LocalUtils.colorize((String) m.a("NoPermAnvilMessage", S_ANVIL));
         S_NOPERM = LocalUtils.colorize((String) m.a("NoPerm", S_NOPERM));
         S_RELOAD = LocalUtils.colorize((String) m.a("Reload", S_RELOAD));
-        S_shopName = (String) m.a("ShopName", S_shopName);
         S_noMoney = LocalUtils.colorize((String) m.a("NoMoney", S_noMoney));
-        S_craftingBenchName = (String) m.a("CraftingBenchName", S_craftingBenchName);
         S_missingIngredients = (String) m.a("Missing_Ingredients", S_missingIngredients);
         S_NORES1 = LocalUtils.colorize((String) m.a("NoResourcepackMessage1", S_NORES1));
         S_NORES2 = LocalUtils.colorize((String) m.a("NoResourcepackMessage2", S_NORES2));
@@ -884,28 +791,8 @@ public class QAMain extends JavaPlugin {
         bagAmmo = LocalUtils.colorize((String) m.a("AmmoBag.current", bagAmmo));
         bagAmmoType = LocalUtils.colorize((String) m.a("AmmoBag.type", bagAmmoType));
 
-        Material glass = null;
-        Material glass2 = null;
-        try {
-            glass = Material.matchMaterial("BLUE_STAINED_GLASS_PANE");
-            glass2 = Material.matchMaterial("RED_STAINED_GLASS_PANE");
-            prevButton = new ItemStack(glass, 1);
-            nextButton = new ItemStack(glass2, 1);
-            ItemMeta nextButtonMeta = nextButton.getItemMeta();
-            nextButtonMeta.setDisplayName(S_nextPage);
-            nextButton.setItemMeta(nextButtonMeta);
-            ItemMeta prevButtonMeta = prevButton.getItemMeta();
-            prevButtonMeta.setDisplayName(S_prevPage);
-            prevButton.setItemMeta(prevButtonMeta);
-        } catch (Error | Exception e45) {
-            glass = Material.matchMaterial("STAINED_GLASS_PANE");
-            prevButton = new ItemStack(glass, 1, (short) 14);
-            nextButton = new ItemStack(glass, 1, (short) 5);
-        }
-
         resourcepackwhitelist = CommentYamlConfiguration.loadConfiguration(new File(getDataFolder(), "resourcepackwhitelist.yml"));
         namesToBypass = (List<String>) resourcepackwhitelist.getOrSet("Names_Of_players_to_bypass", namesToBypass);
-
 
         if (!new File(getDataFolder(), "config.yml").exists()) {
             saveDefaultConfig();
@@ -1211,6 +1098,8 @@ public class QAMain extends JavaPlugin {
         registerCraftEntityNames(ammoRegister);
         registerCraftEntityNames(miscRegister);
         registerCraftEntityNames(armorRegister);
+
+        menuManager = new MenuManager(this);
 
         BoundingBoxManager.initEntityTypeBoundingBoxes();
     }
@@ -1687,7 +1576,7 @@ public class QAMain extends JavaPlugin {
                         if (args.length == 2) {
                             CustomBaseObject g = QualityArmory.getCustomItemByName(args[1]);
                             if (g == null) {
-                                player.openInventory(createCraft(0));
+                                openCraftMenu(player);
                                 return true;
                             }
 
@@ -1705,7 +1594,7 @@ public class QAMain extends JavaPlugin {
                             return true;
                         }
 
-                        player.openInventory(createCraft(0));
+                        openCraftMenu(player);
                         return true;
 
                     }
@@ -1718,7 +1607,7 @@ public class QAMain extends JavaPlugin {
                                 return true;
                             }
 
-                            target.openInventory(createShop(0));
+                            openShopMenu(target);
                             return true;
                         }
 
@@ -1726,7 +1615,7 @@ public class QAMain extends JavaPlugin {
                             sender.sendMessage(prefix + ChatColor.RED + S_NOPERM);
                             return true;
                         }
-                        player.openInventory(createShop(0));
+                        openShopMenu(player);
                         return true;
 
                     }

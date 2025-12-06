@@ -6,6 +6,7 @@
 
 * [Main Configuration](config/main.md)
 * [ResourcePack Configuration](config/resourcepack.md)
+* [Menu Configuration](config/menu.md)
 
 ## Items Config <a href="#items" id="items"></a>
 

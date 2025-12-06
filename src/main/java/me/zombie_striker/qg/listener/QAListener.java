@@ -8,17 +8,21 @@ import me.zombie_striker.customitemmanager.MaterialStorage;
 import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.ammo.Ammo;
 import me.zombie_striker.qg.api.QACustomItemInteractEvent;
-import me.zombie_striker.qg.api.QAGunGiveEvent;
 import me.zombie_striker.qg.api.QualityArmory;
 import me.zombie_striker.qg.attachments.AttachmentBase;
 import me.zombie_striker.qg.guns.Gun;
 import me.zombie_striker.qg.guns.utils.GunRefillerRunnable;
 import me.zombie_striker.qg.guns.utils.GunUtil;
-import me.zombie_striker.qg.handlers.*;
+import me.zombie_striker.qg.handlers.BulletWoundHandler;
+import me.zombie_striker.qg.handlers.IronsightsHandler;
+import me.zombie_striker.qg.handlers.Update19OffhandChecker;
 import me.zombie_striker.qg.miscitems.Grenade;
 import me.zombie_striker.qg.miscitems.MeleeItems;
 import me.zombie_striker.qg.miscitems.ThrowableItems;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -284,151 +288,6 @@ public class QAListener implements Listener {
 					return;
 				}
 			} catch (Error | Exception ignored) {}
-		}
-
-		if (!(e.getInventory().getHolder() instanceof QAInventoryHolder)) return;
-
-		if (e.getView().getTitle().startsWith((QAMain.S_craftingBenchName)) || e.getView().getTitle().startsWith((QAMain.S_shopName))) {
-			if (e.getClick().isShiftClick()) {
-				e.setCancelled(true);
-				return;
-			}
-		}
-
-		name = e.getView().getTitle();
-
-		if (name != null && (name.startsWith(QAMain.S_craftingBenchName) || name.startsWith(QAMain.S_shopName))) {
-			DEBUG("ClickedShop");
-
-			boolean shop = (name.startsWith(QAMain.S_shopName));
-
-			e.setCancelled(true);
-
-			if (shop) {
-				if (!QAMain.enableEconomy) {
-					try {
-						QAMain.enableEconomy = EconHandler.setupEconomy();
-					} catch (Exception | Error ignored) {}
-				}
-
-				if (!QAMain.enableEconomy) {
-					e.getWhoClicked().closeInventory();
-					e.getWhoClicked().sendMessage(QAMain.prefix + QAMain.S_noEcon);
-					return;
-				}
-
-			}
-
-			if (e.getCurrentItem() != null) {
-				if (shop) {
-					if (e.getCurrentItem().isSimilar(QAMain.prevButton)) {
-						int page = Integer.parseInt(e.getView().getTitle().split(QAMain.S_shopName)[1]) - 1;
-						e.getWhoClicked().closeInventory();
-						e.getWhoClicked().openInventory(QAMain.createShop(Math.max(0, page)));
-						DEBUG("Prev_Shop");
-						return;
-					}
-					if (e.getCurrentItem().isSimilar(QAMain.nextButton)) {
-						int page = Integer.parseInt(e.getView().getTitle().split(QAMain.S_shopName)[1]) + 1;
-						e.getWhoClicked().closeInventory();
-						e.getWhoClicked().openInventory(QAMain.createShop(Math.min(QualityArmory.getMaxPagesForGUI(), page)));
-						DEBUG("next_Shop");
-						return;
-					}
-				} else {
-					if (e.getCurrentItem().isSimilar(QAMain.prevButton)) {
-						int page = Integer.parseInt(e.getView().getTitle().split(QAMain.S_craftingBenchName)[1]) - 1;
-						e.getWhoClicked().closeInventory();
-						e.getWhoClicked().openInventory(QAMain.createCraft(Math.max(0, page)));
-						DEBUG("Prev_craft");
-						return;
-					}
-					if (e.getCurrentItem().isSimilar(QAMain.nextButton)) {
-						int page = Integer.parseInt(e.getView().getTitle().split(QAMain.S_craftingBenchName)[1]) + 1;
-						e.getWhoClicked().closeInventory();
-						e.getWhoClicked().openInventory(QAMain.createCraft(Math.min(QualityArmory.getMaxPagesForGUI(), page)));
-						DEBUG("next_craft");
-						return;
-					}
-				}
-				if (QualityArmory.isAmmo(e.getCurrentItem())) {
-					Ammo g = QualityArmory.getAmmo(e.getCurrentItem());
-					if (g.getPrice() < 0 || !g.isEnableShop())
-						return;
-					if ((shop && EconHandler.hasEnough(g, (Player) e.getWhoClicked()))
-							|| (!shop && QAMain.lookForIngre((Player) e.getWhoClicked(), g))
-							|| (!shop && e.getWhoClicked().getGameMode() == GameMode.CREATIVE)) {
-						if (shop) {
-							e.getWhoClicked().sendMessage(
-									QAMain.S_BUYCONFIRM.replaceAll("%item%", ChatColor.stripColor(g.getDisplayName()))
-											.replaceAll("%cost%", "" + g.getPrice()));
-							EconHandler.pay(g, (Player) e.getWhoClicked());
-						} else
-							QAMain.removeForIngre((Player) e.getWhoClicked(), g);
-						QualityArmory.addAmmoToInventory((Player) e.getWhoClicked(), g, g.getCraftingReturn());
-						QAMain.shopsSounds(e, shop);
-						DEBUG("Buy-ammo");
-					} else {
-						e.getWhoClicked().closeInventory();
-						DEBUG("Failed to buy/craft ammo");
-						if (shop)
-							e.getWhoClicked().sendMessage(QAMain.prefix + QAMain.S_noMoney);
-						else
-							e.getWhoClicked().sendMessage(QAMain.prefix + QAMain.S_missingIngredients);
-						try {
-							((Player) e.getWhoClicked()).playSound(e.getWhoClicked().getLocation(),
-									Sound.BLOCK_ANVIL_BREAK, 1, 1);
-						} catch (Error e2) {
-							((Player) e.getWhoClicked()).playSound(e.getWhoClicked().getLocation(),
-									Sound.valueOf("ANVIL_BREAK"), 1, 1);
-						}
-					}
-				} else if (QualityArmory.isCustomItem(e.getCurrentItem())) {
-					CustomBaseObject g = QualityArmory.getCustomItem(e.getCurrentItem());
-					if (g.getPrice() < 0 || !g.isEnableShop())
-						return;
-					if ((shop && EconHandler.hasEnough(g, (Player) e.getWhoClicked()))
-							|| (!shop && QAMain.lookForIngre((Player) e.getWhoClicked(), g))
-							|| (!shop && e.getWhoClicked().getGameMode() == GameMode.CREATIVE)) {
-						if (shop) {
-							EconHandler.pay(g, (Player) e.getWhoClicked());
-							e.getWhoClicked().sendMessage(
-									QAMain.S_BUYCONFIRM.replaceAll("%item%", ChatColor.stripColor(g.getDisplayName()))
-											.replaceAll("%cost%", "" + g.getPrice()));
-						} else
-							QAMain.removeForIngre((Player) e.getWhoClicked(), g);
-
-						if (g instanceof Gun) {
-							QAGunGiveEvent event = new QAGunGiveEvent(((Player) e.getWhoClicked()), ((Gun) g), QAGunGiveEvent.Cause.SHOP);
-							Bukkit.getPluginManager().callEvent(event);
-							if (event.isCancelled()) return;
-							g = event.getGun();
-						}
-
-						ItemStack s = CustomItemManager.getItemType("gun").getItem(g.getItemData().getMat(), g.getItemData().getData(), g.getItemData().getVariant());
-						QualityArmory.giveOrDrop(e.getWhoClicked(),s);
-						QAMain.shopsSounds(e, shop);
-						DEBUG("Buy-Item");
-					} else {
-						DEBUG("Failed to buy/craft Item");
-						e.getWhoClicked().closeInventory();
-						if (shop)
-							e.getWhoClicked().sendMessage(QAMain.prefix + QAMain.S_noMoney);
-						else
-							e.getWhoClicked().sendMessage(QAMain.prefix + QAMain.S_missingIngredients);
-						try {
-							((Player) e.getWhoClicked()).playSound(e.getWhoClicked().getLocation(),
-									Sound.BLOCK_ANVIL_BREAK, 1, 1);
-						} catch (Error e2) {
-							((Player) e.getWhoClicked()).playSound(e.getWhoClicked().getLocation(),
-									Sound.valueOf("ANVIL_BREAK"), 1, 1);
-						}
-					}
-				} else {
-					e.setCancelled(true);
-				}
-			}
-			return;
 		}
 
 		// player inv
@@ -805,14 +664,14 @@ public class QAListener implements Listener {
 				QAMain.DEBUG("Resourcepack message being sent!");
 				return;
 			}
-			if (!e.getPlayer().hasPermission("qualityarmory.craft")) {
-				e.getPlayer().sendMessage(QAMain.prefix + ChatColor.RED + QAMain.S_ANVIL);
-				return;
-			}
-			e.getPlayer().openInventory(QAMain.createCraft(0));
-			e.setCancelled(true);
-			QAMain.DEBUG("Opening crafting menu");
-			return;
+
+            if (!e.getPlayer().hasPermission("qualityarmory.craft")) {
+                e.getPlayer().sendMessage(QAMain.prefix + ChatColor.RED + QAMain.S_ANVIL);
+                return;
+            }
+            QAMain.openCraftMenu(e.getPlayer());
+            e.setCancelled(true);
+            QAMain.DEBUG("Opening crafting menu");
 		}
 	}
 
