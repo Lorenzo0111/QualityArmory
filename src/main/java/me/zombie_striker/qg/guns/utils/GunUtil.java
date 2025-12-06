@@ -614,7 +614,7 @@ public class GunUtil {
 					} else {
 						slot = player.getInventory().getHeldItemSlot();
 					}
-					Gun.updateAmmo(g, player.getItemInHand(), amount);
+					Gun.updateAmmo(g, temp, amount);
 					if(QAMain.showAmmoInXPBar){
 						updateXPBar(player,g,amount);
 					}
