@@ -502,15 +502,9 @@ public class QAListener implements Listener {
 		// Remove one bullet from the gun
 		Gun.updateAmmo(g, player, currentAmmo - 1);
 
-		// Return one bullet to player inventory
+		// Return one bullet to player inventory (drops if full)
 		if (g.getAmmoType() != null) {
-			ItemStack ammoItem = QualityArmory.getCustomItemAsItemStack(g.getAmmoType());
-			ammoItem.setAmount(1);
-			
-			// Try to add to inventory, drop if full
-			if (!QualityArmory.addAmmoToInventory(player, g.getAmmoType(), 1)) {
-				player.getWorld().dropItemNaturally(player.getLocation(), ammoItem);
-			}
+			QualityArmory.addAmmoToInventory(player, g.getAmmoType(), 1);
 		}
 
 		// Play reload sound with lower pitch
@@ -534,15 +528,9 @@ public class QAListener implements Listener {
 		// Remove all bullets from the gun
 		Gun.updateAmmo(g, player, 0);
 
-		// Return all bullets to player inventory
+		// Return all bullets to player inventory (drops if full)
 		if (g.getAmmoType() != null) {
-			ItemStack ammoItem = QualityArmory.getCustomItemAsItemStack(g.getAmmoType());
-			ammoItem.setAmount(currentAmmo);
-			
-			// Try to add to inventory, drop if full
-			if (!QualityArmory.addAmmoToInventory(player, g.getAmmoType(), currentAmmo)) {
-				player.getWorld().dropItemNaturally(player.getLocation(), ammoItem);
-			}
+			QualityArmory.addAmmoToInventory(player, g.getAmmoType(), currentAmmo);
 		}
 
 		// Play reload sound with lower pitch
