@@ -474,6 +474,13 @@ public class QAListener implements Listener {
 		if (QAMain.unloadOnQ) {
 			// Unload mode: Q removes bullets from magazine
 			e.setCancelled(true);
+			
+			// Prevent the gun from firing during unload
+			ignoreClick.add(e.getPlayer().getUniqueId());
+			Bukkit.getScheduler().runTaskLater(QAMain.getInstance(), () -> {
+				ignoreClick.remove(e.getPlayer().getUniqueId());
+			}, 2L);
+			
 			if (e.getPlayer().isSneaking()) {
 				// Remove all bullets from magazine
 				unloadAll(e.getPlayer(), g);
@@ -484,6 +491,13 @@ public class QAListener implements Listener {
 		} else if (QAMain.reloadOnQ && !QAMain.reloadOnFOnly) {
 			// Original reload mode
 			e.setCancelled(true);
+			
+			// Prevent the gun from firing during reload
+			ignoreClick.add(e.getPlayer().getUniqueId());
+			Bukkit.getScheduler().runTaskLater(QAMain.getInstance(), () -> {
+				ignoreClick.remove(e.getPlayer().getUniqueId());
+			}, 2L);
+			
 			reload(e.getPlayer(), g);
 		}
 	}
@@ -739,6 +753,11 @@ public class QAListener implements Listener {
 	@SuppressWarnings({"deprecation"})
 	@EventHandler(priority = EventPriority.LOWEST)
 	public void onClick(final PlayerInteractEvent e) {
+		// Prevent shooting/interaction immediately after unload/reload
+		if (ignoreClick.contains(e.getPlayer().getUniqueId())) {
+			return;
+		}
+		
 		QAMain.DEBUG("InteractEvent Called. Custom item used = " + QualityArmory.isCustomItem(e.getPlayer().getItemInHand()));
 		if (!CustomItemManager.isUsingCustomData()) {
 			QAMain.DEBUG("Custom Data Check");
