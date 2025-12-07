@@ -507,16 +507,7 @@ public class QAListener implements Listener {
 			QualityArmory.addAmmoToInventory(player, g.getAmmoType(), 1);
 		}
 
-		// Play reload sound with lower pitch
-		try {
-			player.getWorld().playSound(player.getLocation(), WeaponSounds.RELOAD_MAG_OUT.getSoundName(), 1, 0.8f);
-		} catch (Error e2) {
-			try {
-				player.getWorld().playSound(player.getLocation(), Sound.valueOf("CLICK"), 5, 0.8f);
-			} catch (Error | Exception e3) {
-				player.getWorld().playSound(player.getLocation(), Sound.valueOf("BLOCK_LEVER_CLICK"), 5, 0.8f);
-			}
-		}
+		playUnloadSound(player);
 	}
 
 	public static void unloadAll(Player player, Gun g) {
@@ -533,14 +524,18 @@ public class QAListener implements Listener {
 			QualityArmory.addAmmoToInventory(player, g.getAmmoType(), currentAmmo);
 		}
 
-		// Play reload sound with lower pitch
+		playUnloadSound(player);
+	}
+
+	private static void playUnloadSound(Player player) {
+		// Play reload sound with lower pitch (0.8) to distinguish from reloading
 		try {
 			player.getWorld().playSound(player.getLocation(), WeaponSounds.RELOAD_MAG_OUT.getSoundName(), 1, 0.8f);
 		} catch (Error e2) {
 			try {
-				player.getWorld().playSound(player.getLocation(), Sound.valueOf("CLICK"), 5, 0.8f);
+				player.getWorld().playSound(player.getLocation(), Sound.valueOf("CLICK"), 1, 0.8f);
 			} catch (Error | Exception e3) {
-				player.getWorld().playSound(player.getLocation(), Sound.valueOf("BLOCK_LEVER_CLICK"), 5, 0.8f);
+				player.getWorld().playSound(player.getLocation(), Sound.valueOf("BLOCK_LEVER_CLICK"), 1, 0.8f);
 			}
 		}
 	}
