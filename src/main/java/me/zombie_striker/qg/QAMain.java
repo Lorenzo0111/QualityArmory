@@ -135,6 +135,7 @@ public class QAMain extends JavaPlugin {
     public static boolean reloadOnQ = true;
     public static boolean reloadOnF = true;
     public static boolean reloadOnFOnly = true;
+    public static boolean unloadOnQ = false;
     public static boolean disableHotBarMessageOnShoot = false;
     public static boolean disableHotBarMessageOnReload = false;
     public static boolean disableHotBarMessageOnOutOfAmmo = false;
@@ -863,6 +864,7 @@ public class QAMain extends JavaPlugin {
         reloadOnQ = (boolean) a("enableReloadingOnDrop", false);
         reloadOnF = (boolean) a("enableReloadingWhenSwapToOffhand", true);
         reloadOnFOnly = (boolean) a("enableReloadOnlyWhenSwapToOffhand", false);
+        unloadOnQ = (boolean) a("enableUnloadingOnDrop", false);
 
         allowGunHitEntities = (boolean) a("allowGunHitEntities", true);
         preventHiddenPlayers = (boolean) a("preventHiddenPlayers", true);

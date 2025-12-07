@@ -465,18 +465,95 @@ public class QAListener implements Listener {
 
 	@EventHandler(priority = EventPriority.LOW)
 	public void onDropReload(PlayerDropItemEvent e) {
-		if (QAMain.reloadOnQ && !QAMain.reloadOnFOnly) {
-			Gun g = QualityArmory.getGun(e.getItemDrop().getItemStack());
-			if (g != null) {
-				e.setCancelled(true);
-				reload(e.getPlayer(),g);
+		Gun g = QualityArmory.getGun(e.getItemDrop().getItemStack());
+		if (g == null) {
+			return;
+		}
+
+		if (QAMain.unloadOnQ) {
+			// Unload mode: Q removes bullets from magazine
+			e.setCancelled(true);
+			if (e.getPlayer().isSneaking()) {
+				// Remove all bullets from magazine
+				unloadAll(e.getPlayer(), g);
+			} else {
+				// Remove one bullet from magazine
+				unloadOne(e.getPlayer(), g);
 			}
+		} else if (QAMain.reloadOnQ && !QAMain.reloadOnFOnly) {
+			// Original reload mode
+			e.setCancelled(true);
+			reload(e.getPlayer(), g);
 		}
 	}
 
 	public static void reload(Player player, Gun g) {
 		if (g.playerHasAmmo(player)) {
 			g.reload(player);
+		}
+	}
+
+	public static void unloadOne(Player player, Gun g) {
+		int currentAmmo = Gun.getAmount(player);
+		if (currentAmmo <= 0) {
+			return; // No ammo to unload
+		}
+
+		// Remove one bullet from the gun
+		Gun.updateAmmo(g, player, currentAmmo - 1);
+
+		// Return one bullet to player inventory
+		if (g.getAmmoType() != null) {
+			ItemStack ammoItem = QualityArmory.getCustomItemAsItemStack(g.getAmmoType());
+			ammoItem.setAmount(1);
+			
+			// Try to add to inventory, drop if full
+			if (!QualityArmory.addAmmoToInventory(player, g.getAmmoType(), 1)) {
+				player.getWorld().dropItemNaturally(player.getLocation(), ammoItem);
+			}
+		}
+
+		// Play reload sound with lower pitch
+		try {
+			player.getWorld().playSound(player.getLocation(), WeaponSounds.RELOAD_MAG_OUT.getSoundName(), 1, 0.8f);
+		} catch (Error e2) {
+			try {
+				player.getWorld().playSound(player.getLocation(), Sound.valueOf("CLICK"), 5, 0.8f);
+			} catch (Error | Exception e3) {
+				player.getWorld().playSound(player.getLocation(), Sound.valueOf("BLOCK_LEVER_CLICK"), 5, 0.8f);
+			}
+		}
+	}
+
+	public static void unloadAll(Player player, Gun g) {
+		int currentAmmo = Gun.getAmount(player);
+		if (currentAmmo <= 0) {
+			return; // No ammo to unload
+		}
+
+		// Remove all bullets from the gun
+		Gun.updateAmmo(g, player, 0);
+
+		// Return all bullets to player inventory
+		if (g.getAmmoType() != null) {
+			ItemStack ammoItem = QualityArmory.getCustomItemAsItemStack(g.getAmmoType());
+			ammoItem.setAmount(currentAmmo);
+			
+			// Try to add to inventory, drop if full
+			if (!QualityArmory.addAmmoToInventory(player, g.getAmmoType(), currentAmmo)) {
+				player.getWorld().dropItemNaturally(player.getLocation(), ammoItem);
+			}
+		}
+
+		// Play reload sound with lower pitch
+		try {
+			player.getWorld().playSound(player.getLocation(), WeaponSounds.RELOAD_MAG_OUT.getSoundName(), 1, 0.8f);
+		} catch (Error e2) {
+			try {
+				player.getWorld().playSound(player.getLocation(), Sound.valueOf("CLICK"), 5, 0.8f);
+			} catch (Error | Exception e3) {
+				player.getWorld().playSound(player.getLocation(), Sound.valueOf("BLOCK_LEVER_CLICK"), 5, 0.8f);
+			}
 		}
 	}
 
