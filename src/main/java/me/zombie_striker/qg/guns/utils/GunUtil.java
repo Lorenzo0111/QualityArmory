@@ -614,7 +614,9 @@ public class GunUtil {
 					} else {
 						slot = player.getInventory().getHeldItemSlot();
 					}
-					Gun.updateAmmo(g, player.getItemInHand(), amount);
+                    if (QualityArmory.isIronSights(player.getItemInHand()))
+                        Gun.updateAmmo(g, player.getItemInHand(), amount);
+                    else Gun.updateAmmo(g, temp, amount);
 					if(QAMain.showAmmoInXPBar){
 						updateXPBar(player,g,amount);
 					}
