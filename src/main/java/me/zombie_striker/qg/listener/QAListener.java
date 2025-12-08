@@ -13,6 +13,7 @@ import me.zombie_striker.qg.attachments.AttachmentBase;
 import me.zombie_striker.qg.guns.Gun;
 import me.zombie_striker.qg.guns.utils.GunRefillerRunnable;
 import me.zombie_striker.qg.guns.utils.GunUtil;
+import me.zombie_striker.qg.guns.utils.WeaponSounds;
 import me.zombie_striker.qg.handlers.BulletWoundHandler;
 import me.zombie_striker.qg.handlers.IronsightsHandler;
 import me.zombie_striker.qg.handlers.Update19OffhandChecker;
@@ -465,18 +466,92 @@ public class QAListener implements Listener {
 
 	@EventHandler(priority = EventPriority.LOW)
 	public void onDropReload(PlayerDropItemEvent e) {
-		if (QAMain.reloadOnQ && !QAMain.reloadOnFOnly) {
-			Gun g = QualityArmory.getGun(e.getItemDrop().getItemStack());
-			if (g != null) {
-				e.setCancelled(true);
-				reload(e.getPlayer(),g);
+		Gun g = QualityArmory.getGun(e.getItemDrop().getItemStack());
+		if (g == null) {
+			return;
+		}
+
+		if (QAMain.unloadOnQ) {
+			// Unload mode: Q removes bullets from magazine
+			e.setCancelled(true);
+			
+			// Prevent the gun from firing during unload
+			ignoreClick.add(e.getPlayer().getUniqueId());
+			Bukkit.getScheduler().runTaskLater(QAMain.getInstance(), () -> {
+				ignoreClick.remove(e.getPlayer().getUniqueId());
+			}, 2L);
+			
+			if (e.getPlayer().isSneaking()) {
+				// Remove all bullets from magazine
+				unloadAll(e.getPlayer(), g);
+			} else {
+				// Remove one bullet from magazine
+				unloadOne(e.getPlayer(), g);
 			}
+		} else if (QAMain.reloadOnQ && !QAMain.reloadOnFOnly) {
+			// Original reload mode
+			e.setCancelled(true);
+			
+			// Prevent the gun from firing during reload
+			ignoreClick.add(e.getPlayer().getUniqueId());
+			Bukkit.getScheduler().runTaskLater(QAMain.getInstance(), () -> {
+				ignoreClick.remove(e.getPlayer().getUniqueId());
+			}, 2L);
+			
+			reload(e.getPlayer(), g);
 		}
 	}
 
 	public static void reload(Player player, Gun g) {
 		if (g.playerHasAmmo(player)) {
 			g.reload(player);
+		}
+	}
+
+	public static void unloadOne(Player player, Gun g) {
+		int currentAmmo = Gun.getAmount(player);
+		if (currentAmmo <= 0) {
+			return; // No ammo to unload
+		}
+
+		// Remove one bullet from the gun
+		Gun.updateAmmo(g, player, currentAmmo - 1);
+
+		// Return one bullet to player inventory (drops if full)
+		if (g.getAmmoType() != null) {
+			QualityArmory.addAmmoToInventory(player, g.getAmmoType(), 1);
+		}
+
+		playUnloadSound(player);
+	}
+
+	public static void unloadAll(Player player, Gun g) {
+		int currentAmmo = Gun.getAmount(player);
+		if (currentAmmo <= 0) {
+			return; // No ammo to unload
+		}
+
+		// Remove all bullets from the gun
+		Gun.updateAmmo(g, player, 0);
+
+		// Return all bullets to player inventory (drops if full)
+		if (g.getAmmoType() != null) {
+			QualityArmory.addAmmoToInventory(player, g.getAmmoType(), currentAmmo);
+		}
+
+		playUnloadSound(player);
+	}
+
+	private static void playUnloadSound(Player player) {
+		// Play reload sound with lower pitch (0.8) to distinguish from reloading
+		try {
+			player.getWorld().playSound(player.getLocation(), WeaponSounds.RELOAD_MAG_OUT.getSoundName(), 1, 0.8f);
+		} catch (Error e2) {
+			try {
+				player.getWorld().playSound(player.getLocation(), Sound.valueOf("CLICK"), 1, 0.8f);
+			} catch (Error | Exception e3) {
+				player.getWorld().playSound(player.getLocation(), Sound.valueOf("BLOCK_LEVER_CLICK"), 1, 0.8f);
+			}
 		}
 	}
 
@@ -678,6 +753,11 @@ public class QAListener implements Listener {
 	@SuppressWarnings({"deprecation"})
 	@EventHandler(priority = EventPriority.LOWEST)
 	public void onClick(final PlayerInteractEvent e) {
+		// Prevent shooting/interaction immediately after unload/reload
+		if (ignoreClick.contains(e.getPlayer().getUniqueId())) {
+			return;
+		}
+		
 		QAMain.DEBUG("InteractEvent Called. Custom item used = " + QualityArmory.isCustomItem(e.getPlayer().getItemInHand()));
 		if (!CustomItemManager.isUsingCustomData()) {
 			QAMain.DEBUG("Custom Data Check");
