@@ -99,3 +99,4 @@ Below you can find a list of all the options that you can configure and their ex
 * **DefaultResourcepack**: Defines the resource pack URLs. Refer to [ResourcePack Configuration](resourcepack.md) for more information.
 * **restoreOffHand**: `false` - If `true`, restores the off-hand item after iron sights are unaimed.
 * **hitDistance**: `5` - The maximum distance (in blocks) at which a gun can register melee hits on entities when using the gun to hit directly.
+* **enableUnloadingOnDrop**: `false` - If `true`, allows players to unload their gun's magazine by pressing their drop key (default 'Q') while holding a gun.

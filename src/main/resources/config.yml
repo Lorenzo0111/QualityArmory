@@ -72,7 +72,6 @@ verboseItemLogging: false
 enableIgnoreArmorProtection: false
 enableReloadingWhenSwapToOffhand: true
 enableReloadOnlyWhenSwapToOffhand: false
-enableUnloadingOnDrop: false
 allowGunHitEntities: true
 showOutOfAmmoOnTitle: false
 showReloadingTitle: false

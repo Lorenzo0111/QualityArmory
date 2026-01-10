@@ -466,39 +466,35 @@ public class QAListener implements Listener {
 
 	@EventHandler(priority = EventPriority.LOW)
 	public void onDropReload(PlayerDropItemEvent e) {
-		Gun g = QualityArmory.getGun(e.getItemDrop().getItemStack());
-		if (g == null) {
-			return;
-		}
+		ItemStack droppedItem = e.getItemDrop().getItemStack();
 
+		Gun g = QualityArmory.getGun(droppedItem);
+		if (g == null && QualityArmory.isIronSights(droppedItem))
+			g = QualityArmory.getGun(e.getPlayer().getInventory().getItemInOffHand());
+
+		if (g == null) return;
+
+		Gun finalG = g;
 		if (QAMain.unloadOnQ) {
-			// Unload mode: Q removes bullets from magazine
 			e.setCancelled(true);
-			
-			// Prevent the gun from firing during unload
+
 			ignoreClick.add(e.getPlayer().getUniqueId());
+
 			Bukkit.getScheduler().runTaskLater(QAMain.getInstance(), () -> {
 				ignoreClick.remove(e.getPlayer().getUniqueId());
+
+				if (e.getPlayer().isSneaking()) unloadAll(e.getPlayer(), finalG);
+				else unloadOne(e.getPlayer(), finalG);
 			}, 2L);
-			
-			if (e.getPlayer().isSneaking()) {
-				// Remove all bullets from magazine
-				unloadAll(e.getPlayer(), g);
-			} else {
-				// Remove one bullet from magazine
-				unloadOne(e.getPlayer(), g);
-			}
 		} else if (QAMain.reloadOnQ && !QAMain.reloadOnFOnly) {
-			// Original reload mode
 			e.setCancelled(true);
 			
-			// Prevent the gun from firing during reload
 			ignoreClick.add(e.getPlayer().getUniqueId());
+
 			Bukkit.getScheduler().runTaskLater(QAMain.getInstance(), () -> {
 				ignoreClick.remove(e.getPlayer().getUniqueId());
+				reload(e.getPlayer(), finalG);
 			}, 2L);
-			
-			reload(e.getPlayer(), g);
 		}
 	}
 
@@ -511,14 +507,15 @@ public class QAListener implements Listener {
 	public static void unloadOne(Player player, Gun g) {
 		int currentAmmo = Gun.getAmount(player);
 		if (currentAmmo <= 0) {
-			return; // No ammo to unload
+			QAMain.DEBUG("No ammo to unload");
+			return;
 		}
 
-		// Remove one bullet from the gun
+		QAMain.DEBUG("Unloading one bullet from " + g.getDisplayName());
 		Gun.updateAmmo(g, player, currentAmmo - 1);
 
-		// Return one bullet to player inventory (drops if full)
 		if (g.getAmmoType() != null) {
+			QAMain.DEBUG("Returning one bullet to player inventory");
 			QualityArmory.addAmmoToInventory(player, g.getAmmoType(), 1);
 		}
 
@@ -528,14 +525,15 @@ public class QAListener implements Listener {
 	public static void unloadAll(Player player, Gun g) {
 		int currentAmmo = Gun.getAmount(player);
 		if (currentAmmo <= 0) {
-			return; // No ammo to unload
+			QAMain.DEBUG("No ammo to unload");
+			return;
 		}
 
-		// Remove all bullets from the gun
+		QAMain.DEBUG("Unloading all ammo from " + g.getDisplayName());
 		Gun.updateAmmo(g, player, 0);
 
-		// Return all bullets to player inventory (drops if full)
 		if (g.getAmmoType() != null) {
+			QAMain.DEBUG("Returning all ammo to player inventory");
 			QualityArmory.addAmmoToInventory(player, g.getAmmoType(), currentAmmo);
 		}
 
@@ -543,7 +541,6 @@ public class QAListener implements Listener {
 	}
 
 	private static void playUnloadSound(Player player) {
-		// Play reload sound with lower pitch (0.8) to distinguish from reloading
 		try {
 			player.getWorld().playSound(player.getLocation(), WeaponSounds.RELOAD_MAG_OUT.getSoundName(), 1, 0.8f);
 		} catch (Error e2) {
