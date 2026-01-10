@@ -98,3 +98,4 @@ Below you can find a list of all the options that you can configure and their ex
 * **weaponSwitchDelay**: `0` - The delay in seconds before a player can fire after switching weapon. A value of `0` means no delay.
 * **DefaultResourcepack**: Defines the resource pack URLs. Refer to [ResourcePack Configuration](resourcepack.md) for more information.
 * **restoreOffHand**: `false` - If `true`, restores the off-hand item after iron sights are unaimed.
+* **hitDistance**: `5` - The maximum distance (in blocks) at which a gun can register melee hits on entities when using the gun to hit directly.

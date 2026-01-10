@@ -77,7 +77,7 @@ public class QAListener implements Listener {
 					if (g == null || !d.getLocation().getWorld().equals(e.getEntity().getLocation().getWorld())) return;
 
 					double distance = d.getLocation().distance(e.getEntity().getLocation());
-					if (distance > 5) return;
+					if (distance >= QAMain.hitDistance) return;
 
 					ignoreClick.add(d.getUniqueId());
 

@@ -169,6 +169,7 @@ public class QAMain extends JavaPlugin {
     public static boolean preventHiddenPlayers = true;
     public static boolean anticheatFix = false;
     public static boolean preventGunsInHoppers = true;
+    public static int hitDistance = 5;
 
     public static String S_NOPERM = "&c You do not have permission to do that.";
 
@@ -868,6 +869,7 @@ public class QAMain extends JavaPlugin {
 
         allowGunHitEntities = (boolean) a("allowGunHitEntities", true);
         preventHiddenPlayers = (boolean) a("preventHiddenPlayers", true);
+        hitDistance = (int) a("hitDistance", hitDistance);
 
         preventGunsInHoppers = (boolean) a("preventGunsInHoppers", true);
 

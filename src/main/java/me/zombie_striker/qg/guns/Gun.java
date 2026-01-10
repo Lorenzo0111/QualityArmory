@@ -912,7 +912,11 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
                     if (GunUtil.rapidfireshooters.containsKey(player.getUniqueId()))
                         GunUtil.rapidfireshooters.remove(player.getUniqueId()).cancel();
 
-                    player.playSound(player.getLocation(), WeaponSounds.OUT_OF_AMMO_CLICK.getSoundName(), 1f, 1f);
+                    try {
+                        player.getWorld().playSound(player.getLocation(), WeaponSounds.OUT_OF_AMMO_CLICK.getSoundName(), 1f, 1f);
+                    } catch (Exception | Error ignored) {
+                        player.playSound(player.getLocation(), WeaponSounds.OUT_OF_AMMO_CLICK.getSoundName(), 1f, 1f);
+                    }
 
                     if (QAMain.enableReloadWhenOutOfAmmo) {
                         if (offhand) {
