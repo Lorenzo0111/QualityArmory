@@ -2,6 +2,8 @@
   - 1.21.11 support
   - Made out of ammo sound public
   - Fixed direct entities hit
+  - Fixed reload on drop (enableReloadingOnDrop)
+  - Added unload on drop (enableUnloadingOnDrop)
 
 2.1.0
   - 1.21.10 support
