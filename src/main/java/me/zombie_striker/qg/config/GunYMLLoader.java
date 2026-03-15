@@ -17,7 +17,6 @@ import me.zombie_striker.qg.utils.LocalUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Particle;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
@@ -215,6 +214,8 @@ public class GunYMLLoader {
 
 							String soundEquip =  f2.contains("sound_equip")? f2.getString("sound_equip"):null;
 							String soundHit =  f2.contains("sound_meleehit")? f2.getString("sound_meleehit"):null;
+							float soundEquipVolume = (float) f2.getDouble("sound_equip_volume", 1.0);
+							float soundHitVolume = (float) f2.getDouble("sound_meleehit_volume", 1.0);
 
 							if (wt == WeaponType.MEDKIT)
 								QAMain.miscRegister.put(ms, base=new MedKit(ms, name, displayname, materails, price));
@@ -224,7 +225,9 @@ public class GunYMLLoader {
 								QAMain.miscRegister.put(ms,
 										base = new MeleeItems(ms, name, displayname, materails, price, damage));
 								base.setSoundOnEquip(soundEquip);
+								base.setSoundOnEquipVolume(soundEquipVolume);
 								base.setSoundOnHit(soundHit);
+								base.setSoundOnHitVolume(soundHitVolume);
 								base.setCustomLore(lore);
 							}
 							if (wt == WeaponType.GRENADES)

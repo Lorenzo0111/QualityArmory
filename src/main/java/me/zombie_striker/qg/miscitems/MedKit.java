@@ -1,23 +1,22 @@
 package me.zombie_striker.qg.miscitems;
 
-import java.text.DecimalFormat;
-import java.util.HashMap;
-import java.util.UUID;
-
+import com.cryptomorin.xseries.XPotion;
+import me.zombie_striker.customitemmanager.ArmoryBaseObject;
 import me.zombie_striker.customitemmanager.CustomBaseObject;
 import me.zombie_striker.customitemmanager.CustomItemManager;
+import me.zombie_striker.customitemmanager.MaterialStorage;
+import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.api.QualityArmory;
+import me.zombie_striker.qg.handlers.BulletWoundHandler;
 import me.zombie_striker.qg.handlers.HotbarMessager;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffectType;
 
-import me.zombie_striker.customitemmanager.ArmoryBaseObject;
-import me.zombie_striker.qg.QAMain;
-import me.zombie_striker.customitemmanager.MaterialStorage;
-import me.zombie_striker.qg.handlers.BulletWoundHandler;
-import com.cryptomorin.xseries.XPotion;
+import java.text.DecimalFormat;
+import java.util.HashMap;
+import java.util.UUID;
 
 public class MedKit extends CustomBaseObject implements ArmoryBaseObject {
 
@@ -65,7 +64,7 @@ public class MedKit extends CustomBaseObject implements ArmoryBaseObject {
 				if (p2 + percent < 100) {
 					PercentTimeHealed.put(healer.getUniqueId(), p2 + percent);
 				} else {
-					healer.playSound(healer.getLocation(), getSoundOnEquip(), 1, 1);
+					healer.playSound(healer.getLocation(), getSoundOnEquip(), getSoundOnEquipVolume(), 1);
 					healer.setHealth(Math.min(healer.getMaxHealth(), healer.getHealth() + QAMain.S_MEDKIT_HEAL_AMOUNT));
 					PercentTimeHealed.remove(healer.getUniqueId());
 					lastTimeHealed.remove(healer.getUniqueId());
@@ -161,7 +160,7 @@ public class MedKit extends CustomBaseObject implements ArmoryBaseObject {
 	@Override
 	public boolean onSwapTo(Player shooter, ItemStack usedItem) {
 		if (getSoundOnEquip() != null)
-			shooter.getWorld().playSound(shooter.getLocation(), getSoundOnEquip(), 1, 1);
+			shooter.getWorld().playSound(shooter.getLocation(), getSoundOnEquip(), getSoundOnEquipVolume(), 1);
 		return false;
 	}
 

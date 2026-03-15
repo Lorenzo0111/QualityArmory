@@ -1,20 +1,19 @@
 package me.zombie_striker.qg.ammo;
 
-import java.util.List;
-
 import com.cryptomorin.xseries.XMaterial;
+import me.zombie_striker.customitemmanager.ArmoryBaseObject;
 import me.zombie_striker.customitemmanager.CustomBaseObject;
 import me.zombie_striker.customitemmanager.CustomItemManager;
+import me.zombie_striker.customitemmanager.MaterialStorage;
+import me.zombie_striker.qg.QAMain;
+import me.zombie_striker.qg.handlers.MultiVersionLookup;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import me.zombie_striker.customitemmanager.ArmoryBaseObject;
-import me.zombie_striker.qg.QAMain;
-import me.zombie_striker.customitemmanager.MaterialStorage;
-import me.zombie_striker.qg.handlers.MultiVersionLookup;
+import java.util.List;
 
 public class Ammo extends CustomBaseObject implements ArmoryBaseObject{
 
@@ -133,7 +132,7 @@ public class Ammo extends CustomBaseObject implements ArmoryBaseObject{
 	@Override
 	public boolean onSwapTo(Player shooter, ItemStack usedItem) {
 		if (getSoundOnEquip() != null)
-			shooter.getWorld().playSound(shooter.getLocation(), getSoundOnEquip(), 1, 1);
+			shooter.getWorld().playSound(shooter.getLocation(), getSoundOnEquip(), getSoundOnEquipVolume(), 1);
 		return false;
 	}
 

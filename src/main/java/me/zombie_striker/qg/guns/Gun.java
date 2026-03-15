@@ -794,7 +794,7 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
     @Override
     public boolean onSwapTo(Player shooter, ItemStack usedItem) {
         if (getSoundOnEquip() != null)
-            shooter.getWorld().playSound(shooter.getLocation(), getSoundOnEquip(), 1, 1);
+            shooter.getWorld().playSound(shooter.getLocation(), getSoundOnEquip(), getSoundOnEquipVolume(), 1);
         if (getSlownessPower() > 0) {
             if (shooter.hasPotionEffect(XPotion.SLOWNESS.getPotionEffectType()))
                 if (shooter.getPotionEffect(XPotion.SLOWNESS.getPotionEffectType()).getAmplifier() != getSlownessPower())

@@ -66,7 +66,7 @@ public class QAListener implements Listener {
 						e.setDamage(((MeleeItems) aa).getDamage());
 					}
 					if (aa.getSoundOnHit() != null) {
-						e.getEntity().getWorld().playSound(e.getEntity().getLocation(), aa.getSoundOnHit(), 1, 1);
+						e.getEntity().getWorld().playSound(e.getEntity().getLocation(), aa.getSoundOnHit(), aa.getSoundOnHitVolume(), 1);
 					}
 				}
 
@@ -945,7 +945,7 @@ public class QAListener implements Listener {
 			if (customBase instanceof ArmoryBaseObject) {
 				((ArmoryBaseObject) customBase).onSwapTo(e.getPlayer(), newslot);
 				if (customBase.getSoundOnEquip() != null)
-					e.getPlayer().getWorld().playSound(e.getPlayer().getLocation(), customBase.getSoundOnEquip(), 1, 1);
+					e.getPlayer().getWorld().playSound(e.getPlayer().getLocation(), customBase.getSoundOnEquip(), customBase.getSoundOnEquipVolume(), 1);
 			}
 
 			if (customBase instanceof Gun && e.getPlayer().isSneaking() && ((Gun) customBase).hasIronSights()) {

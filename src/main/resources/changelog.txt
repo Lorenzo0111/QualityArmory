@@ -1,3 +1,6 @@
+2.1.2
+  - Added sound_equip_volume and sound_meleehit_volume fields
+
 2.1.1
   - 1.21.11 support
   - Made out of ammo sound public

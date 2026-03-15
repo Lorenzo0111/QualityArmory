@@ -16,7 +16,9 @@ public class CustomBaseObject {
 	private boolean customAnimations;
 
 	private String soundOnEquip;
+	private float soundOnEquipVolume = 1.0f;
 	private String soundOnHit;
+	private float soundOnHitVolume = 1.0f;
 
 	private double price;
 	private boolean enableShop = true;
@@ -71,8 +73,16 @@ public class CustomBaseObject {
 		return soundOnEquip;
 	}
 
+	public float getSoundOnEquipVolume() {
+		return soundOnEquipVolume;
+	}
+
 	public String getSoundOnHit() {
 		return soundOnHit;
+	}
+
+	public float getSoundOnHitVolume() {
+		return soundOnHitVolume;
 	}
 
 	public void setSoundOnHit(String sound) {
@@ -81,6 +91,14 @@ public class CustomBaseObject {
 
 	public void setSoundOnEquip(String sound) {
 		this.soundOnEquip = sound;
+	}
+
+	public void setSoundOnEquipVolume(float volume) {
+		this.soundOnEquipVolume = volume;
+	}
+
+	public void setSoundOnHitVolume(float volume) {
+		this.soundOnHitVolume = volume;
 	}
 
 	public double getPrice() {

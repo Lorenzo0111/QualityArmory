@@ -1,17 +1,16 @@
 package me.zombie_striker.qg.miscitems;
 
+import me.zombie_striker.customitemmanager.ArmoryBaseObject;
+import me.zombie_striker.customitemmanager.CustomBaseObject;
+import me.zombie_striker.customitemmanager.CustomItemManager;
+import me.zombie_striker.customitemmanager.MaterialStorage;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
-
-import me.zombie_striker.customitemmanager.CustomBaseObject;
-import me.zombie_striker.customitemmanager.CustomItemManager;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-
-import me.zombie_striker.customitemmanager.ArmoryBaseObject;
-import me.zombie_striker.customitemmanager.MaterialStorage;
 
 public class MeleeItems extends CustomBaseObject implements ArmoryBaseObject{
 
@@ -71,7 +70,7 @@ public class MeleeItems extends CustomBaseObject implements ArmoryBaseObject{
 	@Override
 	public boolean onSwapTo(Player shooter, ItemStack usedItem) {
 		if (getSoundOnEquip() != null)
-			shooter.getWorld().playSound(shooter.getLocation(), getSoundOnEquip(), 1, 1);
+			shooter.getWorld().playSound(shooter.getLocation(), getSoundOnEquip(), getSoundOnEquipVolume(), 1);
 		return false;
 	}
 
