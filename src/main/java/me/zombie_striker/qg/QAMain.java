@@ -142,6 +142,8 @@ public class QAMain extends JavaPlugin {
     public static boolean enableExplosionDamage = false;
     public static boolean enableExplosionDamageDrop = false;
     public static boolean requirePermsToShoot = false;
+    public static boolean requirePermsToCraft = false;
+    public static boolean requirePermsToBuy = false;
     public static boolean enableEconomy = false;
     public static boolean allowGunReload = true;
     public static boolean enableBleeding = false;
@@ -163,6 +165,8 @@ public class QAMain extends JavaPlugin {
     public static boolean kickIfDeniedRequest = false;
     public static boolean showAmmoInXPBar = false;
     public static boolean perWeaponPermission = false;
+    public static boolean perWeaponCraftPermission = false;
+    public static boolean perWeaponBuyPermission = false;
     public static boolean useMoveForRecoil = true;
     public static double weaponSwitchDelay = 0;
     public static boolean allowGunHitEntities = true;
@@ -846,6 +850,8 @@ public class QAMain extends JavaPlugin {
         verboseLoadingLogging = (boolean) a("verboseItemLogging", verboseLoadingLogging);
 
         requirePermsToShoot = (boolean) a("enable_permssionsToShoot", requirePermsToShoot);
+        requirePermsToCraft = (boolean) a("enable_permissionsToCraft", requirePermsToCraft);
+        requirePermsToBuy = (boolean) a("enable_permissionsToBuy", requirePermsToBuy);
 
         sendOnJoin = (boolean) a("sendOnJoin", true);
         sendTitleOnJoin = (boolean) a("sendTitleOnJoin", false);
@@ -879,6 +885,8 @@ public class QAMain extends JavaPlugin {
 
         showAmmoInXPBar = (boolean) a("showAmmoInXPBar", false);
         perWeaponPermission = (boolean) a("perWeaponPermission", false);
+        perWeaponCraftPermission = (boolean) a("perWeaponCraftPermission", perWeaponCraftPermission);
+        perWeaponBuyPermission = (boolean) a("perWeaponBuyPermission", perWeaponBuyPermission);
 
         useMoveForRecoil = (boolean) a("useMoveForRecoil", useMoveForRecoil);
 
@@ -1586,6 +1594,17 @@ public class QAMain extends JavaPlugin {
                             if (g == null) {
                                 openCraftMenu(player);
                                 return true;
+                            }
+
+                            if (g instanceof Gun) {
+                                if (requirePermsToCraft && !player.hasPermission("qualityarmory.craftgun")) {
+                                    player.sendMessage(prefix + ChatColor.RED + S_NOPERM);
+                                    return true;
+                                }
+                                if (perWeaponCraftPermission && !player.hasPermission("qualityarmory.craftgun." + g.getName())) {
+                                    player.sendMessage(prefix + ChatColor.RED + S_NOPERM);
+                                    return true;
+                                }
                             }
 
                             if (!lookForIngre(player, g)) {

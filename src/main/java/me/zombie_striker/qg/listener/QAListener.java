@@ -49,6 +49,7 @@ import java.util.UUID;
 
 public class QAListener implements Listener {
 	private final List<UUID> ignoreClick = new ArrayList<>();
+	private final List<UUID> ignoreDropReload = new ArrayList<>();
 
 	@SuppressWarnings("deprecation")
 	@EventHandler
@@ -260,7 +261,17 @@ public class QAListener implements Listener {
 	public void oninvClick(final InventoryClickEvent e) {
 		if (e.isCancelled())
 			return;
-		String name = null;
+
+		if (e.getSlotType().equals(InventoryType.SlotType.OUTSIDE) && e.getCursor() != null && QualityArmory.isGun(e.getCursor())) {
+			final UUID uuid = e.getWhoClicked().getUniqueId();
+
+			if (!ignoreDropReload.contains(uuid)) {
+				ignoreDropReload.add(uuid);
+				Bukkit.getScheduler().runTaskLater(QAMain.getInstance(), () -> ignoreDropReload.remove(uuid), 2L);
+			}
+
+			return;
+		}
 
 		if(e.getClickedInventory() instanceof PlayerInventory) {
 			ItemStack cursor = e.getCursor();
@@ -466,6 +477,9 @@ public class QAListener implements Listener {
 
 	@EventHandler(priority = EventPriority.LOW)
 	public void onDropReload(PlayerDropItemEvent e) {
+		if (ignoreDropReload.contains(e.getPlayer().getUniqueId()))
+			return;
+
 		ItemStack droppedItem = e.getItemDrop().getItemStack();
 
 		Gun g = QualityArmory.getGun(droppedItem);

@@ -51,6 +51,17 @@ public class ShopItem {
                 click.getRawEvent().setCancelled(true);
                 Player player = (Player) click.getRawEvent().getWhoClicked();
 
+                if (item instanceof Gun) {
+                    if (QAMain.requirePermsToBuy && !player.hasPermission("qualityarmory.shopgun")) {
+                        player.sendMessage(QAMain.prefix + ChatColor.RED + QAMain.S_NOPERM);
+                        return true;
+                    }
+                    if (QAMain.perWeaponBuyPermission && !player.hasPermission("qualityarmory.shopgun." + item.getName())) {
+                        player.sendMessage(QAMain.prefix + ChatColor.RED + QAMain.S_NOPERM);
+                        return true;
+                    }
+                }
+
                 if (!QAMain.enableEconomy) {
                     try {
                         QAMain.enableEconomy = EconHandler.setupEconomy();
