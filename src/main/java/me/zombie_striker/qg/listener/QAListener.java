@@ -956,8 +956,12 @@ public class QAListener implements Listener {
 
 		MedKit medKit = (MedKit) misc;
 
-		if (medKit.useOn(healer, target, inHand))
+		if (medKit.useOn(healer, target, inHand)) {
 			e.setCancelled(true);
+			ignoreClick.add(healer.getUniqueId());
+
+			Bukkit.getScheduler().runTaskLater(QAMain.getInstance(), () -> ignoreClick.remove(healer.getUniqueId()), 2L);
+		}
 	}
 
 	@EventHandler
