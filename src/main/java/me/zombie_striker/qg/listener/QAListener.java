@@ -18,6 +18,7 @@ import me.zombie_striker.qg.handlers.BulletWoundHandler;
 import me.zombie_striker.qg.handlers.IronsightsHandler;
 import me.zombie_striker.qg.handlers.Update19OffhandChecker;
 import me.zombie_striker.qg.miscitems.Grenade;
+import me.zombie_striker.qg.miscitems.MedKit;
 import me.zombie_striker.qg.miscitems.MeleeItems;
 import me.zombie_striker.qg.miscitems.ThrowableItems;
 import org.bukkit.Bukkit;
@@ -931,6 +932,35 @@ public class QAListener implements Listener {
 						e.setCancelled(true);
 				}
 			}
+		}
+	}
+
+	@EventHandler
+	public void onInteractEntity(PlayerInteractEntityEvent e) {
+		if (e.isCancelled())
+			return;
+
+		if (!(e.getRightClicked() instanceof Player))
+			return;
+
+		Player healer = e.getPlayer();
+		Player target = (Player) e.getRightClicked();
+
+		ItemStack inHand = healer.getItemInHand();
+		if (!QualityArmory.isMisc(inHand))
+			return;
+
+		CustomBaseObject misc = QualityArmory.getCustomItem(inHand);
+		if (!(misc instanceof MedKit))
+			return;
+
+		MedKit medKit = (MedKit) misc;
+
+		if (medKit.useOn(healer, target, inHand)) {
+			e.setCancelled(true);
+			ignoreClick.add(healer.getUniqueId());
+
+			Bukkit.getScheduler().runTaskLater(QAMain.getInstance(), () -> ignoreClick.remove(healer.getUniqueId()), 2L);
 		}
 	}
 

@@ -205,6 +205,7 @@ public class QAMain extends JavaPlugin {
     public static String S_RMB_A2 = ChatColor.DARK_GRAY + "[Sneak] to open ironsights";
     public static String S_HELMET_RMB = ChatColor.DARK_GRAY + "[RMB] to equip helmet.";
     public static String S_FULLYHEALED = "&fYou are fully healed. No need for this right now!";
+    public static String S_FULLYHEALED_OTHER = "&f%player% is already fully healed. No need for this right now!";
     public static String S_MEDKIT_HEALING = "Healing";
     public static String S_MEDKIT_BLEEDING = "Blood-Loss Rate:";
     public static double S_MEDKIT_HEALDELAY = 6;
@@ -774,6 +775,7 @@ public class QAMain extends JavaPlugin {
         S_GRENADE_PULLPIN = LocalUtils.colorize((String) m.a("grenadePull", S_GRENADE_PULLPIN));
 
         S_FULLYHEALED = LocalUtils.colorize((String) m.a("Medkit-FullyHealed", S_FULLYHEALED));
+        S_FULLYHEALED_OTHER = LocalUtils.colorize((String) m.a("Medkit-FullyHealed-Other", S_FULLYHEALED_OTHER));
         S_MEDKIT_HEALING = LocalUtils.colorize(
                 (String) m.a("Medkit-Healing", S_MEDKIT_HEALING));
         S_MEDKIT_BLEEDING = LocalUtils.colorize(
