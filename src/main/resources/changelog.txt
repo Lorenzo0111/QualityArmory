@@ -3,6 +3,7 @@
   - Added permissions for crafting and buying guns
   - Fixed gun drop with enableUnloadingOnDrop enabled
   - Added ability to use MedKits on other players
+  - 26.1 support
 
 2.1.1
   - 1.21.11 support
