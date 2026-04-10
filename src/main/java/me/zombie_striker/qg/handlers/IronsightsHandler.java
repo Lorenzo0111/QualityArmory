@@ -29,7 +29,7 @@ public class IronsightsHandler {
 						player.getWorld().dropItem(player.getLocation(),player.getInventory().getItemInOffHand());
 					} else {
 						player.getInventory().setItem(slot, player.getInventory().getItemInOffHand());
-						if (QAMain.restoreOffHand) beforeSwitch.put(player, slot);
+						if (QAMain.getConfiguration().features.restoreOffHand) beforeSwitch.put(player, slot);
 					}
 				}
 				if (player.getItemInHand() != null && QualityArmory.isGun(player.getItemInHand())) {

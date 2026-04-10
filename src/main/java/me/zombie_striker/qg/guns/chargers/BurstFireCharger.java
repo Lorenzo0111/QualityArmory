@@ -57,7 +57,7 @@ public class BurstFireCharger implements ChargingHandler {
 
                 GunUtil.shootHandler(g, player, 1);
                 GunUtil.playShoot(g, player);
-                if (QAMain.enableRecoil && g.getRecoil() > 0) {
+                if (QAMain.getConfiguration().weapons.enableRecoil && g.getRecoil() > 0) {
                     GunUtil.addRecoil(player, g);
                 }
                 shotCurrently++;

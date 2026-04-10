@@ -39,9 +39,9 @@ public class AimManager extends BukkitRunnable implements Listener {
 			Gun g = QualityArmory.getGunInHand(p);
 			if (g!=null) {
 				if (p.isSneaking() && g.isEnableSwaySneakModifier())
-					sway *= QAMain.swayModifier_Sneak;
+					sway *= QAMain.getConfiguration().weapons.swayModifier_Sneak;
 				if (p.isSprinting() && g.isEnableSwayRunModifier()) {
-					sway *= QAMain.swayModifier_Run;
+					sway *= QAMain.getConfiguration().weapons.swayModifier_Run;
 				}
 				if (XReflection.supports(9) && !QualityArmory.isIronSights(p.getInventory().getItemInMainHand())) {
 					sway *= g.getSwayUnscopedMultiplier();
@@ -56,7 +56,7 @@ public class AimManager extends BukkitRunnable implements Listener {
 				if (s < 800) {
 					// less than 1.5 sec
 					if (g==null || g.isEnableSwayMovementModifier())
-						sway *= Math.min(QAMain.swayModifier_Walk, 800 / s);
+						sway *= Math.min(QAMain.getConfiguration().weapons.swayModifier_Walk, 800 / s);
 				}
 			}
 

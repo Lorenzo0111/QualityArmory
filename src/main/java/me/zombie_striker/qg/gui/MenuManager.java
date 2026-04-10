@@ -126,7 +126,7 @@ public class MenuManager {
                         : item.getIngredientsRaw() != null && item.isEnableCrafting())
                 .collect(Collectors.toList());
 
-        if (isShop && QAMain.orderShopByPrice) {
+        if (isShop && QAMain.getConfiguration().menu.orderShopByPrice) {
             available.sort(
                     Comparator.comparingDouble(CustomBaseObject::getPrice)
                             .thenComparing(this::getComparableName, String.CASE_INSENSITIVE_ORDER)

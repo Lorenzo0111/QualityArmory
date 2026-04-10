@@ -116,7 +116,7 @@ public class MedKit extends CustomBaseObject {
 		}
 
 		double bloodLevel = BulletWoundHandler.bloodLevel.get(patientId);
-		double percentBlood = Math.max(0, bloodLevel / QAMain.bulletWound_initialbloodamount);
+		double percentBlood = Math.max(0, bloodLevel / QAMain.getConfiguration().combat.bulletWound_initialbloodamount);
 
 		ChatColor severity = percentBlood > 75 ? ChatColor.WHITE
 				: percentBlood > 50 ? ChatColor.GRAY : percentBlood > 25 ? ChatColor.RED : ChatColor.DARK_RED;
@@ -124,7 +124,7 @@ public class MedKit extends CustomBaseObject {
 				&& BulletWoundHandler.bleedoutMultiplier.get(patientId) < 0)
 			BulletWoundHandler.bleedoutMultiplier.put(patientId,
 					Math.min(0, BulletWoundHandler.bleedoutMultiplier.get(patientId)
-							+ QAMain.bulletWound_MedkitBloodlossHealRate));
+							+ QAMain.getConfiguration().combat.bulletWound_MedkitBloodlossHealRate));
 
 		double newRate = BulletWoundHandler.bleedoutMultiplier.containsKey(patientId)
 				? BulletWoundHandler.bleedoutMultiplier.get(patientId)
@@ -159,7 +159,7 @@ public class MedKit extends CustomBaseObject {
 			String bar = ChatColor.RED + QAMain.S_MEDKIT_HEALING + "[" + levelBar + ChatColor.RED + "] "
 					+ bleedingLabel + " " + (newRate < 0 ? ChatColor.DARK_RED : ChatColor.GRAY)
 					+ new DecimalFormat("##0.##").format(newRate) + ChatColor.GRAY + "+"
-					+ QAMain.bulletWound_BloodIncreasePerSecond;
+					+ QAMain.getConfiguration().combat.bulletWound_BloodIncreasePerSecond;
 
 			HotbarMessager.sendHotBarMessage(healer, bar);
 			if (!healer.equals(patient)) {

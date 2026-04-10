@@ -65,14 +65,14 @@ public class CustomGunItem extends AbstractCustomGunItem {
 
 			OLD_ItemFact.addVariantData(im,lore,base);
 			im.setLore(lore);
-			if (QAMain.ITEM_enableUnbreakable) {
+			if (QAMain.getConfiguration().items.ITEM_enableUnbreakable) {
 				try {
 					im.setUnbreakable(true);
 				} catch (Error | Exception e34) {
 				}
 			}
 			try {
-				if (QAMain.ITEM_enableUnbreakable) {
+				if (QAMain.getConfiguration().items.ITEM_enableUnbreakable) {
 					im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_UNBREAKABLE);
 				}
 				im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_ATTRIBUTES);

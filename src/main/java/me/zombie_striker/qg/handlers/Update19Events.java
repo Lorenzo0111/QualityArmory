@@ -8,7 +8,6 @@ import me.zombie_striker.qg.guns.utils.GunUtil;
 
 import me.zombie_striker.qg.listener.QAListener;
 import org.bukkit.*;
-import org.bukkit.entity.Player;
 import org.bukkit.event.*;
 import org.bukkit.event.inventory.PrepareAnvilEvent;
 import org.bukkit.event.player.*;
@@ -24,7 +23,7 @@ public class Update19Events implements Listener {
 			return;
 		if (QualityArmory.isCustomItem(e.getResult())) {
 			ItemStack newi = e.getResult();
-			newi.setDurability((short) QualityArmory.findSafeSpot(e.getResult(), false,QAMain.overrideURL));
+			newi.setDurability((short) QualityArmory.findSafeSpot(e.getResult(), false,QAMain.getConfiguration().resourcepack.overrideDefaultPack));
 			e.setResult(newi);
 		}
 		for (ItemStack is : e.getInventory().getContents()) {
@@ -37,7 +36,7 @@ public class Update19Events implements Listener {
 
 	@EventHandler
 	public void onItemHandSwap(PlayerSwapHandItemsEvent e) {
-		if (QAMain.reloadOnF || QAMain.reloadOnFOnly) {
+		if (QAMain.getConfiguration().weapons.reloadOnF || QAMain.getConfiguration().weapons.reloadOnFOnly) {
 			if (QualityArmory.isIronSights(e.getOffHandItem())) {
 				e.setCancelled(true);
 				IronsightsHandler.unAim(e.getPlayer());

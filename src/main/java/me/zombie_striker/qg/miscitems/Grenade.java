@@ -54,7 +54,7 @@ public class Grenade extends CustomBaseObject implements ThrowableItems {
 
 	@Override
 	public boolean onRMB(Player thrower, ItemStack usedItem) {
-		if(QAMain.autoarm) onPull(thrower,usedItem);
+		if(QAMain.getConfiguration().features.autoarm) onPull(thrower,usedItem);
 		if (throwItems.containsKey(thrower) && throwItems.get(thrower).getGrenade().equals(this)) {
 			return this.throwGrenade(thrower, thrower.getLocation().getDirection().normalize().multiply(getThrowSpeed()));
 		} else {
@@ -103,14 +103,14 @@ public class Grenade extends CustomBaseObject implements ThrowableItems {
 
 	@Override
 	public boolean onLMB(Player e, ItemStack usedItem) {
-		if(!QAMain.autoarm)
+		if(!QAMain.getConfiguration().features.autoarm)
 			return onPull(e,usedItem);
 		return false;
 	}
 
 	public boolean onPull(Player e, ItemStack usedItem) {
 		Player thrower = e.getPlayer();
-		if(!QAMain.autoarm)
+		if(!QAMain.getConfiguration().features.autoarm)
 		if (throwItems.containsKey(thrower)) {
 			thrower.sendMessage(QAMain.prefix + QAMain.S_GRENADE_PALREADYPULLPIN);
 			thrower.playSound(thrower.getLocation(), WeaponSounds.RELOAD_BULLET.getSoundName(), 1, 1);
@@ -132,7 +132,7 @@ public class Grenade extends CustomBaseObject implements ThrowableItems {
 					GRENADES.remove(h.getHolder());
 					h.getHolder().remove();
 				}
-				if (QAMain.enableExplosionDamage) {
+				if (QAMain.getConfiguration().features.enableExplosionDamage) {
 					QAThrowableExplodeEvent event = new QAThrowableExplodeEvent(Grenade.this, h.getHolder().getLocation());
 					Bukkit.getPluginManager().callEvent(event);
 					if (!event.isCancelled()) ExplosionHandler.handleExplosion(h.getHolder().getLocation(), 3, 1);

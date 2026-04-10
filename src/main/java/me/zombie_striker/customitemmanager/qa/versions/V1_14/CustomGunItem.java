@@ -105,14 +105,14 @@ public class CustomGunItem extends AbstractCustomGunItem {
 				im.addAttributeModifier(XAttribute.ATTACK_SPEED.get(), modifier);
 			}
 
-			if (QAMain.ITEM_enableUnbreakable) {
+			if (QAMain.getConfiguration().items.ITEM_enableUnbreakable) {
 				try {
 					im.setUnbreakable(true);
 				} catch (Error | Exception e34) {
 				}
 			}
 			try {
-				if (QAMain.ITEM_enableUnbreakable) {
+				if (QAMain.getConfiguration().items.ITEM_enableUnbreakable) {
 					im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_UNBREAKABLE);
 				}
 				im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_ATTRIBUTES);

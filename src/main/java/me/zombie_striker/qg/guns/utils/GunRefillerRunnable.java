@@ -137,7 +137,7 @@ public class GunRefillerRunnable {
                     player.getInventory().setItem(newSlot, modifiedOriginalItem);
 
 
-                    if (!different && player.isSneaking() && g.hasIronSights() && !QAMain.enableIronSightsON_RIGHT_CLICK) {
+                    if (!different && player.isSneaking() && g.hasIronSights() && !QAMain.getConfiguration().weapons.enableIronSightsON_RIGHT_CLICK) {
                         IronsightsHandler.aim(player);
                         QAMain.toggleNightvision(player, g, true);
                     }
@@ -145,7 +145,7 @@ public class GunRefillerRunnable {
                     if (shouldContinue)
                         QualityArmory.sendHotbarGunAmmoCount(player, g, modifiedOriginalItem, false);
 
-                    if (QAMain.showAmmoInXPBar && shouldContinue) {
+                    if (QAMain.getConfiguration().ui.showAmmoInXPBar && shouldContinue) {
                         GunUtil.updateXPBar(player, g, reloadAmount);
                     }
                 }

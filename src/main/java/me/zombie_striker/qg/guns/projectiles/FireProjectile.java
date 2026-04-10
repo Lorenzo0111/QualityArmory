@@ -29,13 +29,13 @@ public class FireProjectile implements RealtimeCalculationProjectile {
 		Location test = player.getEyeLocation();
 		double maxDist = GunUtil.getTargetedSolidMaxDistance(dir, test, g.getMaxDistance());
 
-		Vector dir2 = dir.clone().multiply(QAMain.bulletStep);
+		Vector dir2 = dir.clone().multiply(QAMain.getConfiguration().weapons.bulletStep);
 
 		Collection<Entity> nearby = test.getWorld().getNearbyEntities(
 				test.clone().add(dir.clone().multiply(maxDist / 2)), maxDist / 2, maxDist / 2, maxDist / 2);
 
 		// test.add(dir);
-		for (double distance = 0; distance < maxDist; distance += QAMain.bulletStep) {
+		for (double distance = 0; distance < maxDist; distance += QAMain.getConfiguration().weapons.bulletStep) {
 			test.add(dir2);
 			if (test.getBlock().getType().name().equals("WATER")
 					|| test.getBlock().getType().name().equals("STATIONARY_WATER"))

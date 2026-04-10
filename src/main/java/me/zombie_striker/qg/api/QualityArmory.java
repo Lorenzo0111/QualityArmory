@@ -16,6 +16,7 @@ import me.zombie_striker.qg.guns.utils.WeaponSounds;
 import me.zombie_striker.qg.guns.utils.WeaponType;
 import me.zombie_striker.qg.handlers.HotbarMessager;
 import me.zombie_striker.qg.handlers.IronsightsHandler;
+import me.zombie_striker.qg.hooks.ViaVersionHook;
 import me.zombie_striker.qg.hooks.protection.ProtectionHandler;
 import me.zombie_striker.qg.miscitems.AmmoBag;
 import me.zombie_striker.qg.utils.LocalUtils;
@@ -113,7 +114,7 @@ public class QualityArmory {
 						player.sendMessage(LocalUtils.colorize(ChatColor.RED + QAMain.S_NORES2));
 					}
 				}
-				if (QAMain.showCrashMessage)
+				if (QAMain.getConfiguration().ui.showCrashMessage)
 					player.sendMessage(LocalUtils.colorize(QAMain.prefix + QAMain.S_RESOURCEPACK_HELP));
 
 				new BukkitRunnable() {
@@ -121,20 +122,20 @@ public class QualityArmory {
 					public void run() {
 						try {
 							try {
-								QAMain.DEBUG("Sending resourcepack : " + (QAMain.AutoDetectResourcepackVersion) + " || "
-										+ QAMain.MANUALLYSELECT18 + " || " + QAMain.isVersionHigherThan(1, 9) + " || ");
+								QAMain.DEBUG("Sending resourcepack : " + (QAMain.getConfiguration().resourcepack.autoDetectVersion) + " || "
+										+ QAMain.getConfiguration().versionOverride.MANUALLYSELECT18 + " || " + QAMain.isVersionHigherThan(1, 9) + " || ");
 								try {
 									if (QAMain.hasViaVersion) {
 										QAMain.DEBUG(
 												"Has Viaversion: " + com.viaversion.viaversion.api.Via.getAPI()
-														.getPlayerVersion(player) + " 1.8=" + QAMain.ViaVersionIdfor_1_8);
+														.getPlayerVersion(player) + " 1.8=" + ViaVersionHook.VIAVERSION_1_8);
 
 									}
 								} catch (Error | Exception re4) {
 								}
 
 								if (QAMain.isVersionHigherThan(1, 19))
-									player.setResourcePack(CustomItemManager.getResourcepack(player), null, QAMain.kickIfDeniedRequest);
+									player.setResourcePack(CustomItemManager.getResourcepack(player), null, QAMain.getConfiguration().resourcepack.kickIfDeniedRequest);
                                 else player.setResourcePack(CustomItemManager.getResourcepack(player));
 
 							} catch (Error | Exception e4) {
@@ -155,7 +156,7 @@ public class QualityArmory {
 					}
 				}.runTaskLater(QAMain.getInstance(), 20 * (warning ? 1 : 5));
 			}
-		}.runTaskLater(QAMain.getInstance(), (long) (20 * QAMain.secondsTilSend));
+		}.runTaskLater(QAMain.getInstance(), (long) (20 * QAMain.getConfiguration().resourcepack.secondsTilSend));
 	}
 
 	public static boolean allowGunsInRegion(Location loc) {
@@ -466,9 +467,9 @@ public class QualityArmory {
 
 		int ammoamount = getAmmoInInventory(p, g.getAmmoType());
 
-		if (QAMain.showOutOfAmmoOnTitle && ammoamount <= 0 && Gun.getAmount(p) < 1) {
+		if (QAMain.getConfiguration().ui.showOutOfAmmoOnTitle && ammoamount <= 0 && Gun.getAmount(p) < 1) {
 			p.sendTitle(" ", QAMain.S_OUT_OF_AMMO, 0, 20, 1);
-		} else if (QAMain.showReloadOnTitle && reloading) {
+		} else if (QAMain.getConfiguration().ui.showReloadOnTitle && reloading) {
 			for (int i = 1; i < g.getReloadTime() * 20; i += 2) {
 				final int id = i;
 				new BukkitRunnable() {
@@ -488,14 +489,14 @@ public class QualityArmory {
 			try {
 				String message = QAMain.S_HOTBAR_FORMAT;
 
-				if (QAMain.disableHotBarMessageOnOutOfAmmo && QAMain.disableHotBarMessageOnReload
-						&& QAMain.disableHotBarMessageOnShoot)
+				if (QAMain.getConfiguration().ui.disableHotBarMessageOnOutOfAmmo && QAMain.getConfiguration().ui.disableHotBarMessageOnReload
+						&& QAMain.getConfiguration().ui.disableHotBarMessageOnShoot)
 					return;
-				if (reloading && QAMain.disableHotBarMessageOnReload)
+				if (reloading && QAMain.getConfiguration().ui.disableHotBarMessageOnReload)
 					return;
-				if (ammoamount <= 0 && QAMain.disableHotBarMessageOnOutOfAmmo)
+				if (ammoamount <= 0 && QAMain.getConfiguration().ui.disableHotBarMessageOnOutOfAmmo)
 					return;
-				if (!reloading && ammoamount > 0 && QAMain.disableHotBarMessageOnShoot)
+				if (!reloading && ammoamount > 0 && QAMain.getConfiguration().ui.disableHotBarMessageOnShoot)
 					return;
 
 				if (message.contains("%name%"))
@@ -512,7 +513,7 @@ public class QualityArmory {
 				if (message.contains("%total%"))
 					message = message.replace("%total%", "" + ammoamount);
 
-				if (QAMain.unknownTranslationKeyFixer) {
+				if (QAMain.getConfiguration().features.unknownTranslationKeyFixer) {
 					message = ChatColor.stripColor(message);
 				} else {
 					message = LocalUtils.colorize(message);
@@ -633,7 +634,7 @@ public class QualityArmory {
 					count++;
 			}
 		}
-		return count >= (g.isPrimaryWeapon() ? QAMain.primaryWeaponLimit : QAMain.secondaryWeaponLimit);
+		return count >= (g.isPrimaryWeapon() ? QAMain.getConfiguration().limiter.primaryWeaponLimit : QAMain.getConfiguration().limiter.secondaryWeaponLimit);
 	}
 
 	public static ItemStack getCustomItemAsItemStack(String name) {

@@ -50,11 +50,11 @@ public class CraftingItem {
                 Player player = (Player) click.getWhoClicked();
 
                 if (item instanceof Gun) {
-                    if (QAMain.requirePermsToCraft && !player.hasPermission("qualityarmory.craftgun")) {
+                    if (QAMain.getConfiguration().permissions.requirePermsToCraft && !player.hasPermission("qualityarmory.craftgun")) {
                         player.sendMessage(QAMain.S_NOPERM);
                         return true;
                     }
-                    if (QAMain.perWeaponCraftPermission && !player.hasPermission("qualityarmory.craftgun." + item.getName())) {
+                    if (QAMain.getConfiguration().permissions.perWeaponCraftPermission && !player.hasPermission("qualityarmory.craftgun." + item.getName())) {
                         player.sendMessage(QAMain.S_NOPERM);
                         return true;
                     }

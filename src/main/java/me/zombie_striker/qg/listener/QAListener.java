@@ -16,6 +16,7 @@ import me.zombie_striker.qg.guns.utils.WeaponSounds;
 import me.zombie_striker.qg.handlers.BulletWoundHandler;
 import me.zombie_striker.qg.handlers.IronsightsHandler;
 import me.zombie_striker.qg.handlers.Update19OffhandChecker;
+import me.zombie_striker.qg.hooks.ViaVersionHook;
 import me.zombie_striker.qg.miscitems.Grenade;
 import me.zombie_striker.qg.miscitems.MedKit;
 import me.zombie_striker.qg.miscitems.MeleeItems;
@@ -71,14 +72,14 @@ public class QAListener implements Listener {
 					}
 				}
 
-				if (QAMain.allowGunHitEntities && !ignoreClick.contains(d.getUniqueId())) {
+				if (QAMain.getConfiguration().weapons.allowGunHitEntities && !ignoreClick.contains(d.getUniqueId())) {
 					Gun g = QualityArmory.getGun(d.getItemInHand());
 					if (IronsightsHandler.isAiming(d)) g = IronsightsHandler.getGunUsed(d);
 
 					if (g == null || !d.getLocation().getWorld().equals(e.getEntity().getLocation().getWorld())) return;
 
 					double distance = d.getLocation().distance(e.getEntity().getLocation());
-					if (distance >= QAMain.hitDistance) return;
+					if (distance >= QAMain.getConfiguration().weapons.hitDistance) return;
 
 					ignoreClick.add(d.getUniqueId());
 
@@ -117,7 +118,7 @@ public class QAListener implements Listener {
 
 	@EventHandler
 	public void onHopper(InventoryMoveItemEvent e) {
-		if (e.isCancelled() || !QAMain.preventGunsInHoppers)
+		if (e.isCancelled() || !QAMain.getConfiguration().interactions.preventGunsInHoppers)
 			return;
 		if (e.getSource().getType() == InventoryType.HOPPER || e.getSource().getType() == InventoryType.DISPENSER
 				|| e.getSource().getType() == InventoryType.DROPPER)
@@ -133,10 +134,11 @@ public class QAListener implements Listener {
 
 		if (QualityArmory.isCustomItem(e.getPlayer().getItemInHand())) {
 			CustomBaseObject base = QualityArmory.getCustomItem(e.getPlayer().getItemInHand());
-			base.onShift(e.getPlayer(), e.getPlayer().getItemInHand(), e.isSneaking());
+			if (base != null)
+				base.onShift(e.getPlayer(), e.getPlayer().getItemInHand(), e.isSneaking());
 		}
 
-		if (!QAMain.enableIronSightsON_RIGHT_CLICK) {
+		if (!QAMain.getConfiguration().weapons.enableIronSightsON_RIGHT_CLICK) {
 			DEBUG("Sneak Toggle Called");
 			try {
 				if (e.isSneaking()) {
@@ -388,7 +390,7 @@ public class QAListener implements Listener {
 		if (e.isCancelled())
 			return;
 		if (QualityArmory.isCustomItem(e.getItem().getItemStack())) {
-			if (QAMain.shouldSend && !QAMain.namesToBypass.contains(e.getPlayer().getName())
+			if (QAMain.getConfiguration().resourcepack.shouldSend && !QAMain.namesToBypass.contains(e.getPlayer().getName())
 					&& !QAMain.resourcepackReq.contains(e.getPlayer().getUniqueId())) {
 				QualityArmory.sendResourcepack(e.getPlayer(), true);
 			}
@@ -396,9 +398,9 @@ public class QAListener implements Listener {
 			if (QualityArmory.isGun(e.getItem().getItemStack())) {
 				Gun g = QualityArmory.getGun(e.getItem().getItemStack());
 				try {
-					if (QAMain.AutoDetectResourcepackVersion && !QAMain.MANUALLYSELECT18) {
+					if (QAMain.getConfiguration().resourcepack.autoDetectVersion && !QAMain.getConfiguration().versionOverride.MANUALLYSELECT18) {
 						if (com.viaversion.viaversion.api.Via.getAPI()
-								.getPlayerVersion(e.getPlayer()) < QAMain.ViaVersionIdfor_1_8) {
+								.getPlayerVersion(e.getPlayer()) < ViaVersionHook.VIAVERSION_1_8) {
 							if (!g.is18Support()) {
 								for (Gun g2 : QAMain.gunRegister.values()) {
 									if (g2.is18Support()) {
@@ -423,7 +425,7 @@ public class QAListener implements Listener {
 							}
 						} else {
 							if (com.viaversion.viaversion.api.Via.getAPI()
-									.getPlayerVersion(e.getPlayer()) >= QAMain.ViaVersionIdfor_1_8) {
+									.getPlayerVersion(e.getPlayer()) >= ViaVersionHook.VIAVERSION_1_8) {
 								if (g.is18Support()) {
 									for (Gun g2 : QAMain.gunRegister.values()) {
 										if (!g2.is18Support()) {
@@ -453,7 +455,7 @@ public class QAListener implements Listener {
 				}
 				QAMain.checkforDups(e.getPlayer(), e.getItem().getItemStack());
 
-				if (QAMain.enablePrimaryWeaponHandler)
+				if (QAMain.getConfiguration().limiter.enablePrimaryWeaponHandler)
 					if (QualityArmory.isOverLimitForPrimaryWeapons(g, e.getPlayer()))
 						e.setCancelled(true);
 				return;
@@ -487,7 +489,7 @@ public class QAListener implements Listener {
 		if (g == null) return;
 
 		Gun finalG = g;
-		if (QAMain.unloadOnQ) {
+		if (QAMain.getConfiguration().weapons.unloadOnQ) {
 			e.setCancelled(true);
 
 			ignoreClick.add(e.getPlayer().getUniqueId());
@@ -498,7 +500,7 @@ public class QAListener implements Listener {
 				if (e.getPlayer().isSneaking()) unloadAll(e.getPlayer(), finalG);
 				else unloadOne(e.getPlayer(), finalG);
 			}, 2L);
-		} else if (QAMain.reloadOnQ && !QAMain.reloadOnFOnly) {
+		} else if (QAMain.getConfiguration().weapons.reloadOnQ && !QAMain.getConfiguration().weapons.reloadOnFOnly) {
 			e.setCancelled(true);
 
 			ignoreClick.add(e.getPlayer().getUniqueId());
@@ -578,7 +580,7 @@ public class QAListener implements Listener {
 
 	@EventHandler
 	public void onDeathChat(PlayerDeathEvent e) {
-		if (QAMain.changeDeathMessages) {
+		if (QAMain.getConfiguration().combat.changeDeathMessages) {
 			if (e.getEntity().getKiller() != null && e.getEntity().getKiller() instanceof Player) {
 				Player killer = e.getEntity().getKiller();
 				if (e.getDeathMessage() != null && e.getDeathMessage().contains(" using ")) {
@@ -645,7 +647,7 @@ public class QAListener implements Listener {
 			}
 		}
 
-		if (QAMain.showAmmoInXPBar) {
+		if (QAMain.getConfiguration().ui.showAmmoInXPBar) {
 			e.setDroppedExp(0);
 			e.setNewTotalExp(0);
 		}
@@ -660,7 +662,7 @@ public class QAListener implements Listener {
 			}
 		}
 		BulletWoundHandler.bleedoutMultiplier.remove(e.getEntity().getUniqueId());
-		BulletWoundHandler.bloodLevel.put(e.getEntity().getUniqueId(), QAMain.bulletWound_initialbloodamount);
+		BulletWoundHandler.bloodLevel.put(e.getEntity().getUniqueId(), QAMain.getConfiguration().combat.bulletWound_initialbloodamount);
 
 		if (e.getEntity().getKiller() instanceof Player) {
 			Player killer = e.getEntity().getKiller();
@@ -675,7 +677,7 @@ public class QAListener implements Listener {
 	@EventHandler
 	public void onDeath(PlayerRespawnEvent e) {
 		BulletWoundHandler.bleedoutMultiplier.remove(e.getPlayer().getUniqueId());
-		BulletWoundHandler.bloodLevel.put(e.getPlayer().getUniqueId(), QAMain.bulletWound_initialbloodamount);
+		BulletWoundHandler.bloodLevel.put(e.getPlayer().getUniqueId(), QAMain.getConfiguration().combat.bulletWound_initialbloodamount);
 	}
 
 	@SuppressWarnings("deprecation")
@@ -683,7 +685,7 @@ public class QAListener implements Listener {
 	public void onClickMONITOR(final PlayerInteractEvent e) {
 		if (e.isCancelled())
 			return;
-		if (QAMain.ignoreSkipping)
+		if (QAMain.getConfiguration().features.ignoreSkipping)
 			return;
 
 		try {
@@ -699,8 +701,8 @@ public class QAListener implements Listener {
 				if (QualityArmory.isCustomItemNextId(e.getPlayer().getItemInHand())) {
 					QAMain.DEBUG("A player is using a non-gun item, but may reach the textures of one!");
 					// If the item is not a gun, but the item below it is
-					int safeDurib = QualityArmory.findSafeSpot(e.getPlayer().getItemInHand(), true, QAMain.overrideURL)
-							+ (QAMain.overrideURL ? 0 : 3);
+					int safeDurib = QualityArmory.findSafeSpot(e.getPlayer().getItemInHand(), true, QAMain.getConfiguration().resourcepack.overrideDefaultPack)
+							+ (QAMain.getConfiguration().resourcepack.overrideDefaultPack ? 0 : 3);
 
 					// if (e.getItem().getDurability() == 1) {
 					QAMain.DEBUG("Safe Durib= " + (safeDurib) + "! ORG " + e.getPlayer().getItemInHand().getDurability());
@@ -719,7 +721,7 @@ public class QAListener implements Listener {
 						QAMain.DEBUG("A player is using a non-gun item, but may reach the textures of one!");
 						// If the item is not a gun, but the item below it is
 						int safeDurib = QualityArmory.findSafeSpot(e.getPlayer().getInventory().getItemInOffHand(), true,
-								QAMain.overrideURL) + (QAMain.overrideURL ? 0 : 3);
+								QAMain.getConfiguration().resourcepack.overrideDefaultPack) + (QAMain.getConfiguration().resourcepack.overrideDefaultPack ? 0 : 3);
 
 						// if (e.getItem().getDurability() == 1) {
 						QAMain.DEBUG("Safe Durib= " + (safeDurib) + "! ORG "
@@ -740,9 +742,9 @@ public class QAListener implements Listener {
 	@EventHandler
 	public void onAnvilClick(final PlayerInteractEvent e) {
 		if (e.getAction() == Action.RIGHT_CLICK_BLOCK && e.getClickedBlock().getType() == Material.ANVIL
-				&& QAMain.overrideAnvil && !e.getPlayer().isSneaking()) {
+				&& QAMain.getConfiguration().interactions.overrideAnvil && !e.getPlayer().isSneaking()) {
 			QAMain.DEBUG("ANVIL InteractEvent Called");
-			if (QAMain.shouldSend && !QAMain.resourcepackReq.contains(e.getPlayer().getUniqueId())) {
+			if (QAMain.getConfiguration().resourcepack.shouldSend && !QAMain.resourcepackReq.contains(e.getPlayer().getUniqueId())) {
 				QualityArmory.sendResourcepack(e.getPlayer(), true);
 				e.setCancelled(true);
 				QAMain.DEBUG("Resourcepack message being sent!");
@@ -771,13 +773,13 @@ public class QAListener implements Listener {
 		if (!CustomItemManager.isUsingCustomData()) {
 			QAMain.DEBUG("Custom Data Check");
 			try {
-				if (QAMain.ITEM_enableUnbreakable && !QAMain.ignoreUnbreaking)
+				if (QAMain.getConfiguration().items.ITEM_enableUnbreakable && !QAMain.getConfiguration().features.ignoreUnbreaking)
 					if (QualityArmory.isCustomItem(e.getPlayer().getItemInHand())) {
 						if (!e.getPlayer().getItemInHand().getItemMeta().isUnbreakable()) {
 							QAMain.DEBUG("A player is using a breakable item that reached being a gun!");
 							// If the item is not a gun, but the item below it is
-							int safeDurib = QualityArmory.findSafeSpot(e.getPlayer().getItemInHand(), true, QAMain.overrideURL)
-									+ (QAMain.overrideURL ? 0 : 3);
+							int safeDurib = QualityArmory.findSafeSpot(e.getPlayer().getItemInHand(), true, QAMain.getConfiguration().resourcepack.overrideDefaultPack)
+									+ (QAMain.getConfiguration().resourcepack.overrideDefaultPack ? 0 : 3);
 
 							// if (e.getItem().getDurability() == 1) {
 							QAMain.DEBUG("Safe Durib= " + (safeDurib) + "! ORG "
@@ -791,13 +793,13 @@ public class QAListener implements Listener {
 			}
 
 			try {
-				if (QAMain.ITEM_enableUnbreakable && !QAMain.ignoreUnbreaking)
+				if (QAMain.getConfiguration().items.ITEM_enableUnbreakable && !QAMain.getConfiguration().features.ignoreUnbreaking)
 					if (QualityArmory.isCustomItem(e.getPlayer().getInventory().getItemInOffHand())) {
 						if (!e.getPlayer().getInventory().getItemInOffHand().getItemMeta().isUnbreakable()) {
 							QAMain.DEBUG("A player is using a breakable item that reached being a gun!");
 							// If the item is not a gun, but the item below it is
 							int safeDurib = QualityArmory.findSafeSpot(e.getPlayer().getInventory().getItemInOffHand(),
-									true, QAMain.overrideURL) + (QAMain.overrideURL ? 0 : 3);
+									true, QAMain.getConfiguration().resourcepack.overrideDefaultPack) + (QAMain.getConfiguration().resourcepack.overrideDefaultPack ? 0 : 3);
 
 							// if (e.getItem().getDurability() == 1) {
 							QAMain.DEBUG("Safe Durib= " + (safeDurib) + "! ORG "
@@ -836,7 +838,7 @@ public class QAListener implements Listener {
 		if (event.isCancelled())
 			return;
 
-		if (QAMain.kickIfDeniedRequest && QAMain.sentResourcepack.containsKey(e.getPlayer().getUniqueId())
+		if (QAMain.getConfiguration().resourcepack.kickIfDeniedRequest && QAMain.sentResourcepack.containsKey(e.getPlayer().getUniqueId())
 				&& System.currentTimeMillis() - QAMain.sentResourcepack.get(e.getPlayer().getUniqueId()) >= 3000) {
 			// the player did not accept resourcepack, and got away with it
 			e.setCancelled(true);
@@ -886,7 +888,7 @@ public class QAListener implements Listener {
 			ItemStack usedItem = IronsightsHandler.getItemAiming(e.getPlayer());
 
 			// Send the resourcepack if the player does not have it.
-			if (QAMain.shouldSend && !QAMain.resourcepackReq.contains(e.getPlayer().getUniqueId())) {
+			if (QAMain.getConfiguration().resourcepack.shouldSend && !QAMain.resourcepackReq.contains(e.getPlayer().getUniqueId())) {
 				QAMain.DEBUG("Player does not have resourcepack!");
 				QualityArmory.sendResourcepack(e.getPlayer(), true);
 			}
@@ -895,17 +897,17 @@ public class QAListener implements Listener {
 				QAMain.DEBUG("Player is aiming!");
 				try {
 					if ((e.getAction() == Action.RIGHT_CLICK_AIR
-							|| e.getAction() == Action.RIGHT_CLICK_BLOCK) == (QAMain.SWAP_TO_LMB_SHOOT)) {
+							|| e.getAction() == Action.RIGHT_CLICK_BLOCK) == (!QAMain.getConfiguration().features.SwapReloadAndShootingControls)) {
 						e.setCancelled(true);
 						Gun g = IronsightsHandler.getGunUsed(e.getPlayer());
 						QAMain.DEBUG("Swapping " + g.getName() + " from offhand to main hand to reload!");
 						if (GunUtil.rapidfireshooters.containsKey(e.getPlayer().getUniqueId()))
 							GunUtil.rapidfireshooters.remove(e.getPlayer().getUniqueId()).cancel();
 						IronsightsHandler.unAim(e.getPlayer());
-						if (QAMain.enableIronSightsON_RIGHT_CLICK || !e.getPlayer().isSneaking()) {
+						if (QAMain.getConfiguration().weapons.enableIronSightsON_RIGHT_CLICK || !e.getPlayer().isSneaking()) {
 							QAMain.toggleNightvision(e.getPlayer(), g, false);
 						}
-						if (QAMain.enableIronSightsON_RIGHT_CLICK)
+						if (QAMain.getConfiguration().weapons.enableIronSightsON_RIGHT_CLICK)
 							return;
 					}
 				} catch (Error e2) {
@@ -993,7 +995,7 @@ public class QAListener implements Listener {
 			QAMain.lastWeaponSwitch.put(e.getPlayer().getUniqueId(), System.currentTimeMillis());
 		}
 
-		if(QAMain.showAmmoInXPBar) {
+		if(QAMain.getConfiguration().ui.showAmmoInXPBar) {
 			CustomBaseObject customBase = QualityArmory.getCustomItem(newslot);
 			if (customBase instanceof Gun) {
 				GunUtil.updateXPBar(e.getPlayer(), (Gun) customBase,Gun.getAmount(newslot));
@@ -1033,12 +1035,12 @@ public class QAListener implements Listener {
 					QAMain.prefix + " QualityArmory does not support versions older than 1.9, and may crash clients");
 			Bukkit.broadcastMessage(
 					"Since there is no reason to stay on outdated updates, (1.7 and 1.8 has quite a number of exploits) update your server.");
-			if (QAMain.shouldSend) {
-				QAMain.shouldSend = false;
+			if (QAMain.getConfiguration().resourcepack.shouldSend) {
+				QAMain.getConfiguration().resourcepack.shouldSend = false;
 				Bukkit.broadcastMessage(QAMain.prefix + ChatColor.RED + " Disabling resourcepack.");
 			}
 		}
-		if (QAMain.addGlowEffects) {
+		if (QAMain.getConfiguration().features.addGlowEffects) {
 			new BukkitRunnable() {
 
 				@Override
@@ -1051,12 +1053,12 @@ public class QAListener implements Listener {
 			}.runTaskLater(QAMain.getInstance(), 20 * 15);
 		}
 
-		if (QAMain.shouldSend && QAMain.sendOnJoin) {
-			QualityArmory.sendResourcepack(e.getPlayer(), QAMain.sendTitleOnJoin);
+		if (QAMain.getConfiguration().resourcepack.shouldSend && QAMain.getConfiguration().resourcepack.sendOnJoin) {
+			QualityArmory.sendResourcepack(e.getPlayer(), QAMain.getConfiguration().resourcepack.sendTitleOnJoin);
 		} else {
 			for (ItemStack i : e.getPlayer().getInventory().getContents()) {
 				if (i != null && (QualityArmory.isGun(i) || QualityArmory.isAmmo(i) || QualityArmory.isMisc(i))) {
-					if (QAMain.shouldSend && !QAMain.resourcepackReq.contains(e.getPlayer().getUniqueId())) {
+					if (QAMain.getConfiguration().resourcepack.shouldSend && !QAMain.resourcepackReq.contains(e.getPlayer().getUniqueId())) {
 						new BukkitRunnable() {
 
 							@Override
@@ -1092,13 +1094,13 @@ public class QAListener implements Listener {
 
 		if (QualityArmory.isIronSights(e.getItemDrop().getItemStack())) {
 			e.setCancelled(true);
-			if (!QAMain.enableIronSightsON_RIGHT_CLICK)
+			if (!QAMain.getConfiguration().weapons.enableIronSightsON_RIGHT_CLICK)
 				return;
 		}
 
 		QAMain.checkforDups(e.getPlayer(), e.getItemDrop().getItemStack());
 
-		if (QAMain.enableIronSightsON_RIGHT_CLICK) {
+		if (QAMain.getConfiguration().weapons.enableIronSightsON_RIGHT_CLICK) {
 			if (e.getPlayer().getItemInHand() != null && (QualityArmory.isGun(e.getItemDrop().getItemStack())
 					|| QualityArmory.isIronSights(e.getItemDrop().getItemStack()))) {
 				if (e.getItemDrop().getItemStack().getAmount() == 1) {
@@ -1172,4 +1174,3 @@ public class QAListener implements Listener {
 		QAMain.DEBUG(s);
 	}
 }
-

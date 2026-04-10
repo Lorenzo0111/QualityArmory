@@ -36,9 +36,9 @@ public class TreeFellerHandler implements Listener {
 		if(QualityArmory.isCustomItem(e.getPlayer().getItemInHand()) && e.getPlayer().getItemOnCursor().getType().name().endsWith ("AXE")
 				&& System.currentTimeMillis()-lastClicked.get(e.getPlayer().getUniqueId())<1000) {
 			lastClicked.put(e.getPlayer().getUniqueId(), System.currentTimeMillis());
-			int durib = QualityArmory.findSafeSpot(e.getPlayer().getItemInHand(), true,QAMain.overrideURL);
+			int durib = QualityArmory.findSafeSpot(e.getPlayer().getItemInHand(), true,QAMain.getConfiguration().resourcepack.overrideDefaultPack);
 			ItemStack temp = e.getPlayer().getItemInHand();
-			temp.setDurability((short) (durib+(QAMain.overrideURL?0:4)));
+			temp.setDurability((short) (durib+(QAMain.getConfiguration().resourcepack.overrideDefaultPack?0:4)));
 			e.getPlayer().setItemInHand(temp);
 		}
 	}

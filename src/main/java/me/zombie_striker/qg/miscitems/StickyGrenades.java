@@ -24,7 +24,7 @@ public class StickyGrenades extends Grenade {
 
 	@Override
 	public boolean onRMB(Player thrower, ItemStack usedItem) {
-		if(QAMain.autoarm)
+		if(QAMain.getConfiguration().features.autoarm)
 			onPull(thrower,usedItem);
 		if (throwItems.containsKey(thrower) && throwItems.get(thrower).getGrenade().equals(this)) {
 			ThrowableHolder holder = throwItems.get(thrower);
@@ -51,7 +51,7 @@ public class StickyGrenades extends Grenade {
 						if (holder.getHolder() instanceof Arrow) {
 							holder.getHolder().remove();
 						}
-						if (QAMain.enableExplosionDamage) {
+						if (QAMain.getConfiguration().features.enableExplosionDamage) {
 							QAThrowableExplodeEvent event = new QAThrowableExplodeEvent(StickyGrenades.this, holder.getHolder().getLocation());
 							Bukkit.getPluginManager().callEvent(event);
 							if (!event.isCancelled()) ExplosionHandler.handleExplosion(holder.getHolder().getLocation(), 3, 1);
@@ -98,7 +98,7 @@ public class StickyGrenades extends Grenade {
 
 	@Override
 	public boolean onPull(Player thrower, ItemStack usedItem) {
-		if(!QAMain.autoarm)
+		if(!QAMain.getConfiguration().features.autoarm)
 		if (throwItems.containsKey(thrower)) {
 			thrower.sendMessage(QAMain.prefix + QAMain.S_GRENADE_PALREADYPULLPIN);
 			thrower.playSound(thrower.getLocation(), Sound.ENTITY_ARROW_SHOOT, 1, 1);

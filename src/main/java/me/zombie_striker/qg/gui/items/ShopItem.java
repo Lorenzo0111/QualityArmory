@@ -52,11 +52,11 @@ public class ShopItem {
                 Player player = (Player) click.getRawEvent().getWhoClicked();
 
                 if (item instanceof Gun) {
-                    if (QAMain.requirePermsToBuy && !player.hasPermission("qualityarmory.shopgun")) {
+                    if (QAMain.getConfiguration().permissions.requirePermsToBuy && !player.hasPermission("qualityarmory.shopgun")) {
                         player.sendMessage(QAMain.prefix + ChatColor.RED + QAMain.S_NOPERM);
                         return true;
                     }
-                    if (QAMain.perWeaponBuyPermission && !player.hasPermission("qualityarmory.shopgun." + item.getName())) {
+                    if (QAMain.getConfiguration().permissions.perWeaponBuyPermission && !player.hasPermission("qualityarmory.shopgun." + item.getName())) {
                         player.sendMessage(QAMain.prefix + ChatColor.RED + QAMain.S_NOPERM);
                         return true;
                     }
