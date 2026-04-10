@@ -1,8 +1,62 @@
+2.1.2
+  - Added sound_equip_volume and sound_meleehit_volume fields
+  - Added permissions for crafting and buying guns
+  - Fixed gun drop with enableUnloadingOnDrop enabled
+  - Added ability to use MedKits on other players
+  - 26.1 support
+
+2.1.1
+  - 1.21.11 support
+  - Made out of ammo sound public
+  - Fixed direct entities hit
+  - Fixed reload on drop (enableReloadingOnDrop)
+  - Added unload on drop (enableUnloadingOnDrop)
+
+2.1.0
+  - 1.21.10 support
+  - Added new fully customizable menu
+  - Fix ammo and usage in automatic fire mode
+
+2.0.24
+  - Fixed death message error
+  - Fixed grenade throw on death
+  - Fixed armor protection
+
+2.0.23
+  - Fixed direct entity damage causing double death
+  - Disabled hotbar ammo count if the reload didn't succeed
+  - Fixed support for versions before 1.17
+
+2.0.22
+  - Fixed ammo purchase with full inventory
+  - Optimized MaterialStorage
+  - Added flag to disable hopper check (preventGunsInHoppers)
+  - Added new smoke grenade effect (useModernParticles)
+  - Fixed entity hit
+  - Fixed IronSights duplication
+  - Added preventHiddenPlayers option
+
+2.0.21
+  - Reimplemented optional gun animation (enable_lore_gun-bullets must be set to true)
+  - 1.21.6 and 1.21.7 support
+  - Added restoreOffHand option
+  - Added an option to allow direct entity click to shoot (allowGunHitEntities)
+  - Fixed ammo duplication
+  - Fixed economy integration
+
+2.0.20.1
+  - Fixed weapon switch delay
+
 2.0.20
   - Added crossbow animation
   - Fixed gun glow
   - Fixed armor protection
   - Fixed menu item duplication
+  - Added hit sound
+  - Added ability to display ammo count in lore
+  - Added KingdomsX support
+  - Added resourcepack invincibility
+  - Added weapon switch delay
 
 2.0.19
   - Fixed resourcepack for 1.21.x

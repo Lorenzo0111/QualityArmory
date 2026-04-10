@@ -1,15 +1,10 @@
 package me.zombie_striker.qg.hooks.protection;
 
 import me.zombie_striker.qg.QAMain;
-import me.zombie_striker.qg.hooks.protection.implementation.GriefPreventionHook;
-import me.zombie_striker.qg.hooks.protection.implementation.ResidenceHook;
-import me.zombie_striker.qg.hooks.protection.implementation.TownyHook;
-import me.zombie_striker.qg.hooks.protection.implementation.WorldGuardHook;
+import me.zombie_striker.qg.hooks.protection.implementation.*;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 
-import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -20,18 +15,18 @@ public class ProtectionHandler {
     private final static Set<ProtectionHook> compatibilities = new HashSet<>();
 
     public static void init() {
-        Map<String,Class<? extends ProtectionHook>> classes = new HashMap<>();
-        classes.put("WorldGuard", WorldGuardHook.class);
-        classes.put("Towny", TownyHook.class);
-        classes.put("Residence", ResidenceHook.class);
-        classes.put("GriefPrevention", GriefPreventionHook.class);
+        Map<String, CompatibilityConstructor> classes = new HashMap<>();
+        classes.put("WorldGuard", WorldGuardHook::new);
+        classes.put("Towny", TownyHook::new);
+        classes.put("Residence", ResidenceHook::new);
+        classes.put("GriefPrevention", GriefPreventionHook::new);
+        classes.put("Kingdoms", KingdomsHook::new);
 
-        for (Map.Entry<String,Class<? extends ProtectionHook>> entry : classes.entrySet()) {
+        for (Map.Entry<String, CompatibilityConstructor> entry : classes.entrySet()) {
             try {
-                Constructor<? extends ProtectionHook> constructor = entry.getValue().getConstructor();
-
-                hook(entry.getKey(), constructor::newInstance);
-            } catch (Throwable ignored) {}
+                hook(entry.getKey(), entry.getValue());
+            } catch (Throwable ignored) {
+            }
         }
     }
 
@@ -56,7 +51,7 @@ public class ProtectionHandler {
     }
 
     @FunctionalInterface
-    private interface CompatibilityConstructor {
+    public interface CompatibilityConstructor {
         ProtectionHook create() throws InvocationTargetException, InstantiationException, IllegalAccessException;
     }
 }

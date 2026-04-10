@@ -1,22 +1,21 @@
 package me.zombie_striker.qg.miscitems;
 
-import java.text.DecimalFormat;
-import java.util.HashMap;
-import java.util.UUID;
-
+import com.cryptomorin.xseries.XPotion;
 import me.zombie_striker.customitemmanager.CustomBaseObject;
 import me.zombie_striker.customitemmanager.CustomItemManager;
+import me.zombie_striker.customitemmanager.MaterialStorage;
+import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.api.QualityArmory;
+import me.zombie_striker.qg.handlers.BulletWoundHandler;
 import me.zombie_striker.qg.handlers.HotbarMessager;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffectType;
 
-import me.zombie_striker.qg.QAMain;
-import me.zombie_striker.customitemmanager.MaterialStorage;
-import me.zombie_striker.qg.handlers.BulletWoundHandler;
-import com.cryptomorin.xseries.XPotion;
+import java.text.DecimalFormat;
+import java.util.HashMap;
+import java.util.UUID;
 
 public class MedKit extends CustomBaseObject {
 
@@ -43,79 +42,102 @@ public class MedKit extends CustomBaseObject {
 	public void set18Supported(boolean b) {
 	}
 
-	@SuppressWarnings("deprecation")
 	@Override
 	public boolean onRMB(Player e, ItemStack usedItem) {
-		Player healer = e.getPlayer();
-		if (!BulletWoundHandler.bloodLevel.containsKey(healer.getUniqueId())) {
+		return useOn(e, e, usedItem);
+	}
 
-			if (healer.getHealth() < healer.getMaxHealth()) {
+	@SuppressWarnings("deprecation")
+	public boolean useOn(Player healer, Player patient, ItemStack usedItem) {
+		if (healer == null || patient == null)
+			return false;
 
-				if (!lastTimeHealed.containsKey(healer.getUniqueId())
-						|| System.currentTimeMillis() - lastTimeHealed.get(healer.getUniqueId()) > 1500) {
-					PercentTimeHealed.put(healer.getUniqueId(), 0.0);
-				}
-				lastTimeHealed.put(healer.getUniqueId(), System.currentTimeMillis());
+		UUID patientId = patient.getUniqueId();
+
+		if (!BulletWoundHandler.bloodLevel.containsKey(patientId)) {
+
+			if (patient.getHealth() < patient.getMaxHealth()) {
+
+				if (!lastTimeHealed.containsKey(patientId)
+						|| System.currentTimeMillis() - lastTimeHealed.get(patientId) > 1500)
+					PercentTimeHealed.put(patientId, 0.0);
+
+				lastTimeHealed.put(patientId, System.currentTimeMillis());
 
 				double percent = (100.0 / 3) / QAMain.S_MEDKIT_HEALDELAY;
-
-				double p2 = PercentTimeHealed.get(healer.getUniqueId());
+				double p2 = PercentTimeHealed.get(patientId);
 
 				if (p2 + percent < 100) {
-					PercentTimeHealed.put(healer.getUniqueId(), p2 + percent);
+					PercentTimeHealed.put(patientId, p2 + percent);
 				} else {
-					healer.playSound(healer.getLocation(), getSoundOnEquip(), 1, 1);
-					healer.setHealth(Math.min(healer.getMaxHealth(), healer.getHealth() + QAMain.S_MEDKIT_HEAL_AMOUNT));
-					PercentTimeHealed.remove(healer.getUniqueId());
-					lastTimeHealed.remove(healer.getUniqueId());
+					patient.playSound(patient.getLocation(), getSoundOnEquip(), getSoundOnEquipVolume(), 1);
+					patient.setHealth(Math.min(patient.getMaxHealth(), patient.getHealth() + QAMain.S_MEDKIT_HEAL_AMOUNT));
+					PercentTimeHealed.remove(patientId);
+					lastTimeHealed.remove(patientId);
 				}
 
 				int totalBars = 25;
 				double percentLoss = (p2 + percent) / 100;
 				int healthBars = Math.min((int) (percentLoss * totalBars), totalBars);
 
-				StringBuilder levelbar = new StringBuilder();
-				levelbar.append(ChatColor.WHITE);
-				levelbar.append(QualityArmory.repeat(":", healthBars));
-				levelbar.append(ChatColor.BLACK);
-				levelbar.append(QualityArmory.repeat(":", totalBars - healthBars));
+				StringBuilder levelBar = new StringBuilder();
+				levelBar.append(ChatColor.WHITE);
+				levelBar.append(QualityArmory.repeat(":", healthBars));
+				levelBar.append(ChatColor.BLACK);
+				levelBar.append(QualityArmory.repeat(":", totalBars - healthBars));
+
+				String progressText = new DecimalFormat("##0.#").format((p2 + percent)) + " percent!";
+				if (!healer.equals(patient)) {
+					progressText = patient.getName() + ": " + progressText;
+				}
+
+				// Show progress to both healer and patient
 				try {
-					HotbarMessager.sendHotBarMessage(healer, ChatColor.RED + "[" + levelbar.toString() + ChatColor.RED
-							+ "] " + new DecimalFormat("##0.#").format((p2 + percent)) + " percent!");
-				} catch (Exception e2) {
+					String bar = ChatColor.RED + "[" + levelBar + ChatColor.RED + "] " + progressText;
+					HotbarMessager.sendHotBarMessage(healer, bar);
+					if (!healer.equals(patient)) HotbarMessager.sendHotBarMessage(patient, bar);
+				} catch (Exception ignored) {
 				}
 
 			} else {
 				try {
-					HotbarMessager.sendHotBarMessage(healer, QAMain.S_FULLYHEALED);
-				} catch (Error | Exception e5) {
+					String message;
+					if (healer.equals(patient)) {
+						message = QAMain.S_FULLYHEALED;
+					} else {
+						message = QAMain.S_FULLYHEALED_OTHER.replace("%player%", patient.getName());
+					}
+
+					HotbarMessager.sendHotBarMessage(healer, message);
+				} catch (Error | Exception ignored) {
 				}
 			}
 			return true;
 		}
-		double bloodlevel = BulletWoundHandler.bloodLevel.get(healer.getUniqueId());
-		double percentBlood = Math.max(0, bloodlevel / QAMain.bulletWound_initialbloodamount);
+
+		double bloodLevel = BulletWoundHandler.bloodLevel.get(patientId);
+		double percentBlood = Math.max(0, bloodLevel / QAMain.bulletWound_initialbloodamount);
 
 		ChatColor severity = percentBlood > 75 ? ChatColor.WHITE
 				: percentBlood > 50 ? ChatColor.GRAY : percentBlood > 25 ? ChatColor.RED : ChatColor.DARK_RED;
-		if (BulletWoundHandler.bleedoutMultiplier.containsKey(healer.getUniqueId())
-				&& BulletWoundHandler.bleedoutMultiplier.get(healer.getUniqueId()) < 0)
-			BulletWoundHandler.bleedoutMultiplier.put(healer.getUniqueId(),
-					Math.min(0, BulletWoundHandler.bleedoutMultiplier.get(healer.getUniqueId())
+		if (BulletWoundHandler.bleedoutMultiplier.containsKey(patientId)
+				&& BulletWoundHandler.bleedoutMultiplier.get(patientId) < 0)
+			BulletWoundHandler.bleedoutMultiplier.put(patientId,
+					Math.min(0, BulletWoundHandler.bleedoutMultiplier.get(patientId)
 							+ QAMain.bulletWound_MedkitBloodlossHealRate));
 
-		double newRate = BulletWoundHandler.bleedoutMultiplier.containsKey(healer.getUniqueId())
-				? BulletWoundHandler.bleedoutMultiplier.get(healer.getUniqueId())
+		double newRate = BulletWoundHandler.bleedoutMultiplier.containsKey(patientId)
+				? BulletWoundHandler.bleedoutMultiplier.get(patientId)
 				: 0;
 
 		if (newRate >= 0) {
-			BulletWoundHandler.bleedoutMultiplier.remove(healer.getUniqueId());
-			BulletWoundHandler.bloodLevel.remove(healer.getUniqueId());
+			BulletWoundHandler.bleedoutMultiplier.remove(patientId);
+			BulletWoundHandler.bloodLevel.remove(patientId);
 
 			try {
-				healer.removePotionEffect(XPotion.NAUSEA.getPotionEffectType());
-				healer.removePotionEffect(PotionEffectType.BLINDNESS);
-			} catch (Error | Exception e4) {
+				patient.removePotionEffect(XPotion.NAUSEA.getPotionEffectType());
+				patient.removePotionEffect(PotionEffectType.BLINDNESS);
+			} catch (Error | Exception ignored) {
 			}
 
 			return true;
@@ -125,19 +147,27 @@ public class MedKit extends CustomBaseObject {
 			int totalBars = 25;
 			int healthBars = (int) (percentBlood * totalBars);
 
-			StringBuilder levelbar = new StringBuilder();
-			levelbar.append(severity);
-			levelbar.append(QualityArmory.repeat(":", healthBars));
-			levelbar.append(ChatColor.BLACK);
-			levelbar.append(QualityArmory.repeat(":", totalBars - healthBars));
+			String levelBar = severity +
+					QualityArmory.repeat(":", healthBars) +
+					ChatColor.BLACK +
+					QualityArmory.repeat(":", totalBars - healthBars);
 
-			HotbarMessager.sendHotBarMessage(healer,
-					ChatColor.RED + QAMain.S_MEDKIT_HEALING + "[" + levelbar.toString() + ChatColor.RED + "] "
-							+ QAMain.S_MEDKIT_BLEEDING + " " + (newRate < 0 ? ChatColor.DARK_RED : ChatColor.GRAY)
-							+ new DecimalFormat("##0.##").format(newRate) + ChatColor.GRAY + "+"
-							+ QAMain.bulletWound_BloodIncreasePerSecond);
-		} catch (Error | Exception e5) {
+			String bleedingLabel = QAMain.S_MEDKIT_BLEEDING;
+			if (!healer.equals(patient))
+				bleedingLabel = patient.getName() + " - " + bleedingLabel;
+
+			String bar = ChatColor.RED + QAMain.S_MEDKIT_HEALING + "[" + levelBar + ChatColor.RED + "] "
+					+ bleedingLabel + " " + (newRate < 0 ? ChatColor.DARK_RED : ChatColor.GRAY)
+					+ new DecimalFormat("##0.##").format(newRate) + ChatColor.GRAY + "+"
+					+ QAMain.bulletWound_BloodIncreasePerSecond;
+
+			HotbarMessager.sendHotBarMessage(healer, bar);
+			if (!healer.equals(patient)) {
+				HotbarMessager.sendHotBarMessage(patient, bar);
+			}
+		} catch (Error | Exception ignored) {
 		}
+
 		return true;
 	}
 
@@ -160,7 +190,7 @@ public class MedKit extends CustomBaseObject {
 	@Override
 	public boolean onSwapTo(Player shooter, ItemStack usedItem) {
 		if (getSoundOnEquip() != null)
-			shooter.getWorld().playSound(shooter.getLocation(), getSoundOnEquip(), 1, 1);
+			shooter.getWorld().playSound(shooter.getLocation(), getSoundOnEquip(), getSoundOnEquipVolume(), 1);
 		return false;
 	}
 

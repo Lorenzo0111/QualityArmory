@@ -7,6 +7,7 @@ import com.comphenix.protocol.events.ListenerPriority;
 import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
+import com.comphenix.protocol.reflect.StructureModifier;
 import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.comphenix.protocol.wrappers.Pair;
 import com.cryptomorin.xseries.reflection.XReflection;
@@ -254,18 +255,46 @@ public class ProtocolLibHandler {
 
     public static void sendYawChange(Player player, Vector newDirection) {
         try {
-            if (protocolManager == null)
-                protocolManager = ProtocolLibrary.getProtocolManager();
-            final PacketContainer yawpack = protocolManager.createPacket(PacketType.Play.Server.LOOK_AT, false);
-            yawpack.getIntegers().write(0, 1);
-            yawpack.getDoubles().write(0, player.getEyeLocation().getX() + newDirection.getX());
-            yawpack.getDoubles().write(1, player.getEyeLocation().getY() + newDirection.getY());
-            yawpack.getDoubles().write(2, player.getEyeLocation().getZ() + newDirection.getZ());
-            yawpack.getBooleans().write(0, false);
-            protocolManager.sendServerPacket(player, yawpack);
+            if (protocolManager == null) protocolManager = ProtocolLibrary.getProtocolManager();
+
+            final PacketContainer packet = protocolManager.createPacket(PacketType.Play.Server.LOOK_AT, false);
+            if (!setLookAtAnchor(packet)) {
+                QAMain.DEBUG("Could not set anchor for LOOK_AT packet");
+                return;
+            }
+
+            packet.getDoubles().write(0, player.getEyeLocation().getX() + newDirection.getX());
+            packet.getDoubles().write(1, player.getEyeLocation().getY() + newDirection.getY());
+            packet.getDoubles().write(2, player.getEyeLocation().getZ() + newDirection.getZ());
+            packet.getBooleans().write(0, false);
+            protocolManager.sendServerPacket(player, packet);
         } catch (Exception e) {
-            QAMain.DEBUG("An error occurred while sending a yaw change packet to " + player.getName());
-            QAMain.DEBUG(e.getMessage());
+            QAMain.DEBUG("An error occurred while sending a yaw change packet to " + player.getName() + ": " + e.getMessage());
+        }
+    }
+
+    private static boolean setLookAtAnchor(PacketContainer packet) {
+        try {
+            StructureModifier<Object> modifier = packet.getModifier();
+            for (int i = 0; i < modifier.size(); i++) {
+                Class<?> fieldType = modifier.getField(i).getType();
+                if (fieldType.isEnum() && fieldType.getSimpleName().toLowerCase().contains("anchor")) {
+                    Object[] enumConstants = fieldType.getEnumConstants();
+                    if (enumConstants != null && enumConstants.length > 1) {
+                        modifier.write(i, enumConstants[1]);
+                        return true;
+                    }
+                }
+            }
+        } catch (Exception ignored) {
+        }
+
+        try {
+            packet.getIntegers().write(0, 1);
+            return true;
+        } catch (Exception ignored) {
+            QAMain.DEBUG("Could not set anchor for LOOK_AT packet");
+            return false;
         }
     }
 }

@@ -23,7 +23,9 @@ public abstract class CustomBaseObject {
     private boolean customAnimations;
 
     private String soundOnEquip;
+    private float soundOnEquipVolume = 1.0f;
     private String soundOnHit;
+    private float soundOnHitVolume = 1.0f;
 
     private double price;
     private boolean enableShop = true;
@@ -136,12 +138,48 @@ public abstract class CustomBaseObject {
     }
 
     /**
+     * Gets the volume of the sound played when equipping this item.
+     *
+     * @return The volume of the equip sound
+     */
+    public float getSoundOnEquipVolume() {
+        return soundOnEquipVolume;
+    }
+
+    /**
      * Gets the sound played when hitting with this item.
      *
      * @return The hit sound string
      */
     public String getSoundOnHit() {
         return soundOnHit;
+    }
+
+    /**
+     * Gets the volume of the sound played when hitting with this item.
+     *
+     * @return The volume of the hit sound
+     */
+    public float getSoundOnHitVolume() {
+        return soundOnHitVolume;
+    }
+
+    /**
+     * Sets the sound played when equipping this item.
+     *
+     * @param sound The sound string to play
+     */
+    public void setSoundOnEquip(String sound) {
+        this.soundOnEquip = sound;
+    }
+
+    /**
+     * Sets the volume of the sound played when equipping this item.
+     *
+     * @param volume The volume of the sound
+     */
+    public void setSoundOnEquipVolume(float volume) {
+        this.soundOnEquipVolume = volume;
     }
 
     /**
@@ -154,12 +192,12 @@ public abstract class CustomBaseObject {
     }
 
     /**
-     * Sets the sound played when equipping this item.
+     * Sets the volume of the sound played when hitting with this item.
      *
-     * @param sound The sound string to play
+     * @param volume The volume of the sound
      */
-    public void setSoundOnEquip(String sound) {
-        this.soundOnEquip = sound;
+    public void setSoundOnHitVolume(float volume) {
+        this.soundOnHitVolume = volume;
     }
 
     /**

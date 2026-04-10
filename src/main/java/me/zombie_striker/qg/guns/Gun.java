@@ -2,7 +2,10 @@ package me.zombie_striker.qg.guns;
 
 import com.cryptomorin.xseries.XPotion;
 import de.tr7zw.changeme.nbtapi.NBT;
-import me.zombie_striker.customitemmanager.*;
+import me.zombie_striker.customitemmanager.CustomBaseObject;
+import me.zombie_striker.customitemmanager.CustomItemManager;
+import me.zombie_striker.customitemmanager.MaterialStorage;
+import me.zombie_striker.customitemmanager.OLD_ItemFact;
 import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.ammo.Ammo;
 import me.zombie_striker.qg.api.QAWeaponPrepareShootEvent;
@@ -174,6 +177,10 @@ public class Gun extends CustomBaseObject implements Comparable<Gun> {
             nbt.setInteger("ammo", amount);
         });
 
+        Gun.updateAmmoLore(g, current, amount);
+    }
+
+    public static void updateAmmoLore(Gun g, ItemStack current, int amount) {
         if (QAMain.SHOW_BULLETS_LORE && g != null) {
             ItemMeta meta = current.getItemMeta();
             if (meta == null || !meta.hasLore()) return;
@@ -790,7 +797,7 @@ public class Gun extends CustomBaseObject implements Comparable<Gun> {
     @Override
     public boolean onSwapTo(Player shooter, ItemStack usedItem) {
         if (getSoundOnEquip() != null)
-            shooter.getWorld().playSound(shooter.getLocation(), getSoundOnEquip(), 1, 1);
+            shooter.getWorld().playSound(shooter.getLocation(), getSoundOnEquip(), getSoundOnEquipVolume(), 1);
         if (getSlownessPower() > 0) {
             if (shooter.hasPotionEffect(XPotion.SLOWNESS.getPotionEffectType()))
                 if (shooter.getPotionEffect(XPotion.SLOWNESS.getPotionEffectType()).getAmplifier() != getSlownessPower())
@@ -908,12 +915,15 @@ public class Gun extends CustomBaseObject implements Comparable<Gun> {
                     if (GunUtil.rapidfireshooters.containsKey(player.getUniqueId()))
                         GunUtil.rapidfireshooters.remove(player.getUniqueId()).cancel();
 
-                    player.playSound(player.getLocation(), WeaponSounds.OUT_OF_AMMO_CLICK.getSoundName(), 1f, 1f);
+                    try {
+                        player.getWorld().playSound(player.getLocation(), WeaponSounds.OUT_OF_AMMO_CLICK.getSoundName(), 1f, 1f);
+                    } catch (Exception | Error ignored) {
+                        player.playSound(player.getLocation(), WeaponSounds.OUT_OF_AMMO_CLICK.getSoundName(), 1f, 1f);
+                    }
 
                     if (QAMain.enableReloadWhenOutOfAmmo) {
                         if (offhand) {
-                            player.getPlayer().setItemInHand(player.getPlayer().getInventory().getItemInOffHand());
-                            player.getPlayer().getInventory().setItemInOffHand(null);
+                            IronsightsHandler.unAim(player);
                             usedItem = player.getPlayer().getItemInHand();
                             offhand = false;
                         }

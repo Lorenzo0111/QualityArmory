@@ -72,8 +72,10 @@ public class BurstFireCharger implements ChargingHandler {
                 if (slot == -1) {
                     try {
                         if (QualityArmory.isIronSights(player.getItemInHand())) {
-                            if (QualityArmory.isGun(player.getInventory().getItemInOffHand()))
+                            if (QualityArmory.isGun(player.getInventory().getItemInOffHand())) {
                                 player.getInventory().setItemInOffHand(stack);
+                                Gun.updateAmmo(g, player.getItemInHand(), amount);
+                            }
                         }
                     } catch (Error ignored) {
                     }

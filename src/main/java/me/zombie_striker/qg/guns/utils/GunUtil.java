@@ -130,6 +130,14 @@ public class GunUtil {
 
 						Location bulletLocationTest = start.clone();
 						// If the entity is close to the line of fire.
+
+						try {
+							if (QAMain.preventHiddenPlayers && !p.canSee(e)) {
+								QAMain.DEBUG("Prevented shooting a hidden player: " + e.getName());
+								continue;
+							}
+						} catch (Error | Exception ignored) {}
+
 						if (e instanceof Player) {
 							Player player = (Player) e;
 							if (player.getGameMode() == GameMode.SPECTATOR) {
@@ -196,15 +204,27 @@ public class GunUtil {
 								p.playSound(p.getLocation(), Sound.valueOf("LAVA_POP"), 1, 1);
 							}
 						}
+					} else if (QAMain.enableHitSound) {
+						try {
+							p.playSound(p.getLocation(), QAMain.hit_sound, 2, 1);
+
+							if (!QAMain.isVersionHigherThan(1, 9))
+								try {
+									p.playSound(p.getLocation(), Sound.valueOf("LAVA_POP"), 6, 1);
+								} catch (Error | Exception ignored) {}
+
+						} catch (Error | Exception ignored) {
+							p.playSound(p.getLocation(), Sound.valueOf("LAVA_POP"), 1, 1);
+						}
 					}
 
 					boolean negateHeadshot = false;
 					boolean bulletProtection = false;
 
 					if (hitTarget instanceof Player) {
-						bulletProtection = BulletProtectionUtil.stoppedBullet(p, bulletHitLoc, normalizedDirection);
+						bulletProtection = BulletProtectionUtil.stoppedBullet((Player) hitTarget, bulletHitLoc, normalizedDirection);
 						if (headshot) {
-							negateHeadshot = BulletProtectionUtil.negatesHeadshot(p);
+							negateHeadshot = BulletProtectionUtil.negatesHeadshot((Player) hitTarget);
 						}
 					}
 
@@ -594,7 +614,9 @@ public class GunUtil {
 					} else {
 						slot = player.getInventory().getHeldItemSlot();
 					}
-					Gun.updateAmmo(g, player.getItemInHand(), amount);
+                    if (QualityArmory.isIronSights(player.getItemInHand()))
+                        Gun.updateAmmo(g, player.getItemInHand(), amount);
+                    else Gun.updateAmmo(g, temp, amount);
 					if(QAMain.showAmmoInXPBar){
 						updateXPBar(player,g,amount);
 					}
@@ -604,6 +626,13 @@ public class GunUtil {
 							if (QualityArmory.isIronSights(player.getItemInHand())) {
 								player.getInventory().setItemInOffHand(temp);
 								QAMain.DEBUG("Sett Offhand because ironsights in main hand");
+
+								try {
+									// Fix to re-implement the "up and down" animation
+									if (QualityArmory.isIronSights(player.getItemInHand()) && QAMain.SHOW_BULLETS_LORE) {
+										Gun.updateAmmoLore(g, player.getInventory().getItemInOffHand(), amount);
+									}
+								} catch (Exception | Error ignored) {}
 							} else {
 								player.getInventory().setItemInHand(temp);
 								QAMain.DEBUG("Set mainhand because ironsights not in main hand");
@@ -657,6 +686,13 @@ public class GunUtil {
 		}
 		Gun.updateAmmo(g, player, amount);
 		QAMain.DEBUG("New ammo: " + Gun.getAmount(player));
+
+		try {
+			// Fix to re-implement the "up and down" animation
+			if (QualityArmory.isIronSights(player.getItemInHand()) && QAMain.SHOW_BULLETS_LORE) {
+				Gun.updateAmmoLore(g, player.getInventory().getItemInOffHand(), amount);
+			}
+		} catch (Exception | Error ignored) {}
 	}
 
 	public static void updateXPBar(Player player, Gun g, int amount) {
@@ -843,6 +879,10 @@ public class GunUtil {
 	}
 
 	public static boolean isDelay(Gun g, Player player) {
+        if (QAMain.lastWeaponSwitch.containsKey(player.getUniqueId()) &&
+                System.currentTimeMillis() - QAMain.lastWeaponSwitch.get(player.getUniqueId()) < QAMain.weaponSwitchDelay * 1000)
+            return true;
+
 		int showdelay = ((int) (g.getDelayBetweenShotsInSeconds() * 1000));
 
 		 return (g.getLastShotForGun().containsKey(player.getUniqueId())

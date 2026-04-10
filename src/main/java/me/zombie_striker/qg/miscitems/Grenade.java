@@ -1,12 +1,13 @@
 package me.zombie_striker.qg.miscitems;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.cryptomorin.xseries.particles.XParticle;
 import me.zombie_striker.customitemmanager.CustomBaseObject;
 import me.zombie_striker.customitemmanager.CustomItemManager;
+import me.zombie_striker.customitemmanager.MaterialStorage;
+import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.api.QAThrowableExplodeEvent;
+import me.zombie_striker.qg.guns.utils.WeaponSounds;
+import me.zombie_striker.qg.handlers.ExplosionHandler;
 import me.zombie_striker.qg.hooks.protection.ProtectionHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.Effect;
@@ -18,11 +19,11 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.util.Vector;
+import org.jetbrains.annotations.Nullable;
 
-import me.zombie_striker.qg.QAMain;
-import me.zombie_striker.customitemmanager.MaterialStorage;
-import me.zombie_striker.qg.guns.utils.WeaponSounds;
-import me.zombie_striker.qg.handlers.ExplosionHandler;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Grenade extends CustomBaseObject implements ThrowableItems {
 	private static final List<Entity> GRENADES = new ArrayList<>();
@@ -51,44 +52,49 @@ public class Grenade extends CustomBaseObject implements ThrowableItems {
 		return 1;
 	}
 
-	@SuppressWarnings("deprecation")
 	@Override
 	public boolean onRMB(Player thrower, ItemStack usedItem) {
-		if(QAMain.autoarm)
-		onPull(thrower,usedItem);
+		if(QAMain.autoarm) onPull(thrower,usedItem);
 		if (throwItems.containsKey(thrower) && throwItems.get(thrower).getGrenade().equals(this)) {
-			ThrowableHolder holder = throwItems.get(thrower);
-			ItemStack grenadeStack = thrower.getItemInHand();
-			ItemStack temp = grenadeStack.clone();
-			temp.setAmount(1);
-			if (thrower.getGameMode() != GameMode.CREATIVE) {
-				if (grenadeStack.getAmount() > 1) {
-					grenadeStack.setAmount(grenadeStack.getAmount() - 1);
-				} else {
-					grenadeStack = null;
-				}
-				thrower.setItemInHand(grenadeStack);
-			}
-			Item grenade = holder.getHolder().getWorld().dropItem(holder.getHolder().getLocation().add(0, 1.5, 0),
-					temp);
-			grenade.setPickupDelay(Integer.MAX_VALUE);
-			grenade.setVelocity(thrower.getLocation().getDirection().normalize().multiply(getThrowSpeed()));
-			holder.setHolder(grenade);
-			thrower.getWorld().playSound(thrower.getLocation(), Sound.ENTITY_ARROW_SHOOT, 1, 1.5f);
-
-			if (!ProtectionHandler.canExplode(grenade.getLocation())) {
-				return false;
-			}
-
-			throwItems.put(grenade, holder);
-			GRENADES.add(grenade);
-			throwItems.remove(thrower);
-			QAMain.DEBUG("Throw grenade");
+			return this.throwGrenade(thrower, thrower.getLocation().getDirection().normalize().multiply(getThrowSpeed()));
 		} else {
 			thrower.sendMessage(QAMain.prefix + QAMain.S_GRENADE_PULLPIN);
 		}
 		return true;
 	}
+
+    @SuppressWarnings("deprecation")
+    public boolean throwGrenade(Player thrower, @Nullable Vector velocity) {
+        ThrowableHolder holder = throwItems.get(thrower);
+        ItemStack grenadeStack = thrower.getItemInHand();
+        ItemStack temp = grenadeStack.clone();
+        temp.setAmount(1);
+        if (thrower.getGameMode() != GameMode.CREATIVE) {
+            if (grenadeStack.getAmount() > 1) {
+                grenadeStack.setAmount(grenadeStack.getAmount() - 1);
+            } else {
+                grenadeStack = null;
+            }
+            thrower.setItemInHand(grenadeStack);
+        }
+        Item grenade = holder.getHolder().getWorld().dropItem(holder.getHolder().getLocation().add(0, 1.5, 0),
+                temp);
+        grenade.setPickupDelay(Integer.MAX_VALUE);
+        if (velocity != null)
+            grenade.setVelocity(velocity);
+        holder.setHolder(grenade);
+        thrower.getWorld().playSound(thrower.getLocation(), Sound.ENTITY_ARROW_SHOOT, 1, 1.5f);
+
+        if (!ProtectionHandler.canExplode(grenade.getLocation())) {
+            return false;
+        }
+
+        throwItems.put(grenade, holder);
+        GRENADES.add(grenade);
+        throwItems.remove(thrower);
+        QAMain.DEBUG("Throw grenade");
+        return true;
+    }
 
 	@Override
 	public boolean onShift(Player shooter, ItemStack usedItem, boolean toggle) {
@@ -203,7 +209,7 @@ public class Grenade extends CustomBaseObject implements ThrowableItems {
 	@Override
 	public boolean onSwapTo(Player shooter, ItemStack usedItem) {
 		if (getSoundOnEquip() != null)
-			shooter.getWorld().playSound(shooter.getLocation(), getSoundOnEquip(), 1, 1);
+			shooter.getWorld().playSound(shooter.getLocation(), getSoundOnEquip(), getSoundOnEquipVolume(), 1);
 		return false;
 	}
 
