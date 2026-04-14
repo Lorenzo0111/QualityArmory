@@ -123,7 +123,7 @@ public class QualityArmory {
 						try {
 							try {
 								QAMain.DEBUG("Sending resourcepack : " + (QAMain.getConfiguration().resourcepack.autoDetectVersion) + " || "
-										+ QAMain.getConfiguration().versionOverride.MANUALLYSELECT18 + " || " + QAMain.isVersionHigherThan(1, 9) + " || ");
+										+ QAMain.getConfiguration().general.versionOverride.equalsIgnoreCase("1.8") + " || " + QAMain.isVersionHigherThan(1, 9) + " || ");
 								try {
 									if (QAMain.hasViaVersion) {
 										QAMain.DEBUG(
@@ -135,7 +135,7 @@ public class QualityArmory {
 								}
 
 								if (QAMain.isVersionHigherThan(1, 19))
-									player.setResourcePack(CustomItemManager.getResourcepack(player), null, QAMain.getConfiguration().resourcepack.kickIfDeniedRequest);
+									player.setResourcePack(CustomItemManager.getResourcepack(player), null, QAMain.getConfiguration().resourcepack.kickIfDenied);
                                 else player.setResourcePack(CustomItemManager.getResourcepack(player));
 
 							} catch (Error | Exception e4) {

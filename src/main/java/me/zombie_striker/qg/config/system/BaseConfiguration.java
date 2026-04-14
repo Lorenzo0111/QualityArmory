@@ -11,12 +11,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.IdentityHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * This class handles the configuration file loading, saving, and migration.
@@ -92,9 +87,13 @@ public abstract class BaseConfiguration {
             String path = binding.config.value();
             Object value;
 
-            if (List.class.isAssignableFrom(binding.field.getType()))
+            if (List.class.isAssignableFrom(binding.field.getType())) {
+                if (!this.config.contains(path))
+                    continue;
                 value = this.getValueList(path, this.resolveListElementType(binding.field));
-            else value = this.getValue(path, binding.field.getType());
+            } else {
+                value = this.getValue(path, binding.field.getType());
+            }
 
             if (value == null) continue;
 
@@ -198,26 +197,30 @@ public abstract class BaseConfiguration {
         if (raw == null) return null;
         if (type == null) return null;
 
-        if (type.isPrimitive()) {
-            if (type.equals(boolean.class)) return (T) Boolean.valueOf(Boolean.parseBoolean(String.valueOf(raw)));
-            if (type.equals(int.class)) return (T) Integer.valueOf(Integer.parseInt(String.valueOf(raw)));
-            if (type.equals(double.class)) return (T) Double.valueOf(Double.parseDouble(String.valueOf(raw)));
-            if (type.equals(long.class)) return (T) Long.valueOf(Long.parseLong(String.valueOf(raw)));
-            return null;
-        }
-
-        if (type.isInstance(raw)) return (T) raw;
-        if (type.equals(String.class)) return (T) String.valueOf(raw);
-        if (type.equals(Boolean.class)) return (T) Boolean.valueOf(Boolean.parseBoolean(String.valueOf(raw)));
-        if (type.equals(Integer.class)) return (T) Integer.valueOf(Integer.parseInt(String.valueOf(raw)));
-        if (type.equals(Double.class)) return (T) Double.valueOf(Double.parseDouble(String.valueOf(raw)));
-        if (type.equals(Long.class)) return (T) Long.valueOf(Long.parseLong(String.valueOf(raw)));
-        if (Map.class.isAssignableFrom(type) && raw instanceof Map) return (T) raw;
-
-        for (ConfigSerializer<?> serializer : SERIALIZERS) {
-            if (serializer.getType().equals(type)) {
-                return (T) serializer.deserialize(String.valueOf(raw));
+        try {
+            if (type.isPrimitive()) {
+                if (type.equals(boolean.class)) return (T) Boolean.valueOf(Boolean.parseBoolean(String.valueOf(raw)));
+                if (type.equals(int.class)) return (T) Integer.valueOf(Integer.parseInt(String.valueOf(raw)));
+                if (type.equals(double.class)) return (T) Double.valueOf(Double.parseDouble(String.valueOf(raw)));
+                if (type.equals(long.class)) return (T) Long.valueOf(Long.parseLong(String.valueOf(raw)));
+                return null;
             }
+
+            if (type.isInstance(raw)) return (T) raw;
+            if (type.equals(String.class)) return (T) String.valueOf(raw);
+            if (type.equals(Boolean.class)) return (T) Boolean.valueOf(Boolean.parseBoolean(String.valueOf(raw)));
+            if (type.equals(Integer.class)) return (T) Integer.valueOf(Integer.parseInt(String.valueOf(raw)));
+            if (type.equals(Double.class)) return (T) Double.valueOf(Double.parseDouble(String.valueOf(raw)));
+            if (type.equals(Long.class)) return (T) Long.valueOf(Long.parseLong(String.valueOf(raw)));
+            if (Map.class.isAssignableFrom(type) && raw instanceof Map) return (T) raw;
+
+            for (ConfigSerializer<?> serializer : SERIALIZERS) {
+                if (serializer.getType().equals(type)) {
+                    return (T) serializer.deserialize(String.valueOf(raw));
+                }
+            }
+        } catch (RuntimeException e) {
+            plugin.getLogger().warning("Config value could not be converted to " + type.getName() + ": " + raw + " — " + e.getMessage());
         }
 
         return null;
@@ -293,7 +296,8 @@ public abstract class BaseConfiguration {
             Object created = constructor.newInstance();
             field.set(owner, created);
             return created;
-        } catch (Exception ignored) {
+        } catch (Exception e) {
+            plugin.handleException(e);
             return null;
         }
     }

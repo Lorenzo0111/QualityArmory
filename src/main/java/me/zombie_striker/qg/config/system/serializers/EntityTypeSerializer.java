@@ -11,7 +11,14 @@ public class EntityTypeSerializer implements ConfigSerializer<EntityType> {
 
     @Override
     public EntityType deserialize(String from) {
-        return EntityType.valueOf(from);
+        if (from == null || from.trim().isEmpty())
+            return EntityType.UNKNOWN;
+
+        try {
+            return EntityType.valueOf(from.trim());
+        } catch (IllegalArgumentException e) {
+            return EntityType.UNKNOWN;
+        }
     }
 
     @Override

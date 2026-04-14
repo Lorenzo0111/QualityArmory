@@ -517,7 +517,8 @@ public class GunYMLLoader {
 						FileConfiguration f2 = YamlConfiguration.loadConfiguration(f);
 						if ((!f2.contains("invalid")) || !f2.getBoolean("invalid")) {
 							final String name = f2.getString("name");
-							main.getLogger().info("-Loading Attachment: " + name);
+							if (QAMain.getConfiguration().features.verboseLoadingLogging)
+								main.getLogger().info("-Loading Attachment: " + name);
 							final String displayname = f2.contains("displayname")
 									? LocalUtils.colorize( f2.getString("displayname"))
 									: (ChatColor.GOLD + name);

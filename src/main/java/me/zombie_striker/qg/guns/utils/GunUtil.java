@@ -36,6 +36,7 @@ import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class GunUtil {
+	private static final double MIN_POSITIVE_STEP = 0.001;
 
 	public static HashMap<UUID, BukkitTask> rapidfireshooters = new HashMap<>();
 	public static HashMap<UUID, Double> highRecoilCounter = new HashMap<>();
@@ -98,7 +99,8 @@ public class GunUtil {
 			normalizedDirection.add(new Vector((Math.random() * 2 * sway) - sway, (Math.random() * 2 * sway) - sway,
 					(Math.random() * 2 * sway) - sway));
 			normalizedDirection = normalizedDirection.normalize();
-			Vector step = normalizedDirection.clone().multiply(QAMain.getConfiguration().weapons.bulletStep);
+			double bulletStep = Math.max(QAMain.getConfiguration().weapons.bulletStep, MIN_POSITIVE_STEP);
+			Vector step = normalizedDirection.clone().multiply(bulletStep);
 
 			Entity hitTarget = null;
 			AbstractBoundingBox hitBox = null;
@@ -341,8 +343,9 @@ public class GunUtil {
 				if (g.useMuzzleSmoke())
 					ParticleHandlers.spawnMuzzleSmoke(p, start.clone().add(step.clone().multiply(7)));
 				double distSqrt = maxEntityDistance;
-				Vector stepSmoke = normalizedDirection.clone().multiply(QAMain.getConfiguration().features.smokeSpacing);
-				for (double dist = 0; dist < distSqrt; dist += QAMain.getConfiguration().features.smokeSpacing) {
+				double smokeSpacing = Math.max(QAMain.getConfiguration().features.smokeSpacing, MIN_POSITIVE_STEP);
+				Vector stepSmoke = normalizedDirection.clone().multiply(smokeSpacing);
+				for (double dist = 0; dist < distSqrt; dist += smokeSpacing) {
 					start.add(stepSmoke);
 
 					if (start.getBlock().getType() != Material.AIR) {

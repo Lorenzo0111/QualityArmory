@@ -6,6 +6,7 @@ import me.zombie_striker.qg.config.system.Config;
 import org.bukkit.entity.EntityType;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -23,7 +24,6 @@ public class MainConfig extends BaseConfiguration {
     public Menu menu = new Menu();
     public Limiter limiter = new Limiter();
     public Items items = new Items();
-    public VersionOverride versionOverride = new VersionOverride();
     public Combat combat = new Combat();
     public World world = new World();
 
@@ -38,6 +38,9 @@ public class MainConfig extends BaseConfiguration {
     public static class General {
         @Config(value = "general.language", oldPath = "language")
         public String language = "en";
+
+        @Config(value = "general.version-override")
+        public String versionOverride = "none";
     }
 
     public static class Compat {
@@ -46,33 +49,33 @@ public class MainConfig extends BaseConfiguration {
     }
 
     public static class Resourcepack {
-        @Config(value = "resourcepack.kick-if-denied", oldPath = "KickPlayerIfDeniedResourcepack")
-        public boolean kickIfDeniedRequest = false;
+        @Config(value = "resourcepack.enabled", oldPath = "useDefaultResourcepack")
+        public boolean enabled = true;
 
-        @Config(value = "resourcepack.use-default", oldPath = "useDefaultResourcepack")
-        public boolean shouldSend = true;
-
-        @Config(value = "resourcepack.send-on-join", oldPath = "sendOnJoin")
+        @Config(value = "resourcepack.send-on-join.enabled", oldPath = "sendOnJoin")
         public boolean sendOnJoin = true;
 
-        @Config(value = "resourcepack.send-title-on-join", oldPath = "sendTitleOnJoin")
+        @Config(value = "resourcepack.send-on-join.title", oldPath = "sendTitleOnJoin")
         public boolean sendTitleOnJoin = false;
 
-        @Config(value = "resourcepack.invincibility", oldPath = "resourcepackInvincibility")
-        public boolean resourcepackInvincibility = false;
-
-        @Config(value = "resourcepack.send-delay-seconds", oldPath = "SecondsTillRPIsSent")
+        @Config(value = "resourcepack.send-on-join.delay", oldPath = "SecondsTillRPIsSent")
         public double secondsTilSend = 0.0;
+
+        @Config(value = "resourcepack.kick-if-denied", oldPath = "KickPlayerIfDeniedResourcepack")
+        public boolean kickIfDenied = false;
+
+        @Config(value = "resourcepack.invincibility", oldPath = "resourcepackInvincibility")
+        public boolean invincibility = false;
 
         @Config(value = "resourcepack.auto-detect-version", oldPath = "Auto-Detect-Resourcepack")
         public boolean autoDetectVersion = true;
 
-        @Config(value = "resourcepack.override-default-pack", oldPath = "DefaultResourcepackOverride")
-        public boolean overrideDefaultPack = false;
+        @Config(value = "resourcepack.override-default", oldPath = "DefaultResourcepackOverride")
+        public boolean overrideDefault = false;
     }
 
     public static class Weapons {
-        @Config(value = "weapons.durability.enabled", oldPath = "EnableWeaponDurability")
+        @Config(value = "weapons.durability", oldPath = "EnableWeaponDurability")
         public boolean enableDurability = false;
         @Config(value = "weapons.detection.bullet-step", oldPath = "BulletDetection.step")
         public double bulletStep = 0.10;
@@ -92,8 +95,6 @@ public class MainConfig extends BaseConfiguration {
         public double swayModifier_Run = 2.0;
         @Config(value = "weapons.sway.walk", oldPath = "generalModifiers.sway.Walk")
         public double swayModifier_Walk = 1.5;
-        @Config(value = "weapons.sway.ironsights", oldPath = "generalModifiers.sway.Ironsights")
-        public double swayModifier_Ironsights = 0.8;
         @Config(value = "weapons.sway.sneak", oldPath = "generalModifiers.sway.Sneak")
         public double swayModifier_Sneak = 0.7;
         @Config(value = "weapons.allow-gun-hit-entities", oldPath = "allowGunHitEntities")
@@ -135,7 +136,7 @@ public class MainConfig extends BaseConfiguration {
         @Config(value = "weapons.headshot.blacklist", oldPath = "Headshot_Blacklist")
         public List<String> headshotBlacklist = Collections.emptyList();
         @Config(value = "weapons.impenetrable-entities", oldPath = "impenetrableEntityTypes")
-        public List<String> impenetrableEntityTypes = Arrays.asList(EntityType.ARROW.name());
+        public List<String> impenetrableEntityTypes = new ArrayList<>(Arrays.asList(EntityType.ARROW.name()));
     }
 
     public static class Interactions {
@@ -179,8 +180,6 @@ public class MainConfig extends BaseConfiguration {
         public boolean verboseLoadingLogging = false;
         @Config(value = "features.enable-explosion-damage", oldPath = "enableExplosionDamage")
         public boolean enableExplosionDamage = false;
-        @Config(value = "features.enable-explosion-damage-drop", oldPath = "enableExplosionDamageDrop")
-        public boolean enableExplosionDamageDrop = false;
         @Config(value = "features.enable-glow-effects", oldPath = "EnableGlowEffects")
         public boolean addGlowEffects = false;
         @Config(value = "features.unknown-translation-key-fixer", oldPath = "unknownTranslationKeyFixer")
@@ -249,15 +248,6 @@ public class MainConfig extends BaseConfiguration {
         public boolean overrideAttackSpeed = true;
     }
 
-    public static class VersionOverride {
-        @Config(value = "version-override.force-1-8", oldPath = "ManuallyOverrideTo_1_8_systems")
-        public boolean MANUALLYSELECT18 = false;
-        @Config(value = "version-override.force-1-13", oldPath = "ManuallyOverrideTo_1_13_systems")
-        public boolean MANUALLYSELECT113 = false;
-        @Config(value = "version-override.force-1-14", oldPath = "ManuallyOverrideTo_1_14_systems")
-        public boolean MANUALLYSELECT14 = false;
-    }
-
     public static class Combat {
         @Config(value = "combat.bleeding.enabled", oldPath = "experimental.BulletWounds.enableBleeding")
         public boolean enableBleeding = false;
@@ -295,5 +285,14 @@ public class MainConfig extends BaseConfiguration {
                 weapons.impenetrableEntityTypes.add(EntityType.ARMOR_STAND.name());
             }
         }
+
+        if (this.config.contains("ManuallyOverrideTo_1_8_systems") && this.config.getBoolean("ManuallyOverrideTo_1_8_systems"))
+            general.versionOverride = "1.8";
+
+        if (this.config.contains("ManuallyOverrideTo_1_13_systems") && this.config.getBoolean("ManuallyOverrideTo_1_13_systems"))
+            general.versionOverride = "1.13";
+
+        if (this.config.contains("ManuallyOverrideTo_1_14_systems") && this.config.getBoolean("ManuallyOverrideTo_1_14_systems"))
+            general.versionOverride = "1.14";
     }
 }

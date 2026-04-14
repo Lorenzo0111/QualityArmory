@@ -55,7 +55,7 @@ public class Grenade extends CustomBaseObject implements ThrowableItems {
 	@Override
 	public boolean onRMB(Player thrower, ItemStack usedItem) {
 		if(QAMain.getConfiguration().features.autoarm) onPull(thrower,usedItem);
-		if (throwItems.containsKey(thrower) && throwItems.get(thrower).getGrenade().equals(this)) {
+		if (ThrowableItemRegistry.containsKey(thrower) && ThrowableItemRegistry.get(thrower).getGrenade().equals(this)) {
 			return this.throwGrenade(thrower, thrower.getLocation().getDirection().normalize().multiply(getThrowSpeed()));
 		} else {
 			thrower.sendMessage(QAMain.prefix + QAMain.S_GRENADE_PULLPIN);
@@ -65,7 +65,7 @@ public class Grenade extends CustomBaseObject implements ThrowableItems {
 
     @SuppressWarnings("deprecation")
     public boolean throwGrenade(Player thrower, @Nullable Vector velocity) {
-        ThrowableHolder holder = throwItems.get(thrower);
+        ThrowableHolder holder = ThrowableItemRegistry.get(thrower);
         ItemStack grenadeStack = thrower.getItemInHand();
         ItemStack temp = grenadeStack.clone();
         temp.setAmount(1);
@@ -89,9 +89,9 @@ public class Grenade extends CustomBaseObject implements ThrowableItems {
             return false;
         }
 
-        throwItems.put(grenade, holder);
+        ThrowableItemRegistry.put(grenade, holder);
         GRENADES.add(grenade);
-        throwItems.remove(thrower);
+        ThrowableItemRegistry.remove(thrower);
         QAMain.DEBUG("Throw grenade");
         return true;
     }
@@ -110,12 +110,13 @@ public class Grenade extends CustomBaseObject implements ThrowableItems {
 
 	public boolean onPull(Player e, ItemStack usedItem) {
 		Player thrower = e.getPlayer();
-		if(!QAMain.getConfiguration().features.autoarm)
-		if (throwItems.containsKey(thrower)) {
-			thrower.sendMessage(QAMain.prefix + QAMain.S_GRENADE_PALREADYPULLPIN);
-			thrower.playSound(thrower.getLocation(), WeaponSounds.RELOAD_BULLET.getSoundName(), 1, 1);
-			QAMain.DEBUG("Already pin out");
-			return true;
+		if (!QAMain.getConfiguration().features.autoarm) {
+			if (ThrowableItemRegistry.containsKey(thrower)) {
+				thrower.sendMessage(QAMain.prefix + QAMain.S_GRENADE_PALREADYPULLPIN);
+				thrower.playSound(thrower.getLocation(), WeaponSounds.RELOAD_BULLET.getSoundName(), 1, 1);
+				QAMain.DEBUG("Already pin out");
+				return true;
+			}
 		}
 
 		thrower.getWorld().playSound(thrower.getLocation(), WeaponSounds.RELOAD_MAG_IN.getSoundName(), 2, 1);
@@ -163,10 +164,10 @@ public class Grenade extends CustomBaseObject implements ThrowableItems {
 					h.getHolder().getWorld().createExplosion(h.getHolder().getLocation(), 1);
 					QAMain.DEBUG("Failed. Created default explosion");
 				}
-				throwItems.remove(h.getHolder());
+				ThrowableItemRegistry.remove(h.getHolder());
 			}
 		}.runTaskLater(QAMain.getInstance(), 5 * 20));
-		throwItems.put(thrower, h);
+		ThrowableItemRegistry.put(thrower, h);
 		return true;
 	}
 

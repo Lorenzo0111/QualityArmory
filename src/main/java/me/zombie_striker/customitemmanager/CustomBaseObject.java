@@ -147,6 +147,13 @@ public abstract class CustomBaseObject {
     }
 
     /**
+     * When true, {@link #onSwapTo} is responsible for playing the equip sound so listeners should not play it again.
+     */
+    public boolean handlesEquipSound() {
+        return false;
+    }
+
+    /**
      * Gets the sound played when hitting with this item.
      *
      * @return The hit sound string
@@ -260,7 +267,15 @@ public abstract class CustomBaseObject {
      * @param ing Array of ItemStacks used as ingredients
      */
     public void setIngredients(ItemStack[] ing) {
-        this.ing = ing;
+        if (ing == null) {
+            this.ing = null;
+            return;
+        }
+        Object[] copy = new Object[ing.length];
+        for (int i = 0; i < ing.length; i++) {
+            copy[i] = ing[i] == null ? null : ing[i].clone();
+        }
+        this.ing = copy;
     }
 
     /**
@@ -270,7 +285,7 @@ public abstract class CustomBaseObject {
      * @see CustomBaseObject#getIngredientsRaw()
      */
     public void setIngredientsRaw(Object[] ing) {
-        this.ing = ing;
+        this.ing = ing == null ? null : ing.clone();
     }
 
     /**
@@ -303,7 +318,7 @@ public abstract class CustomBaseObject {
      * @return Array of Object ingredients. This can be either an {@link ItemStack} or a {@link String} for custom items.
      */
     public Object[] getIngredientsRaw() {
-        return ing;
+        return ing == null ? null : ing.clone();
     }
 
     /**

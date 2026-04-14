@@ -1,10 +1,7 @@
 package me.zombie_striker.qg.handlers;
 
-import java.util.HashMap;
-import java.util.Map.Entry;
-import java.util.UUID;
-
 import com.cryptomorin.xseries.XPotion;
+import me.zombie_striker.qg.QAMain;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
@@ -12,7 +9,9 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
-import me.zombie_striker.qg.QAMain;
+import java.util.HashMap;
+import java.util.Map.Entry;
+import java.util.UUID;
 
 public class BulletWoundHandler {
 
@@ -63,7 +62,9 @@ public class BulletWoundHandler {
 									online.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 499, 1));
 								} catch (Error | Exception e4) {
 								}
-							if (bloodlevel / QAMain.getConfiguration().combat.bulletWound_initialbloodamount == 0.0)
+							double initialBlood = QAMain.getConfiguration().combat.bulletWound_initialbloodamount;
+							double bloodRatio = initialBlood > 0 ? bloodlevel / initialBlood : bloodlevel;
+							if (bloodRatio <= 1e-9)
 								online.damage(1);
 							if (bleedoutMultiplier.get(online.getUniqueId()) < 0)
 								// online.getWorld().spawnParticle(Particle.REDSTONE,

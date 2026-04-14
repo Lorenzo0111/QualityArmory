@@ -20,11 +20,7 @@ import me.zombie_striker.qg.api.QualityArmory;
 import me.zombie_striker.qg.armor.ArmorObject;
 import me.zombie_striker.qg.attachments.AttachmentBase;
 import me.zombie_striker.qg.boundingbox.BoundingBoxManager;
-import me.zombie_striker.qg.config.CommentYamlConfiguration;
-import me.zombie_striker.qg.config.GunYMLCreator;
-import me.zombie_striker.qg.config.GunYMLLoader;
-import me.zombie_striker.qg.config.MainConfig;
-import me.zombie_striker.qg.config.MessagesYML;
+import me.zombie_striker.qg.config.*;
 import me.zombie_striker.qg.gui.MenuManager;
 import me.zombie_striker.qg.guns.Gun;
 import me.zombie_striker.qg.guns.chargers.*;
@@ -43,8 +39,7 @@ import me.zombie_striker.qg.hooks.anticheat.MatrixHook;
 import me.zombie_striker.qg.hooks.anticheat.VulcanHook;
 import me.zombie_striker.qg.hooks.protection.ProtectionHandler;
 import me.zombie_striker.qg.listener.QAListener;
-import me.zombie_striker.qg.miscitems.ThrowableItems;
-import me.zombie_striker.qg.miscitems.ThrowableItems.ThrowableHolder;
+import me.zombie_striker.qg.miscitems.ThrowableItemRegistry;
 import me.zombie_striker.qg.npcs.Gunner;
 import me.zombie_striker.qg.npcs.GunnerTrait;
 import me.zombie_striker.qg.npcs_sentinel.SentinelQAHandler;
@@ -404,14 +399,12 @@ public class QAMain extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        for (Entry<MaterialStorage, CustomBaseObject> misc : miscRegister.entrySet()) {
-            if (misc instanceof ThrowableItems) {
-                for (Entry<Entity, ThrowableHolder> e : ThrowableItems.throwItems.entrySet()) {
-                    if (e.getKey() instanceof Item)
-                        e.getKey().remove();
-                }
-            }
+        List<Entity> throwableEntities = new ArrayList<>(ThrowableItemRegistry.keySet());
+        for (Entity entity : throwableEntities) {
+            if (entity instanceof Item)
+                entity.remove();
         }
+        ThrowableItemRegistry.clear();
 
         for (Scoreboard s : coloredGunScoreboard)
             for (Team t : s.getTeams())
@@ -537,7 +530,7 @@ public class QAMain extends JavaPlugin {
 
         metrics.addCustomChart(new Metrics.SimplePie("GunCount", () -> gunRegister.size() + ""));
         metrics.addCustomChart(
-                new Metrics.SimplePie("uses_default_resourcepack", () -> getConfiguration().resourcepack.overrideDefaultPack + ""));
+                new Metrics.SimplePie("uses_default_resourcepack", () -> getConfiguration().resourcepack.overrideDefault + ""));
         metrics.addCustomChart(
                 new Metrics.SimplePie("has_an_expansion_pack", () -> (expansionPacks.size() > 0) + ""));
         if (!CustomItemManager.isUsingCustomData()) {
@@ -553,7 +546,7 @@ public class QAMain extends JavaPlugin {
                                     if (getConfiguration().items.ITEM_enableUnbreakable && (!p.getItemInHand().getItemMeta().isUnbreakable()
                                             && !getConfiguration().features.ignoreUnbreaking)) {
                                         ItemStack temp = p.getItemInHand();
-                                        int j = QualityArmory.findSafeSpot(temp, false, getConfiguration().resourcepack.overrideDefaultPack);
+                                        int j = QualityArmory.findSafeSpot(temp, false, getConfiguration().resourcepack.overrideDefault);
                                         temp.setDurability((short) Math.max(0, j - 1));
                                         temp = Gun.removeCalculatedExtra(temp);
                                         p.setItemInHand(temp);
@@ -570,7 +563,7 @@ public class QAMain extends JavaPlugin {
                                         if (getConfiguration().items.ITEM_enableUnbreakable && (!p.getInventory().getItemInOffHand().getItemMeta()
                                                 .isUnbreakable() && !getConfiguration().features.ignoreUnbreaking)) {
                                             ItemStack temp = p.getInventory().getItemInOffHand();
-                                            int j = QualityArmory.findSafeSpot(temp, false, getConfiguration().resourcepack.overrideDefaultPack);
+                                            int j = QualityArmory.findSafeSpot(temp, false, getConfiguration().resourcepack.overrideDefault);
                                             temp.setDurability((short) Math.max(0, j - 1));
                                             temp = Gun.removeCalculatedExtra(temp);
                                             p.getInventory().setItemInOffHand(temp);
@@ -734,7 +727,7 @@ public class QAMain extends JavaPlugin {
 
 
         if (Bukkit.getPluginManager().isPluginEnabled("WetSponge")) {
-            getConfiguration().versionOverride.MANUALLYSELECT18 = true;
+            getConfiguration().general.versionOverride = "1.8";
         }
 
         try {
@@ -756,14 +749,14 @@ public class QAMain extends JavaPlugin {
                         || m.name().contains("LEVER"))
                     interactableBlocks.add(m);
 // Chris: default has 1.14 ItemType
-        if ((getConfiguration().versionOverride.MANUALLYSELECT18 || !isVersionHigherThan(1, 9)) && !getConfiguration().versionOverride.MANUALLYSELECT113 && !getConfiguration().versionOverride.MANUALLYSELECT14) {
+        if ((getConfiguration().general.versionOverride.equalsIgnoreCase("1.8") || !isVersionHigherThan(1, 9)) && !getConfiguration().general.versionOverride.equalsIgnoreCase("1.13") && !getConfiguration().general.versionOverride.equalsIgnoreCase("1.14")) {
             //1.8
             CustomItemManager.registerItemType(getDataFolder(), "gun", new me.zombie_striker.customitemmanager.qa.versions.V1_8.CustomGunItem());
-        } else if ((!isVersionHigherThan(1, 14) || getConfiguration().versionOverride.MANUALLYSELECT113) && !getConfiguration().versionOverride.MANUALLYSELECT18 && !getConfiguration().versionOverride.MANUALLYSELECT14) {
+        } else if ((!isVersionHigherThan(1, 14) || getConfiguration().general.versionOverride.equalsIgnoreCase("1.13")) && !getConfiguration().general.versionOverride.equalsIgnoreCase("1.8") && !getConfiguration().general.versionOverride.equalsIgnoreCase("1.14")) {
             //1.9 to 1.13
             CustomItemManager.registerItemType(getDataFolder(), "gun", new CustomGunItem());
             //Make sure vehicles are safe
-            if (!getConfiguration().resourcepack.overrideDefaultPack) {
+            if (!getConfiguration().resourcepack.overrideDefault) {
                 expansionPacks.add(MaterialStorage.getMS(Material.DIAMOND_AXE, 80, 0));
                 expansionPacks.add(MaterialStorage.getMS(Material.DIAMOND_AXE, 81, 0));
                 expansionPacks.add(MaterialStorage.getMS(Material.DIAMOND_AXE, 82, 0));
@@ -786,7 +779,7 @@ public class QAMain extends JavaPlugin {
                 expansionPacks.add(MaterialStorage.getMS(Material.DIAMOND_AXE, 115, 0));
                 expansionPacks.add(MaterialStorage.getMS(Material.DIAMOND_AXE, 116, 0));
             }
-        } else if (true || getConfiguration().versionOverride.MANUALLYSELECT14) {
+        } else if (true || getConfiguration().general.versionOverride.equalsIgnoreCase("1.14")) {
             //1.14. Use crossbows
             CustomItemManager.registerItemType(getDataFolder(), "gun", new me.zombie_striker.customitemmanager.qa.versions.V1_14.CustomGunItem().setOverrideAttackSpeed(this.mainConfig.items.overrideAttackSpeed));
         }
@@ -797,7 +790,7 @@ public class QAMain extends JavaPlugin {
         }
         ((AbstractCustomGunItem) CustomItemManager.getItemType("gun")).initIronsights(getDataFolder());
 
-        if (getConfiguration().resourcepack.overrideDefaultPack) {
+        if (getConfiguration().resourcepack.overrideDefault) {
             if (!getConfig().contains("DefaultResourcepack")) {
                 getConfig().set("DefaultResourcepack", CustomItemManager.getResourcepackProvider().serialize());
                 saveTheConfig = true;
@@ -1319,7 +1312,7 @@ public class QAMain extends JavaPlugin {
                     sender.sendMessage(prefix + " Overriding resourcepack requirement.");
                     return true;
                 }
-                if (getConfiguration().resourcepack.shouldSend && !resourcepackReq.contains(player.getUniqueId())) {
+                if (getConfiguration().resourcepack.enabled && !resourcepackReq.contains(player.getUniqueId())) {
                     QualityArmory.sendResourcepack(((Player) sender), true);
                     return true;
                 }

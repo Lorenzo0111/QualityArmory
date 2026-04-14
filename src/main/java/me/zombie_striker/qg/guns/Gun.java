@@ -774,7 +774,7 @@ public class Gun extends CustomBaseObject implements Comparable<Gun> {
     @Override
     public int compareTo(Gun arg0) {
         if (QAMain.getConfiguration().menu.orderShopByPrice) {
-            return (int) (this.getPrice() - arg0.getPrice());
+            return Double.compare(this.getPrice(), arg0.getPrice());
         }
         return this.getDisplayName().compareTo(arg0.getDisplayName());
     }
@@ -792,6 +792,11 @@ public class Gun extends CustomBaseObject implements Comparable<Gun> {
     @Override
     public boolean onLMB(Player e, ItemStack usedItem) {
         return onClick(e, usedItem, !QAMain.getConfiguration().features.SwapReloadAndShootingControls);
+    }
+
+    @Override
+    public boolean handlesEquipSound() {
+        return true;
     }
 
     @Override
@@ -971,13 +976,8 @@ public class Gun extends CustomBaseObject implements Comparable<Gun> {
             QAMain.DEBUG("Non-Fire mode activated");
 
 
-            if (QAMain.getConfiguration().weapons.enableIronSightsON_RIGHT_CLICK) {
-                if (!Update19OffhandChecker.supportOffhand(player.getPlayer())) {
-                    QAMain.getConfiguration().weapons.enableIronSightsON_RIGHT_CLICK = false;
-                    QAMain.DEBUG("Offhand checker returned false for the player. Disabling ironsights");
-                    return true;
-                }
-                // Rest should be okay
+            if (QAMain.getConfiguration().weapons.enableIronSightsON_RIGHT_CLICK
+                    && Update19OffhandChecker.supportOffhand(player.getPlayer())) {
                 if (hasIronSights()) {
                     try {
 

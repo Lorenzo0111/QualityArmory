@@ -5,12 +5,14 @@ import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.api.QualityArmory;
 import me.zombie_striker.qg.guns.Gun;
 import me.zombie_striker.qg.guns.utils.GunUtil;
-
 import me.zombie_striker.qg.listener.QAListener;
-import org.bukkit.*;
-import org.bukkit.event.*;
+import org.bukkit.Material;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.PrepareAnvilEvent;
-import org.bukkit.event.player.*;
+import org.bukkit.event.player.PlayerAnimationEvent;
+import org.bukkit.event.player.PlayerAnimationType;
+import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitTask;
 
@@ -23,7 +25,7 @@ public class Update19Events implements Listener {
 			return;
 		if (QualityArmory.isCustomItem(e.getResult())) {
 			ItemStack newi = e.getResult();
-			newi.setDurability((short) QualityArmory.findSafeSpot(e.getResult(), false,QAMain.getConfiguration().resourcepack.overrideDefaultPack));
+			newi.setDurability((short) QualityArmory.findSafeSpot(e.getResult(), false,QAMain.getConfiguration().resourcepack.overrideDefault));
 			e.setResult(newi);
 		}
 		for (ItemStack is : e.getInventory().getContents()) {

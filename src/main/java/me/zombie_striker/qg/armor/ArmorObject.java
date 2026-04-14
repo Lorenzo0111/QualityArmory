@@ -96,10 +96,9 @@ public class ArmorObject extends CustomBaseObject {
 
 	@Override
 	public boolean onLMB(Player e, ItemStack usedItem) {
-		// TODO Auto-generated method stub
 		return false;
-		
 	}
+
 	@Override
 	public ItemStack getItemStack() {
 		ItemStack item = CustomItemManager.getItemType("gun").getItem(this.getItemData().getMat(),this.getItemData().getData(),this.getItemData().getVariant());

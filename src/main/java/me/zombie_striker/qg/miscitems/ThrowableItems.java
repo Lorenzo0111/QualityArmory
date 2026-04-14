@@ -1,15 +1,12 @@
 package me.zombie_striker.qg.miscitems;
 
-import java.util.HashMap;
-import java.util.UUID;
-
 import org.bukkit.entity.Entity;
 import org.bukkit.scheduler.BukkitTask;
 
+import java.util.UUID;
+
 public interface ThrowableItems {
 
-	HashMap<Entity, ThrowableHolder> throwItems = new HashMap<>();
-	
 	class ThrowableHolder {
 		private Entity holder;
 		private UUID owner;
@@ -51,7 +48,6 @@ public interface ThrowableItems {
 			this.grenade = grenade;
 		}
 	}
-
 
 	double getThrowSpeed();
 	void setThrowSpeed(double throwspeed);

@@ -26,8 +26,8 @@ public class StickyGrenades extends Grenade {
 	public boolean onRMB(Player thrower, ItemStack usedItem) {
 		if(QAMain.getConfiguration().features.autoarm)
 			onPull(thrower,usedItem);
-		if (throwItems.containsKey(thrower) && throwItems.get(thrower).getGrenade().equals(this)) {
-			ThrowableHolder holder = throwItems.get(thrower);
+		if (ThrowableItemRegistry.containsKey(thrower) && ThrowableItemRegistry.get(thrower).getGrenade().equals(this)) {
+			ThrowableHolder holder = ThrowableItemRegistry.get(thrower);
 			ItemStack grenadeStack = thrower.getItemInHand();
 			ItemStack temp = grenadeStack.clone();
 			temp.setAmount(1);
@@ -40,11 +40,11 @@ public class StickyGrenades extends Grenade {
 				thrower.setItemInHand(grenadeStack);
 			}
 
-			throwItems.remove(holder.getHolder());
+			ThrowableItemRegistry.remove(holder.getHolder());
 			Arrow arrow = ((Player)holder.getHolder()).launchProjectile(Arrow.class,holder.getHolder().getLocation().getDirection().normalize().multiply(getThrowSpeed()));
 			holder.setHolder(arrow);
 			arrow.setPickupStatus(AbstractArrow.PickupStatus.DISALLOWED);
-			throwItems.put(holder.getHolder(),holder);
+			ThrowableItemRegistry.put(holder.getHolder(),holder);
 			holder.setTimer(new BukkitRunnable(){
 				public void run(){
 					if(thrower.isSneaking()) {
@@ -82,7 +82,7 @@ public class StickyGrenades extends Grenade {
 							holder.getHolder().getWorld().createExplosion(holder.getHolder().getLocation(), 1);
 							QAMain.DEBUG("Failed. Created default explosion");
 						}
-						throwItems.remove(holder.getHolder());
+						ThrowableItemRegistry.remove(holder.getHolder());
 						this.cancel();
 					}
 				}
@@ -99,14 +99,14 @@ public class StickyGrenades extends Grenade {
 	@Override
 	public boolean onPull(Player thrower, ItemStack usedItem) {
 		if(!QAMain.getConfiguration().features.autoarm)
-		if (throwItems.containsKey(thrower)) {
+		if (ThrowableItemRegistry.containsKey(thrower)) {
 			thrower.sendMessage(QAMain.prefix + QAMain.S_GRENADE_PALREADYPULLPIN);
 			thrower.playSound(thrower.getLocation(), Sound.ENTITY_ARROW_SHOOT, 1, 1);
 			return true;
 		}
 		thrower.getWorld().playSound(thrower.getLocation(), Sound.ENTITY_ARROW_SHOOT, 2, 1);
 		final ThrowableHolder h = new ThrowableHolder(thrower.getUniqueId(), thrower, this);
-		throwItems.put(thrower, h);
+		ThrowableItemRegistry.put(thrower, h);
 		return true;
 
 	}

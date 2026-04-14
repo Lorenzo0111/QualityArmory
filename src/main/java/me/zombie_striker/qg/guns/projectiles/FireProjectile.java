@@ -1,14 +1,10 @@
 package me.zombie_striker.qg.guns.projectiles;
 
-import java.util.ArrayList;
-import java.util.Collection;
-
 import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.boundingbox.AbstractBoundingBox;
 import me.zombie_striker.qg.boundingbox.BoundingBoxManager;
 import me.zombie_striker.qg.guns.Gun;
 import me.zombie_striker.qg.guns.utils.GunUtil;
-
 import me.zombie_striker.qg.hooks.protection.ProtectionHandler;
 import org.bukkit.Location;
 import org.bukkit.Particle;
@@ -17,6 +13,9 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
+
+import java.util.ArrayList;
+import java.util.Collection;
 
 public class FireProjectile implements RealtimeCalculationProjectile {
 	public FireProjectile() {
@@ -27,15 +26,21 @@ public class FireProjectile implements RealtimeCalculationProjectile {
 	@Override
 	public void spawn(final Gun g, final Location s, final Player player, final Vector dir) {
 		Location test = player.getEyeLocation();
+		double bulletStep = QAMain.getConfiguration().weapons.bulletStep;
+		if (bulletStep <= 0) {
+			QAMain.getInstance().getLogger().warning("weapons.detection.bullet-step must be positive; using 0.1 for fire projectile.");
+			bulletStep = 0.1;
+		}
+
 		double maxDist = GunUtil.getTargetedSolidMaxDistance(dir, test, g.getMaxDistance());
 
-		Vector dir2 = dir.clone().multiply(QAMain.getConfiguration().weapons.bulletStep);
+		Vector dir2 = dir.clone().multiply(bulletStep);
 
 		Collection<Entity> nearby = test.getWorld().getNearbyEntities(
 				test.clone().add(dir.clone().multiply(maxDist / 2)), maxDist / 2, maxDist / 2, maxDist / 2);
 
 		// test.add(dir);
-		for (double distance = 0; distance < maxDist; distance += QAMain.getConfiguration().weapons.bulletStep) {
+		for (double distance = 0; distance < maxDist; distance += bulletStep) {
 			test.add(dir2);
 			if (test.getBlock().getType().name().equals("WATER")
 					|| test.getBlock().getType().name().equals("STATIONARY_WATER"))
