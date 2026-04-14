@@ -7,6 +7,7 @@ import me.zombie_striker.qg.QAMain;
 import org.bukkit.entity.Player;
 
 public final class ViaVersionHook {
+    public static final int VIAVERSION_1_8 = 106;
 
     public static String getVersion(Player player) {
         if (!QAMain.hasViaVersion) return XReflection.MINOR_NUMBER + "." + XReflection.PATCH_NUMBER;

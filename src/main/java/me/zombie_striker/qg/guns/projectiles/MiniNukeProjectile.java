@@ -29,7 +29,7 @@ public MiniNukeProjectile() {
 
 			@Override
 			public void run() {
-				dir.setY(dir.getY() - QAMain.gravity);
+				dir.setY(dir.getY() - QAMain.getConfiguration().weapons.gravity);
 				for (int tick = 0; tick < Math.round(0.99+g.getVelocityForRealtimeCalculations()); tick++) {
 				distance--;
 				s.add(dir);
@@ -51,7 +51,7 @@ public MiniNukeProjectile() {
 				}
 
 				if (GunUtil.isSolid(s.getBlock(), s) || entityNear || distance < 0) {
-					if (QAMain.enableExplosionDamage) {
+					if (QAMain.getConfiguration().features.enableExplosionDamage) {
 						QAProjectileExplodeEvent event = new QAProjectileExplodeEvent(MiniNukeProjectile.this, s);
 						Bukkit.getPluginManager().callEvent(event);
 						if (!event.isCancelled()) ExplosionHandler.handleExplosion(s, Math.toIntExact(Math.round(g.getExplosionRadius())), 2);

@@ -70,7 +70,7 @@ public class HomingRocketProjectile implements RealtimeCalculationProjectile {
 					}
 
 					if (GunUtil.isSolid(RPGLOCATION.getBlock(), RPGLOCATION) || entityNear || distance < 0) {
-						if (QAMain.enableExplosionDamage) {
+						if (QAMain.getConfiguration().features.enableExplosionDamage) {
 							QAProjectileExplodeEvent event = new QAProjectileExplodeEvent(HomingRocketProjectile.this, RPGLOCATION);
 							Bukkit.getPluginManager().callEvent(event);
 							if (!event.isCancelled()) ExplosionHandler.handleExplosion(RPGLOCATION, 4, 2);

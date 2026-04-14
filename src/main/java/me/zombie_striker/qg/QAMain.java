@@ -20,10 +20,7 @@ import me.zombie_striker.qg.api.QualityArmory;
 import me.zombie_striker.qg.armor.ArmorObject;
 import me.zombie_striker.qg.attachments.AttachmentBase;
 import me.zombie_striker.qg.boundingbox.BoundingBoxManager;
-import me.zombie_striker.qg.config.CommentYamlConfiguration;
-import me.zombie_striker.qg.config.GunYMLCreator;
-import me.zombie_striker.qg.config.GunYMLLoader;
-import me.zombie_striker.qg.config.MessagesYML;
+import me.zombie_striker.qg.config.*;
 import me.zombie_striker.qg.gui.MenuManager;
 import me.zombie_striker.qg.guns.Gun;
 import me.zombie_striker.qg.guns.chargers.*;
@@ -33,7 +30,6 @@ import me.zombie_striker.qg.guns.reloaders.PumpactionReloader;
 import me.zombie_striker.qg.guns.reloaders.SingleBulletReloader;
 import me.zombie_striker.qg.guns.reloaders.SlideReloader;
 import me.zombie_striker.qg.guns.utils.GunRefillerRunnable;
-import me.zombie_striker.qg.guns.utils.WeaponSounds;
 import me.zombie_striker.qg.handlers.*;
 import me.zombie_striker.qg.hooks.MimicHookHandler;
 import me.zombie_striker.qg.hooks.PlaceholderAPIHook;
@@ -43,8 +39,7 @@ import me.zombie_striker.qg.hooks.anticheat.MatrixHook;
 import me.zombie_striker.qg.hooks.anticheat.VulcanHook;
 import me.zombie_striker.qg.hooks.protection.ProtectionHandler;
 import me.zombie_striker.qg.listener.QAListener;
-import me.zombie_striker.qg.miscitems.ThrowableItems;
-import me.zombie_striker.qg.miscitems.ThrowableItems.ThrowableHolder;
+import me.zombie_striker.qg.miscitems.ThrowableItemRegistry;
 import me.zombie_striker.qg.npcs.Gunner;
 import me.zombie_striker.qg.npcs.GunnerTrait;
 import me.zombie_striker.qg.npcs_sentinel.SentinelQAHandler;
@@ -77,12 +72,10 @@ public class QAMain extends JavaPlugin {
 
     private static String changelog = null;
 
-    public static final int ViaVersionIdfor_1_8 = 106;
     public static HashMap<MaterialStorage, Gun> gunRegister = new LinkedHashMap<>();
     public static HashMap<MaterialStorage, Ammo> ammoRegister = new LinkedHashMap<>();
     public static HashMap<MaterialStorage, CustomBaseObject> miscRegister = new LinkedHashMap<>();
     public static HashMap<MaterialStorage, ArmorObject> armorRegister = new LinkedHashMap<>();
-
 
     public static HashMap<String, String> craftingEntityNames = new HashMap<>();
 
@@ -98,82 +91,9 @@ public class QAMain extends JavaPlugin {
     public static List<String> namesToBypass = new ArrayList<>();
     public static List<Material> interactableBlocks = new ArrayList<>();
     public static List<Material> destructableBlocks = new ArrayList<Material>();
-    public static int regenDestructableBlocksAfter = -1;
-    public static boolean enableInteractChests = false;
-    public static boolean DEBUG = false;
     public static Object bulletTrail;
-
-    public static boolean shouldSend = true;
-    public static boolean sendOnJoin = false;
-    public static boolean sendTitleOnJoin = false;
-    public static boolean resourcepackInvincibility = false;
-    public static double secondsTilSend = 0.0;
-
-    public static boolean orderShopByPrice = false;
-    public static boolean ignoreUnbreaking = false;
-    public static boolean ignoreSkipping = false;
-    public static boolean verboseLoadingLogging = false;
-    public static boolean enableDurability = false;
-    public static boolean enableArmorIgnore = false;
-    public static boolean showCrashMessage = true;
-    public static boolean enableRecoil = true;
-    public static double bulletStep = 0.10;
-    public static double gravity = 0.05;
-    public static double swayModifier_Ironsights = 0.8;
-    public static double swayModifier_Sneak = 0.7;
-    public static double swayModifier_Walk = 1.5;
-    public static double swayModifier_Run = 1.3;
-    public static boolean blockbullet_leaves = false;
-    public static boolean blockbullet_halfslabs = false;
-    public static boolean blockbullet_door = false;
-    public static boolean blockbullet_water = false;
-    public static boolean blockbullet_glass = false;
-    public static boolean overrideAnvil = false;
-    public static boolean enableIronSightsON_RIGHT_CLICK = false;
-    public static boolean SwapSneakToSingleFire = false;
-    public static boolean enableBulletTrails = true;
-    public static boolean reloadOnQ = true;
-    public static boolean reloadOnF = true;
-    public static boolean reloadOnFOnly = true;
-    public static boolean unloadOnQ = false;
-    public static boolean disableHotBarMessageOnShoot = false;
-    public static boolean disableHotBarMessageOnReload = false;
-    public static boolean disableHotBarMessageOnOutOfAmmo = false;
-    public static boolean enableExplosionDamage = false;
-    public static boolean enableExplosionDamageDrop = false;
-    public static boolean requirePermsToShoot = false;
-    public static boolean requirePermsToCraft = false;
-    public static boolean requirePermsToBuy = false;
     public static boolean enableEconomy = false;
-    public static boolean allowGunReload = true;
-    public static boolean enableBleeding = false;
-    public static double bulletWound_initialbloodamount = 1500;
-    public static double bulletWound_BloodIncreasePerSecond = 0.01;
-    public static double bulletWound_MedkitBloodlossHealRate = 0.05;
-    public static String headshot_sound = WeaponSounds.XP_ORG_PICKUP.getSoundName();
-    public static String hit_sound = WeaponSounds.XP_ORG_PICKUP.getSoundName();
-    public static List<EntityType> headshotBlacklist = new ArrayList<>();
-    public static boolean HeadshotOneHit = true;
-    public static boolean headshotPling = true;
-    public static boolean enableHitSound = false;
     public static boolean showOutOfAmmoOnItem = false;
-    public static boolean showOutOfAmmoOnTitle = false;
-    public static boolean showReloadOnTitle = false;
-    public static boolean addGlowEffects = false;
-    public static boolean enableReloadWhenOutOfAmmo = false;
-    public static boolean overrideURL = false;
-    public static boolean kickIfDeniedRequest = false;
-    public static boolean showAmmoInXPBar = false;
-    public static boolean perWeaponPermission = false;
-    public static boolean perWeaponCraftPermission = false;
-    public static boolean perWeaponBuyPermission = false;
-    public static boolean useMoveForRecoil = true;
-    public static double weaponSwitchDelay = 0;
-    public static boolean allowGunHitEntities = true;
-    public static boolean preventHiddenPlayers = true;
-    public static boolean anticheatFix = false;
-    public static boolean preventGunsInHoppers = true;
-    public static int hitDistance = 5;
 
     public static String S_NOPERM = "&c You do not have permission to do that.";
 
@@ -225,12 +145,6 @@ public class QAMain extends JavaPlugin {
     public static String S_RESOURCEPACK_OPTIN = "By issuing this command, you have been removed from the whitelist. You will now recieve the resourcepack prompt";
     public static String S_GRENADE_PULLPIN = " Pull the pin first...";
     public static String S_GRENADE_PALREADYPULLPIN = "You already pulled the pin!";
-    public static boolean enableCrafting = true;
-    public static boolean enableShop = true;
-    public static double smokeSpacing = 0.5;
-    public static boolean enablePrimaryWeaponHandler = false;
-    public static int primaryWeaponLimit = 2;
-    public static int secondaryWeaponLimit = 2;
     public static String prefix = "&8[&2QualityArmory&8]&r";
     public static String S_missingIngredients = "You do not have all the materials needed to craft this.";
     public static String S_noMoney = "You do not have enough money to buy this.";
@@ -242,29 +156,11 @@ public class QAMain extends JavaPlugin {
 
     public static MessagesYML m;
     public static CommentYamlConfiguration resourcepackwhitelist;
-    public static String language = "en";
     public static boolean hasParties = false;
-    public static boolean friendlyFire = false;
     public static boolean hasProtocolLib = false;
     public static boolean hasViaVersion = false;
     public static boolean hasViaRewind = false;
-    public static boolean AUTOUPDATE = true;
-    public static boolean SWAP_TO_LMB_SHOOT = true;
-    public static boolean SHOW_BULLETS_LORE = false;
-    public static boolean ENABLE_LORE_INFO = true;
-    public static boolean ENABLE_LORE_HELP = true;
-    public static boolean AutoDetectResourcepackVersion = true;
-    public static boolean ITEM_enableUnbreakable = true;// TODO :stuufff
-    public static boolean MANUALLYSELECT18 = false;
-    public static boolean MANUALLYSELECT113 = false;
-    public static boolean MANUALLYSELECT14 = false;
-    public static boolean unknownTranslationKeyFixer = false;
-    public static boolean enableCreationOfFiles = true;
-    public static boolean changeDeathMessages = true;
     public static List<Scoreboard> coloredGunScoreboard = new ArrayList<Scoreboard>();
-    public static boolean blockBreakTexture = false;
-    public static boolean autoarm = false;
-    public static boolean restoreOffHand = false;
     public static List<UUID> currentlyScoping = new ArrayList<>();
     private static QAMain main;
 
@@ -272,10 +168,15 @@ public class QAMain extends JavaPlugin {
     private FileConfiguration config;
     private File configFile;
     private boolean saveTheConfig = false;
+    private MainConfig mainConfig;
     private static MenuManager menuManager;
 
     public static QAMain getInstance() {
         return main;
+    }
+
+    public static MainConfig getConfiguration() {
+        return getInstance().mainConfig;
     }
 
     public static boolean isVersionHigherThan(int mainVersion, int secondVersion) {
@@ -315,7 +216,7 @@ public class QAMain extends JavaPlugin {
     }
 
     public static void DEBUG(String message) {
-        if (DEBUG)
+        if (getConfiguration().debug.enabled)
             Bukkit.broadcast(prefix + ChatColor.GREEN + " [DEBUG] " + ChatColor.RESET + message, "qualityarmory.debugmessages");
     }
 
@@ -498,14 +399,12 @@ public class QAMain extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        for (Entry<MaterialStorage, CustomBaseObject> misc : miscRegister.entrySet()) {
-            if (misc instanceof ThrowableItems) {
-                for (Entry<Entity, ThrowableHolder> e : ThrowableItems.throwItems.entrySet()) {
-                    if (e.getKey() instanceof Item)
-                        e.getKey().remove();
-                }
-            }
+        List<Entity> throwableEntities = new ArrayList<>(ThrowableItemRegistry.keySet());
+        for (Entity entity : throwableEntities) {
+            if (entity instanceof Item)
+                entity.remove();
         }
+        ThrowableItemRegistry.clear();
 
         for (Scoreboard s : coloredGunScoreboard)
             for (Team t : s.getTeams())
@@ -522,6 +421,7 @@ public class QAMain extends JavaPlugin {
         }
     }
 
+    @Deprecated
     public Object a(String path, Object def) {
         if (getConfig().contains(path)) {
             return getConfig().get(path);
@@ -537,6 +437,8 @@ public class QAMain extends JavaPlugin {
         if (!this.getDataFolder().exists()) {
             this.getDataFolder().mkdirs();
         }
+        this.mainConfig = new MainConfig();
+        this.mainConfig.loadDefaults();
 
         if (!NBT.preloadApi()) {
             getLogger().severe("NBT-API wasn't initialized properly, disabling the plugin");
@@ -619,7 +521,7 @@ public class QAMain extends JavaPlugin {
         }
 
         try {
-            if (AUTOUPDATE)
+            if (getConfiguration().features.AUTOUPDATE)
                 GithubUpdater.autoUpdate(this, "Lorenzo0111", "QualityArmory", "QualityArmory.jar");
         } catch (Exception e) {
         }
@@ -628,7 +530,7 @@ public class QAMain extends JavaPlugin {
 
         metrics.addCustomChart(new Metrics.SimplePie("GunCount", () -> gunRegister.size() + ""));
         metrics.addCustomChart(
-                new Metrics.SimplePie("uses_default_resourcepack", () -> overrideURL + ""));
+                new Metrics.SimplePie("uses_default_resourcepack", () -> getConfiguration().resourcepack.overrideDefault + ""));
         metrics.addCustomChart(
                 new Metrics.SimplePie("has_an_expansion_pack", () -> (expansionPacks.size() > 0) + ""));
         if (!CustomItemManager.isUsingCustomData()) {
@@ -641,10 +543,10 @@ public class QAMain extends JavaPlugin {
                             // if (p.getItemInHand().containsEnchantment(Enchantment.MENDING)) {
                             if (p.getItemInHand() != null && p.getItemInHand().hasItemMeta())
                                 if (QualityArmory.isCustomItem(p.getItemInHand())) {
-                                    if (ITEM_enableUnbreakable && (!p.getItemInHand().getItemMeta().isUnbreakable()
-                                            && !ignoreUnbreaking)) {
+                                    if (getConfiguration().items.ITEM_enableUnbreakable && (!p.getItemInHand().getItemMeta().isUnbreakable()
+                                            && !getConfiguration().features.ignoreUnbreaking)) {
                                         ItemStack temp = p.getItemInHand();
-                                        int j = QualityArmory.findSafeSpot(temp, false, overrideURL);
+                                        int j = QualityArmory.findSafeSpot(temp, false, getConfiguration().resourcepack.overrideDefault);
                                         temp.setDurability((short) Math.max(0, j - 1));
                                         temp = Gun.removeCalculatedExtra(temp);
                                         p.setItemInHand(temp);
@@ -658,10 +560,10 @@ public class QAMain extends JavaPlugin {
                                 if (p.getInventory().getItemInOffHand() != null
                                         && p.getInventory().getItemInOffHand().hasItemMeta())
                                     if (QualityArmory.isCustomItem(p.getInventory().getItemInOffHand())) {
-                                        if (ITEM_enableUnbreakable && (!p.getInventory().getItemInOffHand().getItemMeta()
-                                                .isUnbreakable() && !ignoreUnbreaking)) {
+                                        if (getConfiguration().items.ITEM_enableUnbreakable && (!p.getInventory().getItemInOffHand().getItemMeta()
+                                                .isUnbreakable() && !getConfiguration().features.ignoreUnbreaking)) {
                                             ItemStack temp = p.getInventory().getItemInOffHand();
-                                            int j = QualityArmory.findSafeSpot(temp, false, overrideURL);
+                                            int j = QualityArmory.findSafeSpot(temp, false, getConfiguration().resourcepack.overrideDefault);
                                             temp.setDurability((short) Math.max(0, j - 1));
                                             temp = Gun.removeCalculatedExtra(temp);
                                             p.getInventory().setItemInOffHand(temp);
@@ -681,8 +583,7 @@ public class QAMain extends JavaPlugin {
 
     @SuppressWarnings({"unchecked", "deprecation"})
     public void reloadVals() {
-        reloadConfig();
-        DEBUG = (boolean) a("ENABLE-DEBUG", false);
+        this.mainConfig.reload();
 
         new BoltactionCharger();
         new BreakactionCharger();
@@ -713,13 +614,12 @@ public class QAMain extends JavaPlugin {
 
         // attachmentRegister.clear();
 //Chris: Support more language file lang/message_xx.yml
-        language = (String) a("language", "en");
         File langFolder = new File(getDataFolder(), "lang");
         if (langFolder.exists() && !langFolder.isDirectory()) {
             langFolder.delete();
         }
         langFolder.mkdir();
-        m = new MessagesYML(language, new File(langFolder, "message_" + language + ".yml"));
+        m = new MessagesYML(getConfiguration().general.language, new File(langFolder, "message_" + getConfiguration().general.language + ".yml"));
         prefix = LocalUtils.colorize((String) m.a("Prefix", prefix));
         S_ANVIL = LocalUtils.colorize((String) m.a("NoPermAnvilMessage", S_ANVIL));
         S_NOPERM = LocalUtils.colorize((String) m.a("NoPerm", S_NOPERM));
@@ -826,165 +726,8 @@ public class QAMain extends JavaPlugin {
             }
 
 
-        friendlyFire = (boolean) a("FriendlyFireEnabled", false);
-
-        kickIfDeniedRequest = (boolean) a("KickPlayerIfDeniedResourcepack", false);
-        shouldSend = (boolean) a("useDefaultResourcepack", true);
-
-        enableDurability = (boolean) a("EnableWeaponDurability", false);
-
-        bulletStep = (double) a("BulletDetection.step", 0.10);
-
-        blockbullet_door = (boolean) a("BlockBullets.door", false);
-        blockbullet_halfslabs = (boolean) a("BlockBullets.halfslabs", false);
-        blockbullet_leaves = (boolean) a("BlockBullets.leaves", false);
-        blockbullet_water = (boolean) a("BlockBullets.water", false);
-        blockbullet_glass = (boolean) a("BlockBullets.glass", false);
-
-        enableInteractChests = (boolean) a("enableInteract.Chests", false);
-
-        overrideAnvil = (boolean) a("overrideAnvil", false);
-
-        showCrashMessage = (boolean) a("showPossibleCrashHelpMessage", showCrashMessage);
-
-        anticheatFix = (boolean) a("anticheatFix", anticheatFix);
-
-        verboseLoadingLogging = (boolean) a("verboseItemLogging", verboseLoadingLogging);
-
-        requirePermsToShoot = (boolean) a("enable_permssionsToShoot", requirePermsToShoot);
-        requirePermsToCraft = (boolean) a("enable_permissionsToCraft", requirePermsToCraft);
-        requirePermsToBuy = (boolean) a("enable_permissionsToBuy", requirePermsToBuy);
-
-        sendOnJoin = (boolean) a("sendOnJoin", true);
-        sendTitleOnJoin = (boolean) a("sendTitleOnJoin", false);
-        resourcepackInvincibility = (boolean) a("resourcepackInvincibility", resourcepackInvincibility);
-        secondsTilSend = Double.valueOf(a("SecondsTillRPIsSent", 5.0) + "");
-
-        enableBulletTrails = (boolean) a("enableBulletTrails", true);
-        smokeSpacing = Double.valueOf(a("BulletTrailsSpacing", 0.5) + "");
-
-        enableArmorIgnore = (boolean) a("enableIgnoreArmorProtection", enableArmorIgnore);
-        ignoreUnbreaking = (boolean) a("enableIgnoreUnbreakingChecks", ignoreUnbreaking);
-        ignoreSkipping = (boolean) a("enableIgnoreSkipForBasegameItems", ignoreSkipping);
-
-        ITEM_enableUnbreakable = (boolean) a("Items.enable_Unbreaking", ITEM_enableUnbreakable);
-
-        // enableVisibleAmounts = (boolean) a("enableVisibleBulletCounts", false);
-        reloadOnQ = (boolean) a("enableReloadingOnDrop", false);
-        reloadOnF = (boolean) a("enableReloadingWhenSwapToOffhand", true);
-        reloadOnFOnly = (boolean) a("enableReloadOnlyWhenSwapToOffhand", false);
-        unloadOnQ = (boolean) a("enableUnloadingOnDrop", false);
-
-        allowGunHitEntities = (boolean) a("allowGunHitEntities", true);
-        preventHiddenPlayers = (boolean) a("preventHiddenPlayers", true);
-        hitDistance = (int) a("hitDistance", hitDistance);
-
-        preventGunsInHoppers = (boolean) a("preventGunsInHoppers", true);
-
-        // showOutOfAmmoOnItem = (boolean) a("showOutOfAmmoOnItem", false);
-        showOutOfAmmoOnTitle = (boolean) a("showOutOfAmmoOnTitle", false);
-        showReloadOnTitle = (boolean) a("showReloadingTitle", false);
-
-        showAmmoInXPBar = (boolean) a("showAmmoInXPBar", false);
-        perWeaponPermission = (boolean) a("perWeaponPermission", false);
-        perWeaponCraftPermission = (boolean) a("perWeaponCraftPermission", perWeaponCraftPermission);
-        perWeaponBuyPermission = (boolean) a("perWeaponBuyPermission", perWeaponBuyPermission);
-
-        useMoveForRecoil = (boolean) a("useMoveForRecoil", useMoveForRecoil);
-
-        weaponSwitchDelay = (double) a("weaponSwitchDelay", 0.0);
-
-        enableExplosionDamage = (boolean) a("enableExplosionDamage", false);
-        enableExplosionDamageDrop = (boolean) a("enableExplosionDamageDrop", false);
-
-        enablePrimaryWeaponHandler = (boolean) a("enablePrimaryWeaponLimiter", false);
-        primaryWeaponLimit = (int) a("weaponlimiter_primaries", primaryWeaponLimit);
-        secondaryWeaponLimit = (int) a("weaponlimiter_secondaries", secondaryWeaponLimit);
-
-        enableCrafting = (boolean) a("enableCrafting", true);
-        enableShop = (boolean) a("enableShop", true);
-
-        AUTOUPDATE = (boolean) a("AUTO-UPDATE", true);
-        SWAP_TO_LMB_SHOOT = !(boolean) a("Swap-Reload-and-Shooting-Controls", false);
-
-        orderShopByPrice = (boolean) a("Order-Shop-By-Price", orderShopByPrice);
-
-        SHOW_BULLETS_LORE = (boolean) a("enable_lore_gun-bullets", false);
-        ENABLE_LORE_INFO = (boolean) a("enable_lore_gun-info_messages", true);
-        ENABLE_LORE_HELP = (boolean) a("enable_lore_control-help_messages", true);
-
-        HeadshotOneHit = (boolean) a("Enable_Headshot_Instantkill", HeadshotOneHit);
-        headshotPling = (boolean) a("Enable_Headshot_Notification_Sound", headshotPling);
-        headshot_sound = (String) a("Headshot_Notification_Sound", headshot_sound);
-
-        headshotBlacklist.clear();
-
-        List<String> blacklist = (List<String>) a("Headshot_Blacklist", new ArrayList<String>());
-        for (String s : blacklist) {
-            try {
-                headshotBlacklist.add(EntityType.valueOf(s));
-            } catch (Error | Exception e4) {
-            }
-        }
-
-        hit_sound = (String) a("Hit_Notification_Sound", hit_sound);
-        enableHitSound = (boolean) a("Enable_Hit_Sound", enableHitSound);
-
-        autoarm = (boolean) a("Enable_AutoArm_Grenades", autoarm);
-
-        // ignoreArmorStands = (boolean) a("ignoreArmorStands", false);
-
-        gravity = (double) a("gravityConstantForDropoffCalculations", gravity);
-
-        allowGunReload = (boolean) a("allowGunReload", allowGunReload);
-        AutoDetectResourcepackVersion = (boolean) a("Auto-Detect-Resourcepack", AutoDetectResourcepackVersion);
-        MANUALLYSELECT18 = (boolean) a("ManuallyOverrideTo_1_8_systems",
-                Bukkit.getPluginManager().isPluginEnabled("WetSponge") ? true : MANUALLYSELECT18);
-        MANUALLYSELECT113 = (boolean) a("ManuallyOverrideTo_1_13_systems", MANUALLYSELECT113);
-        MANUALLYSELECT14 = (boolean) a("ManuallyOverrideTo_1_14_systems", MANUALLYSELECT14);
-
-        unknownTranslationKeyFixer = (boolean) a("unknownTranslationKeyFixer", false);
-
-        enableCreationOfFiles = (boolean) a("Enable_Creation_Of_Default_Files", true);
-
-        addGlowEffects = (boolean) a("EnableGlowEffects", false);
-
-        blockBreakTexture = (boolean) a("Break-Block-Texture-If-Shot", true);
-
-        enableRecoil = (boolean) a("enableRecoil", true);
-
-        bulletWound_initialbloodamount = (double) a("experimental.BulletWounds.InitialBloodLevel",
-                bulletWound_initialbloodamount);
-        bulletWound_BloodIncreasePerSecond = (double) a("experimental.BulletWounds.BloodIncreasePerSecond",
-                bulletWound_BloodIncreasePerSecond);
-        bulletWound_MedkitBloodlossHealRate = (double) a("experimental.BulletWounds.Medkit_Heal_Bloodloss_Rate",
-                bulletWound_MedkitBloodlossHealRate);
-        enableBleeding = (boolean) a("experimental.BulletWounds.enableBleeding", enableBleeding);
-
-        disableHotBarMessageOnOutOfAmmo = (boolean) a("disableHotbarMessages.OutOfAmmo", false);
-        disableHotBarMessageOnShoot = (boolean) a("disableHotbarMessages.Shoot", false);
-        disableHotBarMessageOnReload = (boolean) a("disableHotbarMessages.Reload", false);
-
-        enableReloadWhenOutOfAmmo = (boolean) a("automaticallyReloadGunWhenOutOfAmmo", false);
-
-        swayModifier_Run = (double) a("generalModifiers.sway.Run", swayModifier_Run);
-        swayModifier_Walk = (double) a("generalModifiers.sway.Walk", swayModifier_Walk);
-        swayModifier_Ironsights = (double) a("generalModifiers.sway.Ironsights", swayModifier_Ironsights);
-        swayModifier_Sneak = (double) a("generalModifiers.sway.Sneak", swayModifier_Sneak);
-
-        changeDeathMessages = (boolean) a("deathmessages.enable", changeDeathMessages);
-
-        restoreOffHand = (boolean) a("restoreOffHand", restoreOffHand);
-
-        List<String> avoidTypes = (List<String>) a("impenetrableEntityTypes",
-                Collections.singletonList(EntityType.ARROW.name()));
-        if (getConfig().getBoolean("ignoreArmorStands"))
-            QAMain.avoidTypes.add(EntityType.ARMOR_STAND);
-        for (String s : avoidTypes) {
-            try {
-                QAMain.avoidTypes.add(EntityType.valueOf(s));
-            } catch (Error | Exception e4) {
-            }
+        if (Bukkit.getPluginManager().isPluginEnabled("WetSponge")) {
+            getConfiguration().general.versionOverride = "1.8";
         }
 
         try {
@@ -992,20 +735,13 @@ public class QAMain extends JavaPlugin {
         } catch (Exception | Error e) {
         }
 
-        overrideURL = (boolean) a("DefaultResourcepackOverride", false);
-
-        enableIronSightsON_RIGHT_CLICK = (boolean) a("IronSightsOnRightClick", false);
         if (getConfig().contains("SwapSneakToSingleFile")) {
-            SwapSneakToSingleFire = (boolean) a("SwapSneakToSingleFire", a("SwapSneakToSingleFile", false));
+            getConfiguration().weapons.SwapSneakToSingleFire = getConfig().getBoolean("SwapSneakToSingleFile", getConfiguration().weapons.SwapSneakToSingleFire);
             getConfig().set("SwapSneakToSingleFile", null);
+            getConfig().set("weapons.ironsights.swap-sneak-to-single-fire", getConfiguration().weapons.SwapSneakToSingleFire);
             saveTheConfig = true;
         }
-        SwapSneakToSingleFire = (boolean) a("SwapSneakToSingleFire", SwapSneakToSingleFire);
-
-        List<String> destarray = (List<String>) a("DestructableMaterials",
-                Collections.singletonList("MATERIAL_NAME_HERE"));
-        destructableBlocks.addAll(GunYMLLoader.getMaterials(destarray));
-        regenDestructableBlocksAfter = (int) a("RegenDestructableBlocksAfter", regenDestructableBlocksAfter);
+        destructableBlocks.addAll(GunYMLLoader.getMaterials(this.mainConfig.world.destructableMaterials));
 
         for (Material m : Material.values())
             if (m.isBlock())
@@ -1013,14 +749,14 @@ public class QAMain extends JavaPlugin {
                         || m.name().contains("LEVER"))
                     interactableBlocks.add(m);
 // Chris: default has 1.14 ItemType
-        if ((MANUALLYSELECT18 || !isVersionHigherThan(1, 9)) && !MANUALLYSELECT113 && !MANUALLYSELECT14) {
+        if ((getConfiguration().general.versionOverride.equalsIgnoreCase("1.8") || !isVersionHigherThan(1, 9)) && !getConfiguration().general.versionOverride.equalsIgnoreCase("1.13") && !getConfiguration().general.versionOverride.equalsIgnoreCase("1.14")) {
             //1.8
             CustomItemManager.registerItemType(getDataFolder(), "gun", new me.zombie_striker.customitemmanager.qa.versions.V1_8.CustomGunItem());
-        } else if ((!isVersionHigherThan(1, 14) || MANUALLYSELECT113) && !MANUALLYSELECT18 && !MANUALLYSELECT14) {
+        } else if ((!isVersionHigherThan(1, 14) || getConfiguration().general.versionOverride.equalsIgnoreCase("1.13")) && !getConfiguration().general.versionOverride.equalsIgnoreCase("1.8") && !getConfiguration().general.versionOverride.equalsIgnoreCase("1.14")) {
             //1.9 to 1.13
             CustomItemManager.registerItemType(getDataFolder(), "gun", new CustomGunItem());
             //Make sure vehicles are safe
-            if (!overrideURL) {
+            if (!getConfiguration().resourcepack.overrideDefault) {
                 expansionPacks.add(MaterialStorage.getMS(Material.DIAMOND_AXE, 80, 0));
                 expansionPacks.add(MaterialStorage.getMS(Material.DIAMOND_AXE, 81, 0));
                 expansionPacks.add(MaterialStorage.getMS(Material.DIAMOND_AXE, 82, 0));
@@ -1043,18 +779,18 @@ public class QAMain extends JavaPlugin {
                 expansionPacks.add(MaterialStorage.getMS(Material.DIAMOND_AXE, 115, 0));
                 expansionPacks.add(MaterialStorage.getMS(Material.DIAMOND_AXE, 116, 0));
             }
-        } else if (true || MANUALLYSELECT14) {
+        } else if (true || getConfiguration().general.versionOverride.equalsIgnoreCase("1.14")) {
             //1.14. Use crossbows
-            CustomItemManager.registerItemType(getDataFolder(), "gun", new me.zombie_striker.customitemmanager.qa.versions.V1_14.CustomGunItem().setOverrideAttackSpeed((boolean) a("overrideAttackSpeed", true)));
+            CustomItemManager.registerItemType(getDataFolder(), "gun", new me.zombie_striker.customitemmanager.qa.versions.V1_14.CustomGunItem().setOverrideAttackSpeed(this.mainConfig.items.overrideAttackSpeed));
         }
 
         // Chris: if switch on, create default items.
-        if (enableCreationOfFiles) {
+        if (getConfiguration().features.enableCreationOfFiles) {
             CustomItemManager.getItemType("gun").initItems(getDataFolder());
         }
         ((AbstractCustomGunItem) CustomItemManager.getItemType("gun")).initIronsights(getDataFolder());
 
-        if (overrideURL) {
+        if (getConfiguration().resourcepack.overrideDefault) {
             if (!getConfig().contains("DefaultResourcepack")) {
                 getConfig().set("DefaultResourcepack", CustomItemManager.getResourcepackProvider().serialize());
                 saveTheConfig = true;
@@ -1095,14 +831,14 @@ public class QAMain extends JavaPlugin {
         GunYMLLoader.loadGuns(this);
         GunYMLLoader.loadAttachments(this);
         GunYMLLoader.loadArmor(this);
-        if (QAMain.enableBleeding)
+        if (QAMain.getConfiguration().combat.enableBleeding)
             BulletWoundHandler.startTimer();
 
         if (tfh != null) {
             tfh = new TreeFellerHandler();
             Bukkit.getPluginManager().registerEvents(tfh, this);
         }
-        if (addGlowEffects) {
+        if (getConfiguration().features.addGlowEffects) {
             coloredGunScoreboard = new ArrayList<>();
             coloredGunScoreboard.add(registerGlowTeams(Bukkit.getScoreboardManager().getMainScoreboard()));
         }
@@ -1187,10 +923,10 @@ public class QAMain extends JavaPlugin {
                 s.add("version");
             if (b("dumpItem", args[0]))
                 s.add("dumpItem");
-            if (enableShop)
+            if (getConfiguration().menu.enableShop)
                 if (b("shop", args[0]))
                     s.add("shop");
-            if (enableCrafting)
+            if (getConfiguration().menu.enableCrafting)
                 if (b("craft", args[0]))
                     s.add("craft");
             // if (b("getOpenGunSlot", args[0]))
@@ -1275,8 +1011,8 @@ public class QAMain extends JavaPlugin {
                 }
                 if (args[0].equalsIgnoreCase("debug")) {
                     if (sender.hasPermission("qualityarmory.debug")) {
-                        DEBUG = !DEBUG;
-                        sender.sendMessage(prefix + "Console debugging set to " + DEBUG);
+                        getConfiguration().debug.enabled = !getConfiguration().debug.enabled;
+                        sender.sendMessage(prefix + "Console debugging set to " + getConfiguration().debug.enabled);
                     } else {
                         sender.sendMessage(prefix + ChatColor.RED + S_NOPERM);
                         return true;
@@ -1576,7 +1312,7 @@ public class QAMain extends JavaPlugin {
                     sender.sendMessage(prefix + " Overriding resourcepack requirement.");
                     return true;
                 }
-                if (shouldSend && !resourcepackReq.contains(player.getUniqueId())) {
+                if (getConfiguration().resourcepack.enabled && !resourcepackReq.contains(player.getUniqueId())) {
                     QualityArmory.sendResourcepack(((Player) sender), true);
                     return true;
                 }
@@ -1584,7 +1320,7 @@ public class QAMain extends JavaPlugin {
                     sendHelp(player);
                     return true;
                 }
-                if (enableCrafting)
+                if (getConfiguration().menu.enableCrafting)
                     if (args[0].equalsIgnoreCase("craft")) {
                         if (!sender.hasPermission("qualityarmory.craft")) {
                             sender.sendMessage(prefix + ChatColor.RED + S_NOPERM);
@@ -1599,11 +1335,11 @@ public class QAMain extends JavaPlugin {
                             }
 
                             if (g instanceof Gun) {
-                                if (requirePermsToCraft && !player.hasPermission("qualityarmory.craftgun")) {
+                                if (getConfiguration().permissions.requirePermsToCraft && !player.hasPermission("qualityarmory.craftgun")) {
                                     player.sendMessage(prefix + ChatColor.RED + S_NOPERM);
                                     return true;
                                 }
-                                if (perWeaponCraftPermission && !player.hasPermission("qualityarmory.craftgun." + g.getName())) {
+                                if (getConfiguration().permissions.perWeaponCraftPermission && !player.hasPermission("qualityarmory.craftgun." + g.getName())) {
                                     player.sendMessage(prefix + ChatColor.RED + S_NOPERM);
                                     return true;
                                 }
@@ -1627,7 +1363,7 @@ public class QAMain extends JavaPlugin {
                         return true;
 
                     }
-                if (enableShop)
+                if (getConfiguration().menu.enableShop)
                     if (args[0].equalsIgnoreCase("shop")) {
                         if (args.length == 2 && sender.hasPermission("qualityarmory.shop.other")) {
                             Player target = Bukkit.getPlayer(args[1]);
@@ -1687,6 +1423,12 @@ public class QAMain extends JavaPlugin {
                 }
         }
         return false;
+    }
+
+    public void handleException(Exception e) {
+        if (this.mainConfig == null || this.mainConfig.debug.logExceptions)
+            this.getLogger().log(Level.SEVERE, "An exception occurred in QualityArmory", e);
+        else this.getLogger().severe("An exception occurred in QualityArmory. Enable 'log-exceptions' for more information: " + e.getMessage());
     }
 
     @Override

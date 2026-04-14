@@ -6,7 +6,6 @@ import me.zombie_striker.qg.armor.ArmorObject;
 import me.zombie_striker.qg.guns.Gun;
 import me.zombie_striker.qg.handlers.IronsightsHandler;
 import org.bukkit.ChatColor;
-import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -94,13 +93,13 @@ public class OLD_ItemFact {
 			im = ironsights.getItemMeta();
 		}
 		im.setDisplayName(IronsightsHandler.ironsightsDisplay);
-		if (QAMain.ITEM_enableUnbreakable) {
+		if (QAMain.getConfiguration().items.ITEM_enableUnbreakable) {
 			try {
 				im.setUnbreakable(true);
 			} catch (Error | Exception e3423) {			}
 		}
 		try {
-			if (QAMain.ITEM_enableUnbreakable) {
+			if (QAMain.getConfiguration().items.ITEM_enableUnbreakable) {
 				im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_UNBREAKABLE);
 			}
 			im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_ATTRIBUTES);

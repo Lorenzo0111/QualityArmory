@@ -1,8 +1,9 @@
 package me.zombie_striker.qg.miscitems;
 
-import java.util.List;
-
 import com.cryptomorin.xseries.particles.XParticle;
+import me.zombie_striker.customitemmanager.MaterialStorage;
+import me.zombie_striker.qg.QAMain;
+import me.zombie_striker.qg.guns.utils.WeaponSounds;
 import me.zombie_striker.qg.hooks.protection.ProtectionHandler;
 import org.bukkit.Effect;
 import org.bukkit.Location;
@@ -16,9 +17,7 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import me.zombie_striker.qg.QAMain;
-import me.zombie_striker.customitemmanager.MaterialStorage;
-import me.zombie_striker.qg.guns.utils.WeaponSounds;
+import java.util.List;
 
 public class SmokeGrenades extends Grenade {
 	private boolean useModernParticles = false;
@@ -30,8 +29,8 @@ public class SmokeGrenades extends Grenade {
 
 	@Override
 	public boolean onPull(Player thrower, ItemStack usedItem) {
-		if(!QAMain.autoarm)
-            if (throwItems.containsKey(thrower)) {
+		if(!QAMain.getConfiguration().features.autoarm)
+            if (ThrowableItemRegistry.containsKey(thrower)) {
                 thrower.sendMessage(QAMain.prefix + QAMain.S_GRENADE_PALREADYPULLPIN);
                 thrower.playSound(thrower.getLocation(), WeaponSounds.RELOAD_BULLET.getSoundName(), 1, 1);
                 return true;
@@ -118,7 +117,7 @@ public class SmokeGrenades extends Grenade {
 						Grenade.getGrenades().remove(h.getHolder());
 						h.getHolder().remove();
 					}
-					throwItems.remove(h.getHolder());
+					ThrowableItemRegistry.remove(h.getHolder());
 					this.cancel();
 				} else {
 					for(Entity e : h.getHolder().getNearbyEntities(radius, radius, radius))
@@ -135,7 +134,7 @@ public class SmokeGrenades extends Grenade {
 				}
 			}
 		}.runTaskTimer(QAMain.getInstance(), 5 * 20, 5));
-		throwItems.put(thrower, h);
+		ThrowableItemRegistry.put(thrower, h);
 		return true;
 
 	}

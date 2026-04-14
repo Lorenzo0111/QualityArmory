@@ -42,7 +42,7 @@ public class GunYMLLoader {
 									: Material.DIAMOND_AXE;
 							int variant = f2.contains("variant") ? f2.getInt("variant") : 0;
 							final String name = f2.getString("name");
-							if(QAMain.verboseLoadingLogging)
+							if(QAMain.getConfiguration().features.verboseLoadingLogging)
 							main.getLogger().info("-Loading AmmoType: " + name);
 
 							String extraData = null;
@@ -105,7 +105,7 @@ public class GunYMLLoader {
 					e.printStackTrace();
 				}
 			}
-			if(!QAMain.verboseLoadingLogging)
+			if(!QAMain.getConfiguration().features.verboseLoadingLogging)
 				main.getLogger().info("-Loaded "+items+" Ammo types.");
 
 
@@ -122,7 +122,7 @@ public class GunYMLLoader {
 						FileConfiguration f2 = YamlConfiguration.loadConfiguration(f);
 						if ((!f2.contains("invalid")) || !f2.getBoolean("invalid")) {
 							final String name = f2.getString("name");
-							if(QAMain.verboseLoadingLogging)
+							if(QAMain.getConfiguration().features.verboseLoadingLogging)
 							main.getLogger().info("-Loading Armor: " + name);
 
 							Material m = f2.contains("material") ? Material.matchMaterial(f2.getString("material"))
@@ -163,7 +163,7 @@ public class GunYMLLoader {
 					e.printStackTrace();
 				}
 			}
-			if(!QAMain.verboseLoadingLogging)
+			if(!QAMain.getConfiguration().features.verboseLoadingLogging)
 				main.getLogger().info("-Loaded "+items+" Armor types.");
 		}
 	}
@@ -177,7 +177,7 @@ public class GunYMLLoader {
 						FileConfiguration f2 = YamlConfiguration.loadConfiguration(f);
 						if ((!f2.contains("invalid")) || !f2.getBoolean("invalid")) {
 							final String name = f2.getString("name");
-							if (QAMain.verboseLoadingLogging)
+							if (QAMain.getConfiguration().features.verboseLoadingLogging)
 								main.getLogger().info("-Loading Misc: " + name);
 
 							Material m = f2.contains("material") ? Material.matchMaterial(f2.getString("material"))
@@ -278,7 +278,7 @@ public class GunYMLLoader {
 					e.printStackTrace();
 				}
 			}
-			if(!QAMain.verboseLoadingLogging)
+			if(!QAMain.getConfiguration().features.verboseLoadingLogging)
 				main.getLogger().info("-Loaded "+items+" Misc.");
 		}
 	}
@@ -288,7 +288,7 @@ public class GunYMLLoader {
 				FileConfiguration f2 = YamlConfiguration.loadConfiguration(f);
 				if ((!f2.contains("invalid")) || !f2.getBoolean("invalid")) {
 					final String name = f2.getString("name");
-					if(QAMain.verboseLoadingLogging)
+					if(QAMain.getConfiguration().features.verboseLoadingLogging)
 					main.getLogger().info("-Loading Gun: " + name);
 
 					Material m = f2.contains("material") ? Material.matchMaterial(f2.getString("material"))
@@ -503,7 +503,7 @@ public class GunYMLLoader {
 				loadGuns(main, f);
 				items++;
 			}
-			if(!QAMain.verboseLoadingLogging)
+			if(!QAMain.getConfiguration().features.verboseLoadingLogging)
 				main.getLogger().info("-Loaded "+items+" Gun types.");
 		}
 	}
@@ -517,7 +517,8 @@ public class GunYMLLoader {
 						FileConfiguration f2 = YamlConfiguration.loadConfiguration(f);
 						if ((!f2.contains("invalid")) || !f2.getBoolean("invalid")) {
 							final String name = f2.getString("name");
-							main.getLogger().info("-Loading Attachment: " + name);
+							if (QAMain.getConfiguration().features.verboseLoadingLogging)
+								main.getLogger().info("-Loading Attachment: " + name);
 							final String displayname = f2.contains("displayname")
 									? LocalUtils.colorize( f2.getString("displayname"))
 									: (ChatColor.GOLD + name);
@@ -569,7 +570,7 @@ public class GunYMLLoader {
 					e.printStackTrace();
 				}
 			}
-			if(!QAMain.verboseLoadingLogging)
+			if(!QAMain.getConfiguration().features.verboseLoadingLogging)
 				main.getLogger().info("-Loaded "+items+" Attachment types.");
 		}
 	}

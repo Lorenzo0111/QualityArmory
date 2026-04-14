@@ -1,10 +1,7 @@
 package me.zombie_striker.qg.handlers;
 
-import java.util.HashMap;
-import java.util.Map.Entry;
-import java.util.UUID;
-
 import com.cryptomorin.xseries.XPotion;
+import me.zombie_striker.qg.QAMain;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
@@ -12,7 +9,9 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
-import me.zombie_striker.qg.QAMain;
+import java.util.HashMap;
+import java.util.Map.Entry;
+import java.util.UUID;
 
 public class BulletWoundHandler {
 
@@ -22,7 +21,7 @@ public class BulletWoundHandler {
 	public static BukkitTask task = null;
 
 	public static void bulletHit(Player player, double bulletSeverity) {
-		if (QAMain.enableBleeding) {
+		if (QAMain.getConfiguration().combat.enableBleeding) {
 			double current = bleedoutMultiplier.containsKey(player.getUniqueId())
 					? bleedoutMultiplier.get(player.getUniqueId())
 					: 0;
@@ -32,13 +31,13 @@ public class BulletWoundHandler {
 			current -= bulletSeverity;
 			bleedoutMultiplier.put(player.getUniqueId(), current);
 			if (!bloodLevel.containsKey(player.getUniqueId())) {
-				bloodLevel.put(player.getUniqueId(), QAMain.bulletWound_initialbloodamount);
+				bloodLevel.put(player.getUniqueId(), QAMain.getConfiguration().combat.bulletWound_initialbloodamount);
 			}
 		}
 	}
 
 	public static void startTimer() {
-		if (QAMain.enableBleeding) {
+		if (QAMain.getConfiguration().combat.enableBleeding) {
 			task = new BukkitRunnable() {
 				@Override
 				public void run() {
@@ -48,22 +47,24 @@ public class BulletWoundHandler {
 							if (!bloodLevel.containsKey(online.getUniqueId()))
 								bloodLevel.put(online.getUniqueId(), 0.0);
 							double bloodlevel = bloodLevel.get(online.getUniqueId()) + e.getValue()
-									+ QAMain.bulletWound_BloodIncreasePerSecond;
+									+ QAMain.getConfiguration().combat.bulletWound_BloodIncreasePerSecond;
 
-							if (bloodlevel / QAMain.bulletWound_initialbloodamount <= 0.75)
+							if (bloodlevel / QAMain.getConfiguration().combat.bulletWound_initialbloodamount <= 0.75)
 
 								try {
 									online.removePotionEffect(XPotion.NAUSEA.getPotionEffectType());
 									online.addPotionEffect(new PotionEffect(XPotion.NAUSEA.getPotionEffectType(), 499, 3));
 								} catch (Error | Exception e4) {
 								}
-							if (bloodlevel / QAMain.bulletWound_initialbloodamount <= 0.40)
+							if (bloodlevel / QAMain.getConfiguration().combat.bulletWound_initialbloodamount <= 0.40)
 								try {
 									online.removePotionEffect(PotionEffectType.BLINDNESS);
 									online.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 499, 1));
 								} catch (Error | Exception e4) {
 								}
-							if (bloodlevel / QAMain.bulletWound_initialbloodamount == 0.0)
+							double initialBlood = QAMain.getConfiguration().combat.bulletWound_initialbloodamount;
+							double bloodRatio = initialBlood > 0 ? bloodlevel / initialBlood : bloodlevel;
+							if (bloodRatio <= 1e-9)
 								online.damage(1);
 							if (bleedoutMultiplier.get(online.getUniqueId()) < 0)
 								// online.getWorld().spawnParticle(Particle.REDSTONE,
@@ -77,7 +78,7 @@ public class BulletWoundHandler {
 											online.getLocation().add(x, 0.8 + yofset, z));
 								}
 
-							if (bloodlevel >= QAMain.bulletWound_initialbloodamount)
+							if (bloodlevel >= QAMain.getConfiguration().combat.bulletWound_initialbloodamount)
 								bloodLevel.remove(online.getUniqueId());
 							else
 								bloodLevel.put(online.getUniqueId(), bloodlevel);

@@ -1,13 +1,11 @@
 package me.zombie_striker.qg.guns.utils;
 
-import me.zombie_striker.customitemmanager.OLD_ItemFact;
 import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.ammo.Ammo;
 import me.zombie_striker.qg.api.QualityArmory;
 import me.zombie_striker.qg.api.WeaponInteractEvent;
 import me.zombie_striker.qg.guns.Gun;
 import me.zombie_striker.qg.handlers.IronsightsHandler;
-import me.zombie_striker.qg.handlers.Update19OffhandChecker;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -139,7 +137,7 @@ public class GunRefillerRunnable {
                     player.getInventory().setItem(newSlot, modifiedOriginalItem);
 
 
-                    if (!different && player.isSneaking() && g.hasIronSights() && !QAMain.enableIronSightsON_RIGHT_CLICK) {
+                    if (!different && player.isSneaking() && g.hasIronSights() && !QAMain.getConfiguration().weapons.enableIronSightsON_RIGHT_CLICK) {
                         IronsightsHandler.aim(player);
                         QAMain.toggleNightvision(player, g, true);
                     }
@@ -147,7 +145,7 @@ public class GunRefillerRunnable {
                     if (shouldContinue)
                         QualityArmory.sendHotbarGunAmmoCount(player, g, modifiedOriginalItem, false);
 
-                    if (QAMain.showAmmoInXPBar && shouldContinue) {
+                    if (QAMain.getConfiguration().ui.showAmmoInXPBar && shouldContinue) {
                         GunUtil.updateXPBar(player, g, reloadAmount);
                     }
                 }

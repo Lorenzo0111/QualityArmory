@@ -23,7 +23,7 @@ public class Update19resourcepackhandler implements Listener {
             QAMain.resourcepackLoading.remove(event.getPlayer().getUniqueId());
 
         if (event.getStatus() == PlayerResourcePackStatusEvent.Status.DECLINED) {
-            if (QAMain.kickIfDeniedRequest) {
+            if (QAMain.getConfiguration().resourcepack.kickIfDenied) {
                 Bukkit.getScheduler().runTask(QAMain.getInstance(), () -> event.getPlayer().kickPlayer(QAMain.S_KICKED_FOR_RESOURCEPACK));
             }
 
@@ -34,7 +34,7 @@ public class Update19resourcepackhandler implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onDamage(EntityDamageEvent event) {
-        if (!QAMain.resourcepackInvincibility) return;
+        if (!QAMain.getConfiguration().resourcepack.invincibility) return;
         if (!(event.getEntity() instanceof Player)) return;
 
         Player player = (Player) event.getEntity();

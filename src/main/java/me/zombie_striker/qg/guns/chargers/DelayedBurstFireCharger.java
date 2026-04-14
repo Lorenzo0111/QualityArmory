@@ -62,7 +62,7 @@ public class DelayedBurstFireCharger implements ChargingHandler {
 
 				GunUtil.shootHandler(g, player);
 				GunUtil.playShoot(g, player);
-				if (QAMain.enableRecoil && g.getRecoil() > 0) {
+				if (QAMain.getConfiguration().weapons.enableRecoil && g.getRecoil() > 0) {
 					GunUtil.addRecoil(player, g);
 				}
 				shotCurrently++;

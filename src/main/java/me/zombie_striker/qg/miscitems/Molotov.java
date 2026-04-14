@@ -26,11 +26,12 @@ public class Molotov extends Grenade {
 	@Override
 	public boolean onPull(Player e, ItemStack usedItem) {
 		Player thrower = e.getPlayer();
-		if(!QAMain.autoarm)
-		if (throwItems.containsKey(thrower)) {
-			thrower.sendMessage(QAMain.prefix + QAMain.S_GRENADE_PALREADYPULLPIN);
-			thrower.playSound(thrower.getLocation(), WeaponSounds.RELOAD_BULLET.getSoundName(), 1, 1);
-			return true;
+		if (!QAMain.getConfiguration().features.autoarm) {
+			if (ThrowableItemRegistry.containsKey(thrower)) {
+				thrower.sendMessage(QAMain.prefix + QAMain.S_GRENADE_PALREADYPULLPIN);
+				thrower.playSound(thrower.getLocation(), WeaponSounds.RELOAD_BULLET.getSoundName(), 1, 1);
+				return true;
+			}
 		}
 		thrower.getWorld().playSound(thrower.getLocation(), WeaponSounds.RELOAD_MAG_IN.getSoundName(), 2, 1);
 		final ThrowableHolder h = new ThrowableHolder(thrower.getUniqueId(), thrower, this);
@@ -65,7 +66,7 @@ public class Molotov extends Grenade {
 						Grenade.getGrenades().remove(h.getHolder());
 						h.getHolder().remove();
 					}
-					throwItems.remove(h.getHolder());
+					ThrowableItemRegistry.remove(h.getHolder());
 					this.cancel();
 				} else {
 					for(Entity e : h.getHolder().getNearbyEntities(radius, radius, radius)) 
@@ -82,7 +83,7 @@ public class Molotov extends Grenade {
 				}
 			}
 		}.runTaskTimer(QAMain.getInstance(),5*20,10));
-		throwItems.put(thrower, h);
+		ThrowableItemRegistry.put(thrower, h);
 
 		return true;
 	}

@@ -4,7 +4,8 @@ import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.api.QualityArmory;
 import me.zombie_striker.qg.api.WeaponInteractEvent;
 import me.zombie_striker.qg.guns.Gun;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -28,7 +29,7 @@ public class IronsightsHandler {
 						player.getWorld().dropItem(player.getLocation(),player.getInventory().getItemInOffHand());
 					} else {
 						player.getInventory().setItem(slot, player.getInventory().getItemInOffHand());
-						if (QAMain.restoreOffHand) beforeSwitch.put(player, slot);
+						if (QAMain.getConfiguration().features.restoreOffHand) beforeSwitch.put(player, slot);
 					}
 				}
 				if (player.getItemInHand() != null && QualityArmory.isGun(player.getItemInHand())) {

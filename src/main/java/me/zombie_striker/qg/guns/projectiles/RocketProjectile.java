@@ -48,7 +48,7 @@ public class RocketProjectile implements RealtimeCalculationProjectile {
 					if (GunUtil.isSolid(explode.getBlock(), explode) || entityNear || distance < 0) {
 						boolean explodeDamage = false;
 
-						if (QAMain.enableExplosionDamage) {
+						if (QAMain.getConfiguration().features.enableExplosionDamage) {
 							QAProjectileExplodeEvent event = new QAProjectileExplodeEvent(RocketProjectile.this, explode);
 							Bukkit.getPluginManager().callEvent(event);
 							if (!event.isCancelled()) explodeDamage = ExplosionHandler.handleExplosion(explode, 4, 2);

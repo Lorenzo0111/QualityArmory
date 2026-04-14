@@ -29,8 +29,8 @@ public class ProxyMines extends Grenade {
 
 	@Override
 	public boolean onPull(Player thrower, ItemStack usedItem) {
-		if(!QAMain.autoarm)
-		if (throwItems.containsKey(thrower)) {
+		if(!QAMain.getConfiguration().features.autoarm)
+		if (ThrowableItemRegistry.containsKey(thrower)) {
 			thrower.sendMessage(QAMain.prefix + QAMain.S_GRENADE_PALREADYPULLPIN);
 			thrower.playSound(thrower.getLocation(), WeaponSounds.RELOAD_BULLET.getSoundName(), 1, 1);
 			return true;
@@ -75,7 +75,7 @@ public class ProxyMines extends Grenade {
 							Grenade.getGrenades().remove(h.getHolder());
 							h.getHolder().remove();
 						}
-						if (QAMain.enableExplosionDamage) {
+						if (QAMain.getConfiguration().features.enableExplosionDamage) {
 							QAThrowableExplodeEvent event = new QAThrowableExplodeEvent(ProxyMines.this, h.getHolder().getLocation());
 							Bukkit.getPluginManager().callEvent(event);
 							if (!event.isCancelled()) ExplosionHandler.handleExplosion(h.getHolder().getLocation(), Math.toIntExact(Math.round(radius/2)), 1);
@@ -106,13 +106,13 @@ public class ProxyMines extends Grenade {
 							h.getHolder().getWorld().createExplosion(h.getHolder().getLocation(), 1);
 							QAMain.DEBUG("Failed. Created default explosion");
 						}
-						throwItems.remove(h.getHolder());
+						ThrowableItemRegistry.remove(h.getHolder());
 						this.cancel();
 					}
 				}
 			}
 		}.runTaskTimer(QAMain.getInstance(), 5, 1));
-		throwItems.put(thrower, h);
+		ThrowableItemRegistry.put(thrower, h);
 		return true;
 	}
 
