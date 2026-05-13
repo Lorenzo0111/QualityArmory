@@ -1064,13 +1064,14 @@ public class QAMain extends JavaPlugin {
                 else {
                     ConfigurationSection packSection = getConfig().getConfigurationSection("DefaultResourcepack");
                     if (packSection != null) {
-                        // Migrate
+                        // Migrate old 21 format because the default one on v2.0.18 was broken
                         if (packSection.contains("21")) {
                             packSection.set("21-4", packSection.getString("21"));
                             packSection.set("21", null);
                             saveTheConfig = true;
                         }
 
+                        // Migrate existing keys to support major version changes
                         for (String key : packSection.getKeys(false)) {
                             try {
                                 String[] split = key.split("-");
