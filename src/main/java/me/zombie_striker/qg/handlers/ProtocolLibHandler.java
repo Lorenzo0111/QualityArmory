@@ -129,7 +129,7 @@ public class ProtocolLibHandler {
                         }
 
                         // Handle different Minecraft versions
-                        if (XReflection.supports(16)) {
+                        if (QAMain.isVersionHigherThan(1, 16)) {
                             handleModern1_16PacketFormat(event, targetPlayer);
                         } else {
                             handleLegacyPacketFormat(event, targetPlayer, entityId);

@@ -279,7 +279,7 @@ public class QAMain extends JavaPlugin {
     }
 
     public static boolean isVersionHigherThan(int mainVersion, int secondVersion) {
-        return XReflection.supports(secondVersion);
+        return XReflection.supports(mainVersion, secondVersion, 0);
     }
 
     public static void toggleNightvision(Player player, Gun g, boolean add) {
@@ -1064,10 +1064,23 @@ public class QAMain extends JavaPlugin {
                 else {
                     ConfigurationSection packSection = getConfig().getConfigurationSection("DefaultResourcepack");
                     if (packSection != null) {
+                        // Migrate
                         if (packSection.contains("21")) {
                             packSection.set("21-4", packSection.getString("21"));
                             packSection.set("21", null);
                             saveTheConfig = true;
+                        }
+
+                        for (String key : packSection.getKeys(false)) {
+                            try {
+                                String[] split = key.split("-");
+                                int first = Integer.parseInt(split[0]);
+
+                                if (first < 25 && first > 1) {
+                                    packSection.set("1-" + key, packSection.getString(key));
+                                    saveTheConfig = true;
+                                }
+                            } catch (NumberFormatException ignored) {}
                         }
 
                         CustomItemManager.setResourcepack(new MultiVersionPackProvider(packSection));
