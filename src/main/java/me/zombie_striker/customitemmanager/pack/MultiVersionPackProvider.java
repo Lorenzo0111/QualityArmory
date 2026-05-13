@@ -61,13 +61,19 @@ public class MultiVersionPackProvider implements ResourcepackProvider {
                             (keyMajor == major && keyMinor < minor) ||
                             (keyMajor == major && keyMinor == minor && keyPatch <= patch)
             ) {
-                if (
-                        highest.equals("0") ||
-                                keyMajor > Integer.parseInt(highest.split("\\.")[0]) ||
-                                (keyMajor == Integer.parseInt(highest.split("\\.")[0]) &&
-                                        keyMinor > Integer.parseInt(highest.split("\\.")[1]))
-                ) {
+                if (highest.equals("0")) {
                     highest = key;
+                } else {
+                    String[] highestVersion = highest.split("-");
+                    int highestMajor = Integer.parseInt(highestVersion[0]);
+                    int highestMinor = highestVersion.length > 1 ? Integer.parseInt(highestVersion[1]) : 0;
+                    int highestPatch = highestVersion.length > 2 ? Integer.parseInt(highestVersion[2]) : 0;
+
+                    if (keyMajor > highestMajor ||
+                            (keyMajor == highestMajor && keyMinor > highestMinor) ||
+                            (keyMajor == highestMajor && keyMinor == highestMinor && keyPatch > highestPatch)) {
+                        highest = key;
+                    }
                 }
             }
         }
