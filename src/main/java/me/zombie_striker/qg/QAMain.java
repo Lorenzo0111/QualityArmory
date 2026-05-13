@@ -1072,13 +1072,14 @@ public class QAMain extends JavaPlugin {
                         }
 
                         // Migrate existing keys to support major version changes
-                        for (String key : packSection.getKeys(false)) {
+                        for (String key : new HashSet<>(packSection.getKeys(false))) {
                             try {
                                 String[] split = key.split("-");
                                 int first = Integer.parseInt(split[0]);
 
                                 if (first < 25 && first > 1) {
                                     packSection.set("1-" + key, packSection.getString(key));
+                                    packSection.set(key, null);
                                     saveTheConfig = true;
                                 }
                             } catch (NumberFormatException ignored) {}
