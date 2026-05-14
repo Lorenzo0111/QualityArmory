@@ -1,14 +1,8 @@
 package me.zombie_striker.qg.handlers;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
-
-import com.cryptomorin.xseries.reflection.XReflection;
 import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.api.QualityArmory;
 import me.zombie_striker.qg.guns.Gun;
-
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -17,6 +11,10 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 public class AimManager extends BukkitRunnable implements Listener {
 	private static final Map<UUID, Double> SWAYS = new HashMap<>();
@@ -43,7 +41,7 @@ public class AimManager extends BukkitRunnable implements Listener {
 				if (p.isSprinting() && g.isEnableSwayRunModifier()) {
 					sway *= QAMain.swayModifier_Run;
 				}
-				if (XReflection.supports(9) && !QualityArmory.isIronSights(p.getInventory().getItemInMainHand())) {
+				if (QAMain.isVersionHigherThan(1, 9) && !QualityArmory.isIronSights(p.getInventory().getItemInMainHand())) {
 					sway *= g.getSwayUnscopedMultiplier();
 				}
 			}

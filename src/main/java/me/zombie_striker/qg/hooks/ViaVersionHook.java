@@ -7,9 +7,10 @@ import me.zombie_striker.qg.QAMain;
 import org.bukkit.entity.Player;
 
 public final class ViaVersionHook {
+    private static final String SERVER_VERSION = XReflection.MAJOR_NUMBER + "." + XReflection.MINOR_NUMBER + "." + XReflection.PATCH_NUMBER;
 
     public static String getVersion(Player player) {
-        if (!QAMain.hasViaVersion) return XReflection.MINOR_NUMBER + "." + XReflection.PATCH_NUMBER;
+        if (!QAMain.hasViaVersion) return SERVER_VERSION;
 
         try {
             int version = Via.getAPI().getPlayerVersion(player.getUniqueId());
@@ -19,11 +20,11 @@ public final class ViaVersionHook {
                     .findFirst()
                     .map(pv -> {
                         String[] split = pv.getIncludedVersions().iterator().next().split("\\.");
-                        return split[1] + "." + (split.length > 2 ? split[2] : "0");
+                        return split[0] + "." + split[1] + "." + (split.length > 2 ? split[2] : "0");
                     })
-                .orElse(XReflection.MINOR_NUMBER + "." + XReflection.PATCH_NUMBER);
+                .orElse(SERVER_VERSION);
         } catch (Exception | Error e) {
-            return XReflection.MINOR_NUMBER + "." + XReflection.PATCH_NUMBER;
+            return SERVER_VERSION;
         }
     }
 }

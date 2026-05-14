@@ -1,3 +1,6 @@
+2.1.3
+  - Fixed 26.x support
+
 2.1.2
   - Added sound_equip_volume and sound_meleehit_volume fields
   - Added permissions for crafting and buying guns

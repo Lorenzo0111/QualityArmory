@@ -17,7 +17,7 @@ public class ParticleHandlers {
 	public static boolean is13 = true;
 
 	public static void initValues() {
-		is13 = XReflection.supports(13);
+		is13 = QAMain.isVersionHigherThan(1, 13);
 	}
 
 	public static void spawnExplosion(Location loc) {
