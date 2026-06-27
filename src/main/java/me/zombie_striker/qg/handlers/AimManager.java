@@ -9,14 +9,14 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.scheduler.BukkitRunnable;
+import me.zombie_striker.qg.util.FoliaRunnable;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-public class AimManager extends BukkitRunnable implements Listener {
+public class AimManager extends FoliaRunnable implements Listener {
 	private static final Map<UUID, Double> SWAYS = new HashMap<>();
 	private static final Map<UUID, Long> LAST_MOVEMENT = new HashMap<>();
 

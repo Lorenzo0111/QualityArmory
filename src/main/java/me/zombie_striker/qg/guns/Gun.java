@@ -24,7 +24,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffect;
-import org.bukkit.scheduler.BukkitRunnable;
+import me.zombie_striker.qg.util.FoliaRunnable;
 import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
@@ -1003,7 +1003,7 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
 
                         final Gun checkTo = QualityArmory
                                 .getGun(Update19OffhandChecker.getItemStackOFfhand(player.getPlayer()));
-                        new BukkitRunnable() {
+                        new FoliaRunnable() {
 
                             @Override
                             public void run() {
@@ -1030,7 +1030,7 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
                                 }
 
                             }
-                        }.runTaskTimer(QAMain.getInstance(), 20, 20);
+                        }.runTaskTimer(QAMain.getInstance(), player, 20, 20);
 
 
                         QualityArmory.sendHotbarGunAmmoCount(player.getPlayer(), this, usedItem, false);

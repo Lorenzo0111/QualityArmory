@@ -10,7 +10,7 @@ import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.scheduler.BukkitRunnable;
+import me.zombie_striker.qg.util.FoliaRunnable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,7 +29,7 @@ public class OLD_ItemFact {
 		im.setDisplayName(g.getDisplayName() + QAMain.S_OUT_OF_AMMO);
 		k.setItemMeta(im);
 		player.getInventory().setItem(slot, k);
-		new BukkitRunnable() {
+		new FoliaRunnable() {
 			public void run() {
 				removeOutOfAmmoToDisplayname(g, player, k, slot);
 			}

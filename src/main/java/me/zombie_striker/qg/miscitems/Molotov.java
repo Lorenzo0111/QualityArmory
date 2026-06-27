@@ -12,7 +12,7 @@ import org.bukkit.entity.Item;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.scheduler.BukkitRunnable;
+import me.zombie_striker.qg.util.FoliaRunnable;
 
 import java.util.List;
 
@@ -34,7 +34,7 @@ public class Molotov extends Grenade {
 		}
 		thrower.getWorld().playSound(thrower.getLocation(), WeaponSounds.RELOAD_MAG_IN.getSoundName(), 2, 1);
 		final ThrowableHolder h = new ThrowableHolder(thrower.getUniqueId(), thrower, this);
-		h.setTimer(new BukkitRunnable() {
+		h.setTimer(new FoliaRunnable() {
 
 			int k = 0;
 
@@ -81,7 +81,7 @@ public class Molotov extends Grenade {
 						}
 				}
 			}
-		}.runTaskTimer(QAMain.getInstance(),5*20,10));
+		}.runTaskTimer(QAMain.getInstance(), thrower.getLocation().clone(), 5*20, 10));
 		throwItems.put(thrower, h);
 
 		return true;

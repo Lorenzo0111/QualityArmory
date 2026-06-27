@@ -14,7 +14,7 @@ import me.zombie_striker.qg.handlers.ParticleHandlers;
 import org.bukkit.*;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
+import me.zombie_striker.qg.util.FoliaRunnable;
 import org.bukkit.util.Vector;
 
 public class RocketProjectile implements RealtimeCalculationProjectile {
@@ -24,7 +24,7 @@ public class RocketProjectile implements RealtimeCalculationProjectile {
 
 	@Override
 	public void spawn(final Gun g, final Location s, final Player player, final Vector dir) {
-		new BukkitRunnable() {
+		new FoliaRunnable() {
 			int distance = g.getMaxDistance();
 
 			@Override
@@ -68,7 +68,7 @@ public class RocketProjectile implements RealtimeCalculationProjectile {
 					}
 				}
 			}
-		}.runTaskTimer(QAMain.getInstance(), 0, 1);
+		}.runTaskTimer(QAMain.getInstance(), player, 0, 1);
 	}
 
 	@Override

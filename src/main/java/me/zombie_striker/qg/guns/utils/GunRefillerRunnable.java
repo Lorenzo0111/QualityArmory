@@ -13,7 +13,7 @@ import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.scheduler.BukkitRunnable;
+import me.zombie_striker.qg.util.FoliaRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.util.ArrayList;
@@ -78,7 +78,7 @@ public class GunRefillerRunnable {
 
         this.reloadedItem = modifiedOriginalItem.clone();
 
-        r = new BukkitRunnable() {
+        r = new FoliaRunnable() {
             @Override
             public void run() {
                 ItemMeta newim = modifiedOriginalItem.getItemMeta();
@@ -168,7 +168,7 @@ public class GunRefillerRunnable {
                     QAMain.reloadingTasks.put(player.getUniqueId(), rr);
                 }
             }
-        }.runTaskLater(QAMain.getInstance(), (long) (20 * seconds));
+        }.runTaskLater(QAMain.getInstance(), player, (long) (20 * seconds));
 
         allGunRefillers.add(gg);
 

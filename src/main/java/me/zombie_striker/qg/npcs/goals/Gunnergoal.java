@@ -147,7 +147,7 @@ public class Gunnergoal implements Goal {
 					Bukkit.broadcastMessage("Shooting no target");
 				}
 				// Bukkit.broadcastMessage("run1");
-				// new BukkitRunnable() {
+				// new FoliaRunnable() {
 				// public void run() {
 				// GunUtil.shoot(g, (Player) npc.getEntity(), g.getSway(), g.getDamage(), 1,
 				// g.getMaxDistance());

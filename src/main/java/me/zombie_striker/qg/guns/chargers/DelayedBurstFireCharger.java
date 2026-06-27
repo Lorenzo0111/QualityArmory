@@ -7,7 +7,7 @@ import me.zombie_striker.qg.guns.utils.WeaponSounds;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.scheduler.BukkitRunnable;
+import me.zombie_striker.qg.util.FoliaRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
 import me.zombie_striker.qg.QAMain;
@@ -33,7 +33,7 @@ public class DelayedBurstFireCharger implements ChargingHandler {
 		GunUtil.shootHandler(g, player);
 		GunUtil.playShoot(g, player);
 
-		shooters.put(player.getUniqueId(), new BukkitRunnable() {
+		shooters.put(player.getUniqueId(), new FoliaRunnable() {
 			int slotUsed = player.getInventory().getHeldItemSlot();
 			@SuppressWarnings("deprecation")
 			boolean offhand = QualityArmory.isIronSights(player.getItemInHand());
@@ -98,7 +98,7 @@ public class DelayedBurstFireCharger implements ChargingHandler {
 				}
 				QualityArmory.sendHotbarGunAmmoCount(player, g, stack, false);
 			}
-		}.runTaskTimer(QAMain.getInstance(), 1, 1));
+		}.runTaskTimer(QAMain.getInstance(), player, 1, 1));
 		return false;
 	}
 
