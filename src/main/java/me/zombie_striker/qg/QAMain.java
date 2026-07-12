@@ -3,8 +3,6 @@ package me.zombie_striker.qg;
 import com.cryptomorin.xseries.XPotion;
 import com.cryptomorin.xseries.XSound;
 import com.cryptomorin.xseries.reflection.XReflection;
-import de.tr7zw.changeme.nbtapi.NBT;
-import de.tr7zw.changeme.nbtapi.utils.MinecraftVersion;
 import me.zombie_striker.customitemmanager.CustomBaseObject;
 import me.zombie_striker.customitemmanager.CustomItemManager;
 import me.zombie_striker.customitemmanager.MaterialStorage;
@@ -36,6 +34,7 @@ import me.zombie_striker.qg.guns.utils.GunRefillerRunnable;
 import me.zombie_striker.qg.guns.utils.WeaponSounds;
 import me.zombie_striker.qg.handlers.*;
 import me.zombie_striker.qg.hooks.MimicHookHandler;
+import me.zombie_striker.qg.hooks.NBTHook;
 import me.zombie_striker.qg.hooks.PlaceholderAPIHook;
 import me.zombie_striker.qg.hooks.QuickShopHook;
 import me.zombie_striker.qg.hooks.anticheat.AntiCheatHook;
@@ -538,14 +537,13 @@ public class QAMain extends JavaPlugin {
             this.getDataFolder().mkdirs();
         }
 
-        if (!NBT.preloadApi()) {
+        if (!NBTHook.init(this)) {
             getLogger().severe("NBT-API wasn't initialized properly, disabling the plugin");
+            getLogger().severe("Check if a new QualityArmory version is available");
+            getLogger().severe("If you don't want to wait, you can try installing the latest NBTAPI version from https://modrinth.com/plugin/nbtapi");
             getPluginLoader().disablePlugin(this);
             return;
         }
-
-        MinecraftVersion.replaceLogger(this.getLogger());
-        MinecraftVersion.disableUpdateCheck();
 
         ProtectionHandler.init();
 

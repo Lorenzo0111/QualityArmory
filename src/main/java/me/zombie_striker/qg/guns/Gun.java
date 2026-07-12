@@ -1,7 +1,6 @@
 package me.zombie_striker.qg.guns;
 
 import com.cryptomorin.xseries.XPotion;
-import de.tr7zw.changeme.nbtapi.NBT;
 import me.zombie_striker.customitemmanager.*;
 import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.ammo.Ammo;
@@ -17,6 +16,7 @@ import me.zombie_striker.qg.guns.utils.WeaponSounds;
 import me.zombie_striker.qg.guns.utils.WeaponType;
 import me.zombie_striker.qg.handlers.IronsightsHandler;
 import me.zombie_striker.qg.handlers.Update19OffhandChecker;
+import me.zombie_striker.qg.hooks.NBTHook;
 import me.zombie_striker.qg.utils.LocalUtils;
 import org.bukkit.*;
 import org.bukkit.block.Block;
@@ -166,14 +166,11 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
     public static int getAmount(ItemStack is) {
         if (is.getType().equals(Material.AIR)) return 0;
 
-        return NBT.get(is, nbt -> nbt.hasTag("ammo") ? nbt.getInteger("ammo") : 0);
+        return NBTHook.getInt(is, "ammo");
     }
 
     public static void updateAmmo(Gun g, ItemStack current, int amount) {
-        NBT.modify(current, nbt -> {
-            nbt.setInteger("ammo", amount);
-        });
-
+        NBTHook.setInt(current, "ammo", amount);
         Gun.updateAmmoLore(g, current, amount);
     }
 
