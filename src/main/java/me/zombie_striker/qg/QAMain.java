@@ -516,7 +516,8 @@ public class QAMain extends JavaPlugin {
         }
 
         try {
-            resourcepackwhitelist.save(new File(getDataFolder(), "resourcepackwhitelist.yml"));
+            if (resourcepackwhitelist != null)
+                resourcepackwhitelist.save(new File(getDataFolder(), "resourcepackwhitelist.yml"));
         } catch (IOException e) {
             e.printStackTrace();
         }
