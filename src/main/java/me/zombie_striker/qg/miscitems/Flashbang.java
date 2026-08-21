@@ -12,7 +12,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import org.bukkit.scheduler.BukkitRunnable;
+import me.zombie_striker.qg.util.FoliaRunnable;
 
 import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.customitemmanager.MaterialStorage;
@@ -37,7 +37,7 @@ public class Flashbang extends Grenade {
 		}
 		thrower.getWorld().playSound(thrower.getLocation(), WeaponSounds.RELOAD_MAG_IN.getSoundName(), 2, 1);
 		final ThrowableHolder h = new ThrowableHolder(thrower.getUniqueId(), thrower, this);
-		h.setTimer(new BukkitRunnable() {
+		h.setTimer(new FoliaRunnable() {
 			@Override
 			public void run() {
 				try {
@@ -72,7 +72,7 @@ public class Flashbang extends Grenade {
 
 				throwItems.remove(h.getHolder());
 			}
-		}.runTaskLater(QAMain.getInstance(), 5 * 20));
+		}.runTaskLater(QAMain.getInstance(), thrower.getLocation().clone(), 5 * 20));
 		throwItems.put(thrower, h);
 		return true;
 	}

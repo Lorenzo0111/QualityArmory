@@ -15,7 +15,7 @@ import org.bukkit.entity.Item;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.scheduler.BukkitRunnable;
+import me.zombie_striker.qg.util.FoliaRunnable;
 import org.bukkit.util.Vector;
 
 import java.util.List;
@@ -37,7 +37,7 @@ public class ProxyMines extends Grenade {
 		}
 		thrower.getWorld().playSound(thrower.getLocation(), WeaponSounds.RELOAD_MAG_IN.getSoundName(), 2, 1);
 		final ThrowableHolder h = new ThrowableHolder(thrower.getUniqueId(), thrower, this);
-		h.setTimer(new BukkitRunnable() {
+		h.setTimer(new FoliaRunnable() {
 
 			int k = 0;
 			BlockFace sticky = null;
@@ -111,7 +111,7 @@ public class ProxyMines extends Grenade {
 					}
 				}
 			}
-		}.runTaskTimer(QAMain.getInstance(), 5, 1));
+		}.runTaskTimer(QAMain.getInstance(), thrower.getLocation().clone(), 5, 1));
 		throwItems.put(thrower, h);
 		return true;
 	}

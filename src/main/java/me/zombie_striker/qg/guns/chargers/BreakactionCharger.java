@@ -6,7 +6,7 @@ import java.util.UUID;
 
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.scheduler.BukkitRunnable;
+import me.zombie_striker.qg.util.FoliaRunnable;
 
 import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.guns.Gun;
@@ -30,26 +30,26 @@ public class BreakactionCharger implements ChargingHandler {
 	@Override
 	public boolean shoot(Gun g, final Player player, ItemStack stack) {
 		timeC.add(player.getUniqueId());
-		new BukkitRunnable() {
+		new FoliaRunnable() {
 			@Override
 			public void run() {
 				player.getWorld().playSound(player.getLocation(), g.getChargingSound(), 1, 1f);
 			}
-		}.runTaskLater(QAMain.getInstance(), 10);
-		new BukkitRunnable() {
+		}.runTaskLater(QAMain.getInstance(), player, 10);
+		new FoliaRunnable() {
 
 			@Override
 			public void run() {
 				player.getWorld().playSound(player.getLocation(), g.getChargingSound(), 1, 1f);
 			}
-		}.runTaskLater(QAMain.getInstance(), 15);
-		new BukkitRunnable() {
+		}.runTaskLater(QAMain.getInstance(), player, 15);
+		new FoliaRunnable() {
 
 			@Override
 			public void run() {
 				timeC.remove(player.getUniqueId());
 			}
-		}.runTaskLater(QAMain.getInstance(), (long) (g.getDelayBetweenShotsInSeconds()*20));
+		}.runTaskLater(QAMain.getInstance(), player, (long) (g.getDelayBetweenShotsInSeconds()*20));
 		return true;
 	}
 

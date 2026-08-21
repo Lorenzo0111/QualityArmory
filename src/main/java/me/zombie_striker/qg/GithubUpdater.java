@@ -5,7 +5,7 @@ import java.net.*;
 import com.google.gson.*;
 import org.bukkit.*;
 import org.bukkit.plugin.Plugin;
-import org.bukkit.scheduler.BukkitRunnable;
+import me.zombie_striker.qg.util.FoliaRunnable;
 
 public class GithubUpdater {
 
@@ -47,7 +47,7 @@ public class GithubUpdater {
 								+ main.getDescription().getName() + ": " + ChatColor.WHITE + tagname
 								+ ChatColor.LIGHT_PURPLE + " downloading now!!");
 
-				new BukkitRunnable() {
+				new FoliaRunnable() {
 
 					@Override
 					public void run() {

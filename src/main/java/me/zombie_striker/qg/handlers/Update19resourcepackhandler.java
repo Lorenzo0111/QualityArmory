@@ -1,7 +1,7 @@
 package me.zombie_striker.qg.handlers;
 
 import me.zombie_striker.qg.QAMain;
-import org.bukkit.Bukkit;
+import me.zombie_striker.qg.util.FoliaRunnable;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -24,7 +24,7 @@ public class Update19resourcepackhandler implements Listener {
 
         if (event.getStatus() == PlayerResourcePackStatusEvent.Status.DECLINED) {
             if (QAMain.kickIfDeniedRequest) {
-                Bukkit.getScheduler().runTask(QAMain.getInstance(), () -> event.getPlayer().kickPlayer(QAMain.S_KICKED_FOR_RESOURCEPACK));
+                FoliaRunnable.runTask(QAMain.getInstance(), () -> event.getPlayer().kickPlayer(QAMain.S_KICKED_FOR_RESOURCEPACK));
             }
 
             // Add to the list, so it doesn't keep spamming the title

@@ -27,7 +27,7 @@ public class Gunner {
 		SkinnableEntity se = ((SkinnableEntity)gunner.gunner.getEntity());
 		se.setSkinName("army");
 		// gunner.gunner.addTrait(GunnerTrait.class);
-		// new BukkitRunnable() {
+		// new FoliaRunnable() {
 		// @Override
 		// public void run() {
 		Gun g = me.zombie_striker.qg.api.QualityArmory.getGunByName(gun);

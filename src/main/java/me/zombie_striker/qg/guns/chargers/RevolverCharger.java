@@ -7,7 +7,7 @@ import java.util.UUID;
 import me.zombie_striker.qg.api.QualityArmory;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.scheduler.BukkitRunnable;
+import me.zombie_striker.qg.util.FoliaRunnable;
 
 import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.guns.Gun;
@@ -27,7 +27,7 @@ public RevolverCharger() {
 	@Override
 	public boolean shoot(Gun g, final Player player, ItemStack stack) {
 		timeC.add(player.getUniqueId());
-		new BukkitRunnable() {
+		new FoliaRunnable() {
 			@Override
 			public void run() {try {
 				player.getWorld().playSound(player.getLocation(), g.getChargingSound(), 1,
@@ -35,14 +35,14 @@ public RevolverCharger() {
 
 			}catch(Error|Exception e43) {}
 			}
-		}.runTaskLater(QAMain.getInstance(), 10);
-		new BukkitRunnable() {
+		}.runTaskLater(QAMain.getInstance(), player, 10);
+		new FoliaRunnable() {
 			
 			@Override
 			public void run() {
 				timeC.remove(player.getUniqueId());
 			}
-		}.runTaskLater(QAMain.getInstance(), 15);
+		}.runTaskLater(QAMain.getInstance(), player, 15);
 		return true;
 	}
 

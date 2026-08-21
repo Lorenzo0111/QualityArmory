@@ -11,7 +11,7 @@ import org.bukkit.GameMode;
 import org.bukkit.Sound;
 import org.bukkit.entity.*;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.scheduler.BukkitRunnable;
+import me.zombie_striker.qg.util.FoliaRunnable;
 
 import java.util.List;
 
@@ -45,7 +45,7 @@ public class StickyGrenades extends Grenade {
 			holder.setHolder(arrow);
 			arrow.setPickupStatus(AbstractArrow.PickupStatus.DISALLOWED);
 			throwItems.put(holder.getHolder(),holder);
-			holder.setTimer(new BukkitRunnable(){
+			holder.setTimer(new FoliaRunnable(){
 				public void run(){
 					if(thrower.isSneaking()) {
 						if (holder.getHolder() instanceof Arrow) {
@@ -86,7 +86,7 @@ public class StickyGrenades extends Grenade {
 						this.cancel();
 					}
 				}
-			}.runTaskTimer(QAMain.getInstance(),0,2));
+			}.runTaskTimer(QAMain.getInstance(), thrower.getLocation().clone(), 0, 2));
 			//thrower.getWorld().playSound(thrower.getLocation(), Sound.ENTITY_ARROW_SHOOT, 1, 1.5f);
 
 			QAMain.DEBUG("Throw grenade");

@@ -7,7 +7,7 @@ import java.util.UUID;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.scheduler.BukkitRunnable;
+import me.zombie_striker.qg.util.FoliaRunnable;
 
 import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.guns.Gun;
@@ -31,7 +31,7 @@ public class BoltactionCharger implements ChargingHandler {
 	@Override
 	public boolean shoot(Gun g, final Player player, ItemStack stack) {
 		timeR.add(player.getUniqueId());
-		new BukkitRunnable() {
+		new FoliaRunnable() {
 			@Override
 			public void run() {
 				try {
@@ -46,8 +46,8 @@ public class BoltactionCharger implements ChargingHandler {
 					}
 				}
 			}
-		}.runTaskLater(QAMain.getInstance(), 10);
-		new BukkitRunnable() {
+		}.runTaskLater(QAMain.getInstance(), player, 10);
+		new FoliaRunnable() {
 			@Override
 			public void run() {
 				try {
@@ -63,7 +63,7 @@ public class BoltactionCharger implements ChargingHandler {
 				}
 				timeR.remove(player.getUniqueId());
 			}
-		}.runTaskLater(QAMain.getInstance(), (int)g.getDelayBetweenShotsInSeconds()*20);
+		}.runTaskLater(QAMain.getInstance(), player, (int)g.getDelayBetweenShotsInSeconds()*20);
 		return true;
 	}
 

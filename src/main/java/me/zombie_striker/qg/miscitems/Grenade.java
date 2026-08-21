@@ -18,7 +18,7 @@ import org.bukkit.entity.Item;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.scheduler.BukkitRunnable;
+import me.zombie_striker.qg.util.FoliaRunnable;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.Nullable;
 
@@ -120,7 +120,7 @@ public class Grenade extends CustomBaseObject implements ThrowableItems {
 
 		thrower.getWorld().playSound(thrower.getLocation(), WeaponSounds.RELOAD_MAG_IN.getSoundName(), 2, 1);
 		final ThrowableHolder h = new ThrowableHolder(thrower.getUniqueId(), thrower, this);
-		h.setTimer(new BukkitRunnable() {
+		h.setTimer(new FoliaRunnable() {
 			@Override
 			public void run() {
 				if (h.getHolder() instanceof Player) {
@@ -165,7 +165,7 @@ public class Grenade extends CustomBaseObject implements ThrowableItems {
 				}
 				throwItems.remove(h.getHolder());
 			}
-		}.runTaskLater(QAMain.getInstance(), 5 * 20));
+		}.runTaskLater(QAMain.getInstance(), thrower.getLocation().clone(), 5 * 20));
 		throwItems.put(thrower, h);
 		return true;
 	}

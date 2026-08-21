@@ -26,7 +26,7 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.*;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.scheduler.BukkitRunnable;
+import me.zombie_striker.qg.util.FoliaRunnable;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
@@ -419,7 +419,8 @@ public class GunUtil {
 
 				if (QAMain.regenDestructableBlocksAfter > 0) {
 					QAMain.DEBUG("Scheduling replacement of " + regenBlocks.size() + " blocks");
-					new BukkitRunnable() {
+					final Location regenLoc = start.clone();
+					new FoliaRunnable() {
 						@Override
 						public void run() {
 							QAMain.DEBUG("Replacing " + regenBlocks.size() + " blocks");
@@ -429,7 +430,7 @@ public class GunUtil {
 								CoreProtectHook.logPlace(l,p);
 							}
 						}
-					}.runTaskLater(QAMain.getInstance(), QAMain.regenDestructableBlocksAfter * 20L);
+					}.runTaskLater(QAMain.getInstance(), regenLoc, QAMain.regenDestructableBlocksAfter * 20L);
 				}
 			}
 
@@ -440,13 +441,13 @@ public class GunUtil {
 					if (p.getEyeLocation().getBlock().getLightLevel() < g.getLightOnShoot()) {
 						final Location loc = p.getEyeLocation().clone();
 						LightAPI.get().setLightLevel(loc.getWorld().getName(),loc.getBlockX(),loc.getBlockY(),loc.getBlockZ(), g.getLightOnShoot());
-						new BukkitRunnable() {
+						new FoliaRunnable() {
 
 							@Override
 							public void run() {
 								LightAPI.get().setLightLevel(loc.getWorld().getName(), loc.getBlockX(), loc.getBlockY(), loc.getBlockZ(), 0);
 							}
-						}.runTaskLater(QAMain.getInstance(), 3);
+						}.runTaskLater(QAMain.getInstance(), loc, 3);
 					}
 				}
 			} catch (Error | Exception e5) {
@@ -532,7 +533,7 @@ public class GunUtil {
 		}
 
 		if (g.isAutomatic()) {
-			rapidfireshooters.put(player.getUniqueId(), new BukkitRunnable() {
+			rapidfireshooters.put(player.getUniqueId(), new FoliaRunnable() {
 				int slotUsed = player.getInventory().getHeldItemSlot();
 
 				@Override
@@ -653,7 +654,7 @@ public class GunUtil {
 					}
 					QualityArmory.sendHotbarGunAmmoCount(player, g, temp, false);
 				}
-			}.runTaskTimer(QAMain.getInstance(), 10 / g.getFireRate(), 10 / g.getFireRate()));
+			}.runTaskTimer(QAMain.getInstance(), player, 10 / g.getFireRate(), 10 / g.getFireRate()));
 		}
 
 		int amount = Gun.getAmount(player) - 1;
@@ -708,7 +709,7 @@ public class GunUtil {
 
 	public static void playShoot(final Gun g, final Player player) {
 		g.damageDurability(player);
-		new BukkitRunnable() {
+		new FoliaRunnable() {
 			@SuppressWarnings("deprecation")
 			@Override
 			public void run() {
@@ -737,7 +738,7 @@ public class GunUtil {
 				}
 
 			}
-		}.runTaskLater(QAMain.getInstance(), 1);
+		}.runTaskLater(QAMain.getInstance(), player, 1);
 		// Simply delaying the sound by 1/20th of a second makes shooting so much more
 		// immersive
 	}
@@ -808,7 +809,7 @@ public class GunUtil {
 						highRecoilCounter.get(player.getUniqueId()) + g.getRecoil());
 			} else {
 				highRecoilCounter.put(player.getUniqueId(), g.getRecoil());
-				new BukkitRunnable() {
+				new FoliaRunnable() {
 					@Override
 					public void run() {
 						if (QAMain.hasProtocolLib && QAMain.isVersionHigherThan(1, 13) && !QAMain.hasViaVersion) {
@@ -816,7 +817,7 @@ public class GunUtil {
 						} else
 							addRecoilWithTeleport(player, g, true);
 					}
-				}.runTaskLater(QAMain.getInstance(), 3);
+				}.runTaskLater(QAMain.getInstance(), player, 3);
 			}
 		} else {
 			if (QAMain.hasProtocolLib && QAMain.isVersionHigherThan(1, 13)) {
