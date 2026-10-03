@@ -19,7 +19,7 @@ import me.zombie_striker.qg.guns.Gun;
 import me.zombie_striker.qg.handlers.*;
 import me.zombie_striker.qg.hooks.CoreProtectHook;
 import me.zombie_striker.qg.hooks.protection.ProtectionHandler;
-import me.zombie_striker.qg.util.FoliaRunnable;
+import me.zombie_striker.qg.utils.FoliaRunnable;
 import me.zombie_striker.qg.utils.BlockRegenData;
 import org.bukkit.*;
 import org.bukkit.attribute.AttributeModifier;
@@ -43,6 +43,17 @@ public class GunUtil {
 	protected static Map<UUID, Location> AF_locs = new ConcurrentHashMap<>();
 	protected static Map<UUID, BukkitTask> AF_tasks = new ConcurrentHashMap<>();
 
+	/**
+	 * Stops the automatic fire of a player. The task must always be removed from
+	 * {@link #rapidfireshooters} when it is cancelled, or the player will not be
+	 * able to shoot anymore.
+	 */
+	public static void stopRapidFire(Player player) {
+		BukkitTask task = rapidfireshooters.remove(player.getUniqueId());
+		if (task != null)
+			task.cancel();
+	}
+
 	public static void shootHandler(Gun g, Player p) {
 		shootHandler(g, p, g.getBulletsPerShot());
 	}
@@ -64,18 +75,19 @@ public class GunUtil {
 
 	public static double getTargetedSolidMaxDistance(Vector v, Location start, double maxDistance) {
 		Location test = start.clone();
-		Block previous = null;
+		World world = test.getWorld();
+		Block block = null;
+		boolean air = true;
 		for (double i = 0; i < maxDistance; i += v.length()) {
-			if (test.getBlock() == previous) {
-				previous = test.getBlock();
-				test.add(v);
-				continue;
-			}
-			if (test.getBlock().getType() != Material.AIR) {
-				if (isSolid(test.getBlock(), test))
+			if (block == null || block.getX() != test.getBlockX() || block.getY() != test.getBlockY()
+					|| block.getZ() != test.getBlockZ()) {
+				if (!world.isChunkLoaded(test.getBlockX() >> 4, test.getBlockZ() >> 4))
 					return start.distance(test);
+				block = test.getBlock();
+				air = block.getType() == Material.AIR;
 			}
-			previous = test.getBlock();
+			if (!air && isSolid(block, test))
+				return start.distance(test);
 			test.add(v);
 		}
 		return maxDistance;
@@ -270,7 +282,7 @@ public class GunUtil {
 
 									QAMain.DEBUG("Applied armor protection: " + defensePoints);
 
-									damageMAX = damageMAX * (1 - Math.min(20, Math.max(defensePoints / 5,
+									damageMAX = damageMAX * Math.max(0, 1 - QAMain.armorEffectiveness * Math.min(20, Math.max(defensePoints / 5,
 											defensePoints - damageMAX / (toughness / 4 + 2))) / 25);
 								} catch (Error | Exception e5) {
 									QAMain.DEBUG("An error has occurred: " + e5.getMessage());
@@ -291,22 +303,9 @@ public class GunUtil {
 									+ ((LivingEntity) hitTarget).getHealth() + "/"
 									+ ((LivingEntity) hitTarget).getMaxHealth() + " :" + damageMAX + " DAM)");
 						}
-						if(QAMain.anticheatFix || p.hasMetadata("NPC")) {
-							if (hitTarget instanceof Damageable) {
-								((Damageable) hitTarget).damage(damageMAX);
-							} else if (hitTarget instanceof EnderDragon) {
-								((EnderDragon) hitTarget).damage(damageMAX);
-							} else if (hitTarget instanceof EnderDragonPart) {
-								((EnderDragonPart) hitTarget).damage(damageMAX);
-							}
-						}else {
-							if (hitTarget instanceof Damageable) {
-								((Damageable) hitTarget).damage(damageMAX, p);
-							} else if (hitTarget instanceof EnderDragon) {
-								((EnderDragon) hitTarget).damage(damageMAX, p);
-							} else if (hitTarget instanceof EnderDragonPart) {
-								((EnderDragonPart) hitTarget).damage(damageMAX, p);
-							}
+						if (hitTarget instanceof Damageable) {
+							GunDamageHandler.damage((Damageable) hitTarget, damageMAX,
+									(QAMain.anticheatFix || p.hasMetadata("NPC")) ? null : p, true);
 						}
 
 
@@ -318,7 +317,7 @@ public class GunUtil {
 							Bukkit.getPluginManager().callEvent(passengerShoot);
 
 							if (!passengerShoot.isCancelled()) {
-								((Damageable) hitTarget.getPassenger()).damage(damageMAX, p);
+								GunDamageHandler.damage((Damageable) hitTarget.getPassenger(), damageMAX, p, true);
 							}
 						}
 					} else {

@@ -5,7 +5,7 @@ import java.net.*;
 import com.google.gson.*;
 import org.bukkit.*;
 import org.bukkit.plugin.Plugin;
-import me.zombie_striker.qg.util.FoliaRunnable;
+import me.zombie_striker.qg.utils.FoliaRunnable;
 
 public class GithubUpdater {
 

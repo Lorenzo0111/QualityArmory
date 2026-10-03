@@ -18,7 +18,7 @@ import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import me.zombie_striker.qg.util.FoliaRunnable;
+import me.zombie_striker.qg.utils.FoliaRunnable;
 import org.bukkit.util.Vector;
 
 public class HomingRocketProjectile implements RealtimeCalculationProjectile {
@@ -84,7 +84,7 @@ public class HomingRocketProjectile implements RealtimeCalculationProjectile {
 							RPGLOCATION.getWorld().playEffect(RPGLOCATION, Effect.valueOf("CLOUD"), 0);
 							player.getWorld().playSound(RPGLOCATION, Sound.valueOf("EXPLODE"), 8, 0.7f);
 						}
-						ExplosionHandler.handleAOEExplosion(player, RPGLOCATION, g.getDamage(), g.getExplosionRadius());
+						ExplosionHandler.handleAOEExplosion(player, RPGLOCATION, g.getDamage(), g.getExplosionRadius(), g.getExplosionKnockback());
 						cancel();
 						return;
 					}

@@ -8,7 +8,7 @@ import me.zombie_striker.qg.api.QualityArmory;
 import me.zombie_striker.qg.guns.utils.WeaponSounds;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
-import me.zombie_striker.qg.util.FoliaRunnable;
+import me.zombie_striker.qg.utils.FoliaRunnable;
 
 import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.guns.Gun;

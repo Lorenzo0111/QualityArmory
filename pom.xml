@@ -19,6 +19,11 @@
         </repository>
 
         <repository>
+            <id>lumine</id>
+            <url>https://mvn.lumine.io/repository/maven-public/</url>
+        </repository>
+
+        <repository>
             <id>jitpack.io</id>
             <url>https://jitpack.io</url>
         </repository>
@@ -266,6 +271,13 @@
             <groupId>ru.endlesscode.mimic</groupId>
             <artifactId>mimic-bukkit-api</artifactId>
             <version>0.8.0</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>io.lumine</groupId>
+            <artifactId>Mythic-Dist</artifactId>
+            <version>5.9.5</version>
             <scope>provided</scope>
         </dependency>
 

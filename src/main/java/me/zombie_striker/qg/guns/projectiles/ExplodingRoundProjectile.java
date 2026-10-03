@@ -16,7 +16,7 @@ import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import me.zombie_striker.qg.util.FoliaRunnable;
+import me.zombie_striker.qg.utils.FoliaRunnable;
 import org.bukkit.util.Vector;
 
 public class ExplodingRoundProjectile implements RealtimeCalculationProjectile {
@@ -47,7 +47,7 @@ public class ExplodingRoundProjectile implements RealtimeCalculationProjectile {
 					}
 
 					if (GunUtil.isSolid(s.getBlock(), s) || entityNear || distance < 0) {
-						ExplosionHandler.handleAOEExplosion(player, s, g.getDamage(), g.getExplosionRadius());
+						ExplosionHandler.handleAOEExplosion(player, s, g.getDamage(), g.getExplosionRadius(), g.getExplosionKnockback());
 						ParticleHandlers.spawnExplosion(s);
 						try {
 							player.getWorld().playSound(s, WeaponSounds.WARHEAD_EXPLODE.getSoundName(), 10, 1.5f);

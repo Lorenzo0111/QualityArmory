@@ -3,9 +3,10 @@ package me.zombie_striker.qg.miscitems;
 import com.cryptomorin.xseries.particles.XParticle;
 import me.zombie_striker.customitemmanager.MaterialStorage;
 import me.zombie_striker.qg.QAMain;
+import me.zombie_striker.qg.handlers.GunDamageHandler;
 import me.zombie_striker.qg.api.QAThrowableExplodeEvent;
 import me.zombie_striker.qg.handlers.ExplosionHandler;
-import me.zombie_striker.qg.util.FoliaRunnable;
+import me.zombie_striker.qg.utils.FoliaRunnable;
 import org.bukkit.*;
 import org.bukkit.entity.*;
 import org.bukkit.inventory.ItemStack;
@@ -101,10 +102,7 @@ public class StickyGrenades extends Grenade {
 						FoliaRunnable.runEntityTask(QAMain.getInstance(), target, () -> {
 							double dam = (dmageLevel / target.getLocation().distance(holderLoc));
 							QAMain.DEBUG("Grenade-Damaging " + target.getName() + " : " + dam + " DAM.");
-							if (thro == null)
-								target.damage(dam);
-							else
-								target.damage(dam, thro);
+							GunDamageHandler.damage(target, dam, thro, false);
 						});
 					}
 				}

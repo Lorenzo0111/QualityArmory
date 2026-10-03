@@ -40,6 +40,7 @@ import me.zombie_striker.qg.hooks.QuickShopHook;
 import me.zombie_striker.qg.hooks.anticheat.AntiCheatHook;
 import me.zombie_striker.qg.hooks.anticheat.MatrixHook;
 import me.zombie_striker.qg.hooks.anticheat.VulcanHook;
+import me.zombie_striker.qg.hooks.mythicmobs.MythicMobsHook;
 import me.zombie_striker.qg.hooks.protection.ProtectionHandler;
 import me.zombie_striker.qg.listener.QAListener;
 import me.zombie_striker.qg.miscitems.ThrowableItems;
@@ -47,7 +48,7 @@ import me.zombie_striker.qg.miscitems.ThrowableItems.ThrowableHolder;
 import me.zombie_striker.qg.npcs.Gunner;
 import me.zombie_striker.qg.npcs.GunnerTrait;
 import me.zombie_striker.qg.npcs_sentinel.SentinelQAHandler;
-import me.zombie_striker.qg.util.FoliaRunnable;
+import me.zombie_striker.qg.utils.FoliaRunnable;
 import me.zombie_striker.qg.utils.LocalUtils;
 import org.bukkit.*;
 import org.bukkit.command.BlockCommandSender;
@@ -174,6 +175,13 @@ public class QAMain extends JavaPlugin {
     public static boolean anticheatFix = false;
     public static boolean preventGunsInHoppers = true;
     public static int hitDistance = 5;
+    public static double armorEffectiveness = 1.0;
+    public static double armorDurabilityDamageMultiplier = 1.0;
+    public static boolean projectileDamageType = false;
+    public static boolean forceParticles = false;
+    public static final String DEFAULT_SHOP_SOUND = "default";
+    public static String shopPurchaseSound = DEFAULT_SHOP_SOUND;
+    public static String craftingSound = DEFAULT_SHOP_SOUND;
 
     public static String S_NOPERM = "&c You do not have permission to do that.";
 
@@ -336,7 +344,13 @@ public class QAMain extends JavaPlugin {
     }
 
     public static void shopsSounds(Player player, boolean shop) {
-        if (shop) {
+        String sound = shop ? shopPurchaseSound : craftingSound;
+        if (sound == null || sound.isEmpty() || sound.equalsIgnoreCase("none"))
+            return;
+
+        if (!sound.equalsIgnoreCase(DEFAULT_SHOP_SOUND)) {
+            player.playSound(player.getLocation(), sound, 0.7f, 1);
+        } else if (shop) {
             XSound.BLOCK_ANVIL_USE.play(player, 0.7f, 1);
         } else {
             XSound.BLOCK_NOTE_BLOCK_HARP.play(player, 0.7f, 1);
@@ -577,6 +591,14 @@ public class QAMain extends JavaPlugin {
         if (Bukkit.getPluginManager().getPlugin("ItemBridge") != null) {
             ItemBridgePatch.setup(this);
         }
+        try {
+            if (Bukkit.getPluginManager().getPlugin("MythicMobs") != null) {
+                Bukkit.getPluginManager().registerEvents(new MythicMobsHook(), this);
+                getLogger().info("Found MythicMobs. Loaded support");
+            }
+        } catch (Error | Exception e) {
+            getLogger().log(Level.WARNING, "Failed to load the MythicMobs support. Only MythicMobs 5 is supported.");
+        }
 
         DEBUG(ChatColor.RED + "NOTICE ME");
         reloadVals();
@@ -601,6 +623,7 @@ public class QAMain extends JavaPlugin {
         }
 
         Bukkit.getPluginManager().registerEvents(new QAListener(), this);
+        Bukkit.getPluginManager().registerEvents(new GunDamageHandler(), this);
         Bukkit.getPluginManager().registerEvents(new AimManager(), this);
         try {
             if (Bukkit.getPluginManager().isPluginEnabled("ChestShop"))
@@ -859,8 +882,13 @@ public class QAMain extends JavaPlugin {
 
         enableBulletTrails = (boolean) a("enableBulletTrails", true);
         smokeSpacing = Double.valueOf(a("BulletTrailsSpacing", 0.5) + "");
+        forceParticles = (boolean) a("forceParticleRendering", forceParticles);
 
         enableArmorIgnore = (boolean) a("enableIgnoreArmorProtection", enableArmorIgnore);
+        armorEffectiveness = Math.max(0, Double.parseDouble(a("armorEffectiveness", armorEffectiveness) + ""));
+        armorDurabilityDamageMultiplier = Math.max(0,
+                Double.parseDouble(a("armorDurabilityDamageMultiplier", armorDurabilityDamageMultiplier) + ""));
+        projectileDamageType = (boolean) a("useProjectileDamageType", projectileDamageType);
         ignoreUnbreaking = (boolean) a("enableIgnoreUnbreakingChecks", ignoreUnbreaking);
         ignoreSkipping = (boolean) a("enableIgnoreSkipForBasegameItems", ignoreSkipping);
 
@@ -926,6 +954,9 @@ public class QAMain extends JavaPlugin {
 
         hit_sound = (String) a("Hit_Notification_Sound", hit_sound);
         enableHitSound = (boolean) a("Enable_Hit_Sound", enableHitSound);
+
+        shopPurchaseSound = (String) a("Shop_Purchase_Sound", shopPurchaseSound);
+        craftingSound = (String) a("Crafting_Sound", craftingSound);
 
         autoarm = (boolean) a("Enable_AutoArm_Grenades", autoarm);
 

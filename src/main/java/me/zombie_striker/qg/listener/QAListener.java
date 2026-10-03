@@ -17,13 +17,14 @@ import me.zombie_striker.qg.guns.utils.GunRefillerRunnable;
 import me.zombie_striker.qg.guns.utils.GunUtil;
 import me.zombie_striker.qg.guns.utils.WeaponSounds;
 import me.zombie_striker.qg.handlers.BulletWoundHandler;
+import me.zombie_striker.qg.handlers.GunDamageHandler;
 import me.zombie_striker.qg.handlers.IronsightsHandler;
 import me.zombie_striker.qg.handlers.Update19OffhandChecker;
 import me.zombie_striker.qg.miscitems.Grenade;
 import me.zombie_striker.qg.miscitems.MedKit;
 import me.zombie_striker.qg.miscitems.MeleeItems;
 import me.zombie_striker.qg.miscitems.ThrowableItems;
-import me.zombie_striker.qg.util.FoliaRunnable;
+import me.zombie_striker.qg.utils.FoliaRunnable;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -61,6 +62,9 @@ public class QAListener implements Listener {
 	public void onHit(EntityDamageByEntityEvent e) {
 		if (e.isCancelled())
 			return;
+		// Bullets and explosions are dealt in the name of the shooter, but they are not melee hits
+		if (GunDamageHandler.isWeaponDamage())
+			return;
 		if (e.getDamager() instanceof Player) {
 			Player d = (Player) e.getDamager();
 			if ((e.getCause() == DamageCause.ENTITY_ATTACK || e.getCause() == DamageCause.ENTITY_SWEEP_ATTACK)) {
@@ -85,20 +89,25 @@ public class QAListener implements Listener {
 					double distance = d.getLocation().distance(e.getEntity().getLocation());
 					if (distance >= QAMain.hitDistance) return;
 
-					ignoreClick.add(d.getUniqueId());
-
 					QACustomItemInteractEvent event = new QACustomItemInteractEvent(d, g);
 					Bukkit.getPluginManager().callEvent(event);
 					if (event.isCancelled())
 						return;
+
+					ignoreClick.add(d.getUniqueId());
 
 					e.setCancelled(true);
 					QAMain.DEBUG("Detected interact on entity, running LMB for " + g.getName());
 
 					Gun finalG = g;
 					FoliaRunnable.runEntityTaskLater(QAMain.getInstance(), d, () -> {
-						finalG.onLMB(d, d.getItemInHand());
-						ignoreClick.remove(d.getUniqueId());
+						try {
+							if (d.isOnline() && !d.isDead())
+								finalG.onLMB(d, d.getItemInHand());
+						} finally {
+							// Must always be removed, or the player's guns stop responding to clicks
+							ignoreClick.remove(d.getUniqueId());
+						}
 					}, 1L);
 				}
 			}
@@ -669,6 +678,9 @@ public class QAListener implements Listener {
 		BulletWoundHandler.bleedoutMultiplier.remove(e.getEntity().getUniqueId());
 		BulletWoundHandler.bloodLevel.put(e.getEntity().getUniqueId(), QAMain.bulletWound_initialbloodamount);
 
+		GunUtil.stopRapidFire(e.getEntity());
+		GunUtil.highRecoilCounter.remove(e.getEntity().getUniqueId());
+
 		if (e.getEntity().getKiller() instanceof Player) {
 			Player killer = e.getEntity().getKiller();
 			if (QualityArmory.isGun(killer.getItemInHand()) || QualityArmory.isIronSights(killer.getItemInHand())) {
@@ -1036,6 +1048,11 @@ public class QAListener implements Listener {
 		if (burst != null) burst.cancel();
 		BukkitTask delayedBurst = DelayedBurstFireCharger.shooters.remove(e.getPlayer().getUniqueId());
 		if (delayedBurst != null) delayedBurst.cancel();
+
+		GunUtil.stopRapidFire(e.getPlayer());
+		GunUtil.highRecoilCounter.remove(e.getPlayer().getUniqueId());
+		ignoreClick.remove(e.getPlayer().getUniqueId());
+		ignoreDropReload.remove(e.getPlayer().getUniqueId());
 
 		if (QualityArmory.isIronSights(e.getPlayer().getInventory().getItemInHand())) {
 			try {

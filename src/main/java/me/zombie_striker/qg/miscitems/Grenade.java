@@ -5,11 +5,12 @@ import me.zombie_striker.customitemmanager.CustomBaseObject;
 import me.zombie_striker.customitemmanager.CustomItemManager;
 import me.zombie_striker.customitemmanager.MaterialStorage;
 import me.zombie_striker.qg.QAMain;
+import me.zombie_striker.qg.handlers.GunDamageHandler;
 import me.zombie_striker.qg.api.QAThrowableExplodeEvent;
 import me.zombie_striker.qg.guns.utils.WeaponSounds;
 import me.zombie_striker.qg.handlers.ExplosionHandler;
 import me.zombie_striker.qg.hooks.protection.ProtectionHandler;
-import me.zombie_striker.qg.util.FoliaRunnable;
+import me.zombie_striker.qg.utils.FoliaRunnable;
 import org.bukkit.*;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
@@ -34,6 +35,8 @@ public class Grenade extends CustomBaseObject implements ThrowableItems {
 	int craftingReturn;
 
 	double throwspeed = 1.5;
+
+	int fuseTicks = 5 * 20;
 
 	public Grenade(ItemStack[] ingg, double cost, double damage, double explosionreadius, String name,
 			String displayname, List<String> lore, MaterialStorage ms) {
@@ -134,7 +137,7 @@ public class Grenade extends CustomBaseObject implements ThrowableItems {
 							if (t != null) t.cancel();
 						});
 			}
-		}.runTaskLater(QAMain.getInstance(), 5 * 20));
+		}.runTaskLater(QAMain.getInstance(), getFuseTicks()));
 		throwItems.put(thrower, h);
 		return true;
 	}
@@ -173,10 +176,7 @@ public class Grenade extends CustomBaseObject implements ThrowableItems {
 					FoliaRunnable.runEntityTask(QAMain.getInstance(), target, () -> {
 						double dam = (dmageLevel / target.getLocation().distance(holderLoc));
 						QAMain.DEBUG("Grenade-Damaging " + target.getName() + " : " + dam + " DAM.");
-						if (thro == null)
-							target.damage(dam);
-						else
-							target.damage(dam, thro);
+						GunDamageHandler.damage(target, dam, thro, false);
 					});
 				}
 			}
@@ -243,6 +243,14 @@ public class Grenade extends CustomBaseObject implements ThrowableItems {
 	@Override
 	public void setThrowSpeed(double t) {
 		throwspeed = t;
+	}
+
+	public int getFuseTicks() {
+		return fuseTicks;
+	}
+
+	public void setFuseTicks(int fuseTicks) {
+		this.fuseTicks = Math.max(1, fuseTicks);
 	}
 
 	public static List<Entity> getGrenades() {

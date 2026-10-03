@@ -11,7 +11,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -154,6 +153,11 @@ public class GunYML extends ArmoryYML {
 
 	public GunYML setCustomProjectileExplosionRadius(double radius) {
 		set(false, "CustomProjectiles.explosionRadius", radius);
+		return this;
+	}
+
+	public GunYML setCustomProjectileExplosionKnockback(double knockback) {
+		set(false, "CustomProjectiles.explosionKnockback", knockback);
 		return this;
 	}
 

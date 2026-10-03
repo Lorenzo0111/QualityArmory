@@ -266,6 +266,8 @@ public class GunYMLLoader {
 								if (f2.contains("ThrowSpeed"))
 									throwableItems.setThrowSpeed(f2.getDouble("ThrowSpeed"));
 							}
+							if (base instanceof Grenade && f2.contains("FuseTime"))
+								((Grenade) base).setFuseTicks((int) Math.round(f2.getDouble("FuseTime") * 20));
 							if (base instanceof SmokeGrenades) {
 								SmokeGrenades smokeGrenades = (SmokeGrenades) base;
 								if (f2.contains("useModernParticles"))
@@ -428,6 +430,8 @@ public class GunYMLLoader {
 				g.setExplosionRadius(f2.getDouble("CustomProjectiles.explosionRadius"));
 			if (f2.contains("CustomProjectiles.Velocity"))
 				g.setRealtimeVelocity(f2.getDouble("CustomProjectiles.Velocity"));
+			if (f2.contains("CustomProjectiles.explosionKnockback"))
+				g.setExplosionKnockback(f2.getDouble("CustomProjectiles.explosionKnockback"));
 		}
 
 		if (f2.contains("recoil"))

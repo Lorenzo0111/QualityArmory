@@ -1,6 +1,7 @@
 package me.zombie_striker.qg.handlers;
 
 import me.zombie_striker.qg.QAMain;
+import me.zombie_striker.qg.utils.ModernBlockData;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -33,9 +34,10 @@ public class BlockCollisionUtil {
 	public static double getHeight(Block b){
 		Material type = b.getType();
 		if (b.getType().name().contains("SLAB") || b.getType().name().contains("STEP")) {
-			if (b.getData() == 0)
+			int data = getSlabData(b);
+			if (data == 0)
 				return 0.5;
-			if (b.getData() == 1)
+			if (data == 1)
 				return 1;
 		}
 		if(customBlockHeights.containsKey(type))
@@ -70,8 +72,9 @@ public class BlockCollisionUtil {
 				return true;
 		}
 		if (b.getType().name().contains("SLAB") || b.getType().name().contains("STEP")) {
-			if (!QAMain.blockbullet_halfslabs && ((l.getY() - l.getBlockY() > 0.5 && b.getData() == 0)
-					|| (l.getY() - l.getBlockY() <= 0.5 && b.getData() == 1)))
+			int data = getSlabData(b);
+			if (!QAMain.blockbullet_halfslabs && ((l.getY() - l.getBlockY() > 0.5 && data == 0)
+					|| (l.getY() - l.getBlockY() <= 0.5 && data == 1)))
 				return false;
 			return true;
 		}
@@ -93,11 +96,12 @@ public class BlockCollisionUtil {
 		}
 
 		if (b.getType().name().contains("STAIR")) {
-			if (b.getData() < 4 && (l.getY() - l.getBlockY() < 0.5))
+			int data = getStairData(b);
+			if (data < 4 && (l.getY() - l.getBlockY() < 0.5))
 				return true;
-			if (b.getData() >= 4 && (l.getY() - l.getBlockY() > 0.5))
+			if (data >= 4 && (l.getY() - l.getBlockY() > 0.5))
 				return true;
-			switch (b.getData()) {
+			switch (data) {
 				case 0:
 				case 4:
 					return l.getX() - (0.5 + l.getBlockX()) > 0;
@@ -121,5 +125,19 @@ public class BlockCollisionUtil {
 			return true;
 		}
 		return false;
+	}
+
+	@SuppressWarnings("deprecation")
+	private static int getSlabData(Block b) {
+		if (!QAMain.isVersionHigherThan(1, 13))
+			return b.getData();
+		return ModernBlockData.getSlabData(b);
+	}
+
+	@SuppressWarnings("deprecation")
+	private static int getStairData(Block b) {
+		if (!QAMain.isVersionHigherThan(1, 13))
+			return b.getData();
+		return ModernBlockData.getStairData(b);
 	}
 }

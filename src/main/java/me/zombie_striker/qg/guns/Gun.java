@@ -17,7 +17,7 @@ import me.zombie_striker.qg.guns.utils.WeaponType;
 import me.zombie_striker.qg.handlers.IronsightsHandler;
 import me.zombie_striker.qg.handlers.Update19OffhandChecker;
 import me.zombie_striker.qg.hooks.NBTHook;
-import me.zombie_striker.qg.util.FoliaRunnable;
+import me.zombie_striker.qg.utils.FoliaRunnable;
 import me.zombie_striker.qg.utils.LocalUtils;
 import org.bukkit.*;
 import org.bukkit.block.Block;
@@ -44,6 +44,7 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
     RealtimeCalculationProjectile customProjectile = null;
     double velocity = 2;
     double explosionRadius = 10;
+    double explosionKnockback = 0;
     double recoil = 1;
     private WeaponType type;
     private boolean hasIronSights;
@@ -370,6 +371,7 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
         this.headshotMultiplier = g.headshotMultiplier;
         this.isPrimaryWeapon = g.isPrimaryWeapon;
         this.explosionRadius = g.explosionRadius;
+        this.explosionKnockback = g.explosionKnockback;
         this.setCustomLore(g.getCustomLore());
         this.weaponSounds = g.weaponSounds;
         this.setPrice(g.getPrice());
@@ -505,6 +507,14 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
 
     public void setExplosionRadius(double d) {
         this.explosionRadius = d;
+    }
+
+    public double getExplosionKnockback() {
+        return explosionKnockback;
+    }
+
+    public void setExplosionKnockback(double d) {
+        this.explosionKnockback = d;
     }
 
     public int getBulletsPerShot() {
