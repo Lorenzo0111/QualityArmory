@@ -1,14 +1,13 @@
 package me.zombie_striker.qg.miscitems;
 
-import java.util.Map;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
-
+import me.zombie_striker.customitemmanager.ArmoryBaseObject;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
 import org.bukkit.scheduler.BukkitTask;
 
-import me.zombie_striker.customitemmanager.ArmoryBaseObject;
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 public interface ThrowableItems extends ArmoryBaseObject {
 

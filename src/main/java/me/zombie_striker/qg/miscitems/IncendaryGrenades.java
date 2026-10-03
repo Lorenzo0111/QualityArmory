@@ -1,9 +1,11 @@
 package me.zombie_striker.qg.miscitems;
 
-import java.util.List;
-
 import com.cryptomorin.xseries.particles.XParticle;
+import me.zombie_striker.customitemmanager.MaterialStorage;
+import me.zombie_striker.qg.QAMain;
+import me.zombie_striker.qg.guns.utils.WeaponSounds;
 import me.zombie_striker.qg.hooks.protection.ProtectionHandler;
+import me.zombie_striker.qg.util.FoliaRunnable;
 import org.bukkit.Effect;
 import org.bukkit.Sound;
 import org.bukkit.entity.Entity;
@@ -11,12 +13,9 @@ import org.bukkit.entity.Item;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import me.zombie_striker.qg.util.FoliaRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
-import me.zombie_striker.qg.QAMain;
-import me.zombie_striker.customitemmanager.MaterialStorage;
-import me.zombie_striker.qg.guns.utils.WeaponSounds;
+import java.util.List;
 
 public class IncendaryGrenades extends Grenade {
 
