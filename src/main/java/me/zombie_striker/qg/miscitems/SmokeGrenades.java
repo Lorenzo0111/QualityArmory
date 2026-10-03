@@ -1,9 +1,11 @@
 package me.zombie_striker.qg.miscitems;
 
-import java.util.List;
-
 import com.cryptomorin.xseries.particles.XParticle;
+import me.zombie_striker.customitemmanager.MaterialStorage;
+import me.zombie_striker.qg.QAMain;
+import me.zombie_striker.qg.guns.utils.WeaponSounds;
 import me.zombie_striker.qg.hooks.protection.ProtectionHandler;
+import me.zombie_striker.qg.util.FoliaRunnable;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Sound;
@@ -14,11 +16,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
 
-import me.zombie_striker.qg.QAMain;
-import me.zombie_striker.customitemmanager.MaterialStorage;
-import me.zombie_striker.qg.guns.utils.WeaponSounds;
+import java.util.List;
 
 public class SmokeGrenades extends Grenade {
 	private boolean useModernParticles = false;
@@ -38,17 +38,34 @@ public class SmokeGrenades extends Grenade {
             }
 		thrower.getWorld().playSound(thrower.getLocation(), WeaponSounds.RELOAD_MAG_IN.getSoundName(), 2, 1);
 		final ThrowableHolder h = new ThrowableHolder(thrower.getUniqueId(), thrower, this);
-		h.setTimer(new BukkitRunnable() {
-
-			int k = 0;
-
+		h.setTimer(new FoliaRunnable() {
 			@Override
 			public void run() {
+				Entity holderEntity = h.getHolder();
+				if (holderEntity == null) {
+					cancel();
+					return;
+				}
+				FoliaRunnable.runEntityTask(QAMain.getInstance(), holderEntity,
+						() -> handleThrowableTick(h),
+						() -> {
+							throwItems.remove(holderEntity);
+							BukkitTask t = h.getTask();
+							if (t != null) t.cancel();
+						});
+			}
+		}.runTaskTimer(QAMain.getInstance(), 5 * 20, 5));
+		throwItems.put(thrower, h);
+		return true;
+
+	}
+
+	private void handleThrowableTick(ThrowableHolder h) {
 				if (isUseModernParticles()) {
 					try {
 						// Main smoke cloud that gets larger over time
-						double radius = (k / 10.0) + 1.0;
-						int particleCount = Math.max(1, 50 - k);
+						double radius = (h.getTicks() / 10.0) + 1.0;
+						int particleCount = Math.max(1, 50 - h.getTicks());
 
 						// Create a spherical smoke cloud
 						for (int i = 0; i < particleCount * 3; i++) {
@@ -67,7 +84,7 @@ public class SmokeGrenades extends Grenade {
 						}
 
 						// Add some gray smoke for density
-						if (k < 40) {
+						if (h.getTicks() < 40) {
 							for (int i = 0; i < 20 * 3; i++) {
 								double x = (Math.random() - 0.5) * radius * 1.5;
 								double y = Math.random() * radius;
@@ -80,7 +97,7 @@ public class SmokeGrenades extends Grenade {
 						}
 
 						// Initial explosion flash (first few ticks only)
-						if (k < 5) {
+						if (h.getTicks() < 5) {
 							h.getHolder().getWorld().spawnParticle(XParticle.EXPLOSION.get(), h.getHolder().getLocation(), 2, 1, 1, 1, 0);
 							h.getHolder().getWorld().spawnParticle(XParticle.POOF.get(), h.getHolder().getLocation(), 10, 2, 2, 2, 0.1);
 						}
@@ -97,7 +114,7 @@ public class SmokeGrenades extends Grenade {
                     }
 				}
 
-                if (k % 2 == 0)
+                if (h.getTicks() % 2 == 0)
                     try {
                             h.getHolder().getWorld().playSound(h.getHolder().getLocation(),
                                     WeaponSounds.HISS.getSoundName(), 2f, 1f);
@@ -105,39 +122,37 @@ public class SmokeGrenades extends Grenade {
                         h.getHolder().getWorld().playSound(h.getHolder().getLocation(), Sound.valueOf("EXPLODE"), 3, 0.7f);
                     }
 
-				k++;
-				if (k == 1) {
+				h.setTicks(h.getTicks() + 1);
+				if (h.getTicks() == 1) {
 					if (h.getHolder() instanceof Player) {
 						QAMain.DEBUG("Blinded player");
 						((LivingEntity) h.getHolder())
 								.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 20 * 10, 2));
 						removeGrenade(((Player) h.getHolder()));
 					}
-				} else if (k == 80) {
+				} else if (h.getTicks() == 80) {
 					if (h.getHolder() instanceof Item) {
 						Grenade.getGrenades().remove(h.getHolder());
 						h.getHolder().remove();
 					}
 					throwItems.remove(h.getHolder());
-					this.cancel();
+					if (h.getTask() != null) h.getTask().cancel();
 				} else {
 					for(Entity e : h.getHolder().getNearbyEntities(radius, radius, radius))
 						if(e instanceof LivingEntity) {
-							QAMain.DEBUG("Blinding to "+e.getName());
-							try {
-								if (ProtectionHandler.canPvp(e.getLocation())) {
-									((LivingEntity) e).addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 20 * 10, 2));
+							final LivingEntity target = (LivingEntity) e;
+							QAMain.DEBUG("Blinding to "+target.getName());
+							FoliaRunnable.runEntityTask(QAMain.getInstance(), target, () -> {
+								try {
+									if (ProtectionHandler.canPvp(target.getLocation())) {
+										target.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 20 * 10, 2));
+									}
+								}catch (Error error){
+									target.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 20 * 10, 2));
 								}
-							}catch (Error error){
-								((LivingEntity) e).addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 20 * 10, 2));
-							}
+							});
 						}
 				}
-			}
-		}.runTaskTimer(QAMain.getInstance(), 5 * 20, 5));
-		throwItems.put(thrower, h);
-		return true;
-
 	}
 
 	public boolean isUseModernParticles() {

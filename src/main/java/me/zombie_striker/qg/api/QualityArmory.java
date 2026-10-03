@@ -20,7 +20,7 @@ import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.scheduler.BukkitRunnable;
+import me.zombie_striker.qg.util.FoliaRunnable;
 
 import me.zombie_striker.qg.*;
 import me.zombie_striker.qg.ammo.Ammo;
@@ -42,7 +42,7 @@ public class QualityArmory {
 			int cost) {
 		File newGunsDir = new File(QAMain.getInstance().getDataFolder(), "newGuns");
 		final File gunFile = new File(newGunsDir, name);
-		new BukkitRunnable() {
+		new FoliaRunnable() {
 			public void run() {
 				GunYMLLoader.loadGuns(QAMain.getInstance(), gunFile);
 			}
@@ -96,7 +96,7 @@ public class QualityArmory {
 
 	@SuppressWarnings({"deprecation", "unchecked"})
 	public static void sendResourcepack(final Player player, final boolean warning) {
-		new BukkitRunnable() {
+		new FoliaRunnable() {
 			@Override
 			public void run() {
 				if (QAMain.namesToBypass.contains(player.getName())) {
@@ -114,7 +114,7 @@ public class QualityArmory {
 				if (QAMain.showCrashMessage)
 					player.sendMessage(LocalUtils.colorize(QAMain.prefix + QAMain.S_RESOURCEPACK_HELP));
 
-				new BukkitRunnable() {
+				new FoliaRunnable() {
 					@Override
 					public void run() {
 						try {
@@ -151,9 +151,9 @@ public class QualityArmory {
 
 						}
 					}
-				}.runTaskLater(QAMain.getInstance(), 20 * (warning ? 1 : 5));
+				}.runTaskLater(QAMain.getInstance(), player, 20 * (warning ? 1 : 5));
 			}
-		}.runTaskLater(QAMain.getInstance(), (long) (20 * QAMain.secondsTilSend));
+		}.runTaskLater(QAMain.getInstance(), player, (long) (20 * QAMain.secondsTilSend));
 	}
 
 	public static boolean allowGunsInRegion(Location loc) {
@@ -469,7 +469,7 @@ public class QualityArmory {
 		} else if (QAMain.showReloadOnTitle && reloading) {
 			for (int i = 1; i < g.getReloadTime() * 20; i += 2) {
 				final int id = i;
-				new BukkitRunnable() {
+				new FoliaRunnable() {
 					@Override
 					public void run() {
 						StringBuilder sb = new StringBuilder();
@@ -479,7 +479,7 @@ public class QualityArmory {
 						sb.append(repeat("#", (int) (20 - ((int) (20.0 * id / (20 * g.getReloadTime()))))));
 						p.sendTitle(QAMain.S_RELOADING_MESSAGE, sb.toString(), 0, 4, 0);
 					}
-				}.runTaskLater(QAMain.getInstance(), i);
+				}.runTaskLater(QAMain.getInstance(), p, i);
 			}
 		} else {
 

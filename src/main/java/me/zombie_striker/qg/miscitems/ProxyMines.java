@@ -6,8 +6,10 @@ import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.api.QAThrowableExplodeEvent;
 import me.zombie_striker.qg.guns.utils.WeaponSounds;
 import me.zombie_striker.qg.handlers.ExplosionHandler;
+import me.zombie_striker.qg.util.FoliaRunnable;
 import org.bukkit.Bukkit;
 import org.bukkit.Effect;
+import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
@@ -15,7 +17,7 @@ import org.bukkit.entity.Item;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
 
 import java.util.List;
@@ -37,83 +39,98 @@ public class ProxyMines extends Grenade {
 		}
 		thrower.getWorld().playSound(thrower.getLocation(), WeaponSounds.RELOAD_MAG_IN.getSoundName(), 2, 1);
 		final ThrowableHolder h = new ThrowableHolder(thrower.getUniqueId(), thrower, this);
-		h.setTimer(new BukkitRunnable() {
-
-			int k = 0;
-			BlockFace sticky = null;
-
+		h.setTimer(new FoliaRunnable() {
 			@Override
 			public void run() {
-				//TODO: Write this bit that detect how close a player is.
-				if(sticky == null){
-					if(h.getHolder().getLocation().add(0.3,0,0).getBlock().getType().isSolid()){
-						sticky = BlockFace.EAST;
-					}else if(h.getHolder().getLocation().add(-0.3,0,0).getBlock().getType().isSolid()){
-						sticky = BlockFace.WEST;
-					}else if(h.getHolder().getLocation().add(0,0,0.3).getBlock().getType().isSolid()){
-						sticky = BlockFace.SOUTH;
-					}else if(h.getHolder().getLocation().add(0,0,-0.3).getBlock().getType().isSolid()){
-						sticky = BlockFace.NORTH;
-					}
+				Entity holderEntity = h.getHolder();
+				if (holderEntity == null) {
+					cancel();
+					return;
 				}
-				if(sticky!=null){
-					h.getHolder().setVelocity(new Vector(0,0.0,0));
-				}
-				if (!(h.getHolder() instanceof Player)) {
-					k++;
-				}
-				if (k >= 20) {
-					boolean det = false;
-					for(Entity e : h.getHolder().getNearbyEntities(radius,radius,radius)){
-						if (e instanceof Player) {
-							det = true;
-							break;
-						}
-					}
-					if(det){
-						if (h.getHolder() instanceof Item) {
-							Grenade.getGrenades().remove(h.getHolder());
-							h.getHolder().remove();
-						}
-						if (QAMain.enableExplosionDamage) {
-							QAThrowableExplodeEvent event = new QAThrowableExplodeEvent(ProxyMines.this, h.getHolder().getLocation());
-							Bukkit.getPluginManager().callEvent(event);
-							if (!event.isCancelled()) ExplosionHandler.handleExplosion(h.getHolder().getLocation(), Math.toIntExact(Math.round(radius/2)), 1);
-							QAMain.DEBUG("Using default explosions");
-						}
-						try {
-							h.getHolder().getWorld().spawnParticle(XParticle.EXPLOSION_EMITTER.get(),
-									h.getHolder().getLocation(), 0);
-							h.getHolder().getWorld().playSound(h.getHolder().getLocation(), Sound.ENTITY_GENERIC_EXPLODE, 8,
-									0.7f);
-						} catch (Error e3) {
-							h.getHolder().getWorld().playEffect(h.getHolder().getLocation(), Effect.valueOf("CLOUD"), 0);
-							h.getHolder().getWorld().playSound(h.getHolder().getLocation(), Sound.valueOf("EXPLODE"), 8, 0.7f);
-						}
-						Player thro = Bukkit.getPlayer(h.getOwner());
-						try {
-							for (Entity e : h.getHolder().getNearbyEntities(radius, radius, radius)) {
-								if (e instanceof LivingEntity) {
-									double dam = (dmageLevel / e.getLocation().distance(h.getHolder().getLocation()));
-									QAMain.DEBUG("Grenade-Damaging " + e.getName() + " : " + dam + " DAM.");
-									if (thro == null)
-										((LivingEntity) e).damage(dam);
-									else
-										((LivingEntity) e).damage(dam, thro);
-								}
-							}
-						} catch (Error e) {
-							h.getHolder().getWorld().createExplosion(h.getHolder().getLocation(), 1);
-							QAMain.DEBUG("Failed. Created default explosion");
-						}
-						throwItems.remove(h.getHolder());
-						this.cancel();
-					}
-				}
+				FoliaRunnable.runEntityTask(QAMain.getInstance(), holderEntity,
+						() -> handleThrowableTick(h),
+						() -> {
+							throwItems.remove(holderEntity);
+							BukkitTask t = h.getTask();
+							if (t != null) t.cancel();
+						});
 			}
 		}.runTaskTimer(QAMain.getInstance(), 5, 1));
 		throwItems.put(thrower, h);
 		return true;
+	}
+
+	private void handleThrowableTick(ThrowableHolder h) {
+		//TODO: Write this bit that detect how close a player is.
+		if(h.getSticky() == null){
+			if(h.getHolder().getLocation().add(0.3,0,0).getBlock().getType().isSolid()){
+				h.setSticky(BlockFace.EAST);
+			}else if(h.getHolder().getLocation().add(-0.3,0,0).getBlock().getType().isSolid()){
+				h.setSticky(BlockFace.WEST);
+			}else if(h.getHolder().getLocation().add(0,0,0.3).getBlock().getType().isSolid()){
+				h.setSticky(BlockFace.SOUTH);
+			}else if(h.getHolder().getLocation().add(0,0,-0.3).getBlock().getType().isSolid()){
+				h.setSticky(BlockFace.NORTH);
+			}
+		}
+		if(h.getSticky()!=null){
+			h.getHolder().setVelocity(new Vector(0,0.0,0));
+		}
+		if (!(h.getHolder() instanceof Player)) {
+			h.setTicks(h.getTicks() + 1);
+		}
+		if (h.getTicks() >= 20) {
+			boolean det = false;
+			for(Entity e : h.getHolder().getNearbyEntities(radius,radius,radius)){
+				if (e instanceof Player) {
+					det = true;
+					break;
+				}
+			}
+			if(det){
+				if (h.getHolder() instanceof Item) {
+					Grenade.getGrenades().remove(h.getHolder());
+					h.getHolder().remove();
+				}
+				if (QAMain.enableExplosionDamage) {
+					QAThrowableExplodeEvent event = new QAThrowableExplodeEvent(ProxyMines.this, h.getHolder().getLocation());
+					Bukkit.getPluginManager().callEvent(event);
+					if (!event.isCancelled()) ExplosionHandler.handleExplosion(h.getHolder().getLocation(), Math.toIntExact(Math.round(radius/2)), 1);
+					QAMain.DEBUG("Using default explosions");
+				}
+				try {
+					h.getHolder().getWorld().spawnParticle(XParticle.EXPLOSION_EMITTER.get(),
+							h.getHolder().getLocation(), 0);
+					h.getHolder().getWorld().playSound(h.getHolder().getLocation(), Sound.ENTITY_GENERIC_EXPLODE, 8,
+							0.7f);
+				} catch (Error e3) {
+					h.getHolder().getWorld().playEffect(h.getHolder().getLocation(), Effect.valueOf("CLOUD"), 0);
+					h.getHolder().getWorld().playSound(h.getHolder().getLocation(), Sound.valueOf("EXPLODE"), 8, 0.7f);
+				}
+				Player thro = Bukkit.getPlayer(h.getOwner());
+				final Location holderLoc = h.getHolder().getLocation();
+				try {
+					for (Entity e : h.getHolder().getNearbyEntities(radius, radius, radius)) {
+						if (e instanceof LivingEntity) {
+							final LivingEntity target = (LivingEntity) e;
+							FoliaRunnable.runEntityTask(QAMain.getInstance(), target, () -> {
+								double dam = (dmageLevel / target.getLocation().distance(holderLoc));
+								QAMain.DEBUG("Grenade-Damaging " + target.getName() + " : " + dam + " DAM.");
+								if (thro == null)
+									target.damage(dam);
+								else
+									target.damage(dam, thro);
+							});
+						}
+					}
+				} catch (Error e) {
+					h.getHolder().getWorld().createExplosion(h.getHolder().getLocation(), 1);
+					QAMain.DEBUG("Failed. Created default explosion");
+				}
+				throwItems.remove(h.getHolder());
+				if (h.getTask() != null) h.getTask().cancel();
+			}
+		}
 	}
 
 }

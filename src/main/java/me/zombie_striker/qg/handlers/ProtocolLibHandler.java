@@ -20,7 +20,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.CrossbowMeta;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.scheduler.BukkitRunnable;
+import me.zombie_striker.qg.util.FoliaRunnable;
 import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
@@ -213,8 +213,9 @@ public class ProtocolLibHandler {
 
                         // Schedule task to send offhand packet
                         final ItemStack finalItemStack = itemStack;
+                        final Player packetPlayer = event.getPlayer();
 
-                        new BukkitRunnable() {
+                        new FoliaRunnable() {
                             public void run() {
                                 try {
                                     PacketContainer pc2 = protocolManager.createPacket(PacketType.Play.Server.ENTITY_EQUIPMENT);
@@ -223,13 +224,13 @@ public class ProtocolLibHandler {
                                     pc2.getItemSlots().write(1, slot);
                                     pc2.getItemModifier().write(2, finalItemStack);
 
-                                    protocolManager.sendServerPacket(event.getPlayer(), pc2);
+                                    protocolManager.sendServerPacket(packetPlayer, pc2);
                                 } catch (Exception e) {
                                     QAMain.DEBUG("Error sending offhand packet: " + e.getMessage());
                                     e.printStackTrace();
                                 }
                             }
-                        }.runTaskLater(QAMain.getInstance(), 1);
+                        }.runTaskLater(QAMain.getInstance(), packetPlayer, 1);
                     }
 
                     /**

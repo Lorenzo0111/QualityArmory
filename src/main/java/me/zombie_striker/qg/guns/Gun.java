@@ -17,6 +17,7 @@ import me.zombie_striker.qg.guns.utils.WeaponType;
 import me.zombie_striker.qg.handlers.IronsightsHandler;
 import me.zombie_striker.qg.handlers.Update19OffhandChecker;
 import me.zombie_striker.qg.hooks.NBTHook;
+import me.zombie_striker.qg.util.FoliaRunnable;
 import me.zombie_striker.qg.utils.LocalUtils;
 import org.bukkit.*;
 import org.bukkit.block.Block;
@@ -24,13 +25,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffect;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparable<Gun> {
 
@@ -90,7 +88,7 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
 
     private String killedByMessage = "%player% was shot by %killer% using a %name%";
 
-    private HashMap<UUID, Long> lastRMB = new HashMap<>();
+    private Map<UUID, Long> lastRMB = new ConcurrentHashMap<>();
 
     @Deprecated
     public Gun(String name, MaterialStorage id, WeaponType type, boolean h, Ammo am, double acc, double swaymult,
@@ -1000,7 +998,7 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
 
                         final Gun checkTo = QualityArmory
                                 .getGun(Update19OffhandChecker.getItemStackOFfhand(player.getPlayer()));
-                        new BukkitRunnable() {
+                        new FoliaRunnable() {
 
                             @Override
                             public void run() {
@@ -1027,7 +1025,7 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
                                 }
 
                             }
-                        }.runTaskTimer(QAMain.getInstance(), 20, 20);
+                        }.runTaskTimer(QAMain.getInstance(), player, 20, 20);
 
 
                         QualityArmory.sendHotbarGunAmmoCount(player.getPlayer(), this, usedItem, false);

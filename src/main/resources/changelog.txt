@@ -1,3 +1,6 @@
+2.2.0
+  - Added Folia support
+
 2.1.4
   - Added NBTAPI plugin support
   - 26.2 support

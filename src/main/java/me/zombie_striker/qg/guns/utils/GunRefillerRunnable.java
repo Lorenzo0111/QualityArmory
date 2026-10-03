@@ -1,27 +1,27 @@
 package me.zombie_striker.qg.guns.utils;
 
-import me.zombie_striker.customitemmanager.OLD_ItemFact;
 import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.ammo.Ammo;
 import me.zombie_striker.qg.api.QualityArmory;
 import me.zombie_striker.qg.api.WeaponInteractEvent;
 import me.zombie_striker.qg.guns.Gun;
 import me.zombie_striker.qg.handlers.IronsightsHandler;
-import me.zombie_striker.qg.handlers.Update19OffhandChecker;
+import me.zombie_striker.qg.util.FoliaRunnable;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class GunRefillerRunnable {
 
-    private static List<GunRefillerRunnable> allGunRefillers = new ArrayList<>();
+    private static List<GunRefillerRunnable> allGunRefillers = new CopyOnWriteArrayList<>();
 
     public static boolean hasItemReloaded(Player reloader, ItemStack is) {
         for (GunRefillerRunnable s : allGunRefillers) {
@@ -44,6 +44,10 @@ public class GunRefillerRunnable {
             }
         }
         return false;
+    }
+
+    public static void removeAllFor(UUID player) {
+        allGunRefillers.removeIf(r -> player.equals(r.reloader));
     }
 
     private BukkitTask r;
@@ -78,7 +82,7 @@ public class GunRefillerRunnable {
 
         this.reloadedItem = modifiedOriginalItem.clone();
 
-        r = new BukkitRunnable() {
+        r = new FoliaRunnable() {
             @Override
             public void run() {
                 ItemMeta newim = modifiedOriginalItem.getItemMeta();
@@ -168,7 +172,7 @@ public class GunRefillerRunnable {
                     QAMain.reloadingTasks.put(player.getUniqueId(), rr);
                 }
             }
-        }.runTaskLater(QAMain.getInstance(), (long) (20 * seconds));
+        }.runTaskLater(QAMain.getInstance(), player, (long) (20 * seconds));
 
         allGunRefillers.add(gg);
 

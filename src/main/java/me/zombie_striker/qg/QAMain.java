@@ -47,6 +47,7 @@ import me.zombie_striker.qg.miscitems.ThrowableItems.ThrowableHolder;
 import me.zombie_striker.qg.npcs.Gunner;
 import me.zombie_striker.qg.npcs.GunnerTrait;
 import me.zombie_striker.qg.npcs_sentinel.SentinelQAHandler;
+import me.zombie_striker.qg.util.FoliaRunnable;
 import me.zombie_striker.qg.utils.LocalUtils;
 import org.bukkit.*;
 import org.bukkit.command.BlockCommandSender;
@@ -63,13 +64,13 @@ import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
 
 import java.io.*;
 import java.util.*;
 import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 
 public class QAMain extends JavaPlugin {
@@ -85,14 +86,14 @@ public class QAMain extends JavaPlugin {
 
     public static HashMap<String, String> craftingEntityNames = new HashMap<>();
 
-    public static HashMap<UUID, Long> lastWeaponSwitch = new HashMap<>();
+    public static Map<UUID, Long> lastWeaponSwitch = new ConcurrentHashMap<>();
     public static Set<EntityType> avoidTypes = new HashSet<>();
-    public static HashMap<UUID, Location> recoilHelperMovedLocation = new HashMap<>();
+    public static Map<UUID, Location> recoilHelperMovedLocation = new ConcurrentHashMap<>();
     public static ArrayList<MaterialStorage> expansionPacks = new ArrayList<>();
-    public static HashMap<UUID, List<GunRefillerRunnable>> reloadingTasks = new HashMap<>();
-    public static HashMap<UUID, Long> sentResourcepack = new HashMap<>();
-    public static ArrayList<UUID> resourcepackReq = new ArrayList<>();
-    public static List<UUID> resourcepackLoading = new ArrayList<>();
+    public static Map<UUID, List<GunRefillerRunnable>> reloadingTasks = new ConcurrentHashMap<>();
+    public static Map<UUID, Long> sentResourcepack = new ConcurrentHashMap<>();
+    public static Set<UUID> resourcepackReq = ConcurrentHashMap.newKeySet();
+    public static Set<UUID> resourcepackLoading = ConcurrentHashMap.newKeySet();
     public static List<Gunner> gunners = new ArrayList<>();
     public static List<String> namesToBypass = new ArrayList<>();
     public static List<Material> interactableBlocks = new ArrayList<>();
@@ -515,7 +516,8 @@ public class QAMain extends JavaPlugin {
         }
 
         try {
-            resourcepackwhitelist.save(new File(getDataFolder(), "resourcepackwhitelist.yml"));
+            if (resourcepackwhitelist != null)
+                resourcepackwhitelist.save(new File(getDataFolder(), "resourcepackwhitelist.yml"));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -578,7 +580,7 @@ public class QAMain extends JavaPlugin {
 
         DEBUG(ChatColor.RED + "NOTICE ME");
         reloadVals();
-        new BukkitRunnable() {
+        new FoliaRunnable() {
             @Override
             public void run() {
                 for (Player player : Bukkit.getOnlinePlayers())
@@ -630,47 +632,44 @@ public class QAMain extends JavaPlugin {
         metrics.addCustomChart(
                 new Metrics.SimplePie("has_an_expansion_pack", () -> (expansionPacks.size() > 0) + ""));
         if (!CustomItemManager.isUsingCustomData()) {
-            new BukkitRunnable() {
-                @SuppressWarnings("deprecation")
+            new FoliaRunnable() {
                 public void run() {
                     try {
-                        // Cheaty, hacky fix
                         for (Player p : Bukkit.getOnlinePlayers()) {
-                            // if (p.getItemInHand().containsEnchantment(Enchantment.MENDING)) {
-                            if (p.getItemInHand() != null && p.getItemInHand().hasItemMeta())
-                                if (QualityArmory.isCustomItem(p.getItemInHand())) {
-                                    if (ITEM_enableUnbreakable && (!p.getItemInHand().getItemMeta().isUnbreakable()
-                                            && !ignoreUnbreaking)) {
-                                        ItemStack temp = p.getItemInHand();
-                                        int j = QualityArmory.findSafeSpot(temp, false, overrideURL);
-                                        temp.setDurability((short) Math.max(0, j - 1));
-                                        temp = Gun.removeCalculatedExtra(temp);
-                                        p.setItemInHand(temp);
-                                    }
-                                }
-                            try {
-
-                                // if
-                                // (p.getInventory().getItemInOffHand().containsEnchantment(Enchantment.MENDING))
-                                // {
-                                if (p.getInventory().getItemInOffHand() != null
-                                        && p.getInventory().getItemInOffHand().hasItemMeta())
-                                    if (QualityArmory.isCustomItem(p.getInventory().getItemInOffHand())) {
-                                        if (ITEM_enableUnbreakable && (!p.getInventory().getItemInOffHand().getItemMeta()
-                                                .isUnbreakable() && !ignoreUnbreaking)) {
-                                            ItemStack temp = p.getInventory().getItemInOffHand();
-                                            int j = QualityArmory.findSafeSpot(temp, false, overrideURL);
-                                            temp.setDurability((short) Math.max(0, j - 1));
-                                            temp = Gun.removeCalculatedExtra(temp);
-                                            p.getInventory().setItemInOffHand(temp);
-                                            return;
+                            final Player fp = p;
+                            FoliaRunnable.runEntityTask(QAMain.getInstance(), fp, () -> {
+                                try {
+                                    if (fp.getItemInHand() != null && fp.getItemInHand().hasItemMeta())
+                                        if (QualityArmory.isCustomItem(fp.getItemInHand())) {
+                                            if (ITEM_enableUnbreakable && (!fp.getItemInHand().getItemMeta().isUnbreakable()
+                                                    && !ignoreUnbreaking)) {
+                                                ItemStack temp = fp.getItemInHand();
+                                                int j = QualityArmory.findSafeSpot(temp, false, overrideURL);
+                                                temp.setDurability((short) Math.max(0, j - 1));
+                                                temp = Gun.removeCalculatedExtra(temp);
+                                                fp.setItemInHand(temp);
+                                            }
                                         }
+                                    try {
+                                        if (fp.getInventory().getItemInOffHand() != null
+                                                && fp.getInventory().getItemInOffHand().hasItemMeta())
+                                            if (QualityArmory.isCustomItem(fp.getInventory().getItemInOffHand())) {
+                                                if (ITEM_enableUnbreakable && (!fp.getInventory().getItemInOffHand().getItemMeta()
+                                                        .isUnbreakable() && !ignoreUnbreaking)) {
+                                                    ItemStack temp = fp.getInventory().getItemInOffHand();
+                                                    int j = QualityArmory.findSafeSpot(temp, false, overrideURL);
+                                                    temp.setDurability((short) Math.max(0, j - 1));
+                                                    temp = Gun.removeCalculatedExtra(temp);
+                                                    fp.getInventory().setItemInOffHand(temp);
+                                                }
+                                            }
+                                    } catch (Error | Exception e45) {
                                     }
-                            } catch (Error | Exception e45) {
-                            }
+                                } catch (Error | Exception e) {
+                                }
+                            });
                         }
                     } catch (Error | Exception catchy) {
-
                     }
                 }
             }.runTaskTimer(this, 20, 15);

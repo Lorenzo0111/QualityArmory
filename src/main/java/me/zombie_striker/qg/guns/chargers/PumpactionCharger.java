@@ -1,13 +1,13 @@
 package me.zombie_striker.qg.guns.chargers;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.scheduler.BukkitRunnable;
+import me.zombie_striker.qg.util.FoliaRunnable;
 
 import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.guns.Gun;
@@ -15,8 +15,8 @@ import me.zombie_striker.qg.guns.utils.WeaponSounds;
 
 public class PumpactionCharger implements ChargingHandler {
 
-	List<UUID> timeC = new ArrayList<>();
-	List<UUID> timeR = new ArrayList<>();
+	Set<UUID> timeC = ConcurrentHashMap.newKeySet();
+	Set<UUID> timeR = ConcurrentHashMap.newKeySet();
 public PumpactionCharger() {
 	ChargingManager.add(this);
 }
@@ -29,7 +29,7 @@ public PumpactionCharger() {
 	public boolean shoot(Gun g, final Player player, ItemStack stack) {
 		timeC.add(player.getUniqueId());
 
-		new BukkitRunnable() {
+		new FoliaRunnable() {
 			@Override
 			public void run() {
 				try {
@@ -46,8 +46,8 @@ public PumpactionCharger() {
 					}catch(Error|Exception e43) {}
 				}
 			}
-		}.runTaskLater(QAMain.getInstance(), 12);
-		new BukkitRunnable() {
+		}.runTaskLater(QAMain.getInstance(), player, 12);
+		new FoliaRunnable() {
 			@Override
 			public void run() {
 				try {
@@ -64,13 +64,13 @@ public PumpactionCharger() {
 
 				}
 			}
-		}.runTaskLater(QAMain.getInstance(), (long) (g.getDelayBetweenShotsInSeconds()*20));
-		new BukkitRunnable() {
+		}.runTaskLater(QAMain.getInstance(), player, (long) (g.getDelayBetweenShotsInSeconds()*20));
+		new FoliaRunnable() {
 			@Override
 			public void run() {
 				timeC.remove(player.getUniqueId());
 			}
-		}.runTaskLater(QAMain.getInstance(), 20);
+		}.runTaskLater(QAMain.getInstance(), player, 20);
 		return true;
 	}
 

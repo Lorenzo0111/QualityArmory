@@ -19,6 +19,7 @@ import me.zombie_striker.qg.guns.Gun;
 import me.zombie_striker.qg.handlers.*;
 import me.zombie_striker.qg.hooks.CoreProtectHook;
 import me.zombie_striker.qg.hooks.protection.ProtectionHandler;
+import me.zombie_striker.qg.util.FoliaRunnable;
 import me.zombie_striker.qg.utils.BlockRegenData;
 import org.bukkit.*;
 import org.bukkit.attribute.AttributeModifier;
@@ -26,21 +27,21 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.*;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import ru.beykerykt.minecraft.lightapi.common.LightAPI;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class GunUtil {
 
-	public static HashMap<UUID, BukkitTask> rapidfireshooters = new HashMap<>();
-	public static HashMap<UUID, Double> highRecoilCounter = new HashMap<>();
-	protected static HashMap<UUID, Location> AF_locs = new HashMap<>();
-	protected static HashMap<UUID, BukkitTask> AF_tasks = new HashMap<>();
+	public static Map<UUID, BukkitTask> rapidfireshooters = new ConcurrentHashMap<>();
+	public static Map<UUID, Double> highRecoilCounter = new ConcurrentHashMap<>();
+	protected static Map<UUID, Location> AF_locs = new ConcurrentHashMap<>();
+	protected static Map<UUID, BukkitTask> AF_tasks = new ConcurrentHashMap<>();
 
 	public static void shootHandler(Gun g, Player p) {
 		shootHandler(g, p, g.getBulletsPerShot());
@@ -419,14 +420,18 @@ public class GunUtil {
 
 				if (QAMain.regenDestructableBlocksAfter > 0) {
 					QAMain.DEBUG("Scheduling replacement of " + regenBlocks.size() + " blocks");
-					new BukkitRunnable() {
+					new FoliaRunnable() {
 						@Override
 						public void run() {
 							QAMain.DEBUG("Replacing " + regenBlocks.size() + " blocks");
 
 							for (Block l : regenBlocks.keySet()) {
-								regenBlocks.get(l).place(l.getLocation());
-								CoreProtectHook.logPlace(l,p);
+								final Block block = l;
+								final BlockRegenData data = regenBlocks.get(l);
+								FoliaRunnable.runRegionTask(QAMain.getInstance(), block.getLocation(), () -> {
+									data.place(block.getLocation());
+									CoreProtectHook.logPlace(block, p);
+								});
 							}
 						}
 					}.runTaskLater(QAMain.getInstance(), QAMain.regenDestructableBlocksAfter * 20L);
@@ -440,13 +445,13 @@ public class GunUtil {
 					if (p.getEyeLocation().getBlock().getLightLevel() < g.getLightOnShoot()) {
 						final Location loc = p.getEyeLocation().clone();
 						LightAPI.get().setLightLevel(loc.getWorld().getName(),loc.getBlockX(),loc.getBlockY(),loc.getBlockZ(), g.getLightOnShoot());
-						new BukkitRunnable() {
+						new FoliaRunnable() {
 
 							@Override
 							public void run() {
 								LightAPI.get().setLightLevel(loc.getWorld().getName(), loc.getBlockX(), loc.getBlockY(), loc.getBlockZ(), 0);
 							}
-						}.runTaskLater(QAMain.getInstance(), 3);
+						}.runTaskLater(QAMain.getInstance(), loc, 3);
 					}
 				}
 			} catch (Error | Exception e5) {
@@ -532,7 +537,7 @@ public class GunUtil {
 		}
 
 		if (g.isAutomatic()) {
-			rapidfireshooters.put(player.getUniqueId(), new BukkitRunnable() {
+			rapidfireshooters.put(player.getUniqueId(), new FoliaRunnable() {
 				int slotUsed = player.getInventory().getHeldItemSlot();
 
 				@Override
@@ -653,7 +658,7 @@ public class GunUtil {
 					}
 					QualityArmory.sendHotbarGunAmmoCount(player, g, temp, false);
 				}
-			}.runTaskTimer(QAMain.getInstance(), 10 / g.getFireRate(), 10 / g.getFireRate()));
+			}.runTaskTimer(QAMain.getInstance(), player, 10 / g.getFireRate(), 10 / g.getFireRate()));
 		}
 
 		int amount = Gun.getAmount(player) - 1;
@@ -708,7 +713,7 @@ public class GunUtil {
 
 	public static void playShoot(final Gun g, final Player player) {
 		g.damageDurability(player);
-		new BukkitRunnable() {
+		new FoliaRunnable() {
 			@SuppressWarnings("deprecation")
 			@Override
 			public void run() {
@@ -737,7 +742,7 @@ public class GunUtil {
 				}
 
 			}
-		}.runTaskLater(QAMain.getInstance(), 1);
+		}.runTaskLater(QAMain.getInstance(), player, 1);
 		// Simply delaying the sound by 1/20th of a second makes shooting so much more
 		// immersive
 	}
@@ -808,7 +813,7 @@ public class GunUtil {
 						highRecoilCounter.get(player.getUniqueId()) + g.getRecoil());
 			} else {
 				highRecoilCounter.put(player.getUniqueId(), g.getRecoil());
-				new BukkitRunnable() {
+				new FoliaRunnable() {
 					@Override
 					public void run() {
 						if (QAMain.hasProtocolLib && QAMain.isVersionHigherThan(1, 13) && !QAMain.hasViaVersion) {
@@ -816,7 +821,7 @@ public class GunUtil {
 						} else
 							addRecoilWithTeleport(player, g, true);
 					}
-				}.runTaskLater(QAMain.getInstance(), 3);
+				}.runTaskLater(QAMain.getInstance(), player, 3);
 			}
 		} else {
 			if (QAMain.hasProtocolLib && QAMain.isVersionHigherThan(1, 13)) {
@@ -853,12 +858,22 @@ public class GunUtil {
 				- (useHighRecoil ? highRecoilCounter.get(player.getUniqueId()) : g.getRecoil())));
 		if (useHighRecoil)
 			highRecoilCounter.remove(player.getUniqueId());
-		Vector temp = player.getVelocity();
+		final Vector temp = player.getVelocity();
 		// player.getLocation().setDirection(vector);
-		player.teleport(current);
-		player.setVelocity(temp);
-
-		QAMain.recoilHelperMovedLocation.put(player.getUniqueId(), current);
+		// On Folia the teleport completes later, so the recoil state is only updated once it succeeded.
+		FoliaRunnable.teleport(player, current).thenAccept(success -> {
+			if (!success)
+				return;
+			if (!FoliaRunnable.isFolia()) {
+				player.setVelocity(temp);
+				QAMain.recoilHelperMovedLocation.put(player.getUniqueId(), current);
+				return;
+			}
+			FoliaRunnable.runEntityTask(QAMain.getInstance(), player, () -> {
+				player.setVelocity(temp);
+				QAMain.recoilHelperMovedLocation.put(player.getUniqueId(), current);
+			});
+		});
 	}
 
 	public static boolean isBreakable(Block b, Location l) {

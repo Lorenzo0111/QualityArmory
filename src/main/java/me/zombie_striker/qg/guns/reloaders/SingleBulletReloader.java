@@ -1,14 +1,14 @@
 package me.zombie_striker.qg.guns.reloaders;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 import me.zombie_striker.qg.api.QualityArmory;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.scheduler.BukkitRunnable;
+import me.zombie_striker.qg.util.FoliaRunnable;
 
 import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.guns.Gun;
@@ -16,7 +16,7 @@ import me.zombie_striker.qg.guns.utils.WeaponSounds;
 
 public class SingleBulletReloader implements ReloadingHandler {
 
-	List<UUID> timeR = new ArrayList<>();
+	Set<UUID> timeR = ConcurrentHashMap.newKeySet();
 
 	public SingleBulletReloader() {
 		ReloadingManager.add(this);
@@ -34,7 +34,7 @@ public class SingleBulletReloader implements ReloadingHandler {
 		double time2 = time * amountReloading;
 		for (int i = 0; i < amountReloading; i++) {
 			final int finalI = i;
-			new BukkitRunnable() {
+			new FoliaRunnable() {
 				int temp = player.getInventory().getHeldItemSlot();
 				@Override
 				public void run() {
@@ -51,15 +51,15 @@ public class SingleBulletReloader implements ReloadingHandler {
 						}
 					}
 				}
-			}.runTaskLater(QAMain.getInstance(), (int) (time * i * 20));
+			}.runTaskLater(QAMain.getInstance(), player, (int) (time * i * 20));
 		}
-		new BukkitRunnable() {
+		new FoliaRunnable() {
 			@Override
 			public void run() {
 				timeR.remove(player.getUniqueId());
 
 			}
-		}.runTaskLater(QAMain.getInstance(), (int) (time2 * 20) + 5);
+		}.runTaskLater(QAMain.getInstance(), player, (int) (time2 * 20) + 5);
 		return time2;
 	}
 

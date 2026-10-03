@@ -9,7 +9,7 @@ import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
+import me.zombie_striker.qg.util.FoliaRunnable;
 import ru.beykerykt.minecraft.lightapi.common.LightAPI;
 
 public class ParticleHandlers {
@@ -28,14 +28,14 @@ public class ParticleHandlers {
 		// TODO: Do lights n stuff
 		try {
 			if (Bukkit.getPluginManager().getPlugin("LightAPI") != null) {
-				final Location loc2 = loc;
+				final Location loc2 = loc.clone();
 				LightAPI.get().setLightLevel(loc.getWorld().getName(), loc.getBlockX(), loc.getBlockY(), loc.getBlockZ(), 15);
-				new BukkitRunnable() {
+				new FoliaRunnable() {
 					@Override
 					public void run() {
 						LightAPI.get().setLightLevel(loc2.getWorld().getName(), loc2.getBlockX(), loc2.getBlockY(), loc2.getBlockZ(), 0);
 					}
-				}.runTaskLater(QAMain.getInstance(), 10);
+				}.runTaskLater(QAMain.getInstance(), loc2, 10);
 			}
 		} catch (Error | Exception e5) {
 		}
@@ -87,15 +87,15 @@ public class ParticleHandlers {
 
 		try {
 			if (Bukkit.getPluginManager().getPlugin("LightAPI") != null) {
-				final Location loc2 = loc;
+				final Location loc2 = loc.clone();
 				LightAPI.get().setLightLevel(loc.getWorld().getName(), loc.getBlockX(), loc.getBlockY(), loc.getBlockZ(), 15);
-				new BukkitRunnable() {
+				new FoliaRunnable() {
 
 					@Override
 					public void run() {
 						LightAPI.get().setLightLevel(loc2.getWorld().getName(), loc2.getBlockX(), loc2.getBlockY(), loc2.getBlockZ(), 0);
 					}
-				}.runTaskLater(QAMain.getInstance(), 20);
+				}.runTaskLater(QAMain.getInstance(), loc2, 20);
 			}
 		} catch (Error | Exception e5) {
 		}
