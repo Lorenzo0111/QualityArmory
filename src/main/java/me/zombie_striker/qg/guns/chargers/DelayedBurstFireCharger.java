@@ -33,7 +33,7 @@ public class DelayedBurstFireCharger implements ChargingHandler {
 		GunUtil.shootHandler(g, player);
 		GunUtil.playShoot(g, player);
 
-		shooters.put(player.getUniqueId(), new FoliaRunnable() {
+		BukkitTask task = new FoliaRunnable() {
 			int slotUsed = player.getInventory().getHeldItemSlot();
 			@SuppressWarnings("deprecation")
 			boolean offhand = QualityArmory.isIronSights(player.getItemInHand());
@@ -98,7 +98,10 @@ public class DelayedBurstFireCharger implements ChargingHandler {
 				}
 				QualityArmory.sendHotbarGunAmmoCount(player, g, stack, false);
 			}
-		}.runTaskTimer(QAMain.getInstance(), player, 1, 1));
+		}.runTaskTimer(QAMain.getInstance(), player, 1, 1);
+		// Folia returns no task when the player is already gone: storing it would leave them charging forever.
+		if (!task.isCancelled())
+			shooters.put(player.getUniqueId(), task);
 		return false;
 	}
 

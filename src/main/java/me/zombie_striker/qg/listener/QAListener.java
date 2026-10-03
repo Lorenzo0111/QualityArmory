@@ -11,6 +11,8 @@ import me.zombie_striker.qg.api.QACustomItemInteractEvent;
 import me.zombie_striker.qg.api.QualityArmory;
 import me.zombie_striker.qg.attachments.AttachmentBase;
 import me.zombie_striker.qg.guns.Gun;
+import me.zombie_striker.qg.guns.chargers.BurstFireCharger;
+import me.zombie_striker.qg.guns.chargers.DelayedBurstFireCharger;
 import me.zombie_striker.qg.guns.utils.GunRefillerRunnable;
 import me.zombie_striker.qg.guns.utils.GunUtil;
 import me.zombie_striker.qg.guns.utils.WeaponSounds;
@@ -1028,6 +1030,12 @@ public class QAListener implements Listener {
 
 		BukkitTask rapidfire = GunUtil.rapidfireshooters.remove(e.getPlayer().getUniqueId());
 		if (rapidfire != null) rapidfire.cancel();
+
+		// Folia retires the player's timers on quit without running them, so they never clear themselves.
+		BukkitTask burst = BurstFireCharger.shooters.remove(e.getPlayer().getUniqueId());
+		if (burst != null) burst.cancel();
+		BukkitTask delayedBurst = DelayedBurstFireCharger.shooters.remove(e.getPlayer().getUniqueId());
+		if (delayedBurst != null) delayedBurst.cancel();
 
 		if (QualityArmory.isIronSights(e.getPlayer().getInventory().getItemInHand())) {
 			try {

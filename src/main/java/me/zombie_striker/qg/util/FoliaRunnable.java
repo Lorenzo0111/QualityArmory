@@ -8,6 +8,7 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.lang.reflect.Method;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
@@ -67,16 +68,20 @@ public abstract class FoliaRunnable implements Runnable {
         return IS_FOLIA;
     }
 
-    /** Teleports an entity; Folia rejects the synchronous teleport, so teleportAsync is used there. */
-    public static void teleport(Entity entity, Location location) {
+    /**
+     * Teleports an entity; Folia rejects the synchronous teleport, so teleportAsync is used there.
+     * The returned future completes with whether the teleport succeeded.
+     */
+    @SuppressWarnings("unchecked")
+    public static CompletableFuture<Boolean> teleport(Entity entity, Location location) {
         if (!IS_FOLIA || TELEPORT_ASYNC == null) {
-            entity.teleport(location);
-            return;
+            return CompletableFuture.completedFuture(entity.teleport(location));
         }
         try {
-            TELEPORT_ASYNC.invoke(entity, location);
+            return (CompletableFuture<Boolean>) TELEPORT_ASYNC.invoke(entity, location);
         } catch (Exception e) {
             Bukkit.getLogger().severe("[QualityArmory] Failed to teleport entity on Folia: " + e.getMessage());
+            return CompletableFuture.completedFuture(false);
         }
     }
 

@@ -858,12 +858,22 @@ public class GunUtil {
 				- (useHighRecoil ? highRecoilCounter.get(player.getUniqueId()) : g.getRecoil())));
 		if (useHighRecoil)
 			highRecoilCounter.remove(player.getUniqueId());
-		Vector temp = player.getVelocity();
+		final Vector temp = player.getVelocity();
 		// player.getLocation().setDirection(vector);
-		FoliaRunnable.teleport(player, current);
-		player.setVelocity(temp);
-
-		QAMain.recoilHelperMovedLocation.put(player.getUniqueId(), current);
+		// On Folia the teleport completes later, so the recoil state is only updated once it succeeded.
+		FoliaRunnable.teleport(player, current).thenAccept(success -> {
+			if (!success)
+				return;
+			if (!FoliaRunnable.isFolia()) {
+				player.setVelocity(temp);
+				QAMain.recoilHelperMovedLocation.put(player.getUniqueId(), current);
+				return;
+			}
+			FoliaRunnable.runEntityTask(QAMain.getInstance(), player, () -> {
+				player.setVelocity(temp);
+				QAMain.recoilHelperMovedLocation.put(player.getUniqueId(), current);
+			});
+		});
 	}
 
 	public static boolean isBreakable(Block b, Location l) {
