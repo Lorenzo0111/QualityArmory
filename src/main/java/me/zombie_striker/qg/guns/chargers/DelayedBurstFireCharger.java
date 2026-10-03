@@ -1,23 +1,23 @@
 package me.zombie_striker.qg.guns.chargers;
 
-import java.util.HashMap;
-import java.util.UUID;
-
-import me.zombie_striker.qg.guns.utils.WeaponSounds;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
-import me.zombie_striker.qg.util.FoliaRunnable;
-import org.bukkit.scheduler.BukkitTask;
-
 import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.api.QualityArmory;
 import me.zombie_striker.qg.guns.Gun;
 import me.zombie_striker.qg.guns.utils.GunUtil;
+import me.zombie_striker.qg.guns.utils.WeaponSounds;
+import me.zombie_striker.qg.util.FoliaRunnable;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.scheduler.BukkitTask;
+
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class DelayedBurstFireCharger implements ChargingHandler {
 
-	public static HashMap<UUID, BukkitTask> shooters = new HashMap<>();
+	public static Map<UUID, BukkitTask> shooters = new ConcurrentHashMap<>();
 
 	public DelayedBurstFireCharger() {
 		ChargingManager.add(this);

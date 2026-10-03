@@ -19,6 +19,7 @@ import me.zombie_striker.qg.guns.Gun;
 import me.zombie_striker.qg.handlers.*;
 import me.zombie_striker.qg.hooks.CoreProtectHook;
 import me.zombie_striker.qg.hooks.protection.ProtectionHandler;
+import me.zombie_striker.qg.util.FoliaRunnable;
 import me.zombie_striker.qg.utils.BlockRegenData;
 import org.bukkit.*;
 import org.bukkit.attribute.AttributeModifier;
@@ -26,7 +27,6 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.*;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import me.zombie_striker.qg.util.FoliaRunnable;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
@@ -39,9 +39,9 @@ import java.util.concurrent.ThreadLocalRandom;
 public class GunUtil {
 
 	public static Map<UUID, BukkitTask> rapidfireshooters = new ConcurrentHashMap<>();
-	public static HashMap<UUID, Double> highRecoilCounter = new HashMap<>();
-	protected static HashMap<UUID, Location> AF_locs = new HashMap<>();
-	protected static HashMap<UUID, BukkitTask> AF_tasks = new HashMap<>();
+	public static Map<UUID, Double> highRecoilCounter = new ConcurrentHashMap<>();
+	protected static Map<UUID, Location> AF_locs = new ConcurrentHashMap<>();
+	protected static Map<UUID, BukkitTask> AF_tasks = new ConcurrentHashMap<>();
 
 	public static void shootHandler(Gun g, Player p) {
 		shootHandler(g, p, g.getBulletsPerShot());

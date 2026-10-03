@@ -5,17 +5,18 @@ import me.zombie_striker.qg.api.QualityArmory;
 import me.zombie_striker.qg.guns.Gun;
 import me.zombie_striker.qg.guns.utils.GunUtil;
 import me.zombie_striker.qg.guns.utils.WeaponSounds;
+import me.zombie_striker.qg.util.FoliaRunnable;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import me.zombie_striker.qg.util.FoliaRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
-import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class BurstFireCharger implements ChargingHandler {
 
-    public static HashMap<UUID, BukkitTask> shooters = new HashMap<>();
+    public static Map<UUID, BukkitTask> shooters = new ConcurrentHashMap<>();
 
     public BurstFireCharger() {
         ChargingManager.add(this);

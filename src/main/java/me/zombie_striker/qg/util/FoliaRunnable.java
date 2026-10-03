@@ -3,9 +3,11 @@ package me.zombie_striker.qg.util;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitTask;
 
+import java.lang.reflect.Method;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
@@ -24,6 +26,10 @@ import java.util.function.Consumer;
 public abstract class FoliaRunnable implements Runnable {
 
     private static final boolean IS_FOLIA;
+    // Resolved on the ScheduledTask interface: the implementations are private classes,
+    // so looking the methods up on task.getClass() fails with IllegalAccessException.
+    private static final Method TASK_CANCEL;
+    private static final Method TASK_IS_CANCELLED;
 
     static {
         boolean folia;
@@ -34,6 +40,18 @@ public abstract class FoliaRunnable implements Runnable {
             folia = false;
         }
         IS_FOLIA = folia;
+
+        Method cancel = null;
+        Method isCancelled = null;
+        if (folia) {
+            try {
+                Class<?> scheduledTask = Class.forName("io.papermc.paper.threadedregions.scheduler.ScheduledTask");
+                cancel = scheduledTask.getMethod("cancel");
+                isCancelled = scheduledTask.getMethod("isCancelled");
+            } catch (ClassNotFoundException | NoSuchMethodException ignored) {}
+        }
+        TASK_CANCEL = cancel;
+        TASK_IS_CANCELLED = isCancelled;
     }
 
     private volatile Object task;
@@ -56,14 +74,29 @@ public abstract class FoliaRunnable implements Runnable {
         if (!IS_FOLIA) {
             if (task instanceof BukkitTask) ((BukkitTask) task).cancel();
         } else {
-            try {
-                task.getClass().getMethod("cancel").invoke(task);
-            } catch (Exception ignored) {}
+            cancelFoliaTask(task);
         }
     }
 
     private void setTask(Object t) {
         this.task = t;
+    }
+
+    private static void cancelFoliaTask(Object scheduledTask) {
+        if (scheduledTask == null || TASK_CANCEL == null) return;
+        try {
+            TASK_CANCEL.invoke(scheduledTask);
+        } catch (Exception ignored) {}
+    }
+
+    /** Folia consumer body: stops a repeating task that was cancelled before its handle was known. */
+    private void tick(Object scheduledTask) {
+        setTask(scheduledTask);
+        if (cancelled) {
+            cancelFoliaTask(scheduledTask);
+            return;
+        }
+        run();
     }
 
     // ===================== Sync (global region on Folia) =====================
@@ -204,12 +237,12 @@ public abstract class FoliaRunnable implements Runnable {
     /** Run on an entity's regional thread (falls back to global on Bukkit). */
     public static void runEntityTask(Plugin plugin, Entity entity, Runnable task, Runnable retired) {
         if (!IS_FOLIA) {
-            if (retired != null && !entity.isValid()) {
+            if (retired != null && isRetired(entity)) {
                 retired.run();
                 return;
             }
             Bukkit.getScheduler().runTask(plugin, () -> {
-                if (retired != null && !entity.isValid()) {
+                if (retired != null && isRetired(entity)) {
                     retired.run();
                     return;
                 }
@@ -217,7 +250,15 @@ public abstract class FoliaRunnable implements Runnable {
             });
             return;
         }
-        invokeEntity(plugin, entity, task, retired, 1, -1);
+        // The scheduler returns null without calling retired when the entity is already gone.
+        Object st = invokeEntity(plugin, entity, (Consumer<Object>) t -> task.run(), retired, 1, -1);
+        if (st == null && retired != null) retired.run();
+    }
+
+    /** Mirrors Folia's retirement on Bukkit: players only retire on quit, not on death. */
+    private static boolean isRetired(Entity entity) {
+        if (entity instanceof Player) return !((Player) entity).isOnline();
+        return !entity.isValid();
     }
 
     /** Run delayed on an entity's regional thread. */
@@ -252,28 +293,28 @@ public abstract class FoliaRunnable implements Runnable {
     // ===================== Private scheduling implementations =====================
 
     private BukkitTask scheduleGlobal(Plugin plugin, long delay, long period) {
-        Consumer<Object> consumer = t -> { setTask(t); if (!cancelled) run(); };
+        Consumer<Object> consumer = this::tick;
         Object st = invokeGlobal(plugin, consumer, delay, period);
         if (st != null) setTask(st);
         return new FoliaTaskWrapper(plugin, true, st);
     }
 
     private BukkitTask scheduleAsync(Plugin plugin, long delayTicks, long periodTicks) {
-        Consumer<Object> consumer = t -> { setTask(t); if (!cancelled) run(); };
+        Consumer<Object> consumer = this::tick;
         Object st = invokeAsync(plugin, consumer, delayTicks, periodTicks);
         if (st != null) setTask(st);
         return new FoliaTaskWrapper(plugin, false, st);
     }
 
     private BukkitTask scheduleEntity(Plugin plugin, Entity entity, long delay, long period) {
-        Consumer<Object> consumer = t -> { setTask(t); if (!cancelled) run(); };
+        Consumer<Object> consumer = this::tick;
         Object st = invokeEntity(plugin, entity, consumer, null, delay, period);
         if (st != null) setTask(st);
         return new FoliaTaskWrapper(plugin, true, st);
     }
 
     private BukkitTask scheduleRegion(Plugin plugin, Location location, long delay, long period) {
-        Consumer<Object> consumer = t -> { setTask(t); if (!cancelled) run(); };
+        Consumer<Object> consumer = this::tick;
         Object st = invokeRegion(plugin, location, consumer, delay, period);
         if (st != null) setTask(st);
         return new FoliaTaskWrapper(plugin, true, st);
@@ -407,8 +448,9 @@ public abstract class FoliaRunnable implements Runnable {
         @Override
         public boolean isCancelled() {
             if (scheduledTask == null) return true;
+            if (TASK_IS_CANCELLED == null) return cancelled;
             try {
-                return (boolean) scheduledTask.getClass().getMethod("isCancelled").invoke(scheduledTask);
+                return cancelled || (boolean) TASK_IS_CANCELLED.invoke(scheduledTask);
             } catch (Exception e) {
                 return cancelled;
             }
@@ -417,10 +459,7 @@ public abstract class FoliaRunnable implements Runnable {
         @Override
         public void cancel() {
             cancelled = true;
-            if (scheduledTask == null) return;
-            try {
-                scheduledTask.getClass().getMethod("cancel").invoke(scheduledTask);
-            } catch (Exception ignored) {}
+            cancelFoliaTask(scheduledTask);
         }
     }
 }

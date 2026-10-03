@@ -47,6 +47,7 @@ import me.zombie_striker.qg.miscitems.ThrowableItems.ThrowableHolder;
 import me.zombie_striker.qg.npcs.Gunner;
 import me.zombie_striker.qg.npcs.GunnerTrait;
 import me.zombie_striker.qg.npcs_sentinel.SentinelQAHandler;
+import me.zombie_striker.qg.util.FoliaRunnable;
 import me.zombie_striker.qg.utils.LocalUtils;
 import org.bukkit.*;
 import org.bukkit.command.BlockCommandSender;
@@ -63,7 +64,6 @@ import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import me.zombie_striker.qg.util.FoliaRunnable;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
 
@@ -86,9 +86,9 @@ public class QAMain extends JavaPlugin {
 
     public static HashMap<String, String> craftingEntityNames = new HashMap<>();
 
-    public static HashMap<UUID, Long> lastWeaponSwitch = new HashMap<>();
+    public static Map<UUID, Long> lastWeaponSwitch = new ConcurrentHashMap<>();
     public static Set<EntityType> avoidTypes = new HashSet<>();
-    public static HashMap<UUID, Location> recoilHelperMovedLocation = new HashMap<>();
+    public static Map<UUID, Location> recoilHelperMovedLocation = new ConcurrentHashMap<>();
     public static ArrayList<MaterialStorage> expansionPacks = new ArrayList<>();
     public static Map<UUID, List<GunRefillerRunnable>> reloadingTasks = new ConcurrentHashMap<>();
     public static Map<UUID, Long> sentResourcepack = new ConcurrentHashMap<>();
