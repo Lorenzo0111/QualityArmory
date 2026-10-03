@@ -30,6 +30,7 @@ public abstract class FoliaRunnable implements Runnable {
     // so looking the methods up on task.getClass() fails with IllegalAccessException.
     private static final Method TASK_CANCEL;
     private static final Method TASK_IS_CANCELLED;
+    private static final Method TELEPORT_ASYNC;
 
     static {
         boolean folia;
@@ -43,7 +44,11 @@ public abstract class FoliaRunnable implements Runnable {
 
         Method cancel = null;
         Method isCancelled = null;
+        Method teleportAsync = null;
         if (folia) {
+            try {
+                teleportAsync = Entity.class.getMethod("teleportAsync", Location.class);
+            } catch (NoSuchMethodException ignored) {}
             try {
                 Class<?> scheduledTask = Class.forName("io.papermc.paper.threadedregions.scheduler.ScheduledTask");
                 cancel = scheduledTask.getMethod("cancel");
@@ -52,6 +57,7 @@ public abstract class FoliaRunnable implements Runnable {
         }
         TASK_CANCEL = cancel;
         TASK_IS_CANCELLED = isCancelled;
+        TELEPORT_ASYNC = teleportAsync;
     }
 
     private volatile Object task;
@@ -59,6 +65,19 @@ public abstract class FoliaRunnable implements Runnable {
 
     public static boolean isFolia() {
         return IS_FOLIA;
+    }
+
+    /** Teleports an entity; Folia rejects the synchronous teleport, so teleportAsync is used there. */
+    public static void teleport(Entity entity, Location location) {
+        if (!IS_FOLIA || TELEPORT_ASYNC == null) {
+            entity.teleport(location);
+            return;
+        }
+        try {
+            TELEPORT_ASYNC.invoke(entity, location);
+        } catch (Exception e) {
+            Bukkit.getLogger().severe("[QualityArmory] Failed to teleport entity on Folia: " + e.getMessage());
+        }
     }
 
     public boolean isCancelled() {

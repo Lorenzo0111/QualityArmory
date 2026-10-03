@@ -860,7 +860,7 @@ public class GunUtil {
 			highRecoilCounter.remove(player.getUniqueId());
 		Vector temp = player.getVelocity();
 		// player.getLocation().setDirection(vector);
-		player.teleport(current);
+		FoliaRunnable.teleport(player, current);
 		player.setVelocity(temp);
 
 		QAMain.recoilHelperMovedLocation.put(player.getUniqueId(), current);
