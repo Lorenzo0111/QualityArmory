@@ -141,14 +141,17 @@ public class SmokeGrenades extends Grenade {
 				} else {
 					for(Entity e : h.getHolder().getNearbyEntities(radius, radius, radius))
 						if(e instanceof LivingEntity) {
-							QAMain.DEBUG("Blinding to "+e.getName());
-							try {
-								if (ProtectionHandler.canPvp(e.getLocation())) {
-									((LivingEntity) e).addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 20 * 10, 2));
+							final LivingEntity target = (LivingEntity) e;
+							QAMain.DEBUG("Blinding to "+target.getName());
+							FoliaRunnable.runEntityTask(QAMain.getInstance(), target, () -> {
+								try {
+									if (ProtectionHandler.canPvp(target.getLocation())) {
+										target.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 20 * 10, 2));
+									}
+								}catch (Error error){
+									target.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 20 * 10, 2));
 								}
-							}catch (Error error){
-								((LivingEntity) e).addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 20 * 10, 2));
-							}
+							});
 						}
 				}
 	}

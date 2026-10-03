@@ -86,16 +86,19 @@ public class Molotov extends Grenade {
 			throwItems.remove(h.getHolder());
 			if (h.getTask() != null) h.getTask().cancel();
 		} else {
-			for(Entity e : h.getHolder().getNearbyEntities(radius, radius, radius)) 
+			for(Entity e : h.getHolder().getNearbyEntities(radius, radius, radius))
 				if(e instanceof LivingEntity) {
-					QAMain.DEBUG("Firedamage to "+e.getName());
-					try {
-						if (ProtectionHandler.canPvp(e.getLocation())) {
-							e.setFireTicks(20);
+					final Entity target = e;
+					QAMain.DEBUG("Firedamage to "+target.getName());
+					FoliaRunnable.runEntityTask(QAMain.getInstance(), target, () -> {
+						try {
+							if (ProtectionHandler.canPvp(target.getLocation())) {
+								target.setFireTicks(20);
+							}
+						}catch (Error error){
+							target.setFireTicks(20);
 						}
-					}catch (Error error){
-						e.setFireTicks(20);
-					}
+					});
 				}
 		}
 	}

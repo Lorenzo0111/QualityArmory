@@ -8,6 +8,7 @@ import me.zombie_striker.qg.guns.utils.WeaponSounds;
 import me.zombie_striker.qg.handlers.ExplosionHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.Effect;
+import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
@@ -22,8 +23,6 @@ import org.bukkit.util.Vector;
 import java.util.List;
 
 public class ProxyMines extends Grenade {
-
-	private BlockFace sticky = null;
 
 	public ProxyMines(ItemStack[] ingg, double cost, double damage, double explosionreadius, String name,
 					  String displayname, List<String> lore, MaterialStorage ms) {
@@ -63,18 +62,18 @@ public class ProxyMines extends Grenade {
 
 	private void handleThrowableTick(ThrowableHolder h) {
 		//TODO: Write this bit that detect how close a player is.
-		if(sticky == null){
+		if(h.getSticky() == null){
 			if(h.getHolder().getLocation().add(0.3,0,0).getBlock().getType().isSolid()){
-				sticky = BlockFace.EAST;
+				h.setSticky(BlockFace.EAST);
 			}else if(h.getHolder().getLocation().add(-0.3,0,0).getBlock().getType().isSolid()){
-				sticky = BlockFace.WEST;
+				h.setSticky(BlockFace.WEST);
 			}else if(h.getHolder().getLocation().add(0,0,0.3).getBlock().getType().isSolid()){
-				sticky = BlockFace.SOUTH;
+				h.setSticky(BlockFace.SOUTH);
 			}else if(h.getHolder().getLocation().add(0,0,-0.3).getBlock().getType().isSolid()){
-				sticky = BlockFace.NORTH;
+				h.setSticky(BlockFace.NORTH);
 			}
 		}
-		if(sticky!=null){
+		if(h.getSticky()!=null){
 			h.getHolder().setVelocity(new Vector(0,0.0,0));
 		}
 		if (!(h.getHolder() instanceof Player)) {
@@ -109,15 +108,19 @@ public class ProxyMines extends Grenade {
 					h.getHolder().getWorld().playSound(h.getHolder().getLocation(), Sound.valueOf("EXPLODE"), 8, 0.7f);
 				}
 				Player thro = Bukkit.getPlayer(h.getOwner());
+				final Location holderLoc = h.getHolder().getLocation();
 				try {
 					for (Entity e : h.getHolder().getNearbyEntities(radius, radius, radius)) {
 						if (e instanceof LivingEntity) {
-							double dam = (dmageLevel / e.getLocation().distance(h.getHolder().getLocation()));
-							QAMain.DEBUG("Grenade-Damaging " + e.getName() + " : " + dam + " DAM.");
-							if (thro == null)
-								((LivingEntity) e).damage(dam);
-							else
-								((LivingEntity) e).damage(dam, thro);
+							final LivingEntity target = (LivingEntity) e;
+							FoliaRunnable.runEntityTask(QAMain.getInstance(), target, () -> {
+								double dam = (dmageLevel / target.getLocation().distance(holderLoc));
+								QAMain.DEBUG("Grenade-Damaging " + target.getName() + " : " + dam + " DAM.");
+								if (thro == null)
+									target.damage(dam);
+								else
+									target.damage(dam, thro);
+							});
 						}
 					}
 				} catch (Error e) {

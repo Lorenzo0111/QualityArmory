@@ -208,7 +208,13 @@ public abstract class FoliaRunnable implements Runnable {
                 retired.run();
                 return;
             }
-            Bukkit.getScheduler().runTask(plugin, task);
+            Bukkit.getScheduler().runTask(plugin, () -> {
+                if (retired != null && !entity.isValid()) {
+                    retired.run();
+                    return;
+                }
+                task.run();
+            });
             return;
         }
         invokeEntity(plugin, entity, task, retired, 1, -1);
@@ -275,6 +281,7 @@ public abstract class FoliaRunnable implements Runnable {
 
     private static Object invokeGlobal(Plugin plugin, Object consumer, long delay, long period) {
         try {
+            if (period >= 0 && period < 1) period = 1;
             Object scheduler = plugin.getServer().getClass()
                     .getMethod("getGlobalRegionScheduler").invoke(plugin.getServer());
             if (period >= 0) {
@@ -302,6 +309,7 @@ public abstract class FoliaRunnable implements Runnable {
 
     private static Object invokeAsync(Plugin plugin, Object consumer, long delayTicks, long periodTicks) {
         try {
+            if (periodTicks >= 0 && periodTicks < 1) periodTicks = 1;
             Object scheduler = plugin.getServer().getClass()
                     .getMethod("getAsyncScheduler").invoke(plugin.getServer());
             if (periodTicks >= 0) {
@@ -330,6 +338,7 @@ public abstract class FoliaRunnable implements Runnable {
 
     private static Object invokeEntity(Plugin plugin, Entity entity, Object consumer, Runnable retired, long delay, long period) {
         try {
+            if (period >= 0 && period < 1) period = 1;
             Object scheduler = entity.getClass().getMethod("getScheduler").invoke(entity);
             if (period >= 0) {
                 return scheduler.getClass()
@@ -356,6 +365,7 @@ public abstract class FoliaRunnable implements Runnable {
 
     private static Object invokeRegion(Plugin plugin, Location location, Object consumer, long delay, long period) {
         try {
+            if (period >= 0 && period < 1) period = 1;
             Object scheduler = plugin.getServer().getClass()
                     .getMethod("getRegionScheduler").invoke(plugin.getServer());
             if (period >= 0) {

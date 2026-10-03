@@ -18,6 +18,7 @@ import org.bukkit.scheduler.BukkitTask;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class GunRefillerRunnable {
@@ -45,6 +46,10 @@ public class GunRefillerRunnable {
             }
         }
         return false;
+    }
+
+    public static void removeAllFor(UUID player) {
+        allGunRefillers.removeIf(r -> player.equals(r.reloader));
     }
 
     private BukkitTask r;

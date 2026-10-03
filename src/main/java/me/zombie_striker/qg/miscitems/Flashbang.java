@@ -72,9 +72,10 @@ public class Flashbang extends Grenade {
 		try {
 			for (Entity e : h.getHolder().getNearbyEntities(radius, radius, radius)) {
 				if (e instanceof LivingEntity) {
-					QAMain.DEBUG("Flashbaned "+e.getName());
-					((LivingEntity) e)
-							.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 20 * 10, 2));
+					final LivingEntity target = (LivingEntity) e;
+					QAMain.DEBUG("Flashbaned "+target.getName());
+					FoliaRunnable.runEntityTask(QAMain.getInstance(), target, () ->
+							target.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 20 * 10, 2)));
 				}
 			}
 		} catch (Error e) {

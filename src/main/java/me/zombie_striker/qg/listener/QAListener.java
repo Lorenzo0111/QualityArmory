@@ -22,6 +22,7 @@ import me.zombie_striker.qg.miscitems.MedKit;
 import me.zombie_striker.qg.miscitems.MeleeItems;
 import me.zombie_striker.qg.miscitems.ThrowableItems;
 import org.bukkit.Bukkit;
+import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -1024,6 +1025,10 @@ public class QAListener implements Listener {
 			}
 		}
 		QAMain.reloadingTasks.remove(e.getPlayer().getUniqueId());
+		GunRefillerRunnable.removeAllFor(e.getPlayer().getUniqueId());
+
+		BukkitTask rapidfire = GunUtil.rapidfireshooters.remove(e.getPlayer().getUniqueId());
+		if (rapidfire != null) rapidfire.cancel();
 
 		if (QualityArmory.isIronSights(e.getPlayer().getInventory().getItemInHand())) {
 			try {

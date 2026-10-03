@@ -12,6 +12,7 @@ import me.zombie_striker.qg.hooks.protection.ProtectionHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.Effect;
 import org.bukkit.GameMode;
+import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
@@ -23,11 +24,11 @@ import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class Grenade extends CustomBaseObject implements ThrowableItems {
-	private static final List<Entity> GRENADES = new ArrayList<>();
+	private static final List<Entity> GRENADES = new CopyOnWriteArrayList<>();
 
 	private ItemStack[] ing = null;
 
@@ -168,15 +169,19 @@ public class Grenade extends CustomBaseObject implements ThrowableItems {
 			h.getHolder().getWorld().playSound(h.getHolder().getLocation(), Sound.valueOf("EXPLODE"), 8, 0.7f);
 		}
 		Player thro = Bukkit.getPlayer(h.getOwner());
+		final Location holderLoc = h.getHolder().getLocation();
 		try {
 			for (Entity e : h.getHolder().getNearbyEntities(radius, radius, radius)) {
 				if (e instanceof LivingEntity) {
-					double dam = (dmageLevel / e.getLocation().distance(h.getHolder().getLocation()));
-					QAMain.DEBUG("Grenade-Damaging " + e.getName() + " : " + dam + " DAM.");
-					if (thro == null)
-						((LivingEntity) e).damage(dam);
-					else
-						((LivingEntity) e).damage(dam, thro);
+					final LivingEntity target = (LivingEntity) e;
+					FoliaRunnable.runEntityTask(QAMain.getInstance(), target, () -> {
+						double dam = (dmageLevel / target.getLocation().distance(holderLoc));
+						QAMain.DEBUG("Grenade-Damaging " + target.getName() + " : " + dam + " DAM.");
+						if (thro == null)
+							target.damage(dam);
+						else
+							target.damage(dam, thro);
+					});
 				}
 			}
 		} catch (Error e) {
