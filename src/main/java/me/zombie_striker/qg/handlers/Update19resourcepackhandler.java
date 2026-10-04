@@ -1,7 +1,7 @@
 package me.zombie_striker.qg.handlers;
 
 import me.zombie_striker.qg.QAMain;
-import me.zombie_striker.qg.util.FoliaRunnable;
+import me.zombie_striker.qg.utils.FoliaRunnable;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;

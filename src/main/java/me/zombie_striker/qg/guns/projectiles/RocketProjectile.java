@@ -14,7 +14,7 @@ import me.zombie_striker.qg.handlers.ParticleHandlers;
 import org.bukkit.*;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import me.zombie_striker.qg.util.FoliaRunnable;
+import me.zombie_striker.qg.utils.FoliaRunnable;
 import org.bukkit.util.Vector;
 
 public class RocketProjectile implements RealtimeCalculationProjectile {
@@ -62,7 +62,7 @@ public class RocketProjectile implements RealtimeCalculationProjectile {
 							s.getWorld().playEffect(s, Effect.valueOf("CLOUD"), 0);
 							player.getWorld().playSound(s, Sound.valueOf("EXPLODE"), 8, 0.7f);
 						}
-						ExplosionHandler.handleAOEExplosion(player, s, g.getDamage(), g.getExplosionRadius());
+						ExplosionHandler.handleAOEExplosion(player, s, g.getDamage(), g.getExplosionRadius(), g.getExplosionKnockback());
 						cancel();
 						return;
 					}

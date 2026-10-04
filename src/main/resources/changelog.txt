@@ -1,5 +1,15 @@
 2.2.0
   - Added Folia support
+  - Added MythicMobs support (qashoot and qaequip mechanics)
+  - Added armorEffectiveness and armorDurabilityDamageMultiplier options
+  - Added useProjectileDamageType option
+  - Added forceParticleRendering option
+  - Added Shop_Purchase_Sound and Crafting_Sound options
+  - Added FuseTime field for grenades
+  - Added CustomProjectiles.explosionKnockback field for guns
+  - Fixed server freeze when shooting
+  - Fixed guns not firing after reloading with the swap hand key
+  - Fixed guns acting like crossbows after dying from your own explosives
 
 2.1.4
   - Added NBTAPI plugin support

@@ -4,10 +4,9 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-import me.zombie_striker.qg.api.QualityArmory;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import me.zombie_striker.qg.util.FoliaRunnable;
+import me.zombie_striker.qg.utils.FoliaRunnable;
 
 import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.guns.Gun;

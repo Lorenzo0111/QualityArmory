@@ -4,7 +4,7 @@ import com.cryptomorin.xseries.particles.XParticle;
 import me.zombie_striker.customitemmanager.MaterialStorage;
 import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.guns.utils.WeaponSounds;
-import me.zombie_striker.qg.util.FoliaRunnable;
+import me.zombie_striker.qg.utils.FoliaRunnable;
 import org.bukkit.Effect;
 import org.bukkit.Sound;
 import org.bukkit.entity.Entity;
@@ -53,7 +53,7 @@ public class Flashbang extends Grenade {
 							if (t != null) t.cancel();
 						});
 			}
-		}.runTaskLater(QAMain.getInstance(), 5 * 20));
+		}.runTaskLater(QAMain.getInstance(), getFuseTicks()));
 		throwItems.put(thrower, h);
 		return true;
 	}

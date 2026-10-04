@@ -5,7 +5,7 @@ import me.zombie_striker.qg.api.QualityArmory;
 import me.zombie_striker.qg.guns.Gun;
 import me.zombie_striker.qg.guns.utils.GunUtil;
 import me.zombie_striker.qg.guns.utils.WeaponSounds;
-import me.zombie_striker.qg.util.FoliaRunnable;
+import me.zombie_striker.qg.utils.FoliaRunnable;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitTask;

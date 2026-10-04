@@ -6,7 +6,7 @@ import me.zombie_striker.qg.api.QualityArmory;
 import me.zombie_striker.qg.api.WeaponInteractEvent;
 import me.zombie_striker.qg.guns.Gun;
 import me.zombie_striker.qg.handlers.IronsightsHandler;
-import me.zombie_striker.qg.util.FoliaRunnable;
+import me.zombie_striker.qg.utils.FoliaRunnable;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -85,6 +85,22 @@ public class GunRefillerRunnable {
         r = new FoliaRunnable() {
             @Override
             public void run() {
+                try {
+                    finishReload();
+                } finally {
+                    reloadedItem = null;
+                    allGunRefillers.remove(gg);
+
+                    List<GunRefillerRunnable> rr = QAMain.reloadingTasks.get(player.getUniqueId());
+                    if (rr != null) {
+                        rr.remove(GunRefillerRunnable.this);
+                        if (rr.isEmpty())
+                            QAMain.reloadingTasks.remove(player.getUniqueId());
+                    }
+                }
+            }
+
+            private void finishReload() {
                 ItemMeta newim = modifiedOriginalItem.getItemMeta();
                 boolean shouldContinue = player.getInventory().getHeldItemSlot() == slot;
 
@@ -158,19 +174,6 @@ public class GunRefillerRunnable {
 
 
                 Bukkit.getPluginManager().callEvent(new WeaponInteractEvent(player, g, WeaponInteractEvent.InteractType.RELOAD));
-                if (!QAMain.reloadingTasks.containsKey(player.getUniqueId())) {
-                    return;
-                }
-                List<GunRefillerRunnable> rr = QAMain.reloadingTasks.get(player.getUniqueId());
-                rr.remove(GunRefillerRunnable.this);
-                reloadedItem = null;
-                allGunRefillers.remove(gg);
-
-                if (rr.isEmpty()) {
-                    QAMain.reloadingTasks.remove(player.getUniqueId());
-                } else {
-                    QAMain.reloadingTasks.put(player.getUniqueId(), rr);
-                }
             }
         }.runTaskLater(QAMain.getInstance(), player, (long) (20 * seconds));
 

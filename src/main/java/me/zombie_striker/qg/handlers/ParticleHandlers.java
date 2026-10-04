@@ -1,7 +1,6 @@
 package me.zombie_striker.qg.handlers;
 
 import com.cryptomorin.xseries.particles.XParticle;
-import com.cryptomorin.xseries.reflection.XReflection;
 import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.guns.Gun;
 import org.bukkit.Bukkit;
@@ -9,7 +8,7 @@ import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
-import me.zombie_striker.qg.util.FoliaRunnable;
+import me.zombie_striker.qg.utils.FoliaRunnable;
 import ru.beykerykt.minecraft.lightapi.common.LightAPI;
 
 public class ParticleHandlers {
@@ -22,7 +21,7 @@ public class ParticleHandlers {
 
 	public static void spawnExplosion(Location loc) {
 		try {
-			loc.getWorld().spawnParticle(XParticle.EXPLOSION_EMITTER.get(), loc, 1);
+			spawn(XParticle.EXPLOSION_EMITTER.get(), loc, 1, null);
 		} catch (Error | Exception e4) {
 		}
 		// TODO: Do lights n stuff
@@ -107,11 +106,25 @@ public class ParticleHandlers {
 				if (g.getParticle() == XParticle.DUST.get()) {
 					spawnParticle(g.getParticleR(), g.getParticleG(), g.getParticleB(), loc);
 				} else if (g.getParticle() == XParticle.BLOCK.get() || g.getParticle() == Particle.BLOCK || g.getParticle() == Particle.FALLING_DUST) {
-					loc.getWorld().spawnParticle(g.getParticle(), loc, 1, g.getParticleMaterial().createBlockData());
+					spawn(g.getParticle(), loc, 1, g.getParticleMaterial().createBlockData());
 				} else {
-					loc.getWorld().spawnParticle(g.getParticle(), loc, g.getParticleData());
+					spawn(g.getParticle(), loc, g.getParticleData(), null);
 				}
 		} catch (Error | Exception e4) {
+		}
+	}
+
+	/**
+	 * Spawns a particle, ignoring the client's particle render distance if
+	 * forceParticleRendering is enabled.
+	 */
+	private static <T> void spawn(Particle particle, Location loc, int count, T data) {
+		if (QAMain.forceParticles && is13) {
+			loc.getWorld().spawnParticle(particle, loc, count, 0, 0, 0, 1, data, true);
+		} else if (data != null) {
+			loc.getWorld().spawnParticle(particle, loc, count, data);
+		} else {
+			loc.getWorld().spawnParticle(particle, loc, count);
 		}
 	}
 
@@ -120,6 +133,10 @@ public class ParticleHandlers {
 			if (is13) {
 				Particle.DustOptions dust = new Particle.DustOptions(
 						Color.fromRGB((int) (r * 255), (int) (g * 255), (int) (b * 255)), 1);
+				if (QAMain.forceParticles) {
+					loc.getWorld().spawnParticle(XParticle.DUST.get(), loc.getX(), loc.getY(), loc.getZ(), 0, 0, 0, 0, 1, dust, true);
+					return;
+				}
 				for (Player player : loc.getWorld().getPlayers()) {
 					if (player.getLocation().distanceSquared(loc) < 60 * 60)
 						player.spawnParticle(XParticle.DUST.get(), loc.getX(), loc.getY(), loc.getZ(), 0, 0, 0, 0, dust);
@@ -153,7 +170,7 @@ public class ParticleHandlers {
 			Location l = loc.clone().add(x, 0, z);
 
 			for (int i = 0; i < 2; i++)
-				loc.getWorld().spawnParticle(XParticle.EFFECT.get(), l, 0);
+				spawn(XParticle.EFFECT.get(), l, 0, null);
 		} catch (Error | Exception e4) {
 		}
 	}

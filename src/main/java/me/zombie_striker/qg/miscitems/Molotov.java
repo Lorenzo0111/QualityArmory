@@ -4,7 +4,7 @@ import me.zombie_striker.customitemmanager.MaterialStorage;
 import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.guns.utils.WeaponSounds;
 import me.zombie_striker.qg.hooks.protection.ProtectionHandler;
-import me.zombie_striker.qg.util.FoliaRunnable;
+import me.zombie_striker.qg.utils.FoliaRunnable;
 import org.bukkit.Effect;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
@@ -51,7 +51,7 @@ public class Molotov extends Grenade {
 							if (t != null) t.cancel();
 						});
 			}
-		}.runTaskTimer(QAMain.getInstance(), 5*20, 10));
+		}.runTaskTimer(QAMain.getInstance(), getFuseTicks(), 10));
 		throwItems.put(thrower, h);
 
 		return true;

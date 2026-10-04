@@ -13,7 +13,6 @@ import org.bukkit.event.*;
 import org.bukkit.event.inventory.PrepareAnvilEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.scheduler.BukkitTask;
 
 public class Update19Events implements Listener {
 
@@ -41,15 +40,11 @@ public class Update19Events implements Listener {
 			if (QualityArmory.isIronSights(e.getOffHandItem())) {
 				e.setCancelled(true);
 				IronsightsHandler.unAim(e.getPlayer());
-				BukkitTask task = GunUtil.rapidfireshooters.get(e.getPlayer().getUniqueId());
-				if (task != null)
-					task.cancel();
+				GunUtil.stopRapidFire(e.getPlayer());
 				return;
 			} else if (QualityArmory.isGun(e.getMainHandItem())) {
 				e.setCancelled(true);
-				BukkitTask task = GunUtil.rapidfireshooters.get(e.getPlayer().getUniqueId());
-				if (task != null)
-					task.cancel();
+				GunUtil.stopRapidFire(e.getPlayer());
 				return;
 			}
 			Gun g = null;
@@ -64,9 +59,7 @@ public class Update19Events implements Listener {
 			if (g != null) {
 				e.setCancelled(true);
 				QAListener.reload(e.getPlayer(),g);
-				BukkitTask task = GunUtil.rapidfireshooters.get(e.getPlayer().getUniqueId());
-				if (task != null)
-					task.cancel();
+				GunUtil.stopRapidFire(e.getPlayer());
 			}
 
 		} else {

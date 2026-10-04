@@ -1,4 +1,4 @@
-package me.zombie_striker.qg.util;
+package me.zombie_striker.qg.utils;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
