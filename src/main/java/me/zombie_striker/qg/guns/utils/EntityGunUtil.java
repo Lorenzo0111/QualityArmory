@@ -29,7 +29,8 @@ public class EntityGunUtil {
 	 * gun and no ammo is used.
 	 *
 	 * @param direction      the direction of the shot.
-	 * @param swayMultiplier multiplier for the sway of the gun: 0 is a perfect aim.
+	 * @param swayMultiplier multiplier for the sway of the gun: 0 is a perfect aim and 1 is as
+	 *                       accurate as a player standing still.
 	 */
 	public static void shoot(Gun g, LivingEntity shooter, Vector direction, double swayMultiplier) {
 		if (direction.lengthSquared() == 0)
@@ -37,7 +38,9 @@ public class EntityGunUtil {
 		if (!QualityArmory.allowGunsInRegion(shooter.getLocation()))
 			return;
 
-		double sway = g.getSway() * swayMultiplier;
+		// Players get the sway of the gun applied twice (see AimManager#getSway), so this is the
+		// sway of a player standing still. A multiplier of 1 is as accurate as that player.
+		double sway = g.getSway() * g.getSway() * swayMultiplier;
 		for (int i = 0; i < g.getBulletsPerShot(); i++) {
 			shootBullet(g, shooter, direction, sway);
 		}

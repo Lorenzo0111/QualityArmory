@@ -3,10 +3,7 @@ package me.zombie_striker.qg.hooks.mythicmobs;
 import io.lumine.mythic.api.adapters.AbstractEntity;
 import io.lumine.mythic.api.adapters.AbstractLocation;
 import io.lumine.mythic.api.config.MythicLineConfig;
-import io.lumine.mythic.api.skills.ITargetedEntitySkill;
-import io.lumine.mythic.api.skills.ITargetedLocationSkill;
-import io.lumine.mythic.api.skills.SkillMetadata;
-import io.lumine.mythic.api.skills.SkillResult;
+import io.lumine.mythic.api.skills.*;
 import io.lumine.mythic.bukkit.BukkitAdapter;
 import me.zombie_striker.qg.api.QualityArmory;
 import me.zombie_striker.qg.guns.Gun;
@@ -24,6 +21,11 @@ public class ShootMechanic implements ITargetedEntitySkill, ITargetedLocationSki
 	public ShootMechanic(MythicLineConfig config) {
 		this.gunName = config.getString(new String[]{"gun", "g", "weapon"}, null);
 		this.sway = config.getDouble("sway", 1.0);
+	}
+
+	@Override
+	public ThreadSafetyLevel getThreadSafetyLevel() {
+		return ThreadSafetyLevel.SYNC_ONLY;
 	}
 
 	@Override
