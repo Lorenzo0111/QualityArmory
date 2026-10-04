@@ -22,8 +22,8 @@ import java.util.concurrent.ThreadLocalRandom;
  */
 public class GunDamageHandler implements Listener {
 
-	// Per thread, as Folia ticks regions on different threads
-	private static final ThreadLocal<Boolean> weaponDamage = ThreadLocal.withInitial(() -> false);
+	// Nesting depth of the weapon damage calls. Per thread, as Folia ticks regions on different threads
+	private static final ThreadLocal<int[]> depth = ThreadLocal.withInitial(() -> new int[1]);
 	private static boolean projectileDamageSupported = true;
 
 	/**
@@ -31,18 +31,20 @@ public class GunDamageHandler implements Listener {
 	 * {@link #end()} in a finally block.
 	 */
 	public static void begin() {
-		weaponDamage.set(true);
+		depth.get()[0]++;
 	}
 
 	public static void end() {
-		weaponDamage.set(false);
+		int[] current = depth.get();
+		if (current[0] > 0)
+			current[0]--;
 	}
 
 	/**
 	 * @return true if the damage currently being dealt comes from a QualityArmory weapon.
 	 */
 	public static boolean isWeaponDamage() {
-		return weaponDamage.get();
+		return depth.get()[0] > 0;
 	}
 
 	/**
