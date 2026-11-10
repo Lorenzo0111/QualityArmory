@@ -132,7 +132,7 @@ public class QualityArmory {
 								}
 
 								if (QAMain.isVersionHigherThan(1, 19))
-									player.setResourcePack(CustomItemManager.getResourcepack(player), null, QAMain.kickIfDeniedRequest);
+									player.setResourcePack(CustomItemManager.getResourcepack(player), (byte[]) null, QAMain.kickIfDeniedRequest);
                                 else player.setResourcePack(CustomItemManager.getResourcepack(player));
 
 							} catch (Error | Exception e4) {

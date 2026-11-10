@@ -343,7 +343,7 @@ public class GunYMLLoader {
 		if (f2.contains("maxbullets"))
 			g.setMaxBullets(f2.getInt("maxbullets"));
 		if (f2.contains("damage"))
-			g.setDurabilityDamage(f2.getInt("damage"));
+			g.setDurabilityDamage((float) f2.getDouble("damage"));
 		if (f2.contains("durability"))
 			g.setDuribility(f2.getInt("durability"));
 		if (f2.contains("price"))
