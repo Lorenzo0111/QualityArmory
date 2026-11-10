@@ -10,6 +10,7 @@
   - Fixed server freeze when shooting
   - Fixed guns not firing after reloading with the swap hand key
   - Fixed guns acting like crossbows after dying from your own explosives
+  - 26.3 support
 
 2.1.4
   - Added NBTAPI plugin support
