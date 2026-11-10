@@ -19,11 +19,6 @@
         </repository>
 
         <repository>
-            <id>papermc</id>
-            <url>https://repo.papermc.io/repository/maven-public/</url>
-        </repository>
-
-        <repository>
             <id>lumine</id>
             <url>https://mvn.lumine.io/repository/maven-public/</url>
         </repository>
