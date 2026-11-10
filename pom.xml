@@ -125,11 +125,11 @@
             <scope>provided</scope>
         </dependency>
 
-        <!--Paper API 26.1.2-->
+        <!--Spigot API-->
         <dependency>
-            <groupId>io.papermc.paper</groupId>
-            <artifactId>paper-api</artifactId>
-            <version>26.1.2.build.65-stable</version>
+            <groupId>org.spigotmc</groupId>
+            <artifactId>spigot-api</artifactId>
+            <version>1.20.6-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
 
