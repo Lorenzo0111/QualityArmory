@@ -835,7 +835,6 @@ public class QAMain extends JavaPlugin {
             hasViaVersion = true;
         if (getServer().getPluginManager().isPluginEnabled("ProtocolLib")) {
             hasProtocolLib = true;
-            ProtocolLibHandler.initRemoveArmswing();
             ProtocolLibHandler.initAimBow();
         }
 
