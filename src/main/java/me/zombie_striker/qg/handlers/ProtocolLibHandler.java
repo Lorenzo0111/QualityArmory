@@ -29,57 +29,12 @@ public class ProtocolLibHandler {
 
     private static ProtocolManager protocolManager;
 
-    public static void initRemoveArmswing() {
-        if (protocolManager == null)
-            protocolManager = ProtocolLibrary.getProtocolManager();
-        protocolManager.addPacketListener(
-                new PacketAdapter(QAMain.getInstance(), ListenerPriority.NORMAL, PacketType.Play.Client.ARM_ANIMATION) {
-
-                    @SuppressWarnings("deprecation")
-                    public void onPacketReceiving(PacketEvent event) {
-                        final Player player = event.getPlayer();
-
-                        boolean tempplayer = false;
-                        try {
-                            player.getVehicle();
-                        } catch (UnsupportedOperationException e) {
-                            tempplayer = true;
-                        }
-                        if (tempplayer)
-                            return;
-
-                        if (event.getPacketType() == PacketType.Play.Client.ARM_ANIMATION
-                                && player.getVehicle() != null) {
-                            try {
-
-                                byte state = event.getPacket().getBytes().readSafely(0);
-                                int entityID = event.getPacket().getIntegers().readSafely(0);
-                                Player targ = null;
-                                for (Player p : Bukkit.getOnlinePlayers()) {
-                                    if (p.getEntityId() == entityID) {
-                                        targ = p;
-                                        break;
-                                    }
-                                }
-                                if (targ == null) {
-                                    Bukkit.broadcastMessage("The ID for the entity is incorrect");
-                                    return;
-                                }
-                                if (state == 0) {
-                                    if (QualityArmory.isGun(targ.getItemInHand())
-                                            || QualityArmory.isIronSights(targ.getItemInHand())) {
-                                        event.setCancelled(true);
-                                    }
-                                }
-                            } catch (Error | Exception ignored) {
-                            }
-                        }
-                    }
-                });
-    }
-
     @SuppressWarnings("deprecation")
     public static void initAimBow() {
+        if (!PacketType.Play.Server.ENTITY_EQUIPMENT.isSupported()) {
+            QAMain.DEBUG("ENTITY_EQUIPMENT packet is not supported by ProtocolLib on this server, skipping aim bow listener");
+            return;
+        }
         if (protocolManager == null)
             protocolManager = ProtocolLibrary.getProtocolManager();
 
