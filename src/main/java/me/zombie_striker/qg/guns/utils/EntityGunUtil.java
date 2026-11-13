@@ -74,7 +74,7 @@ public class EntityGunUtil {
 		for (Entity e : start.getWorld().getNearbyEntities(center, maxDistance / 2, maxDistance / 2, maxDistance / 2)) {
 			if (!(e instanceof Damageable) || e == shooter || e == shooter.getVehicle() || e.getVehicle() == shooter)
 				continue;
-			if (QAMain.avoidTypes.contains(e.getType()))
+			if (QAMain.avoidTypes.contains(e.getType()) || GunUtil.shouldBulletPassThrough(e))
 				continue;
 			if (e instanceof Player && ((Player) e).getGameMode() == GameMode.SPECTATOR)
 				continue;

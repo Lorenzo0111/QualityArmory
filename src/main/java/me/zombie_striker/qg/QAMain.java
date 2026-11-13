@@ -172,6 +172,7 @@ public class QAMain extends JavaPlugin {
     public static double weaponSwitchDelay = 0;
     public static boolean allowGunHitEntities = true;
     public static boolean preventHiddenPlayers = true;
+    public static boolean bulletsPassThroughNPCs = false;
     public static boolean anticheatFix = false;
     public static boolean preventGunsInHoppers = true;
     public static int hitDistance = 5;
@@ -902,6 +903,7 @@ public class QAMain extends JavaPlugin {
 
         allowGunHitEntities = (boolean) a("allowGunHitEntities", true);
         preventHiddenPlayers = (boolean) a("preventHiddenPlayers", true);
+        bulletsPassThroughNPCs = (boolean) a("bulletsPassThroughNPCs", false);
         hitDistance = (int) a("hitDistance", hitDistance);
 
         preventGunsInHoppers = (boolean) a("preventGunsInHoppers", true);
