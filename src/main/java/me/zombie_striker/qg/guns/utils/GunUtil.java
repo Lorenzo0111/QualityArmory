@@ -73,6 +73,14 @@ public class GunUtil {
 		}
 	}
 
+	/**
+	 * Whether bullets should ignore this entity because it is an NPC (e.g. Citizens),
+	 * and the "bulletsPassThroughNPCs" option is enabled.
+	 */
+	public static boolean shouldBulletPassThrough(Entity e) {
+		return QAMain.bulletsPassThroughNPCs && e.hasMetadata("NPC");
+	}
+
 	public static double getTargetedSolidMaxDistance(Vector v, Location start, double maxDistance) {
 		Location test = start.clone();
 		World world = test.getWorld();
@@ -130,7 +138,7 @@ public class GunUtil {
 			for (Entity e : centerTest.getWorld().getNearbyEntities(centerTest, maxDistance / 2, maxDistance / 2,
 					maxDistance / 2)) {
 				if (e instanceof Damageable) {
-					if (QAMain.avoidTypes.contains(e.getType()))
+					if (QAMain.avoidTypes.contains(e.getType()) || shouldBulletPassThrough(e))
 						continue;
 
 					if (e != p && e != p.getVehicle() && e != p.getPassenger()) {
