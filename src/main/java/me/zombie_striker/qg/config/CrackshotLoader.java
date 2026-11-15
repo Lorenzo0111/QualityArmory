@@ -96,7 +96,8 @@ public class CrackshotLoader {
 				} else {
 					data = highestData;
 				}
-			} catch (Error | Exception e45) {
+			} catch (RuntimeException e45) {
+				// Not a numeric id, or a modern server where materials have no ids: use the material name
 				Material configMaterial = Material.matchMaterial(type);
 				if (configMaterial != null) {
 					materialtype = configMaterial;

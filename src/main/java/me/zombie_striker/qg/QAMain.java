@@ -494,7 +494,9 @@ public class QAMain extends JavaPlugin {
             CustomItemManager.registerItemType(getDataFolder(), "gun", new me.zombie_striker.customitemmanager.qa.versions.V1_14.CustomGunItem().setOverrideAttackSpeed(this.mainConfig.items.overrideAttackSpeed));
         }
 
-        // Chris: if switch on, create default items.
+        // Rename old item keys first, so the default items below update the admin's values, not duplicates
+        GunYMLLoader.migrateAll(getDataFolder());
+
         if (getConfiguration().features.enableCreationOfDefaultFiles) {
             CustomItemManager.getItemType("gun").initItems(getDataFolder());
         }

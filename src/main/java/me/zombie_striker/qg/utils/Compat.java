@@ -26,10 +26,10 @@ public final class Compat {
     public static final boolean PLAYER_SOUND_BY_NAME = hasMethod("org.bukkit.entity.Player", "playSound", "org.bukkit.Location", "java.lang.String", "float", "float");
     /** {@code World#spawnParticle} (1.9+). */
     public static final boolean PARTICLES = hasMethod("org.bukkit.World", "spawnParticle", "org.bukkit.Particle", "org.bukkit.Location", "int");
-    /** The flattened material names of 1.13+. */
-    public static final boolean FLATTENED = XReflection.supports(13);
-    /** Sounds were renamed to namespaced keys in 1.9. */
-    public static final boolean MODERN_SOUNDS = XReflection.supports(9);
+    /** The flattened materials and block data of 1.13+: {@code Block#getBlockData}. */
+    public static final boolean FLATTENED = hasMethod("org.bukkit.block.Block", "getBlockData");
+    /** The sound names of 1.9+ ({@code Sound.ENTITY_ITEM_PICKUP}). A field check, since Sound is no longer an enum on 1.21.3+. */
+    public static final boolean MODERN_SOUNDS = hasField("org.bukkit.Sound", "ENTITY_ITEM_PICKUP");
 
     private Compat() {
     }
@@ -54,6 +54,18 @@ public final class Compat {
             Class.forName(className).getMethod(method, types);
             return true;
         } catch (ClassNotFoundException | NoSuchMethodException | LinkageError e) {
+            return false;
+        }
+    }
+
+    /**
+     * @return Whether a public field (or enum constant) exists.
+     */
+    public static boolean hasField(String className, String field) {
+        try {
+            Class.forName(className).getField(field);
+            return true;
+        } catch (ClassNotFoundException | NoSuchFieldException | LinkageError e) {
             return false;
         }
     }

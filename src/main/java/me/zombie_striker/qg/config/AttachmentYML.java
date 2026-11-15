@@ -1,6 +1,6 @@
 package me.zombie_striker.qg.config;
 
-import org.bukkit.Bukkit;
+import me.zombie_striker.qg.config.items.ItemKeys;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -29,15 +29,16 @@ public class AttachmentYML extends GunYML {
 	}
 
 	public String getBaseGun() {
-		return (String) get("baseGun");
+		return (String) get("base-gun");
 	}
 
 	public AttachmentYML setKilledByMessage(String message) {
-		set(false, "KilledByMessage", message);
+		set(false, "killed-by-message", message);
 		return this;
 	}
 	@Override
 	public AttachmentYML verify(String name, Object v) {
+		name = ItemKeys.translate(name);
 		if (!fileConfig.contains(name)) {
 			FileConfiguration otherConfig = getBaseGunFile();
 			if (otherConfig != null) {

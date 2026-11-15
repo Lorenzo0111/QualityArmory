@@ -70,6 +70,34 @@ public abstract class BaseConfiguration {
     }
 
     /**
+     * @return Whether missing values, comments and the header are written to the file, and new files get a
+     * version. Files that people write by hand (item files) only get migrated.
+     */
+    protected boolean writesDefaults() {
+        return true;
+    }
+
+    /**
+     * @return Whether migrations are logged. Disable it for files that come in large numbers.
+     */
+    protected boolean logsMigration() {
+        return true;
+    }
+
+    /**
+     * Called right before {@link #load()} saves a changed file.
+     */
+    protected void beforeSave() {
+    }
+
+    /**
+     * @return The file this configuration is stored in.
+     */
+    public File getFile() {
+        return this.file;
+    }
+
+    /**
      * Registers a migration step. When a file is loaded, {@link Config#oldPath()} values are moved first,
      * then every step with a version higher than the file's runs in ascending order.
      *
@@ -107,25 +135,31 @@ public abstract class BaseConfiguration {
         this.config = YamlConfiguration.loadConfiguration(this.file);
         String before = this.config.saveToString();
 
+        boolean writesDefaults = this.writesDefaults();
         boolean migrated = false;
         if (this.config.getKeys(false).isEmpty()) {
-            this.config.set(VERSION_KEY, this.getVersion());
+            if (writesDefaults)
+                this.config.set(VERSION_KEY, this.getVersion());
         } else {
             migrated = this.migrate(bindings);
         }
 
-        for (Binding binding : bindings) {
-            if (!this.config.contains(binding.path))
-                this.config.set(binding.path, this.serialize(binding.defaultValue));
+        if (writesDefaults) {
+            for (Binding binding : bindings) {
+                if (!this.config.contains(binding.path))
+                    this.config.set(binding.path, this.serialize(binding.defaultValue));
+            }
+
+            if (migrated)
+                this.config = this.reorder(this.config, bindings);
+
+            this.applyHeaderAndComments(bindings);
         }
 
-        if (migrated)
-            this.config = this.reorder(this.config, bindings);
-
-        this.applyHeaderAndComments(bindings);
-
-        if (!this.config.saveToString().equals(before))
+        if (!this.config.saveToString().equals(before)) {
+            this.beforeSave();
             this.save();
+        }
 
         for (Binding binding : bindings)
             this.assign(binding);
@@ -187,7 +221,8 @@ public abstract class BaseConfiguration {
 
         pruneEmptySections(this.config);
         this.config.set(VERSION_KEY, to);
-        this.logger.info("Migrated " + this.file.getName() + " from version " + from + " to " + to);
+        if (this.logsMigration())
+            this.logger.info("Migrated " + this.file.getName() + " from version " + from + " to " + to);
         return true;
     }
 
@@ -315,6 +350,7 @@ public abstract class BaseConfiguration {
             return raw instanceof Map ? raw : null;
         }
 
+        if (type == Object.class) return raw;
         if (raw instanceof ConfigurationSection || raw instanceof List) return null;
         String string = String.valueOf(raw).trim();
 
@@ -407,7 +443,7 @@ public abstract class BaseConfiguration {
     }
 
     private void collect(Object instance, String prefix, List<Binding> result) {
-        for (Field field : instance.getClass().getDeclaredFields()) {
+        for (Field field : fieldsOf(instance.getClass())) {
             int modifiers = field.getModifiers();
             if (field.isSynthetic() || Modifier.isStatic(modifiers) || Modifier.isTransient(modifiers)) continue;
 
@@ -439,6 +475,19 @@ public abstract class BaseConfiguration {
                 this.sectionComments.put(path, comment.value());
             this.collect(value, path + ".", result);
         }
+    }
+
+    /**
+     * @return The declared fields of the class and its superclasses, superclass fields first.
+     */
+    private static List<Field> fieldsOf(Class<?> type) {
+        Deque<Class<?>> hierarchy = new ArrayDeque<>();
+        for (Class<?> c = type; c != null && c != Object.class && c != BaseConfiguration.class; c = c.getSuperclass())
+            hierarchy.push(c);
+        List<Field> fields = new ArrayList<>();
+        for (Class<?> c : hierarchy)
+            fields.addAll(Arrays.asList(c.getDeclaredFields()));
+        return fields;
     }
 
     static String toKebabCase(String name) {

@@ -13,18 +13,18 @@ public class MiscYML extends ArmoryYML{
 	}
 
 	public void setMiscType(WeaponType misctype) {
-		set("MiscType",misctype.name());
+		set("misc-type",misctype.name());
 		this.misctype = misctype;
 	}
 	public void setThrowSpeed(double speed){
-		set("ThrowSpeed",1.5);
+		set("throw-speed",1.5);
 	}
 
 	@Override
 	public void verifyAllTagsExist() {
 		super.verifyAllTagsExist();
-		verify("ThrowSpeed",1.5);
+		verify("throw-speed",1.5);
 		if (misctype == WeaponType.SMOKE_GRENADES)
-			verify("useModernParticles", false);
+			verify("use-modern-particles", false);
 	}
 }
