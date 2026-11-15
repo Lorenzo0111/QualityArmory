@@ -1,5 +1,6 @@
 package me.zombie_striker.qg.miscitems;
 
+import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
 import org.bukkit.scheduler.BukkitTask;
 
@@ -8,11 +9,15 @@ import java.util.UUID;
 public interface ThrowableItems {
 
 	class ThrowableHolder {
-		private Entity holder;
+		private volatile Entity holder;
 		private UUID owner;
 		private Grenade grenade;
 
-		private BukkitTask timer;
+		private volatile BukkitTask timer;
+		/** Per-throw tick counter (only touched on the holder's region thread). */
+		private int ticks = 0;
+		/** Per-throw stick state used by ProxyMines. */
+		private BlockFace sticky;
 
 		public ThrowableHolder(UUID owner, Entity holder, Grenade grenade) {
 			this.holder = holder;
@@ -34,6 +39,22 @@ public interface ThrowableItems {
 
 		public BukkitTask getTask() {
 			return timer;
+		}
+
+		public int getTicks() {
+			return ticks;
+		}
+
+		public void setTicks(int ticks) {
+			this.ticks = ticks;
+		}
+
+		public BlockFace getSticky() {
+			return sticky;
+		}
+
+		public void setSticky(BlockFace sticky) {
+			this.sticky = sticky;
 		}
 
 		public UUID getOwner() {

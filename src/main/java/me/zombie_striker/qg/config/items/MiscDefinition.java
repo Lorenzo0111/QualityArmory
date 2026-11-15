@@ -25,6 +25,9 @@ public class MiscDefinition extends ItemDefinition {
     public Double throwSpeed;
     @Config
     public Boolean useModernParticles;
+    /** Seconds before a grenade explodes. */
+    @Config
+    public Double fuseTime;
 
     public MiscDefinition(File file) {
         super(file);

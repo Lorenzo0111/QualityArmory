@@ -3,6 +3,7 @@ package me.zombie_striker.qg.guns.projectiles;
 import me.zombie_striker.qg.utils.Compat;
 import me.zombie_striker.qg.utils.ErrorReporter;
 import me.zombie_striker.qg.QAMain;
+import me.zombie_striker.qg.handlers.GunDamageHandler;
 import me.zombie_striker.qg.boundingbox.AbstractBoundingBox;
 import me.zombie_striker.qg.boundingbox.BoundingBoxManager;
 import me.zombie_striker.qg.guns.Gun;
@@ -52,7 +53,7 @@ public class FireProjectile implements RealtimeCalculationProjectile {
 					AbstractBoundingBox box = BoundingBoxManager.getBoundingBox(e);
 					if (box.intersects(player,test, e)) {
 						if (e instanceof Damageable) {
-							((Damageable) e).damage(g.getDamage(), player);
+							GunDamageHandler.damage((Damageable) e, g.getDamage(), player, false);
 							if (e instanceof LivingEntity) {
 								((LivingEntity) e).setNoDamageTicks(0);
 								try {

@@ -1,5 +1,8 @@
 package me.zombie_striker.qg.guns.utils;
 
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.UUID;
+import me.zombie_striker.qg.utils.FoliaRunnable;
 import me.zombie_striker.qg.items.ItemState;
 import me.zombie_striker.qg.utils.Compat;
 import me.zombie_striker.qg.QAMain;
@@ -13,15 +16,13 @@ import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class GunRefillerRunnable {
 
-    private static List<GunRefillerRunnable> allGunRefillers = new ArrayList<>();
+    private static List<GunRefillerRunnable> allGunRefillers = new CopyOnWriteArrayList<>();
 
     public static boolean hasItemReloaded(Player reloader, ItemStack is) {
         for (GunRefillerRunnable s : allGunRefillers) {
@@ -44,6 +45,10 @@ public class GunRefillerRunnable {
             }
         }
         return false;
+    }
+
+    public static void removeAllFor(UUID player) {
+        allGunRefillers.removeIf(r -> player.equals(r.reloader.getUniqueId()));
     }
 
     private BukkitTask r;
@@ -78,9 +83,26 @@ public class GunRefillerRunnable {
 
         this.reloadedItem = modifiedOriginalItem.clone();
 
-        r = new BukkitRunnable() {
+        r = new FoliaRunnable() {
             @Override
             public void run() {
+                try {
+                    finishReload();
+                } finally {
+                    // Always unregister, even if the reload failed, or the gun stays blocked
+                    reloadedItem = null;
+                    allGunRefillers.remove(gg);
+
+                    List<GunRefillerRunnable> rr = QAMain.getPlayerState().getReloadingTasks().get(player.getUniqueId());
+                    if (rr != null) {
+                        rr.remove(GunRefillerRunnable.this);
+                        if (rr.isEmpty())
+                            QAMain.getPlayerState().getReloadingTasks().remove(player.getUniqueId());
+                    }
+                }
+            }
+
+            private void finishReload() {
                 ItemMeta newim = modifiedOriginalItem.getItemMeta();
                 boolean shouldContinue = player.getInventory().getHeldItemSlot() == slot;
 
@@ -143,30 +165,14 @@ public class GunRefillerRunnable {
 
 
                 Bukkit.getPluginManager().callEvent(new WeaponInteractEvent(player, g, WeaponInteractEvent.InteractType.RELOAD));
-                if (!QAMain.getPlayerState().getReloadingTasks().containsKey(player.getUniqueId())) {
-                    return;
-                }
-                List<GunRefillerRunnable> rr = QAMain.getPlayerState().getReloadingTasks().get(player.getUniqueId());
-                rr.remove(GunRefillerRunnable.this);
-                reloadedItem = null;
-                allGunRefillers.remove(gg);
-
-                if (rr.isEmpty()) {
-                    QAMain.getPlayerState().getReloadingTasks().remove(player.getUniqueId());
-                } else {
-                    QAMain.getPlayerState().getReloadingTasks().put(player.getUniqueId(), rr);
-                }
             }
-        }.runTaskLater(QAMain.getInstance(), (long) (20 * seconds));
+        }.runTaskLater(QAMain.getInstance(), player, (long) (20 * seconds));
 
         allGunRefillers.add(gg);
 
-        if (!QAMain.getPlayerState().getReloadingTasks().containsKey(player.getUniqueId())) {
-            QAMain.getPlayerState().getReloadingTasks().put(player.getUniqueId(), new ArrayList<GunRefillerRunnable>());
-        }
-        List<GunRefillerRunnable> rr = QAMain.getPlayerState().getReloadingTasks().get(player.getUniqueId());
-        rr.add(this);
-        QAMain.getPlayerState().getReloadingTasks().put(player.getUniqueId(), rr);
+        QAMain.getPlayerState().getReloadingTasks()
+                .computeIfAbsent(player.getUniqueId(), id -> new CopyOnWriteArrayList<>())
+                .add(this);
     }
 
 }

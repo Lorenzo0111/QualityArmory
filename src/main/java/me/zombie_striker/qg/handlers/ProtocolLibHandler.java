@@ -11,7 +11,6 @@ import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.reflect.StructureModifier;
 import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.comphenix.protocol.wrappers.Pair;
-import com.cryptomorin.xseries.reflection.XReflection;
 import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.api.QualityArmory;
 import me.zombie_striker.qg.guns.Gun;
@@ -21,7 +20,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.CrossbowMeta;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.scheduler.BukkitRunnable;
+import me.zombie_striker.qg.utils.FoliaRunnable;
 import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
@@ -131,7 +130,7 @@ public class ProtocolLibHandler {
                         }
 
                         // Handle different Minecraft versions
-                        if (XReflection.supports(16)) {
+                        if (QAMain.isVersionHigherThan(1, 16)) {
                             handleModern1_16PacketFormat(event, targetPlayer);
                         } else {
                             handleLegacyPacketFormat(event, targetPlayer, entityId);
@@ -215,8 +214,9 @@ public class ProtocolLibHandler {
 
                         // Schedule task to send offhand packet
                         final ItemStack finalItemStack = itemStack;
+                        final Player packetPlayer = event.getPlayer();
 
-                        new BukkitRunnable() {
+                        new FoliaRunnable() {
                             public void run() {
                                 try {
                                     PacketContainer pc2 = protocolManager.createPacket(PacketType.Play.Server.ENTITY_EQUIPMENT);
@@ -225,12 +225,12 @@ public class ProtocolLibHandler {
                                     pc2.getItemSlots().write(1, slot);
                                     pc2.getItemModifier().write(2, finalItemStack);
 
-                                    protocolManager.sendServerPacket(event.getPlayer(), pc2);
+                                    protocolManager.sendServerPacket(packetPlayer, pc2);
                                 } catch (Exception e) {
                                     ErrorReporter.report("sending the off hand item packet", e);
                                 }
                             }
-                        }.runTaskLater(QAMain.getInstance(), 1);
+                        }.runTaskLater(QAMain.getInstance(), packetPlayer, 1);
                     }
 
                     /**

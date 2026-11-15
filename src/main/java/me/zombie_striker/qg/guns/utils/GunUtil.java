@@ -1,5 +1,7 @@
 package me.zombie_striker.qg.guns.utils;
 
+import org.bukkit.scheduler.BukkitTask;
+import me.zombie_striker.qg.utils.FoliaRunnable;
 import me.zombie_striker.qg.items.ItemState;
 import me.zombie_striker.qg.utils.Compat;
 import me.zombie_striker.qg.utils.ErrorReporter;
@@ -30,7 +32,6 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.*;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import ru.beykerykt.minecraft.lightapi.common.LightAPI;
@@ -39,6 +40,16 @@ import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class GunUtil {
+
+	/**
+	 * Stops the automatic fire of a player. The task must always be removed from the rapid fire tasks when it is
+	 * cancelled, or the player will not be able to shoot anymore.
+	 */
+	public static void stopRapidFire(Player player) {
+		BukkitTask task = QAMain.getPlayerState().getRapidFireTasks().remove(player.getUniqueId());
+		if (task != null)
+			task.cancel();
+	}
 	private static final double MIN_POSITIVE_STEP = 0.001;
 
 
@@ -63,18 +74,19 @@ public class GunUtil {
 
 	public static double getTargetedSolidMaxDistance(Vector v, Location start, double maxDistance) {
 		Location test = start.clone();
-		Block previous = null;
+		World world = test.getWorld();
+		Block block = null;
+		boolean air = true;
 		for (double i = 0; i < maxDistance; i += v.length()) {
-			if (test.getBlock() == previous) {
-				previous = test.getBlock();
-				test.add(v);
-				continue;
-			}
-			if (test.getBlock().getType() != Material.AIR) {
-				if (isSolid(test.getBlock(), test))
+			if (block == null || block.getX() != test.getBlockX() || block.getY() != test.getBlockY()
+					|| block.getZ() != test.getBlockZ()) {
+				if (!world.isChunkLoaded(test.getBlockX() >> 4, test.getBlockZ() >> 4))
 					return start.distance(test);
+				block = test.getBlock();
+				air = block.getType() == Material.AIR;
 			}
-			previous = test.getBlock();
+			if (!air && isSolid(block, test))
+				return start.distance(test);
 			test.add(v);
 		}
 		return maxDistance;
@@ -248,7 +260,7 @@ public class GunUtil {
 
 									QAMain.DEBUG("Applied armor protection: " + defensePoints);
 
-									damageMAX = damageMAX * (1 - Math.min(20, Math.max(defensePoints / 5,
+									damageMAX = damageMAX * Math.max(0, 1 - QAMain.getConfiguration().combat.armorEffectiveness * Math.min(20, Math.max(defensePoints / 5,
 											defensePoints - damageMAX / (toughness / 4 + 2))) / 25);
 								} catch (RuntimeException e5) {
 									ErrorReporter.report("applying armor protection", e5);
@@ -269,22 +281,9 @@ public class GunUtil {
 									+ ((LivingEntity) hitTarget).getHealth() + "/"
 									+ ((LivingEntity) hitTarget).getMaxHealth() + " :" + damageMAX + " DAM)");
 						}
-						if(QAMain.getConfiguration().features.anticheatFix || p.hasMetadata("NPC")) {
-							if (hitTarget instanceof Damageable) {
-								((Damageable) hitTarget).damage(damageMAX);
-							} else if (hitTarget instanceof EnderDragon) {
-								((EnderDragon) hitTarget).damage(damageMAX);
-							} else if (hitTarget instanceof EnderDragonPart) {
-								((EnderDragonPart) hitTarget).damage(damageMAX);
-							}
-						}else {
-							if (hitTarget instanceof Damageable) {
-								((Damageable) hitTarget).damage(damageMAX, p);
-							} else if (hitTarget instanceof EnderDragon) {
-								((EnderDragon) hitTarget).damage(damageMAX, p);
-							} else if (hitTarget instanceof EnderDragonPart) {
-								((EnderDragonPart) hitTarget).damage(damageMAX, p);
-							}
+						if (hitTarget instanceof Damageable) {
+							GunDamageHandler.damage((Damageable) hitTarget, damageMAX,
+									(QAMain.getConfiguration().features.anticheatFix || p.hasMetadata("NPC")) ? null : p, true);
 						}
 
 
@@ -296,7 +295,7 @@ public class GunUtil {
 							Bukkit.getPluginManager().callEvent(passengerShoot);
 
 							if (!passengerShoot.isCancelled()) {
-								((Damageable) hitTarget.getPassenger()).damage(damageMAX, p);
+								GunDamageHandler.damage((Damageable) hitTarget.getPassenger(), damageMAX, p, true);
 							}
 						}
 					} else {
@@ -369,14 +368,18 @@ public class GunUtil {
 
 				if (QAMain.getConfiguration().world.regenDestructableBlocksAfter > 0) {
 					QAMain.DEBUG("Scheduling replacement of " + regenBlocks.size() + " blocks");
-					new BukkitRunnable() {
+					new FoliaRunnable() {
 						@Override
 						public void run() {
 							QAMain.DEBUG("Replacing " + regenBlocks.size() + " blocks");
 
 							for (Block l : regenBlocks.keySet()) {
-								regenBlocks.get(l).place(l.getLocation());
-								CoreProtectHook.logPlace(l,p);
+								final Block block = l;
+								final BlockRegenData data = regenBlocks.get(l);
+								FoliaRunnable.runRegionTask(QAMain.getInstance(), block.getLocation(), () -> {
+									data.place(block.getLocation());
+									CoreProtectHook.logPlace(block, p);
+								});
 							}
 						}
 					}.runTaskLater(QAMain.getInstance(), QAMain.getConfiguration().world.regenDestructableBlocksAfter * 20L);
@@ -390,13 +393,13 @@ public class GunUtil {
 					if (p.getEyeLocation().getBlock().getLightLevel() < g.getLightOnShoot()) {
 						final Location loc = p.getEyeLocation().clone();
 						LightAPI.get().setLightLevel(loc.getWorld().getName(),loc.getBlockX(),loc.getBlockY(),loc.getBlockZ(), g.getLightOnShoot());
-						new BukkitRunnable() {
+						new FoliaRunnable() {
 
 							@Override
 							public void run() {
 								LightAPI.get().setLightLevel(loc.getWorld().getName(), loc.getBlockX(), loc.getBlockY(), loc.getBlockZ(), 0);
 							}
-						}.runTaskLater(QAMain.getInstance(), 3);
+						}.runTaskLater(QAMain.getInstance(), loc, 3);
 					}
 				}
 			} catch (RuntimeException | LinkageError e5) {
@@ -469,7 +472,7 @@ public class GunUtil {
 		}
 
 		if (g.isAutomatic()) {
-			QAMain.getPlayerState().getRapidFireTasks().put(player.getUniqueId(), new BukkitRunnable() {
+			QAMain.getPlayerState().getRapidFireTasks().put(player.getUniqueId(), new FoliaRunnable() {
 				int slotUsed = player.getInventory().getHeldItemSlot();
 
 				@Override
@@ -580,7 +583,7 @@ public class GunUtil {
 					}
 					QualityArmory.sendHotbarGunAmmoCount(player, g, temp, false);
 				}
-			}.runTaskTimer(QAMain.getInstance(), 10 / g.getFireRate(), 10 / g.getFireRate()));
+			}.runTaskTimer(QAMain.getInstance(), player, 10 / g.getFireRate(), 10 / g.getFireRate()));
 		}
 
 		int amount = Gun.getAmount(player) - 1;
@@ -665,7 +668,7 @@ public class GunUtil {
 
 	public static void playShoot(final Gun g, final Player player) {
 		g.damageDurability(player);
-		new BukkitRunnable() {
+		new FoliaRunnable() {
 			@SuppressWarnings("deprecation")
 			@Override
 			public void run() {
@@ -686,7 +689,7 @@ public class GunUtil {
 				}
 
 			}
-		}.runTaskLater(QAMain.getInstance(), 1);
+		}.runTaskLater(QAMain.getInstance(), player, 1);
 		// Simply delaying the sound by 1/20th of a second makes shooting so much more
 		// immersive
 	}
@@ -753,7 +756,7 @@ public class GunUtil {
 						QAMain.getPlayerState().getRecoilCounter().get(player.getUniqueId()) + g.getRecoil());
 			} else {
 				QAMain.getPlayerState().getRecoilCounter().put(player.getUniqueId(), g.getRecoil());
-				new BukkitRunnable() {
+				new FoliaRunnable() {
 					@Override
 					public void run() {
 						if (QAMain.getIntegrations().hasProtocolLib() && QAMain.isVersionHigherThan(1, 13) && !QAMain.getIntegrations().hasViaVersion()) {
@@ -761,7 +764,7 @@ public class GunUtil {
 						} else
 							addRecoilWithTeleport(player, g, true);
 					}
-				}.runTaskLater(QAMain.getInstance(), 3);
+				}.runTaskLater(QAMain.getInstance(), player, 3);
 			}
 		} else {
 			if (QAMain.getIntegrations().hasProtocolLib() && QAMain.isVersionHigherThan(1, 13)) {
@@ -798,12 +801,21 @@ public class GunUtil {
 				- (useHighRecoil ? QAMain.getPlayerState().getRecoilCounter().get(player.getUniqueId()) : g.getRecoil())));
 		if (useHighRecoil)
 			QAMain.getPlayerState().getRecoilCounter().remove(player.getUniqueId());
-		Vector temp = player.getVelocity();
-		// player.getLocation().setDirection(vector);
-		player.teleport(current);
-		player.setVelocity(temp);
-
-		QAMain.getPlayerState().getLastMoveLocation().put(player.getUniqueId(), current);
+		final Vector temp = player.getVelocity();
+		// On Folia the teleport completes later, so the recoil state is only updated once it succeeded.
+		FoliaRunnable.teleport(player, current).thenAccept(success -> {
+			if (!success)
+				return;
+			if (!FoliaRunnable.isFolia()) {
+				player.setVelocity(temp);
+				QAMain.getPlayerState().getLastMoveLocation().put(player.getUniqueId(), current);
+				return;
+			}
+			FoliaRunnable.runEntityTask(QAMain.getInstance(), player, () -> {
+				player.setVelocity(temp);
+				QAMain.getPlayerState().getLastMoveLocation().put(player.getUniqueId(), current);
+			});
+		});
 	}
 
 	public static boolean isBreakable(Block b, Location l) {

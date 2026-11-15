@@ -9,13 +9,13 @@ import me.zombie_striker.qg.utils.ErrorReporter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.scheduler.BukkitRunnable;
+import me.zombie_striker.qg.utils.FoliaRunnable;
 
 /**
  * With durability based items (before 1.14), a custom item that lost its unbreakable flag would wear down
  * into a different item. This task moves such items back onto their item slot every 15 ticks.
  */
-public final class UnbreakableItemsTask extends BukkitRunnable {
+public final class UnbreakableItemsTask extends FoliaRunnable {
 
     /**
      * @return Whether the task is needed: durability based items, and a server that has the unbreakable flag (1.11+).
@@ -30,19 +30,22 @@ public final class UnbreakableItemsTask extends BukkitRunnable {
         MainConfig config = QAMain.getConfiguration();
         if (!config.items.enableUnbreaking || config.features.enableIgnoreUnbreakingChecks)
             return;
-        try {
-            for (Player p : Bukkit.getOnlinePlayers()) {
-                ItemStack mainHand = p.getItemInHand();
-                if (needsFix(mainHand))
-                    p.setItemInHand(fix(mainHand));
+        // Each player is handled on its own thread on Folia
+        for (Player player : Bukkit.getOnlinePlayers())
+            FoliaRunnable.runEntityTask(QAMain.getInstance(), player, () -> fixHeldItems(player));
+    }
 
-                if (Compat.OFFHAND) {
-                    ItemStack offHand = p.getInventory().getItemInOffHand();
-                    if (needsFix(offHand)) {
-                        p.getInventory().setItemInOffHand(fix(offHand));
-                        return;
-                    }
-                }
+    @SuppressWarnings("deprecation")
+    private static void fixHeldItems(Player p) {
+        try {
+            ItemStack mainHand = p.getItemInHand();
+            if (needsFix(mainHand))
+                p.setItemInHand(fix(mainHand));
+
+            if (Compat.OFFHAND) {
+                ItemStack offHand = p.getInventory().getItemInOffHand();
+                if (needsFix(offHand))
+                    p.getInventory().setItemInOffHand(fix(offHand));
             }
         } catch (RuntimeException e) {
             ErrorReporter.report("making held custom items unbreakable", e);

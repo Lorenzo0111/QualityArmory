@@ -1,5 +1,10 @@
 package me.zombie_striker.qg.listener;
 
+import me.zombie_striker.qg.guns.utils.GunRefillerRunnable;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.Set;
+import me.zombie_striker.qg.utils.FoliaRunnable;
+import me.zombie_striker.qg.handlers.GunDamageHandler;
 import me.zombie_striker.qg.items.ItemState;
 import me.zombie_striker.qg.utils.Compat;
 import me.zombie_striker.qg.utils.ErrorReporter;
@@ -41,7 +46,6 @@ import org.bukkit.event.player.*;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scoreboard.Scoreboard;
 
 import java.util.ArrayList;
@@ -49,13 +53,16 @@ import java.util.List;
 import java.util.UUID;
 
 public class QAListener implements Listener {
-	private final List<UUID> ignoreClick = new ArrayList<>();
-	private final List<UUID> ignoreDropReload = new ArrayList<>();
+	private final Set<UUID> ignoreClick = ConcurrentHashMap.newKeySet();
+	private final Set<UUID> ignoreDropReload = ConcurrentHashMap.newKeySet();
 
 	@SuppressWarnings("deprecation")
 	@EventHandler
 	public void onHit(EntityDamageByEntityEvent e) {
 		if (e.isCancelled())
+			return;
+		// Bullets and explosions are dealt in the name of the shooter, but they are not melee hits
+		if (GunDamageHandler.isWeaponDamage())
 			return;
 		if (e.getDamager() instanceof Player) {
 			Player d = (Player) e.getDamager();
@@ -92,9 +99,14 @@ public class QAListener implements Listener {
 					QAMain.DEBUG("Detected interact on entity, running LMB for " + g.getName());
 
 					Gun finalG = g;
-					Bukkit.getScheduler().runTaskLater(QAMain.getInstance(), () -> {
-						finalG.onLMB(d, d.getItemInHand());
-						ignoreClick.remove(d.getUniqueId());
+					FoliaRunnable.runEntityTaskLater(QAMain.getInstance(), d, () -> {
+						try {
+							if (d.isOnline() && !d.isDead())
+								finalG.onLMB(d, d.getItemInHand());
+						} finally {
+							// Must always be removed, or the player's guns stop responding to clicks
+							ignoreClick.remove(d.getUniqueId());
+						}
 					}, 1L);
 				}
 			}
@@ -165,7 +177,7 @@ public class QAListener implements Listener {
 									return;
 
 								IronsightsHandler.aim(e.getPlayer());
-								new BukkitRunnable() {
+								new FoliaRunnable() {
 									@Override
 									public void run() {
 										MaterialStorage ms1 = MaterialStorage.getMS(e.getPlayer().getItemInHand());
@@ -175,13 +187,13 @@ public class QAListener implements Listener {
 											DEBUG("Item Duped. Got Rid of using offhand override (code=1)");
 										}
 									}
-								}.runTaskLater(QAMain.getInstance(), 1);
+								}.runTaskLater(QAMain.getInstance(), e.getPlayer(), 1);
 							}
 						}
 					}
 				} else {
 					if (IronsightsHandler.isAiming(e.getPlayer())) {
-						new BukkitRunnable() {
+						new FoliaRunnable() {
 
 							@Override
 							public void run() {
@@ -193,7 +205,7 @@ public class QAListener implements Listener {
 									DEBUG("Item Duped. Got Rid of using offhand override (code=2)");
 								}
 							}
-						}.runTaskLater(QAMain.getInstance(), 5);
+						}.runTaskLater(QAMain.getInstance(), e.getPlayer(), 5);
 
 						IronsightsHandler.unAim(e.getPlayer());
 						QAMain.DEBUG("Swap gun back to main hand");
@@ -236,13 +248,13 @@ public class QAListener implements Listener {
 				} else {
 					t = Gun.removeCalculatedExtra(hand);
 				}
-				new BukkitRunnable() {
+				new FoliaRunnable() {
 
 					@Override
 					public void run() {
 						e.getPlayer().setItemInHand(t);
 					}
-				}.runTaskLater(QAMain.getInstance(), 1);
+				}.runTaskLater(QAMain.getInstance(), e.getPlayer(), 1);
 
 			}
 	}
@@ -259,7 +271,7 @@ public class QAListener implements Listener {
 
 			if (!ignoreDropReload.contains(uuid)) {
 				ignoreDropReload.add(uuid);
-				Bukkit.getScheduler().runTaskLater(QAMain.getInstance(), () -> ignoreDropReload.remove(uuid), 2L);
+				FoliaRunnable.runTaskLater(QAMain.getInstance(), () -> ignoreDropReload.remove(uuid), 2L);
 			}
 
 			return;
@@ -475,7 +487,7 @@ public class QAListener implements Listener {
 
 			ignoreClick.add(e.getPlayer().getUniqueId());
 
-			Bukkit.getScheduler().runTaskLater(QAMain.getInstance(), () -> {
+			FoliaRunnable.runEntityTaskLater(QAMain.getInstance(), e.getPlayer(), () -> {
 				ignoreClick.remove(e.getPlayer().getUniqueId());
 
 				if (e.getPlayer().isSneaking()) unloadAll(e.getPlayer(), finalG);
@@ -486,7 +498,7 @@ public class QAListener implements Listener {
 
 			ignoreClick.add(e.getPlayer().getUniqueId());
 
-			Bukkit.getScheduler().runTaskLater(QAMain.getInstance(), () -> {
+			FoliaRunnable.runEntityTaskLater(QAMain.getInstance(), e.getPlayer(), () -> {
 				ignoreClick.remove(e.getPlayer().getUniqueId());
 				reload(e.getPlayer(), finalG);
 			}, 2L);
@@ -639,6 +651,8 @@ public class QAListener implements Listener {
 			}
 		}
 		QAMain.getPlayerState().getBleedoutMultiplier().remove(e.getEntity().getUniqueId());
+		GunUtil.stopRapidFire(e.getEntity());
+		QAMain.getPlayerState().getRecoilCounter().remove(e.getEntity().getUniqueId());
 		QAMain.getPlayerState().getBloodLevel().put(e.getEntity().getUniqueId(), QAMain.getConfiguration().combat.bleeding.initialBloodLevel);
 
 		if (e.getEntity().getKiller() instanceof Player) {
@@ -828,7 +842,7 @@ public class QAListener implements Listener {
 				QAMain.DEBUG("1.8 item damage check");
 				final ItemStack temp2 = Compat.OFFHAND ? e.getPlayer().getInventory().getItemInOffHand() : null;
 
-				new BukkitRunnable() {
+				new FoliaRunnable() {
 					@Override
 					public void run() {
 						if (origin.getDurability() != e.getPlayer().getItemInHand().getDurability()
@@ -848,7 +862,7 @@ public class QAListener implements Listener {
 						}
 
 					}
-				}.runTaskLater(QAMain.getInstance(), 0);
+				}.runTaskLater(QAMain.getInstance(), e.getPlayer(), 0);
 			}
 
 			ItemStack usedItem = IronsightsHandler.getItemAiming(e.getPlayer());
@@ -922,7 +936,7 @@ public class QAListener implements Listener {
 			e.setCancelled(true);
 			ignoreClick.add(healer.getUniqueId());
 
-			Bukkit.getScheduler().runTaskLater(QAMain.getInstance(), () -> ignoreClick.remove(healer.getUniqueId()), 2L);
+			FoliaRunnable.runTaskLater(QAMain.getInstance(), () -> ignoreClick.remove(healer.getUniqueId()), 2L);
 		}
 	}
 
@@ -952,7 +966,7 @@ public class QAListener implements Listener {
 				e.getPlayer().getWorld().playSound(e.getPlayer().getLocation(), customBase.getSoundOnEquip(), customBase.getSoundOnEquipVolume(), 1);
 
 			if (customBase instanceof Gun && e.getPlayer().isSneaking() && ((Gun) customBase).hasIronSights()) {
-				Bukkit.getScheduler().runTaskLater(QAMain.getInstance(), () -> IronsightsHandler.aim(e.getPlayer()), 1);
+				FoliaRunnable.runEntityTaskLater(QAMain.getInstance(), e.getPlayer(), () -> IronsightsHandler.aim(e.getPlayer()), 1);
 			}
 
 			QAMain.getPlayerState().getLastWeaponSwitch().put(e.getPlayer().getUniqueId(), System.currentTimeMillis());
@@ -972,7 +986,11 @@ public class QAListener implements Listener {
 	@EventHandler
 	public void onQuit(final PlayerQuitEvent e) {
 		QAMain.getResourcepacks().onQuit(e.getPlayer().getUniqueId());
+		// Also cancels the player's timers: Folia retires them on quit without running them
 		QAMain.getPlayerState().onQuit(e.getPlayer().getUniqueId());
+		GunRefillerRunnable.removeAllFor(e.getPlayer().getUniqueId());
+		ignoreClick.remove(e.getPlayer().getUniqueId());
+		ignoreDropReload.remove(e.getPlayer().getUniqueId());
 
 		if (Compat.OFFHAND && QualityArmory.isIronSights(e.getPlayer().getInventory().getItemInHand())) {
 			e.getPlayer().getInventory().setItemInMainHand(e.getPlayer().getInventory().getItemInOffHand());
@@ -993,7 +1011,7 @@ public class QAListener implements Listener {
 			}
 		}
 		if (QAMain.getConfiguration().features.enableGlowEffects) {
-			new BukkitRunnable() {
+			new FoliaRunnable() {
 
 				@Override
 				public void run() {
@@ -1002,7 +1020,7 @@ public class QAListener implements Listener {
 						QAMain.getInstance().getGlowScoreboards().add(QAMain.registerGlowTeams(e.getPlayer().getScoreboard()));
 					}
 				}
-			}.runTaskLater(QAMain.getInstance(), 20 * 15);
+			}.runTaskLater(QAMain.getInstance(), e.getPlayer(), 20 * 15);
 		}
 
 		if (QAMain.getConfiguration().resourcepack.enabled && QAMain.getConfiguration().resourcepack.sendOnJoin.enabled) {
@@ -1011,14 +1029,14 @@ public class QAListener implements Listener {
 			for (ItemStack i : e.getPlayer().getInventory().getContents()) {
 				if (i != null && (QualityArmory.isGun(i) || QualityArmory.isAmmo(i) || QualityArmory.isMisc(i))) {
 					if (QAMain.getConfiguration().resourcepack.enabled && !QAMain.getResourcepacks().hasAccepted(e.getPlayer().getUniqueId())) {
-						new BukkitRunnable() {
+						new FoliaRunnable() {
 
 							@Override
 							public void run() {
 								QualityArmory.sendResourcepack(e.getPlayer(), false);
 							}
 
-						}.runTaskLater(QAMain.getInstance(), 0);
+						}.runTaskLater(QAMain.getInstance(), e.getPlayer(), 0);
 					}
 					break;
 				}
@@ -1072,13 +1090,13 @@ public class QAListener implements Listener {
 								e.setCancelled(true);
 
 								final Gun gk = g;
-								new BukkitRunnable() {
+								new FoliaRunnable() {
 									@Override
 									public void run() {
 										QAMain.DEBUG("Reloaded after one tick");
 										GunUtil.basicReload(gk, e.getPlayer(), gk.hasUnlimitedAmmo());
 									}
-								}.runTaskLater(QAMain.getInstance(), 1);
+								}.runTaskLater(QAMain.getInstance(), e.getPlayer(), 1);
 							}
 						}
 

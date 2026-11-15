@@ -19,7 +19,7 @@ public final class ItemRegistry {
     private final HashMap<MaterialStorage, CustomBaseObject> misc = new LinkedHashMap<>();
     private final HashMap<MaterialStorage, ArmorObject> armor = new LinkedHashMap<>();
     private final ArrayList<MaterialStorage> expansionPacks = new ArrayList<>();
-    private final Map<String, String> craftingNames = new HashMap<>();
+    private final Map<String, String> craftingNames = new java.util.concurrent.ConcurrentHashMap<>();
 
     public HashMap<MaterialStorage, Gun> getGuns() {
         return guns;

@@ -403,6 +403,10 @@ public class MainConfig extends BaseConfiguration {
         @Config(oldPath = "enableBulletTrails")
         public boolean enableBulletTrails = true;
 
+        @Comment("Shows bullet particles to players far away, even with reduced particle settings")
+        @Config(oldPath = "forceParticleRendering")
+        public boolean forceParticleRendering = false;
+
         @Comment("Distance between bullet trail particles, in blocks")
         @Range(min = 0.01)
         @Config(oldPath = "BulletTrailsSpacing")
@@ -469,6 +473,17 @@ public class MainConfig extends BaseConfiguration {
         public boolean enableShop = true;
         @Config(oldPath = "Order-Shop-By-Price")
         public boolean orderShopByPrice = false;
+
+        @Comment({"Sound played when buying an item: a sound name, \"default\" or \"none\""})
+        @Config(oldPath = "Shop_Purchase_Sound")
+        public String shopPurchaseSound = DEFAULT_SOUND;
+
+        @Comment({"Sound played when crafting an item: a sound name, \"default\" or \"none\""})
+        @Config(oldPath = "Crafting_Sound")
+        public String craftingSound = DEFAULT_SOUND;
+
+        /** Plays the built-in anvil or harp sound. */
+        public static final String DEFAULT_SOUND = "default";
     }
 
     @Section
@@ -520,6 +535,20 @@ public class MainConfig extends BaseConfiguration {
 
     @Section
     public static class Combat {
+        @Comment("How much armor reduces bullet damage. 1 is vanilla, 0 ignores armor")
+        @Range(min = 0)
+        @Config(oldPath = "armorEffectiveness")
+        public double armorEffectiveness = 1.0;
+
+        @Comment("Multiplies the durability armor loses when hit by bullets")
+        @Range(min = 0)
+        @Config(oldPath = "armorDurabilityDamageMultiplier")
+        public double armorDurabilityDamageMultiplier = 1.0;
+
+        @Comment("Deal bullet damage as projectile damage instead of entity attack damage")
+        @Config(oldPath = "useProjectileDamageType")
+        public boolean useProjectileDamageType = false;
+
         public Bleeding bleeding = new Bleeding();
         public DeathMessages deathMessages = new DeathMessages();
 

@@ -25,7 +25,7 @@ public class GunDefinition extends ItemDefinition {
     @Config
     public Integer maxBullets;
     @Config
-    public Integer damage;
+    public Double damage;
     @Config
     public Integer durability;
     @Config
@@ -120,6 +120,8 @@ public class GunDefinition extends ItemDefinition {
         public Double explosionRadius;
         @Config
         public Double velocity;
+        @Config
+        public Double explosionKnockback;
     }
 
     public GunDefinition(File file) {

@@ -1,5 +1,6 @@
 package me.zombie_striker.qg.api;
 
+import me.zombie_striker.qg.utils.FoliaRunnable;
 import me.zombie_striker.qg.items.ItemState;
 import me.zombie_striker.qg.utils.ErrorReporter;
 import me.zombie_striker.qg.utils.CustomModelData;
@@ -32,7 +33,6 @@ import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -49,7 +49,7 @@ public class QualityArmory {
 			int cost) {
 		File newGunsDir = new File(QAMain.getInstance().getDataFolder(), "newGuns");
 		final File gunFile = new File(newGunsDir, name);
-		new BukkitRunnable() {
+		new FoliaRunnable() {
 			public void run() {
 				GunYMLLoader.loadGuns(QAMain.getInstance(), gunFile);
 			}
@@ -103,7 +103,7 @@ public class QualityArmory {
 
 	@SuppressWarnings({"deprecation", "unchecked"})
 	public static void sendResourcepack(final Player player, final boolean warning) {
-		new BukkitRunnable() {
+		new FoliaRunnable() {
 			@Override
 			public void run() {
 				if (QAMain.getResourcepacks().isBypassing(player.getName())) {
@@ -121,7 +121,7 @@ public class QualityArmory {
 				if (QAMain.getConfiguration().ui.showPossibleCrashHelpMessage)
 					player.sendMessage(LocalUtils.colorize(QAMain.getMessages().general.prefix + QAMain.getMessages().resourcepack.crashHelp));
 
-				new BukkitRunnable() {
+				new FoliaRunnable() {
 					@Override
 					public void run() {
 						try {
@@ -140,7 +140,7 @@ public class QualityArmory {
 							boolean sent = false;
 							if (QAMain.isVersionHigherThan(1, 19) && FORCED_RESOURCEPACK) {
 								try {
-									player.setResourcePack(pack, null, QAMain.getConfiguration().resourcepack.kickIfDenied);
+									player.setResourcePack(pack, (byte[]) null, QAMain.getConfiguration().resourcepack.kickIfDenied);
 									sent = true;
 								} catch (IllegalArgumentException e4) {
 									// Some versions require a hash with this method; fall back to the plain one
@@ -160,9 +160,9 @@ public class QualityArmory {
 							ErrorReporter.report("sending the resourcepack", e);
 						}
 					}
-				}.runTaskLater(QAMain.getInstance(), 20 * (warning ? 1 : 5));
+				}.runTaskLater(QAMain.getInstance(), player, 20 * (warning ? 1 : 5));
 			}
-		}.runTaskLater(QAMain.getInstance(), (long) (20 * QAMain.getConfiguration().resourcepack.sendOnJoin.delay));
+		}.runTaskLater(QAMain.getInstance(), player, (long) (20 * QAMain.getConfiguration().resourcepack.sendOnJoin.delay));
 	}
 
 	/** {@code Player#sendTitle(String, String)}, missing on early 1.8 builds. */
@@ -471,7 +471,7 @@ public class QualityArmory {
 		} else if (QAMain.getConfiguration().ui.showReloadTitle && reloading) {
 			for (int i = 1; i < g.getReloadTime() * 20; i += 2) {
 				final int id = i;
-				new BukkitRunnable() {
+				new FoliaRunnable() {
 					@Override
 					public void run() {
 						StringBuilder sb = new StringBuilder();
@@ -481,7 +481,7 @@ public class QualityArmory {
 						sb.append(repeat("#", (int) (20 - ((int) (20.0 * id / (20 * g.getReloadTime()))))));
 						p.sendTitle(QAMain.getMessages().weapon.reloading, sb.toString(), 0, 4, 0);
 					}
-				}.runTaskLater(QAMain.getInstance(), i);
+				}.runTaskLater(QAMain.getInstance(), p, i);
 			}
 		} else {
 

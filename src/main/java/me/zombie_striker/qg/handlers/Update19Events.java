@@ -1,5 +1,6 @@
 package me.zombie_striker.qg.handlers;
 
+import me.zombie_striker.qg.guns.utils.GunUtil;
 import me.zombie_striker.customitemmanager.CustomItemManager;
 import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.api.QualityArmory;
@@ -13,7 +14,6 @@ import org.bukkit.event.player.PlayerAnimationEvent;
 import org.bukkit.event.player.PlayerAnimationType;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.scheduler.BukkitTask;
 
 public class Update19Events implements Listener {
 
@@ -41,15 +41,11 @@ public class Update19Events implements Listener {
 			if (QualityArmory.isIronSights(e.getOffHandItem())) {
 				e.setCancelled(true);
 				IronsightsHandler.unAim(e.getPlayer());
-				BukkitTask task = QAMain.getPlayerState().getRapidFireTasks().get(e.getPlayer().getUniqueId());
-				if (task != null)
-					task.cancel();
+				GunUtil.stopRapidFire(e.getPlayer());
 				return;
 			} else if (QualityArmory.isGun(e.getMainHandItem())) {
 				e.setCancelled(true);
-				BukkitTask task = QAMain.getPlayerState().getRapidFireTasks().get(e.getPlayer().getUniqueId());
-				if (task != null)
-					task.cancel();
+				GunUtil.stopRapidFire(e.getPlayer());
 				return;
 			}
 			Gun g = null;
@@ -64,9 +60,7 @@ public class Update19Events implements Listener {
 			if (g != null) {
 				e.setCancelled(true);
 				QAListener.reload(e.getPlayer(),g);
-				BukkitTask task = QAMain.getPlayerState().getRapidFireTasks().get(e.getPlayer().getUniqueId());
-				if (task != null)
-					task.cancel();
+				GunUtil.stopRapidFire(e.getPlayer());
 			}
 
 		} else {

@@ -6,28 +6,27 @@ import me.zombie_striker.customitemmanager.CustomBaseObject;
 import me.zombie_striker.customitemmanager.CustomItemManager;
 import me.zombie_striker.customitemmanager.MaterialStorage;
 import me.zombie_striker.qg.QAMain;
+import me.zombie_striker.qg.handlers.GunDamageHandler;
 import me.zombie_striker.qg.api.QAThrowableExplodeEvent;
 import me.zombie_striker.qg.guns.utils.WeaponSounds;
 import me.zombie_striker.qg.handlers.ExplosionHandler;
 import me.zombie_striker.qg.hooks.protection.ProtectionHandler;
-import org.bukkit.Bukkit;
-import org.bukkit.Effect;
-import org.bukkit.GameMode;
-import org.bukkit.Sound;
+import me.zombie_striker.qg.utils.FoliaRunnable;
+import org.bukkit.*;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class Grenade extends CustomBaseObject implements ThrowableItems {
-	private static final List<Entity> GRENADES = new ArrayList<>();
+	private static final List<Entity> GRENADES = new CopyOnWriteArrayList<>();
 
 	private ItemStack[] ing = null;
 
@@ -37,6 +36,8 @@ public class Grenade extends CustomBaseObject implements ThrowableItems {
 	int craftingReturn;
 
 	double throwspeed = 1.5;
+
+	int fuseTicks = 5 * 20;
 
 	public Grenade(ItemStack[] ingg, double cost, double damage, double explosionreadius, String name,
 			String displayname, List<String> lore, MaterialStorage ms) {
@@ -111,60 +112,75 @@ public class Grenade extends CustomBaseObject implements ThrowableItems {
 
 	public boolean onPull(Player e, ItemStack usedItem) {
 		Player thrower = e.getPlayer();
-		if (!QAMain.getConfiguration().features.enableAutoArmGrenades) {
-			if (ThrowableItemRegistry.containsKey(thrower)) {
-				thrower.sendMessage(QAMain.getMessages().general.prefix + QAMain.getMessages().grenade.alreadyPulled);
-				thrower.playSound(thrower.getLocation(), WeaponSounds.RELOAD_BULLET.getSoundName(), 1, 1);
-				QAMain.DEBUG("Already pin out");
-				return true;
-			}
+		if(!QAMain.getConfiguration().features.enableAutoArmGrenades)
+		if (ThrowableItemRegistry.containsKey(thrower)) {
+			thrower.sendMessage(QAMain.getMessages().general.prefix + QAMain.getMessages().grenade.alreadyPulled);
+			thrower.playSound(thrower.getLocation(), WeaponSounds.RELOAD_BULLET.getSoundName(), 1, 1);
+			QAMain.DEBUG("Already pin out");
+			return true;
 		}
 
 		thrower.getWorld().playSound(thrower.getLocation(), WeaponSounds.RELOAD_MAG_IN.getSoundName(), 2, 1);
 		final ThrowableHolder h = new ThrowableHolder(thrower.getUniqueId(), thrower, this);
-		h.setTimer(new BukkitRunnable() {
+		h.setTimer(new FoliaRunnable() {
 			@Override
 			public void run() {
-				if (h.getHolder() instanceof Player) {
-					QAMain.DEBUG("Player did not throw. Damaged for " + dmageLevel);
-					removeGrenade(((Player) h.getHolder()));
-					((Player) h.getHolder()).damage(dmageLevel);
+				Entity holderEntity = h.getHolder();
+				if (holderEntity == null) {
+					cancel();
+					return;
 				}
-				if (h.getHolder() instanceof Item) {
-					GRENADES.remove(h.getHolder());
-					h.getHolder().remove();
-				}
-				if (QAMain.getConfiguration().features.enableExplosionDamage) {
-					QAThrowableExplodeEvent event = new QAThrowableExplodeEvent(Grenade.this, h.getHolder().getLocation());
-					Bukkit.getPluginManager().callEvent(event);
-					if (!event.isCancelled()) ExplosionHandler.handleExplosion(h.getHolder().getLocation(), 3, 1);
-					QAMain.DEBUG("Using default explosions");
-				}
-				if (Compat.PARTICLES) {
-					h.getHolder().getWorld().spawnParticle(XParticle.EXPLOSION_EMITTER.get(),
-							h.getHolder().getLocation(), 0);
-					h.getHolder().getWorld().playSound(h.getHolder().getLocation(), Sound.ENTITY_GENERIC_EXPLODE, 8,
-							0.7f);
-				} else {
-					h.getHolder().getWorld().playEffect(h.getHolder().getLocation(), Effect.valueOf("CLOUD"), 0);
-					h.getHolder().getWorld().playSound(h.getHolder().getLocation(), Sound.valueOf("EXPLODE"), 8, 0.7f);
-				}
-				Player thro = Bukkit.getPlayer(h.getOwner());
-				for (Entity e : h.getHolder().getNearbyEntities(radius, radius, radius)) {
-					if (e instanceof LivingEntity) {
-						double dam = (dmageLevel / e.getLocation().distance(h.getHolder().getLocation()));
-						QAMain.DEBUG("Grenade-Damaging " + e.getName() + " : " + dam + " DAM.");
-						if (thro == null)
-							((LivingEntity) e).damage(dam);
-						else
-							((LivingEntity) e).damage(dam, thro);
-					}
-				}
-				ThrowableItemRegistry.remove(h.getHolder());
+				FoliaRunnable.runEntityTask(QAMain.getInstance(), holderEntity,
+						() -> handleThrowableTick(h),
+						() -> {
+							ThrowableItemRegistry.remove(holderEntity);
+							BukkitTask t = h.getTask();
+							if (t != null) t.cancel();
+						});
 			}
-		}.runTaskLater(QAMain.getInstance(), 5 * 20));
+		}.runTaskLater(QAMain.getInstance(), getFuseTicks()));
 		ThrowableItemRegistry.put(thrower, h);
 		return true;
+	}
+
+	private void handleThrowableTick(ThrowableHolder h) {
+		if (h.getHolder() instanceof Player) {
+			QAMain.DEBUG("Player did not throw. Damaged for " + dmageLevel);
+			removeGrenade(((Player) h.getHolder()));
+			((Player) h.getHolder()).damage(dmageLevel);
+		}
+		if (h.getHolder() instanceof Item) {
+			GRENADES.remove(h.getHolder());
+			h.getHolder().remove();
+		}
+		if (QAMain.getConfiguration().features.enableExplosionDamage) {
+			QAThrowableExplodeEvent event = new QAThrowableExplodeEvent(Grenade.this, h.getHolder().getLocation());
+			Bukkit.getPluginManager().callEvent(event);
+			if (!event.isCancelled()) ExplosionHandler.handleExplosion(h.getHolder().getLocation(), 3, 1);
+			QAMain.DEBUG("Using default explosions");
+		}
+		if (Compat.PARTICLES) {
+			h.getHolder().getWorld().spawnParticle(XParticle.EXPLOSION_EMITTER.get(),
+					h.getHolder().getLocation(), 0);
+			h.getHolder().getWorld().playSound(h.getHolder().getLocation(), Sound.ENTITY_GENERIC_EXPLODE, 8,
+					0.7f);
+		} else {
+			h.getHolder().getWorld().playEffect(h.getHolder().getLocation(), Effect.valueOf("CLOUD"), 0);
+			h.getHolder().getWorld().playSound(h.getHolder().getLocation(), Sound.valueOf("EXPLODE"), 8, 0.7f);
+		}
+		Player thro = Bukkit.getPlayer(h.getOwner());
+		final Location holderLoc = h.getHolder().getLocation();
+		for (Entity e : h.getHolder().getNearbyEntities(radius, radius, radius)) {
+			if (e instanceof LivingEntity) {
+				final LivingEntity target = (LivingEntity) e;
+				FoliaRunnable.runEntityTask(QAMain.getInstance(), target, () -> {
+					double dam = (dmageLevel / target.getLocation().distance(holderLoc));
+					QAMain.DEBUG("Grenade-Damaging " + target.getName() + " : " + dam + " DAM.");
+					GunDamageHandler.damage(target, dam, thro, false);
+				});
+			}
+		}
+		ThrowableItemRegistry.remove(h.getHolder());
 	}
 
 	@Override
@@ -223,6 +239,14 @@ public class Grenade extends CustomBaseObject implements ThrowableItems {
 	@Override
 	public void setThrowSpeed(double t) {
 		throwspeed = t;
+	}
+
+	public int getFuseTicks() {
+		return fuseTicks;
+	}
+
+	public void setFuseTicks(int fuseTicks) {
+		this.fuseTicks = Math.max(1, fuseTicks);
 	}
 
 	public static List<Entity> getGrenades() {

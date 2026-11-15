@@ -19,7 +19,7 @@ import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
+import me.zombie_striker.qg.utils.FoliaRunnable;
 import org.bukkit.util.Vector;
 
 public class HomingRocketProjectile implements RealtimeCalculationProjectile {
@@ -29,7 +29,7 @@ public class HomingRocketProjectile implements RealtimeCalculationProjectile {
 
 	@Override
 	public void spawn(final Gun g, final Location starting, final Player player, final Vector dir) {
-		new BukkitRunnable() {
+		new FoliaRunnable() {
 			Location RPGLOCATION = starting.clone();
 			int distance = g.getMaxDistance();
 			Vector vect = dir;
@@ -82,13 +82,13 @@ public class HomingRocketProjectile implements RealtimeCalculationProjectile {
 							RPGLOCATION.getWorld().playEffect(RPGLOCATION, Effect.valueOf("CLOUD"), 0);
 							player.getWorld().playSound(RPGLOCATION, Sound.valueOf("EXPLODE"), 8, 0.7f);
 						}
-						ExplosionHandler.handleAOEExplosion(player, RPGLOCATION, g.getDamage(), g.getExplosionRadius());
+						ExplosionHandler.handleAOEExplosion(player, RPGLOCATION, g.getDamage(), g.getExplosionRadius(), g.getExplosionKnockback());
 						cancel();
 						return;
 					}
 				}
 			}
-		}.runTaskTimer(QAMain.getInstance(), 0, 1);
+		}.runTaskTimer(QAMain.getInstance(), player, 0, 1);
 	}
 
 	@Override

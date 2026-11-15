@@ -161,6 +161,8 @@ public class GunYMLLoader {
 				base.setMaxItemStack(def.maxItemStack);
 			if (base instanceof ThrowableItems && def.throwSpeed != null)
 				((ThrowableItems) base).setThrowSpeed(def.throwSpeed);
+			if (base instanceof Grenade && def.fuseTime != null)
+				((Grenade) base).setFuseTicks((int) Math.round(def.fuseTime * 20));
 			if (base instanceof SmokeGrenades && def.useModernParticles != null)
 				((SmokeGrenades) base).setUseModernParticles(def.useModernParticles);
 		}
@@ -286,7 +288,7 @@ public class GunYMLLoader {
 		if (def.maxBullets != null)
 			g.setMaxBullets(def.maxBullets);
 		if (def.damage != null)
-			g.setDurabilityDamage(def.damage);
+			g.setDurabilityDamage(def.damage.floatValue());
 		if (def.durability != null)
 			g.setDuribility(def.durability);
 		if (def.price != null)
@@ -336,6 +338,8 @@ public class GunYMLLoader {
 				g.setExplosionRadius(def.customProjectiles.explosionRadius);
 			if (def.customProjectiles.velocity != null)
 				g.setRealtimeVelocity(def.customProjectiles.velocity);
+			if (def.customProjectiles.explosionKnockback != null)
+				g.setExplosionKnockback(def.customProjectiles.explosionKnockback);
 		}
 
 		if (def.recoil != null)

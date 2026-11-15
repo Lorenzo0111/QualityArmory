@@ -7,6 +7,7 @@ import me.zombie_striker.customitemmanager.MaterialStorage;
 import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.guns.utils.WeaponSounds;
 import me.zombie_striker.qg.hooks.protection.ProtectionHandler;
+import me.zombie_striker.qg.utils.FoliaRunnable;
 import org.bukkit.Effect;
 import org.bukkit.Sound;
 import org.bukkit.entity.Entity;
@@ -14,7 +15,7 @@ import org.bukkit.entity.Item;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
 
 import java.util.List;
 
@@ -36,59 +37,74 @@ public class IncendaryGrenades extends Grenade {
 		}
 		thrower.getWorld().playSound(thrower.getLocation(), WeaponSounds.RELOAD_MAG_IN.getSoundName(), 2, 1);
 		final ThrowableHolder h = new ThrowableHolder(thrower.getUniqueId(), thrower, this);
-		h.setTimer(new BukkitRunnable() {
-
-			int k = 0;
-
+		h.setTimer(new FoliaRunnable() {
 			@Override
 			public void run() {
-				if (Compat.PARTICLES) {
-					h.getHolder().getWorld().spawnParticle(XParticle.EXPLOSION_EMITTER.get(),
-							h.getHolder().getLocation(), 0);
-					for(int i = 0; i < 4; i ++) {
-						//TODO: Check: This goes in three directions, and one stays still
-						h.getHolder().getWorld().spawnParticle(org.bukkit.Particle.LAVA,
-								h.getHolder().getLocation(), i);
-					}
-					h.getHolder().getWorld().playSound(h.getHolder().getLocation(), WeaponSounds.HISS.getSoundName(), 2f,
-							1f);
-				} else {
-					h.getHolder().getWorld().playEffect(h.getHolder().getLocation(), Effect.valueOf("CLOUD"), 0);
-					h.getHolder().getWorld().playSound(h.getHolder().getLocation(), Sound.valueOf("EXPLODE"), 3, 0.7f);
+				Entity holderEntity = h.getHolder();
+				if (holderEntity == null) {
+					cancel();
+					return;
 				}
-				k++;
-				QAMain.DEBUG("Fireticks");
-				if (k == 1) {
-					if (h.getHolder() instanceof Player) {
-						((LivingEntity) h.getHolder()).setFireTicks(h.getHolder().getMaxFireTicks()/5);
-						removeGrenade(((Player) h.getHolder()));
-					}
-				} else if (k == 40) {
-					if (h.getHolder() instanceof Item) {
-						Grenade.getGrenades().remove(h.getHolder());
-						h.getHolder().remove();
-					}
-					ThrowableItemRegistry.remove(h.getHolder());
-					this.cancel();
-				} else {
-					for(Entity e : h.getHolder().getNearbyEntities(radius, radius, radius)) 
-						if(e instanceof LivingEntity) {
-							QAMain.DEBUG("Firedamage to "+e.getName());
-							try {
-								if (ProtectionHandler.canPvp(e.getLocation())) {
-									e.setFireTicks(20);
-								}
-							} catch (LinkageError error) {
-								ErrorReporter.report("checking PvP protection", error);
-								e.setFireTicks(20);
-							}
-						}
-				}
+				FoliaRunnable.runEntityTask(QAMain.getInstance(), holderEntity,
+						() -> handleThrowableTick(h),
+						() -> {
+							ThrowableItemRegistry.remove(holderEntity);
+							BukkitTask t = h.getTask();
+							if (t != null) t.cancel();
+						});
 			}
-		}.runTaskTimer(QAMain.getInstance(),5*20,10));
+		}.runTaskTimer(QAMain.getInstance(), getFuseTicks(), 10));
 		ThrowableItemRegistry.put(thrower, h);
 
 		return true;
+	}
+
+	private void handleThrowableTick(ThrowableHolder h) {
+		if (Compat.PARTICLES) {
+			h.getHolder().getWorld().spawnParticle(XParticle.EXPLOSION_EMITTER.get(),
+					h.getHolder().getLocation(), 0);
+			for(int i = 0; i < 4; i ++) {
+				//TODO: Check: This goes in three directions, and one stays still
+				h.getHolder().getWorld().spawnParticle(org.bukkit.Particle.LAVA,
+						h.getHolder().getLocation(), i);
+			}
+			h.getHolder().getWorld().playSound(h.getHolder().getLocation(), WeaponSounds.HISS.getSoundName(), 2f,
+					1f);
+		} else {
+			h.getHolder().getWorld().playEffect(h.getHolder().getLocation(), Effect.valueOf("CLOUD"), 0);
+			h.getHolder().getWorld().playSound(h.getHolder().getLocation(), Sound.valueOf("EXPLODE"), 3, 0.7f);
+		}
+		h.setTicks(h.getTicks() + 1);
+		QAMain.DEBUG("Fireticks");
+		if (h.getTicks() == 1) {
+			if (h.getHolder() instanceof Player) {
+				((LivingEntity) h.getHolder()).setFireTicks(h.getHolder().getMaxFireTicks()/5);
+				removeGrenade(((Player) h.getHolder()));
+			}
+		} else if (h.getTicks() == 40) {
+			if (h.getHolder() instanceof Item) {
+				Grenade.getGrenades().remove(h.getHolder());
+				h.getHolder().remove();
+			}
+			ThrowableItemRegistry.remove(h.getHolder());
+			if (h.getTask() != null) h.getTask().cancel();
+		} else {
+			for(Entity e : h.getHolder().getNearbyEntities(radius, radius, radius))
+				if(e instanceof LivingEntity) {
+					final Entity target = e;
+					QAMain.DEBUG("Firedamage to "+target.getName());
+					FoliaRunnable.runEntityTask(QAMain.getInstance(), target, () -> {
+						try {
+							if (ProtectionHandler.canPvp(target.getLocation())) {
+								target.setFireTicks(20);
+							}
+						} catch (LinkageError error) {
+							ErrorReporter.report("checking PvP protection", error);
+							target.setFireTicks(20);
+						}
+					});
+				}
+		}
 	}
 
 }

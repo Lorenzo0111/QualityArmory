@@ -32,18 +32,19 @@ public class MultiVersionPackProvider implements ResourcepackProvider {
         if (player == null) return versions.get("0");
 
         String[] version = ViaVersionHook.getVersion(player).split("\\.");
-        int minor = Integer.parseInt(version[0]);
-        int patch = version.length > 1 ? Integer.parseInt(version[1]) : 0;
+        int major = Integer.parseInt(version[0]);
+        int minor = version.length > 1 ? Integer.parseInt(version[1]) : 0;
+        int patch = version.length > 2 ? Integer.parseInt(version[2]) : 0;
 
-        QAMain.DEBUG(player.getName() + " is using version " + minor + "." + patch);
+        QAMain.DEBUG(player.getName() + " is using version " + major + "." + minor + "." + patch);
 
-        String highest = findPack(minor, patch);
+        String highest = findPack(major, minor, patch);
 
         QAMain.DEBUG("Fond pack with version " + highest);
         return versions.get(highest);
     }
 
-    private @NotNull String findPack(int minor, int patch) {
+    private @NotNull String findPack(int major, int minor, int patch) {
         String highest = "0";
 
         for (String key : versions.keySet()) {
@@ -51,12 +52,28 @@ public class MultiVersionPackProvider implements ResourcepackProvider {
 
             String[] keyVersion = key.split("-");
 
-            int keyMinor = Integer.parseInt(keyVersion[0]);
-            int keyPatch = keyVersion.length > 1 ? Integer.parseInt(keyVersion[1]) : 0;
+            int keyMajor = Integer.parseInt(keyVersion[0]);
+            int keyMinor = keyVersion.length > 1 ? Integer.parseInt(keyVersion[1]) : 0;
+            int keyPatch = keyVersion.length > 2 ? Integer.parseInt(keyVersion[2]) : 0;
 
-            if (keyMinor < minor || (keyMinor == minor && keyPatch <= patch)) {
-                if (highest.equals("0") || keyMinor > Integer.parseInt(highest.split("-")[0])) {
+            if (
+                    keyMajor < major ||
+                            (keyMajor == major && keyMinor < minor) ||
+                            (keyMajor == major && keyMinor == minor && keyPatch <= patch)
+            ) {
+                if (highest.equals("0")) {
                     highest = key;
+                } else {
+                    String[] highestVersion = highest.split("-");
+                    int highestMajor = Integer.parseInt(highestVersion[0]);
+                    int highestMinor = highestVersion.length > 1 ? Integer.parseInt(highestVersion[1]) : 0;
+                    int highestPatch = highestVersion.length > 2 ? Integer.parseInt(highestVersion[2]) : 0;
+
+                    if (keyMajor > highestMajor ||
+                            (keyMajor == highestMajor && keyMinor > highestMinor) ||
+                            (keyMajor == highestMajor && keyMinor == highestMinor && keyPatch > highestPatch)) {
+                        highest = key;
+                    }
                 }
             }
         }

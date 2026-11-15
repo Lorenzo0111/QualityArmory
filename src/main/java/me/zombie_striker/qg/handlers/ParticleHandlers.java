@@ -1,7 +1,7 @@
 package me.zombie_striker.qg.handlers;
 
+import me.zombie_striker.qg.utils.FoliaRunnable;
 import com.cryptomorin.xseries.particles.XParticle;
-import com.cryptomorin.xseries.reflection.XReflection;
 import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.guns.Gun;
 import me.zombie_striker.qg.utils.Compat;
@@ -11,7 +11,6 @@ import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
 import ru.beykerykt.minecraft.lightapi.common.LightAPI;
 
 public class ParticleHandlers {
@@ -19,12 +18,12 @@ public class ParticleHandlers {
 	public static boolean is13 = true;
 
 	public static void initValues() {
-		is13 = XReflection.supports(13);
+		is13 = QAMain.isVersionHigherThan(1, 13);
 	}
 
 	public static void spawnExplosion(Location loc) {
 		if (Compat.PARTICLES)
-			loc.getWorld().spawnParticle(XParticle.EXPLOSION_EMITTER.get(), loc, 1);
+			spawn(XParticle.EXPLOSION_EMITTER.get(), loc, 1, null);
 		flashLight(loc, 10);
 	}
 
@@ -79,15 +78,16 @@ public class ParticleHandlers {
 	private static void flashLight(Location loc, long ticks) {
 		if (Bukkit.getPluginManager().getPlugin("LightAPI") == null) return;
 		try {
-			final String world = loc.getWorld().getName();
-			final int x = loc.getBlockX(), y = loc.getBlockY(), z = loc.getBlockZ();
+			final Location light = loc.clone();
+			final String world = light.getWorld().getName();
+			final int x = light.getBlockX(), y = light.getBlockY(), z = light.getBlockZ();
 			LightAPI.get().setLightLevel(world, x, y, z, 15);
-			new BukkitRunnable() {
+			new FoliaRunnable() {
 				@Override
 				public void run() {
 					LightAPI.get().setLightLevel(world, x, y, z, 0);
 				}
-			}.runTaskLater(QAMain.getInstance(), ticks);
+			}.runTaskLater(QAMain.getInstance(), light, ticks);
 		} catch (RuntimeException | LinkageError e) {
 			ErrorReporter.report("lighting an explosion with LightAPI", e);
 		}
@@ -102,12 +102,25 @@ public class ParticleHandlers {
 			} else if (particle == XParticle.BLOCK.get() || particle == XParticle.FALLING_DUST.get()) {
 				// Block particles need block data, which exists from 1.13
 				if (Compat.FLATTENED)
-					loc.getWorld().spawnParticle(particle, loc, 1, g.getParticleMaterial().createBlockData());
+					spawn(particle, loc, 1, g.getParticleMaterial().createBlockData());
 			} else {
-				loc.getWorld().spawnParticle(particle, loc, g.getParticleData());
+				spawn(particle, loc, g.getParticleData(), null);
 			}
 		} catch (RuntimeException e) {
 			ErrorReporter.report("spawning the particles of " + g.getName(), e);
+		}
+	}
+
+	/**
+	 * Spawns a particle, ignoring the client's particle render distance when force-particle-rendering is on (1.13+).
+	 */
+	private static <T> void spawn(Particle particle, Location loc, int count, T data) {
+		if (QAMain.getConfiguration().features.forceParticleRendering && is13) {
+			loc.getWorld().spawnParticle(particle, loc, count, 0, 0, 0, 1, data, true);
+		} else if (data != null) {
+			loc.getWorld().spawnParticle(particle, loc, count, data);
+		} else {
+			loc.getWorld().spawnParticle(particle, loc, count);
 		}
 	}
 
@@ -117,6 +130,10 @@ public class ParticleHandlers {
 			if (is13) {
 				Particle.DustOptions dust = new Particle.DustOptions(
 						Color.fromRGB((int) (r * 255), (int) (g * 255), (int) (b * 255)), 1);
+				if (QAMain.getConfiguration().features.forceParticleRendering) {
+					loc.getWorld().spawnParticle(XParticle.DUST.get(), loc.getX(), loc.getY(), loc.getZ(), 0, 0, 0, 0, 1, dust, true);
+					return;
+				}
 				for (Player player : loc.getWorld().getPlayers()) {
 					if (player.getLocation().distanceSquared(loc) < 60 * 60)
 						player.spawnParticle(XParticle.DUST.get(), loc.getX(), loc.getY(), loc.getZ(), 0, 0, 0, 0, dust);
@@ -142,6 +159,6 @@ public class ParticleHandlers {
 		Location l = loc.clone().add(Math.sin(theta), 0, Math.cos(theta));
 
 		for (int i = 0; i < 2; i++)
-			loc.getWorld().spawnParticle(XParticle.EFFECT.get(), l, 0);
+			spawn(XParticle.EFFECT.get(), l, 0, null);
 	}
 }

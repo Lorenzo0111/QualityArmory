@@ -11,6 +11,8 @@ import org.bukkit.configuration.ConfigurationSection;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -23,10 +25,10 @@ public final class ResourcepackManager {
 
     private final File whitelistFile;
     private final Logger logger;
-    private final Map<UUID, Long> sentAt = new HashMap<>();
-    private final Set<UUID> accepted = new HashSet<>();
-    private final Set<UUID> loading = new HashSet<>();
-    private final List<String> bypassNames = new ArrayList<>();
+    private final Map<UUID, Long> sentAt = new ConcurrentHashMap<>();
+    private final Set<UUID> accepted = ConcurrentHashMap.newKeySet();
+    private final Set<UUID> loading = ConcurrentHashMap.newKeySet();
+    private final List<String> bypassNames = new CopyOnWriteArrayList<>();
     private CommentYamlConfiguration whitelist;
 
     public ResourcepackManager(File dataFolder, Logger logger) {
@@ -128,6 +130,20 @@ public final class ResourcepackManager {
                     packSection.set("21-4", packSection.getString("21"));
                     packSection.set("21", null);
                     save = true;
+                }
+
+                // Keys now include the major version (1-21-4), since Minecraft moved to 26.x
+                for (String key : new HashSet<>(packSection.getKeys(false))) {
+                    try {
+                        int first = Integer.parseInt(key.split("-")[0]);
+                        if (first < 25 && first > 1) {
+                            packSection.set("1-" + key, packSection.getString(key));
+                            packSection.set(key, null);
+                            save = true;
+                        }
+                    } catch (NumberFormatException ignored) {
+                        // Not a version key
+                    }
                 }
                 CustomItemManager.setResourcepack(new MultiVersionPackProvider(packSection));
             } else {

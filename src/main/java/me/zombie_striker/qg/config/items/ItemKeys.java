@@ -44,6 +44,7 @@ public final class ItemKeys {
         m.put("sound_meleehit_volume", "sound-melee-hit-volume");
         m.put("ThrowSpeed", "throw-speed");
         m.put("useModernParticles", "use-modern-particles");
+        m.put("FuseTime", "fuse-time");
         // Guns and attachments
         m.put("guntype", "weapon-type");
         m.put("weapontype", "weapon-type");
@@ -90,6 +91,7 @@ public final class ItemKeys {
         m.put("CustomProjectiles.projectileType", "custom-projectiles.projectile-type");
         m.put("CustomProjectiles.explosionRadius", "custom-projectiles.explosion-radius");
         m.put("CustomProjectiles.Velocity", "custom-projectiles.velocity");
+        m.put("CustomProjectiles.explosionKnockback", "custom-projectiles.explosion-knockback");
         RENAMED = Collections.unmodifiableMap(m);
     }
 

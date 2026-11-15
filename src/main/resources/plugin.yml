@@ -1,6 +1,7 @@
 main: me.zombie_striker.qg.QAMain
 version: ${project.version}
 api-version: 1.13
+folia-supported: true
 name: QualityArmory
 commands:
   QualityArmory:
@@ -29,7 +30,7 @@ permissions:
       qualityarmory.craft: true
       qualityarmory.shop: true
       qualityarmory.usegun: true
-softdepend: [Vault, PlaceholderAPI, ChestShop, Parties, WorldGuard, ViaVersion, ViaRewind, LightAPI, Citizens, ProtocolLib, SunLight-Core, ItemBridge, Sentinel, Spartan, Towny, Residence, Matrix, QuickShop, Vulcan, CoreProtect, Mimic, GriefPrevention, Kingdoms]
+softdepend: [Vault, PlaceholderAPI, ChestShop, Parties, WorldGuard, ViaVersion, ViaRewind, LightAPI, Citizens, ProtocolLib, SunLight-Core, ItemBridge, Sentinel, Spartan, Towny, Residence, Matrix, QuickShop, Vulcan, CoreProtect, Mimic, GriefPrevention, Kingdoms, NBTAPI, MythicMobs]
 authors:
   - Zombie_Striker
   - Lorenzo0111

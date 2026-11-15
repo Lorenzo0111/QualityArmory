@@ -1,5 +1,9 @@
 package me.zombie_striker.qg;
 
+import java.util.concurrent.ConcurrentHashMap;
+import me.zombie_striker.qg.utils.FoliaRunnable;
+import me.zombie_striker.qg.hooks.mythicmobs.MythicMobsHook;
+import me.zombie_striker.qg.hooks.NBTHook;
 import me.zombie_striker.qg.handlers.UnbreakableItemsTask;
 import me.zombie_striker.qg.commands.CommandRegistry;
 import me.zombie_striker.qg.commands.Commands;
@@ -9,8 +13,6 @@ import me.zombie_striker.qg.utils.Compat;
 import com.cryptomorin.xseries.XPotion;
 import com.cryptomorin.xseries.XSound;
 import com.cryptomorin.xseries.reflection.XReflection;
-import de.tr7zw.changeme.nbtapi.NBT;
-import de.tr7zw.changeme.nbtapi.utils.MinecraftVersion;
 import me.zombie_striker.customitemmanager.CustomBaseObject;
 import me.zombie_striker.customitemmanager.CustomItemManager;
 import me.zombie_striker.customitemmanager.MaterialStorage;
@@ -56,7 +58,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
 
@@ -84,7 +85,7 @@ public class QAMain extends JavaPlugin {
     public static ArrayList<MaterialStorage> expansionPacks = new ArrayList<>();
     /** @deprecated Use {@link #getPlayerState()}. Kept for addons; it is the same map. */
     @Deprecated
-    public static HashMap<UUID, List<GunRefillerRunnable>> reloadingTasks = new HashMap<>();
+    public static Map<UUID, List<GunRefillerRunnable>> reloadingTasks = new ConcurrentHashMap<>();
 
     private static QAMain main;
 
@@ -151,7 +152,7 @@ public class QAMain extends JavaPlugin {
     private static final boolean GET_POTION_EFFECT = Compat.hasMethod("org.bukkit.entity.LivingEntity", "getPotionEffect", "org.bukkit.potion.PotionEffectType");
 
     public static boolean isVersionHigherThan(int mainVersion, int secondVersion) {
-        return XReflection.supports(secondVersion);
+        return XReflection.supports(mainVersion, secondVersion, 0);
     }
 
     public static void toggleNightvision(Player player, Gun g, boolean add) {
@@ -208,7 +209,13 @@ public class QAMain extends JavaPlugin {
     }
 
     public static void shopsSounds(Player player, boolean shop) {
-        if (shop) {
+        String sound = shop ? getConfiguration().menu.shopPurchaseSound : getConfiguration().menu.craftingSound;
+        if (sound == null || sound.isEmpty() || sound.equalsIgnoreCase("none"))
+            return;
+
+        if (!sound.equalsIgnoreCase(MainConfig.Menu.DEFAULT_SOUND)) {
+            player.playSound(player.getLocation(), sound, 0.7f, 1);
+        } else if (shop) {
             XSound.BLOCK_ANVIL_USE.play(player, 0.7f, 1);
         } else {
             XSound.BLOCK_NOTE_BLOCK_HARP.play(player, 0.7f, 1);
@@ -326,14 +333,13 @@ public class QAMain extends JavaPlugin {
         this.mainConfig.load();
         this.loadMessages();
 
-        if (!NBT.preloadApi()) {
+        if (!NBTHook.init(this)) {
             getLogger().severe("NBT-API wasn't initialized properly, disabling the plugin");
+            getLogger().severe("Check if a new QualityArmory version is available");
+            getLogger().severe("If you don't want to wait, you can try installing the latest NBTAPI version from https://modrinth.com/plugin/nbtapi");
             getPluginLoader().disablePlugin(this);
             return;
         }
-
-        MinecraftVersion.replaceLogger(this.getLogger());
-        MinecraftVersion.disableUpdateCheck();
 
         ProtectionHandler.init();
 
@@ -363,10 +369,18 @@ public class QAMain extends JavaPlugin {
         if (Bukkit.getPluginManager().getPlugin("ItemBridge") != null) {
             ItemBridgePatch.setup(this);
         }
+        if (Bukkit.getPluginManager().getPlugin("MythicMobs") != null) {
+            try {
+                Bukkit.getPluginManager().registerEvents(new MythicMobsHook(), this);
+                getLogger().info("Found MythicMobs. Loaded support");
+            } catch (RuntimeException | LinkageError e) {
+                getLogger().log(Level.WARNING, "Failed to load the MythicMobs support. Only MythicMobs 5 is supported.", e);
+            }
+        }
 
         DEBUG(ChatColor.RED + "NOTICE ME");
         reloadVals();
-        new BukkitRunnable() {
+        new FoliaRunnable() {
             @Override
             public void run() {
                 for (Player player : Bukkit.getOnlinePlayers())
@@ -394,6 +408,7 @@ public class QAMain extends JavaPlugin {
         }
 
         Bukkit.getPluginManager().registerEvents(new QAListener(), this);
+        Bukkit.getPluginManager().registerEvents(new GunDamageHandler(), this);
         Bukkit.getPluginManager().registerEvents(new AimManager(), this);
         if (Bukkit.getPluginManager().isPluginEnabled("ChestShop")) {
             try {

@@ -1,14 +1,14 @@
 package me.zombie_striker.qg.guns.chargers;
 
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.Set;
+import me.zombie_striker.qg.utils.FoliaRunnable;
 import me.zombie_striker.qg.utils.Compat;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.guns.Gun;
@@ -16,8 +16,8 @@ import me.zombie_striker.qg.guns.utils.WeaponSounds;
 
 public class BoltactionCharger implements ChargingHandler {
 
-	List<UUID> timeC = new ArrayList<>();
-	List<UUID> timeR = new ArrayList<>();
+	Set<UUID> timeC = ConcurrentHashMap.newKeySet();
+	Set<UUID> timeR = ConcurrentHashMap.newKeySet();
 	
 	public BoltactionCharger() {
 		ChargingManager.add(this);
@@ -32,7 +32,7 @@ public class BoltactionCharger implements ChargingHandler {
 	@Override
 	public boolean shoot(Gun g, final Player player, ItemStack stack) {
 		timeR.add(player.getUniqueId());
-		new BukkitRunnable() {
+		new FoliaRunnable() {
 			@Override
 			public void run() {
 				if (Compat.WORLD_SOUND_BY_NAME) {
@@ -41,8 +41,8 @@ public class BoltactionCharger implements ChargingHandler {
 					player.getWorld().playSound(player.getLocation(), Sound.valueOf("CLICK"), 5, 1);
 				}
 			}
-		}.runTaskLater(QAMain.getInstance(), 10);
-		new BukkitRunnable() {
+		}.runTaskLater(QAMain.getInstance(), player, 10);
+		new FoliaRunnable() {
 			@Override
 			public void run() {
 				if (Compat.WORLD_SOUND_BY_NAME) {
@@ -52,7 +52,7 @@ public class BoltactionCharger implements ChargingHandler {
 				}
 				timeR.remove(player.getUniqueId());
 			}
-		}.runTaskLater(QAMain.getInstance(), (int)g.getDelayBetweenShotsInSeconds()*20);
+		}.runTaskLater(QAMain.getInstance(), player, (int)(g.getDelayBetweenShotsInSeconds()*20));
 		return true;
 	}
 

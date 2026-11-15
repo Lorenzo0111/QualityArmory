@@ -16,7 +16,7 @@ import me.zombie_striker.qg.handlers.ParticleHandlers;
 import org.bukkit.*;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
+import me.zombie_striker.qg.utils.FoliaRunnable;
 import org.bukkit.util.Vector;
 
 public class MiniNukeProjectile implements RealtimeCalculationProjectile{
@@ -25,7 +25,7 @@ public MiniNukeProjectile() {
 }
 	@Override
 	public void spawn(final Gun g, final Location s, final Player player, final Vector dir) {
-		new BukkitRunnable() {
+		new FoliaRunnable() {
 			int distance = g.getMaxDistance();
 
 			@Override
@@ -58,26 +58,27 @@ public MiniNukeProjectile() {
 						player.getWorld().playSound(s, WeaponSounds.WARHEAD_EXPLODE.getSoundName(), 10, 0.9f);
 						player.getWorld().playSound(s, Sound.ENTITY_GENERIC_EXPLODE, 8, 0.7f);
 						ParticleHandlers.spawnMushroomCloud(s);
-						new BukkitRunnable() {
+						final Location sClone = s.clone();
+						new FoliaRunnable() {
 
 							@Override
 							public void run() {
-								ParticleHandlers.spawnMushroomCloud(s);
+								ParticleHandlers.spawnMushroomCloud(sClone);
 							}
-						}.runTaskLater(QAMain.getInstance(), 10);
+						}.runTaskLater(QAMain.getInstance(), sClone, 10);
 
 					} else {
 						s.getWorld().playEffect(s, Effect.valueOf("CLOUD"), 0);
 						player.getWorld().playSound(s, Sound.valueOf("EXPLODE"), 8, 0.7f);
 					}
-					ExplosionHandler.handleAOEExplosion(player, s, g.getDamage(), g.getExplosionRadius());
+					ExplosionHandler.handleAOEExplosion(player, s, g.getDamage(), g.getExplosionRadius(), g.getExplosionKnockback());
 					cancel();
 					return;
 				}
 				}
 				
 			}
-		}.runTaskTimer(QAMain.getInstance(), 0, 1);
+		}.runTaskTimer(QAMain.getInstance(), player, 0, 1);
 	}
 	@Override
 	public String getName() {

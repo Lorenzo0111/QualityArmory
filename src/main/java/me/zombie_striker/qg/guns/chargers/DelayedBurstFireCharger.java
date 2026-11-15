@@ -1,12 +1,13 @@
 package me.zombie_striker.qg.guns.chargers;
 
 
+import org.bukkit.scheduler.BukkitTask;
+import me.zombie_striker.qg.utils.FoliaRunnable;
 import me.zombie_striker.qg.utils.Compat;
 import me.zombie_striker.qg.guns.utils.WeaponSounds;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.api.QualityArmory;
@@ -30,7 +31,7 @@ public class DelayedBurstFireCharger implements ChargingHandler {
 		GunUtil.shootHandler(g, player);
 		GunUtil.playShoot(g, player);
 
-		QAMain.getPlayerState().getDelayedBurstFireTasks().put(player.getUniqueId(), new BukkitRunnable() {
+		BukkitTask task = new FoliaRunnable() {
 			int slotUsed = player.getInventory().getHeldItemSlot();
 			@SuppressWarnings("deprecation")
 			boolean offhand = QualityArmory.isIronSights(player.getItemInHand());
@@ -91,7 +92,10 @@ public class DelayedBurstFireCharger implements ChargingHandler {
 				}
 				QualityArmory.sendHotbarGunAmmoCount(player, g, stack, false);
 			}
-		}.runTaskTimer(QAMain.getInstance(), 1, 1));
+		}.runTaskTimer(QAMain.getInstance(), player, 1, 1);
+        // Folia returns no task when the player is already gone: storing it would leave them charging forever.
+        if (!task.isCancelled())
+            QAMain.getPlayerState().getDelayedBurstFireTasks().put(player.getUniqueId(), task);
 		return false;
 	}
 

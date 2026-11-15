@@ -154,6 +154,11 @@ public class GunYML extends ArmoryYML {
 		return this;
 	}
 
+	public GunYML setCustomProjectileExplosionKnockback(double knockback) {
+		set(false, "CustomProjectiles.explosionKnockback", knockback);
+		return this;
+	}
+
 	public GunYML setCustomProjectile(String customProjectle) {
 		set(false, "custom-projectiles.projectile-type", customProjectle);
 		return this;

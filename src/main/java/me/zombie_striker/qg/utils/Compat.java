@@ -39,7 +39,7 @@ public final class Compat {
      * @return Whether the server is on that version or newer.
      */
     public static boolean supports(int minor) {
-        return XReflection.supports(minor);
+        return XReflection.supports(1, minor, 0);
     }
 
     /**

@@ -5,26 +5,28 @@ import org.bukkit.Location;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Transient per-player state. Everything that only matters while a player is online is removed in
+ * Transient per-player state. Collections are concurrent, since Folia runs players on different threads.
+ Everything that only matters while a player is online is removed in
  * {@link #onQuit(UUID)}, and running tasks are cancelled.
  * <p>
  * Bleeding and scoping are deliberately kept across a relog: a player who logs out while bleeding is still
  * bleeding when they come back, and the scoping marker is what removes the zoom effects they still have.
  */
 public final class PlayerStateManager {
-    private final Map<UUID, Long> lastWeaponSwitch = new HashMap<>();
-    private final Map<UUID, Location> lastMoveLocation = new HashMap<>();
-    private final HashMap<UUID, List<GunRefillerRunnable>> reloadingTasks = new HashMap<>();
-    private final Map<UUID, BukkitTask> rapidFireTasks = new HashMap<>();
-    private final Map<UUID, BukkitTask> burstFireTasks = new HashMap<>();
-    private final Map<UUID, BukkitTask> delayedBurstFireTasks = new HashMap<>();
-    private final Map<UUID, Double> recoilCounter = new HashMap<>();
-    private final Map<UUID, Integer> slotBeforeIronsights = new HashMap<>();
-    private final Set<UUID> scoping = new HashSet<>();
-    private final Map<UUID, Double> bleedoutMultiplier = new HashMap<>();
-    private final Map<UUID, Double> bloodLevel = new HashMap<>();
+    private final Map<UUID, Long> lastWeaponSwitch = new ConcurrentHashMap<>();
+    private final Map<UUID, Location> lastMoveLocation = new ConcurrentHashMap<>();
+    private final Map<UUID, List<GunRefillerRunnable>> reloadingTasks = new ConcurrentHashMap<>();
+    private final Map<UUID, BukkitTask> rapidFireTasks = new ConcurrentHashMap<>();
+    private final Map<UUID, BukkitTask> burstFireTasks = new ConcurrentHashMap<>();
+    private final Map<UUID, BukkitTask> delayedBurstFireTasks = new ConcurrentHashMap<>();
+    private final Map<UUID, Double> recoilCounter = new ConcurrentHashMap<>();
+    private final Map<UUID, Integer> slotBeforeIronsights = new ConcurrentHashMap<>();
+    private final Set<UUID> scoping = ConcurrentHashMap.newKeySet();
+    private final Map<UUID, Double> bleedoutMultiplier = new ConcurrentHashMap<>();
+    private final Map<UUID, Double> bloodLevel = new ConcurrentHashMap<>();
 
     /**
      * @return The time (millis) each player last switched weapon.
@@ -40,7 +42,7 @@ public final class PlayerStateManager {
         return lastMoveLocation;
     }
 
-    public HashMap<UUID, List<GunRefillerRunnable>> getReloadingTasks() {
+    public Map<UUID, List<GunRefillerRunnable>> getReloadingTasks() {
         return reloadingTasks;
     }
 

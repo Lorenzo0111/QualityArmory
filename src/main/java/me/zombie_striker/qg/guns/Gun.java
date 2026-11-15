@@ -1,9 +1,12 @@
 package me.zombie_striker.qg.guns;
 
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.Map;
+import me.zombie_striker.qg.utils.FoliaRunnable;
+import me.zombie_striker.qg.hooks.NBTHook;
 import me.zombie_striker.qg.items.ItemState;
 import me.zombie_striker.qg.utils.Compat;
 import com.cryptomorin.xseries.XPotion;
-import de.tr7zw.changeme.nbtapi.NBT;
 import me.zombie_striker.customitemmanager.CustomBaseObject;
 import me.zombie_striker.customitemmanager.CustomItemManager;
 import me.zombie_striker.customitemmanager.MaterialStorage;
@@ -29,7 +32,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffect;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
@@ -51,6 +53,7 @@ public class Gun extends CustomBaseObject implements Comparable<Gun> {
     RealtimeCalculationProjectile customProjectile = null;
     double velocity = 2;
     double explosionRadius = 10;
+    double explosionKnockback = 0;
     double recoil = 1;
     private WeaponType type;
     private boolean hasIronSights;
@@ -95,7 +98,7 @@ public class Gun extends CustomBaseObject implements Comparable<Gun> {
 
     private String killedByMessage = "%player% was shot by %killer% using a %name%";
 
-    private HashMap<UUID, Long> lastRMB = new HashMap<>();
+    private Map<UUID, Long> lastRMB = new ConcurrentHashMap<>();
 
     @Deprecated
     public Gun(String name, MaterialStorage id, WeaponType type, boolean h, Ammo am, double acc, double swaymult,
@@ -171,14 +174,11 @@ public class Gun extends CustomBaseObject implements Comparable<Gun> {
     public static int getAmount(ItemStack is) {
         if (is.getType().equals(Material.AIR)) return 0;
 
-        return NBT.get(is, nbt -> nbt.hasTag("ammo") ? nbt.getInteger("ammo") : 0);
+        return NBTHook.getInt(is, "ammo");
     }
 
     public static void updateAmmo(Gun g, ItemStack current, int amount) {
-        NBT.modify(current, nbt -> {
-            nbt.setInteger("ammo", amount);
-        });
-
+        NBTHook.setInt(current, "ammo", amount);
         Gun.updateAmmoLore(g, current, amount);
     }
 
@@ -397,6 +397,7 @@ public class Gun extends CustomBaseObject implements Comparable<Gun> {
         this.headshotMultiplier = g.headshotMultiplier;
         this.isPrimaryWeapon = g.isPrimaryWeapon;
         this.explosionRadius = g.explosionRadius;
+        this.explosionKnockback = g.explosionKnockback;
         this.setCustomLore(g.getCustomLore());
         this.weaponSounds = g.weaponSounds;
         this.setPrice(g.getPrice());
@@ -532,6 +533,14 @@ public class Gun extends CustomBaseObject implements Comparable<Gun> {
 
     public void setExplosionRadius(double d) {
         this.explosionRadius = d;
+    }
+
+    public double getExplosionKnockback() {
+        return explosionKnockback;
+    }
+
+    public void setExplosionKnockback(double d) {
+        this.explosionKnockback = d;
     }
 
     public int getBulletsPerShot() {
@@ -1018,7 +1027,7 @@ public class Gun extends CustomBaseObject implements Comparable<Gun> {
 
                         final Gun checkTo = QualityArmory
                                 .getGun(Update19OffhandChecker.getItemStackOFfhand(player.getPlayer()));
-                        new BukkitRunnable() {
+                        new FoliaRunnable() {
 
                             @Override
                             public void run() {
@@ -1045,7 +1054,7 @@ public class Gun extends CustomBaseObject implements Comparable<Gun> {
                                 }
 
                             }
-                        }.runTaskTimer(QAMain.getInstance(), 20, 20);
+                        }.runTaskTimer(QAMain.getInstance(), player, 20, 20);
 
 
                         QualityArmory.sendHotbarGunAmmoCount(player.getPlayer(), this, usedItem, false);
