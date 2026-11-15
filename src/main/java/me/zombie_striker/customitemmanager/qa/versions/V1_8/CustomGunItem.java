@@ -1,5 +1,6 @@
 package me.zombie_striker.customitemmanager.qa.versions.V1_8;
 
+import me.zombie_striker.qg.utils.Compat;
 import me.zombie_striker.customitemmanager.*;
 import me.zombie_striker.customitemmanager.pack.StaticPackProvider;
 import me.zombie_striker.customitemmanager.qa.AbstractCustomGunItem;
@@ -65,26 +66,13 @@ public class CustomGunItem extends AbstractCustomGunItem {
 			OLD_ItemFact.addVariantData(im,lore,base);
 
 			im.setLore(lore);
-			if (QAMain.getConfiguration().items.enableUnbreaking) {
-				try {
-					im.setUnbreakable(true);
-				} catch (Error | Exception e34) {
-					/*try {
-						im.spigot().setUnbreakable(true);
-					} catch (Error | Exception e344) {
-					}*/
-					//TODO: Readd Unbreakable support for 1.9
-				}
-			}
-			try {
-				if (QAMain.getConfiguration().items.enableUnbreaking) {
-					im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_UNBREAKABLE);
-				}
-				im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_ATTRIBUTES);
-				im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_DESTROYS);
-			} catch (Error e) {
-
-			}
+			boolean enableUnbreakable = QAMain.getConfiguration().items.enableUnbreaking;
+			if (enableUnbreakable && Compat.UNBREAKABLE_META)
+				im.setUnbreakable(true);
+			if (enableUnbreakable)
+				im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_UNBREAKABLE);
+			im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_ATTRIBUTES);
+			im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_DESTROYS);
 
 			if (ms.getVariant() != 0) {
 				OLD_ItemFact.addVariantData(im, im.getLore(), ms.getVariant());

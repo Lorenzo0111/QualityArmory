@@ -1,5 +1,8 @@
 package me.zombie_striker.qg.api;
 
+import me.zombie_striker.qg.utils.ErrorReporter;
+import me.zombie_striker.qg.utils.CustomModelData;
+import me.zombie_striker.qg.utils.Compat;
 import me.zombie_striker.customitemmanager.CustomBaseObject;
 import me.zombie_striker.customitemmanager.CustomItemManager;
 import me.zombie_striker.customitemmanager.MaterialStorage;
@@ -107,9 +110,9 @@ public class QualityArmory {
 					return;
 				}
 				if (warning) {
-					try {
+					if (TITLES) {
 						player.sendTitle(LocalUtils.colorize(ChatColor.RED + QAMain.getMessages().resourcepack.downloading), LocalUtils.colorize(QAMain.getMessages().resourcepack.acceptPrompt));
-					} catch (Error e2) {
+					} else {
 						player.sendMessage(LocalUtils.colorize(ChatColor.RED + QAMain.getMessages().resourcepack.downloading));
 						player.sendMessage(LocalUtils.colorize(ChatColor.RED + QAMain.getMessages().resourcepack.acceptPrompt));
 					}
@@ -121,27 +124,29 @@ public class QualityArmory {
 					@Override
 					public void run() {
 						try {
-							try {
-								QAMain.DEBUG("Sending resourcepack : " + (QAMain.getConfiguration().resourcepack.autoDetectVersion) + " || "
-										+ QAMain.getConfiguration().general.versionOverride.equalsIgnoreCase("1.8") + " || " + QAMain.isVersionHigherThan(1, 9) + " || ");
+							QAMain.DEBUG("Sending resourcepack : " + (QAMain.getConfiguration().resourcepack.autoDetectVersion) + " || "
+									+ QAMain.getConfiguration().general.versionOverride.equalsIgnoreCase("1.8") + " || " + QAMain.isVersionHigherThan(1, 9) + " || ");
+							if (QAMain.getIntegrations().hasViaVersion() && QAMain.getConfiguration().debug.enabled) {
 								try {
-									if (QAMain.getIntegrations().hasViaVersion()) {
-										QAMain.DEBUG(
-												"Has Viaversion: " + com.viaversion.viaversion.api.Via.getAPI()
-														.getPlayerVersion(player) + " 1.8=" + ViaVersionHook.VIAVERSION_1_8);
-
-									}
-								} catch (Error | Exception re4) {
+									QAMain.DEBUG("Has Viaversion: " + com.viaversion.viaversion.api.Via.getAPI()
+											.getPlayerVersion(player) + " 1.8=" + ViaVersionHook.VIAVERSION_1_8);
+								} catch (RuntimeException | LinkageError re4) {
+									ErrorReporter.report("reading the client version from ViaVersion", re4);
 								}
-
-								if (QAMain.isVersionHigherThan(1, 19))
-									player.setResourcePack(CustomItemManager.getResourcepack(player), null, QAMain.getConfiguration().resourcepack.kickIfDenied);
-                                else player.setResourcePack(CustomItemManager.getResourcepack(player));
-
-							} catch (Error | Exception e4) {
-
-								player.setResourcePack(CustomItemManager.getResourcepack(player));
 							}
+
+							String pack = CustomItemManager.getResourcepack(player);
+							boolean sent = false;
+							if (QAMain.isVersionHigherThan(1, 19) && FORCED_RESOURCEPACK) {
+								try {
+									player.setResourcePack(pack, null, QAMain.getConfiguration().resourcepack.kickIfDenied);
+									sent = true;
+								} catch (IllegalArgumentException e4) {
+									// Some versions require a hash with this method; fall back to the plain one
+								}
+							}
+							if (!sent)
+								player.setResourcePack(pack);
 
 							if (!QAMain.isVersionHigherThan(1, 9)) {
 								QAMain.getResourcepacks().setAccepted(player.getUniqueId());
@@ -150,8 +155,8 @@ public class QualityArmory {
 							}
 							// If the player is on 1.8, manually add them to the resource list.
 
-						} catch (Exception e) {
-
+						} catch (RuntimeException e) {
+							ErrorReporter.report("sending the resourcepack", e);
 						}
 					}
 				}.runTaskLater(QAMain.getInstance(), 20 * (warning ? 1 : 5));
@@ -159,12 +164,19 @@ public class QualityArmory {
 		}.runTaskLater(QAMain.getInstance(), (long) (20 * QAMain.getConfiguration().resourcepack.sendOnJoin.delay));
 	}
 
+	/** {@code Player#sendTitle(String, String)}, missing on early 1.8 builds. */
+	private static final boolean TITLES = Compat.hasMethod("org.bukkit.entity.Player", "sendTitle", "java.lang.String", "java.lang.String");
+	/** {@code Player#setResourcePack(String, byte[], boolean)} (1.17+). */
+	private static final boolean FORCED_RESOURCEPACK = Compat.hasMethod("org.bukkit.entity.Player", "setResourcePack", "java.lang.String", "[B", "boolean");
+
 	public static boolean allowGunsInRegion(Location loc) {
 		try {
 			return ProtectionHandler.canPvp(loc);
-		} catch (Error e) {
+		} catch (LinkageError e) {
+			// A protection plugin changed its API; don't block guns because of it
+			ErrorReporter.report("checking PvP protection", e);
+			return true;
 		}
-		return true;
 	}
 
 	public static boolean isCustomItem(ItemStack is) {
@@ -175,10 +187,8 @@ public class QualityArmory {
 	public static boolean isCustomItemNextId(ItemStack is) {
 		if (is == null)
 			return false;
-		try{
-			if(CustomItemManager.isUsingCustomData())
-				return false;
-		}catch (Error|Exception e4){}
+		if (CustomItemManager.isUsingCustomData())
+			return false;
 		List<MaterialStorage> ms = new ArrayList<MaterialStorage>();
 		ms.addAll(QAMain.getItemRegistry().getExpansionPacks());
 		ms.addAll(QAMain.getItemRegistry().getGuns().keySet());
@@ -215,13 +225,7 @@ public class QualityArmory {
 			im.setLore(lore);
 			is.setItemMeta(im);
 		}
-		try{
-			ItemMeta im = is.getItemMeta();
-			im.setCustomModelData(data);
-			is.setItemMeta(im);
-		}catch (Error|Exception e4){
-			is.setDurability((short) data);
-		}
+		CustomModelData.setOrDurability(is, data);
 		return getCustomItem(is);
 	}
 	public static CustomBaseObject getCustomItem(ItemStack is) {
@@ -242,8 +246,8 @@ public class QualityArmory {
 			return false;
 		ItemStack itemstack = is.clone();
 		if(dataOffset!=0) {
-			try {
-				ItemMeta im = itemstack.getItemMeta();
+			ItemMeta im = CustomModelData.SUPPORTED ? itemstack.getItemMeta() : null;
+			if (im != null) {
 				int modeldata = 0;
 				if(im.hasCustomModelData()) {
 					modeldata = im.getCustomModelData();
@@ -252,7 +256,7 @@ public class QualityArmory {
 				}
 				im.setCustomModelData(modeldata + dataOffset);
 				itemstack.setItemMeta(im);
-			} catch (Error | Exception ed4) {
+			} else {
 				itemstack.setDurability((short) (is.getDurability() + dataOffset));
 			}
 		}
@@ -312,12 +316,12 @@ public class QualityArmory {
 
 		if (isGun(stack)) return getGun(stack);
 		if (isIronSights(stack)) {
-			try {
+			if (Compat.OFFHAND) {
 				ItemStack offHand = entity.getInventory().getItemInOffHand();
 				if (isGun(offHand)) {
 					return getGun(offHand);
 				}
-			} catch (NoSuchMethodError ignored) {}
+			}
 		}
 
 		return null;
@@ -402,18 +406,11 @@ public class QualityArmory {
 	public static boolean isIronSights(ItemStack is) {
 		if (is == null)
 			return false;
-		if (is.getType() == IronsightsHandler.ironsightsMaterial)
-			try{
-				if(!is.hasItemMeta() || !is.getItemMeta().hasCustomModelData())
-					return false;
-				if(is.getItemMeta().getCustomModelData() == IronsightsHandler
-				.ironsightsData)
-					return true;
-			}catch (Error|Exception e4){
-				if(is.getDurability() == IronsightsHandler.ironsightsData)
-					return true;
-			}
-		return false;
+		if (is.getType() != IronsightsHandler.ironsightsMaterial)
+			return false;
+		if (CustomModelData.SUPPORTED)
+			return CustomModelData.has(is) && is.getItemMeta().getCustomModelData() == IronsightsHandler.ironsightsData;
+		return is.getDurability() == IronsightsHandler.ironsightsData;
 	}
 
 	public static ArmorObject getArmorByName(String name) {
@@ -519,7 +516,8 @@ public class QualityArmory {
 					message = LocalUtils.colorize(message);
 				}
 				HotbarMessager.sendHotBarMessage(p, message);
-			} catch (Error | Exception e5) {
+			} catch (Exception | LinkageError e5) {
+				ErrorReporter.report("sending the hotbar ammo message", e5);
 			}
 		}
 	}
@@ -528,10 +526,7 @@ public class QualityArmory {
 	public static int findSafeSpot(ItemStack newItem, boolean findHighest, boolean allowPockets) {
 		if(CustomItemManager.isUsingCustomData())
 			return -1;
-		try{
-			return findSafeSpot(newItem.getType(), newItem.getItemMeta().getCustomModelData(), findHighest, allowPockets);
-		}catch (Error|Exception e534){}
-		return findSafeSpot(newItem.getType(), newItem.getDurability(), findHighest, allowPockets);
+		return findSafeSpot(newItem.getType(), CustomModelData.getOrDurability(newItem), findHighest, allowPockets);
 	}
 
 	public static int findSafeSpot(Material newItemtype, int startingData, boolean findHighest, boolean allowPockets) {
@@ -587,12 +582,7 @@ public class QualityArmory {
 
 	@SuppressWarnings("deprecation")
 	public static int findSafeSpotVariant(ItemStack newItem, boolean findHighest) {
-		try{
-			return findSafeSpotVariant(newItem.getType(), newItem.getItemMeta().getCustomModelData(), findHighest);
-
-		}catch (Error|Exception e4){
-		}
-		return findSafeSpotVariant(newItem.getType(), newItem.getDurability(), findHighest);
+		return findSafeSpotVariant(newItem.getType(), CustomModelData.getOrDurability(newItem), findHighest);
 	}
 
 	public static int findSafeSpotVariant(Material newItemtype, int startingData, boolean findHighest) {

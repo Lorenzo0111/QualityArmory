@@ -1,5 +1,6 @@
 package me.zombie_striker.qg.hooks;
 
+import me.zombie_striker.qg.utils.ErrorReporter;
 import com.cryptomorin.xseries.reflection.XReflection;
 import com.viaversion.viaversion.api.Via;
 import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
@@ -23,7 +24,8 @@ public final class ViaVersionHook {
                         return split[1] + "." + (split.length > 2 ? split[2] : "0");
                     })
                 .orElse(XReflection.MINOR_NUMBER + "." + XReflection.PATCH_NUMBER);
-        } catch (Exception | Error e) {
+        } catch (RuntimeException | LinkageError e) {
+            ErrorReporter.report("reading the client version from ViaVersion", e);
             return XReflection.MINOR_NUMBER + "." + XReflection.PATCH_NUMBER;
         }
     }

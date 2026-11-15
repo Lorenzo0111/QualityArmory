@@ -1,5 +1,7 @@
 package me.zombie_striker.customitemmanager;
 
+import me.zombie_striker.qg.utils.CustomModelData;
+import me.zombie_striker.qg.utils.Compat;
 import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.api.QualityArmory;
 import me.zombie_striker.qg.armor.ArmorObject;
@@ -84,28 +86,21 @@ public class OLD_ItemFact {
 
 		ItemStack ironsights = null;
 		ItemMeta im = null;
-		try {
+		if (CustomModelData.SUPPORTED) {
 			ironsights = new ItemStack(IronsightsHandler.ironsightsMaterial);
 			im = ironsights.getItemMeta();
 			im.setCustomModelData(IronsightsHandler.ironsightsData);
-		} catch (Error | Exception e4) {
+		} else {
 			ironsights = new ItemStack(IronsightsHandler.ironsightsMaterial, 1, (short) IronsightsHandler.ironsightsData);
 			im = ironsights.getItemMeta();
 		}
 		im.setDisplayName(IronsightsHandler.ironsightsDisplay);
-		if (QAMain.getConfiguration().items.enableUnbreaking) {
-			try {
-				im.setUnbreakable(true);
-			} catch (Error | Exception e3423) {			}
-		}
-		try {
-			if (QAMain.getConfiguration().items.enableUnbreaking) {
-				im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_UNBREAKABLE);
-			}
-			im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_ATTRIBUTES);
-			im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_DESTROYS);
-		} catch (Error | Exception e34) {
-		}
+		if (QAMain.getConfiguration().items.enableUnbreaking && Compat.UNBREAKABLE_META)
+			im.setUnbreakable(true);
+		if (QAMain.getConfiguration().items.enableUnbreaking)
+			im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_UNBREAKABLE);
+		im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_ATTRIBUTES);
+		im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_DESTROYS);
 		ironsights.setItemMeta(im);
 		return ironsights;
 	}

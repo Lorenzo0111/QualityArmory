@@ -1,5 +1,6 @@
 package me.zombie_striker.qg.miscitems;
 
+import me.zombie_striker.qg.utils.Compat;
 import com.cryptomorin.xseries.particles.XParticle;
 import me.zombie_striker.customitemmanager.MaterialStorage;
 import me.zombie_striker.qg.QAMain;
@@ -57,30 +58,25 @@ public class StickyGrenades extends Grenade {
 							if (!event.isCancelled()) ExplosionHandler.handleExplosion(holder.getHolder().getLocation(), 3, 1);
 							QAMain.DEBUG("Using default explosions");
 						}
-						try {
+						if (Compat.PARTICLES) {
 							holder.getHolder().getWorld().spawnParticle(XParticle.EXPLOSION_EMITTER.get(),
 									holder.getHolder().getLocation(), 0);
 							holder.getHolder().getWorld().playSound(holder.getHolder().getLocation(), Sound.ENTITY_GENERIC_EXPLODE, 8,
 									0.7f);
-						} catch (Error e3) {
+						} else {
 							holder.getHolder().getWorld().playEffect(holder.getHolder().getLocation(), Effect.valueOf("CLOUD"), 0);
 							holder.getHolder().getWorld().playSound(holder.getHolder().getLocation(), Sound.valueOf("EXPLODE"), 8, 0.7f);
 						}
 						Player thro = Bukkit.getPlayer(holder.getOwner());
-						try {
-							for (Entity e : holder.getHolder().getNearbyEntities(radius, radius, radius)) {
-								if (e instanceof LivingEntity) {
-									double dam = (dmageLevel / e.getLocation().distance(holder.getHolder().getLocation()));
-									QAMain.DEBUG("Grenade-Damaging " + e.getName() + " : " + dam + " DAM.");
-									if (thro == null)
-										((LivingEntity) e).damage(dam);
-									else
-										((LivingEntity) e).damage(dam, thro);
-								}
+						for (Entity e : holder.getHolder().getNearbyEntities(radius, radius, radius)) {
+							if (e instanceof LivingEntity) {
+								double dam = (dmageLevel / e.getLocation().distance(holder.getHolder().getLocation()));
+								QAMain.DEBUG("Grenade-Damaging " + e.getName() + " : " + dam + " DAM.");
+								if (thro == null)
+									((LivingEntity) e).damage(dam);
+								else
+									((LivingEntity) e).damage(dam, thro);
 							}
-						} catch (Error e) {
-							holder.getHolder().getWorld().createExplosion(holder.getHolder().getLocation(), 1);
-							QAMain.DEBUG("Failed. Created default explosion");
 						}
 						ThrowableItemRegistry.remove(holder.getHolder());
 						this.cancel();

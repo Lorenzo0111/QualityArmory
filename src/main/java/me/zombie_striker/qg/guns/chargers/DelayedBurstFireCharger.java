@@ -1,6 +1,7 @@
 package me.zombie_striker.qg.guns.chargers;
 
 
+import me.zombie_striker.qg.utils.Compat;
 import me.zombie_striker.qg.guns.utils.WeaponSounds;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -80,14 +81,10 @@ public class DelayedBurstFireCharger implements ChargingHandler {
 				stack.setItemMeta(im);
 				Gun.updateAmmo(g, stack, amount);
 				if (slot == -1) {
-					try {
-						if (QualityArmory.isIronSights(player.getItemInHand())) {
-							player.getInventory().setItemInOffHand(stack);
-						} else {
-							player.getInventory().setItemInHand(stack);
-						}
-
-					} catch (Error e) {
+					if (Compat.OFFHAND && QualityArmory.isIronSights(player.getItemInHand())) {
+						player.getInventory().setItemInOffHand(stack);
+					} else if (Compat.OFFHAND) {
+						player.getInventory().setItemInHand(stack);
 					}
 				} else {
 					player.getInventory().setItem(slot, stack);

@@ -1,5 +1,7 @@
 package me.zombie_striker.qg.miscitems;
 
+import me.zombie_striker.qg.utils.ErrorReporter;
+import me.zombie_striker.qg.utils.Compat;
 import me.zombie_striker.customitemmanager.MaterialStorage;
 import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.guns.utils.WeaponSounds;
@@ -41,7 +43,7 @@ public class Molotov extends Grenade {
 
 			@Override
 			public void run() {
-				try {
+				if (Compat.PARTICLES) {
 					for(int i = 0; i < 8; i++) {
 						double xoffset = ((Math.random() * 2) - 1)*radius;
 						double zoffset = ((Math.random() * 2) - 1)*radius;
@@ -55,7 +57,7 @@ public class Molotov extends Grenade {
 					}
 					h.getHolder().getWorld().playSound(h.getHolder().getLocation(), WeaponSounds.HISS.getSoundName(), 2f,
 							1f);
-				} catch (Error e3) {
+				} else {
 					h.getHolder().getWorld().playEffect(h.getHolder().getLocation(), Effect.valueOf("CLOUD"), 0);
 					h.getHolder().getWorld().playSound(h.getHolder().getLocation(), Sound.valueOf("EXPLODE"), 3, 0.7f);
 				}
@@ -76,7 +78,8 @@ public class Molotov extends Grenade {
 								if (ProtectionHandler.canPvp(e.getLocation())) {
 									e.setFireTicks(20);
 								}
-							}catch (Error error){
+							} catch (LinkageError error) {
+								ErrorReporter.report("checking PvP protection", error);
 								e.setFireTicks(20);
 							}
 						}

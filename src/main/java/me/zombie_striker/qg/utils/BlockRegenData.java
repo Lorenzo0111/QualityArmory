@@ -1,5 +1,6 @@
 package me.zombie_striker.qg.utils;
 
+import me.zombie_striker.qg.utils.Compat;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -11,18 +12,14 @@ public class BlockRegenData {
 
     public BlockRegenData(Block block) {
         this.material = block.getType();
-        try {
-            this.data = block.getBlockData();
-        } catch (Exception | Error e) {
-            this.data = null;
-        }
+        // Block data exists from 1.13; older versions only restore the material
+        this.data = Compat.FLATTENED ? block.getBlockData() : null;
     }
 
     public void place(Location location) {
         location.getBlock().setType(material);
 
-        try {
+        if (data != null)
             location.getBlock().setBlockData((BlockData) data);
-        } catch (Exception | Error ignored) {}
     }
 }

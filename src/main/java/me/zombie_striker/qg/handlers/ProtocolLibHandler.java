@@ -1,5 +1,6 @@
 package me.zombie_striker.qg.handlers;
 
+import me.zombie_striker.qg.utils.ErrorReporter;
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
@@ -72,7 +73,8 @@ public class ProtocolLibHandler {
                                         event.setCancelled(true);
                                     }
                                 }
-                            } catch (Error | Exception ignored) {
+                            } catch (RuntimeException e) {
+                                ErrorReporter.report("hiding the arm swing of a gun", e);
                             }
                         }
                     }
@@ -225,8 +227,7 @@ public class ProtocolLibHandler {
 
                                     protocolManager.sendServerPacket(event.getPlayer(), pc2);
                                 } catch (Exception e) {
-                                    QAMain.DEBUG("Error sending offhand packet: " + e.getMessage());
-                                    e.printStackTrace();
+                                    ErrorReporter.report("sending the off hand item packet", e);
                                 }
                             }
                         }.runTaskLater(QAMain.getInstance(), 1);
@@ -269,7 +270,7 @@ public class ProtocolLibHandler {
             packet.getBooleans().write(0, false);
             protocolManager.sendServerPacket(player, packet);
         } catch (Exception e) {
-            QAMain.DEBUG("An error occurred while sending a yaw change packet to " + player.getName() + ": " + e.getMessage());
+            ErrorReporter.report("sending a yaw change packet", e);
         }
     }
 
@@ -286,13 +287,14 @@ public class ProtocolLibHandler {
                     }
                 }
             }
-        } catch (Exception ignored) {
+        } catch (RuntimeException ignored) {
+            // The packet layout differs between versions; try the integer anchor below
         }
 
         try {
             packet.getIntegers().write(0, 1);
             return true;
-        } catch (Exception ignored) {
+        } catch (RuntimeException ignored) {
             QAMain.DEBUG("Could not set anchor for LOOK_AT packet");
             return false;
         }

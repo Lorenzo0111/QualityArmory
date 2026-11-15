@@ -1,5 +1,6 @@
 package me.zombie_striker.qg.guns.chargers;
 
+import me.zombie_striker.qg.utils.Compat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -34,32 +35,20 @@ public class BoltactionCharger implements ChargingHandler {
 		new BukkitRunnable() {
 			@Override
 			public void run() {
-				try {
-					if (QAMain.isVersionHigherThan(1, 9)) {
-						player.getWorld().playSound(player.getLocation(), g.getChargingSound(), 1, 1f);
-					} else
-						player.getWorld().playSound(player.getLocation(), Sound.BLOCK_LEVER_CLICK, 5, 1);
-				} catch (Error e) {
-					try {
-						player.getWorld().playSound(player.getLocation(), Sound.valueOf("CLICK"), 5, 1);
-					} catch (Error | Exception e43) {
-					}
+				if (Compat.WORLD_SOUND_BY_NAME) {
+					player.getWorld().playSound(player.getLocation(), g.getChargingSound(), 1, 1f);
+				} else {
+					player.getWorld().playSound(player.getLocation(), Sound.valueOf("CLICK"), 5, 1);
 				}
 			}
 		}.runTaskLater(QAMain.getInstance(), 10);
 		new BukkitRunnable() {
 			@Override
 			public void run() {
-				try {
-					if (QAMain.isVersionHigherThan(1, 9)) {
-						player.getWorld().playSound(player.getLocation(), g.getChargingSound(), 1, 1f);
-					} else
-						player.getWorld().playSound(player.getLocation(), Sound.BLOCK_LEVER_CLICK, 5, 1);
-				} catch (Error e) {
-					try {
-						player.getWorld().playSound(player.getLocation(), Sound.valueOf("CLICK"), 5, 1);
-					} catch (Error | Exception e43) {
-					}
+				if (Compat.WORLD_SOUND_BY_NAME) {
+					player.getWorld().playSound(player.getLocation(), g.getChargingSound(), 1, 1f);
+				} else {
+					player.getWorld().playSound(player.getLocation(), Sound.valueOf("CLICK"), 5, 1);
 				}
 				timeR.remove(player.getUniqueId());
 			}

@@ -1,5 +1,6 @@
 package me.zombie_striker.qg.npcs.goals;
 
+import me.zombie_striker.qg.utils.ErrorReporter;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -65,7 +66,8 @@ public class Gunnergoal implements Goal {
 			if (btemp == null || btemp.getType() == Material.AIR) {
 				return true;
 			}
-		} catch (Error | Exception e4) {
+		} catch (RuntimeException e4) {
+			ErrorReporter.report("checking the line of sight of a gunner NPC", e4);
 		}
 		Location test = ((Player) npc.getEntity()).getEyeLocation().clone();
 		int stepi = 4;

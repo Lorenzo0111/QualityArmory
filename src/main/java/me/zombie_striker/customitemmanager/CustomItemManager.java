@@ -1,10 +1,9 @@
 package me.zombie_striker.customitemmanager;
 
+import me.zombie_striker.qg.utils.CustomModelData;
 import me.zombie_striker.customitemmanager.pack.ResourcepackProvider;
 import me.zombie_striker.customitemmanager.pack.StaticPackProvider;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 
 import java.io.File;
 import java.util.HashMap;
@@ -54,14 +53,11 @@ public class CustomItemManager {
 		return customItemTypes.get(key);
 	}
 
+	/**
+	 * @return Whether items are identified by custom model data (1.14+) instead of durability.
+	 */
 	public static boolean isUsingCustomData(){
-		try{
-			new ItemStack(Material.DIAMOND_BLOCK).getItemMeta().hasCustomModelData();
-			return true;
-		}catch (Error | Exception e4){
-
-		}
-		return false;
+		return CustomModelData.SUPPORTED;
 	}
 
 

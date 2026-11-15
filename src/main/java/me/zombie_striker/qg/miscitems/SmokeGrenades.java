@@ -1,5 +1,7 @@
 package me.zombie_striker.qg.miscitems;
 
+import me.zombie_striker.qg.utils.ErrorReporter;
+import me.zombie_striker.qg.utils.Compat;
 import com.cryptomorin.xseries.particles.XParticle;
 import me.zombie_striker.customitemmanager.MaterialStorage;
 import me.zombie_striker.qg.QAMain;
@@ -44,7 +46,9 @@ public class SmokeGrenades extends Grenade {
 			@Override
 			public void run() {
 				if (isUseModernParticles()) {
-					try {
+					if (!Compat.PARTICLES) {
+						h.getHolder().getWorld().playEffect(h.getHolder().getLocation(), Effect.SMOKE, 0);
+					} else try {
 						// Main smoke cloud that gets larger over time
 						double radius = (k / 10.0) + 1.0;
 						int particleCount = Math.max(1, 50 - k);
@@ -83,24 +87,24 @@ public class SmokeGrenades extends Grenade {
 							h.getHolder().getWorld().spawnParticle(XParticle.EXPLOSION.get(), h.getHolder().getLocation(), 2, 1, 1, 1, 0);
 							h.getHolder().getWorld().spawnParticle(XParticle.POOF.get(), h.getHolder().getLocation(), 10, 2, 2, 2, 0.1);
 						}
-					} catch (Exception | Error e) {
-						// Fallback for older versions or errors
+					} catch (IllegalArgumentException e) {
+						// A particle that XSeries can't map on this version
 						h.getHolder().getWorld().playEffect(h.getHolder().getLocation(), Effect.SMOKE, 0);
 					}
 				} else {
-                    try {
+                    if (Compat.PARTICLES) {
                         h.getHolder().getWorld().spawnParticle(XParticle.EXPLOSION_EMITTER.get(),
                                 h.getHolder().getLocation(), 0);
-                    } catch (Error e3) {
+                    } else {
                         h.getHolder().getWorld().playEffect(h.getHolder().getLocation(), Effect.valueOf("CLOUD"), 0);
                     }
 				}
 
                 if (k % 2 == 0)
-                    try {
+                    if (Compat.WORLD_SOUND_BY_NAME) {
                             h.getHolder().getWorld().playSound(h.getHolder().getLocation(),
                                     WeaponSounds.HISS.getSoundName(), 2f, 1f);
-                    } catch (Error e3) {
+                    } else {
                         h.getHolder().getWorld().playSound(h.getHolder().getLocation(), Sound.valueOf("EXPLODE"), 3, 0.7f);
                     }
 
@@ -127,7 +131,8 @@ public class SmokeGrenades extends Grenade {
 								if (ProtectionHandler.canPvp(e.getLocation())) {
 									((LivingEntity) e).addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 20 * 10, 2));
 								}
-							}catch (Error error){
+							} catch (LinkageError error) {
+								ErrorReporter.report("checking PvP protection", error);
 								((LivingEntity) e).addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 20 * 10, 2));
 							}
 						}

@@ -1,5 +1,6 @@
 package me.zombie_striker.qg.guns.projectiles;
 
+import me.zombie_striker.qg.utils.Compat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,14 +35,11 @@ public class RocketProjectile implements RealtimeCalculationProjectile {
 					s.add(dir);
 					ParticleHandlers.spawnGunParticles(g, s);
 					boolean entityNear = false;
-					try {
-						List<Entity> e2 = new ArrayList<>(s.getWorld().getNearbyEntities(s, 1, 1, 1));
-						for (Entity e : e2) {
-							if (e != player
-									&& (!(e instanceof Player) || ((Player) e).getGameMode() != GameMode.SPECTATOR))
-								entityNear = true;
-						}
-					} catch (Error e) {
+					List<Entity> e2 = new ArrayList<>(s.getWorld().getNearbyEntities(s, 1, 1, 1));
+					for (Entity e : e2) {
+						if (e != player
+								&& (!(e instanceof Player) || ((Player) e).getGameMode() != GameMode.SPECTATOR))
+							entityNear = true;
 					}
 
 					final Location explode = s.clone();
@@ -53,12 +51,12 @@ public class RocketProjectile implements RealtimeCalculationProjectile {
 							Bukkit.getPluginManager().callEvent(event);
 							if (!event.isCancelled()) explodeDamage = ExplosionHandler.handleExplosion(explode, 4, 2);
 						}
-						try {
+						if (Compat.PARTICLES) {
 							//player.getWorld().playSound(s, WeaponSounds.WARHEAD_EXPLODE.getSoundName(), 10, 0.9f);
 							player.getWorld().playSound(s, Sound.ENTITY_GENERIC_EXPLODE, 8, 0.7f);
 							s.getWorld().spawnParticle(XParticle.EXPLOSION_EMITTER.get(), s, 0);
 
-						} catch (Error e3) {
+						} else {
 							s.getWorld().playEffect(s, Effect.valueOf("CLOUD"), 0);
 							player.getWorld().playSound(s, Sound.valueOf("EXPLODE"), 8, 0.7f);
 						}

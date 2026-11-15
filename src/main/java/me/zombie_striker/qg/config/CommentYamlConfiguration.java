@@ -98,12 +98,10 @@ public class CommentYamlConfiguration extends YamlConfiguration {
 			try {
 				file.createNewFile();
 			} catch (IOException e1) {
-				e1.printStackTrace();
+				Bukkit.getLogger().log(Level.SEVERE, "Cannot create " + file, e1);
 			}
         try {
             config.load(file);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
         } catch (IOException | InvalidConfigurationException var4) {
             Bukkit.getLogger().log(Level.SEVERE, "Cannot load " + file, var4);
         }

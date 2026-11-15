@@ -1,5 +1,7 @@
 package me.zombie_striker.customitemmanager.qa.versions.V1_13;
 
+import me.zombie_striker.qg.utils.ErrorReporter;
+import me.zombie_striker.qg.utils.Compat;
 import me.zombie_striker.customitemmanager.CustomBaseObject;
 import me.zombie_striker.customitemmanager.CustomItemManager;
 import me.zombie_striker.customitemmanager.MaterialStorage;
@@ -69,21 +71,12 @@ public class CustomGunItem extends AbstractCustomGunItem {
 			OLD_ItemFact.addVariantData(im,lore,base);
 			im.setLore(lore);
 			boolean enableUnbreakable = QAMain.getConfiguration().items.enableUnbreaking;
-			if (enableUnbreakable) {
-				try {
-					im.setUnbreakable(true);
-				} catch (Error | Exception e34) {
-				}
-			}
-			try {
-				if (enableUnbreakable) {
-					im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_UNBREAKABLE);
-				}
-				im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_ATTRIBUTES);
-				im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_DESTROYS);
-			} catch (Error e) {
-
-			}
+			if (enableUnbreakable && Compat.UNBREAKABLE_META)
+				im.setUnbreakable(true);
+			if (enableUnbreakable)
+				im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_UNBREAKABLE);
+			im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_ATTRIBUTES);
+			im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_DESTROYS);
 			if(ms.getVariant()!=0) {
 				OLD_ItemFact.addVariantData(im, im.getLore(), ms.getVariant());
 			}
@@ -115,7 +108,7 @@ public class CustomGunItem extends AbstractCustomGunItem {
 			try {
 				ironconfig.save(ironsights);
 			} catch (IOException e) {
-				e.printStackTrace();
+				ErrorReporter.report("saving " + ironsights.getName(), e);
 			}
 		}
 		IronsightsHandler.ironsightsMaterial = Material.matchMaterial(ironconfig.getString("material"));

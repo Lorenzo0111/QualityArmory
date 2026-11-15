@@ -1,5 +1,6 @@
 package me.zombie_striker.qg.armor;
 
+import me.zombie_striker.qg.utils.Compat;
 import com.cryptomorin.xseries.XAttribute;
 import me.zombie_striker.customitemmanager.CustomBaseObject;
 import me.zombie_striker.customitemmanager.CustomItemManager;
@@ -81,10 +82,8 @@ public class ArmorObject extends CustomBaseObject {
 			ItemStack helm = e.getInventory().getHelmet();
 			e.setItemInHand(helm);
 			e.getInventory().setHelmet(usedItem);
-			try {
+			if (Compat.MODERN_SOUNDS)
 				e.getPlayer().playSound(e.getLocation(), Sound.ITEM_ARMOR_EQUIP_IRON, 2, 1);
-			} catch (Error | Exception e3) {
-			}
 			return true;
 		
 	}

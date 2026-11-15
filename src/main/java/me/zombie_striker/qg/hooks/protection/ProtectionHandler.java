@@ -1,5 +1,6 @@
 package me.zombie_striker.qg.hooks.protection;
 
+import me.zombie_striker.qg.utils.ErrorReporter;
 import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.hooks.protection.implementation.*;
 import org.bukkit.Bukkit;
@@ -25,7 +26,8 @@ public class ProtectionHandler {
         for (Map.Entry<String, CompatibilityConstructor> entry : classes.entrySet()) {
             try {
                 hook(entry.getKey(), entry.getValue());
-            } catch (Throwable ignored) {
+            } catch (Exception | LinkageError e) {
+                ErrorReporter.report("hooking into " + entry.getKey(), e);
             }
         }
     }

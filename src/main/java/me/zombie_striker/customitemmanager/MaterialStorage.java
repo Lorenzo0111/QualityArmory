@@ -1,5 +1,7 @@
 package me.zombie_striker.customitemmanager;
 
+import me.zombie_striker.qg.utils.CustomModelData;
+import me.zombie_striker.qg.utils.ErrorReporter;
 import com.cryptomorin.xseries.profiles.PlayerProfiles;
 import com.cryptomorin.xseries.profiles.builder.XSkull;
 import com.cryptomorin.xseries.profiles.gameprofile.MojangGameProfile;
@@ -100,11 +102,9 @@ public class MaterialStorage {
 			if (profile != null)
 				temp = PlayerProfiles.getTextureValue(profile);
 		}
-		try {
+		if (CustomModelData.SUPPORTED && itemMeta != null) {
 			return getMS(is.getType(), itemMeta.hasCustomModelData() ? itemMeta.getCustomModelData() : 0, variant,
 					is.getType() == MultiVersionLookup.getSkull() ? ((SkullMeta) itemMeta).getOwner() : null, temp);
-
-		} catch (Error | Exception e4) {
 		}
 		return getMS(is.getType(), is.getDurability(), variant,
 				is.getType() == MultiVersionLookup.getSkull() ? ((SkullMeta) itemMeta).getOwner() : null, temp);
@@ -120,16 +120,16 @@ public class MaterialStorage {
 						try {
 							int id = Integer.parseInt(lore.split(QAMain.getMessages().lore.variant)[1].trim());
 							return id;
-						} catch (Error | Exception e4) {
-							e4.printStackTrace();
+						} catch (RuntimeException e4) {
+							ErrorReporter.report("reading the variant from an item's lore", e4);
 							return 0;
 						}
 					} else if (lore.startsWith(QAMain.getMessages().lore.variantLegacy)) {
 						try {
 							int id = Integer.parseInt(lore.split(QAMain.getMessages().lore.variantLegacy)[1].trim());
 							return id;
-						} catch (Error | Exception e4) {
-							e4.printStackTrace();
+						} catch (RuntimeException e4) {
+							ErrorReporter.report("reading the variant from an item's lore", e4);
 							return 0;
 						}
 					}

@@ -4,6 +4,8 @@ import com.cryptomorin.xseries.particles.XParticle;
 import com.cryptomorin.xseries.reflection.XReflection;
 import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.guns.Gun;
+import me.zombie_striker.qg.utils.Compat;
+import me.zombie_striker.qg.utils.ErrorReporter;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Location;
@@ -21,28 +23,13 @@ public class ParticleHandlers {
 	}
 
 	public static void spawnExplosion(Location loc) {
-		try {
+		if (Compat.PARTICLES)
 			loc.getWorld().spawnParticle(XParticle.EXPLOSION_EMITTER.get(), loc, 1);
-		} catch (Error | Exception e4) {
-		}
-		// TODO: Do lights n stuff
-		try {
-			if (Bukkit.getPluginManager().getPlugin("LightAPI") != null) {
-				final Location loc2 = loc;
-				LightAPI.get().setLightLevel(loc.getWorld().getName(), loc.getBlockX(), loc.getBlockY(), loc.getBlockZ(), 15);
-				new BukkitRunnable() {
-					@Override
-					public void run() {
-						LightAPI.get().setLightLevel(loc2.getWorld().getName(), loc2.getBlockX(), loc2.getBlockY(), loc2.getBlockZ(), 0);
-					}
-				}.runTaskLater(QAMain.getInstance(), 10);
-			}
-		} catch (Error | Exception e5) {
-		}
+		flashLight(loc, 10);
 	}
 
 	public static void spawnMushroomCloud(Location loc) {
-		try {
+		if (Compat.PARTICLES) {
 			for (double d = 0; d < 2 * Math.PI; d += Math.PI / 48) {
 				double radius = 2;
 
@@ -82,40 +69,50 @@ public class ParticleHandlers {
 				spawnParticle(1.0, 0.5, 0.0, new Location(loc.getWorld(), loc.getX() + (Math.sin(d) * radius),
 						loc.getY() + 5.5, loc.getZ() + (Math.cos(d) * radius)));
 			}
-		} catch (Error | Exception e4) {
 		}
+		flashLight(loc, 20);
+	}
 
+	/**
+	 * Lights up the location for a few ticks when LightAPI is installed.
+	 */
+	private static void flashLight(Location loc, long ticks) {
+		if (Bukkit.getPluginManager().getPlugin("LightAPI") == null) return;
 		try {
-			if (Bukkit.getPluginManager().getPlugin("LightAPI") != null) {
-				final Location loc2 = loc;
-				LightAPI.get().setLightLevel(loc.getWorld().getName(), loc.getBlockX(), loc.getBlockY(), loc.getBlockZ(), 15);
-				new BukkitRunnable() {
-
-					@Override
-					public void run() {
-						LightAPI.get().setLightLevel(loc2.getWorld().getName(), loc2.getBlockX(), loc2.getBlockY(), loc2.getBlockZ(), 0);
-					}
-				}.runTaskLater(QAMain.getInstance(), 20);
-			}
-		} catch (Error | Exception e5) {
+			final String world = loc.getWorld().getName();
+			final int x = loc.getBlockX(), y = loc.getBlockY(), z = loc.getBlockZ();
+			LightAPI.get().setLightLevel(world, x, y, z, 15);
+			new BukkitRunnable() {
+				@Override
+				public void run() {
+					LightAPI.get().setLightLevel(world, x, y, z, 0);
+				}
+			}.runTaskLater(QAMain.getInstance(), ticks);
+		} catch (RuntimeException | LinkageError e) {
+			ErrorReporter.report("lighting an explosion with LightAPI", e);
 		}
 	}
 
 	public static void spawnGunParticles(Gun g, Location loc) {
+		Particle particle = g.getParticle();
+		if (particle == null || !Compat.PARTICLES) return;
 		try {
-			if (g.getParticle() != null)
-				if (g.getParticle() == XParticle.DUST.get()) {
-					spawnParticle(g.getParticleR(), g.getParticleG(), g.getParticleB(), loc);
-				} else if (g.getParticle() == XParticle.BLOCK.get() || g.getParticle() == Particle.BLOCK || g.getParticle() == Particle.FALLING_DUST) {
-					loc.getWorld().spawnParticle(g.getParticle(), loc, 1, g.getParticleMaterial().createBlockData());
-				} else {
-					loc.getWorld().spawnParticle(g.getParticle(), loc, g.getParticleData());
-				}
-		} catch (Error | Exception e4) {
+			if (particle == XParticle.DUST.get()) {
+				spawnParticle(g.getParticleR(), g.getParticleG(), g.getParticleB(), loc);
+			} else if (particle == XParticle.BLOCK.get() || particle == XParticle.FALLING_DUST.get()) {
+				// Block particles need block data, which exists from 1.13
+				if (Compat.FLATTENED)
+					loc.getWorld().spawnParticle(particle, loc, 1, g.getParticleMaterial().createBlockData());
+			} else {
+				loc.getWorld().spawnParticle(particle, loc, g.getParticleData());
+			}
+		} catch (RuntimeException e) {
+			ErrorReporter.report("spawning the particles of " + g.getName(), e);
 		}
 	}
 
 	public static void spawnParticle(double r, double g, double b, Location loc) {
+		if (!Compat.PARTICLES) return;
 		try {
 			if (is13) {
 				Particle.DustOptions dust = new Particle.DustOptions(
@@ -124,37 +121,27 @@ public class ParticleHandlers {
 					if (player.getLocation().distanceSquared(loc) < 60 * 60)
 						player.spawnParticle(XParticle.DUST.get(), loc.getX(), loc.getY(), loc.getZ(), 0, 0, 0, 0, dust);
 				}
-				/*Particle.DustOptions dust = new Particle.DustOptions(
-						Color.fromRGB((int) (r * 255), (int) (g * 255), (int) (b * 255)), 1);
-				loc.getWorld().spawnParticle(Particle.REDSTONE, loc.getX(), loc.getY(), loc.getZ(), 0, 0, 0, 0, dust);*/
 			} else {
-
 				for (Player player : loc.getWorld().getPlayers()) {
 					if (player.getLocation().distanceSquared(loc) < 60 * 60)
 						player.spawnParticle(XParticle.DUST.get(), loc.getX(), loc.getY(), loc.getZ(), 0, r, g, b, 1);
 				}
-				//loc.getWorld().spawnParticle(Particle.REDSTONE, loc.getX(), loc.getY(), loc.getZ(), 0, r, g, b, 1);
 			}
-		} catch (Error | Exception e45) {
-			e45.printStackTrace();
+		} catch (RuntimeException e) {
+			ErrorReporter.report("spawning dust particles", e);
 		}
 	}
 
 	public static void spawnMuzzleSmoke(Player shooter, Location loc) {
-		try {
-			double theta = Math.atan2(shooter.getLocation().getDirection().getX(),
-					shooter.getLocation().getDirection().getZ());
+		if (!Compat.PARTICLES) return;
+		double theta = Math.atan2(shooter.getLocation().getDirection().getX(),
+				shooter.getLocation().getDirection().getZ());
 
-			theta -= (Math.PI / 8);
+		theta -= (Math.PI / 8);
 
-			double x = Math.sin(theta);
-			double z = Math.cos(theta);
+		Location l = loc.clone().add(Math.sin(theta), 0, Math.cos(theta));
 
-			Location l = loc.clone().add(x, 0, z);
-
-			for (int i = 0; i < 2; i++)
-				loc.getWorld().spawnParticle(XParticle.EFFECT.get(), l, 0);
-		} catch (Error | Exception e4) {
-		}
+		for (int i = 0; i < 2; i++)
+			loc.getWorld().spawnParticle(XParticle.EFFECT.get(), l, 0);
 	}
 }

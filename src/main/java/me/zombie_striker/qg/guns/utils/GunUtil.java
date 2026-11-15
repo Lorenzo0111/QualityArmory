@@ -1,5 +1,8 @@
 package me.zombie_striker.qg.guns.utils;
 
+import me.zombie_striker.qg.utils.Compat;
+import me.zombie_striker.qg.utils.ErrorReporter;
+
 import com.alessiodp.parties.api.Parties;
 import com.alessiodp.parties.api.interfaces.PartiesAPI;
 import com.alessiodp.parties.api.interfaces.Party;
@@ -128,12 +131,10 @@ public class GunUtil {
 						Location bulletLocationTest = start.clone();
 						// If the entity is close to the line of fire.
 
-						try {
-							if (QAMain.getConfiguration().interactions.preventHiddenPlayersHit && !p.canSee(e)) {
-								QAMain.DEBUG("Prevented shooting a hidden player: " + e.getName());
-								continue;
-							}
-						} catch (Error | Exception ignored) {}
+						if (QAMain.getConfiguration().interactions.preventHiddenPlayersHit && !canSee(p, e)) {
+							QAMain.DEBUG("Prevented shooting a hidden player: " + e.getName());
+							continue;
+						}
 
 						if (e instanceof Player) {
 							Player player = (Player) e;
@@ -151,8 +152,8 @@ public class GunUtil {
 											continue;
 										}
 									}
-								} catch (Error | Exception e43) {
-
+								} catch (RuntimeException | LinkageError e43) {
+									ErrorReporter.report("checking Parties friendly fire", e43);
 								}
 							}
 						}
@@ -189,30 +190,10 @@ public class GunUtil {
 					if (headshot) {
 						QAMain.DEBUG("Headshot!");
 						if (QAMain.getConfiguration().weapons.headshot.playNotificationSound) {
-							try {
-								p.playSound(p.getLocation(), QAMain.getConfiguration().weapons.headshot.notificationSound, 2, 1);
-								if (!QAMain.isVersionHigherThan(1, 9))
-									try {
-										p.playSound(p.getLocation(), Sound.valueOf("LAVA_POP"), 6, 1);
-									} catch (Error | Exception h4) {
-									}
-
-							} catch (Error | Exception h4) {
-								p.playSound(p.getLocation(), Sound.valueOf("LAVA_POP"), 1, 1);
-							}
+							playNotificationSound(p, QAMain.getConfiguration().weapons.headshot.notificationSound);
 						}
 					} else if (QAMain.getConfiguration().weapons.hitSound.enabled) {
-						try {
-							p.playSound(p.getLocation(), QAMain.getConfiguration().weapons.hitSound.sound, 2, 1);
-
-							if (!QAMain.isVersionHigherThan(1, 9))
-								try {
-									p.playSound(p.getLocation(), Sound.valueOf("LAVA_POP"), 6, 1);
-								} catch (Error | Exception ignored) {}
-
-						} catch (Error | Exception ignored) {
-							p.playSound(p.getLocation(), Sound.valueOf("LAVA_POP"), 1, 1);
-						}
+						playNotificationSound(p, QAMain.getConfiguration().weapons.hitSound.sound);
 					}
 
 					boolean negateHeadshot = false;
@@ -242,7 +223,7 @@ public class GunUtil {
 						}
 						if (hitTarget instanceof Player) {
 							Player player = (Player) hitTarget;
-							if (!QAMain.getConfiguration().features.enableIgnoreArmorProtection) {
+							if (!QAMain.getConfiguration().features.enableIgnoreArmorProtection && Compat.ITEM_ATTRIBUTES) {
 								try {
 									// damage = damage * ( 1 - min( 20, max( defensePoints / 5, defensePoints -
 									// damage / ( toughness / 4 + 2 ) ) ) / 25 )
@@ -268,8 +249,8 @@ public class GunUtil {
 
 									damageMAX = damageMAX * (1 - Math.min(20, Math.max(defensePoints / 5,
 											defensePoints - damageMAX / (toughness / 4 + 2))) / 25);
-								} catch (Error | Exception e5) {
-									QAMain.DEBUG("An error has occurred: " + e5.getMessage());
+								} catch (RuntimeException e5) {
+									ErrorReporter.report("applying armor protection", e5);
 								}
 							}
 
@@ -366,36 +347,6 @@ public class GunUtil {
 						}
 					}
 
-					/*try {
-						int control = 3;
-						if (dist % control == 0) {
-							List<Player> heard = new ArrayList<>();
-							for (Player p2 : nonheard) {
-								if (p2.getLocation().distanceSquared(start) <= (control * control * 4)) {
-									try {
-										start.getWorld().playSound(start, Sound.BLOCK_DISPENSER_LAUNCH, 2, 3);
-									} catch (Error e) {
-										start.getWorld().playSound(start, Sound.valueOf("SHOOT_ARROW"), 2, 2);
-									}
-									heard.add(p2);
-								}
-							}
-							for (Player p3 : heard) {
-								nonheard.remove(p3);
-							}
-						}
-
-					} catch (Error | Exception e53) {
-						if (dist % 30 == 0) {
-							try {
-								start.getWorld().playSound(start, Sound.BLOCK_DISPENSER_LAUNCH, 2, 2);
-								start.getWorld().playSound(start, Sound.BLOCK_FIRE_EXTINGUISH, 2, 2);
-							} catch (Error e) {
-								start.getWorld().playSound(start, Sound.valueOf("SHOOT_ARROW"), 2, 2);
-								start.getWorld().playSound(start, Sound.valueOf("FIRE_IGNITE"), 2, 2);
-							}
-						}
-					}*/
 					ParticleHandlers.spawnGunParticles(g, start);
 				}
 
@@ -447,7 +398,8 @@ public class GunUtil {
 						}.runTaskLater(QAMain.getInstance(), 3);
 					}
 				}
-			} catch (Error | Exception e5) {
+			} catch (RuntimeException | LinkageError e5) {
+				ErrorReporter.report("lighting the muzzle flash with LightAPI", e5);
 			}
 
 			// Breaking texture
@@ -455,20 +407,6 @@ public class GunUtil {
 				for (@SuppressWarnings("unused")
 						Location l : blocksThatWillPLAYBreak) {
 					start.getWorld().playSound(start, SoundHandler.getSoundWhenShot(start.getBlock()), 2, 1);
-					try {/*
-					 * for (Player p2 : l.getWorld().getPlayers()) {
-					 * com.comphenix.protocol.events.PacketContainer packet = new
-					 * com.comphenix.protocol.events.PacketContainer(
-					 * com.comphenix.protocol.Packets.Server.BLOCK_BREAK_ANIMATION);
-					 * packet.getIntegers().write(0, p2.getEntityId());
-					 * packet.getBlockPositionModifier().write(1, new
-					 * com.comphenix.protocol.wrappers.BlockPosition(l.getBlockX(), l.getBlockY(),
-					 * l.getBlockZ())); packet.getBytes().write(2, (byte) 4);
-					 * com.comphenix.protocol.ProtocolLibrary.getProtocolManager().sendServerPacket(
-					 * p2, packet); }
-					 */
-					} catch (Error | Exception e4) {
-					}
 				}
 			time4 = System.currentTimeMillis();
 		}
@@ -620,23 +558,13 @@ public class GunUtil {
 					}
 
 					if (slot == -1) {
-						try {
-							if (QualityArmory.isIronSights(player.getItemInHand())) {
-								player.getInventory().setItemInOffHand(temp);
-								QAMain.DEBUG("Sett Offhand because ironsights in main hand");
-
-								try {
-									// Fix to re-implement the "up and down" animation
-									if (QualityArmory.isIronSights(player.getItemInHand()) && QAMain.getConfiguration().features.enableLoreGunBullets) {
-										Gun.updateAmmoLore(g, player.getInventory().getItemInOffHand(), amount);
-									}
-								} catch (Exception | Error ignored) {}
-							} else {
-								player.getInventory().setItemInHand(temp);
-								QAMain.DEBUG("Set mainhand because ironsights not in main hand");
-							}
-
-						} catch (Error e) {
+						if (Compat.OFFHAND && QualityArmory.isIronSights(player.getItemInHand())) {
+							player.getInventory().setItemInOffHand(temp);
+							QAMain.DEBUG("Sett Offhand because ironsights in main hand");
+							refreshIronsightsLore(player, g, amount);
+						} else if (Compat.OFFHAND) {
+							player.getInventory().setItemInHand(temp);
+							QAMain.DEBUG("Set mainhand because ironsights not in main hand");
 						}
 					} else {
 						ItemStack tempCheck = player.getInventory().getItem(slot);
@@ -669,15 +597,12 @@ public class GunUtil {
 		QAMain.DEBUG("Ammo amount: " + amount);
 		QAMain.DEBUG("Slot: " + slot);
 		if (slot == -1) {
-			try {
-				if (QualityArmory.isIronSights(player.getItemInHand())) {
-					player.getInventory().setItemInOffHand(firstGunInstance);
-					QAMain.DEBUG("Sett Offhand because ironsights in main hand");
-				} else {
-					player.getInventory().setItemInHand(firstGunInstance);
-					QAMain.DEBUG("Set mainhand because ironsights not in main hand");
-				}
-			} catch (Error e) {
+			if (Compat.OFFHAND && QualityArmory.isIronSights(player.getItemInHand())) {
+				player.getInventory().setItemInOffHand(firstGunInstance);
+				QAMain.DEBUG("Sett Offhand because ironsights in main hand");
+			} else if (Compat.OFFHAND) {
+				player.getInventory().setItemInHand(firstGunInstance);
+				QAMain.DEBUG("Set mainhand because ironsights not in main hand");
 			}
 		} else {
 			player.getInventory().setItem(slot, firstGunInstance);
@@ -685,12 +610,45 @@ public class GunUtil {
 		Gun.updateAmmo(g, player, amount);
 		QAMain.DEBUG("New ammo: " + Gun.getAmount(player));
 
+		refreshIronsightsLore(player, g, amount);
+	}
+
+	/**
+	 * Re-applies the ammo lore to the gun in the offhand while aiming, which replays the item's
+	 * "up and down" animation.
+	 */
+	private static void refreshIronsightsLore(Player player, Gun g, int amount) {
+		if (!Compat.OFFHAND || !QAMain.getConfiguration().features.enableLoreGunBullets
+				|| !QualityArmory.isIronSights(player.getItemInHand()))
+			return;
 		try {
-			// Fix to re-implement the "up and down" animation
-			if (QualityArmory.isIronSights(player.getItemInHand()) && QAMain.getConfiguration().features.enableLoreGunBullets) {
-				Gun.updateAmmoLore(g, player.getInventory().getItemInOffHand(), amount);
-			}
-		} catch (Exception | Error ignored) {}
+			Gun.updateAmmoLore(g, player.getInventory().getItemInOffHand(), amount);
+		} catch (RuntimeException e) {
+			ErrorReporter.report("updating the lore of the aimed gun", e);
+		}
+	}
+
+	/**
+	 * Whether the shooter can see the entity. Before 1.18 only players can be hidden.
+	 */
+	private static boolean canSee(Player shooter, Entity entity) {
+		if (Compat.CAN_SEE_ENTITY)
+			return shooter.canSee(entity);
+		return !(entity instanceof Player) || shooter.canSee((Player) entity);
+	}
+
+	/**
+	 * Plays the headshot or hit notification sound. 1.8 can't play sounds by name, so it also plays the
+	 * vanilla lava pop sound, as before.
+	 */
+	private static void playNotificationSound(Player player, String sound) {
+		if (Compat.PLAYER_SOUND_BY_NAME) {
+			player.playSound(player.getLocation(), sound, 2, 1);
+			if (!Compat.MODERN_SOUNDS)
+				player.playSound(player.getLocation(), Sound.valueOf("LAVA_POP"), 6, 1);
+		} else {
+			player.playSound(player.getLocation(), Sound.valueOf("LAVA_POP"), 1, 1);
+		}
 	}
 
 	public static void updateXPBar(Player player, Gun g, int amount) {
@@ -710,8 +668,8 @@ public class GunUtil {
 			@SuppressWarnings("deprecation")
 			@Override
 			public void run() {
-				try {
-					String soundname = null;
+				if (Compat.WORLD_SOUND_BY_NAME) {
+					String soundname;
 					if (g.getWeaponSounds().size() > 1) {
 						soundname = g.getWeaponSounds()
 								.get(ThreadLocalRandom.current().nextInt(g.getWeaponSounds().size()));
@@ -719,16 +677,8 @@ public class GunUtil {
 						soundname = g.getWeaponSound();
 					}
 					player.getWorld().playSound(player.getLocation(), soundname, (float) g.getVolume(), 1);
-					if (!QAMain.isVersionHigherThan(1, 9)) {
-						try {
-							player.getWorld().playSound(player.getLocation(), Sound.valueOf("CLICK"), 5, 1);
-							player.getWorld().playSound(player.getLocation(), Sound.valueOf("WITHER_SHOOT"), 8, 2);
-							player.getWorld().playSound(player.getLocation(), Sound.valueOf("EXPLODE"), 8, 2f);
-						} catch (Error | Exception e3) {
-							player.getWorld().playSound(player.getLocation(), Sound.valueOf("BLOCK_LEVER_CLICK"), 5, 1);
-						}
-					}
-				} catch (Error e2) {
+				} else {
+					// 1.8 can't play the custom gun sounds
 					player.getWorld().playSound(player.getLocation(), Sound.valueOf("CLICK"), 5, 1);
 					player.getWorld().playSound(player.getLocation(), Sound.valueOf("WITHER_SHOOT"), 8, 2);
 					player.getWorld().playSound(player.getLocation(), Sound.valueOf("EXPLODE"), 8, 2f);
@@ -761,15 +711,10 @@ public class GunUtil {
 		if (im.getLore() != null && im.getDisplayName().contains(QAMain.getMessages().weapon.reloading)) {
 
 		} else {
-			try {
+			if (Compat.WORLD_SOUND_BY_NAME)
 				player.getWorld().playSound(player.getLocation(), WeaponSounds.RELOAD_MAG_OUT.getSoundName(), 1, 1f);
-			} catch (Error e2) {
-				try {
-					player.getWorld().playSound(player.getLocation(), Sound.valueOf("CLICK"), 5, 1);
-				} catch (Error | Exception e3) {
-					player.getWorld().playSound(player.getLocation(), Sound.valueOf("BLOCK_LEVER_CLICK"), 5, 1);
-				}
-			}
+			else
+				player.getWorld().playSound(player.getLocation(), Sound.valueOf("CLICK"), 5, 1);
 			final int slot = player.getInventory().getHeldItemSlot();
 
 			Ammo ammo = g.getAmmoType();

@@ -1,5 +1,6 @@
 package me.zombie_striker.qg.guns.reloaders;
 
+import me.zombie_striker.qg.utils.Compat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -43,22 +44,19 @@ public class PumpactionReloader implements ReloadingHandler {
 						return;
 					QualityArmory.sendHotbarGunAmmoCount(player, g, player.getInventory().getItemInMainHand(), true, g.getMaxBullets()-amountReloading+finalI, g.getMaxBullets());
 
-					try {
+					if (Compat.WORLD_SOUND_BY_NAME) {
 						if (k) {
 							player.getWorld().playSound(player.getLocation(), g.getReloadingSound(), 5, 4f);
 							player.getWorld().playSound(player.getLocation(), WeaponSounds.RELOAD_SHOTGUN.getSoundName(), 8, 1.4f);
 						}
 						player.getWorld().playSound(player.getLocation(), g.getReloadingSound(), 5, 4f);
-					} catch (Error e) {
-						try {
-							if (k) {
-								player.getWorld().playSound(player.getLocation(), g.getReloadingSound(), 5,
-										4f);
-								player.getWorld().playSound(player.getLocation(), Sound.valueOf("DIG_SAND"), 8, 1.4f);
-							}
-							player.getWorld().playSound(player.getLocation(), g.getReloadingSound(), 5, 4f);
-						} catch (Error | Exception e43) {
+					} else {
+						if (k) {
+							player.getWorld().playSound(player.getLocation(), g.getReloadingSound(), 5,
+									4f);
+							player.getWorld().playSound(player.getLocation(), Sound.valueOf("DIG_SAND"), 8, 1.4f);
 						}
+						player.getWorld().playSound(player.getLocation(), g.getReloadingSound(), 5, 4f);
 					}
 				}
 			}.runTaskLater(QAMain.getInstance(), (int) (time * i * 20));

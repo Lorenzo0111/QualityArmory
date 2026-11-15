@@ -1,5 +1,6 @@
 package me.zombie_striker.qg.gui.items;
 
+import me.zombie_striker.qg.utils.ErrorReporter;
 import com.cryptomorin.xseries.XSound;
 import de.themoep.inventorygui.StaticGuiElement;
 import me.zombie_striker.customitemmanager.CustomBaseObject;
@@ -106,7 +107,7 @@ public class ShopItem {
                 return true;
             });
         } catch (Exception e) {
-            e.printStackTrace();
+            ErrorReporter.report("building a shop menu item", e);
             ItemStack errorItem = new ItemStack(Material.BARRIER);
             ItemMeta meta = errorItem.getItemMeta();
             if (meta != null) {

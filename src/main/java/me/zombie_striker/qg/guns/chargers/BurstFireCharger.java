@@ -1,5 +1,6 @@
 package me.zombie_striker.qg.guns.chargers;
 
+import me.zombie_striker.qg.utils.Compat;
 import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.api.QualityArmory;
 import me.zombie_striker.qg.guns.Gun;
@@ -66,14 +67,11 @@ public class BurstFireCharger implements ChargingHandler {
                 Gun.updateAmmo(g, stack, amount);
 
                 if (slot == -1) {
-                    try {
-                        if (QualityArmory.isIronSights(player.getItemInHand())) {
-                            if (QualityArmory.isGun(player.getInventory().getItemInOffHand())) {
-                                player.getInventory().setItemInOffHand(stack);
-                                Gun.updateAmmo(g, player.getItemInHand(), amount);
-                            }
+                    if (Compat.OFFHAND && QualityArmory.isIronSights(player.getItemInHand())) {
+                        if (QualityArmory.isGun(player.getInventory().getItemInOffHand())) {
+                            player.getInventory().setItemInOffHand(stack);
+                            Gun.updateAmmo(g, player.getItemInHand(), amount);
                         }
-                    } catch (Error ignored) {
                     }
 
                 } else {

@@ -1,5 +1,7 @@
 package me.zombie_striker.qg.hooks;
 
+import me.zombie_striker.qg.utils.ErrorReporter;
+import me.zombie_striker.qg.utils.Compat;
 import me.zombie_striker.qg.QAMain;
 import net.coreprotect.CoreProtect;
 import net.coreprotect.CoreProtectAPI;
@@ -17,8 +19,8 @@ public class CoreProtectHook {
             if (!logBreak0(block, player)) {
                 QAMain.DEBUG("CoreProtect failed to log break: Returned false");
             }
-        } catch (Throwable e) {
-            QAMain.DEBUG("Error while logging break to CoreProtect: " + e.getMessage());
+        } catch (RuntimeException | LinkageError e) {
+            ErrorReporter.report("logging a block change to CoreProtect", e);
         }
     }
 
@@ -28,11 +30,9 @@ public class CoreProtectHook {
 
         QAMain.DEBUG("Logging break to CoreProtect");
 
-        try {
+        if (Compat.FLATTENED)
             return getCoreProtect().logRemoval(player.getName(), block.getLocation(), block.getType(), block.getBlockData());
-        } catch (Exception ignored) {
-            return getCoreProtect().logRemoval(player.getName(), block.getLocation(), block.getType(), block.getData());
-        }
+        return getCoreProtect().logRemoval(player.getName(), block.getLocation(), block.getType(), block.getData());
     }
 
     public static void logPlace(Block block, Player player) {
@@ -40,8 +40,8 @@ public class CoreProtectHook {
             if (!logPlace0(block, player)) {
                 QAMain.DEBUG("CoreProtect failed to log place: Returned false");
             }
-        } catch (Throwable e) {
-            QAMain.DEBUG("Error while logging break to CoreProtect: " + e.getMessage());
+        } catch (RuntimeException | LinkageError e) {
+            ErrorReporter.report("logging a block change to CoreProtect", e);
         }
     }
 
@@ -51,11 +51,9 @@ public class CoreProtectHook {
 
         QAMain.DEBUG("Logging break to CoreProtect");
 
-        try {
+        if (Compat.FLATTENED)
             return getCoreProtect().logPlacement(player.getName(), block.getLocation(), block.getType(), block.getBlockData());
-        } catch (Exception ignored) {
-            return getCoreProtect().logPlacement(player.getName(), block.getLocation(), block.getType(), block.getData());
-        }
+        return getCoreProtect().logPlacement(player.getName(), block.getLocation(), block.getType(), block.getData());
     }
 
     private static @Nullable CoreProtectAPI getCoreProtect() {

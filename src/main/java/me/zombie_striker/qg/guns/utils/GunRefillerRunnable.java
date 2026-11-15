@@ -1,5 +1,6 @@
 package me.zombie_striker.qg.guns.utils;
 
+import me.zombie_striker.qg.utils.Compat;
 import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.ammo.Ammo;
 import me.zombie_striker.qg.api.QualityArmory;
@@ -91,22 +92,10 @@ public class GunRefillerRunnable {
                 }
 
                 if (shouldContinue) {
-                    try {
+                    if (Compat.WORLD_SOUND_BY_NAME)
                         player.getWorld().playSound(player.getLocation(), WeaponSounds.RELOAD_MAG_IN.getSoundName(), 1, 1f);
-                        if (!QAMain.isVersionHigherThan(1, 9)) {
-                            try {
-                                player.getWorld().playSound(player.getLocation(), Sound.valueOf("CLICK"), 5, 1);
-                            } catch (Error | Exception e3) {
-                                player.getWorld().playSound(player.getLocation(), Sound.valueOf("BLOCK_LEVER_CLICK"), 5, 1);
-                            }
-                        }
-                    } catch (Error e2) {
-                        try {
-                            player.getWorld().playSound(player.getLocation(), Sound.valueOf("CLICK"), 5, 1);
-                        } catch (Error | Exception e3) {
-                            player.getWorld().playSound(player.getLocation(), Sound.valueOf("BLOCK_LEVER_CLICK"), 5, 1);
-                        }
-                    }
+                    else
+                        player.getWorld().playSound(player.getLocation(), Sound.valueOf("CLICK"), 5, 1);
                 }
 
                 newim.setDisplayName(g.getDisplayName());

@@ -1,5 +1,6 @@
 package me.zombie_striker.qg.miscitems;
 
+import me.zombie_striker.qg.utils.ErrorReporter;
 import com.cryptomorin.xseries.XPotion;
 import me.zombie_striker.customitemmanager.CustomBaseObject;
 import me.zombie_striker.customitemmanager.CustomItemManager;
@@ -100,8 +101,9 @@ public class MedKit extends CustomBaseObject {
 					String bar = ChatColor.RED + "[" + levelBar + ChatColor.RED + "] " + progressText;
 					HotbarMessager.sendHotBarMessage(healer, bar);
 					if (!healer.equals(patient)) HotbarMessager.sendHotBarMessage(patient, bar);
-				} catch (Exception ignored) {
-				}
+				} catch (Exception e) {
+			ErrorReporter.report("sending the medkit hotbar message", e);
+		}
 
 			} else {
 				try {
@@ -113,8 +115,9 @@ public class MedKit extends CustomBaseObject {
 					}
 
 					HotbarMessager.sendHotBarMessage(healer, message);
-				} catch (Error | Exception ignored) {
-				}
+				} catch (Exception e) {
+			ErrorReporter.report("sending the medkit hotbar message", e);
+		}
 			}
 			return true;
 		}
@@ -138,11 +141,8 @@ public class MedKit extends CustomBaseObject {
 			QAMain.getPlayerState().getBleedoutMultiplier().remove(patientId);
 			QAMain.getPlayerState().getBloodLevel().remove(patientId);
 
-			try {
-				patient.removePotionEffect(XPotion.NAUSEA.getPotionEffectType());
-				patient.removePotionEffect(PotionEffectType.BLINDNESS);
-			} catch (Error | Exception ignored) {
-			}
+			patient.removePotionEffect(XPotion.NAUSEA.getPotionEffectType());
+			patient.removePotionEffect(PotionEffectType.BLINDNESS);
 
 			return true;
 		}
@@ -169,7 +169,8 @@ public class MedKit extends CustomBaseObject {
 			if (!healer.equals(patient)) {
 				HotbarMessager.sendHotBarMessage(patient, bar);
 			}
-		} catch (Error | Exception ignored) {
+		} catch (Exception e) {
+			ErrorReporter.report("sending the medkit hotbar message", e);
 		}
 
 		return true;

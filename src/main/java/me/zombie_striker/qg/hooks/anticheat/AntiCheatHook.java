@@ -1,5 +1,6 @@
 package me.zombie_striker.qg.hooks.anticheat;
 
+import me.zombie_striker.qg.utils.ErrorReporter;
 import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.api.QualityArmory;
 import me.zombie_striker.qg.guns.Gun;
@@ -10,7 +11,6 @@ import org.bukkit.event.Cancellable;
 import org.bukkit.event.Listener;
 import org.jetbrains.annotations.NotNull;
 
-import java.lang.reflect.InvocationTargetException;
 
 public abstract class AntiCheatHook implements Listener {
 
@@ -35,7 +35,9 @@ public abstract class AntiCheatHook implements Listener {
             try {
                 AntiCheatHook aHook = hook.getConstructor().newInstance();
                 QAMain.getInstance().getLogger().info("Found " + aHook.getName() + " AntiCheat. Loaded support");
-            } catch (Throwable ignored) {}
+            } catch (Exception | LinkageError e) {
+                ErrorReporter.report("hooking into the " + name + " anticheat", e);
+            }
         }
     }
 }

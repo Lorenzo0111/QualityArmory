@@ -1,5 +1,8 @@
 package me.zombie_striker.qg;
 
+import java.nio.charset.StandardCharsets;
+import me.zombie_striker.qg.utils.ErrorReporter;
+import me.zombie_striker.qg.utils.Compat;
 import com.cryptomorin.xseries.XPotion;
 import com.cryptomorin.xseries.XSound;
 import com.cryptomorin.xseries.reflection.XReflection;
@@ -150,6 +153,9 @@ public class QAMain extends JavaPlugin {
         return glowScoreboards;
     }
 
+    /** {@code LivingEntity#getPotionEffect} (1.11+). */
+    private static final boolean GET_POTION_EFFECT = Compat.hasMethod("org.bukkit.entity.LivingEntity", "getPotionEffect", "org.bukkit.potion.PotionEffectType");
+
     public static boolean isVersionHigherThan(int mainVersion, int secondVersion) {
         return XReflection.supports(secondVersion);
     }
@@ -169,11 +175,11 @@ public class QAMain extends JavaPlugin {
                 if (player.hasPotionEffect(XPotion.SLOWNESS.getPotionEffectType()) && (g == null || g.getZoomWhenIronSights() > 0))
                     player.removePotionEffect(XPotion.SLOWNESS.getPotionEffectType());
                 boolean potionEff = false;
-                try {
+                if (GET_POTION_EFFECT) {
                     potionEff = player.hasPotionEffect(PotionEffectType.NIGHT_VISION)
                             && (g == null || g.hasnightVision())
                             && player.getPotionEffect(PotionEffectType.NIGHT_VISION).getAmplifier() == 3;
-                } catch (Error | Exception e3452) {
+                } else {
                     for (PotionEffect pe : player.getActivePotionEffects())
                         if (pe.getType() == PotionEffectType.NIGHT_VISION)
                             potionEff = (g == null || g.hasnightVision()) && pe.getAmplifier() == 3;
@@ -336,17 +342,13 @@ public class QAMain extends JavaPlugin {
     public static void registerCraftEntityNames(HashMap<MaterialStorage, ?> regMaps) {
         if (null != regMaps && !regMaps.isEmpty()) {
             for (Object item : regMaps.values()) {
-                try {
-                    Object[] itemStacks = ((CustomBaseObject) item).getIngredientsRaw();
-                    if (null != itemStacks && itemStacks.length > 0) {
-                        for (Object itemStack : itemStacks) {
-                            String itemName = ((ItemStack) itemStack).getType().name();
-                            String showName = getMessages().getMaterialName(itemName);
-                            getItemRegistry().getCraftingNames().put(itemName, showName);
-                        }
-                    }
-                } catch (Exception e) {
-                    //
+                Object[] ingredients = ((CustomBaseObject) item).getIngredientsRaw();
+                if (ingredients == null) continue;
+                for (Object ingredient : ingredients) {
+                    // Ingredients can also be the names of other custom items
+                    if (!(ingredient instanceof ItemStack)) continue;
+                    String itemName = ((ItemStack) ingredient).getType().name();
+                    getItemRegistry().getCraftingNames().put(itemName, getMessages().getMaterialName(itemName));
                 }
             }
         }
@@ -435,18 +437,16 @@ public class QAMain extends JavaPlugin {
             this.getLogger().info("Found PlaceholderAPI. Loaded support");
         }
 
-        try {
-            if (Bukkit.getPluginManager().isPluginEnabled("Mimic")) {
+        if (Bukkit.getPluginManager().isPluginEnabled("Mimic")) {
+            try {
                 MimicHookHandler.register();
                 this.getLogger().info("Found Mimic. Loaded support");
+            } catch (RuntimeException | LinkageError e) {
+                ErrorReporter.report("registering the Mimic hook", e);
             }
-        } catch (Exception | Error ignored) {
         }
 
-        try {
-            ParticleHandlers.initValues();
-        } catch (Error | Exception e5) {
-        }
+        ParticleHandlers.initValues();
         if (Bukkit.getPluginManager().getPlugin("ItemBridge") != null) {
             ItemBridgePatch.setup(this);
         }
@@ -468,33 +468,36 @@ public class QAMain extends JavaPlugin {
                 // Register your trait with Citizens.
                 net.citizensnpcs.api.CitizensAPI.getTraitFactory()
                         .registerTrait(net.citizensnpcs.api.trait.TraitInfo.create(GunnerTrait.class));
-            } catch (Error | Exception e4) {
-                getLogger().log(Level.WARNING, "Citizens 2.0 failed to register gunner trait (Ignore this.)");
+            } catch (RuntimeException | LinkageError e4) {
+                getLogger().log(Level.WARNING, "Citizens 2.0 failed to register gunner trait (Ignore this.)", e4);
             }
         }
 
         Bukkit.getPluginManager().registerEvents(new QAListener(), this);
         Bukkit.getPluginManager().registerEvents(new AimManager(), this);
-        try {
-            if (Bukkit.getPluginManager().isPluginEnabled("ChestShop"))
+        if (Bukkit.getPluginManager().isPluginEnabled("ChestShop")) {
+            try {
                 Bukkit.getPluginManager().registerEvents(new ChestShopHandler(), this);
-        } catch (Error | Exception e43) {
+            } catch (RuntimeException | LinkageError e) {
+                ErrorReporter.report("registering the ChestShop hook", e);
+            }
         }
 
-        try {
+        if (Compat.hasClass("org.bukkit.event.player.PlayerResourcePackStatusEvent")) {
             Bukkit.getPluginManager().registerEvents(new Update19resourcepackhandler(), this);
-        } catch (Exception | Error e) {
+        } else {
             getLogger().info(getMessages().general.prefix + " Resourcepack handler has been disabled due to the update being used.");
         }
-        try {
+        // Off hand, anvil and swing events (1.9+)
+        if (Compat.OFFHAND)
             Bukkit.getPluginManager().registerEvents(new Update19Events(), this);
-        } catch (Exception | Error e) {
-        }
 
-        try {
-            if (getConfiguration().features.autoUpdate)
+        if (getConfiguration().features.autoUpdate) {
+            try {
                 GithubUpdater.autoUpdate(this, "Lorenzo0111", "QualityArmory", "QualityArmory.jar");
-        } catch (Exception e) {
+            } catch (RuntimeException e) {
+                ErrorReporter.report("checking for updates", e);
+            }
         }
 
         Metrics metrics = new Metrics(this, 1699);
@@ -504,7 +507,8 @@ public class QAMain extends JavaPlugin {
                 new Metrics.SimplePie("uses_default_resourcepack", () -> getConfiguration().resourcepack.overrideDefault + ""));
         metrics.addCustomChart(
                 new Metrics.SimplePie("has_an_expansion_pack", () -> !itemRegistry.getExpansionPacks().isEmpty() + ""));
-        if (!CustomItemManager.isUsingCustomData()) {
+        // Only needed with durability based items, and isUnbreakable exists from 1.11
+        if (!CustomItemManager.isUsingCustomData() && Compat.UNBREAKABLE_META) {
             new BukkitRunnable() {
                 @SuppressWarnings("deprecation")
                 public void run() {
@@ -523,11 +527,7 @@ public class QAMain extends JavaPlugin {
                                         p.setItemInHand(temp);
                                     }
                                 }
-                            try {
-
-                                // if
-                                // (p.getInventory().getItemInOffHand().containsEnchantment(Enchantment.MENDING))
-                                // {
+                            if (Compat.OFFHAND) {
                                 if (p.getInventory().getItemInOffHand() != null
                                         && p.getInventory().getItemInOffHand().hasItemMeta())
                                     if (QualityArmory.isCustomItem(p.getInventory().getItemInOffHand())) {
@@ -541,11 +541,10 @@ public class QAMain extends JavaPlugin {
                                             return;
                                         }
                                     }
-                            } catch (Error | Exception e45) {
                             }
                         }
-                    } catch (Error | Exception catchy) {
-
+                    } catch (RuntimeException e) {
+                        ErrorReporter.report("making held custom items unbreakable", e);
                     }
                 }
             }.runTaskTimer(this, 20, 15);
@@ -554,6 +553,7 @@ public class QAMain extends JavaPlugin {
 
     @SuppressWarnings({"unchecked", "deprecation"})
     public void reloadVals() {
+        ErrorReporter.reset();
         this.mainConfig.load();
 
         new BoltactionCharger();
@@ -586,7 +586,8 @@ public class QAMain extends JavaPlugin {
         if (getServer().getPluginManager().isPluginEnabled("Sentinel"))
             try {
                 org.mcmonkey.sentinel.SentinelPlugin.integrations.add(new SentinelQAHandler());
-            } catch (Error | Exception e4) {
+            } catch (RuntimeException | LinkageError e4) {
+                ErrorReporter.report("registering the Sentinel integration", e4);
             }
 
 
@@ -728,13 +729,12 @@ public class QAMain extends JavaPlugin {
             }
             String[] k = e.get(i).split(",");
 
-            try {
-                temp = new ItemStack(Material.matchMaterial(k[0]));
-            } catch (Exception e2) {
-                e2.printStackTrace();
-            }
-            if (temp == null)
+            Material material = Material.matchMaterial(k[0]);
+            if (material == null) {
+                getLogger().warning("Unknown material in crafting requirements: " + k[0]);
                 continue;
+            }
+            temp = new ItemStack(material);
             if (k.length > 1)
                 temp.setDurability(Short.parseShort(k[1]));
             if (k.length > 2)
@@ -828,25 +828,21 @@ public class QAMain extends JavaPlugin {
                         StringBuilder builder = new StringBuilder();
 
                         InputStream in = getClass().getResourceAsStream("/changelog.txt");
-                        BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-                        for (int i = 0; i < 7; i++) {
-                            try {
-                                String s = reader.readLine();
-                                if (s.length() <= 1)
-                                    break;
-                                if (i == 6) {
-                                    builder.append("......\n");
-                                    break;
+                        if (in != null) {
+                            try (BufferedReader reader = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8))) {
+                                for (int i = 0; i < 7; i++) {
+                                    String s = reader.readLine();
+                                    if (s == null || s.length() <= 1)
+                                        break;
+                                    if (i == 6) {
+                                        builder.append("......\n");
+                                        break;
+                                    }
+                                    builder.append("\n").append(s);
                                 }
-                                builder.append("\n").append(s);
-                            } catch (IOException ignored) {
+                            } catch (IOException e) {
+                                ErrorReporter.report("reading the changelog", e);
                             }
-                        }
-
-                        try {
-                            in.close();
-                            reader.close();
-                        } catch (IOException e) {
                         }
 
                         changelog = LocalUtils.colorize(builder.toString());

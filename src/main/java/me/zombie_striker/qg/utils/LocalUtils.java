@@ -16,7 +16,7 @@ public class LocalUtils {
             Class<?> CLASS_CHAT_COLOR_BUNGEE = Class.forName("net.md_5.bungee.api.ChatColor");
             CLASS_CHAT_COLOR_BUNGEE.getDeclaredMethod("of", String.class);
             hexColorSupport = true;
-        }catch (Throwable e) {
+        } catch (ClassNotFoundException | NoSuchMethodException | LinkageError e) {
             hexColorSupport = false;
         }
     }

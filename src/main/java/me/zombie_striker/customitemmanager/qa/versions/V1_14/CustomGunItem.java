@@ -1,5 +1,7 @@
 package me.zombie_striker.customitemmanager.qa.versions.V1_14;
 
+import me.zombie_striker.qg.utils.ErrorReporter;
+import me.zombie_striker.qg.utils.Compat;
 import com.cryptomorin.xseries.XAttribute;
 import com.cryptomorin.xseries.profiles.builder.XSkull;
 import com.cryptomorin.xseries.profiles.objects.ProfileInputType;
@@ -109,21 +111,12 @@ public class CustomGunItem extends AbstractCustomGunItem {
 			}
 
 			boolean enableUnbreakable = QAMain.getConfiguration().items.enableUnbreaking;
-			if (enableUnbreakable) {
-				try {
-					im.setUnbreakable(true);
-				} catch (Error | Exception e34) {
-				}
-			}
-			try {
-				if (enableUnbreakable) {
-					im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_UNBREAKABLE);
-				}
-				im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_ATTRIBUTES);
-				im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_DESTROYS);
-			} catch (Error e) {
-
-			}
+			if (enableUnbreakable && Compat.UNBREAKABLE_META)
+				im.setUnbreakable(true);
+			if (enableUnbreakable)
+				im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_UNBREAKABLE);
+			im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_ATTRIBUTES);
+			im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_DESTROYS);
 			if (ms.getData() >= 0)
 				im.setCustomModelData(ms.getData());
 
@@ -152,7 +145,7 @@ public class CustomGunItem extends AbstractCustomGunItem {
 			try {
 				ironconfig.save(ironsights);
 			} catch (IOException e) {
-				e.printStackTrace();
+				ErrorReporter.report("saving " + ironsights.getName(), e);
 			}
 		}
 		IronsightsHandler.ironsightsMaterial = Material.matchMaterial(ironconfig.getString("material"));

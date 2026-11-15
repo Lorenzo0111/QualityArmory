@@ -96,15 +96,12 @@ public class Update19Events implements Listener {
 	@EventHandler
 	public void onSwig(PlayerAnimationEvent e) {
 		if (e.getAnimationType() == PlayerAnimationType.ARM_SWING) {
-			try {
-				if (e.getPlayer().getItemInHand() != null
-						&& QualityArmory.isGun(e.getPlayer().getInventory().getItemInMainHand()))
-					e.setCancelled(true);
-				if (e.getPlayer().getInventory().getItemInOffHand() != null
-						&& QualityArmory.isGun(e.getPlayer().getInventory().getItemInOffHand()))
-					e.setCancelled(true);
-			} catch (Error | Exception re) {
-			}
+			if (e.getPlayer().getItemInHand() != null
+					&& QualityArmory.isGun(e.getPlayer().getInventory().getItemInMainHand()))
+				e.setCancelled(true);
+			if (e.getPlayer().getInventory().getItemInOffHand() != null
+					&& QualityArmory.isGun(e.getPlayer().getInventory().getItemInOffHand()))
+				e.setCancelled(true);
 		}
 	}
 }

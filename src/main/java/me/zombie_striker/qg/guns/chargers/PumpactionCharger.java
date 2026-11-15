@@ -1,5 +1,6 @@
 package me.zombie_striker.qg.guns.chargers;
 
+import me.zombie_striker.qg.utils.Compat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -32,32 +33,30 @@ public PumpactionCharger() {
 		new BukkitRunnable() {
 			@Override
 			public void run() {
-				try {
+				if (Compat.WORLD_SOUND_BY_NAME) {
 					/*
 					 * player.getWorld().playSound(player.getLocation(), Sound.BLOCK_LEVER_CLICK, 8,
 					 * 1.4f); player.getWorld().playSound(player.getLocation(),
 					 * Sound.BLOCK_SAND_BREAK, 8, 1.4f);
 					 */
 					player.getWorld().playSound(player.getLocation(), g.getChargingSound(), 1, 1f);
-				} catch (Error e) {
-					try {
+				} else {
 					player.getWorld().playSound(player.getLocation(), Sound.valueOf("CLICK"), 8, 1.4f);
-					player.getWorld().playSound(player.getLocation(), Sound.valueOf("DIG_SAND"), 8, 1.4f);
-					}catch(Error|Exception e43) {}
+				player.getWorld().playSound(player.getLocation(), Sound.valueOf("DIG_SAND"), 8, 1.4f);
 				}
 			}
 		}.runTaskLater(QAMain.getInstance(), 12);
 		new BukkitRunnable() {
 			@Override
 			public void run() {
-				try {
+				if (Compat.WORLD_SOUND_BY_NAME) {
 					player.getWorld().playSound(player.getLocation(), g.getChargingSound(), 1,
 							1f);/*
 								 * player.getWorld().playSound(player.getLocation(), Sound.BLOCK_SAND_BREAK, 8,
 								 * 1.4f); player.getWorld().playSound(player.getLocation(),
 								 * Sound.BLOCK_LEVER_CLICK, 8, 1);
 								 */
-				} catch (Error e) {try {
+				} else {try {
 					player.getWorld().playSound(player.getLocation(), Sound.valueOf("DIG_SAND"), 8, 1.4f);
 					player.getWorld().playSound(player.getLocation(), Sound.valueOf("CLICK"), 8, 1);
 				}catch(Error|Exception e43) {}

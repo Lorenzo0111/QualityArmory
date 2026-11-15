@@ -1,5 +1,6 @@
 package me.zombie_striker.qg.miscitems;
 
+import me.zombie_striker.qg.utils.Compat;
 import com.cryptomorin.xseries.particles.XParticle;
 import me.zombie_striker.customitemmanager.MaterialStorage;
 import me.zombie_striker.qg.QAMain;
@@ -39,24 +40,21 @@ public class Flashbang extends Grenade {
 		h.setTimer(new BukkitRunnable() {
 			@Override
 			public void run() {
-				try {
+				if (Compat.PARTICLES) {
 					h.getHolder().getWorld().spawnParticle(XParticle.EXPLOSION_EMITTER.get(),
 							h.getHolder().getLocation(), 0);
 					h.getHolder().getWorld().playSound(h.getHolder().getLocation(), WeaponSounds.FLASHBANG.getSoundName(),
 							3f, 1f);
-				} catch (Error e3) {
+				} else {
 					h.getHolder().getWorld().playEffect(h.getHolder().getLocation(), Effect.valueOf("CLOUD"), 0);
 					h.getHolder().getWorld().playSound(h.getHolder().getLocation(), Sound.valueOf("EXPLODE"), 8, 0.7f);
 				}
-				try {
-					for (Entity e : h.getHolder().getNearbyEntities(radius, radius, radius)) {
-						if (e instanceof LivingEntity) {
-							QAMain.DEBUG("Flashbaned "+e.getName());
-							((LivingEntity) e)
-									.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 20 * 10, 2));
-						}
+				for (Entity e : h.getHolder().getNearbyEntities(radius, radius, radius)) {
+					if (e instanceof LivingEntity) {
+						QAMain.DEBUG("Flashbaned "+e.getName());
+						((LivingEntity) e)
+								.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 20 * 10, 2));
 					}
-				} catch (Error e) {
 				}
 				if (h.getHolder() instanceof Player) {
 					QAMain.DEBUG("Blinded player");

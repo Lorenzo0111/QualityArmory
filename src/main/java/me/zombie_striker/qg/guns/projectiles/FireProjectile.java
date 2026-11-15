@@ -1,5 +1,7 @@
 package me.zombie_striker.qg.guns.projectiles;
 
+import me.zombie_striker.qg.utils.Compat;
+import me.zombie_striker.qg.utils.ErrorReporter;
 import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.boundingbox.AbstractBoundingBox;
 import me.zombie_striker.qg.boundingbox.BoundingBoxManager;
@@ -57,8 +59,8 @@ public class FireProjectile implements RealtimeCalculationProjectile {
 									if (ProtectionHandler.canPvp(e.getLocation())) {
 										e.setFireTicks(20*3);
 									}
-								}catch (Error error){
-									QAMain.DEBUG("Cannot use protection hook: " + error.getMessage());
+								} catch (LinkageError error) {
+									ErrorReporter.report("checking PvP protection", error);
 									e.setFireTicks(20*3);
 								}
 							}
@@ -70,10 +72,8 @@ public class FireProjectile implements RealtimeCalculationProjectile {
 				}
 			}
 
-			try {
+			if (Compat.PARTICLES)
 				test.getWorld().spawnParticle(Particle.FLAME, test, 0);
-			} catch (Error | Exception e) {
-			}
 		}
 	}
 

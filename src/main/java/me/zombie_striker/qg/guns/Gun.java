@@ -1,5 +1,6 @@
 package me.zombie_striker.qg.guns;
 
+import me.zombie_striker.qg.utils.Compat;
 import com.cryptomorin.xseries.XPotion;
 import de.tr7zw.changeme.nbtapi.NBT;
 import me.zombie_striker.customitemmanager.CustomBaseObject;
@@ -851,18 +852,14 @@ public class Gun extends CustomBaseObject implements Comparable<Gun> {
         boolean offhand = offhandItem != null && offhandItem.equals(usedItem);
 
         QAMain.DEBUG("Made it to gun/attachment check : " + getName());
-        try {
-            if (QAMain.getConfiguration().interactions.enableChestInteract) {
-                Block b = player.getTargetBlock(null, 6);
-                if (b != null
-                        && (b.getType() == Material.CHEST
-                        || b.getType() == Material.TRAPPED_CHEST)
-                        || b.getType() == Material.ENDER_CHEST) {
-                    QAMain.DEBUG("Chest interactable check has return true!");
-                    return true;
-                }
+        if (QAMain.getConfiguration().interactions.enableChestInteract) {
+            Block b = player.getTargetBlock(null, 6);
+            if (b != null && (b.getType() == Material.CHEST
+                    || b.getType() == Material.TRAPPED_CHEST
+                    || b.getType() == Material.ENDER_CHEST)) {
+                QAMain.DEBUG("Chest interactable check has return true!");
+                return true;
             }
-        } catch (Error | Exception e4) {
         }
 
         if (fire) {
@@ -917,11 +914,10 @@ public class Gun extends CustomBaseObject implements Comparable<Gun> {
                     if (QAMain.getPlayerState().getRapidFireTasks().containsKey(player.getUniqueId()))
                         QAMain.getPlayerState().getRapidFireTasks().remove(player.getUniqueId()).cancel();
 
-                    try {
+                    if (Compat.WORLD_SOUND_BY_NAME)
                         player.getWorld().playSound(player.getLocation(), WeaponSounds.OUT_OF_AMMO_CLICK.getSoundName(), 1f, 1f);
-                    } catch (Exception | Error ignored) {
+                    else
                         player.playSound(player.getLocation(), WeaponSounds.OUT_OF_AMMO_CLICK.getSoundName(), 1f, 1f);
-                    }
 
                     if (QAMain.getConfiguration().weapons.autoReloadWhenOutOfAmmo) {
                         if (offhand) {
@@ -976,7 +972,7 @@ public class Gun extends CustomBaseObject implements Comparable<Gun> {
             if (QAMain.getConfiguration().weapons.ironsights.rightClick
                     && Update19OffhandChecker.supportOffhand(player.getPlayer())) {
                 if (hasIronSights()) {
-                    try {
+                    if (Compat.OFFHAND) {
 
                         if (player.getPlayer().getItemInHand().getItemMeta().getDisplayName()
                                 .contains(QAMain.getMessages().weapon.reloading)) {
@@ -1034,7 +1030,7 @@ public class Gun extends CustomBaseObject implements Comparable<Gun> {
 
 
                         QualityArmory.sendHotbarGunAmmoCount(player.getPlayer(), this, usedItem, false);
-                    } catch (Error e2) {
+                    } else {
                         Bukkit.broadcastMessage(QAMain.getMessages().general.prefix
                                 + "Ironsights not compatible for versions lower than 1.8. The server owner should set EnableIronSights to false in the plugin's config");
                     }

@@ -1,5 +1,6 @@
 package me.zombie_striker.qg.hooks;
 
+import me.zombie_striker.qg.utils.ErrorReporter;
 import me.zombie_striker.customitemmanager.CustomBaseObject;
 import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.api.QualityArmory;
@@ -49,6 +50,8 @@ public class MimicHookImpl implements BukkitItemsRegistry {
     public void register() {
         try {
             Mimic.getInstance().registerItemsRegistry(this, MimicApiLevel.CURRENT, QAMain.getInstance(), ServicePriority.Normal);
-        } catch (Throwable ignored) {}
+        } catch (RuntimeException | LinkageError e) {
+            ErrorReporter.report("registering items with Mimic", e);
+        }
     }
 }

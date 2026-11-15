@@ -53,17 +53,11 @@ public class BulletWoundHandler {
 
 							if (bloodlevel / QAMain.getConfiguration().combat.bleeding.initialBloodLevel <= 0.75)
 
-								try {
-									online.removePotionEffect(XPotion.NAUSEA.getPotionEffectType());
-									online.addPotionEffect(new PotionEffect(XPotion.NAUSEA.getPotionEffectType(), 499, 3));
-								} catch (Error | Exception e4) {
-								}
+								online.removePotionEffect(XPotion.NAUSEA.getPotionEffectType());
+								online.addPotionEffect(new PotionEffect(XPotion.NAUSEA.getPotionEffectType(), 499, 3));
 							if (bloodlevel / QAMain.getConfiguration().combat.bleeding.initialBloodLevel <= 0.40)
-								try {
-									online.removePotionEffect(PotionEffectType.BLINDNESS);
-									online.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 499, 1));
-								} catch (Error | Exception e4) {
-								}
+								online.removePotionEffect(PotionEffectType.BLINDNESS);
+								online.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 499, 1));
 							double initialBlood = QAMain.getConfiguration().combat.bleeding.initialBloodLevel;
 							double bloodRatio = initialBlood > 0 ? bloodlevel / initialBlood : bloodlevel;
 							if (bloodRatio <= 1e-9)
