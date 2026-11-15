@@ -53,6 +53,8 @@ public class MessagesConfig extends BaseConfiguration {
         public String playerNotOnline = "&c That player is not online";
         @Config
         public String consoleRequiresPlayer = " A player is required from the console. /QA give <item> <player> [amount]";
+        @Config
+        public String playerOnly = " This command can only be used by players.";
     }
 
     @Section

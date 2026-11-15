@@ -1,5 +1,6 @@
 package me.zombie_striker.customitemmanager;
 
+import me.zombie_striker.qg.crafting.Crafting;
 import me.zombie_striker.qg.utils.CustomModelData;
 import me.zombie_striker.qg.utils.Compat;
 import me.zombie_striker.qg.QAMain;
@@ -66,7 +67,7 @@ public class OLD_ItemFact {
 				StringBuilder sb = new StringBuilder();
 				// Chris: itemName from message.yml
 				String itemName = is.getType().name();
-				sb.append(ChatColor.RED + "- " + QAMain.findCraftEntityName(itemName, itemName) + " x " + is.getAmount());
+				sb.append(ChatColor.RED + "- " + Crafting.findIngredientName(itemName, itemName) + " x " + is.getAmount());
 				if (is.getDurability() != 0)
 					sb.append(":" + is.getDurability());
 				lore.add(sb.toString());

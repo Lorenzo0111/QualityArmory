@@ -1,5 +1,6 @@
 package me.zombie_striker.qg.gui.items;
 
+import me.zombie_striker.qg.crafting.Crafting;
 import me.zombie_striker.qg.utils.ErrorReporter;
 import com.cryptomorin.xseries.XSound;
 import de.themoep.inventorygui.StaticGuiElement;
@@ -63,7 +64,7 @@ public class CraftingItem {
 
                 if (item.getIngredientsRaw() == null) return true;
 
-                if (!QAMain.lookForIngre(player, item) && player.getGameMode() != GameMode.CREATIVE) {
+                if (!Crafting.hasIngredients(player, item) && player.getGameMode() != GameMode.CREATIVE) {
                     player.closeInventory();
                     player.sendMessage(QAMain.getMessages().general.prefix + QAMain.getMessages().crafting.missingIngredients);
                     XSound.BLOCK_ANVIL_BREAK.play(player, 1, 1);
@@ -71,7 +72,7 @@ public class CraftingItem {
                 }
 
                 if (player.getGameMode() != GameMode.CREATIVE) {
-                    QAMain.removeForIngre(player, item);
+                    Crafting.removeIngredients(player, item);
                 }
 
                 if (item instanceof Ammo) {

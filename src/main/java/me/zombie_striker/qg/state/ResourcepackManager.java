@@ -1,6 +1,12 @@
 package me.zombie_striker.qg.state;
 
+import me.zombie_striker.customitemmanager.CustomItemManager;
+import me.zombie_striker.customitemmanager.pack.MultiVersionPackProvider;
+import me.zombie_striker.customitemmanager.pack.StaticPackProvider;
+import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.config.CommentYamlConfiguration;
+import me.zombie_striker.qg.config.MainConfig;
+import org.bukkit.configuration.ConfigurationSection;
 
 import java.io.File;
 import java.io.IOException;
@@ -105,6 +111,40 @@ public final class ResourcepackManager {
             this.loading.add(player);
         else
             this.loading.remove(player);
+    }
+
+    /**
+     * Applies the {@code resourcepack.default-pack} setting: uses the configured pack when
+     * {@code resourcepack.override-default} is on, otherwise writes the bundled pack's URL to the config.
+     */
+    public void applyDefaultPack(MainConfig config) {
+        boolean save = false;
+        Object defaultPack = config.getDefaultResourcepack();
+        if (config.resourcepack.overrideDefault && defaultPack != null) {
+            if (defaultPack instanceof ConfigurationSection) {
+                ConfigurationSection packSection = (ConfigurationSection) defaultPack;
+                // "21" was renamed to "21-4" when 1.21.4 got its own pack
+                if (packSection.contains("21")) {
+                    packSection.set("21-4", packSection.getString("21"));
+                    packSection.set("21", null);
+                    save = true;
+                }
+                CustomItemManager.setResourcepack(new MultiVersionPackProvider(packSection));
+            } else {
+                CustomItemManager.setResourcepack(new StaticPackProvider(String.valueOf(defaultPack)));
+            }
+        } else {
+            Object serialized = CustomItemManager.getResourcepackProvider().serialize();
+            if (!(defaultPack instanceof String) || !defaultPack.equals(serialized)) {
+                config.setDefaultResourcepack(serialized);
+                save = true;
+            }
+        }
+
+        if (save) {
+            QAMain.DEBUG(QAMain.getMessages().general.prefix + " Needed to save config: code=2");
+            config.save();
+        }
     }
 
     public void onQuit(UUID player) {
