@@ -11,37 +11,37 @@ import org.bukkit.entity.EntityType;
 public class BoundingBoxManager {
 
 	//private static DefaultHumanoidBoundingBox DEFUALT = new DefaultHumanoidBoundingBox();
-	public static PlayerBoundingBox PLAYER = new PlayerBoundingBox();
-	public static DefaultHumanoidBoundingBox HUMANOID = new DefaultHumanoidBoundingBox();
-	public static DefaultHumanoidBoundingBox WITHER_SKELETON = new DefaultHumanoidBoundingBox(1.8, 0.45, 2.4);
-	public static DefaultHumanoidBoundingBox VILLAGER = new DefaultHumanoidBoundingBox(1.4, 0.45, 2);
-	public static DefaultHumanoidBoundingBox CREEPER = new DefaultHumanoidBoundingBox(1.2, 0.4, 1.7);
-	public static DefaultHumanoidBoundingBox ENDERMAN = new DefaultHumanoidBoundingBox(2.4, 0.4, 3);
-	public static ComplexHumanoidBoundingBox IRON_GOLEM = new ComplexHumanoidBoundingBox(2.1, 0.8, 2.9, 0.4);
-	public static ComplexHumanoidBoundingBox WITHER = new ComplexHumanoidBoundingBox(2.5, 1, 3.5, 1.5);
-	public static DefaultHumanoidBoundingBox BAT = new DefaultHumanoidBoundingBox(0.5, 0.4, 1);
-	public static ComplexAnimalBoundingBox SILVERFISH = new ComplexAnimalBoundingBox(0.3, 0.2, 0, 0.3, 0.05, 0.15);
-	public static ComplexAnimalBoundingBox CAT = new ComplexAnimalBoundingBox(0.4, 0.3, 0.15, 0.4, 0.1, 0.4);
-	public static ComplexAnimalBoundingBox SPIDER = new ComplexAnimalBoundingBox(0.8, 0.8, 0.2, 0.8, 0.2, 0.6);
-	public static ComplexAnimalBoundingBox CHICKEN = new ComplexAnimalBoundingBox(0.5, 0.25, 0.5, 0.9, 0.2, 0.1);
-	public static ComplexAnimalBoundingBox COW = new ComplexAnimalBoundingBox(1.3, 0.5, 1, 1.3, 0.25, 0.6);
-	public static ComplexAnimalBoundingBox PHANTOM = new ComplexAnimalBoundingBox(0.5, 1, 0, 0.5, 0.25, 0.15);
-	public static ComplexAnimalBoundingBox PIG = new ComplexAnimalBoundingBox(0.8, 0.5, 0.5, 1, 0.25, 0.6);
-	public static ComplexAnimalBoundingBox HORSE = new ComplexAnimalBoundingBox(1.3, 0.75, 1.3, 2, 0.25, 0.75);
-	public static ComplexAnimalBoundingBox WOLF = new ComplexAnimalBoundingBox(0.5, 0.3, 0.3, 0.5, 0.1, 0.3);
+	public static final PlayerBoundingBox PLAYER = new PlayerBoundingBox();
+	public static final DefaultHumanoidBoundingBox HUMANOID = new DefaultHumanoidBoundingBox();
+	public static final DefaultHumanoidBoundingBox WITHER_SKELETON = new DefaultHumanoidBoundingBox(1.8, 0.45, 2.4);
+	public static final DefaultHumanoidBoundingBox VILLAGER = new DefaultHumanoidBoundingBox(1.4, 0.45, 2);
+	public static final DefaultHumanoidBoundingBox CREEPER = new DefaultHumanoidBoundingBox(1.2, 0.4, 1.7);
+	public static final DefaultHumanoidBoundingBox ENDERMAN = new DefaultHumanoidBoundingBox(2.4, 0.4, 3);
+	public static final ComplexHumanoidBoundingBox IRON_GOLEM = new ComplexHumanoidBoundingBox(2.1, 0.8, 2.9, 0.4);
+	public static final ComplexHumanoidBoundingBox WITHER = new ComplexHumanoidBoundingBox(2.5, 1, 3.5, 1.5);
+	public static final DefaultHumanoidBoundingBox BAT = new DefaultHumanoidBoundingBox(0.5, 0.4, 1);
+	public static final ComplexAnimalBoundingBox SILVERFISH = new ComplexAnimalBoundingBox(0.3, 0.2, 0, 0.3, 0.05, 0.15);
+	public static final ComplexAnimalBoundingBox CAT = new ComplexAnimalBoundingBox(0.4, 0.3, 0.15, 0.4, 0.1, 0.4);
+	public static final ComplexAnimalBoundingBox SPIDER = new ComplexAnimalBoundingBox(0.8, 0.8, 0.2, 0.8, 0.2, 0.6);
+	public static final ComplexAnimalBoundingBox CHICKEN = new ComplexAnimalBoundingBox(0.5, 0.25, 0.5, 0.9, 0.2, 0.1);
+	public static final ComplexAnimalBoundingBox COW = new ComplexAnimalBoundingBox(1.3, 0.5, 1, 1.3, 0.25, 0.6);
+	public static final ComplexAnimalBoundingBox PHANTOM = new ComplexAnimalBoundingBox(0.5, 1, 0, 0.5, 0.25, 0.15);
+	public static final ComplexAnimalBoundingBox PIG = new ComplexAnimalBoundingBox(0.8, 0.5, 0.5, 1, 0.25, 0.6);
+	public static final ComplexAnimalBoundingBox HORSE = new ComplexAnimalBoundingBox(1.3, 0.75, 1.3, 2, 0.25, 0.75);
+	public static final ComplexAnimalBoundingBox WOLF = new ComplexAnimalBoundingBox(0.5, 0.3, 0.3, 0.5, 0.1, 0.3);
 
 
 	//TODO: Verify
-	public static ComplexAnimalBoundingBox FISH = new ComplexAnimalBoundingBox(0.3, 0.3, 0, 0.3, 0.1, 0.21);
-	public static ComplexAnimalBoundingBox ENDERDRAGON = new ComplexAnimalBoundingBox(4, 8, 0.8, 4, 1, -3);
-	public static ComplexAnimalBoundingBox CAVE_SPIDER = new ComplexAnimalBoundingBox(0.5, 0.5, 0.15, 0.5, 0.2, 0.4);
-	public static ComplexAnimalBoundingBox RAVAGER = new ComplexAnimalBoundingBox(2, 1, 1, 2.2, 1, 1.5);
-	public static ComplexAnimalBoundingBox GHAST = new ComplexAnimalBoundingBox(4, 2, 0, 4, 2, 0);
-	public static ComplexAnimalBoundingBox GUARDIAN = new ComplexAnimalBoundingBox(1.3, 0.6, 0, 1.3, 0.6, 0);
+	public static final ComplexAnimalBoundingBox FISH = new ComplexAnimalBoundingBox(0.3, 0.3, 0, 0.3, 0.1, 0.21);
+	public static final ComplexAnimalBoundingBox ENDERDRAGON = new ComplexAnimalBoundingBox(4, 8, 0.8, 4, 1, -3);
+	public static final ComplexAnimalBoundingBox CAVE_SPIDER = new ComplexAnimalBoundingBox(0.5, 0.5, 0.15, 0.5, 0.2, 0.4);
+	public static final ComplexAnimalBoundingBox RAVAGER = new ComplexAnimalBoundingBox(2, 1, 1, 2.2, 1, 1.5);
+	public static final ComplexAnimalBoundingBox GHAST = new ComplexAnimalBoundingBox(4, 2, 0, 4, 2, 0);
+	public static final ComplexAnimalBoundingBox GUARDIAN = new ComplexAnimalBoundingBox(1.3, 0.6, 0, 1.3, 0.6, 0);
 
-	public static NullBoundingBox NULL = new NullBoundingBox();
+	public static final NullBoundingBox NULL = new NullBoundingBox();
 
-	//public static ComplexAnimalBoundingBox CAVE_SPIDER = new ComplexAnimalBoundingBox(0.5,0.5,0.15,0.5,0.2,0.4);
+	//public static final ComplexAnimalBoundingBox CAVE_SPIDER = new ComplexAnimalBoundingBox(0.5,0.5,0.15,0.5,0.2,0.4);
 	//TODO: SLIMES
 	private static HashMap<UUID, AbstractBoundingBox> entityBoundbox = new HashMap<>();
 	private static HashMap<EntityType, AbstractBoundingBox> entityTypeBoundingBox = new HashMap<>();

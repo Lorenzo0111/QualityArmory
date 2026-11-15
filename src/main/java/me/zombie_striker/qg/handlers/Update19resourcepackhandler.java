@@ -12,15 +12,15 @@ public class Update19resourcepackhandler implements Listener {
 
     @EventHandler
     public void onResourcePackStatus(PlayerResourcePackStatusEvent event) {
-        QAMain.sentResourcepack.remove(event.getPlayer().getUniqueId());
+        QAMain.getResourcepacks().clearSent(event.getPlayer().getUniqueId());
 
         if (event.getStatus() == PlayerResourcePackStatusEvent.Status.ACCEPTED
                 || event.getStatus() == PlayerResourcePackStatusEvent.Status.SUCCESSFULLY_LOADED) {
-            QAMain.resourcepackReq.add(event.getPlayer().getUniqueId());
+            QAMain.getResourcepacks().setAccepted(event.getPlayer().getUniqueId());
         }
 
         if (event.getStatus() == PlayerResourcePackStatusEvent.Status.SUCCESSFULLY_LOADED)
-            QAMain.resourcepackLoading.remove(event.getPlayer().getUniqueId());
+            QAMain.getResourcepacks().setLoading(event.getPlayer().getUniqueId(), false);
 
         if (event.getStatus() == PlayerResourcePackStatusEvent.Status.DECLINED) {
             if (QAMain.getConfiguration().resourcepack.kickIfDenied) {
@@ -28,7 +28,7 @@ public class Update19resourcepackhandler implements Listener {
             }
 
             // Add to the list, so it doesn't keep spamming the title
-            QAMain.resourcepackReq.add(event.getPlayer().getUniqueId());
+            QAMain.getResourcepacks().setAccepted(event.getPlayer().getUniqueId());
         }
     }
 
@@ -38,7 +38,7 @@ public class Update19resourcepackhandler implements Listener {
         if (!(event.getEntity() instanceof Player)) return;
 
         Player player = (Player) event.getEntity();
-        if (QAMain.resourcepackLoading.contains(player.getUniqueId()))
+        if (QAMain.getResourcepacks().isLoading(player.getUniqueId()))
             event.setCancelled(true);
     }
 

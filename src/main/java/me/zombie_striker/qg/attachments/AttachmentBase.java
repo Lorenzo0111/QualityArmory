@@ -17,7 +17,7 @@ public class AttachmentBase extends Gun {
 	public AttachmentBase(MaterialStorage baseItem, MaterialStorage currentMaterial, String name, String displayname) {
 		super(displayname, currentMaterial);
 		this.base = baseItem;
-		baseGun = QAMain.gunRegister.get(baseItem);
+		baseGun = QAMain.getItemRegistry().getGuns().get(baseItem);
 		copyFrom(baseGun);
 		this.setDisplayname(displayname);
 		this.newName = name;

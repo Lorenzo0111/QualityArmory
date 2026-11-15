@@ -10,7 +10,7 @@ public final class ViaVersionHook {
     public static final int VIAVERSION_1_8 = 106;
 
     public static String getVersion(Player player) {
-        if (!QAMain.hasViaVersion) return XReflection.MINOR_NUMBER + "." + XReflection.PATCH_NUMBER;
+        if (!QAMain.getIntegrations().hasViaVersion()) return XReflection.MINOR_NUMBER + "." + XReflection.PATCH_NUMBER;
 
         try {
             int version = Via.getAPI().getPlayerVersion(player.getUniqueId());

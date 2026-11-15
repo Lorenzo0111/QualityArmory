@@ -62,14 +62,8 @@ public class ShopItem {
                     }
                 }
 
-                if (!QAMain.enableEconomy) {
-                    try {
-                        QAMain.enableEconomy = EconHandler.setupEconomy();
-                    } catch (Exception | Error ignored) {
-                    }
-                }
-
-                if (!QAMain.enableEconomy) {
+                // The economy plugin may have loaded after QualityArmory
+                if (!QAMain.getIntegrations().hasEconomy() && !QAMain.getIntegrations().setupEconomy()) {
                     player.closeInventory();
                     player.sendMessage(QAMain.getMessages().general.prefix + QAMain.getMessages().shop.noEconomy);
                     return true;

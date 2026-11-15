@@ -21,6 +21,7 @@ import me.zombie_striker.qg.armor.ArmorObject;
 import me.zombie_striker.qg.attachments.AttachmentBase;
 import me.zombie_striker.qg.boundingbox.BoundingBoxManager;
 import me.zombie_striker.qg.config.*;
+import me.zombie_striker.qg.state.*;
 import me.zombie_striker.qg.gui.MenuManager;
 import me.zombie_striker.qg.guns.Gun;
 import me.zombie_striker.qg.guns.chargers.*;
@@ -50,7 +51,6 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -71,41 +71,38 @@ public class QAMain extends JavaPlugin {
 
     private static String changelog = null;
 
+    /** @deprecated Use {@link #getItemRegistry()}. Kept for addons; it is the same map. */
+    @Deprecated
     public static HashMap<MaterialStorage, Gun> gunRegister = new LinkedHashMap<>();
+    /** @deprecated Use {@link #getItemRegistry()}. Kept for addons; it is the same map. */
+    @Deprecated
     public static HashMap<MaterialStorage, Ammo> ammoRegister = new LinkedHashMap<>();
+    /** @deprecated Use {@link #getItemRegistry()}. Kept for addons; it is the same map. */
+    @Deprecated
     public static HashMap<MaterialStorage, CustomBaseObject> miscRegister = new LinkedHashMap<>();
+    /** @deprecated Use {@link #getItemRegistry()}. Kept for addons; it is the same map. */
+    @Deprecated
     public static HashMap<MaterialStorage, ArmorObject> armorRegister = new LinkedHashMap<>();
-
-    public static HashMap<String, String> craftingEntityNames = new HashMap<>();
-
-    public static HashMap<UUID, Long> lastWeaponSwitch = new HashMap<>();
-    public static HashMap<UUID, Location> recoilHelperMovedLocation = new HashMap<>();
+    /** @deprecated Use {@link #getItemRegistry()}. Kept for addons; it is the same list. */
+    @Deprecated
     public static ArrayList<MaterialStorage> expansionPacks = new ArrayList<>();
+    /** @deprecated Use {@link #getPlayerState()}. Kept for addons; it is the same map. */
+    @Deprecated
     public static HashMap<UUID, List<GunRefillerRunnable>> reloadingTasks = new HashMap<>();
-    public static HashMap<UUID, Long> sentResourcepack = new HashMap<>();
-    public static ArrayList<UUID> resourcepackReq = new ArrayList<>();
-    public static List<UUID> resourcepackLoading = new ArrayList<>();
-    public static List<Gunner> gunners = new ArrayList<>();
-    public static List<String> namesToBypass = new ArrayList<>();
-    public static List<Material> interactableBlocks = new ArrayList<>();
-    public static List<Material> destructableBlocks = new ArrayList<Material>();
-    public static Object bulletTrail;
-    public static boolean enableEconomy = false;
-    public static boolean showOutOfAmmoOnItem = false;
 
-    public static CommentYamlConfiguration resourcepackwhitelist;
-    public static boolean hasParties = false;
-    public static boolean hasProtocolLib = false;
-    public static boolean hasViaVersion = false;
-    public static boolean hasViaRewind = false;
-    public static List<Scoreboard> coloredGunScoreboard = new ArrayList<Scoreboard>();
-    public static List<UUID> currentlyScoping = new ArrayList<>();
     private static QAMain main;
 
     private TreeFellerHandler tfh = null;
     private MainConfig mainConfig;
     private MessagesConfig messages;
-    private static MenuManager menuManager;
+    private MenuManager menuManager;
+    private final ItemRegistry itemRegistry = new ItemRegistry();
+    private final PlayerStateManager playerState = new PlayerStateManager();
+    private final Integrations integrations = new Integrations();
+    private final BlockRules blockRules = new BlockRules();
+    private ResourcepackManager resourcepacks;
+    private final List<Gunner> gunners = new ArrayList<>();
+    private final List<Scoreboard> glowScoreboards = new ArrayList<>();
 
     public static QAMain getInstance() {
         return main;
@@ -119,6 +116,40 @@ public class QAMain extends JavaPlugin {
         return getInstance().messages;
     }
 
+    public static ItemRegistry getItemRegistry() {
+        return getInstance().itemRegistry;
+    }
+
+    public static PlayerStateManager getPlayerState() {
+        return getInstance().playerState;
+    }
+
+    public static ResourcepackManager getResourcepacks() {
+        return getInstance().resourcepacks;
+    }
+
+    public static Integrations getIntegrations() {
+        return getInstance().integrations;
+    }
+
+    public static BlockRules getBlockRules() {
+        return getInstance().blockRules;
+    }
+
+    /**
+     * @return Citizens gunner NPCs, disposed when the plugin is disabled.
+     */
+    public List<Gunner> getGunners() {
+        return gunners;
+    }
+
+    /**
+     * @return Scoreboards that have the glow color teams registered.
+     */
+    public List<Scoreboard> getGlowScoreboards() {
+        return glowScoreboards;
+    }
+
     public static boolean isVersionHigherThan(int mainVersion, int secondVersion) {
         return XReflection.supports(secondVersion);
     }
@@ -126,15 +157,15 @@ public class QAMain extends JavaPlugin {
     public static void toggleNightvision(Player player, Gun g, boolean add) {
         if (add) {
             if (g.getZoomWhenIronSights() > 0) {
-                currentlyScoping.add(player.getUniqueId());
+                getPlayerState().getScoping().add(player.getUniqueId());
                 player.addPotionEffect(new PotionEffect(XPotion.SLOWNESS.getPotionEffectType(), 1200, g.getZoomWhenIronSights()));
             }
             if (g.hasnightVision()) {
-                currentlyScoping.add(player.getUniqueId());
+                getPlayerState().getScoping().add(player.getUniqueId());
                 player.addPotionEffect(new PotionEffect(XPotion.NIGHT_VISION.getPotionEffectType(), 1200, 3));
             }
         } else {
-            if (currentlyScoping.contains(player.getUniqueId())) {
+            if (getPlayerState().getScoping().contains(player.getUniqueId())) {
                 if (player.hasPotionEffect(XPotion.SLOWNESS.getPotionEffectType()) && (g == null || g.getZoomWhenIronSights() > 0))
                     player.removePotionEffect(XPotion.SLOWNESS.getPotionEffectType());
                 boolean potionEff = false;
@@ -149,7 +180,7 @@ public class QAMain extends JavaPlugin {
                 }
                 if (potionEff)
                     player.removePotionEffect(PotionEffectType.NIGHT_VISION);
-                currentlyScoping.remove(player.getUniqueId());
+                getPlayerState().getScoping().remove(player.getUniqueId());
             }
         }
 
@@ -293,11 +324,13 @@ public class QAMain extends JavaPlugin {
     }
 
     public static void openShopMenu(Player player) {
-        if (menuManager != null) menuManager.openShopMenu(player);
+        MenuManager menus = getInstance().menuManager;
+        if (menus != null) menus.openShopMenu(player);
     }
 
     public static void openCraftMenu(Player player) {
-        if (menuManager != null) menuManager.openCraftMenu(player);
+        MenuManager menus = getInstance().menuManager;
+        if (menus != null) menus.openCraftMenu(player);
     }
 
     public static void registerCraftEntityNames(HashMap<MaterialStorage, ?> regMaps) {
@@ -309,7 +342,7 @@ public class QAMain extends JavaPlugin {
                         for (Object itemStack : itemStacks) {
                             String itemName = ((ItemStack) itemStack).getType().name();
                             String showName = getMessages().getMaterialName(itemName);
-                            craftingEntityNames.put(itemName, showName);
+                            getItemRegistry().getCraftingNames().put(itemName, showName);
                         }
                     }
                 } catch (Exception e) {
@@ -320,9 +353,11 @@ public class QAMain extends JavaPlugin {
     }
 
     public static String findCraftEntityName(String itemName, String defaultName) {
-        String value = craftingEntityNames.get(itemName);
-        if (null == value || value.trim().length() <= 0) {
-            value = craftingEntityNames.put(itemName, defaultName);
+        Map<String, String> names = getItemRegistry().getCraftingNames();
+        String value = names.get(itemName);
+        if (value == null || value.trim().isEmpty()) {
+            names.put(itemName, defaultName);
+            value = defaultName;
         }
         return value;
     }
@@ -346,7 +381,7 @@ public class QAMain extends JavaPlugin {
         }
         ThrowableItemRegistry.clear();
 
-        for (Scoreboard s : coloredGunScoreboard)
+        for (Scoreboard s : glowScoreboards)
             for (Team t : s.getTeams())
                 t.unregister();
 
@@ -354,11 +389,9 @@ public class QAMain extends JavaPlugin {
             g.dispose();
         }
 
-        try {
-            resourcepackwhitelist.save(new File(getDataFolder(), "resourcepackwhitelist.yml"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        playerState.shutdown();
+        if (resourcepacks != null)
+            resourcepacks.save();
     }
 
     @Override
@@ -367,6 +400,13 @@ public class QAMain extends JavaPlugin {
         if (!this.getDataFolder().exists()) {
             this.getDataFolder().mkdirs();
         }
+        this.resourcepacks = new ResourcepackManager(this.getDataFolder(), this.getLogger());
+        gunRegister = itemRegistry.getGuns();
+        ammoRegister = itemRegistry.getAmmo();
+        miscRegister = itemRegistry.getMisc();
+        armorRegister = itemRegistry.getArmor();
+        expansionPacks = itemRegistry.getExpansionPacks();
+        reloadingTasks = playerState.getReloadingTasks();
         this.mainConfig = new MainConfig();
         this.mainConfig.load();
         this.loadMessages();
@@ -417,7 +457,7 @@ public class QAMain extends JavaPlugin {
             @Override
             public void run() {
                 for (Player player : Bukkit.getOnlinePlayers())
-                    resourcepackReq.add(player.getUniqueId());
+                    resourcepacks.setAccepted(player.getUniqueId());
             }
         }.runTaskLater(this, 1);
 
@@ -459,11 +499,11 @@ public class QAMain extends JavaPlugin {
 
         Metrics metrics = new Metrics(this, 1699);
 
-        metrics.addCustomChart(new Metrics.SimplePie("GunCount", () -> gunRegister.size() + ""));
+        metrics.addCustomChart(new Metrics.SimplePie("GunCount", () -> itemRegistry.getGuns().size() + ""));
         metrics.addCustomChart(
                 new Metrics.SimplePie("uses_default_resourcepack", () -> getConfiguration().resourcepack.overrideDefault + ""));
         metrics.addCustomChart(
-                new Metrics.SimplePie("has_an_expansion_pack", () -> (expansionPacks.size() > 0) + ""));
+                new Metrics.SimplePie("has_an_expansion_pack", () -> !itemRegistry.getExpansionPacks().isEmpty() + ""));
         if (!CustomItemManager.isUsingCustomData()) {
             new BukkitRunnable() {
                 @SuppressWarnings("deprecation")
@@ -536,29 +576,12 @@ public class QAMain extends JavaPlugin {
         new RocketProjectile();
         new FireProjectile();
 
-        gunRegister.clear();
-        ammoRegister.clear();
-        miscRegister.clear();
-        armorRegister.clear();
-        interactableBlocks.clear();
-        craftingEntityNames.clear();
+        itemRegistry.clearItems();
 
         this.loadMessages();
 
-        resourcepackwhitelist = CommentYamlConfiguration.loadConfiguration(new File(getDataFolder(), "resourcepackwhitelist.yml"));
-        namesToBypass = (List<String>) resourcepackwhitelist.getOrSet("Names_Of_players_to_bypass", namesToBypass);
-
-        if (getServer().getPluginManager().isPluginEnabled("Parties"))
-            hasParties = true;
-        if (Bukkit.getPluginManager().isPluginEnabled("ViaRewind"))
-            hasViaRewind = true;
-        if (Bukkit.getPluginManager().isPluginEnabled("ViaVersion"))
-            hasViaVersion = true;
-        if (getServer().getPluginManager().isPluginEnabled("ProtocolLib")) {
-            hasProtocolLib = true;
-            ProtocolLibHandler.initRemoveArmswing();
-            ProtocolLibHandler.initAimBow();
-        }
+        resourcepacks.load();
+        integrations.detect();
 
         if (getServer().getPluginManager().isPluginEnabled("Sentinel"))
             try {
@@ -571,19 +594,7 @@ public class QAMain extends JavaPlugin {
             getConfiguration().general.versionOverride = "1.8";
         }
 
-        try {
-            enableEconomy = EconHandler.setupEconomy();
-        } catch (Exception | Error e) {
-        }
-
-        destructableBlocks.clear();
-        destructableBlocks.addAll(GunYMLLoader.getMaterials(this.mainConfig.world.destructableMaterials));
-
-        for (Material m : Material.values())
-            if (m.isBlock())
-                if (m.name().contains("DOOR") || m.name().contains("TRAPDOOR") || m.name().contains("BUTTON")
-                        || m.name().contains("LEVER"))
-                    interactableBlocks.add(m);
+        blockRules.reload(GunYMLLoader.getMaterials(this.mainConfig.world.destructableMaterials));
 // Chris: default has 1.14 ItemType
         if ((getConfiguration().general.versionOverride.equalsIgnoreCase("1.8") || !isVersionHigherThan(1, 9)) && !getConfiguration().general.versionOverride.equalsIgnoreCase("1.13") && !getConfiguration().general.versionOverride.equalsIgnoreCase("1.14")) {
             //1.8
@@ -593,27 +604,27 @@ public class QAMain extends JavaPlugin {
             CustomItemManager.registerItemType(getDataFolder(), "gun", new CustomGunItem());
             //Make sure vehicles are safe
             if (!getConfiguration().resourcepack.overrideDefault) {
-                expansionPacks.add(MaterialStorage.getMS(Material.DIAMOND_AXE, 80, 0));
-                expansionPacks.add(MaterialStorage.getMS(Material.DIAMOND_AXE, 81, 0));
-                expansionPacks.add(MaterialStorage.getMS(Material.DIAMOND_AXE, 82, 0));
-                expansionPacks.add(MaterialStorage.getMS(Material.DIAMOND_AXE, 83, 0));
-                expansionPacks.add(MaterialStorage.getMS(Material.DIAMOND_AXE, 84, 0));
-                expansionPacks.add(MaterialStorage.getMS(Material.DIAMOND_AXE, 85, 0));
-                expansionPacks.add(MaterialStorage.getMS(Material.DIAMOND_AXE, 86, 0));
-                expansionPacks.add(MaterialStorage.getMS(Material.DIAMOND_AXE, 87, 0));
-                expansionPacks.add(MaterialStorage.getMS(Material.DIAMOND_AXE, 88, 0));
-                expansionPacks.add(MaterialStorage.getMS(Material.DIAMOND_AXE, 89, 0));
-                expansionPacks.add(MaterialStorage.getMS(Material.DIAMOND_AXE, 92, 0));
-                expansionPacks.add(MaterialStorage.getMS(Material.DIAMOND_AXE, 94, 0));
-                expansionPacks.add(MaterialStorage.getMS(Material.DIAMOND_AXE, 95, 0));
-                expansionPacks.add(MaterialStorage.getMS(Material.DIAMOND_AXE, 96, 0));
-                expansionPacks.add(MaterialStorage.getMS(Material.DIAMOND_AXE, 97, 0));
-                expansionPacks.add(MaterialStorage.getMS(Material.DIAMOND_AXE, 104, 0));
-                expansionPacks.add(MaterialStorage.getMS(Material.DIAMOND_AXE, 111, 0));
-                expansionPacks.add(MaterialStorage.getMS(Material.DIAMOND_AXE, 112, 0));
-                expansionPacks.add(MaterialStorage.getMS(Material.DIAMOND_AXE, 114, 0));
-                expansionPacks.add(MaterialStorage.getMS(Material.DIAMOND_AXE, 115, 0));
-                expansionPacks.add(MaterialStorage.getMS(Material.DIAMOND_AXE, 116, 0));
+                itemRegistry.addExpansionPack(MaterialStorage.getMS(Material.DIAMOND_AXE, 80, 0));
+                itemRegistry.addExpansionPack(MaterialStorage.getMS(Material.DIAMOND_AXE, 81, 0));
+                itemRegistry.addExpansionPack(MaterialStorage.getMS(Material.DIAMOND_AXE, 82, 0));
+                itemRegistry.addExpansionPack(MaterialStorage.getMS(Material.DIAMOND_AXE, 83, 0));
+                itemRegistry.addExpansionPack(MaterialStorage.getMS(Material.DIAMOND_AXE, 84, 0));
+                itemRegistry.addExpansionPack(MaterialStorage.getMS(Material.DIAMOND_AXE, 85, 0));
+                itemRegistry.addExpansionPack(MaterialStorage.getMS(Material.DIAMOND_AXE, 86, 0));
+                itemRegistry.addExpansionPack(MaterialStorage.getMS(Material.DIAMOND_AXE, 87, 0));
+                itemRegistry.addExpansionPack(MaterialStorage.getMS(Material.DIAMOND_AXE, 88, 0));
+                itemRegistry.addExpansionPack(MaterialStorage.getMS(Material.DIAMOND_AXE, 89, 0));
+                itemRegistry.addExpansionPack(MaterialStorage.getMS(Material.DIAMOND_AXE, 92, 0));
+                itemRegistry.addExpansionPack(MaterialStorage.getMS(Material.DIAMOND_AXE, 94, 0));
+                itemRegistry.addExpansionPack(MaterialStorage.getMS(Material.DIAMOND_AXE, 95, 0));
+                itemRegistry.addExpansionPack(MaterialStorage.getMS(Material.DIAMOND_AXE, 96, 0));
+                itemRegistry.addExpansionPack(MaterialStorage.getMS(Material.DIAMOND_AXE, 97, 0));
+                itemRegistry.addExpansionPack(MaterialStorage.getMS(Material.DIAMOND_AXE, 104, 0));
+                itemRegistry.addExpansionPack(MaterialStorage.getMS(Material.DIAMOND_AXE, 111, 0));
+                itemRegistry.addExpansionPack(MaterialStorage.getMS(Material.DIAMOND_AXE, 112, 0));
+                itemRegistry.addExpansionPack(MaterialStorage.getMS(Material.DIAMOND_AXE, 114, 0));
+                itemRegistry.addExpansionPack(MaterialStorage.getMS(Material.DIAMOND_AXE, 115, 0));
+                itemRegistry.addExpansionPack(MaterialStorage.getMS(Material.DIAMOND_AXE, 116, 0));
             }
         } else if (true || getConfiguration().general.versionOverride.equalsIgnoreCase("1.14")) {
             //1.14. Use crossbows
@@ -669,15 +680,15 @@ public class QAMain extends JavaPlugin {
             Bukkit.getPluginManager().registerEvents(tfh, this);
         }
         if (getConfiguration().features.enableGlowEffects) {
-            coloredGunScoreboard = new ArrayList<>();
-            coloredGunScoreboard.add(registerGlowTeams(Bukkit.getScoreboardManager().getMainScoreboard()));
+            glowScoreboards.clear();
+            glowScoreboards.add(registerGlowTeams(Bukkit.getScoreboardManager().getMainScoreboard()));
         }
 
         //Chris: Find and reg craft entity name
-        registerCraftEntityNames(gunRegister);
-        registerCraftEntityNames(ammoRegister);
-        registerCraftEntityNames(miscRegister);
-        registerCraftEntityNames(armorRegister);
+        registerCraftEntityNames(itemRegistry.getGuns());
+        registerCraftEntityNames(itemRegistry.getAmmo());
+        registerCraftEntityNames(itemRegistry.getMisc());
+        registerCraftEntityNames(itemRegistry.getArmor());
         this.messages.saveIfChanged();
 
         if (menuManager != null) {
@@ -778,20 +789,20 @@ public class QAMain extends JavaPlugin {
         if (args.length == 2) {
             List<String> s = new ArrayList<String>();
             if (args[0].equalsIgnoreCase("give") || args[0].equalsIgnoreCase("drop")) {
-                for (Entry<MaterialStorage, Gun> e : gunRegister.entrySet()) {
+                for (Entry<MaterialStorage, Gun> e : itemRegistry.getGuns().entrySet()) {
                     if (e.getValue() instanceof AttachmentBase) {
                         if (b(e.getValue().getName(), args[1]))
                             s.add(e.getValue().getName());
                     } else if (b(e.getValue().getName(), args[1]))
                         s.add(e.getValue().getName());
                 }
-                for (Entry<MaterialStorage, Ammo> e : ammoRegister.entrySet())
+                for (Entry<MaterialStorage, Ammo> e : itemRegistry.getAmmo().entrySet())
                     if (b(e.getValue().getName(), args[1]))
                         s.add(e.getValue().getName());
-                for (Entry<MaterialStorage, CustomBaseObject> e : miscRegister.entrySet())
+                for (Entry<MaterialStorage, CustomBaseObject> e : itemRegistry.getMisc().entrySet())
                     if (b(e.getValue().getName(), args[1]))
                         s.add(e.getValue().getName());
-                for (Entry<MaterialStorage, ArmorObject> e : armorRegister.entrySet())
+                for (Entry<MaterialStorage, ArmorObject> e : itemRegistry.getArmor().entrySet())
                     if (b(e.getValue().getName(), args[1]))
                         s.add(e.getValue().getName());
             }
@@ -914,8 +925,7 @@ public class QAMain extends JavaPlugin {
                     } else {
                         player = (Player) sender;
                     }
-                    namesToBypass.remove(player.getName());
-                    resourcepackwhitelist.set("Names_Of_players_to_bypass", namesToBypass);
+                    resourcepacks.setBypassing(player.getName(), false);
                     sender.sendMessage(getMessages().general.prefix + getMessages().resourcepack.nowOptedIn);
                     QualityArmory.sendResourcepack(player, true);
                     return true;
@@ -931,10 +941,7 @@ public class QAMain extends JavaPlugin {
                     } else {
                         player = (Player) sender;
                     }
-                    if (!namesToBypass.contains(player.getName())) {
-                        namesToBypass.add(player.getName());
-                        resourcepackwhitelist.set("Names_Of_players_to_bypass", namesToBypass);
-                    }
+                    resourcepacks.setBypassing(player.getName(), true);
 
                     player.sendMessage(getMessages().general.prefix + getMessages().resourcepack.download);
                     player.sendMessage(CustomItemManager.getResourcepack(player));
@@ -946,13 +953,13 @@ public class QAMain extends JavaPlugin {
 
                 if (args[0].equalsIgnoreCase("listItemIds")) {
                     if (sender.hasPermission("qualityarmory.getmaterialsused")) {
-                        for (CustomBaseObject g : miscRegister.values())
+                        for (CustomBaseObject g : itemRegistry.getMisc().values())
                             sender.sendMessage(ChatColor.GREEN + g.getName() + ": " + ChatColor.WHITE
                                     + g.getItemData().getMat().name() + " : " + g.getItemData().getData());
-                        for (Gun g : gunRegister.values())
+                        for (Gun g : itemRegistry.getGuns().values())
                             sender.sendMessage(ChatColor.GOLD + g.getName() + ": " + ChatColor.WHITE
                                     + g.getItemData().getMat().name() + " : " + g.getItemData().getData());
-                        for (Ammo g : ammoRegister.values())
+                        for (Ammo g : itemRegistry.getAmmo().values())
                             sender.sendMessage(ChatColor.AQUA + g.getName() + ": " + ChatColor.WHITE
                                     + g.getItemData().getMat().name() + " : " + g.getItemData().getData());
                     } else {
@@ -980,19 +987,19 @@ public class QAMain extends JavaPlugin {
                         sender.sendMessage(getMessages().general.prefix + getMessages().commands.itemNameRequired);
                         StringBuilder sb = new StringBuilder();
                         sb.append(getMessages().commands.validItems);
-                        for (Gun g : gunRegister.values()) {
+                        for (Gun g : itemRegistry.getGuns().values()) {
                             sb.append(g.getName() + ", ");
                         }
                         sb.append(ChatColor.GRAY);
-                        for (Ammo g : ammoRegister.values()) {
+                        for (Ammo g : itemRegistry.getAmmo().values()) {
                             sb.append(g.getName() + ", ");
                         }
                         sb.append(ChatColor.WHITE);
-                        for (CustomBaseObject g : miscRegister.values()) {
+                        for (CustomBaseObject g : itemRegistry.getMisc().values()) {
                             sb.append(g.getName() + ", ");
                         }
                         sb.append(ChatColor.GRAY);
-                        for (ArmorObject g : armorRegister.values()) {
+                        for (ArmorObject g : itemRegistry.getArmor().values()) {
                             sb.append(g.getName() + ", ");
                         }
                         sb.append(ChatColor.WHITE);
@@ -1073,19 +1080,19 @@ public class QAMain extends JavaPlugin {
                         sender.sendMessage(getMessages().general.prefix + getMessages().commands.itemNameRequired);
                         StringBuilder sb = new StringBuilder();
                         sb.append(getMessages().commands.validItems);
-                        for (Gun g : gunRegister.values()) {
+                        for (Gun g : itemRegistry.getGuns().values()) {
                             sb.append(g.getName() + ", ");
                         }
                         sb.append(ChatColor.GRAY);
-                        for (Ammo g : ammoRegister.values()) {
+                        for (Ammo g : itemRegistry.getAmmo().values()) {
                             sb.append(g.getName() + ", ");
                         }
                         sb.append(ChatColor.WHITE);
-                        for (CustomBaseObject g : miscRegister.values()) {
+                        for (CustomBaseObject g : itemRegistry.getMisc().values()) {
                             sb.append(g.getName() + ", ");
                         }
                         sb.append(ChatColor.GRAY);
-                        for (ArmorObject g : armorRegister.values()) {
+                        for (ArmorObject g : itemRegistry.getArmor().values()) {
                             sb.append(g.getName() + ", ");
                         }
                         sb.append(ChatColor.WHITE);
@@ -1145,11 +1152,11 @@ public class QAMain extends JavaPlugin {
             if (sender instanceof Player) {
                 final Player player = (Player) sender;
                 if (args.length >= 1 && args[0].equalsIgnoreCase("override")) {
-                    resourcepackReq.add(player.getUniqueId());
+                    resourcepacks.setAccepted(player.getUniqueId());
                     sender.sendMessage(getMessages().general.prefix + getMessages().commands.resourcepackOverride);
                     return true;
                 }
-                if (getConfiguration().resourcepack.enabled && !resourcepackReq.contains(player.getUniqueId())) {
+                if (getConfiguration().resourcepack.enabled && !resourcepacks.hasAccepted(player.getUniqueId())) {
                     QualityArmory.sendResourcepack(((Player) sender), true);
                     return true;
                 }

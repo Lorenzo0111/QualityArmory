@@ -86,7 +86,7 @@ public class GunYMLLoader {
 							da.setEnableShop(allowInShop);
 							da.setCustomLore(extraLore);
 
-							QAMain.ammoRegister.put(ms, da);
+							QAMain.getItemRegistry().getAmmo().put(ms, da);
 							items++;
 
 							if (extraData != null) {
@@ -154,7 +154,7 @@ public class GunYMLLoader {
 								helmet.setHeightMin(f2.getDouble("minProtectionHeight"));
 								helmet.setProtection(f2.getInt("protection", 0));
                                 helmet.setNegateHeadshots(f2.getBoolean("stopsHeadshots"));
-								QAMain.armorRegister.put(ms, helmet);
+								QAMain.getItemRegistry().getArmor().put(ms, helmet);
 								items++;
 							}
 						}
@@ -218,11 +218,11 @@ public class GunYMLLoader {
 							float soundHitVolume = (float) f2.getDouble("sound_meleehit_volume", 1.0);
 
 							if (wt == WeaponType.MEDKIT)
-								QAMain.miscRegister.put(ms, base=new MedKit(ms, name, displayname, materails, price));
+								QAMain.getItemRegistry().getMisc().put(ms, base=new MedKit(ms, name, displayname, materails, price));
 							if (wt == WeaponType.AMMO_BAG)
-								QAMain.miscRegister.put(ms, base=new AmmoBag(ms, name, displayname, materails, f2.getInt("max", 5), price));
+								QAMain.getItemRegistry().getMisc().put(ms, base=new AmmoBag(ms, name, displayname, materails, f2.getInt("max", 5), price));
 							if (wt == WeaponType.MELEE) {
-								QAMain.miscRegister.put(ms,
+								QAMain.getItemRegistry().getMisc().put(ms,
 										base = new MeleeItems(ms, name, displayname, materails, price, damage));
 								base.setSoundOnEquip(soundEquip);
 								base.setSoundOnEquipVolume(soundEquipVolume);
@@ -231,25 +231,25 @@ public class GunYMLLoader {
 								base.setCustomLore(lore);
 							}
 							if (wt == WeaponType.GRENADES)
-								QAMain.miscRegister.put(ms,
+								QAMain.getItemRegistry().getMisc().put(ms,
 										base=new Grenade(materails, price, damage, radius, name, displayname, lore, ms));
 							if (wt == WeaponType.SMOKE_GRENADES)
-								QAMain.miscRegister.put(ms, base=new SmokeGrenades(materails, price, damage, radius, name,
+								QAMain.getItemRegistry().getMisc().put(ms, base=new SmokeGrenades(materails, price, damage, radius, name,
 										displayname, lore, ms));
 							if (wt == WeaponType.INCENDARY_GRENADES)
-								QAMain.miscRegister.put(ms, base=new IncendaryGrenades(materails, price, damage, radius,
+								QAMain.getItemRegistry().getMisc().put(ms, base=new IncendaryGrenades(materails, price, damage, radius,
 										name, displayname, lore, ms));
 							if (wt == WeaponType.PROXYMINES)
-								QAMain.miscRegister.put(ms, base=new ProxyMines(materails, price, damage, radius,
+								QAMain.getItemRegistry().getMisc().put(ms, base=new ProxyMines(materails, price, damage, radius,
 										name, displayname, lore, ms));
 							if (wt == WeaponType.STICKYGRENADE)
-								QAMain.miscRegister.put(ms, base=new StickyGrenades(materails, price, damage, radius,
+								QAMain.getItemRegistry().getMisc().put(ms, base=new StickyGrenades(materails, price, damage, radius,
 										name, displayname, lore, ms));
 							if (wt == WeaponType.MOLOTOV)
-								QAMain.miscRegister.put(ms, base=new Molotov(materails, price, damage, radius,
+								QAMain.getItemRegistry().getMisc().put(ms, base=new Molotov(materails, price, damage, radius,
 										name, displayname, lore, ms));
 							if (wt == WeaponType.FLASHBANGS)
-								QAMain.miscRegister.put(ms,
+								QAMain.getItemRegistry().getMisc().put(ms,
 										base=new Flashbang(materails, price, damage, radius, name, displayname, lore, ms));
 
 
@@ -316,7 +316,7 @@ public class GunYMLLoader {
 						g.setDisplayname(displayname);
 						g.setCustomLore(extraLore);
 						g.setIngredients(materails);
-						QAMain.gunRegister.put(ms, g);
+						QAMain.getItemRegistry().getGuns().put(ms, g);
 						loadGunSettings(g, f2);
 					}
 
@@ -482,7 +482,7 @@ public class GunYMLLoader {
 			try {
 				Particle particle = (Particle) (f2.contains("particles.bullet_particle")
 						? Particle.valueOf(f2.getString("particles.bullet_particle"))
-						: QAMain.bulletTrail);
+						: null);
 				g.setParticles(particle, partr, partg, partb, partm, partdata);
 			} catch (Error | Exception er5) {
 			}
@@ -532,7 +532,7 @@ public class GunYMLLoader {
 							// Gun baseGun = null;
 							MaterialStorage baseGunM = null;
 							String base = f2.getString("baseGun");
-							for (Entry<MaterialStorage, Gun> g : QAMain.gunRegister.entrySet()) {
+							for (Entry<MaterialStorage, Gun> g : QAMain.getItemRegistry().getGuns().entrySet()) {
 								if (g.getValue().getName().equalsIgnoreCase(base)) {
 									// baseGun = g.getValue();
 									baseGunM = g.getKey();
@@ -552,7 +552,7 @@ public class GunYMLLoader {
 							}
 
 							AttachmentBase attach = new AttachmentBase(baseGunM, ms, name, displayname);
-							QAMain.gunRegister.put(ms, attach);
+							QAMain.getItemRegistry().getGuns().put(ms, attach);
 							items++;
 
 							attach.setCustomLore(extraLore);

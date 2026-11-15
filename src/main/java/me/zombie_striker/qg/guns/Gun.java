@@ -884,8 +884,8 @@ public class Gun extends CustomBaseObject implements Comparable<Gun> {
                 QAMain.DEBUG("Reloading message 1!");
                 return true;
             }
-            if (!isAutomatic() && GunUtil.rapidfireshooters.containsKey(player.getPlayer().getUniqueId())) {
-                GunUtil.rapidfireshooters.remove(player.getPlayer().getUniqueId()).cancel();
+            if (!isAutomatic() && QAMain.getPlayerState().getRapidFireTasks().containsKey(player.getPlayer().getUniqueId())) {
+                QAMain.getPlayerState().getRapidFireTasks().remove(player.getPlayer().getUniqueId()).cancel();
                 if (QAMain.getConfiguration().weapons.autoReloadWhenOutOfAmmo) {
                     if (getAmount(player) <= 0) {
                         if (offhand) {
@@ -903,9 +903,6 @@ public class Gun extends CustomBaseObject implements Comparable<Gun> {
                                 QAMain.DEBUG("Trying to reload WITH AUTORELOAD. player has ammo");
                                 reload(player.getPlayer());
                             } else {
-                                if (QAMain.showOutOfAmmoOnItem) {
-                                    QAMain.DEBUG("UNSUPPORTED: Out of ammo displayed on item");
-                                }
                                 QAMain.DEBUG("Trying to reload WITH AUTORELOAD. player DOES NOT have ammo");
                             }
                         }
@@ -917,8 +914,8 @@ public class Gun extends CustomBaseObject implements Comparable<Gun> {
                 if (getAmount(player) <= 0) {
                     QAMain.DEBUG("Out of ammo");
 
-                    if (GunUtil.rapidfireshooters.containsKey(player.getUniqueId()))
-                        GunUtil.rapidfireshooters.remove(player.getUniqueId()).cancel();
+                    if (QAMain.getPlayerState().getRapidFireTasks().containsKey(player.getUniqueId()))
+                        QAMain.getPlayerState().getRapidFireTasks().remove(player.getUniqueId()).cancel();
 
                     try {
                         player.getWorld().playSound(player.getLocation(), WeaponSounds.OUT_OF_AMMO_CLICK.getSoundName(), 1f, 1f);
@@ -1047,7 +1044,7 @@ public class Gun extends CustomBaseObject implements Comparable<Gun> {
             } else {
                 QAMain.DEBUG("Reload called");
                 Block targetblock = player.getTargetBlock(null, 5);
-                if (targetblock != null && QAMain.interactableBlocks.contains(targetblock.getType())) {
+                if (targetblock != null && QAMain.getBlockRules().isInteractable(targetblock.getType())) {
                     QAMain.DEBUG("Canceled interact because block is " + targetblock.getType().name());
                     return false;
                 } else {

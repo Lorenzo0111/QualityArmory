@@ -8,14 +8,10 @@ import me.zombie_striker.qg.guns.utils.WeaponSounds;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.scheduler.BukkitTask;
 
-import java.util.HashMap;
-import java.util.UUID;
 
 public class BurstFireCharger implements ChargingHandler {
 
-    public static HashMap<UUID, BukkitTask> shooters = new HashMap<>();
 
     public BurstFireCharger() {
         ChargingManager.add(this);
@@ -23,7 +19,7 @@ public class BurstFireCharger implements ChargingHandler {
 
     @Override
     public boolean isCharging(Player player) {
-        return shooters.containsKey(player.getUniqueId());
+        return QAMain.getPlayerState().getBurstFireTasks().containsKey(player.getUniqueId());
     }
 
     @Override
@@ -31,7 +27,7 @@ public class BurstFireCharger implements ChargingHandler {
         GunUtil.shootHandler(g, player, 1);
         //	final AttachmentBase attach = QualityArmory.getGunWithAttchments(stack);
         GunUtil.playShoot(g, player);
-        shooters.put(player.getUniqueId(), new BukkitRunnable() {
+        QAMain.getPlayerState().getBurstFireTasks().put(player.getUniqueId(), new BukkitRunnable() {
             final int slotUsed = player.getInventory().getHeldItemSlot();
             @SuppressWarnings("deprecation")
             final boolean offhand = QualityArmory.isIronSights(player.getItemInHand());
@@ -50,8 +46,8 @@ public class BurstFireCharger implements ChargingHandler {
                 int amount = Gun.getAmount(player);
                 if (shotCurrently >= g.getBulletsPerShot() || slotUsed != player.getInventory().getHeldItemSlot()
                         || amount <= 0) {
-                    if (shooters.containsKey(player.getUniqueId()))
-                        shooters.remove(player.getUniqueId()).cancel();
+                    if (QAMain.getPlayerState().getBurstFireTasks().containsKey(player.getUniqueId()))
+                        QAMain.getPlayerState().getBurstFireTasks().remove(player.getUniqueId()).cancel();
                     return;
                 }
 

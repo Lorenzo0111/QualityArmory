@@ -6,7 +6,6 @@ import me.zombie_striker.customitemmanager.CustomItemManager;
 import me.zombie_striker.customitemmanager.MaterialStorage;
 import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.api.QualityArmory;
-import me.zombie_striker.qg.handlers.BulletWoundHandler;
 import me.zombie_striker.qg.handlers.HotbarMessager;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -59,7 +58,7 @@ public class MedKit extends CustomBaseObject {
 
 		UUID patientId = patient.getUniqueId();
 
-		if (!BulletWoundHandler.bloodLevel.containsKey(patientId)) {
+		if (!QAMain.getPlayerState().getBloodLevel().containsKey(patientId)) {
 
 			if (patient.getHealth() < patient.getMaxHealth()) {
 
@@ -120,24 +119,24 @@ public class MedKit extends CustomBaseObject {
 			return true;
 		}
 
-		double bloodLevel = BulletWoundHandler.bloodLevel.get(patientId);
+		double bloodLevel = QAMain.getPlayerState().getBloodLevel().get(patientId);
 		double percentBlood = Math.max(0, bloodLevel / QAMain.getConfiguration().combat.bleeding.initialBloodLevel);
 
 		ChatColor severity = percentBlood > 0.75 ? ChatColor.WHITE
 				: percentBlood > 0.5 ? ChatColor.GRAY : percentBlood > 0.25 ? ChatColor.RED : ChatColor.DARK_RED;
-		if (BulletWoundHandler.bleedoutMultiplier.containsKey(patientId)
-				&& BulletWoundHandler.bleedoutMultiplier.get(patientId) < 0)
-			BulletWoundHandler.bleedoutMultiplier.put(patientId,
-					Math.min(0, BulletWoundHandler.bleedoutMultiplier.get(patientId)
+		if (QAMain.getPlayerState().getBleedoutMultiplier().containsKey(patientId)
+				&& QAMain.getPlayerState().getBleedoutMultiplier().get(patientId) < 0)
+			QAMain.getPlayerState().getBleedoutMultiplier().put(patientId,
+					Math.min(0, QAMain.getPlayerState().getBleedoutMultiplier().get(patientId)
 							+ QAMain.getConfiguration().combat.bleeding.medkitHealBloodlossRate));
 
-		double newRate = BulletWoundHandler.bleedoutMultiplier.containsKey(patientId)
-				? BulletWoundHandler.bleedoutMultiplier.get(patientId)
+		double newRate = QAMain.getPlayerState().getBleedoutMultiplier().containsKey(patientId)
+				? QAMain.getPlayerState().getBleedoutMultiplier().get(patientId)
 				: 0;
 
 		if (newRate >= 0) {
-			BulletWoundHandler.bleedoutMultiplier.remove(patientId);
-			BulletWoundHandler.bloodLevel.remove(patientId);
+			QAMain.getPlayerState().getBleedoutMultiplier().remove(patientId);
+			QAMain.getPlayerState().getBloodLevel().remove(patientId);
 
 			try {
 				patient.removePotionEffect(XPotion.NAUSEA.getPotionEffectType());

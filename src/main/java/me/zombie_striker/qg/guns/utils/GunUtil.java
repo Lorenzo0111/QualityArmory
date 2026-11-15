@@ -27,7 +27,6 @@ import org.bukkit.entity.*;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import ru.beykerykt.minecraft.lightapi.common.LightAPI;
@@ -38,10 +37,6 @@ import java.util.concurrent.ThreadLocalRandom;
 public class GunUtil {
 	private static final double MIN_POSITIVE_STEP = 0.001;
 
-	public static HashMap<UUID, BukkitTask> rapidfireshooters = new HashMap<>();
-	public static HashMap<UUID, Double> highRecoilCounter = new HashMap<>();
-	protected static HashMap<UUID, Location> AF_locs = new HashMap<>();
-	protected static HashMap<UUID, BukkitTask> AF_tasks = new HashMap<>();
 
 	public static void shootHandler(Gun g, Player p) {
 		shootHandler(g, p, g.getBulletsPerShot());
@@ -145,7 +140,7 @@ public class GunUtil {
 							if (player.getGameMode() == GameMode.SPECTATOR) {
 								continue;
 							}
-							if (QAMain.hasParties && (!QAMain.getConfiguration().compat.friendlyFire)) {
+							if (QAMain.getIntegrations().hasParties() && (!QAMain.getConfiguration().compat.friendlyFire)) {
 								try {
 									PartiesAPI api = Parties.getApi();
 									PartyPlayer pp1 = api.getPartyPlayer(p.getUniqueId());
@@ -361,7 +356,7 @@ public class GunUtil {
 
 							final Block block = start.getBlock();
 							final Material type = block.getType();
-							if ((QAMain.destructableBlocks.contains(type) || g.getBreakableMaterials().contains(type)) && ProtectionHandler.canBreak(start)) {
+							if ((QAMain.getBlockRules().isDestructable(type) || g.getBreakableMaterials().contains(type)) && ProtectionHandler.canBreak(start)) {
 								blocksThatWillBreak.add(block);
 							}
 						}
@@ -511,7 +506,7 @@ public class GunUtil {
 		g.getLastShotForGun().put(player.getUniqueId(), System.currentTimeMillis());
 
 
-		if (rapidfireshooters.containsKey(player.getUniqueId())) {
+		if (QAMain.getPlayerState().getRapidFireTasks().containsKey(player.getUniqueId())) {
 			QAMain.DEBUG("Shooting canceled due to rapid fire being enabled.");
 			return;
 		}
@@ -535,21 +530,21 @@ public class GunUtil {
 		}
 
 		if (g.isAutomatic()) {
-			rapidfireshooters.put(player.getUniqueId(), new BukkitRunnable() {
+			QAMain.getPlayerState().getRapidFireTasks().put(player.getUniqueId(), new BukkitRunnable() {
 				int slotUsed = player.getInventory().getHeldItemSlot();
 
 				@Override
 				public void run() {
 					if (!player.isOnline()) {
 						QAMain.DEBUG("Stopping Automatic Firing because player left");
-						rapidfireshooters.remove(player.getUniqueId());
+						QAMain.getPlayerState().getRapidFireTasks().remove(player.getUniqueId());
 						cancel();
 						return;
 					}
 
 					if ((g.getChargingHandler() != null && g.getChargingHandler().isCharging(player)) || GunRefillerRunnable.isReloading(player)) {
 						QAMain.DEBUG("Cancelling rapid fire shoot due to charging or reloading.");
-						rapidfireshooters.remove(player.getUniqueId());
+						QAMain.getPlayerState().getRapidFireTasks().remove(player.getUniqueId());
 						cancel();
 						return;
 					}
@@ -558,7 +553,7 @@ public class GunUtil {
 						if ((!g.hasIronSights() || !IronsightsHandler.isAiming(player)) && ((player.isSneaking() == QAMain.getConfiguration().weapons.ironsights.swapSneakToSingleFire))) {
 							cancel();
 							QAMain.DEBUG("Stopping Automatic Firing");
-							rapidfireshooters.remove(player.getUniqueId());
+							QAMain.getPlayerState().getRapidFireTasks().remove(player.getUniqueId());
 							return;
 						}
 					}
@@ -567,7 +562,7 @@ public class GunUtil {
 
 					if (QAMain.getConfiguration().weapons.durability && g.getDamage(temp) <= 0) {
 						player.playSound(player.getLocation(), WeaponSounds.METALHIT.getSoundName(), 1, 1);
-						rapidfireshooters.remove(player.getUniqueId());
+						QAMain.getPlayerState().getRapidFireTasks().remove(player.getUniqueId());
 						QAMain.DEBUG("Canceld due to weapon durability = " + g.getDamage(temp));
 						cancel();
 						return;
@@ -576,14 +571,14 @@ public class GunUtil {
 					int amount = Gun.getAmount(player);
 					if(holdingRMB && QAMain.getConfiguration().features.swapReloadAndShootingControls){
 						if(System.currentTimeMillis()-g.getLastTimeRMB(player) > 310){
-							rapidfireshooters.remove(player.getUniqueId());
+							QAMain.getPlayerState().getRapidFireTasks().remove(player.getUniqueId());
 							cancel();
 							return;
 						}
 					}
 
 					if (((!QAMain.getConfiguration().features.swapReloadAndShootingControls && player.isSneaking() == QAMain.getConfiguration().weapons.ironsights.swapSneakToSingleFire)) || slotUsed != player.getInventory().getHeldItemSlot() || amount <= 0) {
-						rapidfireshooters.remove(player.getUniqueId());
+						QAMain.getPlayerState().getRapidFireTasks().remove(player.getUniqueId());
 						cancel();
 						return;
 					}
@@ -806,15 +801,15 @@ public class GunUtil {
 		if (g.getRecoil() == 0)
 			return;
 		if (g.getFireRate() >= 4) {
-			if (highRecoilCounter.containsKey(player.getUniqueId())) {
-				highRecoilCounter.put(player.getUniqueId(),
-						highRecoilCounter.get(player.getUniqueId()) + g.getRecoil());
+			if (QAMain.getPlayerState().getRecoilCounter().containsKey(player.getUniqueId())) {
+				QAMain.getPlayerState().getRecoilCounter().put(player.getUniqueId(),
+						QAMain.getPlayerState().getRecoilCounter().get(player.getUniqueId()) + g.getRecoil());
 			} else {
-				highRecoilCounter.put(player.getUniqueId(), g.getRecoil());
+				QAMain.getPlayerState().getRecoilCounter().put(player.getUniqueId(), g.getRecoil());
 				new BukkitRunnable() {
 					@Override
 					public void run() {
-						if (QAMain.hasProtocolLib && QAMain.isVersionHigherThan(1, 13) && !QAMain.hasViaVersion) {
+						if (QAMain.getIntegrations().hasProtocolLib() && QAMain.isVersionHigherThan(1, 13) && !QAMain.getIntegrations().hasViaVersion()) {
 							addRecoilWithProtocolLib(player, g, true);
 						} else
 							addRecoilWithTeleport(player, g, true);
@@ -822,7 +817,7 @@ public class GunUtil {
 				}.runTaskLater(QAMain.getInstance(), 3);
 			}
 		} else {
-			if (QAMain.hasProtocolLib && QAMain.isVersionHigherThan(1, 13)) {
+			if (QAMain.getIntegrations().hasProtocolLib() && QAMain.isVersionHigherThan(1, 13)) {
 				addRecoilWithProtocolLib(player, g, false);
 			} else
 				addRecoilWithTeleport(player, g, false);
@@ -833,15 +828,15 @@ public class GunUtil {
 		Vector newDir = player.getLocation().getDirection();
 		newDir.normalize()
 				.setY(newDir.getY()
-						+ ((useHighRecoil ? highRecoilCounter.get(player.getUniqueId()) : g.getRecoil()) / 30))
+						+ ((useHighRecoil ? QAMain.getPlayerState().getRecoilCounter().get(player.getUniqueId()) : g.getRecoil()) / 30))
 				.multiply(20);
 		if (useHighRecoil)
-			highRecoilCounter.remove(player.getUniqueId());
+			QAMain.getPlayerState().getRecoilCounter().remove(player.getUniqueId());
 		ProtocolLibHandler.sendYawChange(player, newDir);
 	}
 
 	private static void addRecoilWithTeleport(Player player, Gun g, boolean useHighRecoil) {
-		Location tempCur = QAMain.getConfiguration().weapons.recoil.usePlayerMove ? (QAMain.recoilHelperMovedLocation.get(player.getUniqueId())) : null;
+		Location tempCur = QAMain.getConfiguration().weapons.recoil.usePlayerMove ? (QAMain.getPlayerState().getLastMoveLocation().get(player.getUniqueId())) : null;
 		final Location current;
 		if (tempCur == null) {
 			current = player.getLocation();
@@ -853,15 +848,15 @@ public class GunUtil {
 			movementOffset.setY(0);
 		current.add(movementOffset);
 		current.setPitch((float) (current.getPitch()
-				- (useHighRecoil ? highRecoilCounter.get(player.getUniqueId()) : g.getRecoil())));
+				- (useHighRecoil ? QAMain.getPlayerState().getRecoilCounter().get(player.getUniqueId()) : g.getRecoil())));
 		if (useHighRecoil)
-			highRecoilCounter.remove(player.getUniqueId());
+			QAMain.getPlayerState().getRecoilCounter().remove(player.getUniqueId());
 		Vector temp = player.getVelocity();
 		// player.getLocation().setDirection(vector);
 		player.teleport(current);
 		player.setVelocity(temp);
 
-		QAMain.recoilHelperMovedLocation.put(player.getUniqueId(), current);
+		QAMain.getPlayerState().getLastMoveLocation().put(player.getUniqueId(), current);
 	}
 
 	public static boolean isBreakable(Block b, Location l) {
@@ -882,8 +877,8 @@ public class GunUtil {
 	}
 
 	public static boolean isDelay(Gun g, Player player) {
-        if (QAMain.lastWeaponSwitch.containsKey(player.getUniqueId()) &&
-                System.currentTimeMillis() - QAMain.lastWeaponSwitch.get(player.getUniqueId()) < QAMain.getConfiguration().weapons.switchDelaySeconds * 1000)
+        if (QAMain.getPlayerState().getLastWeaponSwitch().containsKey(player.getUniqueId()) &&
+                System.currentTimeMillis() - QAMain.getPlayerState().getLastWeaponSwitch().get(player.getUniqueId()) < QAMain.getConfiguration().weapons.switchDelaySeconds * 1000)
             return true;
 
 		int showdelay = ((int) (g.getDelayBetweenShotsInSeconds() * 1000));

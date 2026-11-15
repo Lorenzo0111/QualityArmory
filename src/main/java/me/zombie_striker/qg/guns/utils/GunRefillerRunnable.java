@@ -152,30 +152,30 @@ public class GunRefillerRunnable {
 
 
                 Bukkit.getPluginManager().callEvent(new WeaponInteractEvent(player, g, WeaponInteractEvent.InteractType.RELOAD));
-                if (!QAMain.reloadingTasks.containsKey(player.getUniqueId())) {
+                if (!QAMain.getPlayerState().getReloadingTasks().containsKey(player.getUniqueId())) {
                     return;
                 }
-                List<GunRefillerRunnable> rr = QAMain.reloadingTasks.get(player.getUniqueId());
+                List<GunRefillerRunnable> rr = QAMain.getPlayerState().getReloadingTasks().get(player.getUniqueId());
                 rr.remove(GunRefillerRunnable.this);
                 reloadedItem = null;
                 allGunRefillers.remove(gg);
 
                 if (rr.isEmpty()) {
-                    QAMain.reloadingTasks.remove(player.getUniqueId());
+                    QAMain.getPlayerState().getReloadingTasks().remove(player.getUniqueId());
                 } else {
-                    QAMain.reloadingTasks.put(player.getUniqueId(), rr);
+                    QAMain.getPlayerState().getReloadingTasks().put(player.getUniqueId(), rr);
                 }
             }
         }.runTaskLater(QAMain.getInstance(), (long) (20 * seconds));
 
         allGunRefillers.add(gg);
 
-        if (!QAMain.reloadingTasks.containsKey(player.getUniqueId())) {
-            QAMain.reloadingTasks.put(player.getUniqueId(), new ArrayList<GunRefillerRunnable>());
+        if (!QAMain.getPlayerState().getReloadingTasks().containsKey(player.getUniqueId())) {
+            QAMain.getPlayerState().getReloadingTasks().put(player.getUniqueId(), new ArrayList<GunRefillerRunnable>());
         }
-        List<GunRefillerRunnable> rr = QAMain.reloadingTasks.get(player.getUniqueId());
+        List<GunRefillerRunnable> rr = QAMain.getPlayerState().getReloadingTasks().get(player.getUniqueId());
         rr.add(this);
-        QAMain.reloadingTasks.put(player.getUniqueId(), rr);
+        QAMain.getPlayerState().getReloadingTasks().put(player.getUniqueId(), rr);
     }
 
 }

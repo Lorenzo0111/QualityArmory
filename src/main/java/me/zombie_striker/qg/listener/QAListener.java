@@ -10,10 +10,8 @@ import me.zombie_striker.qg.api.QACustomItemInteractEvent;
 import me.zombie_striker.qg.api.QualityArmory;
 import me.zombie_striker.qg.attachments.AttachmentBase;
 import me.zombie_striker.qg.guns.Gun;
-import me.zombie_striker.qg.guns.utils.GunRefillerRunnable;
 import me.zombie_striker.qg.guns.utils.GunUtil;
 import me.zombie_striker.qg.guns.utils.WeaponSounds;
-import me.zombie_striker.qg.handlers.BulletWoundHandler;
 import me.zombie_striker.qg.handlers.IronsightsHandler;
 import me.zombie_striker.qg.handlers.Update19OffhandChecker;
 import me.zombie_striker.qg.hooks.ViaVersionHook;
@@ -387,8 +385,8 @@ public class QAListener implements Listener {
 		if (e.isCancelled())
 			return;
 		if (QualityArmory.isCustomItem(e.getItem().getItemStack())) {
-			if (QAMain.getConfiguration().resourcepack.enabled && !QAMain.namesToBypass.contains(e.getPlayer().getName())
-					&& !QAMain.resourcepackReq.contains(e.getPlayer().getUniqueId())) {
+			if (QAMain.getConfiguration().resourcepack.enabled && !QAMain.getResourcepacks().isBypassing(e.getPlayer().getName())
+					&& !QAMain.getResourcepacks().hasAccepted(e.getPlayer().getUniqueId())) {
 				QualityArmory.sendResourcepack(e.getPlayer(), true);
 			}
 
@@ -399,7 +397,7 @@ public class QAListener implements Listener {
 						if (com.viaversion.viaversion.api.Via.getAPI()
 								.getPlayerVersion(e.getPlayer()) < ViaVersionHook.VIAVERSION_1_8) {
 							if (!g.is18Support()) {
-								for (Gun g2 : QAMain.gunRegister.values()) {
+								for (Gun g2 : QAMain.getItemRegistry().getGuns().values()) {
 									if (g2.is18Support()) {
 										if (g2.getDisplayName().equals(g.getDisplayName())) {
 											e.getItem().setItemStack(CustomItemManager.getItemType("gun").getItem(g2.getItemData().getMat(), g2.getItemData().getData(), g2.getItemData().getVariant()));
@@ -410,7 +408,7 @@ public class QAListener implements Listener {
 								}
 								// If there is no exact match for 1.8, get the closest gun that uses the same
 								// ammo type.
-								for (Gun g2 : QAMain.gunRegister.values()) {
+								for (Gun g2 : QAMain.getItemRegistry().getGuns().values()) {
 									if (g2.is18Support()) {
 										if (g2.getAmmoType().equals(g.getAmmoType())) {
 											e.getItem().setItemStack(CustomItemManager.getItemType("gun").getItem(g2.getItemData().getMat(), g2.getItemData().getData(), g2.getItemData().getVariant()));
@@ -424,7 +422,7 @@ public class QAListener implements Listener {
 							if (com.viaversion.viaversion.api.Via.getAPI()
 									.getPlayerVersion(e.getPlayer()) >= ViaVersionHook.VIAVERSION_1_8) {
 								if (g.is18Support()) {
-									for (Gun g2 : QAMain.gunRegister.values()) {
+									for (Gun g2 : QAMain.getItemRegistry().getGuns().values()) {
 										if (!g2.is18Support()) {
 											if (g2.getDisplayName().equals(g.getDisplayName())) {
 												e.getItem().setItemStack(CustomItemManager.getItemType("gun").getItem(g2.getItemData().getMat(), g2.getItemData().getData(), g2.getItemData().getVariant()));
@@ -435,7 +433,7 @@ public class QAListener implements Listener {
 									}
 									// If there is no exact match for 1.8, get the closest gun that uses the same
 									// ammo type.
-									for (Gun g2 : QAMain.gunRegister.values()) {
+									for (Gun g2 : QAMain.getItemRegistry().getGuns().values()) {
 										if (!g2.is18Support()) {
 											if (g2.getAmmoType().equals(g.getAmmoType())) {
 												e.getItem().setItemStack(CustomItemManager.getItemType("gun").getItem(g2.getItemData().getMat(), g2.getItemData().getData(), g2.getItemData().getVariant()));
@@ -459,7 +457,7 @@ public class QAListener implements Listener {
 			}
 
 			if (QualityArmory.isAmmo(e.getItem().getItemStack())) {
-				QualityArmory.addAmmoToInventory(e.getPlayer(), QAMain.ammoRegister.get(MaterialStorage.getMS(e.getItem().getItemStack())),
+				QualityArmory.addAmmoToInventory(e.getPlayer(), QAMain.getItemRegistry().getAmmo().get(MaterialStorage.getMS(e.getItem().getItemStack())),
 						e.getItem().getItemStack().getAmount());
 				e.setCancelled(true);
 				e.getItem().remove();
@@ -565,7 +563,7 @@ public class QAListener implements Listener {
 
 	@EventHandler
 	public void onMove(PlayerMoveEvent e) {
-		QAMain.recoilHelperMovedLocation.put(e.getPlayer().getUniqueId(), e.getTo());
+		QAMain.getPlayerState().getLastMoveLocation().put(e.getPlayer().getUniqueId(), e.getTo());
 	}
 
 	@EventHandler
@@ -658,8 +656,8 @@ public class QAListener implements Listener {
 			} catch (Error | Exception e34) {
 			}
 		}
-		BulletWoundHandler.bleedoutMultiplier.remove(e.getEntity().getUniqueId());
-		BulletWoundHandler.bloodLevel.put(e.getEntity().getUniqueId(), QAMain.getConfiguration().combat.bleeding.initialBloodLevel);
+		QAMain.getPlayerState().getBleedoutMultiplier().remove(e.getEntity().getUniqueId());
+		QAMain.getPlayerState().getBloodLevel().put(e.getEntity().getUniqueId(), QAMain.getConfiguration().combat.bleeding.initialBloodLevel);
 
 		if (e.getEntity().getKiller() instanceof Player) {
 			Player killer = e.getEntity().getKiller();
@@ -673,8 +671,8 @@ public class QAListener implements Listener {
 
 	@EventHandler
 	public void onDeath(PlayerRespawnEvent e) {
-		BulletWoundHandler.bleedoutMultiplier.remove(e.getPlayer().getUniqueId());
-		BulletWoundHandler.bloodLevel.put(e.getPlayer().getUniqueId(), QAMain.getConfiguration().combat.bleeding.initialBloodLevel);
+		QAMain.getPlayerState().getBleedoutMultiplier().remove(e.getPlayer().getUniqueId());
+		QAMain.getPlayerState().getBloodLevel().put(e.getPlayer().getUniqueId(), QAMain.getConfiguration().combat.bleeding.initialBloodLevel);
 	}
 
 	@SuppressWarnings("deprecation")
@@ -741,7 +739,7 @@ public class QAListener implements Listener {
 		if (e.getAction() == Action.RIGHT_CLICK_BLOCK && e.getClickedBlock().getType() == Material.ANVIL
 				&& QAMain.getConfiguration().interactions.overrideAnvil && !e.getPlayer().isSneaking()) {
 			QAMain.DEBUG("ANVIL InteractEvent Called");
-			if (QAMain.getConfiguration().resourcepack.enabled && !QAMain.resourcepackReq.contains(e.getPlayer().getUniqueId())) {
+			if (QAMain.getConfiguration().resourcepack.enabled && !QAMain.getResourcepacks().hasAccepted(e.getPlayer().getUniqueId())) {
 				QualityArmory.sendResourcepack(e.getPlayer(), true);
 				e.setCancelled(true);
 				QAMain.DEBUG("Resourcepack message being sent!");
@@ -835,8 +833,8 @@ public class QAListener implements Listener {
 		if (event.isCancelled())
 			return;
 
-		if (QAMain.getConfiguration().resourcepack.kickIfDenied && QAMain.sentResourcepack.containsKey(e.getPlayer().getUniqueId())
-				&& System.currentTimeMillis() - QAMain.sentResourcepack.get(e.getPlayer().getUniqueId()) >= 3000) {
+		if (QAMain.getConfiguration().resourcepack.kickIfDenied && QAMain.getResourcepacks().getSentAt(e.getPlayer().getUniqueId()) != null
+				&& System.currentTimeMillis() - QAMain.getResourcepacks().getSentAt(e.getPlayer().getUniqueId()) >= 3000) {
 			// the player did not accept resourcepack, and got away with it
 			e.setCancelled(true);
 			e.getPlayer().kickPlayer(QAMain.getMessages().resourcepack.kickMessage);
@@ -885,7 +883,7 @@ public class QAListener implements Listener {
 			ItemStack usedItem = IronsightsHandler.getItemAiming(e.getPlayer());
 
 			// Send the resourcepack if the player does not have it.
-			if (QAMain.getConfiguration().resourcepack.enabled && !QAMain.resourcepackReq.contains(e.getPlayer().getUniqueId())) {
+			if (QAMain.getConfiguration().resourcepack.enabled && !QAMain.getResourcepacks().hasAccepted(e.getPlayer().getUniqueId())) {
 				QAMain.DEBUG("Player does not have resourcepack!");
 				QualityArmory.sendResourcepack(e.getPlayer(), true);
 			}
@@ -898,8 +896,8 @@ public class QAListener implements Listener {
 						e.setCancelled(true);
 						Gun g = IronsightsHandler.getGunUsed(e.getPlayer());
 						QAMain.DEBUG("Swapping " + g.getName() + " from offhand to main hand to reload!");
-						if (GunUtil.rapidfireshooters.containsKey(e.getPlayer().getUniqueId()))
-							GunUtil.rapidfireshooters.remove(e.getPlayer().getUniqueId()).cancel();
+						if (QAMain.getPlayerState().getRapidFireTasks().containsKey(e.getPlayer().getUniqueId()))
+							QAMain.getPlayerState().getRapidFireTasks().remove(e.getPlayer().getUniqueId()).cancel();
 						IronsightsHandler.unAim(e.getPlayer());
 						if (QAMain.getConfiguration().weapons.ironsights.rightClick || !e.getPlayer().isSneaking()) {
 							QAMain.toggleNightvision(e.getPlayer(), g, false);
@@ -989,7 +987,7 @@ public class QAListener implements Listener {
 				Bukkit.getScheduler().runTaskLater(QAMain.getInstance(), () -> IronsightsHandler.aim(e.getPlayer()), 1);
 			}
 
-			QAMain.lastWeaponSwitch.put(e.getPlayer().getUniqueId(), System.currentTimeMillis());
+			QAMain.getPlayerState().getLastWeaponSwitch().put(e.getPlayer().getUniqueId(), System.currentTimeMillis());
 		}
 
 		if(QAMain.getConfiguration().ui.showAmmoInXpBar) {
@@ -1005,16 +1003,8 @@ public class QAListener implements Listener {
 
 	@EventHandler
 	public void onQuit(final PlayerQuitEvent e) {
-		QAMain.sentResourcepack.remove(e.getPlayer().getUniqueId());
-		QAMain.resourcepackLoading.remove(e.getPlayer().getUniqueId());
-		QAMain.resourcepackReq.remove(e.getPlayer().getUniqueId());
-
-		if (QAMain.reloadingTasks.containsKey(e.getPlayer().getUniqueId())) {
-			for (GunRefillerRunnable r : QAMain.reloadingTasks.get(e.getPlayer().getUniqueId())) {
-				r.getTask().cancel();
-			}
-		}
-		QAMain.reloadingTasks.remove(e.getPlayer().getUniqueId());
+		QAMain.getResourcepacks().onQuit(e.getPlayer().getUniqueId());
+		QAMain.getPlayerState().onQuit(e.getPlayer().getUniqueId());
 
 		if (QualityArmory.isIronSights(e.getPlayer().getInventory().getItemInHand())) {
 			try {
@@ -1043,8 +1033,8 @@ public class QAListener implements Listener {
 				@Override
 				public void run() {
 					if (e.getPlayer().getScoreboard() != null
-							&& !QAMain.coloredGunScoreboard.contains(e.getPlayer().getScoreboard())) {
-						QAMain.coloredGunScoreboard.add(QAMain.registerGlowTeams(e.getPlayer().getScoreboard()));
+							&& !QAMain.getInstance().getGlowScoreboards().contains(e.getPlayer().getScoreboard())) {
+						QAMain.getInstance().getGlowScoreboards().add(QAMain.registerGlowTeams(e.getPlayer().getScoreboard()));
 					}
 				}
 			}.runTaskLater(QAMain.getInstance(), 20 * 15);
@@ -1055,7 +1045,7 @@ public class QAListener implements Listener {
 		} else {
 			for (ItemStack i : e.getPlayer().getInventory().getContents()) {
 				if (i != null && (QualityArmory.isGun(i) || QualityArmory.isAmmo(i) || QualityArmory.isMisc(i))) {
-					if (QAMain.getConfiguration().resourcepack.enabled && !QAMain.resourcepackReq.contains(e.getPlayer().getUniqueId())) {
+					if (QAMain.getConfiguration().resourcepack.enabled && !QAMain.getResourcepacks().hasAccepted(e.getPlayer().getUniqueId())) {
 						new BukkitRunnable() {
 
 							@Override
@@ -1076,18 +1066,6 @@ public class QAListener implements Listener {
 	public void onDrop(final PlayerDropItemEvent e) {
 		if (e.isCancelled())
 			return;
-		if (QAMain.showOutOfAmmoOnItem) {
-			if (QualityArmory.isGun(e.getItemDrop().getItemStack())) {
-				if (e.getItemDrop().getItemStack().getItemMeta().getDisplayName().contains(QAMain.getMessages().weapon.outOfAmmo)) {
-					ItemStack temp = e.getItemDrop().getItemStack();
-					ItemMeta im = temp.getItemMeta();
-					im.setDisplayName(QualityArmory.getGun(temp).getDisplayName());
-					temp.setItemMeta(im);
-					e.getItemDrop().setItemStack(temp);
-					QAMain.DEBUG("UNSUPPORTED: Dropping item with Out of ammo displayed");
-				}
-			}
-		}
 
 		if (QualityArmory.isIronSights(e.getItemDrop().getItemStack())) {
 			e.setCancelled(true);
@@ -1156,8 +1134,8 @@ public class QAListener implements Listener {
 			Gun g = QualityArmory.getGun(item);
 			if (g == null) return;
 
-			if (g.getGlow() != null && QAMain.coloredGunScoreboard != null) {
-				for (Scoreboard s : QAMain.coloredGunScoreboard)
+			if (g.getGlow() != null && QAMain.getInstance().getGlowScoreboards() != null) {
+				for (Scoreboard s : QAMain.getInstance().getGlowScoreboards())
 					if (s.getTeam("QA_" + g.getGlow().name()) != null)
 						s.getTeam("QA_" + g.getGlow().name()).addEntry(event.getEntity().getUniqueId().toString());
 

@@ -1,14 +1,11 @@
 package me.zombie_striker.qg.guns.chargers;
 
-import java.util.HashMap;
-import java.util.UUID;
 
 import me.zombie_striker.qg.guns.utils.WeaponSounds;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.scheduler.BukkitTask;
 
 import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.api.QualityArmory;
@@ -17,7 +14,6 @@ import me.zombie_striker.qg.guns.utils.GunUtil;
 
 public class DelayedBurstFireCharger implements ChargingHandler {
 
-	public static HashMap<UUID, BukkitTask> shooters = new HashMap<>();
 
 	public DelayedBurstFireCharger() {
 		ChargingManager.add(this);
@@ -25,7 +21,7 @@ public class DelayedBurstFireCharger implements ChargingHandler {
 
 	@Override
 	public boolean isCharging(Player player) {
-		return shooters.containsKey(player.getUniqueId());
+		return QAMain.getPlayerState().getDelayedBurstFireTasks().containsKey(player.getUniqueId());
 	}
 
 	@Override
@@ -33,7 +29,7 @@ public class DelayedBurstFireCharger implements ChargingHandler {
 		GunUtil.shootHandler(g, player);
 		GunUtil.playShoot(g, player);
 
-		shooters.put(player.getUniqueId(), new BukkitRunnable() {
+		QAMain.getPlayerState().getDelayedBurstFireTasks().put(player.getUniqueId(), new BukkitRunnable() {
 			int slotUsed = player.getInventory().getHeldItemSlot();
 			@SuppressWarnings("deprecation")
 			boolean offhand = QualityArmory.isIronSights(player.getItemInHand());
@@ -55,8 +51,8 @@ public class DelayedBurstFireCharger implements ChargingHandler {
 				int amount = Gun.getAmount(player);
 				if (shotCurrently >= g.getBulletsPerShot() || slotUsed != player.getInventory().getHeldItemSlot()
 						|| amount <= 0) {
-					if (shooters.containsKey(player.getUniqueId()))
-						shooters.remove(player.getUniqueId()).cancel();
+					if (QAMain.getPlayerState().getDelayedBurstFireTasks().containsKey(player.getUniqueId()))
+						QAMain.getPlayerState().getDelayedBurstFireTasks().remove(player.getUniqueId()).cancel();
 					return;
 				}
 

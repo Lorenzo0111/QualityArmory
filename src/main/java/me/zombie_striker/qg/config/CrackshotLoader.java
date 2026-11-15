@@ -244,7 +244,7 @@ public class CrackshotLoader {
 
 			g.setReloadingTimeInSeconds(reloadDelayInTicks / 20);
 			guns4.add(g);
-			QAMain.gunRegister.put(ms, g);
+			QAMain.getItemRegistry().getGuns().put(ms, g);
 			QAMain.DEBUG("-Registering Crackshot Gun: " + internalname);
 		}
 		return guns4;
