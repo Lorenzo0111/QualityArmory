@@ -38,7 +38,7 @@ public class Update19Events implements Listener {
 
 	@EventHandler
 	public void onItemHandSwap(PlayerSwapHandItemsEvent e) {
-		if (QAMain.getConfiguration().weapons.reloadOnF || QAMain.getConfiguration().weapons.reloadOnFOnly) {
+		if (QAMain.getConfiguration().weapons.controls.reloadOnOffhandSwap || QAMain.getConfiguration().weapons.controls.reloadOnlyOnOffhandSwap) {
 			if (QualityArmory.isIronSights(e.getOffHandItem())) {
 				e.setCancelled(true);
 				IronsightsHandler.unAim(e.getPlayer());

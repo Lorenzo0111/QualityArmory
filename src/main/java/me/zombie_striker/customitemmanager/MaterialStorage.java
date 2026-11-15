@@ -116,17 +116,17 @@ public class MaterialStorage {
 
 			if (im.hasLore()) {
 				for (String lore : im.getLore()) {
-					if (lore.startsWith(QAMain.S_ITEM_VARIANTS_NEW)) {
+					if (lore.startsWith(QAMain.getMessages().lore.variant)) {
 						try {
-							int id = Integer.parseInt(lore.split(QAMain.S_ITEM_VARIANTS_NEW)[1].trim());
+							int id = Integer.parseInt(lore.split(QAMain.getMessages().lore.variant)[1].trim());
 							return id;
 						} catch (Error | Exception e4) {
 							e4.printStackTrace();
 							return 0;
 						}
-					} else if (lore.startsWith(QAMain.S_ITEM_VARIANTS_LEGACY)) {
+					} else if (lore.startsWith(QAMain.getMessages().lore.variantLegacy)) {
 						try {
-							int id = Integer.parseInt(lore.split(QAMain.S_ITEM_VARIANTS_LEGACY)[1].trim());
+							int id = Integer.parseInt(lore.split(QAMain.getMessages().lore.variantLegacy)[1].trim());
 							return id;
 						} catch (Error | Exception e4) {
 							e4.printStackTrace();

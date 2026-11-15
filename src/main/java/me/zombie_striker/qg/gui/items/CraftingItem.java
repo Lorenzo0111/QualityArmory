@@ -50,12 +50,12 @@ public class CraftingItem {
                 Player player = (Player) click.getWhoClicked();
 
                 if (item instanceof Gun) {
-                    if (QAMain.getConfiguration().permissions.requirePermsToCraft && !player.hasPermission("qualityarmory.craftgun")) {
-                        player.sendMessage(QAMain.S_NOPERM);
+                    if (QAMain.getConfiguration().permissions.requireCraft && !player.hasPermission("qualityarmory.craftgun")) {
+                        player.sendMessage(QAMain.getMessages().general.noPermission);
                         return true;
                     }
-                    if (QAMain.getConfiguration().permissions.perWeaponCraftPermission && !player.hasPermission("qualityarmory.craftgun." + item.getName())) {
-                        player.sendMessage(QAMain.S_NOPERM);
+                    if (QAMain.getConfiguration().permissions.perWeapon.craft && !player.hasPermission("qualityarmory.craftgun." + item.getName())) {
+                        player.sendMessage(QAMain.getMessages().general.noPermission);
                         return true;
                     }
                 }
@@ -64,7 +64,7 @@ public class CraftingItem {
 
                 if (!QAMain.lookForIngre(player, item) && player.getGameMode() != GameMode.CREATIVE) {
                     player.closeInventory();
-                    player.sendMessage(QAMain.prefix + QAMain.S_missingIngredients);
+                    player.sendMessage(QAMain.getMessages().general.prefix + QAMain.getMessages().crafting.missingIngredients);
                     XSound.BLOCK_ANVIL_BREAK.play(player, 1, 1);
                     return true;
                 }

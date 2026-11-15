@@ -1,0 +1,96 @@
+version: 1
+general:
+  prefix: '&8[&2QualityArmory&8]&r'
+  no-permission: '&c You do not have permission to do that.'
+  reloaded: ' Guns and configs have been reloaded.'
+  player-not-found: ' This player does not exist.'
+  player-not-online: '&c That player is not online'
+  console-requires-player: ' A player is required from the console. /QA give <item> <player> [amount]'
+commands:
+  hold-gun-required: '&c You need to hold a gun to do this.'
+  hold-ammo-template-required: ' You need to hold an item that will be used as ammo.'
+  ammo-created: ' A new ammo type has been created.'
+  ammo-created-reload-hint: ' You will need to use /qa reload for the new ammo type to appear.'
+  item-name-required: ' The item name is required'
+  valid-items: ' Valid items: '
+  item-not-found: ' Could not find item "%item%"'
+  location-required: ' A valid location is required'
+  dropping-item: ' Dropping item %item% at that location'
+  drop-failed: ' Failed to drop item %item% at that location'
+  giving-item-self: ' Adding %item% to your inventory'
+  giving-item-other: ' Adding %item% to %player%''s inventory'
+  resourcepack-override: ' Overriding resourcepack requirement.'
+help:
+  header: ' Commands:'
+  give: '&6/QA give <Item> [player] [amount]:&7 Gives the sender the item specified (guns, ammo, misc.)'
+  craft: '&6/QA craft [Item]:&7 Opens the crafting menu.'
+  shop: '&6/QA shop: &7Opens the shop menu'
+  get-resourcepack: '&6/QA getResourcepack: &7Sends the link to the resourcepack. Disables the resourcepack prompts until /qa sendResourcepack is used'
+  send-resourcepack: '&6/QA sendResourcepack: &7Sends the resourcepack prompt. Enables the resourcepack prompt. Enabled by default'
+  reload: '&6/QA reload: &7Reloads all values in QA.'
+  create-new-ammo: '&6/QA createNewAmmo <name>: &7Creates a new ammo type using the item in your hand as a template'
+shop:
+  purchase-confirm: '&aYou have purchased %item% for $%cost%!'
+  no-money: You do not have enough money to buy this.
+  no-economy: ECONOMY NOT ENABLED. REPORT THIS TO THE OWNER!
+crafting:
+  missing-ingredients: You do not have all the materials needed to craft this.
+  no-anvil-permission: ' &a You do not have permission to use this armory bench. Shift+Click to access anvil.'
+resourcepack:
+  downloading: ' &c&l Downloading Resourcepack...'
+  accept-prompt: ' &f Accept the resourcepack to see the custom items'
+  kick-message: "&c You have been kicked because you did not accept the resourcepack. \n&f If you want to rejoin the server, edit the server entry and set \"Resourcepack Prompts\" to \"Accept\" or \"Prompt\""
+  crash-help: In case the resourcepack crashes your client, reject the request and use /qa getResourcepack to get the resourcepack.
+  download: Download this resourcepack and enable it to see the custom items (Note that it may take some time to load)
+  now-bypassing: By issuing this command, you are now added to a whitelist for the resourcepack. You should no longer see the prompt
+  now-opted-in: By issuing this command, you have been removed from the whitelist. You will now receive the resourcepack prompt
+lore:
+  ammo: '&aAmmo'
+  bullets: '&aBullets'
+  damage: '&aDamage'
+  durability: Durability
+  ingredients: Ingredients
+  variant: '&7Varient:'
+  variant-legacy: '&7Varient:'
+  price: '&6Price: '
+  dps: '&2DPS'
+  crafts: Crafts
+  returns: Returns
+  controls:
+    single-fire: '&8[LMB] to use Single-fire mode'
+    full-auto: '&8[Sneak]+[LMB] to use Automatic-fire'
+    reload: '&8[RMB] to reload'
+    ironsights-right-click: '&8[RMB] to open ironsights'
+    ironsights-sneak: '&8[Sneak] to open ironsights'
+    reload-drop: '&8[DropItem] to reload'
+    reload-right-click: '&8[RMB] to reload'
+    equip-helmet: '&8[RMB] to equip helmet.'
+weapon:
+  reloading: '[Reloading...]'
+  ammo-count: '[%total%]'
+  out-of-ammo: '[Out of Ammo]'
+  hotbar-format: '%name% = %amount%/%max% %state%'
+grenade:
+  pull-pin: ' Pull the pin first...'
+  already-pulled: You already pulled the pin!
+medkit:
+  fully-healed: '&fYou are fully healed. No need for this right now!'
+  fully-healed-other: '&f%player% is already fully healed. No need for this right now!'
+  healing: Healing
+  bleeding-rate: 'Blood-Loss Rate:'
+bleeding:
+  start: '&cYOU ARE BLEEDING! FIND A MEDKIT TO STOP THE BLEEDING!'
+  protected-by-kevlar: '&aYour Kevlar vest protected you from that bullet!'
+ammo-bag:
+  ammo: '&aAmmo: '
+  type: '&aAmmo Type: '
+materials:
+  IRON_INGOT: IRON_INGOT
+  REDSTONE: REDSTONE
+  OAK_PLANKS: OAK_PLANKS
+  BLAZE_POWDER: BLAZE_POWDER
+  GOLD_INGOT: GOLD_INGOT
+  GUNPOWDER: GUNPOWDER
+  NETHER_STAR: NETHER_STAR
+  BLAZE_ROD: BLAZE_ROD
+  TNT: TNT

@@ -29,7 +29,7 @@ public MiniNukeProjectile() {
 
 			@Override
 			public void run() {
-				dir.setY(dir.getY() - QAMain.getConfiguration().weapons.gravity);
+				dir.setY(dir.getY() - QAMain.getConfiguration().weapons.detection.gravity);
 				for (int tick = 0; tick < Math.round(0.99+g.getVelocityForRealtimeCalculations()); tick++) {
 				distance--;
 				s.add(dir);

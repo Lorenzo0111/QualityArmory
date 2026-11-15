@@ -1,316 +1,479 @@
 package me.zombie_striker.qg.config.system;
 
-import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.config.system.serializers.ConfigSerializer;
-import me.zombie_striker.qg.config.system.serializers.EntityTypeSerializer;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
-import java.lang.reflect.Constructor;
+import java.io.IOException;
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
- * This class handles the configuration file loading, saving, and migration.
- * It uses reflection to load the fields annotated with @Config and set their values from the configuration file.
+ * A YAML file mapped onto the {@link Config} fields of a class and its {@link Section}s.
+ * <p>
+ * {@link #load()} does everything in one pass: it migrates old files, writes missing defaults and comments,
+ * saves the file if anything changed and assigns the values to the fields.
  *
  * @see Config
+ * @see Section
  */
 public abstract class BaseConfiguration {
+    /**
+     * Serializers for types the configuration doesn't handle natively. Primitives, Strings, enums and lists of
+     * those are always supported.
+     */
     public static final List<ConfigSerializer<?>> SERIALIZERS = new ArrayList<>();
-    private final QAMain plugin = QAMain.getInstance();
+    private static final String VERSION_KEY = "version";
+    private static final boolean COMMENTS_SUPPORTED = detectCommentSupport();
+
     private final File file;
+    private final Logger logger;
+    private final SortedMap<Integer, Migration> migrations = new TreeMap<>();
+    private List<Binding> bindings;
+    private Map<String, String[]> sectionComments;
     protected FileConfiguration config;
 
-    static {
-        SERIALIZERS.add(new EntityTypeSerializer());
-    }
-
-    protected BaseConfiguration(File file) {
+    protected BaseConfiguration(File file, Logger logger) {
         this.file = file;
-        this.loadFile();
+        this.logger = logger;
     }
 
     /**
-     * Loads the configuration file into memory.
+     * @return The current version of the file. Files with a lower version are migrated when loaded.
      */
-    protected void loadFile() {
+    public abstract int getVersion();
+
+    /**
+     * @return Lines written at the top of the file. Works on every server version.
+     */
+    protected String[] getHeader() {
+        return new String[0];
+    }
+
+    /**
+     * Called for every value read from the file before it is assigned to its field.
+     * Override it to post-process values, for example to colorize messages.
+     *
+     * @param field The field the value will be assigned to.
+     * @param value The value read from the file, never null.
+     * @return The value to assign.
+     */
+    protected Object transformValue(Field field, Object value) {
+        return value;
+    }
+
+    /**
+     * Registers a migration step. When a file is loaded, {@link Config#oldPath()} values are moved first,
+     * then every step with a version higher than the file's runs in ascending order.
+     *
+     * @param version   The version the step upgrades the file to.
+     * @param migration The step.
+     */
+    protected final void migration(int version, Migration migration) {
+        if (version < 1 || version > this.getVersion())
+            throw new IllegalArgumentException("Migration version " + version + " is outside 1.." + this.getVersion());
+        this.migrations.put(version, migration);
+    }
+
+    /**
+     * Moves a value to a new path unless the new path is already set. The old path is always removed.
+     */
+    protected final void move(String from, String to) {
+        if (!this.config.contains(from)) return;
+        if (!this.config.contains(to)) {
+            Object value = this.config.get(from);
+            if (value instanceof ConfigurationSection)
+                this.config.createSection(to, toMap((ConfigurationSection) value));
+            else
+                this.config.set(to, value);
+        }
+        this.config.set(from, null);
+    }
+
+    /**
+     * Loads the file: migrates it, writes missing defaults and comments, saves it if needed
+     * and assigns the values to the fields. Call it again to reload.
+     */
+    public void load() {
+        List<Binding> bindings = this.bindings();
+        this.createFile();
         this.config = YamlConfiguration.loadConfiguration(this.file);
+        String before = this.config.saveToString();
+
+        boolean migrated = false;
+        if (this.config.getKeys(false).isEmpty()) {
+            this.config.set(VERSION_KEY, this.getVersion());
+        } else {
+            migrated = this.migrate(bindings);
+        }
+
+        for (Binding binding : bindings) {
+            if (!this.config.contains(binding.path))
+                this.config.set(binding.path, this.serialize(binding.defaultValue));
+        }
+
+        if (migrated)
+            this.config = this.reorder(this.config, bindings);
+
+        this.applyHeaderAndComments(bindings);
+
+        if (!this.config.saveToString().equals(before))
+            this.save();
+
+        for (Binding binding : bindings)
+            this.assign(binding);
     }
 
     /**
-     * Loads the default values into the configuration file if it doesn't exist.
-     */
-    @SuppressWarnings("ResultOfMethodCallIgnored")
-    public void loadDefaults() {
-        if (!this.file.exists()) {
-            try {
-                this.file.getParentFile().mkdirs();
-                this.file.createNewFile();
-            } catch (Exception e) {
-                plugin.handleException(e);
-            }
-        }
-
-        if (this.config.get("version") == null) {
-            this.config.set("version", 0);
-        }
-
-        this.migrate();
-
-        for (ConfigFieldBinding binding : this.collectConfigFields()) {
-            String path = binding.config.value();
-            Object value = this.config.get(path);
-            if (value != null) continue;
-
-            try {
-                binding.field.setAccessible(true);
-                this.config.set(path, binding.field.get(binding.owner));
-            } catch (IllegalAccessException e) {
-                plugin.handleException(e);
-            }
-        }
-
-        this.save();
-    }
-
-    /**
-     * Reloads the configuration file and updates the fields annotated with @Config.
-     */
-    public void reload() {
-        this.loadFile();
-
-        for (ConfigFieldBinding binding : this.collectConfigFields()) {
-            String path = binding.config.value();
-            Object value;
-
-            if (List.class.isAssignableFrom(binding.field.getType())) {
-                if (!this.config.contains(path))
-                    continue;
-                value = this.getValueList(path, this.resolveListElementType(binding.field));
-            } else {
-                value = this.getValue(path, binding.field.getType());
-            }
-
-            if (value == null) continue;
-
-            try {
-                binding.field.setAccessible(true);
-                binding.field.set(binding.owner, value);
-            } catch (IllegalAccessException e) {
-                plugin.handleException(e);
-            }
-        }
-    }
-
-    /**
-     * Gets the value of a field from the configuration file.
+     * Sets a raw value in the file. Call {@link #save()} to persist it and {@link #load()} to update the fields.
      *
-     * @param path The path of the field in the configuration file.
-     * @param type The class type of the field.
-     * @return The value of the field, or null if it doesn't exist.
+     * @param path  The path in the file.
+     * @param value The value, or null to remove it.
      */
-    @SuppressWarnings("unchecked")
-    public <T> T getValue(String path, Class<T> type) {
-        Object raw = this.config.get(path);
-        if (raw == null) return null;
-        return this.convertRawValue(raw, type);
+    public void set(String path, Object value) {
+        this.config.set(path, this.serialize(value));
     }
 
     /**
-     * Gets the value of a field from the configuration file.
-     *
-     * @param path The path of the field in the configuration file.
-     * @param type The class type of the field.
-     * @return The value of the field, or null if it doesn't exist.
-     */
-    public <T> List<T> getValueList(String path, Class<T> type) {
-        List<?> values = this.config.getList(path);
-        List<T> result = new ArrayList<>();
-        if (values == null) return result;
-
-        for (Object value : values) {
-            T obj = this.convertRawValue(value, type);
-            if (obj != null) result.add(obj);
-        }
-
-        return result;
-    }
-
-    /**
-     * Saves the configuration file to disk.
+     * Saves the file to disk.
      */
     public void save() {
         try {
             this.config.save(this.file);
-        } catch (Exception e) {
-            plugin.handleException(e);
+        } catch (IOException e) {
+            this.logger.log(Level.SEVERE, "Could not save " + this.file.getName(), e);
         }
     }
 
+    @SuppressWarnings("ResultOfMethodCallIgnored")
+    private void createFile() {
+        if (this.file.exists()) return;
+        try {
+            this.file.getParentFile().mkdirs();
+            this.file.createNewFile();
+        } catch (IOException e) {
+            this.logger.log(Level.SEVERE, "Could not create " + this.file.getName(), e);
+        }
+    }
+
+    // ---- Migration ----
+
     /**
-     * Migrates the configuration file from an old version to the current version.
-     * This method checks for fields annotated with @Config that have an oldPath specified.
-     * It copies the value from the old path to the new path and removes the old path.
-     * If the version in the configuration file is already up to date, it does nothing.
+     * @return Whether the file was migrated.
      */
-    public void migrate() {
-        if (this.getVersion() == 0) return;
-        if (this.config.getInt("version") == this.getVersion()) return;
-
-        this.customMigrate();
-
-        for (ConfigFieldBinding binding : this.collectConfigFields()) {
-            if (binding.config.oldPath().isEmpty()) continue;
-
-            String oldPath = binding.config.oldPath();
-            Object value = this.convertRawValue(this.config.get(oldPath), binding.field.getType());
-            if (value == null) continue;
-
-            this.config.set(binding.config.value(), value);
-            this.config.set(oldPath, null);
+    private boolean migrate(List<Binding> bindings) {
+        int from = this.config.getInt(VERSION_KEY, 0);
+        int to = this.getVersion();
+        if (from == to) return false;
+        if (from > to) {
+            this.logger.warning(this.file.getName() + " is from a newer version (" + from + " > " + to + "). It will be loaded as is.");
+            return false;
         }
 
-        this.config.set("version", this.getVersion());
-        this.save();
+        for (Binding binding : bindings) {
+            for (String oldPath : binding.oldPaths)
+                this.move(oldPath, binding.path);
+        }
+
+        for (Map.Entry<Integer, Migration> step : this.migrations.tailMap(from + 1).entrySet())
+            step.getValue().migrate(this.config);
+
+        pruneEmptySections(this.config);
+        this.config.set(VERSION_KEY, to);
+        this.logger.info("Migrated " + this.file.getName() + " from version " + from + " to " + to);
+        return true;
     }
 
-
     /**
-     * @return The version of the configuration file.
+     * Rebuilds a migrated file so keys follow the declared order, like a freshly generated file.
+     * Values without a field (raw values, custom sections) keep their place at the end of their section.
      */
-    public abstract int getVersion();
-
-
-    /**
-     * This method is called before the default migration process.
-     * You can override this method to perform any custom migration logic.
-     */
-    public void customMigrate() {
+    private FileConfiguration reorder(FileConfiguration source, List<Binding> bindings) {
+        YamlConfiguration ordered = new YamlConfiguration();
+        ordered.set(VERSION_KEY, source.get(VERSION_KEY));
+        for (Binding binding : bindings)
+            ordered.set(binding.path, source.get(binding.path));
+        for (String path : source.getKeys(true)) {
+            if (!source.isConfigurationSection(path) && !ordered.contains(path))
+                ordered.set(path, source.get(path));
+        }
+        return ordered;
     }
 
-    @SuppressWarnings("unchecked")
-    private <T> T convertRawValue(Object raw, Class<T> type) {
-        if (raw == null) return null;
-        if (type == null) return null;
+    /**
+     * Converts a section to nested maps, so it can be recreated at another path.
+     */
+    protected static Map<String, Object> toMap(ConfigurationSection section) {
+        Map<String, Object> map = new LinkedHashMap<>();
+        for (String key : section.getKeys(false)) {
+            Object value = section.get(key);
+            map.put(key, value instanceof ConfigurationSection ? toMap((ConfigurationSection) value) : value);
+        }
+        return map;
+    }
+
+    /**
+     * Removes sections left empty after their keys were moved.
+     */
+    private static void pruneEmptySections(ConfigurationSection section) {
+        for (String key : section.getKeys(false)) {
+            ConfigurationSection child = section.getConfigurationSection(key);
+            if (child == null) continue;
+
+            pruneEmptySections(child);
+            if (child.getKeys(false).isEmpty())
+                section.set(key, null);
+        }
+    }
+
+    // ---- Comments ----
+
+    private static boolean detectCommentSupport() {
+        try {
+            ConfigurationSection.class.getMethod("setComments", String.class, List.class);
+            return true;
+        } catch (NoSuchMethodException e) {
+            return false;
+        }
+    }
+
+    @SuppressWarnings("deprecation")
+    private void applyHeaderAndComments(List<Binding> bindings) {
+        String[] header = this.getHeader();
+
+        if (!COMMENTS_SUPPORTED) {
+            // Legacy servers only support a plain header
+            if (header.length > 0)
+                this.config.options().header(String.join("\n", header)).copyHeader(true);
+            return;
+        }
+
+        if (header.length > 0)
+            this.config.options().setHeader(Arrays.asList(header));
+        for (Map.Entry<String, String[]> entry : this.sectionComments.entrySet())
+            this.config.setComments(entry.getKey(), Arrays.asList(entry.getValue()));
+        for (Binding binding : bindings) {
+            if (binding.comment != null)
+                this.config.setComments(binding.path, Arrays.asList(binding.comment));
+        }
+    }
+
+    // ---- Reading values ----
+
+    private void assign(Binding binding) {
+        Object raw = this.config.get(binding.path);
+        Object value = raw == null ? null : this.convert(raw, binding.field.getType(), binding.field.getGenericType(), binding.path);
+
+        if (value == null) {
+            if (raw != null)
+                this.logger.warning("Invalid value for " + binding.path + " in " + this.file.getName() + ": '" + raw + "'. Using the default.");
+            value = copy(binding.defaultValue);
+        } else if (binding.range != null && value instanceof Number) {
+            double number = ((Number) value).doubleValue();
+            if (number < binding.range.min() || number > binding.range.max()) {
+                this.logger.warning(binding.path + " in " + this.file.getName() + " must be between "
+                        + binding.range.min() + " and " + binding.range.max() + ", but is " + number + ". Using the default.");
+                value = copy(binding.defaultValue);
+            }
+        }
+
+        if (value != null)
+            value = this.transformValue(binding.field, value);
 
         try {
-            if (type.isPrimitive()) {
-                if (type.equals(boolean.class)) return (T) Boolean.valueOf(Boolean.parseBoolean(String.valueOf(raw)));
-                if (type.equals(int.class)) return (T) Integer.valueOf(Integer.parseInt(String.valueOf(raw)));
-                if (type.equals(double.class)) return (T) Double.valueOf(Double.parseDouble(String.valueOf(raw)));
-                if (type.equals(long.class)) return (T) Long.valueOf(Long.parseLong(String.valueOf(raw)));
+            binding.field.set(binding.owner, value);
+        } catch (IllegalAccessException e) {
+            this.logger.log(Level.SEVERE, "Could not set " + binding.path, e);
+        }
+    }
+
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    private Object convert(Object raw, Class<?> type, Type genericType, String path) {
+        if (List.class.isAssignableFrom(type)) {
+            if (!(raw instanceof List)) return null;
+            Class<?> elementType = resolveListElementType(genericType);
+            List<Object> result = new ArrayList<>();
+            for (Object element : (List<?>) raw) {
+                Object converted = element == null ? null : this.convert(element, elementType, elementType, path);
+                if (converted == null)
+                    this.logger.warning("Ignoring invalid entry in " + path + " (" + this.file.getName() + "): '" + element + "'");
+                else
+                    result.add(converted);
+            }
+            return result;
+        }
+
+        if (Map.class.isAssignableFrom(type)) {
+            if (raw instanceof ConfigurationSection) return ((ConfigurationSection) raw).getValues(false);
+            return raw instanceof Map ? raw : null;
+        }
+
+        if (raw instanceof ConfigurationSection || raw instanceof List) return null;
+        String string = String.valueOf(raw).trim();
+
+        try {
+            if (type == boolean.class || type == Boolean.class) {
+                if (raw instanceof Boolean) return raw;
+                if (string.equalsIgnoreCase("true")) return true;
+                if (string.equalsIgnoreCase("false")) return false;
                 return null;
             }
-
-            if (type.isInstance(raw)) return (T) raw;
-            if (type.equals(String.class)) return (T) String.valueOf(raw);
-            if (type.equals(Boolean.class)) return (T) Boolean.valueOf(Boolean.parseBoolean(String.valueOf(raw)));
-            if (type.equals(Integer.class)) return (T) Integer.valueOf(Integer.parseInt(String.valueOf(raw)));
-            if (type.equals(Double.class)) return (T) Double.valueOf(Double.parseDouble(String.valueOf(raw)));
-            if (type.equals(Long.class)) return (T) Long.valueOf(Long.parseLong(String.valueOf(raw)));
-            if (Map.class.isAssignableFrom(type) && raw instanceof Map) return (T) raw;
+            if (type == int.class || type == Integer.class) {
+                if (raw instanceof Number && ((Number) raw).doubleValue() % 1 == 0) return ((Number) raw).intValue();
+                return Integer.parseInt(string);
+            }
+            if (type == long.class || type == Long.class) {
+                if (raw instanceof Number && ((Number) raw).doubleValue() % 1 == 0) return ((Number) raw).longValue();
+                return Long.parseLong(string);
+            }
+            if (type == double.class || type == Double.class) {
+                if (raw instanceof Number) return ((Number) raw).doubleValue();
+                return Double.parseDouble(string);
+            }
+            if (type == float.class || type == Float.class) {
+                if (raw instanceof Number) return ((Number) raw).floatValue();
+                return Float.parseFloat(string);
+            }
+            if (type == String.class) return String.valueOf(raw);
+            if (type.isEnum()) return Enum.valueOf((Class<Enum>) type, string.toUpperCase(Locale.ROOT));
 
             for (ConfigSerializer<?> serializer : SERIALIZERS) {
-                if (serializer.getType().equals(type)) {
-                    return (T) serializer.deserialize(String.valueOf(raw));
-                }
+                if (serializer.getType().equals(type))
+                    return serializer.deserialize(string);
             }
-        } catch (RuntimeException e) {
-            plugin.getLogger().warning("Config value could not be converted to " + type.getName() + ": " + raw + " — " + e.getMessage());
+            if (type.isInstance(raw)) return raw;
+        } catch (IllegalArgumentException e) {
+            // Includes NumberFormatException and unknown enum constants
+            return null;
         }
 
         return null;
     }
 
-    @SuppressWarnings("unchecked")
-    private <T> Class<T> resolveListElementType(Field field) {
-        Type genericType = field.getGenericType();
-        if (!(genericType instanceof ParameterizedType)) return (Class<T>) Object.class;
-
-        Type[] typeArguments = ((ParameterizedType) genericType).getActualTypeArguments();
-        if (typeArguments.length == 0) return (Class<T>) Object.class;
-
-        Type firstType = typeArguments[0];
-        if (firstType instanceof Class) return (Class<T>) firstType;
-        if (firstType instanceof ParameterizedType) {
-            Type rawType = ((ParameterizedType) firstType).getRawType();
-            if (rawType instanceof Class) return (Class<T>) rawType;
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    private Object serialize(Object value) {
+        if (value == null) return null;
+        if (value instanceof Enum) return ((Enum<?>) value).name();
+        if (value instanceof List) {
+            List<Object> result = new ArrayList<>();
+            for (Object element : (List<?>) value)
+                result.add(this.serialize(element));
+            return result;
         }
-
-        return (Class<T>) Object.class;
+        for (ConfigSerializer serializer : SERIALIZERS) {
+            if (serializer.getType().isInstance(value))
+                return serializer.serialize(value);
+        }
+        return value;
     }
 
-    private List<ConfigFieldBinding> collectConfigFields() {
-        List<ConfigFieldBinding> fields = new ArrayList<>();
-        this.collectConfigFields(this, fields, Collections.newSetFromMap(new IdentityHashMap<Object, Boolean>()));
-        return fields;
+    private static Object copy(Object value) {
+        if (value instanceof List) return new ArrayList<>((List<?>) value);
+        if (value instanceof Map) return new LinkedHashMap<>((Map<?, ?>) value);
+        return value;
     }
 
-    private void collectConfigFields(Object instance, List<ConfigFieldBinding> fields, Set<Object> visited) {
-        if (instance == null || visited.contains(instance)) return;
-        visited.add(instance);
+    private static Class<?> resolveListElementType(Type genericType) {
+        if (!(genericType instanceof ParameterizedType)) return Object.class;
 
+        Type[] arguments = ((ParameterizedType) genericType).getActualTypeArguments();
+        if (arguments.length == 0) return Object.class;
+        if (arguments[0] instanceof Class) return (Class<?>) arguments[0];
+        if (arguments[0] instanceof ParameterizedType && ((ParameterizedType) arguments[0]).getRawType() instanceof Class)
+            return (Class<?>) ((ParameterizedType) arguments[0]).getRawType();
+        return Object.class;
+    }
+
+    // ---- Field discovery ----
+
+    /**
+     * Collects the bindings once. It can't run in the constructor because subclass fields
+     * aren't initialized yet at that point.
+     */
+    private List<Binding> bindings() {
+        if (this.bindings == null) {
+            this.bindings = new ArrayList<>();
+            this.sectionComments = new LinkedHashMap<>();
+            this.collect(this, "", this.bindings);
+        }
+        return this.bindings;
+    }
+
+    private void collect(Object instance, String prefix, List<Binding> result) {
         for (Field field : instance.getClass().getDeclaredFields()) {
-            if (field.isSynthetic()) continue;
+            int modifiers = field.getModifiers();
+            if (field.isSynthetic() || Modifier.isStatic(modifiers) || Modifier.isTransient(modifiers)) continue;
 
             Config config = field.getAnnotation(Config.class);
+            Section section = field.getType().getAnnotation(Section.class);
+            if (config == null && section == null) continue;
+
+            field.setAccessible(true);
+            Object value;
+            try {
+                value = field.get(instance);
+            } catch (IllegalAccessException e) {
+                throw new IllegalStateException("Could not read " + field, e);
+            }
+
             if (config != null) {
-                fields.add(new ConfigFieldBinding(instance, field, config));
+                String key = config.value().isEmpty() ? toKebabCase(field.getName()) : config.value();
+                result.add(new Binding(instance, field, prefix + key, config.oldPath(),
+                        field.getAnnotation(Comment.class), field.getAnnotation(Range.class), copy(value)));
                 continue;
             }
 
-            if (!this.isNestedConfigField(field)) continue;
+            if (value == null)
+                throw new IllegalStateException("Section field " + field + " must be initialized");
 
-            Object nested = this.resolveOrCreateNestedObject(instance, field);
-            if (nested == null) continue;
-            this.collectConfigFields(nested, fields, visited);
+            String path = prefix + (section.value().isEmpty() ? toKebabCase(field.getName()) : section.value());
+            Comment comment = field.isAnnotationPresent(Comment.class) ? field.getAnnotation(Comment.class) : field.getType().getAnnotation(Comment.class);
+            if (comment != null)
+                this.sectionComments.put(path, comment.value());
+            this.collect(value, path + ".", result);
         }
     }
 
-    private boolean isNestedConfigField(Field field) {
-        int modifiers = field.getModifiers();
-        if (java.lang.reflect.Modifier.isStatic(modifiers)) return false;
-        if (java.lang.reflect.Modifier.isTransient(modifiers)) return false;
-
-        Class<?> type = field.getType();
-        if (type.isPrimitive() || type.isEnum() || type.isArray()) return false;
-        if (type.equals(String.class)) return false;
-        if (Number.class.isAssignableFrom(type)) return false;
-        if (type.equals(Boolean.class) || type.equals(Character.class)) return false;
-        if (List.class.isAssignableFrom(type) || Map.class.isAssignableFrom(type)) return false;
-        return !type.getName().startsWith("java.");
-    }
-
-    private Object resolveOrCreateNestedObject(Object owner, Field field) {
-        try {
-            field.setAccessible(true);
-            Object value = field.get(owner);
-            if (value != null) return value;
-
-            Constructor<?> constructor = field.getType().getDeclaredConstructor();
-            constructor.setAccessible(true);
-            Object created = constructor.newInstance();
-            field.set(owner, created);
-            return created;
-        } catch (Exception e) {
-            plugin.handleException(e);
-            return null;
+    static String toKebabCase(String name) {
+        StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < name.length(); i++) {
+            char c = name.charAt(i);
+            if (Character.isUpperCase(c)) {
+                boolean previousLower = i > 0 && !Character.isUpperCase(name.charAt(i - 1));
+                boolean nextLower = i + 1 < name.length() && Character.isLowerCase(name.charAt(i + 1));
+                if (i > 0 && (previousLower || nextLower)) builder.append('-');
+                builder.append(Character.toLowerCase(c));
+            } else {
+                builder.append(c);
+            }
         }
+        return builder.toString();
     }
 
-    private static final class ConfigFieldBinding {
+    private static final class Binding {
         private final Object owner;
         private final Field field;
-        private final Config config;
+        private final String path;
+        private final String[] oldPaths;
+        private final String[] comment;
+        private final Range range;
+        private final Object defaultValue;
 
-        private ConfigFieldBinding(Object owner, Field field, Config config) {
+        private Binding(Object owner, Field field, String path, String[] oldPaths, Comment comment, Range range, Object defaultValue) {
             this.owner = owner;
             this.field = field;
-            this.config = config;
+            this.path = path;
+            this.oldPaths = oldPaths;
+            this.comment = comment == null ? null : comment.value();
+            this.range = range;
+            this.defaultValue = defaultValue;
         }
     }
 }

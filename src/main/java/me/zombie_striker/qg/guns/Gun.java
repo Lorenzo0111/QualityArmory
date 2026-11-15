@@ -181,7 +181,7 @@ public class Gun extends CustomBaseObject implements Comparable<Gun> {
     }
 
     public static void updateAmmoLore(Gun g, ItemStack current, int amount) {
-        if (QAMain.getConfiguration().features.SHOW_BULLETS_LORE && g != null) {
+        if (QAMain.getConfiguration().features.enableLoreGunBullets && g != null) {
             ItemMeta meta = current.getItemMeta();
             if (meta == null || !meta.hasLore()) return;
 
@@ -190,8 +190,8 @@ public class Gun extends CustomBaseObject implements Comparable<Gun> {
 
             for (int i = 0; i < lore.size(); i++) {
                 String loreLine = lore.get(i);
-                if (loreLine.startsWith(QAMain.S_ITEM_BULLETS)) {
-                    lore.set(i, QAMain.S_ITEM_BULLETS + ": " + (amount) + "/" + g.getMaxBullets());
+                if (loreLine.startsWith(QAMain.getMessages().lore.bullets)) {
+                    lore.set(i, QAMain.getMessages().lore.bullets + ": " + (amount) + "/" + g.getMaxBullets());
                     break;
                 }
             }
@@ -207,24 +207,24 @@ public class Gun extends CustomBaseObject implements Comparable<Gun> {
         if (g == null) g = QualityArmory.getGun(current);
         updateAmmo(g, current, amount);
 
-        if (QAMain.getConfiguration().ui.showAmmoInXPBar)
+        if (QAMain.getConfiguration().ui.showAmmoInXpBar)
             GunUtil.updateXPBar(player, g, amount);
     }
 
     public static List<String> getGunLore(Gun g, ItemStack current, int amount) {
         List<String> lore = (current != null && current.hasItemMeta() && current.getItemMeta().hasLore()) ? current.getItemMeta().getLore() : new ArrayList<>();
         OLD_ItemFact.addVariantData(null, lore, g);
-        if (QAMain.getConfiguration().features.ENABLE_LORE_INFO) {
-            if (QAMain.getConfiguration().features.SHOW_BULLETS_LORE) lore.add(QAMain.S_ITEM_BULLETS + ": " + amount + "/" + g.getMaxBullets());
-            lore.add(QAMain.S_ITEM_DAMAGE + ": " + g.getDamage());
-            lore.add(QAMain.S_ITEM_DPS + ": "
+        if (QAMain.getConfiguration().features.enableLoreGunInfoMessages) {
+            if (QAMain.getConfiguration().features.enableLoreGunBullets) lore.add(QAMain.getMessages().lore.bullets + ": " + amount + "/" + g.getMaxBullets());
+            lore.add(QAMain.getMessages().lore.damage + ": " + g.getDamage());
+            lore.add(QAMain.getMessages().lore.dps + ": "
                     + (g.isAutomatic()
                     ? (2 * g.getFireRate() * g.getDamage()) + ""
                     + (g.getBulletsPerShot() > 1 ? "x" + g.getBulletsPerShot() : "")
                     : "" + ((int) (1.0 / g.getDelayBetweenShotsInSeconds()) * g.getDamage())
                     + (g.getBulletsPerShot() > 1 ? "x" + g.getBulletsPerShot() : "")));
             if (g.getAmmoType() != null)
-                lore.add(QAMain.S_ITEM_AMMO + ": " + g.getAmmoType().getDisplayName());
+                lore.add(QAMain.getMessages().lore.ammo + ": " + g.getAmmoType().getDisplayName());
         }
         if (QAMain.getConfiguration().resourcepack.autoDetectVersion && Bukkit.getPluginManager().isPluginEnabled("ViaRewind")) {
             if (g.is18Support()) {
@@ -232,24 +232,24 @@ public class Gun extends CustomBaseObject implements Comparable<Gun> {
             }
         }
 
-        if (QAMain.getConfiguration().weapons.enableDurability)
+        if (QAMain.getConfiguration().weapons.durability)
             if (current == null) {
                 double k = ((double) g.getDamage()) / g.getDurability();
                 ChatColor c = k > 0.5 ? ChatColor.DARK_GREEN : k > 0.25 ? ChatColor.GOLD : ChatColor.DARK_RED;
-                lore.add(c + QAMain.S_ITEM_DURIB + ":" + g.getDurability() + "/" + g.getDurability());
+                lore.add(c + QAMain.getMessages().lore.durability + ":" + g.getDurability() + "/" + g.getDurability());
             } else {
                 lore = setDurabilityDamage(g, lore, getDamage(current));
             }
-        if (QAMain.getConfiguration().features.ENABLE_LORE_HELP) {
+        if (QAMain.getConfiguration().features.enableLoreControlHelpMessages) {
             if (g.isAutomatic()) {
-                lore.add(QAMain.S_LMB_SINGLE);
-                lore.add(QAMain.S_LMB_FULLAUTO);
-                lore.add(QAMain.S_RMB_RELOAD);
+                lore.add(QAMain.getMessages().lore.controls.singleFire);
+                lore.add(QAMain.getMessages().lore.controls.fullAuto);
+                lore.add(QAMain.getMessages().lore.controls.reload);
             } else {
-                lore.add(QAMain.S_LMB_SINGLE);
-                lore.add(QAMain.getConfiguration().weapons.enableIronSightsON_RIGHT_CLICK ? QAMain.S_RMB_R1 : QAMain.S_RMB_R2);
+                lore.add(QAMain.getMessages().lore.controls.singleFire);
+                lore.add(QAMain.getConfiguration().weapons.ironsights.rightClick ? QAMain.getMessages().lore.controls.reloadDrop : QAMain.getMessages().lore.controls.reloadRightClick);
                 if (g.hasIronSights())
-                    lore.add(QAMain.getConfiguration().weapons.enableIronSightsON_RIGHT_CLICK ? QAMain.S_RMB_A1 : QAMain.S_RMB_A2);
+                    lore.add(QAMain.getConfiguration().weapons.ironsights.rightClick ? QAMain.getMessages().lore.controls.ironsightsRightClick : QAMain.getMessages().lore.controls.ironsightsSneak);
             }
         }
 
@@ -266,7 +266,7 @@ public class Gun extends CustomBaseObject implements Comparable<Gun> {
     public static int getDamage(ItemStack is) {
         if (is != null && is.hasItemMeta() && is.getItemMeta().hasLore())
             for (String lore : is.getItemMeta().getLore()) {
-                if (ChatColor.stripColor(lore).startsWith(ChatColor.stripColor(QAMain.S_ITEM_DURIB))) {
+                if (ChatColor.stripColor(lore).startsWith(ChatColor.stripColor(QAMain.getMessages().lore.durability))) {
                     return Integer.parseInt(lore.split(":")[1].split("/")[0].trim());
                 }
             }
@@ -289,14 +289,14 @@ public class Gun extends CustomBaseObject implements Comparable<Gun> {
         double k = ((double) damage) / g.getDurability();
         ChatColor c = k > 0.5 ? ChatColor.DARK_GREEN : k > 0.25 ? ChatColor.GOLD : ChatColor.DARK_RED;
         for (int j = 0; j < lore.size(); j++) {
-            if (ChatColor.stripColor(lore.get(j)).contains(ChatColor.stripColor(QAMain.S_ITEM_DURIB))) {
-                lore.set(j, c + QAMain.S_ITEM_DURIB + ":" + damage + "/" + g.getDurability());
+            if (ChatColor.stripColor(lore.get(j)).contains(ChatColor.stripColor(QAMain.getMessages().lore.durability))) {
+                lore.set(j, c + QAMain.getMessages().lore.durability + ":" + damage + "/" + g.getDurability());
                 foundLine = true;
                 break;
             }
         }
         if (!foundLine) {
-            lore.add(c + QAMain.S_ITEM_DURIB + ":" + damage + "/" + g.getDurability());
+            lore.add(c + QAMain.getMessages().lore.durability + ":" + damage + "/" + g.getDurability());
         }
         return lore;
     }
@@ -781,7 +781,7 @@ public class Gun extends CustomBaseObject implements Comparable<Gun> {
 
     @Override
     public boolean onRMB(Player e, ItemStack usedItem) {
-        return onClick(e, usedItem, (QAMain.getConfiguration().weapons.reloadOnFOnly || QAMain.getConfiguration().features.SwapReloadAndShootingControls));
+        return onClick(e, usedItem, (QAMain.getConfiguration().weapons.controls.reloadOnlyOnOffhandSwap || QAMain.getConfiguration().features.swapReloadAndShootingControls));
     }
 
     @Override
@@ -791,7 +791,7 @@ public class Gun extends CustomBaseObject implements Comparable<Gun> {
 
     @Override
     public boolean onLMB(Player e, ItemStack usedItem) {
-        return onClick(e, usedItem, !QAMain.getConfiguration().features.SwapReloadAndShootingControls);
+        return onClick(e, usedItem, !QAMain.getConfiguration().features.swapReloadAndShootingControls);
     }
 
     @Override
@@ -835,12 +835,12 @@ public class Gun extends CustomBaseObject implements Comparable<Gun> {
     @SuppressWarnings("deprecation")
     private boolean onClick(final Player player, ItemStack usedItem, boolean fire) {
         QAMain.DEBUG("CLICKED GUN " + getName());
-        if (QAMain.getConfiguration().permissions.requirePermsToShoot && !player.getPlayer().hasPermission("qualityarmory.usegun")) {
-            player.getPlayer().sendMessage(QAMain.S_NOPERM);
+        if (QAMain.getConfiguration().permissions.requireShoot && !player.getPlayer().hasPermission("qualityarmory.usegun")) {
+            player.getPlayer().sendMessage(QAMain.getMessages().general.noPermission);
             return true;
         }
-        if (QAMain.getConfiguration().permissions.perWeaponPermission && !player.getPlayer().hasPermission("qualityarmory.usegun." + getName())) {
-            player.getPlayer().sendMessage(QAMain.S_NOPERM);
+        if (QAMain.getConfiguration().permissions.perWeapon.shoot && !player.getPlayer().hasPermission("qualityarmory.usegun." + getName())) {
+            player.getPlayer().sendMessage(QAMain.getMessages().general.noPermission);
             return true;
         }
 
@@ -852,7 +852,7 @@ public class Gun extends CustomBaseObject implements Comparable<Gun> {
 
         QAMain.DEBUG("Made it to gun/attachment check : " + getName());
         try {
-            if (QAMain.getConfiguration().interactions.enableInteractChests) {
+            if (QAMain.getConfiguration().interactions.enableChestInteract) {
                 Block b = player.getTargetBlock(null, 6);
                 if (b != null
                         && (b.getType() == Material.CHEST
@@ -867,7 +867,7 @@ public class Gun extends CustomBaseObject implements Comparable<Gun> {
 
         if (fire) {
             QAMain.DEBUG("Fire mode called");
-            if (player.getPlayer().getItemInHand().getItemMeta().getDisplayName().contains(QAMain.S_RELOADING_MESSAGE)) {
+            if (player.getPlayer().getItemInHand().getItemMeta().getDisplayName().contains(QAMain.getMessages().weapon.reloading)) {
                 if (!GunRefillerRunnable.hasItemReloaded(player, usedItem)) {
                     ItemStack tempused = usedItem;
                     ItemMeta im = tempused.getItemMeta();
@@ -886,7 +886,7 @@ public class Gun extends CustomBaseObject implements Comparable<Gun> {
             }
             if (!isAutomatic() && GunUtil.rapidfireshooters.containsKey(player.getPlayer().getUniqueId())) {
                 GunUtil.rapidfireshooters.remove(player.getPlayer().getUniqueId()).cancel();
-                if (QAMain.getConfiguration().weapons.enableReloadWhenOutOfAmmo) {
+                if (QAMain.getConfiguration().weapons.autoReloadWhenOutOfAmmo) {
                     if (getAmount(player) <= 0) {
                         if (offhand) {
                             player.getPlayer().setItemInHand(player.getPlayer().getInventory().getItemInOffHand());
@@ -926,7 +926,7 @@ public class Gun extends CustomBaseObject implements Comparable<Gun> {
                         player.playSound(player.getLocation(), WeaponSounds.OUT_OF_AMMO_CLICK.getSoundName(), 1f, 1f);
                     }
 
-                    if (QAMain.getConfiguration().weapons.enableReloadWhenOutOfAmmo) {
+                    if (QAMain.getConfiguration().weapons.autoReloadWhenOutOfAmmo) {
                         if (offhand) {
                             IronsightsHandler.unAim(player);
                             usedItem = player.getPlayer().getItemInHand();
@@ -947,9 +947,9 @@ public class Gun extends CustomBaseObject implements Comparable<Gun> {
                     }
                     return true;
                 }
-                if (!QAMain.getConfiguration().weapons.enableDurability || getDamage(usedItem) > 0) {
+                if (!QAMain.getConfiguration().weapons.durability || getDamage(usedItem) > 0) {
                     boolean automaticfiring = true;
-                    if (QAMain.getConfiguration().features.SwapReloadAndShootingControls) {
+                    if (QAMain.getConfiguration().features.swapReloadAndShootingControls) {
                         if (lastRMB.containsKey(player.getUniqueId())) {
                             if (System.currentTimeMillis() - lastRMB.get(player.getUniqueId()) <= 600) {
                                 automaticfiring = true;
@@ -976,13 +976,13 @@ public class Gun extends CustomBaseObject implements Comparable<Gun> {
             QAMain.DEBUG("Non-Fire mode activated");
 
 
-            if (QAMain.getConfiguration().weapons.enableIronSightsON_RIGHT_CLICK
+            if (QAMain.getConfiguration().weapons.ironsights.rightClick
                     && Update19OffhandChecker.supportOffhand(player.getPlayer())) {
                 if (hasIronSights()) {
                     try {
 
                         if (player.getPlayer().getItemInHand().getItemMeta().getDisplayName()
-                                .contains(QAMain.S_RELOADING_MESSAGE)) {
+                                .contains(QAMain.getMessages().weapon.reloading)) {
                             if (!GunRefillerRunnable.hasItemReloaded(player, usedItem)) {
                                 ItemStack tempused = usedItem.clone();
                                 ItemMeta im = tempused.getItemMeta();
@@ -1038,7 +1038,7 @@ public class Gun extends CustomBaseObject implements Comparable<Gun> {
 
                         QualityArmory.sendHotbarGunAmmoCount(player.getPlayer(), this, usedItem, false);
                     } catch (Error e2) {
-                        Bukkit.broadcastMessage(QAMain.prefix
+                        Bukkit.broadcastMessage(QAMain.getMessages().general.prefix
                                 + "Ironsights not compatible for versions lower than 1.8. The server owner should set EnableIronSights to false in the plugin's config");
                     }
                 } else {
@@ -1073,7 +1073,7 @@ public class Gun extends CustomBaseObject implements Comparable<Gun> {
     }
 
     public void damageDurability(Player player) {
-        if (QAMain.getConfiguration().weapons.enableDurability) {
+        if (QAMain.getConfiguration().weapons.durability) {
             if (QualityArmory.isIronSights(player.getItemInHand())) {
                 Update19OffhandChecker.setOffhand(player, durabilityDamage(this, Update19OffhandChecker.getItemStackOFfhand(player)));
             } else {

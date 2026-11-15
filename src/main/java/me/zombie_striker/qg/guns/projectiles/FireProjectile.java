@@ -26,7 +26,7 @@ public class FireProjectile implements RealtimeCalculationProjectile {
 	@Override
 	public void spawn(final Gun g, final Location s, final Player player, final Vector dir) {
 		Location test = player.getEyeLocation();
-		double bulletStep = QAMain.getConfiguration().weapons.bulletStep;
+		double bulletStep = QAMain.getConfiguration().weapons.detection.bulletStep;
 		if (bulletStep <= 0) {
 			QAMain.getInstance().getLogger().warning("weapons.detection.bullet-step must be positive; using 0.1 for fire projectile.");
 			bulletStep = 0.1;

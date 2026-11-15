@@ -108,7 +108,7 @@ public class CustomGunItem extends AbstractCustomGunItem {
 				im.addAttributeModifier(XAttribute.ATTACK_SPEED.get(), modifier);
 			}
 
-			boolean enableUnbreakable = QAMain.getConfiguration().items.ITEM_enableUnbreakable;
+			boolean enableUnbreakable = QAMain.getConfiguration().items.enableUnbreaking;
 			if (enableUnbreakable) {
 				try {
 					im.setUnbreakable(true);
@@ -130,7 +130,7 @@ public class CustomGunItem extends AbstractCustomGunItem {
 			is.setItemMeta(im);
 		} else {
 			QAMain.getInstance().getLogger()
-					.warning(QAMain.prefix + " ItemMeta is null for " + base.getName() + ". I have");
+					.warning(QAMain.getMessages().general.prefix + " ItemMeta is null for " + base.getName() + ". I have");
 		}
 		is.setAmount(1);
 		return is;

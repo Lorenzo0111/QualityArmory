@@ -24,7 +24,7 @@ public class StickyGrenades extends Grenade {
 
 	@Override
 	public boolean onRMB(Player thrower, ItemStack usedItem) {
-		if(QAMain.getConfiguration().features.autoarm)
+		if(QAMain.getConfiguration().features.enableAutoArmGrenades)
 			onPull(thrower,usedItem);
 		if (ThrowableItemRegistry.containsKey(thrower) && ThrowableItemRegistry.get(thrower).getGrenade().equals(this)) {
 			ThrowableHolder holder = ThrowableItemRegistry.get(thrower);
@@ -91,16 +91,16 @@ public class StickyGrenades extends Grenade {
 
 			QAMain.DEBUG("Throw grenade");
 		} else {
-			thrower.sendMessage(QAMain.prefix + QAMain.S_GRENADE_PULLPIN);
+			thrower.sendMessage(QAMain.getMessages().general.prefix + QAMain.getMessages().grenade.pullPin);
 		}
 		return true;
 	}
 
 	@Override
 	public boolean onPull(Player thrower, ItemStack usedItem) {
-		if(!QAMain.getConfiguration().features.autoarm)
+		if(!QAMain.getConfiguration().features.enableAutoArmGrenades)
 		if (ThrowableItemRegistry.containsKey(thrower)) {
-			thrower.sendMessage(QAMain.prefix + QAMain.S_GRENADE_PALREADYPULLPIN);
+			thrower.sendMessage(QAMain.getMessages().general.prefix + QAMain.getMessages().grenade.alreadyPulled);
 			thrower.playSound(thrower.getLocation(), Sound.ENTITY_ARROW_SHOOT, 1, 1);
 			return true;
 		}

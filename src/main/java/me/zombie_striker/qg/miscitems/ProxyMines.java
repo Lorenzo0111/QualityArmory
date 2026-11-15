@@ -29,9 +29,9 @@ public class ProxyMines extends Grenade {
 
 	@Override
 	public boolean onPull(Player thrower, ItemStack usedItem) {
-		if(!QAMain.getConfiguration().features.autoarm)
+		if(!QAMain.getConfiguration().features.enableAutoArmGrenades)
 		if (ThrowableItemRegistry.containsKey(thrower)) {
-			thrower.sendMessage(QAMain.prefix + QAMain.S_GRENADE_PALREADYPULLPIN);
+			thrower.sendMessage(QAMain.getMessages().general.prefix + QAMain.getMessages().grenade.alreadyPulled);
 			thrower.playSound(thrower.getLocation(), WeaponSounds.RELOAD_BULLET.getSoundName(), 1, 1);
 			return true;
 		}

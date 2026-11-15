@@ -99,7 +99,7 @@ public class GunUtil {
 			normalizedDirection.add(new Vector((Math.random() * 2 * sway) - sway, (Math.random() * 2 * sway) - sway,
 					(Math.random() * 2 * sway) - sway));
 			normalizedDirection = normalizedDirection.normalize();
-			double bulletStep = Math.max(QAMain.getConfiguration().weapons.bulletStep, MIN_POSITIVE_STEP);
+			double bulletStep = Math.max(QAMain.getConfiguration().weapons.detection.bulletStep, MIN_POSITIVE_STEP);
 			Vector step = normalizedDirection.clone().multiply(bulletStep);
 
 			Entity hitTarget = null;
@@ -119,7 +119,7 @@ public class GunUtil {
 			for (Entity e : centerTest.getWorld().getNearbyEntities(centerTest, maxDistance / 2, maxDistance / 2,
 					maxDistance / 2)) {
 				if (e instanceof Damageable) {
-					if (QAMain.avoidTypes.contains(e.getType()))
+					if (QAMain.getConfiguration().weapons.impenetrableEntities.contains(e.getType()))
 						continue;
 
 					if (e != p && e != p.getVehicle() && e != p.getPassenger()) {
@@ -134,7 +134,7 @@ public class GunUtil {
 						// If the entity is close to the line of fire.
 
 						try {
-							if (QAMain.getConfiguration().interactions.preventHiddenPlayers && !p.canSee(e)) {
+							if (QAMain.getConfiguration().interactions.preventHiddenPlayersHit && !p.canSee(e)) {
 								QAMain.DEBUG("Prevented shooting a hidden player: " + e.getName());
 								continue;
 							}
@@ -193,9 +193,9 @@ public class GunUtil {
 					boolean headshot = hitBox.allowsHeadshots() && hitBox.intersectsHead(bulletHitLoc, hitTarget);
 					if (headshot) {
 						QAMain.DEBUG("Headshot!");
-						if (QAMain.getConfiguration().weapons.headshotPling) {
+						if (QAMain.getConfiguration().weapons.headshot.playNotificationSound) {
 							try {
-								p.playSound(p.getLocation(), QAMain.getConfiguration().weapons.headshot_sound, 2, 1);
+								p.playSound(p.getLocation(), QAMain.getConfiguration().weapons.headshot.notificationSound, 2, 1);
 								if (!QAMain.isVersionHigherThan(1, 9))
 									try {
 										p.playSound(p.getLocation(), Sound.valueOf("LAVA_POP"), 6, 1);
@@ -206,9 +206,9 @@ public class GunUtil {
 								p.playSound(p.getLocation(), Sound.valueOf("LAVA_POP"), 1, 1);
 							}
 						}
-					} else if (QAMain.getConfiguration().weapons.enableHitSound) {
+					} else if (QAMain.getConfiguration().weapons.hitSound.enabled) {
 						try {
-							p.playSound(p.getLocation(), QAMain.getConfiguration().weapons.hit_sound, 2, 1);
+							p.playSound(p.getLocation(), QAMain.getConfiguration().weapons.hitSound.sound, 2, 1);
 
 							if (!QAMain.isVersionHigherThan(1, 9))
 								try {
@@ -232,7 +232,7 @@ public class GunUtil {
 
                     double damageMAX = damage * (bulletProtection ? 0.1 : 1)
                             * ((headshot && !negateHeadshot) ? (
-                            QAMain.getConfiguration().weapons.HeadshotOneHit && !QAMain.getConfiguration().weapons.headshotBlacklist.contains(hitTarget.getType().name())
+                            QAMain.getConfiguration().weapons.headshot.instantKill && !QAMain.getConfiguration().weapons.headshot.blacklist.contains(hitTarget.getType())
                                     ? 50 * g.getHeadshotMultiplier() : g.getHeadshotMultiplier())
                             : 1);
 
@@ -247,7 +247,7 @@ public class GunUtil {
 						}
 						if (hitTarget instanceof Player) {
 							Player player = (Player) hitTarget;
-							if (!QAMain.getConfiguration().features.enableArmorIgnore) {
+							if (!QAMain.getConfiguration().features.enableIgnoreArmorProtection) {
 								try {
 									// damage = damage * ( 1 - min( 20, max( defensePoints / 5, defensePoints -
 									// damage / ( toughness / 4 + 2 ) ) ) / 25 )
@@ -282,7 +282,7 @@ public class GunUtil {
 								BulletWoundHandler.bulletHit((Player) hitTarget,
 										g.getAmmoType() == null ? 1 : g.getAmmoType().getPiercingDamage());
 							} else {
-								hitTarget.sendMessage(QAMain.S_BULLETPROOFSTOPPEDBLEEDING);
+								hitTarget.sendMessage(QAMain.getMessages().bleeding.protectedByKevlar);
 							}
 						}
 
@@ -343,7 +343,7 @@ public class GunUtil {
 				if (g.useMuzzleSmoke())
 					ParticleHandlers.spawnMuzzleSmoke(p, start.clone().add(step.clone().multiply(7)));
 				double distSqrt = maxEntityDistance;
-				double smokeSpacing = Math.max(QAMain.getConfiguration().features.smokeSpacing, MIN_POSITIVE_STEP);
+				double smokeSpacing = Math.max(QAMain.getConfiguration().features.bulletTrailsSpacing, MIN_POSITIVE_STEP);
 				Vector stepSmoke = normalizedDirection.clone().multiply(smokeSpacing);
 				for (double dist = 0; dist < distSqrt; dist += smokeSpacing) {
 					start.add(stepSmoke);
@@ -456,7 +456,7 @@ public class GunUtil {
 			}
 
 			// Breaking texture
-			if (QAMain.getConfiguration().features.blockBreakTexture)
+			if (QAMain.getConfiguration().features.breakBlockTextureIfShot)
 				for (@SuppressWarnings("unused")
 						Location l : blocksThatWillPLAYBreak) {
 					start.getWorld().playSound(start, SoundHandler.getSoundWhenShot(start.getBlock()), 2, 1);
@@ -555,7 +555,7 @@ public class GunUtil {
 					}
 
 					if(!holdingRMB){
-						if ((!g.hasIronSights() || !IronsightsHandler.isAiming(player)) && ((player.isSneaking() == QAMain.getConfiguration().weapons.SwapSneakToSingleFire))) {
+						if ((!g.hasIronSights() || !IronsightsHandler.isAiming(player)) && ((player.isSneaking() == QAMain.getConfiguration().weapons.ironsights.swapSneakToSingleFire))) {
 							cancel();
 							QAMain.DEBUG("Stopping Automatic Firing");
 							rapidfireshooters.remove(player.getUniqueId());
@@ -565,7 +565,7 @@ public class GunUtil {
 
 					ItemStack temp = IronsightsHandler.getItemAiming(player);
 
-					if (QAMain.getConfiguration().weapons.enableDurability && g.getDamage(temp) <= 0) {
+					if (QAMain.getConfiguration().weapons.durability && g.getDamage(temp) <= 0) {
 						player.playSound(player.getLocation(), WeaponSounds.METALHIT.getSoundName(), 1, 1);
 						rapidfireshooters.remove(player.getUniqueId());
 						QAMain.DEBUG("Canceld due to weapon durability = " + g.getDamage(temp));
@@ -574,7 +574,7 @@ public class GunUtil {
 					}
 
 					int amount = Gun.getAmount(player);
-					if(holdingRMB && QAMain.getConfiguration().features.SwapReloadAndShootingControls){
+					if(holdingRMB && QAMain.getConfiguration().features.swapReloadAndShootingControls){
 						if(System.currentTimeMillis()-g.getLastTimeRMB(player) > 310){
 							rapidfireshooters.remove(player.getUniqueId());
 							cancel();
@@ -582,7 +582,7 @@ public class GunUtil {
 						}
 					}
 
-					if (((!QAMain.getConfiguration().features.SwapReloadAndShootingControls && player.isSneaking() == QAMain.getConfiguration().weapons.SwapSneakToSingleFire)) || slotUsed != player.getInventory().getHeldItemSlot() || amount <= 0) {
+					if (((!QAMain.getConfiguration().features.swapReloadAndShootingControls && player.isSneaking() == QAMain.getConfiguration().weapons.ironsights.swapSneakToSingleFire)) || slotUsed != player.getInventory().getHeldItemSlot() || amount <= 0) {
 						rapidfireshooters.remove(player.getUniqueId());
 						cancel();
 						return;
@@ -620,7 +620,7 @@ public class GunUtil {
                     if (QualityArmory.isIronSights(player.getItemInHand()))
                         Gun.updateAmmo(g, player.getItemInHand(), amount);
                     else Gun.updateAmmo(g, temp, amount);
-					if(QAMain.getConfiguration().ui.showAmmoInXPBar){
+					if(QAMain.getConfiguration().ui.showAmmoInXpBar){
 						updateXPBar(player,g,amount);
 					}
 
@@ -632,7 +632,7 @@ public class GunUtil {
 
 								try {
 									// Fix to re-implement the "up and down" animation
-									if (QualityArmory.isIronSights(player.getItemInHand()) && QAMain.getConfiguration().features.SHOW_BULLETS_LORE) {
+									if (QualityArmory.isIronSights(player.getItemInHand()) && QAMain.getConfiguration().features.enableLoreGunBullets) {
 										Gun.updateAmmoLore(g, player.getInventory().getItemInOffHand(), amount);
 									}
 								} catch (Exception | Error ignored) {}
@@ -692,7 +692,7 @@ public class GunUtil {
 
 		try {
 			// Fix to re-implement the "up and down" animation
-			if (QualityArmory.isIronSights(player.getItemInHand()) && QAMain.getConfiguration().features.SHOW_BULLETS_LORE) {
+			if (QualityArmory.isIronSights(player.getItemInHand()) && QAMain.getConfiguration().features.enableLoreGunBullets) {
 				Gun.updateAmmoLore(g, player.getInventory().getItemInOffHand(), amount);
 			}
 		} catch (Exception | Error ignored) {}
@@ -763,7 +763,7 @@ public class GunUtil {
 		}
 		if (im == null || !im.hasDisplayName())
 			return;
-		if (im.getLore() != null && im.getDisplayName().contains(QAMain.S_RELOADING_MESSAGE)) {
+		if (im.getLore() != null && im.getDisplayName().contains(QAMain.getMessages().weapon.reloading)) {
 
 		} else {
 			try {
@@ -789,11 +789,11 @@ public class GunUtil {
 			}
 			QAMain.toggleNightvision(player, g, false);
 			//Gun.updateAmmo(g, im, initialAmount);
-			im.setDisplayName(g.getDisplayName() + QAMain.S_RELOADING_MESSAGE);
+			im.setDisplayName(g.getDisplayName() + QAMain.getMessages().weapon.reloading);
 			temp.setItemMeta(im);
 			player.getInventory().setItem(slot, temp);
 
-			if(QAMain.getConfiguration().ui.showAmmoInXPBar){
+			if(QAMain.getConfiguration().ui.showAmmoInXpBar){
 				updateXPBar(player,g,0);
 			}
 			new GunRefillerRunnable(player, temp, g, slot, initialAmount, reloadAmount, seconds, ammo, subtractAmount, !doNotRemoveAmmo);
@@ -841,7 +841,7 @@ public class GunUtil {
 	}
 
 	private static void addRecoilWithTeleport(Player player, Gun g, boolean useHighRecoil) {
-		Location tempCur = QAMain.getConfiguration().weapons.useMoveForRecoil ? (QAMain.recoilHelperMovedLocation.get(player.getUniqueId())) : null;
+		Location tempCur = QAMain.getConfiguration().weapons.recoil.usePlayerMove ? (QAMain.recoilHelperMovedLocation.get(player.getUniqueId())) : null;
 		final Location current;
 		if (tempCur == null) {
 			current = player.getLocation();
@@ -883,7 +883,7 @@ public class GunUtil {
 
 	public static boolean isDelay(Gun g, Player player) {
         if (QAMain.lastWeaponSwitch.containsKey(player.getUniqueId()) &&
-                System.currentTimeMillis() - QAMain.lastWeaponSwitch.get(player.getUniqueId()) < QAMain.getConfiguration().weapons.weaponSwitchDelay * 1000)
+                System.currentTimeMillis() - QAMain.lastWeaponSwitch.get(player.getUniqueId()) < QAMain.getConfiguration().weapons.switchDelaySeconds * 1000)
             return true;
 
 		int showdelay = ((int) (g.getDelayBetweenShotsInSeconds() * 1000));

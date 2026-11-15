@@ -125,15 +125,15 @@ public class AmmoBag extends CustomBaseObject {
         }
 
         for (int i = 0; i < lore.size(); i++) {
-            if (ChatColor.stripColor(lore.get(i)).contains(ChatColor.stripColor(QAMain.bagAmmo))) {
-                lore.set(i, QAMain.bagAmmo + newAmmo + "/" + maxAmmo);
+            if (ChatColor.stripColor(lore.get(i)).contains(ChatColor.stripColor(QAMain.getMessages().ammoBag.ammo))) {
+                lore.set(i, QAMain.getMessages().ammoBag.ammo + newAmmo + "/" + maxAmmo);
                 foundLine = true;
                 break;
             }
         }
 
         if (!foundLine) {
-            lore.add(QAMain.bagAmmo + newAmmo + "/" + maxAmmo);
+            lore.add(QAMain.getMessages().ammoBag.ammo + newAmmo + "/" + maxAmmo);
         }
 
         meta.setLore(lore);
@@ -153,15 +153,15 @@ public class AmmoBag extends CustomBaseObject {
         }
 
         for (int i = 0; i < lore.size(); i++) {
-            if (ChatColor.stripColor(lore.get(i)).contains(ChatColor.stripColor(QAMain.bagAmmoType))) {
-                lore.set(i, QAMain.bagAmmoType + type.getName());
+            if (ChatColor.stripColor(lore.get(i)).contains(ChatColor.stripColor(QAMain.getMessages().ammoBag.type))) {
+                lore.set(i, QAMain.getMessages().ammoBag.type + type.getName());
                 foundLine = true;
                 break;
             }
         }
 
         if (!foundLine) {
-            lore.add(QAMain.bagAmmoType + type.getName());
+            lore.add(QAMain.getMessages().ammoBag.type + type.getName());
         }
 
         meta.setLore(lore);
@@ -179,8 +179,8 @@ public class AmmoBag extends CustomBaseObject {
         Objects.requireNonNull(lore);
 
         for (String value : lore) {
-            if (ChatColor.stripColor(value).contains(ChatColor.stripColor(QAMain.bagAmmo))) {
-                String s = value.replace(QAMain.bagAmmo, "");
+            if (ChatColor.stripColor(value).contains(ChatColor.stripColor(QAMain.getMessages().ammoBag.ammo))) {
+                String s = value.replace(QAMain.getMessages().ammoBag.ammo, "");
                 String[] split = s.split("/");
                 return Integer.parseInt(split[0]);
             }
@@ -200,8 +200,8 @@ public class AmmoBag extends CustomBaseObject {
         Objects.requireNonNull(lore);
 
         for (String value : lore) {
-            if (ChatColor.stripColor(value).contains(ChatColor.stripColor(QAMain.bagAmmoType))) {
-                String s = value.replace(QAMain.bagAmmoType, "");
+            if (ChatColor.stripColor(value).contains(ChatColor.stripColor(QAMain.getMessages().ammoBag.type))) {
+                String s = value.replace(QAMain.getMessages().ammoBag.type, "");
                 return QualityArmory.getAmmoByName(s);
             }
         }

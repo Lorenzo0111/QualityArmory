@@ -52,12 +52,12 @@ public class ShopItem {
                 Player player = (Player) click.getRawEvent().getWhoClicked();
 
                 if (item instanceof Gun) {
-                    if (QAMain.getConfiguration().permissions.requirePermsToBuy && !player.hasPermission("qualityarmory.shopgun")) {
-                        player.sendMessage(QAMain.prefix + ChatColor.RED + QAMain.S_NOPERM);
+                    if (QAMain.getConfiguration().permissions.requireBuy && !player.hasPermission("qualityarmory.shopgun")) {
+                        player.sendMessage(QAMain.getMessages().general.prefix + ChatColor.RED + QAMain.getMessages().general.noPermission);
                         return true;
                     }
-                    if (QAMain.getConfiguration().permissions.perWeaponBuyPermission && !player.hasPermission("qualityarmory.shopgun." + item.getName())) {
-                        player.sendMessage(QAMain.prefix + ChatColor.RED + QAMain.S_NOPERM);
+                    if (QAMain.getConfiguration().permissions.perWeapon.buy && !player.hasPermission("qualityarmory.shopgun." + item.getName())) {
+                        player.sendMessage(QAMain.getMessages().general.prefix + ChatColor.RED + QAMain.getMessages().general.noPermission);
                         return true;
                     }
                 }
@@ -71,7 +71,7 @@ public class ShopItem {
 
                 if (!QAMain.enableEconomy) {
                     player.closeInventory();
-                    player.sendMessage(QAMain.prefix + QAMain.S_noEcon);
+                    player.sendMessage(QAMain.getMessages().general.prefix + QAMain.getMessages().shop.noEconomy);
                     return true;
                 }
 
@@ -79,13 +79,13 @@ public class ShopItem {
 
                 if (!EconHandler.hasEnough(item, player)) {
                     player.closeInventory();
-                    player.sendMessage(QAMain.prefix + QAMain.S_noMoney);
+                    player.sendMessage(QAMain.getMessages().general.prefix + QAMain.getMessages().shop.noMoney);
                     XSound.BLOCK_ANVIL_BREAK.play(player, 1, 1);
                     return true;
                 }
 
                 EconHandler.pay(item, player);
-                player.sendMessage(QAMain.S_BUYCONFIRM
+                player.sendMessage(QAMain.getMessages().shop.purchaseConfirm
                         .replaceAll("%item%", ChatColor.stripColor(item.getDisplayName()))
                         .replaceAll("%cost%", "" + item.getPrice()));
 

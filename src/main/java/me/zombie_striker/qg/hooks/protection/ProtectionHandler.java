@@ -43,7 +43,7 @@ public class ProtectionHandler {
     }
 
     public static void hook(String plugin, CompatibilityConstructor constructor) throws InvocationTargetException, InstantiationException, IllegalAccessException {
-        if (Bukkit.getPluginManager().isPluginEnabled(plugin) && (boolean) QAMain.getInstance().a("hooks." + plugin, !plugin.equalsIgnoreCase("WorldGuard"))) {
+        if (Bukkit.getPluginManager().isPluginEnabled(plugin) && QAMain.getConfiguration().compat.isHookEnabled(plugin)) {
             compatibilities.add(constructor.create());
 
             QAMain.getInstance().getLogger().info("Hooked with " + plugin + "!");

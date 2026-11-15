@@ -287,7 +287,7 @@
     <build>
         <finalName>${project.name}</finalName>
         <defaultGoal>install</defaultGoal>
-        <!-- Uses the properties in this file for plugin.yml and config.yml -->
+        <!-- Uses the properties in this file for plugin.yml -->
         <resources>
             <resource>
                 <directory>${basedir}/src/main/resources</directory>
@@ -295,7 +295,6 @@
                 <includes>
                     <include>changelog.txt</include>
                     <include>plugin.yml</include>
-                    <include>config.yml</include>
                     <include>menu.yml</include>
                     <include>META-INF/.mojang-mapped</include>
                 </includes>

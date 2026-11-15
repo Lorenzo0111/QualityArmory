@@ -49,7 +49,6 @@ import org.bukkit.command.BlockCommandSender;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Item;
@@ -80,7 +79,6 @@ public class QAMain extends JavaPlugin {
     public static HashMap<String, String> craftingEntityNames = new HashMap<>();
 
     public static HashMap<UUID, Long> lastWeaponSwitch = new HashMap<>();
-    public static Set<EntityType> avoidTypes = new HashSet<>();
     public static HashMap<UUID, Location> recoilHelperMovedLocation = new HashMap<>();
     public static ArrayList<MaterialStorage> expansionPacks = new ArrayList<>();
     public static HashMap<UUID, List<GunRefillerRunnable>> reloadingTasks = new HashMap<>();
@@ -95,66 +93,6 @@ public class QAMain extends JavaPlugin {
     public static boolean enableEconomy = false;
     public static boolean showOutOfAmmoOnItem = false;
 
-    public static String S_NOPERM = "&c You do not have permission to do that.";
-
-    public static String S_RELOAD = " Guns and configs have been reloaded.";
-    public static String S_NORES1 = " &c&l Downloading Resourcepack...";
-    public static String S_NORES2 = " &f Accept the resourcepack to see the custom items";
-    public static String S_ANVIL = " &a You do not have permission to use this armory bench. Shift+Click to access anvil.";
-    public static String S_ITEM_BULLETS = "&aBullets";
-    public static String S_ITEM_DURIB = "Durability";
-    public static String S_ITEM_DAMAGE = "&aDamage";
-    public static String S_ITEM_AMMO = "&aAmmo";
-    public static String S_ITEM_ING = "Ingredients";
-    public static String S_ITEM_VARIANTS_LEGACY = "&7Varient:";
-    public static String S_ITEM_VARIANTS_NEW = "&7Varient:";
-    public static String S_ITEM_DPS = "&2DPS";
-    public static String S_ITEM_COST = "&" + ChatColor.GOLD.getChar() + "Price: ";
-
-    // Chris: add message
-    public static String S_ITEM_CRAFTS = "Crafts";
-    public static String S_ITEM_RETURNS = "Returns";
-
-    public static String S_KICKED_FOR_RESOURCEPACK = "&c You have been kicked because you did not accept the resourcepack. \n&f If you want to rejoin the server, edit the server entry and set \"Resourcepack Prompts\" to \"Accept\" or \"Prompt\"'";
-    public static String S_LMB_SINGLE = ChatColor.DARK_GRAY + "[LMB] to use Single-fire mode";
-    public static String S_LMB_FULLAUTO = ChatColor.DARK_GRAY + "[Sneak]+[LMB] to use Automatic-fire";
-    public static String S_RMB_RELOAD = ChatColor.DARK_GRAY + "[RMB] to reload";
-    public static String S_RMB_R1 = ChatColor.DARK_GRAY + "[DropItem] to reload";
-    public static String S_RMB_R2 = ChatColor.DARK_GRAY + "[RMB] to reload";
-    public static String S_RMB_A1 = ChatColor.DARK_GRAY + "[RMB] to open ironsights";
-    public static String S_RMB_A2 = ChatColor.DARK_GRAY + "[Sneak] to open ironsights";
-    public static String S_HELMET_RMB = ChatColor.DARK_GRAY + "[RMB] to equip helmet.";
-    public static String S_FULLYHEALED = "&fYou are fully healed. No need for this right now!";
-    public static String S_FULLYHEALED_OTHER = "&f%player% is already fully healed. No need for this right now!";
-    public static String S_MEDKIT_HEALING = "Healing";
-    public static String S_MEDKIT_BLEEDING = "Blood-Loss Rate:";
-    public static double S_MEDKIT_HEALDELAY = 6;
-    public static double S_MEDKIT_HEAL_AMOUNT = 1;
-    public static String S_MEDKIT_LORE_INFO = "&f[RMB] to heal yourself!";
-    public static String S_BULLETPROOFSTOPPEDBLEEDING = "&aYour Kevlar vest protected you from that bullet!";
-    public static String S_BLEEDOUT_STARTBLEEDING = "&cYOU ARE BLEEDING! FIND A MEDKIT TO STOP THE BLEEDING!";
-    public static String S_BLEEDOUT_LOSINGconscious = "&cYOU ARE LOSING CONSCIOUSNESS DUE TO BLOODLOSS!";
-    public static String S_BUYCONFIRM = "&aYour have purchased %item% for $%cost%!";
-    public static String S_OUT_OF_AMMO = "[Out of Ammo]";
-    public static String S_RELOADING_MESSAGE = "[Reloading...]";
-    public static String S_MAX_FOUND = "[%total%]";
-    public static String S_HOTBAR_FORMAT = "%name% = %amount%/%max% %state%";
-    public static String S_RESOURCEPACK_HELP = "In case the resourcepack crashes your client, reject the request and use /qa getResourcepack to get the resourcepack.";
-    public static String S_RESOURCEPACK_DOWNLOAD = "Download this resourcepack and enable it to see the custom items (Note that it may take some time to load)";
-    public static String S_RESOURCEPACK_BYPASS = "By issuing this command, you are now added to a whitelist for the resourcepack. You should no longer see the prompt";
-    public static String S_RESOURCEPACK_OPTIN = "By issuing this command, you have been removed from the whitelist. You will now recieve the resourcepack prompt";
-    public static String S_GRENADE_PULLPIN = " Pull the pin first...";
-    public static String S_GRENADE_PALREADYPULLPIN = "You already pulled the pin!";
-    public static String prefix = "&8[&2QualityArmory&8]&r";
-    public static String S_missingIngredients = "You do not have all the materials needed to craft this.";
-    public static String S_noMoney = "You do not have enough money to buy this.";
-    public static String S_noEcon = "ECONOMY NOT ENABLED. REPORT THIS TO THE OWNER!";
-    public static String S_nextPage = "&6Next Page:";
-    public static String S_prevPage = "&6Previous Page:";
-    public static String bagAmmo = "&aAmmo: ";
-    public static String bagAmmoType = "&aAmmo Type: ";
-
-    public static MessagesYML m;
     public static CommentYamlConfiguration resourcepackwhitelist;
     public static boolean hasParties = false;
     public static boolean hasProtocolLib = false;
@@ -165,10 +103,8 @@ public class QAMain extends JavaPlugin {
     private static QAMain main;
 
     private TreeFellerHandler tfh = null;
-    private FileConfiguration config;
-    private File configFile;
-    private boolean saveTheConfig = false;
     private MainConfig mainConfig;
+    private MessagesConfig messages;
     private static MenuManager menuManager;
 
     public static QAMain getInstance() {
@@ -177,6 +113,10 @@ public class QAMain extends JavaPlugin {
 
     public static MainConfig getConfiguration() {
         return getInstance().mainConfig;
+    }
+
+    public static MessagesConfig getMessages() {
+        return getInstance().messages;
     }
 
     public static boolean isVersionHigherThan(int mainVersion, int secondVersion) {
@@ -216,8 +156,8 @@ public class QAMain extends JavaPlugin {
     }
 
     public static void DEBUG(String message) {
-        if (getConfiguration().debug.enabled)
-            Bukkit.broadcast(prefix + ChatColor.GREEN + " [DEBUG] " + ChatColor.RESET + message, "qualityarmory.debugmessages");
+        if (getConfiguration().debug.enabled && getMessages() != null)
+            Bukkit.broadcast(getMessages().general.prefix + ChatColor.GREEN + " [DEBUG] " + ChatColor.RESET + message, "qualityarmory.debugmessages");
     }
 
     public static Scoreboard registerGlowTeams(Scoreboard sb) {
@@ -368,7 +308,7 @@ public class QAMain extends JavaPlugin {
                     if (null != itemStacks && itemStacks.length > 0) {
                         for (Object itemStack : itemStacks) {
                             String itemName = ((ItemStack) itemStack).getType().name();
-                            String showName = LocalUtils.colorize((String) QAMain.m.a("EntityType." + itemName, itemName));
+                            String showName = getMessages().getMaterialName(itemName);
                             craftingEntityNames.put(itemName, showName);
                         }
                     }
@@ -421,16 +361,6 @@ public class QAMain extends JavaPlugin {
         }
     }
 
-    @Deprecated
-    public Object a(String path, Object def) {
-        if (getConfig().contains(path)) {
-            return getConfig().get(path);
-        }
-        getConfig().set(path, def);
-        saveTheConfig = true;
-        return def;
-    }
-
     @Override
     public void onEnable() {
         main = this;
@@ -438,7 +368,8 @@ public class QAMain extends JavaPlugin {
             this.getDataFolder().mkdirs();
         }
         this.mainConfig = new MainConfig();
-        this.mainConfig.loadDefaults();
+        this.mainConfig.load();
+        this.loadMessages();
 
         if (!NBT.preloadApi()) {
             getLogger().severe("NBT-API wasn't initialized properly, disabling the plugin");
@@ -513,7 +444,7 @@ public class QAMain extends JavaPlugin {
         try {
             Bukkit.getPluginManager().registerEvents(new Update19resourcepackhandler(), this);
         } catch (Exception | Error e) {
-            getLogger().info(prefix + " Resourcepack handler has been disabled due to the update being used.");
+            getLogger().info(getMessages().general.prefix + " Resourcepack handler has been disabled due to the update being used.");
         }
         try {
             Bukkit.getPluginManager().registerEvents(new Update19Events(), this);
@@ -521,7 +452,7 @@ public class QAMain extends JavaPlugin {
         }
 
         try {
-            if (getConfiguration().features.AUTOUPDATE)
+            if (getConfiguration().features.autoUpdate)
                 GithubUpdater.autoUpdate(this, "Lorenzo0111", "QualityArmory", "QualityArmory.jar");
         } catch (Exception e) {
         }
@@ -543,8 +474,8 @@ public class QAMain extends JavaPlugin {
                             // if (p.getItemInHand().containsEnchantment(Enchantment.MENDING)) {
                             if (p.getItemInHand() != null && p.getItemInHand().hasItemMeta())
                                 if (QualityArmory.isCustomItem(p.getItemInHand())) {
-                                    if (getConfiguration().items.ITEM_enableUnbreakable && (!p.getItemInHand().getItemMeta().isUnbreakable()
-                                            && !getConfiguration().features.ignoreUnbreaking)) {
+                                    if (getConfiguration().items.enableUnbreaking && (!p.getItemInHand().getItemMeta().isUnbreakable()
+                                            && !getConfiguration().features.enableIgnoreUnbreakingChecks)) {
                                         ItemStack temp = p.getItemInHand();
                                         int j = QualityArmory.findSafeSpot(temp, false, getConfiguration().resourcepack.overrideDefault);
                                         temp.setDurability((short) Math.max(0, j - 1));
@@ -560,8 +491,8 @@ public class QAMain extends JavaPlugin {
                                 if (p.getInventory().getItemInOffHand() != null
                                         && p.getInventory().getItemInOffHand().hasItemMeta())
                                     if (QualityArmory.isCustomItem(p.getInventory().getItemInOffHand())) {
-                                        if (getConfiguration().items.ITEM_enableUnbreakable && (!p.getInventory().getItemInOffHand().getItemMeta()
-                                                .isUnbreakable() && !getConfiguration().features.ignoreUnbreaking)) {
+                                        if (getConfiguration().items.enableUnbreaking && (!p.getInventory().getItemInOffHand().getItemMeta()
+                                                .isUnbreakable() && !getConfiguration().features.enableIgnoreUnbreakingChecks)) {
                                             ItemStack temp = p.getInventory().getItemInOffHand();
                                             int j = QualityArmory.findSafeSpot(temp, false, getConfiguration().resourcepack.overrideDefault);
                                             temp.setDurability((short) Math.max(0, j - 1));
@@ -583,7 +514,7 @@ public class QAMain extends JavaPlugin {
 
     @SuppressWarnings({"unchecked", "deprecation"})
     public void reloadVals() {
-        this.mainConfig.reload();
+        this.mainConfig.load();
 
         new BoltactionCharger();
         new BreakactionCharger();
@@ -612,100 +543,10 @@ public class QAMain extends JavaPlugin {
         interactableBlocks.clear();
         craftingEntityNames.clear();
 
-        // attachmentRegister.clear();
-//Chris: Support more language file lang/message_xx.yml
-        File langFolder = new File(getDataFolder(), "lang");
-        if (langFolder.exists() && !langFolder.isDirectory()) {
-            langFolder.delete();
-        }
-        langFolder.mkdir();
-        m = new MessagesYML(getConfiguration().general.language, new File(langFolder, "message_" + getConfiguration().general.language + ".yml"));
-        prefix = LocalUtils.colorize((String) m.a("Prefix", prefix));
-        S_ANVIL = LocalUtils.colorize((String) m.a("NoPermAnvilMessage", S_ANVIL));
-        S_NOPERM = LocalUtils.colorize((String) m.a("NoPerm", S_NOPERM));
-        S_RELOAD = LocalUtils.colorize((String) m.a("Reload", S_RELOAD));
-        S_noMoney = LocalUtils.colorize((String) m.a("NoMoney", S_noMoney));
-        S_missingIngredients = (String) m.a("Missing_Ingredients", S_missingIngredients);
-        S_NORES1 = LocalUtils.colorize((String) m.a("NoResourcepackMessage1", S_NORES1));
-        S_NORES2 = LocalUtils.colorize((String) m.a("NoResourcepackMessage2", S_NORES2));
-        S_ITEM_AMMO = LocalUtils.colorize((String) m.a("Lore_Ammo", S_ITEM_AMMO));
-        S_ITEM_BULLETS = LocalUtils.colorize((String) m.a("lore_bullets", S_ITEM_BULLETS));
-        S_ITEM_DAMAGE = LocalUtils.colorize((String) m.a("Lore_Damage", S_ITEM_DAMAGE));
-        S_ITEM_DURIB = LocalUtils.colorize((String) m.a("Lore_Durib", S_ITEM_DURIB));
-        S_ITEM_ING = LocalUtils.colorize((String) m.a("Lore_ingredients", S_ITEM_ING));
-        if (m.getConfig().contains("Lore_Varients"))
-            S_ITEM_VARIANTS_LEGACY = LocalUtils.colorize(
-                    (String) m.a("Lore_Varients", S_ITEM_VARIANTS_LEGACY));
-        S_ITEM_VARIANTS_NEW = LocalUtils.colorize(
-                (String) m.a("Lore_Variants", S_ITEM_VARIANTS_NEW));
-        S_ITEM_COST = LocalUtils.colorize((String) m.a("Lore_Price", S_ITEM_COST));
-        S_ITEM_DPS = LocalUtils.colorize((String) m.a("Lore_DamagePerSecond", S_ITEM_DPS));
-
-        // Chris: add message Crafts
-        S_ITEM_CRAFTS = LocalUtils.colorize((String) m.a("Lore_Crafts", S_ITEM_CRAFTS));
-        S_ITEM_RETURNS = LocalUtils.colorize((String) m.a("Lore_Returns", S_ITEM_RETURNS));
-
-
-        S_RELOADING_MESSAGE = LocalUtils.colorize(
-                (String) m.a("Reloading_Message", S_RELOADING_MESSAGE));
-        S_MAX_FOUND = LocalUtils.colorize((String) m.a("State_AmmoCount", S_MAX_FOUND));
-        S_OUT_OF_AMMO = LocalUtils.colorize((String) m.a("State_OutOfAmmo", S_OUT_OF_AMMO));
-        S_HOTBAR_FORMAT = LocalUtils.colorize((String) m.a("HotbarMessage", S_HOTBAR_FORMAT));
-
-        S_KICKED_FOR_RESOURCEPACK = LocalUtils.colorize(
-                (String) m.a("Kick_message_if_player_denied_request", S_KICKED_FOR_RESOURCEPACK));
-
-        S_LMB_SINGLE = (String) m.a("Lore-LMB-Single", S_LMB_SINGLE);
-        S_LMB_FULLAUTO = (String) m.a("Lore-LMB-FullAuto", S_LMB_FULLAUTO);
-        S_RMB_RELOAD = (String) m.a("Lore-RMB-Reload", S_RMB_RELOAD);
-        S_RMB_A1 = (String) m.a("Lore-Ironsights-RMB", S_RMB_A1);
-        S_RMB_A2 = (String) m.a("Lore-Ironsights-Sneak", S_RMB_A2);
-        S_RMB_R1 = (String) m.a("Lore-Reload-Dropitem", S_RMB_R1);
-        S_RMB_R2 = (String) m.a("Lore-Reload-RMB", S_RMB_R2);
-        S_HELMET_RMB = LocalUtils.colorize((String) m.a("Lore-Helmet-RMB", S_HELMET_RMB));
-
-        S_BUYCONFIRM = LocalUtils.colorize((String) m.a("Shop_Confirm", S_BUYCONFIRM));
-
-        S_RESOURCEPACK_HELP = (String) m.a("Resourcepack_InCaseOfCrash", S_RESOURCEPACK_HELP);
-        S_RESOURCEPACK_DOWNLOAD = (String) m.a("Resourcepack_Download", S_RESOURCEPACK_DOWNLOAD);
-        S_RESOURCEPACK_BYPASS = (String) m.a("Resourcepack_NowBypass", S_RESOURCEPACK_BYPASS);
-        S_RESOURCEPACK_OPTIN = (String) m.a("Resourcepack_NowOptIn", S_RESOURCEPACK_OPTIN);
-
-        S_GRENADE_PALREADYPULLPIN = LocalUtils.colorize((String) m.a("grenadeAlreadyPulled", S_GRENADE_PALREADYPULLPIN));
-        S_GRENADE_PULLPIN = LocalUtils.colorize((String) m.a("grenadePull", S_GRENADE_PULLPIN));
-
-        S_FULLYHEALED = LocalUtils.colorize((String) m.a("Medkit-FullyHealed", S_FULLYHEALED));
-        S_FULLYHEALED_OTHER = LocalUtils.colorize((String) m.a("Medkit-FullyHealed-Other", S_FULLYHEALED_OTHER));
-        S_MEDKIT_HEALING = LocalUtils.colorize(
-                (String) m.a("Medkit-Healing", S_MEDKIT_HEALING));
-        S_MEDKIT_BLEEDING = LocalUtils.colorize(
-                (String) m.a("Medkit-Bleeding", S_MEDKIT_BLEEDING));
-
-        S_MEDKIT_HEAL_AMOUNT = (double) m.a("Medkit-HEALING_HEARTS_AMOUNT", S_MEDKIT_HEAL_AMOUNT);
-
-        S_MEDKIT_HEALDELAY = (double) m.a("Medkit-HEALING_WEAPPING_DELAY_IN_SECONDS", S_MEDKIT_HEALDELAY);
-
-        S_MEDKIT_LORE_INFO = LocalUtils.colorize(
-                (String) m.a("Medkit-Lore_RMB", S_MEDKIT_LORE_INFO));
-
-        S_BLEEDOUT_LOSINGconscious = LocalUtils.colorize(
-                (String) m.a("Bleeding.Losingconsciousness", S_BLEEDOUT_LOSINGconscious));
-        S_BLEEDOUT_STARTBLEEDING = LocalUtils.colorize(
-                (String) m.a("Bleeding.StartBleeding", S_BLEEDOUT_STARTBLEEDING));
-        S_BULLETPROOFSTOPPEDBLEEDING = LocalUtils.colorize(
-                (String) m.a("Bleeding.ProtectedByKevlar", S_BULLETPROOFSTOPPEDBLEEDING));
-        S_prevPage = LocalUtils.colorize((String) m.a("gui.prevPage", S_prevPage));
-        S_nextPage = LocalUtils.colorize((String) m.a("gui.nextPage", S_nextPage));
-        bagAmmo = LocalUtils.colorize((String) m.a("AmmoBag.current", bagAmmo));
-        bagAmmoType = LocalUtils.colorize((String) m.a("AmmoBag.type", bagAmmoType));
+        this.loadMessages();
 
         resourcepackwhitelist = CommentYamlConfiguration.loadConfiguration(new File(getDataFolder(), "resourcepackwhitelist.yml"));
         namesToBypass = (List<String>) resourcepackwhitelist.getOrSet("Names_Of_players_to_bypass", namesToBypass);
-
-        if (!new File(getDataFolder(), "config.yml").exists()) {
-            saveDefaultConfig();
-            reloadConfig();
-        }
 
         if (getServer().getPluginManager().isPluginEnabled("Parties"))
             hasParties = true;
@@ -735,12 +576,7 @@ public class QAMain extends JavaPlugin {
         } catch (Exception | Error e) {
         }
 
-        if (getConfig().contains("SwapSneakToSingleFile")) {
-            getConfiguration().weapons.SwapSneakToSingleFire = getConfig().getBoolean("SwapSneakToSingleFile", getConfiguration().weapons.SwapSneakToSingleFire);
-            getConfig().set("SwapSneakToSingleFile", null);
-            getConfig().set("weapons.ironsights.swap-sneak-to-single-fire", getConfiguration().weapons.SwapSneakToSingleFire);
-            saveTheConfig = true;
-        }
+        destructableBlocks.clear();
         destructableBlocks.addAll(GunYMLLoader.getMaterials(this.mainConfig.world.destructableMaterials));
 
         for (Material m : Material.values())
@@ -785,43 +621,37 @@ public class QAMain extends JavaPlugin {
         }
 
         // Chris: if switch on, create default items.
-        if (getConfiguration().features.enableCreationOfFiles) {
+        if (getConfiguration().features.enableCreationOfDefaultFiles) {
             CustomItemManager.getItemType("gun").initItems(getDataFolder());
         }
         ((AbstractCustomGunItem) CustomItemManager.getItemType("gun")).initIronsights(getDataFolder());
 
-        if (getConfiguration().resourcepack.overrideDefault) {
-            if (!getConfig().contains("DefaultResourcepack")) {
-                getConfig().set("DefaultResourcepack", CustomItemManager.getResourcepackProvider().serialize());
-                saveTheConfig = true;
-            } else {
-                if (getConfig().get("DefaultResourcepack") instanceof String)
-                    CustomItemManager.setResourcepack(new StaticPackProvider(getConfig().getString("DefaultResourcepack")));
-                else {
-                    ConfigurationSection packSection = getConfig().getConfigurationSection("DefaultResourcepack");
-                    if (packSection != null) {
-                        if (packSection.contains("21")) {
-                            packSection.set("21-4", packSection.getString("21"));
-                            packSection.set("21", null);
-                            saveTheConfig = true;
-                        }
-
-                        CustomItemManager.setResourcepack(new MultiVersionPackProvider(packSection));
-                    }
+        boolean saveConfig = false;
+        Object defaultPack = this.mainConfig.getDefaultResourcepack();
+        if (getConfiguration().resourcepack.overrideDefault && defaultPack != null) {
+            if (defaultPack instanceof ConfigurationSection) {
+                ConfigurationSection packSection = (ConfigurationSection) defaultPack;
+                if (packSection.contains("21")) {
+                    packSection.set("21-4", packSection.getString("21"));
+                    packSection.set("21", null);
+                    saveConfig = true;
                 }
+
+                CustomItemManager.setResourcepack(new MultiVersionPackProvider(packSection));
+            } else {
+                CustomItemManager.setResourcepack(new StaticPackProvider(String.valueOf(defaultPack)));
             }
         } else {
-            if (!getConfig().contains("DefaultResourcepack")
-                    || !getConfig().getString("DefaultResourcepack").equals(CustomItemManager.getResourcepack(null))) {
-                getConfig().set("DefaultResourcepack", CustomItemManager.getResourcepackProvider().serialize());
-                saveTheConfig = true;
+            Object serialized = CustomItemManager.getResourcepackProvider().serialize();
+            if (defaultPack == null || !(defaultPack instanceof String) || !defaultPack.equals(serialized)) {
+                this.mainConfig.setDefaultResourcepack(serialized);
+                saveConfig = true;
             }
         }
 
-
-        if (saveTheConfig) {
-            DEBUG(prefix + " Needed to save config: code=2");
-            saveConfig();
+        if (saveConfig) {
+            DEBUG(getMessages().general.prefix + " Needed to save config: code=2");
+            this.mainConfig.save();
         }
 
 
@@ -831,14 +661,14 @@ public class QAMain extends JavaPlugin {
         GunYMLLoader.loadGuns(this);
         GunYMLLoader.loadAttachments(this);
         GunYMLLoader.loadArmor(this);
-        if (QAMain.getConfiguration().combat.enableBleeding)
+        if (QAMain.getConfiguration().combat.bleeding.enabled)
             BulletWoundHandler.startTimer();
 
         if (tfh != null) {
             tfh = new TreeFellerHandler();
             Bukkit.getPluginManager().registerEvents(tfh, this);
         }
-        if (getConfiguration().features.addGlowEffects) {
+        if (getConfiguration().features.enableGlowEffects) {
             coloredGunScoreboard = new ArrayList<>();
             coloredGunScoreboard.add(registerGlowTeams(Bukkit.getScoreboardManager().getMainScoreboard()));
         }
@@ -848,6 +678,7 @@ public class QAMain extends JavaPlugin {
         registerCraftEntityNames(ammoRegister);
         registerCraftEntityNames(miscRegister);
         registerCraftEntityNames(armorRegister);
+        this.messages.saveIfChanged();
 
         if (menuManager != null) {
             menuManager.reload();
@@ -856,6 +687,11 @@ public class QAMain extends JavaPlugin {
         }
 
         BoundingBoxManager.initEntityTypeBoundingBoxes();
+    }
+
+    private void loadMessages() {
+        this.messages = new MessagesConfig(this.mainConfig.general.language);
+        this.messages.load();
     }
 
     public ItemStack[] convertIngredients(List<String> e) {
@@ -974,7 +810,7 @@ public class QAMain extends JavaPlugin {
         if (command.getName().equalsIgnoreCase("QualityArmory")) {
             if (args.length > 0) {
                 if (args[0].equalsIgnoreCase("version")) {
-                    sender.sendMessage(prefix + ChatColor.WHITE + " This server is using version " + ChatColor.GREEN
+                    sender.sendMessage(getMessages().general.prefix + ChatColor.WHITE + " This server is using version " + ChatColor.GREEN
                             + this.getDescription().getVersion() + ChatColor.WHITE + " of QualityArmory");
                     sender.sendMessage("--==Changelog==--");
                     if (changelog == null) {
@@ -1012,9 +848,9 @@ public class QAMain extends JavaPlugin {
                 if (args[0].equalsIgnoreCase("debug")) {
                     if (sender.hasPermission("qualityarmory.debug")) {
                         getConfiguration().debug.enabled = !getConfiguration().debug.enabled;
-                        sender.sendMessage(prefix + "Console debugging set to " + getConfiguration().debug.enabled);
+                        sender.sendMessage(getMessages().general.prefix + "Console debugging set to " + getConfiguration().debug.enabled);
                     } else {
-                        sender.sendMessage(prefix + ChatColor.RED + S_NOPERM);
+                        sender.sendMessage(getMessages().general.prefix + ChatColor.RED + getMessages().general.noPermission);
                         return true;
                     }
                     return true;
@@ -1027,13 +863,13 @@ public class QAMain extends JavaPlugin {
                         }
                         Gun gun = QualityArmory.getGunInHand(((Player) sender));
                         if (gun == null) {
-                            sender.sendMessage(prefix + ChatColor.RED + "You need to hold a gun to do this.");
+                            sender.sendMessage(getMessages().general.prefix + getMessages().commands.holdGunRequired);
                             return true;
                         }
 
-                        sender.sendMessage(prefix + ChatColor.YELLOW + gun.toString());
+                        sender.sendMessage(getMessages().general.prefix + ChatColor.YELLOW + gun.toString());
                     } else {
-                        sender.sendMessage(prefix + ChatColor.RED + S_NOPERM);
+                        sender.sendMessage(getMessages().general.prefix + ChatColor.RED + getMessages().general.noPermission);
                         return true;
                     }
                     return true;
@@ -1044,7 +880,7 @@ public class QAMain extends JavaPlugin {
                         if (args.length >= 2) {
                             ItemStack itemInHand = ((Player) sender).getItemInHand();
                             if (itemInHand == null) {
-                                sender.sendMessage(prefix + " You need to hold an item that will be used as ammo.");
+                                sender.sendMessage(getMessages().general.prefix + getMessages().commands.holdAmmoTemplateRequired);
 
                                 return true;
                             }
@@ -1055,14 +891,14 @@ public class QAMain extends JavaPlugin {
                                             ? ((SkullMeta) itemInHand.getItemMeta()).getOwner()
                                             : null),
                                     null, 100, 1, 64);
-                            sender.sendMessage(prefix + " A new ammo type has been created.");
+                            sender.sendMessage(getMessages().general.prefix + getMessages().commands.ammoCreated);
                             sender.sendMessage(
-                                    prefix + " You will need to use /qa reload for the new ammo type to appear.");
+                                    getMessages().general.prefix + getMessages().commands.ammoCreatedReloadHint);
                         } else {
                             sendHelp(sender);
                         }
                     } else {
-                        sender.sendMessage(prefix + ChatColor.RED + S_NOPERM);
+                        sender.sendMessage(getMessages().general.prefix + ChatColor.RED + getMessages().general.noPermission);
                         return true;
                     }
                     return true;
@@ -1072,7 +908,7 @@ public class QAMain extends JavaPlugin {
                     if (args.length > 1 && sender.hasPermission("qualityarmory.sendresourcepack.other")) {
                         player = Bukkit.getPlayer(args[1]);
                         if (player == null) {
-                            sender.sendMessage(prefix + " This player does not exist.");
+                            sender.sendMessage(getMessages().general.prefix + getMessages().general.playerNotFound);
                             return true;
                         }
                     } else {
@@ -1080,7 +916,7 @@ public class QAMain extends JavaPlugin {
                     }
                     namesToBypass.remove(player.getName());
                     resourcepackwhitelist.set("Names_Of_players_to_bypass", namesToBypass);
-                    sender.sendMessage(prefix + S_RESOURCEPACK_OPTIN);
+                    sender.sendMessage(getMessages().general.prefix + getMessages().resourcepack.nowOptedIn);
                     QualityArmory.sendResourcepack(player, true);
                     return true;
                 }
@@ -1089,7 +925,7 @@ public class QAMain extends JavaPlugin {
                     if (args.length > 1) {
                         player = Bukkit.getPlayer(args[1]);
                         if (player == null) {
-                            sender.sendMessage(prefix + " This player does not exist.");
+                            sender.sendMessage(getMessages().general.prefix + getMessages().general.playerNotFound);
                             return true;
                         }
                     } else {
@@ -1100,9 +936,9 @@ public class QAMain extends JavaPlugin {
                         resourcepackwhitelist.set("Names_Of_players_to_bypass", namesToBypass);
                     }
 
-                    player.sendMessage(prefix + S_RESOURCEPACK_DOWNLOAD);
+                    player.sendMessage(getMessages().general.prefix + getMessages().resourcepack.download);
                     player.sendMessage(CustomItemManager.getResourcepack(player));
-                    player.sendMessage(prefix + S_RESOURCEPACK_BYPASS);
+                    player.sendMessage(getMessages().general.prefix + getMessages().resourcepack.nowBypassing);
 
                     return true;
                 }
@@ -1120,31 +956,30 @@ public class QAMain extends JavaPlugin {
                             sender.sendMessage(ChatColor.AQUA + g.getName() + ": " + ChatColor.WHITE
                                     + g.getItemData().getMat().name() + " : " + g.getItemData().getData());
                     } else {
-                        sender.sendMessage(prefix + ChatColor.RED + S_NOPERM);
+                        sender.sendMessage(getMessages().general.prefix + ChatColor.RED + getMessages().general.noPermission);
                         return true;
                     }
                 }
                 if (args[0].equalsIgnoreCase("reload")) {
                     if (sender.hasPermission("qualityarmory.reload")) {
-                        reloadConfig();
                         reloadVals();
-                        sender.sendMessage(prefix + S_RELOAD);
+                        sender.sendMessage(getMessages().general.prefix + getMessages().general.reloaded);
                         return true;
                     } else {
-                        sender.sendMessage(prefix + ChatColor.RED + S_NOPERM);
+                        sender.sendMessage(getMessages().general.prefix + ChatColor.RED + getMessages().general.noPermission);
                         return true;
                     }
                 }
 
                 if (args[0].equalsIgnoreCase("drop")) {
                     if (!sender.hasPermission("qualityarmory.drop")) {
-                        sender.sendMessage(prefix + ChatColor.RED + S_NOPERM);
+                        sender.sendMessage(getMessages().general.prefix + ChatColor.RED + getMessages().general.noPermission);
                         return true;
                     }
                     if (args.length == 1) {
-                        sender.sendMessage(prefix + " The item name is required");
+                        sender.sendMessage(getMessages().general.prefix + getMessages().commands.itemNameRequired);
                         StringBuilder sb = new StringBuilder();
-                        sb.append("Valid items: ");
+                        sb.append(getMessages().commands.validItems);
                         for (Gun g : gunRegister.values()) {
                             sb.append(g.getName() + ", ");
                         }
@@ -1161,7 +996,7 @@ public class QAMain extends JavaPlugin {
                             sb.append(g.getName() + ", ");
                         }
                         sb.append(ChatColor.WHITE);
-                        sender.sendMessage(prefix + sb.toString());
+                        sender.sendMessage(getMessages().general.prefix + sb.toString());
                         return true;
                     }
 
@@ -1204,7 +1039,7 @@ public class QAMain extends JavaPlugin {
                             loc = new Location(w, x, y, z);
                         }
                         if (loc == null) {
-                            sender.sendMessage(prefix + " A valid location is required");
+                            sender.sendMessage(getMessages().general.prefix + getMessages().commands.locationRequired);
                             return true;
                         }
                         ItemStack temp = null;
@@ -1219,25 +1054,25 @@ public class QAMain extends JavaPlugin {
                         }
                         if (temp != null) {
                             loc.getWorld().dropItem(loc, temp);
-                            sender.sendMessage(prefix + " Dropping item " + g.getName() + " at that location");
+                            sender.sendMessage(getMessages().general.prefix + MessagesConfig.format(getMessages().commands.droppingItem, "item", g.getName()));
                         } else {
-                            sender.sendMessage(prefix + " Failed to drop item " + g.getName() + " at that location");
+                            sender.sendMessage(getMessages().general.prefix + MessagesConfig.format(getMessages().commands.dropFailed, "item", g.getName()));
                         }
                     } else {
-                        sender.sendMessage(prefix + " Could not find item \"" + args[1] + "\"");
+                        sender.sendMessage(getMessages().general.prefix + MessagesConfig.format(getMessages().commands.itemNotFound, "item", args[1]));
                     }
                     return true;
                 }
 
                 if (args[0].equalsIgnoreCase("give")) {
                     if (!sender.hasPermission("qualityarmory.give")) {
-                        sender.sendMessage(prefix + ChatColor.RED + S_NOPERM);
+                        sender.sendMessage(getMessages().general.prefix + ChatColor.RED + getMessages().general.noPermission);
                         return true;
                     }
                     if (args.length == 1) {
-                        sender.sendMessage(prefix + " The item name is required");
+                        sender.sendMessage(getMessages().general.prefix + getMessages().commands.itemNameRequired);
                         StringBuilder sb = new StringBuilder();
-                        sb.append("Valid items: ");
+                        sb.append(getMessages().commands.validItems);
                         for (Gun g : gunRegister.values()) {
                             sb.append(g.getName() + ", ");
                         }
@@ -1257,7 +1092,7 @@ public class QAMain extends JavaPlugin {
                         // for (AttachmentBase g : attachmentRegister.values()) {
                         // sb.append(g.getAttachmentName() + ",");
                         // }
-                        sender.sendMessage(prefix + sb.toString());
+                        sender.sendMessage(getMessages().general.prefix + sb.toString());
                         return true;
                     }
 
@@ -1269,10 +1104,10 @@ public class QAMain extends JavaPlugin {
                         else if (sender instanceof Player)
                             who = ((Player) sender);
                         else {
-                            sender.sendMessage("A USER IS REQUIRED FOR CONSOLE. /QA give <gun> <player> <amount>");
+                            sender.sendMessage(getMessages().general.prefix + getMessages().general.consoleRequiresPlayer);
                         }
                         if (who == null) {
-                            sender.sendMessage("That player is not online");
+                            sender.sendMessage(getMessages().general.prefix + getMessages().general.playerNotOnline);
                             return true;
                         }
 
@@ -1298,9 +1133,11 @@ public class QAMain extends JavaPlugin {
                             who.getInventory().addItem(temp);
                         }
 
-                        sender.sendMessage(prefix + " Adding " + g.getName() + " to " + (sender == who ? "your" : who.getName() + "'s") + " inventory");
+                        sender.sendMessage(getMessages().general.prefix + (sender == who
+                                ? MessagesConfig.format(getMessages().commands.givingItemSelf, "item", g.getName())
+                                : MessagesConfig.format(getMessages().commands.givingItemOther, "item", g.getName(), "player", who.getName())));
                     } else {
-                        sender.sendMessage(prefix + " Could not find item \"" + args[1] + "\"");
+                        sender.sendMessage(getMessages().general.prefix + MessagesConfig.format(getMessages().commands.itemNotFound, "item", args[1]));
                     }
                     return true;
                 }
@@ -1309,7 +1146,7 @@ public class QAMain extends JavaPlugin {
                 final Player player = (Player) sender;
                 if (args.length >= 1 && args[0].equalsIgnoreCase("override")) {
                     resourcepackReq.add(player.getUniqueId());
-                    sender.sendMessage(prefix + " Overriding resourcepack requirement.");
+                    sender.sendMessage(getMessages().general.prefix + getMessages().commands.resourcepackOverride);
                     return true;
                 }
                 if (getConfiguration().resourcepack.enabled && !resourcepackReq.contains(player.getUniqueId())) {
@@ -1323,7 +1160,7 @@ public class QAMain extends JavaPlugin {
                 if (getConfiguration().menu.enableCrafting)
                     if (args[0].equalsIgnoreCase("craft")) {
                         if (!sender.hasPermission("qualityarmory.craft")) {
-                            sender.sendMessage(prefix + ChatColor.RED + S_NOPERM);
+                            sender.sendMessage(getMessages().general.prefix + ChatColor.RED + getMessages().general.noPermission);
                             return true;
                         }
 
@@ -1335,18 +1172,18 @@ public class QAMain extends JavaPlugin {
                             }
 
                             if (g instanceof Gun) {
-                                if (getConfiguration().permissions.requirePermsToCraft && !player.hasPermission("qualityarmory.craftgun")) {
-                                    player.sendMessage(prefix + ChatColor.RED + S_NOPERM);
+                                if (getConfiguration().permissions.requireCraft && !player.hasPermission("qualityarmory.craftgun")) {
+                                    player.sendMessage(getMessages().general.prefix + ChatColor.RED + getMessages().general.noPermission);
                                     return true;
                                 }
-                                if (getConfiguration().permissions.perWeaponCraftPermission && !player.hasPermission("qualityarmory.craftgun." + g.getName())) {
-                                    player.sendMessage(prefix + ChatColor.RED + S_NOPERM);
+                                if (getConfiguration().permissions.perWeapon.craft && !player.hasPermission("qualityarmory.craftgun." + g.getName())) {
+                                    player.sendMessage(getMessages().general.prefix + ChatColor.RED + getMessages().general.noPermission);
                                     return true;
                                 }
                             }
 
                             if (!lookForIngre(player, g)) {
-                                player.sendMessage(QAMain.prefix + QAMain.S_missingIngredients);
+                                player.sendMessage(QAMain.getMessages().general.prefix + QAMain.getMessages().crafting.missingIngredients);
                                 return true;
                             }
 
@@ -1368,7 +1205,7 @@ public class QAMain extends JavaPlugin {
                         if (args.length == 2 && sender.hasPermission("qualityarmory.shop.other")) {
                             Player target = Bukkit.getPlayer(args[1]);
                             if (target == null) {
-                                sender.sendMessage(prefix + ChatColor.RED + "That player is not online");
+                                sender.sendMessage(getMessages().general.prefix + getMessages().general.playerNotOnline);
                                 return true;
                             }
 
@@ -1377,7 +1214,7 @@ public class QAMain extends JavaPlugin {
                         }
 
                         if (!sender.hasPermission("qualityarmory.shop")) {
-                            sender.sendMessage(prefix + ChatColor.RED + S_NOPERM);
+                            sender.sendMessage(getMessages().general.prefix + ChatColor.RED + getMessages().general.noPermission);
                             return true;
                         }
                         openShopMenu(player);
@@ -1393,26 +1230,17 @@ public class QAMain extends JavaPlugin {
     }
 
     public void sendHelp(CommandSender sender) {
-        sender.sendMessage(LocalUtils.colorize(prefix + " Commands:"));
-        sender.sendMessage(ChatColor.GOLD + "/QA give <Item> [player] [amount]:" + ChatColor.GRAY
-                + " Gives the sender the item specified (guns, ammo, misc.)");
-        sender.sendMessage(ChatColor.GOLD + "/QA craft [Item]:" + ChatColor.GRAY + " Opens the crafting menu.");
-        sender.sendMessage(ChatColor.GOLD + "/QA shop: " + ChatColor.GRAY + "Opens the shop menu");
-
-        sender.sendMessage(ChatColor.GOLD + "/QA getResourcepack: " + ChatColor.GRAY
-                + "Sends the link to the resourcepack. Disables the resourcepack prompts until /qa sendResourcepack is used");
-        sender.sendMessage(ChatColor.GOLD + "/QA sendResourcepack: " + ChatColor.GRAY
-                + "Sends the resourcepack prompt. Enables the resourcepack prompt. Enabled by default");
-
-        // sender.sendMessage(
-        // ChatColor.GOLD + "/QA listItemIds: " + ChatColor.GRAY + "Lists the materials
-        // and data for all items.");
+        MessagesConfig.Help help = getMessages().help;
+        sender.sendMessage(getMessages().general.prefix + help.header);
+        sender.sendMessage(help.give);
+        sender.sendMessage(help.craft);
+        sender.sendMessage(help.shop);
+        sender.sendMessage(help.getResourcepack);
+        sender.sendMessage(help.sendResourcepack);
         if (sender.hasPermission("qualityarmory.reload"))
-            sender.sendMessage(ChatColor.GOLD + "/QA reload: " + ChatColor.GRAY + "reloads all values in QA.");
-        if (sender.hasPermission("qualityarmory.createnewitem")) {
-            sender.sendMessage(ChatColor.GOLD + "/QA createNewAmmo <name>: " + ChatColor.GRAY
-                    + "Creats a new ammo type using the item in your hand as a template");
-        }
+            sender.sendMessage(help.reload);
+        if (sender.hasPermission("qualityarmory.createnewitem"))
+            sender.sendMessage(help.createNewAmmo);
     }
 
     public boolean isDuplicateGun(ItemStack is1, Player player) {
@@ -1429,47 +1257,5 @@ public class QAMain extends JavaPlugin {
         if (this.mainConfig == null || this.mainConfig.debug.logExceptions)
             this.getLogger().log(Level.SEVERE, "An exception occurred in QualityArmory", e);
         else this.getLogger().severe("An exception occurred in QualityArmory. Enable 'log-exceptions' for more information: " + e.getMessage());
-    }
-
-    @Override
-    public void reloadConfig() {
-        if (configFile == null) {
-            configFile = new File(this.getDataFolder(), "config.yml");
-            if (!this.getDataFolder().exists())
-                this.getDataFolder().mkdirs();
-            if (!configFile.exists()) {
-                try {
-                    configFile.createNewFile();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-        config = CommentYamlConfiguration.loadConfiguration(configFile);
-		/*InputStream defConfigStream = this.getResource("config.yml");
-		if (defConfigStream != null) {
-			config.setDefaults(
-					YamlConfiguration.loadConfiguration(new InputStreamReader(defConfigStream, Charsets.UTF_8)));
-		}*/
-    }
-
-    @Override
-    public FileConfiguration getConfig() {
-        if (this.config == null) {
-            this.reloadConfig();
-        }
-        return this.config;
-    }
-
-    @Override
-    public void saveConfig() {
-        if (this.config == null) {
-            this.reloadConfig();
-        }
-        try {
-            this.config.save(configFile);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 }

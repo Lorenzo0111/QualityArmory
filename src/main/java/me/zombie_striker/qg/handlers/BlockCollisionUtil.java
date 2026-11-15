@@ -62,32 +62,32 @@ public class BlockCollisionUtil {
 			return false;
 		}
 		if (b.getType() == Material.WATER) {
-			if (QAMain.getConfiguration().weapons.blockbullet_water)
+			if (QAMain.getConfiguration().weapons.blockBullets.water)
 				return true;
 		}
 		if (b.getType().name().contains("LEAVE")) {
-			if (QAMain.getConfiguration().weapons.blockbullet_leaves)
+			if (QAMain.getConfiguration().weapons.blockBullets.leaves)
 				return true;
 		}
 		if (b.getType().name().contains("SLAB") || b.getType().name().contains("STEP")) {
-			if (!QAMain.getConfiguration().weapons.blockbullet_halfslabs && ((l.getY() - l.getBlockY() > 0.5 && b.getData() == 0)
+			if (!QAMain.getConfiguration().weapons.blockBullets.halfslabs && ((l.getY() - l.getBlockY() > 0.5 && b.getData() == 0)
 					|| (l.getY() - l.getBlockY() <= 0.5 && b.getData() == 1)))
 				return false;
 			return true;
 		}
 		if (b.getType().name().contains("BED_") || b.getType().name().contains("_BED")
 				|| b.getType().name().contains("DAYLIGHT_DETECTOR")) {
-			if (!QAMain.getConfiguration().weapons.blockbullet_halfslabs && (l.getY() - l.getBlockY() > 0.5))
+			if (!QAMain.getConfiguration().weapons.blockBullets.halfslabs && (l.getY() - l.getBlockY() > 0.5))
 				return false;
 			return true;
 		}
 		if (b.getType().name().contains("DOOR")) {
-			if (QAMain.getConfiguration().weapons.blockbullet_door)
+			if (QAMain.getConfiguration().weapons.blockBullets.door)
 				return true;
 			return false;
 		}
 		if (b.getType().name().contains("GLASS")) {
-			if (QAMain.getConfiguration().weapons.blockbullet_glass)
+			if (QAMain.getConfiguration().weapons.blockBullets.glass)
 				return true;
 			return false;
 		}

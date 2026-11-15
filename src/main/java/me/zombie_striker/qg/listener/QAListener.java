@@ -135,7 +135,7 @@ public class QAListener implements Listener {
 				base.onShift(e.getPlayer(), e.getPlayer().getItemInHand(), e.isSneaking());
 		}
 
-		if (!QAMain.getConfiguration().weapons.enableIronSightsON_RIGHT_CLICK) {
+		if (!QAMain.getConfiguration().weapons.ironsights.rightClick) {
 			DEBUG("Sneak Toggle Called");
 			try {
 				if (e.isSneaking()) {
@@ -160,7 +160,7 @@ public class QAListener implements Listener {
 								if (!e.getPlayer().getItemInHand().hasItemMeta()
 										|| !e.getPlayer().getItemInHand().getItemMeta().hasDisplayName()
 										|| e.getPlayer().getItemInHand().getItemMeta().getDisplayName()
-										.contains(QAMain.S_RELOADING_MESSAGE))
+										.contains(QAMain.getMessages().weapon.reloading))
 									return;
 
 								IronsightsHandler.aim(e.getPlayer());
@@ -176,7 +176,7 @@ public class QAListener implements Listener {
 									}
 								}.runTaskLater(QAMain.getInstance(), 1);
 							} catch (Error e2) {
-								Bukkit.broadcastMessage(QAMain.prefix
+								Bukkit.broadcastMessage(QAMain.getMessages().general.prefix
 										+ "Ironsights not compatible for versions lower than 1.8. The server owner should set EnableIronSights to false in the plugin's config");
 							}
 						}
@@ -452,7 +452,7 @@ public class QAListener implements Listener {
 				}
 				QAMain.checkforDups(e.getPlayer(), e.getItem().getItemStack());
 
-				if (QAMain.getConfiguration().limiter.enablePrimaryWeaponHandler)
+				if (QAMain.getConfiguration().limiter.primary.enabled)
 					if (QualityArmory.isOverLimitForPrimaryWeapons(g, e.getPlayer()))
 						e.setCancelled(true);
 				return;
@@ -486,7 +486,7 @@ public class QAListener implements Listener {
 		if (g == null) return;
 
 		Gun finalG = g;
-		if (QAMain.getConfiguration().weapons.unloadOnQ) {
+		if (QAMain.getConfiguration().weapons.controls.unloadOnDrop) {
 			e.setCancelled(true);
 
 			ignoreClick.add(e.getPlayer().getUniqueId());
@@ -497,7 +497,7 @@ public class QAListener implements Listener {
 				if (e.getPlayer().isSneaking()) unloadAll(e.getPlayer(), finalG);
 				else unloadOne(e.getPlayer(), finalG);
 			}, 2L);
-		} else if (QAMain.getConfiguration().weapons.reloadOnQ && !QAMain.getConfiguration().weapons.reloadOnFOnly) {
+		} else if (QAMain.getConfiguration().weapons.controls.reloadOnDrop && !QAMain.getConfiguration().weapons.controls.reloadOnlyOnOffhandSwap) {
 			e.setCancelled(true);
 
 			ignoreClick.add(e.getPlayer().getUniqueId());
@@ -577,7 +577,7 @@ public class QAListener implements Listener {
 
 	@EventHandler
 	public void onDeathChat(PlayerDeathEvent e) {
-		if (QAMain.getConfiguration().combat.changeDeathMessages) {
+		if (QAMain.getConfiguration().combat.deathMessages.enabled) {
 			if (e.getEntity().getKiller() != null && e.getEntity().getKiller() instanceof Player) {
 				Player killer = e.getEntity().getKiller();
 				if (e.getDeathMessage() != null && e.getDeathMessage().contains(" using ")) {
@@ -635,7 +635,7 @@ public class QAListener implements Listener {
 			if (QualityArmory.isIronSights(is)) {
 				e.getDrops().remove(is);
 				DEBUG("Removing IronSights");
-			} else if (is.hasItemMeta() && is.getItemMeta().hasDisplayName() && is.getItemMeta().getDisplayName().contains(QAMain.S_RELOADING_MESSAGE)) {
+			} else if (is.hasItemMeta() && is.getItemMeta().hasDisplayName() && is.getItemMeta().getDisplayName().contains(QAMain.getMessages().weapon.reloading)) {
 				Gun g = QualityArmory.getGun(is);
 				ItemMeta im = is.getItemMeta();
 				im.setDisplayName(g.getDisplayName());
@@ -644,7 +644,7 @@ public class QAListener implements Listener {
 			}
 		}
 
-		if (QAMain.getConfiguration().ui.showAmmoInXPBar) {
+		if (QAMain.getConfiguration().ui.showAmmoInXpBar) {
 			e.setDroppedExp(0);
 			e.setNewTotalExp(0);
 		}
@@ -659,7 +659,7 @@ public class QAListener implements Listener {
 			}
 		}
 		BulletWoundHandler.bleedoutMultiplier.remove(e.getEntity().getUniqueId());
-		BulletWoundHandler.bloodLevel.put(e.getEntity().getUniqueId(), QAMain.getConfiguration().combat.bulletWound_initialbloodamount);
+		BulletWoundHandler.bloodLevel.put(e.getEntity().getUniqueId(), QAMain.getConfiguration().combat.bleeding.initialBloodLevel);
 
 		if (e.getEntity().getKiller() instanceof Player) {
 			Player killer = e.getEntity().getKiller();
@@ -674,7 +674,7 @@ public class QAListener implements Listener {
 	@EventHandler
 	public void onDeath(PlayerRespawnEvent e) {
 		BulletWoundHandler.bleedoutMultiplier.remove(e.getPlayer().getUniqueId());
-		BulletWoundHandler.bloodLevel.put(e.getPlayer().getUniqueId(), QAMain.getConfiguration().combat.bulletWound_initialbloodamount);
+		BulletWoundHandler.bloodLevel.put(e.getPlayer().getUniqueId(), QAMain.getConfiguration().combat.bleeding.initialBloodLevel);
 	}
 
 	@SuppressWarnings("deprecation")
@@ -682,7 +682,7 @@ public class QAListener implements Listener {
 	public void onClickMONITOR(final PlayerInteractEvent e) {
 		if (e.isCancelled())
 			return;
-		if (QAMain.getConfiguration().features.ignoreSkipping)
+		if (QAMain.getConfiguration().features.enableIgnoreSkipForBasegameItems)
 			return;
 
 		try {
@@ -749,7 +749,7 @@ public class QAListener implements Listener {
 			}
 
 			if (!e.getPlayer().hasPermission("qualityarmory.craft")) {
-				e.getPlayer().sendMessage(QAMain.prefix + ChatColor.RED + QAMain.S_ANVIL);
+				e.getPlayer().sendMessage(QAMain.getMessages().general.prefix + ChatColor.RED + QAMain.getMessages().crafting.noAnvilPermission);
 				return;
 			}
 			QAMain.openCraftMenu(e.getPlayer());
@@ -770,7 +770,7 @@ public class QAListener implements Listener {
 		if (!CustomItemManager.isUsingCustomData()) {
 			QAMain.DEBUG("Custom Data Check");
 			try {
-				if (QAMain.getConfiguration().items.ITEM_enableUnbreakable && !QAMain.getConfiguration().features.ignoreUnbreaking)
+				if (QAMain.getConfiguration().items.enableUnbreaking && !QAMain.getConfiguration().features.enableIgnoreUnbreakingChecks)
 					if (QualityArmory.isCustomItem(e.getPlayer().getItemInHand())) {
 						if (!e.getPlayer().getItemInHand().getItemMeta().isUnbreakable()) {
 							QAMain.DEBUG("A player is using a breakable item that reached being a gun!");
@@ -790,7 +790,7 @@ public class QAListener implements Listener {
 			}
 
 			try {
-				if (QAMain.getConfiguration().items.ITEM_enableUnbreakable && !QAMain.getConfiguration().features.ignoreUnbreaking)
+				if (QAMain.getConfiguration().items.enableUnbreaking && !QAMain.getConfiguration().features.enableIgnoreUnbreakingChecks)
 					if (QualityArmory.isCustomItem(e.getPlayer().getInventory().getItemInOffHand())) {
 						if (!e.getPlayer().getInventory().getItemInOffHand().getItemMeta().isUnbreakable()) {
 							QAMain.DEBUG("A player is using a breakable item that reached being a gun!");
@@ -839,7 +839,7 @@ public class QAListener implements Listener {
 				&& System.currentTimeMillis() - QAMain.sentResourcepack.get(e.getPlayer().getUniqueId()) >= 3000) {
 			// the player did not accept resourcepack, and got away with it
 			e.setCancelled(true);
-			e.getPlayer().kickPlayer(QAMain.S_KICKED_FOR_RESOURCEPACK);
+			e.getPlayer().kickPlayer(QAMain.getMessages().resourcepack.kickMessage);
 			QAMain.DEBUG("Kick for custom resourcepack");
 			return;
 		}
@@ -894,17 +894,17 @@ public class QAListener implements Listener {
 				QAMain.DEBUG("Player is aiming!");
 				try {
 					if ((e.getAction() == Action.RIGHT_CLICK_AIR
-							|| e.getAction() == Action.RIGHT_CLICK_BLOCK) == (!QAMain.getConfiguration().features.SwapReloadAndShootingControls)) {
+							|| e.getAction() == Action.RIGHT_CLICK_BLOCK) == (!QAMain.getConfiguration().features.swapReloadAndShootingControls)) {
 						e.setCancelled(true);
 						Gun g = IronsightsHandler.getGunUsed(e.getPlayer());
 						QAMain.DEBUG("Swapping " + g.getName() + " from offhand to main hand to reload!");
 						if (GunUtil.rapidfireshooters.containsKey(e.getPlayer().getUniqueId()))
 							GunUtil.rapidfireshooters.remove(e.getPlayer().getUniqueId()).cancel();
 						IronsightsHandler.unAim(e.getPlayer());
-						if (QAMain.getConfiguration().weapons.enableIronSightsON_RIGHT_CLICK || !e.getPlayer().isSneaking()) {
+						if (QAMain.getConfiguration().weapons.ironsights.rightClick || !e.getPlayer().isSneaking()) {
 							QAMain.toggleNightvision(e.getPlayer(), g, false);
 						}
-						if (QAMain.getConfiguration().weapons.enableIronSightsON_RIGHT_CLICK)
+						if (QAMain.getConfiguration().weapons.ironsights.rightClick)
 							return;
 					}
 				} catch (Error e2) {
@@ -992,7 +992,7 @@ public class QAListener implements Listener {
 			QAMain.lastWeaponSwitch.put(e.getPlayer().getUniqueId(), System.currentTimeMillis());
 		}
 
-		if(QAMain.getConfiguration().ui.showAmmoInXPBar) {
+		if(QAMain.getConfiguration().ui.showAmmoInXpBar) {
 			CustomBaseObject customBase = QualityArmory.getCustomItem(newslot);
 			if (customBase instanceof Gun) {
 				GunUtil.updateXPBar(e.getPlayer(), (Gun) customBase,Gun.getAmount(newslot));
@@ -1029,15 +1029,15 @@ public class QAListener implements Listener {
 	public void onJoin(final PlayerJoinEvent e) {
 		if (XReflection.MINOR_NUMBER == 7) {
 			Bukkit.broadcastMessage(
-					QAMain.prefix + " QualityArmory does not support versions older than 1.9, and may crash clients");
+					QAMain.getMessages().general.prefix + " QualityArmory does not support versions older than 1.9, and may crash clients");
 			Bukkit.broadcastMessage(
 					"Since there is no reason to stay on outdated updates, (1.7 and 1.8 has quite a number of exploits) update your server.");
 			if (QAMain.getConfiguration().resourcepack.enabled) {
 				QAMain.getConfiguration().resourcepack.enabled = false;
-				Bukkit.broadcastMessage(QAMain.prefix + ChatColor.RED + " Disabling resourcepack.");
+				Bukkit.broadcastMessage(QAMain.getMessages().general.prefix + ChatColor.RED + " Disabling resourcepack.");
 			}
 		}
-		if (QAMain.getConfiguration().features.addGlowEffects) {
+		if (QAMain.getConfiguration().features.enableGlowEffects) {
 			new BukkitRunnable() {
 
 				@Override
@@ -1050,8 +1050,8 @@ public class QAListener implements Listener {
 			}.runTaskLater(QAMain.getInstance(), 20 * 15);
 		}
 
-		if (QAMain.getConfiguration().resourcepack.enabled && QAMain.getConfiguration().resourcepack.sendOnJoin) {
-			QualityArmory.sendResourcepack(e.getPlayer(), QAMain.getConfiguration().resourcepack.sendTitleOnJoin);
+		if (QAMain.getConfiguration().resourcepack.enabled && QAMain.getConfiguration().resourcepack.sendOnJoin.enabled) {
+			QualityArmory.sendResourcepack(e.getPlayer(), QAMain.getConfiguration().resourcepack.sendOnJoin.title);
 		} else {
 			for (ItemStack i : e.getPlayer().getInventory().getContents()) {
 				if (i != null && (QualityArmory.isGun(i) || QualityArmory.isAmmo(i) || QualityArmory.isMisc(i))) {
@@ -1078,7 +1078,7 @@ public class QAListener implements Listener {
 			return;
 		if (QAMain.showOutOfAmmoOnItem) {
 			if (QualityArmory.isGun(e.getItemDrop().getItemStack())) {
-				if (e.getItemDrop().getItemStack().getItemMeta().getDisplayName().contains(QAMain.S_OUT_OF_AMMO)) {
+				if (e.getItemDrop().getItemStack().getItemMeta().getDisplayName().contains(QAMain.getMessages().weapon.outOfAmmo)) {
 					ItemStack temp = e.getItemDrop().getItemStack();
 					ItemMeta im = temp.getItemMeta();
 					im.setDisplayName(QualityArmory.getGun(temp).getDisplayName());
@@ -1091,13 +1091,13 @@ public class QAListener implements Listener {
 
 		if (QualityArmory.isIronSights(e.getItemDrop().getItemStack())) {
 			e.setCancelled(true);
-			if (!QAMain.getConfiguration().weapons.enableIronSightsON_RIGHT_CLICK)
+			if (!QAMain.getConfiguration().weapons.ironsights.rightClick)
 				return;
 		}
 
 		QAMain.checkforDups(e.getPlayer(), e.getItemDrop().getItemStack());
 
-		if (QAMain.getConfiguration().weapons.enableIronSightsON_RIGHT_CLICK) {
+		if (QAMain.getConfiguration().weapons.ironsights.rightClick) {
 			if (e.getPlayer().getItemInHand() != null && (QualityArmory.isGun(e.getItemDrop().getItemStack())
 					|| QualityArmory.isIronSights(e.getItemDrop().getItemStack()))) {
 				if (e.getItemDrop().getItemStack().getAmount() == 1) {

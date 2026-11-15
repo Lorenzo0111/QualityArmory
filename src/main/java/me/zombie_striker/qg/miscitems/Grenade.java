@@ -54,11 +54,11 @@ public class Grenade extends CustomBaseObject implements ThrowableItems {
 
 	@Override
 	public boolean onRMB(Player thrower, ItemStack usedItem) {
-		if(QAMain.getConfiguration().features.autoarm) onPull(thrower,usedItem);
+		if(QAMain.getConfiguration().features.enableAutoArmGrenades) onPull(thrower,usedItem);
 		if (ThrowableItemRegistry.containsKey(thrower) && ThrowableItemRegistry.get(thrower).getGrenade().equals(this)) {
 			return this.throwGrenade(thrower, thrower.getLocation().getDirection().normalize().multiply(getThrowSpeed()));
 		} else {
-			thrower.sendMessage(QAMain.prefix + QAMain.S_GRENADE_PULLPIN);
+			thrower.sendMessage(QAMain.getMessages().general.prefix + QAMain.getMessages().grenade.pullPin);
 		}
 		return true;
 	}
@@ -103,16 +103,16 @@ public class Grenade extends CustomBaseObject implements ThrowableItems {
 
 	@Override
 	public boolean onLMB(Player e, ItemStack usedItem) {
-		if(!QAMain.getConfiguration().features.autoarm)
+		if(!QAMain.getConfiguration().features.enableAutoArmGrenades)
 			return onPull(e,usedItem);
 		return false;
 	}
 
 	public boolean onPull(Player e, ItemStack usedItem) {
 		Player thrower = e.getPlayer();
-		if (!QAMain.getConfiguration().features.autoarm) {
+		if (!QAMain.getConfiguration().features.enableAutoArmGrenades) {
 			if (ThrowableItemRegistry.containsKey(thrower)) {
-				thrower.sendMessage(QAMain.prefix + QAMain.S_GRENADE_PALREADYPULLPIN);
+				thrower.sendMessage(QAMain.getMessages().general.prefix + QAMain.getMessages().grenade.alreadyPulled);
 				thrower.playSound(thrower.getLocation(), WeaponSounds.RELOAD_BULLET.getSoundName(), 1, 1);
 				QAMain.DEBUG("Already pin out");
 				return true;

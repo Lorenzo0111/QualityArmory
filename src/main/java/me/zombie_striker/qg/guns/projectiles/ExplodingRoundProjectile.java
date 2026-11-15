@@ -31,7 +31,7 @@ public class ExplodingRoundProjectile implements RealtimeCalculationProjectile {
 
 			@Override
 			public void run() {
-				dir.setY(dir.getY() - QAMain.getConfiguration().weapons.gravity);
+				dir.setY(dir.getY() - QAMain.getConfiguration().weapons.detection.gravity);
 				for (int tick = 0; tick < g.getVelocityForRealtimeCalculations(); tick++) {
 					distance--;
 					s.add(dir);

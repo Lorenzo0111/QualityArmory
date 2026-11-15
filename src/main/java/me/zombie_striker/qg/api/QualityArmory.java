@@ -108,14 +108,14 @@ public class QualityArmory {
 				}
 				if (warning) {
 					try {
-						player.sendTitle(LocalUtils.colorize(ChatColor.RED + QAMain.S_NORES1), LocalUtils.colorize(QAMain.S_NORES2));
+						player.sendTitle(LocalUtils.colorize(ChatColor.RED + QAMain.getMessages().resourcepack.downloading), LocalUtils.colorize(QAMain.getMessages().resourcepack.acceptPrompt));
 					} catch (Error e2) {
-						player.sendMessage(LocalUtils.colorize(ChatColor.RED + QAMain.S_NORES1));
-						player.sendMessage(LocalUtils.colorize(ChatColor.RED + QAMain.S_NORES2));
+						player.sendMessage(LocalUtils.colorize(ChatColor.RED + QAMain.getMessages().resourcepack.downloading));
+						player.sendMessage(LocalUtils.colorize(ChatColor.RED + QAMain.getMessages().resourcepack.acceptPrompt));
 					}
 				}
-				if (QAMain.getConfiguration().ui.showCrashMessage)
-					player.sendMessage(LocalUtils.colorize(QAMain.prefix + QAMain.S_RESOURCEPACK_HELP));
+				if (QAMain.getConfiguration().ui.showPossibleCrashHelpMessage)
+					player.sendMessage(LocalUtils.colorize(QAMain.getMessages().general.prefix + QAMain.getMessages().resourcepack.crashHelp));
 
 				new BukkitRunnable() {
 					@Override
@@ -156,7 +156,7 @@ public class QualityArmory {
 					}
 				}.runTaskLater(QAMain.getInstance(), 20 * (warning ? 1 : 5));
 			}
-		}.runTaskLater(QAMain.getInstance(), (long) (20 * QAMain.getConfiguration().resourcepack.secondsTilSend));
+		}.runTaskLater(QAMain.getInstance(), (long) (20 * QAMain.getConfiguration().resourcepack.sendOnJoin.delay));
 	}
 
 	public static boolean allowGunsInRegion(Location loc) {
@@ -467,9 +467,9 @@ public class QualityArmory {
 
 		int ammoamount = getAmmoInInventory(p, g.getAmmoType());
 
-		if (QAMain.getConfiguration().ui.showOutOfAmmoOnTitle && ammoamount <= 0 && Gun.getAmount(p) < 1) {
-			p.sendTitle(" ", QAMain.S_OUT_OF_AMMO, 0, 20, 1);
-		} else if (QAMain.getConfiguration().ui.showReloadOnTitle && reloading) {
+		if (QAMain.getConfiguration().ui.showOutOfAmmoTitle && ammoamount <= 0 && Gun.getAmount(p) < 1) {
+			p.sendTitle(" ", QAMain.getMessages().weapon.outOfAmmo, 0, 20, 1);
+		} else if (QAMain.getConfiguration().ui.showReloadTitle && reloading) {
 			for (int i = 1; i < g.getReloadTime() * 20; i += 2) {
 				final int id = i;
 				new BukkitRunnable() {
@@ -480,23 +480,23 @@ public class QualityArmory {
 						sb.append(repeat("#", (int) (20 * (1.0 * id / (20 * g.getReloadTime())))));
 						sb.append(ChatColor.DARK_GRAY);
 						sb.append(repeat("#", (int) (20 - ((int) (20.0 * id / (20 * g.getReloadTime()))))));
-						p.sendTitle(QAMain.S_RELOADING_MESSAGE, sb.toString(), 0, 4, 0);
+						p.sendTitle(QAMain.getMessages().weapon.reloading, sb.toString(), 0, 4, 0);
 					}
 				}.runTaskLater(QAMain.getInstance(), i);
 			}
 		} else {
 
 			try {
-				String message = QAMain.S_HOTBAR_FORMAT;
+				String message = QAMain.getMessages().weapon.hotbarFormat;
 
-				if (QAMain.getConfiguration().ui.disableHotBarMessageOnOutOfAmmo && QAMain.getConfiguration().ui.disableHotBarMessageOnReload
-						&& QAMain.getConfiguration().ui.disableHotBarMessageOnShoot)
+				if (QAMain.getConfiguration().ui.disableHotbarMessages.outOfAmmo && QAMain.getConfiguration().ui.disableHotbarMessages.reload
+						&& QAMain.getConfiguration().ui.disableHotbarMessages.shoot)
 					return;
-				if (reloading && QAMain.getConfiguration().ui.disableHotBarMessageOnReload)
+				if (reloading && QAMain.getConfiguration().ui.disableHotbarMessages.reload)
 					return;
-				if (ammoamount <= 0 && QAMain.getConfiguration().ui.disableHotBarMessageOnOutOfAmmo)
+				if (ammoamount <= 0 && QAMain.getConfiguration().ui.disableHotbarMessages.outOfAmmo)
 					return;
-				if (!reloading && ammoamount > 0 && QAMain.getConfiguration().ui.disableHotBarMessageOnShoot)
+				if (!reloading && ammoamount > 0 && QAMain.getConfiguration().ui.disableHotbarMessages.shoot)
 					return;
 
 				if (message.contains("%name%"))
@@ -508,8 +508,8 @@ public class QualityArmory {
 					message = message.replace("%max%", maxAmount + "");
 
 				if (message.contains("%state%"))
-					message = message.replace("%state%", reloading ? QAMain.S_RELOADING_MESSAGE
-							: ammoamount <= 0 ? QAMain.S_OUT_OF_AMMO : QAMain.S_MAX_FOUND);
+					message = message.replace("%state%", reloading ? QAMain.getMessages().weapon.reloading
+							: ammoamount <= 0 ? QAMain.getMessages().weapon.outOfAmmo : QAMain.getMessages().weapon.ammoCount);
 				if (message.contains("%total%"))
 					message = message.replace("%total%", "" + ammoamount);
 
@@ -634,7 +634,7 @@ public class QualityArmory {
 					count++;
 			}
 		}
-		return count >= (g.isPrimaryWeapon() ? QAMain.getConfiguration().limiter.primaryWeaponLimit : QAMain.getConfiguration().limiter.secondaryWeaponLimit);
+		return count >= (g.isPrimaryWeapon() ? QAMain.getConfiguration().limiter.primary.max : QAMain.getConfiguration().limiter.secondary.max);
 	}
 
 	public static ItemStack getCustomItemAsItemStack(String name) {

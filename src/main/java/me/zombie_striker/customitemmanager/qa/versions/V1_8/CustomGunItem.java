@@ -65,7 +65,7 @@ public class CustomGunItem extends AbstractCustomGunItem {
 			OLD_ItemFact.addVariantData(im,lore,base);
 
 			im.setLore(lore);
-			if (QAMain.getConfiguration().items.ITEM_enableUnbreakable) {
+			if (QAMain.getConfiguration().items.enableUnbreaking) {
 				try {
 					im.setUnbreakable(true);
 				} catch (Error | Exception e34) {
@@ -77,7 +77,7 @@ public class CustomGunItem extends AbstractCustomGunItem {
 				}
 			}
 			try {
-				if (QAMain.getConfiguration().items.ITEM_enableUnbreakable) {
+				if (QAMain.getConfiguration().items.enableUnbreaking) {
 					im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_UNBREAKABLE);
 				}
 				im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_ATTRIBUTES);
@@ -93,7 +93,7 @@ public class CustomGunItem extends AbstractCustomGunItem {
 		} else {
 			// Item meta is still null. Catch and report.
 			QAMain.getInstance().getLogger()
-					.warning(QAMain.prefix + " ItemMeta is null for " + base.getName() + ". I have");
+					.warning(QAMain.getMessages().general.prefix + " ItemMeta is null for " + base.getName() + ". I have");
 		}
 		is.setAmount(1);
 		return is;

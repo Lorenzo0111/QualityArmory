@@ -24,7 +24,7 @@ public class Update19resourcepackhandler implements Listener {
 
         if (event.getStatus() == PlayerResourcePackStatusEvent.Status.DECLINED) {
             if (QAMain.getConfiguration().resourcepack.kickIfDenied) {
-                Bukkit.getScheduler().runTask(QAMain.getInstance(), () -> event.getPlayer().kickPlayer(QAMain.S_KICKED_FOR_RESOURCEPACK));
+                Bukkit.getScheduler().runTask(QAMain.getInstance(), () -> event.getPlayer().kickPlayer(QAMain.getMessages().resourcepack.kickMessage));
             }
 
             // Add to the list, so it doesn't keep spamming the title

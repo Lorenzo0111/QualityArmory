@@ -124,7 +124,7 @@ public class GunRefillerRunnable {
                         if (check != null) {
                             Gun g2 = QualityArmory.getGun(check);
                             if (g2 != null && g2 == g) {
-                                if (check.getItemMeta().getDisplayName().contains(QAMain.S_RELOADING_MESSAGE)) {
+                                if (check.getItemMeta().getDisplayName().contains(QAMain.getMessages().weapon.reloading)) {
                                     newSlot = i;
                                     break;
                                 }
@@ -137,7 +137,7 @@ public class GunRefillerRunnable {
                     player.getInventory().setItem(newSlot, modifiedOriginalItem);
 
 
-                    if (!different && player.isSneaking() && g.hasIronSights() && !QAMain.getConfiguration().weapons.enableIronSightsON_RIGHT_CLICK) {
+                    if (!different && player.isSneaking() && g.hasIronSights() && !QAMain.getConfiguration().weapons.ironsights.rightClick) {
                         IronsightsHandler.aim(player);
                         QAMain.toggleNightvision(player, g, true);
                     }
@@ -145,7 +145,7 @@ public class GunRefillerRunnable {
                     if (shouldContinue)
                         QualityArmory.sendHotbarGunAmmoCount(player, g, modifiedOriginalItem, false);
 
-                    if (QAMain.getConfiguration().ui.showAmmoInXPBar && shouldContinue) {
+                    if (QAMain.getConfiguration().ui.showAmmoInXpBar && shouldContinue) {
                         GunUtil.updateXPBar(player, g, reloadAmount);
                     }
                 }
