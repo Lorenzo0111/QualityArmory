@@ -1,5 +1,6 @@
 package me.zombie_striker.qg.miscitems;
 
+import me.zombie_striker.qg.items.ItemState;
 import me.zombie_striker.customitemmanager.CustomBaseObject;
 import me.zombie_striker.customitemmanager.CustomItemManager;
 import me.zombie_striker.customitemmanager.MaterialStorage;
@@ -138,6 +139,7 @@ public class AmmoBag extends CustomBaseObject {
 
         meta.setLore(lore);
         item.setItemMeta(meta);
+        ItemState.setBagAmmo(item, newAmmo);
     }
 
     public void updateTypeLore(@NotNull ItemStack item, Ammo type) {
@@ -166,9 +168,12 @@ public class AmmoBag extends CustomBaseObject {
 
         meta.setLore(lore);
         item.setItemMeta(meta);
+        ItemState.setBagType(item, type.getName());
     }
 
     public int getAmmo(@NotNull ItemStack item) {
+        Integer tagged = ItemState.getBagAmmo(item);
+        if (tagged != null) return tagged;
         ItemMeta meta = item.getItemMeta();
         Objects.requireNonNull(meta);
         if (!meta.hasLore()) {
@@ -190,6 +195,8 @@ public class AmmoBag extends CustomBaseObject {
     }
 
     public @Nullable Ammo getAmmoType(@NotNull ItemStack item) {
+        String tagged = ItemState.getBagType(item);
+        if (tagged != null) return QualityArmory.getAmmoByName(tagged);
         ItemMeta meta = item.getItemMeta();
         Objects.requireNonNull(meta);
         if (!meta.hasLore()) {

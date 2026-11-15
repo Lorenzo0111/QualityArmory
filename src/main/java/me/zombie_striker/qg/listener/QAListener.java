@@ -1,5 +1,6 @@
 package me.zombie_striker.qg.listener;
 
+import me.zombie_striker.qg.items.ItemState;
 import me.zombie_striker.qg.utils.Compat;
 import me.zombie_striker.qg.utils.ErrorReporter;
 import org.bukkit.inventory.Inventory;
@@ -160,8 +161,7 @@ public class QAListener implements Listener {
 							{
 								if (!e.getPlayer().getItemInHand().hasItemMeta()
 										|| !e.getPlayer().getItemInHand().getItemMeta().hasDisplayName()
-										|| e.getPlayer().getItemInHand().getItemMeta().getDisplayName()
-										.contains(QAMain.getMessages().weapon.reloading))
+										|| Gun.isReloading(e.getPlayer().getItemInHand()))
 									return;
 
 								IronsightsHandler.aim(e.getPlayer());
@@ -614,11 +614,12 @@ public class QAListener implements Listener {
 			if (QualityArmory.isIronSights(is)) {
 				e.getDrops().remove(is);
 				DEBUG("Removing IronSights");
-			} else if (is.hasItemMeta() && is.getItemMeta().hasDisplayName() && is.getItemMeta().getDisplayName().contains(QAMain.getMessages().weapon.reloading)) {
+			} else if (Gun.isReloading(is) && QualityArmory.getGun(is) != null) {
 				Gun g = QualityArmory.getGun(is);
 				ItemMeta im = is.getItemMeta();
 				im.setDisplayName(g.getDisplayName());
 				is.setItemMeta(im);
+				ItemState.setReloading(is, false);
 				DEBUG("Removed Reloading suffix");
 			}
 		}

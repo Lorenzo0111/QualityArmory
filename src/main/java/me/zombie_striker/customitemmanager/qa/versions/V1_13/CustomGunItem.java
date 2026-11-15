@@ -1,5 +1,6 @@
 package me.zombie_striker.customitemmanager.qa.versions.V1_13;
 
+import me.zombie_striker.qg.items.ItemState;
 import me.zombie_striker.qg.utils.ErrorReporter;
 import me.zombie_striker.qg.utils.Compat;
 import me.zombie_striker.customitemmanager.CustomBaseObject;
@@ -81,6 +82,7 @@ public class CustomGunItem extends AbstractCustomGunItem {
 				OLD_ItemFact.addVariantData(im, im.getLore(), ms.getVariant());
 			}
 			is.setItemMeta(im);
+			ItemState.setVariant(is, ms.getVariant());
 		} else {
 			// Item meta is still null. Catch and report.
 			QAMain.getInstance().getLogger()

@@ -1,5 +1,6 @@
 package me.zombie_striker.qg.guns.utils;
 
+import me.zombie_striker.qg.items.ItemState;
 import me.zombie_striker.qg.utils.Compat;
 import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.ammo.Ammo;
@@ -100,6 +101,7 @@ public class GunRefillerRunnable {
 
                 newim.setDisplayName(g.getDisplayName());
                 modifiedOriginalItem.setItemMeta(newim);
+                ItemState.setReloading(modifiedOriginalItem, false);
                 if (shouldContinue) Gun.updateAmmo(g, modifiedOriginalItem, reloadAmount);
 
                 ItemStack current = player.getInventory().getItem(slot);
@@ -113,7 +115,7 @@ public class GunRefillerRunnable {
                         if (check != null) {
                             Gun g2 = QualityArmory.getGun(check);
                             if (g2 != null && g2 == g) {
-                                if (check.getItemMeta().getDisplayName().contains(QAMain.getMessages().weapon.reloading)) {
+                                if (Gun.isReloading(check)) {
                                     newSlot = i;
                                     break;
                                 }

@@ -1,5 +1,6 @@
 package me.zombie_striker.customitemmanager;
 
+import me.zombie_striker.qg.items.ItemState;
 import me.zombie_striker.qg.utils.CustomModelData;
 import me.zombie_striker.qg.utils.ErrorReporter;
 import com.cryptomorin.xseries.profiles.PlayerProfiles;
@@ -111,6 +112,8 @@ public class MaterialStorage {
 	}
 
 	public static int getVariant(ItemStack is) {
+		Integer tagged = ItemState.getVariant(is);
+		if (tagged != null) return tagged;
 		if (is != null && is.hasItemMeta()) {
 			ItemMeta im = is.getItemMeta();
 

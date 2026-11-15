@@ -1,5 +1,6 @@
 package me.zombie_striker.customitemmanager;
 
+import me.zombie_striker.qg.items.ItemState;
 import me.zombie_striker.qg.crafting.Crafting;
 import me.zombie_striker.qg.utils.CustomModelData;
 import me.zombie_striker.qg.utils.Compat;
@@ -44,6 +45,7 @@ public class OLD_ItemFact {
 			ItemMeta im = is.getItemMeta();
 			im.setDisplayName(g.getDisplayName());
 			is.setItemMeta(im);
+			ItemState.setReloading(is, false);
 			player.getInventory().setItem(slot, is);
 		}
 	}

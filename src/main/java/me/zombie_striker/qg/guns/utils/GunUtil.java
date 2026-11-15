@@ -1,5 +1,6 @@
 package me.zombie_striker.qg.guns.utils;
 
+import me.zombie_striker.qg.items.ItemState;
 import me.zombie_striker.qg.utils.Compat;
 import me.zombie_striker.qg.utils.ErrorReporter;
 
@@ -708,7 +709,7 @@ public class GunUtil {
 		}
 		if (im == null || !im.hasDisplayName())
 			return;
-		if (im.getLore() != null && im.getDisplayName().contains(QAMain.getMessages().weapon.reloading)) {
+		if (im.getLore() != null && Gun.isReloading(temp)) {
 
 		} else {
 			if (Compat.WORLD_SOUND_BY_NAME)
@@ -731,6 +732,7 @@ public class GunUtil {
 			//Gun.updateAmmo(g, im, initialAmount);
 			im.setDisplayName(g.getDisplayName() + QAMain.getMessages().weapon.reloading);
 			temp.setItemMeta(im);
+			ItemState.setReloading(temp, true);
 			player.getInventory().setItem(slot, temp);
 
 			if(QAMain.getConfiguration().ui.showAmmoInXpBar){

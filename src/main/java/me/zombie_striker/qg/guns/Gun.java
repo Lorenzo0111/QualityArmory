@@ -1,5 +1,6 @@
 package me.zombie_striker.qg.guns;
 
+import me.zombie_striker.qg.items.ItemState;
 import me.zombie_striker.qg.utils.Compat;
 import com.cryptomorin.xseries.XPotion;
 import de.tr7zw.changeme.nbtapi.NBT;
@@ -264,7 +265,23 @@ public class Gun extends CustomBaseObject implements Comparable<Gun> {
         return lore;
     }
 
+    /**
+     * @return Whether the gun item is reloading. Items without the NBT flag fall back to the reloading suffix
+     * in their name.
+     */
+    public static boolean isReloading(ItemStack is) {
+        Boolean tagged = ItemState.isReloading(is);
+        if (tagged != null) return tagged;
+        return is != null && is.hasItemMeta() && is.getItemMeta().hasDisplayName()
+                && is.getItemMeta().getDisplayName().contains(QAMain.getMessages().weapon.reloading);
+    }
+
+    /**
+     * @return The remaining durability, from NBT or, for older items, the durability lore line. -1 if unknown.
+     */
     public static int getDamage(ItemStack is) {
+        Integer tagged = ItemState.getDurability(is);
+        if (tagged != null) return tagged;
         if (is != null && is.hasItemMeta() && is.getItemMeta().hasLore())
             for (String lore : is.getItemMeta().getLore()) {
                 if (ChatColor.stripColor(lore).startsWith(ChatColor.stripColor(QAMain.getMessages().lore.durability))) {
@@ -282,6 +299,7 @@ public class Gun extends CustomBaseObject implements Comparable<Gun> {
         ItemMeta im = is.getItemMeta();
         im.setLore(setDurabilityDamage(g, im.getLore(), damage));
         is.setItemMeta(im);
+        ItemState.setDurability(is, damage);
         return is;
     }
 
@@ -864,12 +882,13 @@ public class Gun extends CustomBaseObject implements Comparable<Gun> {
 
         if (fire) {
             QAMain.DEBUG("Fire mode called");
-            if (player.getPlayer().getItemInHand().getItemMeta().getDisplayName().contains(QAMain.getMessages().weapon.reloading)) {
+            if (isReloading(player.getPlayer().getItemInHand())) {
                 if (!GunRefillerRunnable.hasItemReloaded(player, usedItem)) {
                     ItemStack tempused = usedItem;
                     ItemMeta im = tempused.getItemMeta();
                     im.setDisplayName(getDisplayName());
                     tempused.setItemMeta(im);
+                    ItemState.setReloading(tempused, false);
                     if (offhand) {
                         Update19OffhandChecker.setOffhand(player.getPlayer(), tempused);
                         QAMain.DEBUG("odd. Reloading broke. Removing reloading message from offhand - firing");
@@ -974,13 +993,13 @@ public class Gun extends CustomBaseObject implements Comparable<Gun> {
                 if (hasIronSights()) {
                     if (Compat.OFFHAND) {
 
-                        if (player.getPlayer().getItemInHand().getItemMeta().getDisplayName()
-                                .contains(QAMain.getMessages().weapon.reloading)) {
+                        if (isReloading(player.getPlayer().getItemInHand())) {
                             if (!GunRefillerRunnable.hasItemReloaded(player, usedItem)) {
                                 ItemStack tempused = usedItem.clone();
                                 ItemMeta im = tempused.getItemMeta();
                                 im.setDisplayName(getDisplayName());
                                 tempused.setItemMeta(im);
+                                ItemState.setReloading(tempused, false);
                                 if (offhand) {
                                     Update19OffhandChecker.setOffhand(player.getPlayer(), tempused);
                                     QAMain.DEBUG(

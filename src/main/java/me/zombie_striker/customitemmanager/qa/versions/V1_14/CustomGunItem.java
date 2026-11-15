@@ -1,5 +1,6 @@
 package me.zombie_striker.customitemmanager.qa.versions.V1_14;
 
+import me.zombie_striker.qg.items.ItemState;
 import me.zombie_striker.qg.utils.ErrorReporter;
 import me.zombie_striker.qg.utils.Compat;
 import com.cryptomorin.xseries.XAttribute;
@@ -121,6 +122,7 @@ public class CustomGunItem extends AbstractCustomGunItem {
 				im.setCustomModelData(ms.getData());
 
 			is.setItemMeta(im);
+			ItemState.setVariant(is, ms.getVariant());
 		} else {
 			QAMain.getInstance().getLogger()
 					.warning(QAMain.getMessages().general.prefix + " ItemMeta is null for " + base.getName() + ". I have");

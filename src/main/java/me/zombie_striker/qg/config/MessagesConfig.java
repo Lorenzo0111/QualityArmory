@@ -151,12 +151,11 @@ public class MessagesConfig extends BaseConfiguration {
     }
 
     /**
-     * Lore labels. These are also used to read values back from existing items,
-     * so changing them will make items created before the change lose that information.
+     * Lore labels. Items store their data in NBT; the labels are only parsed for items created before v3.
      */
     @Section
-    @Comment({"Item lore labels. QualityArmory reads these back from existing items,",
-            "so changing them makes items created before the change lose that information"})
+    @Comment({"Item lore labels. Items keep their data in NBT, so these can be changed freely;",
+            "they are only read back from items created before QualityArmory v3"})
     public static class Lore {
         @Config(oldPath = "Lore_Ammo")
         public String ammo = "&aAmmo";

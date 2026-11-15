@@ -1,5 +1,6 @@
 package me.zombie_striker.qg.api;
 
+import me.zombie_striker.qg.items.ItemState;
 import me.zombie_striker.qg.utils.ErrorReporter;
 import me.zombie_striker.qg.utils.CustomModelData;
 import me.zombie_striker.qg.utils.Compat;
@@ -226,6 +227,7 @@ public class QualityArmory {
 			is.setItemMeta(im);
 		}
 		CustomModelData.setOrDurability(is, data);
+		ItemState.setVariant(is, variant);
 		return getCustomItem(is);
 	}
 	public static CustomBaseObject getCustomItem(ItemStack is) {
