@@ -37,7 +37,7 @@ public class RocketProjectile implements RealtimeCalculationProjectile {
 					try {
 						List<Entity> e2 = new ArrayList<>(s.getWorld().getNearbyEntities(s, 1, 1, 1));
 						for (Entity e : e2) {
-							if (e != player
+							if (e != player && !GunUtil.shouldBulletPassThrough(e)
 									&& (!(e instanceof Player) || ((Player) e).getGameMode() != GameMode.SPECTATOR))
 								entityNear = true;
 						}

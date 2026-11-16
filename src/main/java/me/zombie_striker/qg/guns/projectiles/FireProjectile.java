@@ -42,7 +42,8 @@ public class FireProjectile implements RealtimeCalculationProjectile {
 					|| test.getBlock().getType().name().equals("STATIONARY_WATER"))
 				break;
 			for (Entity e : new ArrayList<>(nearby)) {
-				if (e != player && e != player.getVehicle() && e != player.getPassenger()) {
+				if (e != player && e != player.getVehicle() && e != player.getPassenger()
+						&& !GunUtil.shouldBulletPassThrough(e)) {
 					AbstractBoundingBox box = BoundingBoxManager.getBoundingBox(e);
 					if (box.intersects(player,test, e)) {
 						if (e instanceof Damageable) {
