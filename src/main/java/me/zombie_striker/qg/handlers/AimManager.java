@@ -43,9 +43,9 @@ public class AimManager extends FoliaRunnable implements Listener {
 		Gun g = QualityArmory.getGunInHand(p);
 		if (g!=null) {
 			if (p.isSneaking() && g.isEnableSwaySneakModifier())
-				sway *= QAMain.swayModifier_Sneak;
+				sway *= QAMain.getConfiguration().weapons.sway.sneak;
 			if (p.isSprinting() && g.isEnableSwayRunModifier()) {
-				sway *= QAMain.swayModifier_Run;
+				sway *= QAMain.getConfiguration().weapons.sway.run;
 			}
 			if (QAMain.isVersionHigherThan(1, 9) && !QualityArmory.isIronSights(p.getInventory().getItemInMainHand())) {
 				sway *= g.getSwayUnscopedMultiplier();
@@ -60,7 +60,7 @@ public class AimManager extends FoliaRunnable implements Listener {
 			if (s < 800) {
 				// less than 1.5 sec
 				if (g==null || g.isEnableSwayMovementModifier())
-					sway *= Math.min(QAMain.swayModifier_Walk, 800 / s);
+					sway *= Math.min(QAMain.getConfiguration().weapons.sway.walk, 800 / s);
 			}
 		}
 

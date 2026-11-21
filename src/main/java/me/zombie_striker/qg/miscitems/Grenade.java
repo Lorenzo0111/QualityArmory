@@ -1,5 +1,6 @@
 package me.zombie_striker.qg.miscitems;
 
+import me.zombie_striker.qg.utils.Compat;
 import com.cryptomorin.xseries.particles.XParticle;
 import me.zombie_striker.customitemmanager.CustomBaseObject;
 import me.zombie_striker.customitemmanager.CustomItemManager;
@@ -55,18 +56,18 @@ public class Grenade extends CustomBaseObject implements ThrowableItems {
 
 	@Override
 	public boolean onRMB(Player thrower, ItemStack usedItem) {
-		if(QAMain.autoarm) onPull(thrower,usedItem);
-		if (throwItems.containsKey(thrower) && throwItems.get(thrower).getGrenade().equals(this)) {
+		if(QAMain.getConfiguration().features.enableAutoArmGrenades) onPull(thrower,usedItem);
+		if (ThrowableItemRegistry.containsKey(thrower) && ThrowableItemRegistry.get(thrower).getGrenade().equals(this)) {
 			return this.throwGrenade(thrower, thrower.getLocation().getDirection().normalize().multiply(getThrowSpeed()));
 		} else {
-			thrower.sendMessage(QAMain.prefix + QAMain.S_GRENADE_PULLPIN);
+			thrower.sendMessage(QAMain.getMessages().general.prefix + QAMain.getMessages().grenade.pullPin);
 		}
 		return true;
 	}
 
     @SuppressWarnings("deprecation")
     public boolean throwGrenade(Player thrower, @Nullable Vector velocity) {
-        ThrowableHolder holder = throwItems.get(thrower);
+        ThrowableHolder holder = ThrowableItemRegistry.get(thrower);
         ItemStack grenadeStack = thrower.getItemInHand();
         ItemStack temp = grenadeStack.clone();
         temp.setAmount(1);
@@ -90,9 +91,9 @@ public class Grenade extends CustomBaseObject implements ThrowableItems {
             return false;
         }
 
-        throwItems.put(grenade, holder);
+        ThrowableItemRegistry.put(grenade, holder);
         GRENADES.add(grenade);
-        throwItems.remove(thrower);
+        ThrowableItemRegistry.remove(thrower);
         QAMain.DEBUG("Throw grenade");
         return true;
     }
@@ -104,16 +105,16 @@ public class Grenade extends CustomBaseObject implements ThrowableItems {
 
 	@Override
 	public boolean onLMB(Player e, ItemStack usedItem) {
-		if(!QAMain.autoarm)
+		if(!QAMain.getConfiguration().features.enableAutoArmGrenades)
 			return onPull(e,usedItem);
 		return false;
 	}
 
 	public boolean onPull(Player e, ItemStack usedItem) {
 		Player thrower = e.getPlayer();
-		if(!QAMain.autoarm)
-		if (throwItems.containsKey(thrower)) {
-			thrower.sendMessage(QAMain.prefix + QAMain.S_GRENADE_PALREADYPULLPIN);
+		if(!QAMain.getConfiguration().features.enableAutoArmGrenades)
+		if (ThrowableItemRegistry.containsKey(thrower)) {
+			thrower.sendMessage(QAMain.getMessages().general.prefix + QAMain.getMessages().grenade.alreadyPulled);
 			thrower.playSound(thrower.getLocation(), WeaponSounds.RELOAD_BULLET.getSoundName(), 1, 1);
 			QAMain.DEBUG("Already pin out");
 			return true;
@@ -132,13 +133,13 @@ public class Grenade extends CustomBaseObject implements ThrowableItems {
 				FoliaRunnable.runEntityTask(QAMain.getInstance(), holderEntity,
 						() -> handleThrowableTick(h),
 						() -> {
-							throwItems.remove(holderEntity);
+							ThrowableItemRegistry.remove(holderEntity);
 							BukkitTask t = h.getTask();
 							if (t != null) t.cancel();
 						});
 			}
 		}.runTaskLater(QAMain.getInstance(), getFuseTicks()));
-		throwItems.put(thrower, h);
+		ThrowableItemRegistry.put(thrower, h);
 		return true;
 	}
 
@@ -152,39 +153,34 @@ public class Grenade extends CustomBaseObject implements ThrowableItems {
 			GRENADES.remove(h.getHolder());
 			h.getHolder().remove();
 		}
-		if (QAMain.enableExplosionDamage) {
+		if (QAMain.getConfiguration().features.enableExplosionDamage) {
 			QAThrowableExplodeEvent event = new QAThrowableExplodeEvent(Grenade.this, h.getHolder().getLocation());
 			Bukkit.getPluginManager().callEvent(event);
 			if (!event.isCancelled()) ExplosionHandler.handleExplosion(h.getHolder().getLocation(), 3, 1);
 			QAMain.DEBUG("Using default explosions");
 		}
-		try {
+		if (Compat.PARTICLES) {
 			h.getHolder().getWorld().spawnParticle(XParticle.EXPLOSION_EMITTER.get(),
 					h.getHolder().getLocation(), 0);
 			h.getHolder().getWorld().playSound(h.getHolder().getLocation(), Sound.ENTITY_GENERIC_EXPLODE, 8,
 					0.7f);
-		} catch (Error e3) {
+		} else {
 			h.getHolder().getWorld().playEffect(h.getHolder().getLocation(), Effect.valueOf("CLOUD"), 0);
 			h.getHolder().getWorld().playSound(h.getHolder().getLocation(), Sound.valueOf("EXPLODE"), 8, 0.7f);
 		}
 		Player thro = Bukkit.getPlayer(h.getOwner());
 		final Location holderLoc = h.getHolder().getLocation();
-		try {
-			for (Entity e : h.getHolder().getNearbyEntities(radius, radius, radius)) {
-				if (e instanceof LivingEntity) {
-					final LivingEntity target = (LivingEntity) e;
-					FoliaRunnable.runEntityTask(QAMain.getInstance(), target, () -> {
-						double dam = (dmageLevel / target.getLocation().distance(holderLoc));
-						QAMain.DEBUG("Grenade-Damaging " + target.getName() + " : " + dam + " DAM.");
-						GunDamageHandler.damage(target, dam, thro, false);
-					});
-				}
+		for (Entity e : h.getHolder().getNearbyEntities(radius, radius, radius)) {
+			if (e instanceof LivingEntity) {
+				final LivingEntity target = (LivingEntity) e;
+				FoliaRunnable.runEntityTask(QAMain.getInstance(), target, () -> {
+					double dam = (dmageLevel / target.getLocation().distance(holderLoc));
+					QAMain.DEBUG("Grenade-Damaging " + target.getName() + " : " + dam + " DAM.");
+					GunDamageHandler.damage(target, dam, thro, false);
+				});
 			}
-		} catch (Error e) {
-			h.getHolder().getWorld().createExplosion(h.getHolder().getLocation(), 1);
-			QAMain.DEBUG("Failed. Created default explosion");
 		}
-		throwItems.remove(h.getHolder());
+		ThrowableItemRegistry.remove(h.getHolder());
 	}
 
 	@Override

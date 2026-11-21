@@ -6,7 +6,6 @@ import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
-import me.zombie_striker.customitemmanager.OLD_ItemFact;
 import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.guns.Gun;
 import me.zombie_striker.qg.npcs.goals.Gunnergoal;
@@ -23,7 +22,7 @@ public class Gunner {
 		final Gunner gunner = new Gunner();
 		gunner.gunner = CitizensAPI.getNPCRegistry().createNPC(EntityType.PLAYER, "GunnerTest");
 		gunner.gunner.spawn(loc);
-		QAMain.gunners.add(gunner);
+		QAMain.getInstance().getGunners().add(gunner);
 		SkinnableEntity se = ((SkinnableEntity)gunner.gunner.getEntity());
 		se.setSkinName("army");
 		// gunner.gunner.addTrait(GunnerTrait.class);

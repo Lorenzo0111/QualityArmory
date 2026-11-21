@@ -7,6 +7,8 @@ import me.zombie_striker.qg.ammo.Ammo;
 import me.zombie_striker.qg.ammo.AmmoType;
 import me.zombie_striker.qg.armor.Helmet;
 import me.zombie_striker.qg.attachments.AttachmentBase;
+import me.zombie_striker.qg.config.items.*;
+import me.zombie_striker.qg.crafting.Crafting;
 import me.zombie_striker.qg.guns.Gun;
 import me.zombie_striker.qg.guns.chargers.ChargingManager;
 import me.zombie_striker.qg.guns.reloaders.ReloadingManager;
@@ -17,599 +19,494 @@ import me.zombie_striker.qg.utils.LocalUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Particle;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.Map.Entry;
+import java.util.Locale;
+import java.util.function.Function;
+import java.util.logging.Level;
 
+/**
+ * Loads the item files (guns, ammo, misc, armor and attachments) into the {@link me.zombie_striker.qg.state.ItemRegistry}.
+ */
 public class GunYMLLoader {
+	private static final String GUNS = "newGuns";
+	private static final String AMMO = "ammo";
+	private static final String MISC = "misc";
+	private static final String ARMOR = "armor";
+	private static final String ATTACHMENTS = "attachments";
+
+	/**
+	 * Migrates every item file to the current key names. Runs before the default items are created,
+	 * so their "only if unchanged" updates see the admin's values under the new names.
+	 */
+	public static void migrateAll(File dataFolder) {
+		migrateFolder(new File(dataFolder, GUNS), GunDefinition::new, true);
+		migrateFolder(new File(dataFolder, AMMO), AmmoDefinition::new, false);
+		migrateFolder(new File(dataFolder, MISC), MiscDefinition::new, false);
+		migrateFolder(new File(dataFolder, ARMOR), ArmorDefinition::new, false);
+		migrateFolder(new File(dataFolder, ATTACHMENTS), AttachmentDefinition::new, false);
+	}
+
+	private static void migrateFolder(File folder, Function<File, ItemDefinition> factory, boolean mayContainCrackshot) {
+		for (File file : itemFiles(folder)) {
+			try {
+				if (mayContainCrackshot && CrackshotLoader.isCrackshotGun(YamlConfiguration.loadConfiguration(file)))
+					continue;
+				factory.apply(file).load();
+			} catch (RuntimeException e) {
+				QAMain.getInstance().getLogger().log(Level.SEVERE, "Could not migrate item file " + file.getPath(), e);
+			}
+		}
+	}
 
 	public static void loadAmmo(QAMain main) {
+		File folder = new File(main.getDataFolder(), AMMO);
+		if (!folder.exists()) return;
+		int items = 0;
+		for (File f : itemFiles(folder)) {
+			AmmoDefinition def = load(main, f, AmmoDefinition::new, "Ammo");
+			if (def == null || def.invalid) continue;
+			if (QAMain.getConfiguration().features.verboseItemLogging)
+				main.getLogger().info("-Loading AmmoType: " + def.name);
 
-		if (new File(main.getDataFolder(), "ammo").exists()) {
-			int items = 0;
-			for (File f : new File(main.getDataFolder(), "ammo").listFiles()) {
-				try {
-					if (f.getName().contains("yml")) {
-						FileConfiguration f2 = YamlConfiguration.loadConfiguration(f);
-						if ((!f2.contains("invalid")) || !f2.getBoolean("invalid")) {
-							Material m = f2.contains("material") ? Material.matchMaterial(f2.getString("material"))
-									: Material.DIAMOND_AXE;
-							int variant = f2.contains("variant") ? f2.getInt("variant") : 0;
-							final String name = f2.getString("name");
-							if(QAMain.verboseLoadingLogging)
-							main.getLogger().info("-Loading AmmoType: " + name);
+			String skullOwner = def.skullOwner;
+			String customSkin = def.skullOwnerCustomUrl != null && !def.skullOwnerCustomUrl.equals(Ammo.NO_SKIN_STRING)
+					? def.skullOwnerCustomUrl : null;
 
-							String extraData = null;
-							if (f2.contains("skull_owner")) {
-								extraData = f2.getString("skull_owner");
-							}
-							String ed2 = null;
-							if (f2.contains("skull_owner_custom_url")
-									&& !f2.getString("skull_owner_custom_url").equals(Ammo.NO_SKIN_STRING)) {
-								ed2 = f2.getString("skull_owner_custom_url");
-							}
+			MaterialStorage ms = MaterialStorage.getMS(material(def), def.id, def.variant, skullOwner, customSkin);
+			ItemStack[] ingredients = Crafting.parseItemIngredients(def.craftingRequirements);
+			String displayname = LocalUtils.colorize(def.displayNameOr(ChatColor.WHITE.toString()));
+			List<String> lore = colorizedLore(def);
+			double price = def.price != null ? def.price : 100;
+			int maxStack = def.maxItemStack != null ? def.maxItemStack : 0;
 
-							final MaterialStorage ms = MaterialStorage.getMS(m, f2.getInt("id"), variant, extraData,
-									ed2);
-							final ItemStack[] materails = main
-									.convertIngredients(f2.getStringList("craftingRequirements"));
-							final String displayname = f2.contains("displayname")
-									? LocalUtils.colorize( f2.getString("displayname"))
-									: (ChatColor.WHITE + name);
-							final List<String> extraLore2 = f2.contains("lore") ? f2.getStringList("lore") : null;
-							final List<String> extraLore = new ArrayList<String>();
-							try {
-								for (String lore : extraLore2) {
-									extraLore.add(LocalUtils.colorize( lore));
-								}
-							} catch (Error | Exception re52) {
-							}
+			Ammo ammo = new Ammo(def.name, displayname, lore, ms, maxStack, false, 1, price, ingredients, def.piercingSeverity);
+			ammo.setEnableShop(def.allowInShop && price > 0);
+			ammo.setCustomLore(lore);
+			QAMain.getItemRegistry().getAmmo().put(ms, ammo);
+			items++;
 
-							final double price = f2.contains("price") ? f2.getDouble("price") : 100;
-							final boolean allowInShop = f2.getBoolean("allowInShop", true) && price > 0;
-
-							int amountA = f2.getInt("maxAmount");
-							if(f2.contains("maxItemStack")) {
-								amountA=(f2.getInt("maxItemStack"));
-							}
-							double piercing = f2.getDouble("piercingSeverity");
-
-							Ammo da = new Ammo(name, displayname, extraLore, ms, amountA, false, 1, price, materails,
-									piercing);
-
-							da.setEnableShop(allowInShop);
-							da.setCustomLore(extraLore);
-
-							QAMain.ammoRegister.put(ms, da);
-							items++;
-
-							if (extraData != null) {
-								da.setSkullOwner(extraData);
-							}
-							if (ed2 != null) {
-								da.setCustomSkin(ed2);
-							}
-							if (f2.contains("craftingReturnAmount")) {
-								da.setCraftingReturn(f2.getInt("craftingReturnAmount"));
-							}
-
-						}
-					}
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-			if(!QAMain.verboseLoadingLogging)
-				main.getLogger().info("-Loaded "+items+" Ammo types.");
-
-
+			if (skullOwner != null)
+				ammo.setSkullOwner(skullOwner);
+			if (customSkin != null)
+				ammo.setCustomSkin(customSkin);
+			if (def.craftingReturnAmount != null)
+				ammo.setCraftingReturn(def.craftingReturnAmount);
 		}
+		logLoaded(main, items, "Ammo types.");
 	}
 
 	public static void loadArmor(QAMain main) {
-		if (new File(main.getDataFolder(), "armor").exists()) {
-			int items = 0;
+		File folder = new File(main.getDataFolder(), ARMOR);
+		if (!folder.exists()) return;
+		int items = 0;
+		for (File f : itemFiles(folder)) {
+			ArmorDefinition def = load(main, f, ArmorDefinition::new, "Armor");
+			if (def == null || def.invalid) continue;
+			if (QAMain.getConfiguration().features.verboseItemLogging)
+				main.getLogger().info("-Loading Armor: " + def.name);
 
-			for (File f : new File(main.getDataFolder(), "armor").listFiles()) {
-				try {
-					if (f.getName().contains("yml")) {
-						FileConfiguration f2 = YamlConfiguration.loadConfiguration(f);
-						if ((!f2.contains("invalid")) || !f2.getBoolean("invalid")) {
-							final String name = f2.getString("name");
-							if(QAMain.verboseLoadingLogging)
-							main.getLogger().info("-Loading Armor: " + name);
+			MaterialStorage ms = MaterialStorage.getMS(material(def), def.id, def.variant);
+			ItemStack[] ingredients = Crafting.parseItemIngredients(def.craftingRequirements);
+			String displayname = LocalUtils.colorize(def.displayNameOr(ChatColor.WHITE.toString()));
+			int price = def.price != null ? def.price.intValue() : 100;
 
-							Material m = f2.contains("material") ? Material.matchMaterial(f2.getString("material"))
-									: Material.DIAMOND_AXE;
-							int variant = f2.contains("variant") ? f2.getInt("variant") : 0;
-							final MaterialStorage ms = MaterialStorage.getMS(m, f2.getInt("id"), variant);
-							final ItemStack[] materails = main
-									.convertIngredients(f2.getStringList("craftingRequirements"));
-							final String displayname = f2.contains("displayname")
-									? LocalUtils.colorize( f2.getString("displayname"))
-									: (ChatColor.WHITE + name);
-							final List<String> rawLore = f2.contains("lore") ? f2.getStringList("lore") : null;
-							final List<String> lore = new ArrayList<String>();
-							try {
-								for (String lore2 : rawLore) {
-									lore.add(LocalUtils.colorize( lore2));
-								}
-							} catch (Error | Exception re52) {
-							}
-
-							final int price = f2.contains("price") ? f2.getInt("price") : 100;
-							final boolean allowInShop = f2.getBoolean("allowInShop", true) && price > 0;
-
-							WeaponType wt = WeaponType.getByName(f2.getString("MiscType"));
-
-							if (wt == WeaponType.HELMET) {
-								Helmet helmet = new Helmet(name,displayname,lore,materails,ms,price,allowInShop);
-								helmet.setHeightMax(f2.getDouble("maxProtectionHeight"));
-								helmet.setHeightMin(f2.getDouble("minProtectionHeight"));
-								helmet.setProtection(f2.getInt("protection", 0));
-                                helmet.setNegateHeadshots(f2.getBoolean("stopsHeadshots"));
-								QAMain.armorRegister.put(ms, helmet);
-								items++;
-							}
-						}
-					}
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
+			if (WeaponType.getByName(def.miscType) == WeaponType.HELMET) {
+				Helmet helmet = new Helmet(def.name, displayname, colorizedLore(def), ingredients, ms, price, def.allowInShop && price > 0);
+				helmet.setHeightMax(def.maxProtectionHeight);
+				helmet.setHeightMin(def.minProtectionHeight);
+				helmet.setProtection(def.protection);
+				helmet.setNegateHeadshots(def.stopsHeadshots);
+				QAMain.getItemRegistry().getArmor().put(ms, helmet);
+				items++;
 			}
-			if(!QAMain.verboseLoadingLogging)
-				main.getLogger().info("-Loaded "+items+" Armor types.");
 		}
+		logLoaded(main, items, "Armor types.");
 	}
 
 	public static void loadMisc(QAMain main) {
-		if (new File(main.getDataFolder(), "misc").exists()) {
-			int items = 0;
-			for (File f : new File(main.getDataFolder(), "misc").listFiles()) {
-				try {
-					if (f.getName().contains("yml")) {
-						FileConfiguration f2 = YamlConfiguration.loadConfiguration(f);
-						if ((!f2.contains("invalid")) || !f2.getBoolean("invalid")) {
-							final String name = f2.getString("name");
-							if (QAMain.verboseLoadingLogging)
-								main.getLogger().info("-Loading Misc: " + name);
+		File folder = new File(main.getDataFolder(), MISC);
+		if (!folder.exists()) return;
+		int items = 0;
+		for (File f : itemFiles(folder)) {
+			MiscDefinition def = load(main, f, MiscDefinition::new, "Misc");
+			if (def == null || def.invalid) continue;
+			if (QAMain.getConfiguration().features.verboseItemLogging)
+				main.getLogger().info("-Loading Misc: " + def.name);
 
-							Material m = f2.contains("material") ? Material.matchMaterial(f2.getString("material"))
-									: Material.DIAMOND_AXE;
-							int variant = f2.contains("variant") ? f2.getInt("variant") : 0;
-							final MaterialStorage ms = MaterialStorage.getMS(m, f2.getInt("id"), variant);
-							final ItemStack[] materails = main
-									.convertIngredients(f2.getStringList("craftingRequirements"));
-							final String displayname = f2.contains("displayname")
-									? LocalUtils.colorize( f2.getString("displayname"))
-									: (ChatColor.WHITE + name);
-							final List<String> rawLore = f2.contains("lore") ? f2.getStringList("lore") : null;
-							final List<String> lore = new ArrayList<String>();
-							try {
-								for (String lore2 : rawLore) {
-									lore.add(LocalUtils.colorize( lore2));
-								}
-							} catch (Error | Exception re52) {
-							}
+			MaterialStorage ms = MaterialStorage.getMS(material(def), def.id, def.variant);
+			ItemStack[] ingredients = Crafting.parseItemIngredients(def.craftingRequirements);
+			String name = def.name;
+			String displayname = LocalUtils.colorize(def.displayNameOr(ChatColor.WHITE.toString()));
+			List<String> lore = colorizedLore(def);
+			int price = def.price != null ? def.price.intValue() : 100;
+			int damage = def.damage;
+			double radius = def.radius;
+			items++;
 
-							final int price = f2.contains("price") ? f2.getInt("price") : 100;
-							final boolean allowInShop = f2.getBoolean("allowInShop", true) && price > 0;
+			CustomBaseObject base = createMisc(WeaponType.getByName(def.miscType), def, ms, name, displayname, lore, ingredients, price, damage, radius);
+			if (base == null) continue;
+			QAMain.getItemRegistry().getMisc().put(ms, base);
 
-							int damage = f2.contains("damage") ? f2.getInt("damage") : 1;
-							// int durib = f2.contains("durability") ? f2.getInt("durability") : 1000;
-
-							WeaponType wt = WeaponType.getByName(f2.getString("MiscType"));
-
-							double radius = f2.contains("radius") ? f2.getDouble("radius") : 0;
-							items++;
-
-							CustomBaseObject base = null;
-
-
-							String soundEquip =  f2.contains("sound_equip")? f2.getString("sound_equip"):null;
-							String soundHit =  f2.contains("sound_meleehit")? f2.getString("sound_meleehit"):null;
-							float soundEquipVolume = (float) f2.getDouble("sound_equip_volume", 1.0);
-							float soundHitVolume = (float) f2.getDouble("sound_meleehit_volume", 1.0);
-
-							if (wt == WeaponType.MEDKIT)
-								QAMain.miscRegister.put(ms, base=new MedKit(ms, name, displayname, materails, price));
-							if (wt == WeaponType.AMMO_BAG)
-								QAMain.miscRegister.put(ms, base=new AmmoBag(ms, name, displayname, materails, f2.getInt("max", 5), price));
-							if (wt == WeaponType.MELEE) {
-								QAMain.miscRegister.put(ms,
-										base = new MeleeItems(ms, name, displayname, materails, price, damage));
-								base.setSoundOnEquip(soundEquip);
-								base.setSoundOnEquipVolume(soundEquipVolume);
-								base.setSoundOnHit(soundHit);
-								base.setSoundOnHitVolume(soundHitVolume);
-								base.setCustomLore(lore);
-							}
-							if (wt == WeaponType.GRENADES)
-								QAMain.miscRegister.put(ms,
-										base=new Grenade(materails, price, damage, radius, name, displayname, lore, ms));
-							if (wt == WeaponType.SMOKE_GRENADES)
-								QAMain.miscRegister.put(ms, base=new SmokeGrenades(materails, price, damage, radius, name,
-										displayname, lore, ms));
-							if (wt == WeaponType.INCENDARY_GRENADES)
-								QAMain.miscRegister.put(ms, base=new IncendaryGrenades(materails, price, damage, radius,
-										name, displayname, lore, ms));
-							if (wt == WeaponType.PROXYMINES)
-								QAMain.miscRegister.put(ms, base=new ProxyMines(materails, price, damage, radius,
-										name, displayname, lore, ms));
-							if (wt == WeaponType.STICKYGRENADE)
-								QAMain.miscRegister.put(ms, base=new StickyGrenades(materails, price, damage, radius,
-										name, displayname, lore, ms));
-							if (wt == WeaponType.MOLOTOV)
-								QAMain.miscRegister.put(ms, base=new Molotov(materails, price, damage, radius,
-										name, displayname, lore, ms));
-							if (wt == WeaponType.FLASHBANGS)
-								QAMain.miscRegister.put(ms,
-										base=new Flashbang(materails, price, damage, radius, name, displayname, lore, ms));
-
-
-							if(base!=null) {
-								base.setCustomLore(lore);
-								base.setIngredients(materails);
-								base.setEnableShop(allowInShop);
-							}
-
-							if(f2.contains("maxItemStack"))
-								base.setMaxItemStack(f2.getInt("maxItemStack"));
-							if(base instanceof ThrowableItems) {
-								ThrowableItems throwableItems = (ThrowableItems) base;
-								if (f2.contains("ThrowSpeed"))
-									throwableItems.setThrowSpeed(f2.getDouble("ThrowSpeed"));
-							}
-							if (base instanceof Grenade && f2.contains("FuseTime"))
-								((Grenade) base).setFuseTicks((int) Math.round(f2.getDouble("FuseTime") * 20));
-							if (base instanceof SmokeGrenades) {
-								SmokeGrenades smokeGrenades = (SmokeGrenades) base;
-								if (f2.contains("useModernParticles"))
-									smokeGrenades.setUseModernParticles(f2.getBoolean("useModernParticles"));
-							}
-
-						}
-					}
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-			if(!QAMain.verboseLoadingLogging)
-				main.getLogger().info("-Loaded "+items+" Misc.");
+			base.setCustomLore(lore);
+			base.setIngredients(ingredients);
+			base.setEnableShop(def.allowInShop && price > 0);
+			if (def.maxItemStack != null)
+				base.setMaxItemStack(def.maxItemStack);
+			if (base instanceof ThrowableItems && def.throwSpeed != null)
+				((ThrowableItems) base).setThrowSpeed(def.throwSpeed);
+			if (base instanceof Grenade && def.fuseTime != null)
+				((Grenade) base).setFuseTicks((int) Math.round(def.fuseTime * 20));
+			if (base instanceof SmokeGrenades && def.useModernParticles != null)
+				((SmokeGrenades) base).setUseModernParticles(def.useModernParticles);
 		}
+		logLoaded(main, items, "Misc.");
 	}
 
-	public static void loadGuns(QAMain main, File f) {
-			if (f.getName().contains("yml")) {
-				FileConfiguration f2 = YamlConfiguration.loadConfiguration(f);
-				if ((!f2.contains("invalid")) || !f2.getBoolean("invalid")) {
-					final String name = f2.getString("name");
-					if(QAMain.verboseLoadingLogging)
-					main.getLogger().info("-Loading Gun: " + name);
-
-					Material m = f2.contains("material") ? Material.matchMaterial(f2.getString("material"))
-							: Material.DIAMOND_AXE;
-					int variant = f2.contains("variant") ? f2.getInt("variant") : 0;
-					final MaterialStorage ms = MaterialStorage.getMS(m, f2.getInt("id"), variant);
-					WeaponType weatype = f2.contains("guntype") ? WeaponType.valueOf(f2.getString("guntype"))
-							: WeaponType.valueOf(f2.getString("weapontype"));
-					final ItemStack[] materails = main.convertIngredients(f2.getStringList("craftingRequirements"));
-
-					final String displayname = f2.contains("displayname")
-							? LocalUtils.colorize( f2.getString("displayname"))
-							: (ChatColor.GOLD + name);
-					final List<String> extraLore2 = f2.contains("lore") ? f2.getStringList("lore") : null;
-					final List<String> extraLore = new ArrayList<String>();
-
-					try {
-						for (String lore : extraLore2) {
-							extraLore.add(LocalUtils.colorize( lore));
-						}
-					} catch (Error | Exception re52) {
-					}
-					if (weatype.isGun()) {
-						Gun g = new Gun(name, ms);
-						g.setDisplayname(displayname);
-						g.setCustomLore(extraLore);
-						g.setIngredients(materails);
-						QAMain.gunRegister.put(ms, g);
-						loadGunSettings(g, f2);
-					}
-
-				}
-			}
-
-	}
-
-	@SuppressWarnings("unchecked")
-	private static void loadGunSettings(Gun g, FileConfiguration f2) {
-
-		if (f2.contains("ammotype"))
-			g.setAmmo(AmmoType.getAmmo(f2.getString("ammotype")));
-
-		if (f2.contains("sway.defaultValue")) {
-			g.setSway(f2.getDouble("sway.defaultValue"));
-		}
-		if (f2.contains("sway.defaultMultiplier"))
-			g.setSwayMultiplier(f2.getDouble("sway.defaultMultiplier"));
-		if (f2.contains("enableIronSights"))
-			g.setHasIronsights(f2.getBoolean("enableIronSights"));
-		if (f2.contains("maxbullets"))
-			g.setMaxBullets(f2.getInt("maxbullets"));
-		if (f2.contains("damage"))
-			g.setDurabilityDamage((float) f2.getDouble("damage"));
-		if (f2.contains("durability"))
-			g.setDuribility(f2.getInt("durability"));
-		if (f2.contains("repairItem"))
-			g.setRepairItem(f2.getString("repairItem"));
-		if (f2.contains("repairAmount"))
-			g.setRepairAmount(f2.getInt("repairAmount"));
-		if (f2.contains("price"))
-			g.setPrice(f2.getDouble("price"));
-		if (f2.contains("allowInShop"))
-			g.setEnableShop(f2.getBoolean("allowInShop"));
-		if (f2.contains("allowCrafting"))
-			g.setEnableCrafting(f2.getBoolean("allowCrafting"));
-		if (f2.contains("isAutomatic"))
-			g.setAutomatic(f2.getBoolean("isAutomatic"));
-		if (f2.contains("enableBetterModelScopes"))
-			g.enableBetterAimingAnimations(f2.getBoolean("enableBetterModelScopes"));
-
-		if (f2.contains("sway.sneakModifier"))
-			g.setEnableSwaySneakModifier(f2.getBoolean("sway.sneakModifier"));
-		if (f2.contains("sway.moveModifier"))
-			g.setEnableSwayMovementModifier(f2.getBoolean("sway.moveModifier"));
-		if (f2.contains("sway.runModifier"))
-			g.setEnableSwayRunModifier(f2.getBoolean("sway.runModifier"));
-		if (f2.contains("DestructableMaterials")) {
-			g.getBreakableMaterials().clear();
-			g.getBreakableMaterials().addAll(getMaterials(f2.getStringList("DestructableMaterials")));
-		}
-
-		List<String> sounds = null;
-
-		if (f2.contains("weaponsounds")) {
-			Object ss = f2.get("weaponsounds");
-			if (ss instanceof String) {
-				sounds = new ArrayList<>();
-				sounds.add(f2.getString("weaponsounds"));
-			} else if (ss instanceof List) {
-				sounds = (List<String>) ss;
-			}
-		} else {
-			sounds = new ArrayList<>();
-			String sound = WeaponSounds.GUN_MEDIUM.getSoundName();
-			if (g.getWeaponType() == WeaponType.PISTOL || g.getWeaponType() == WeaponType.SMG)
-				sound = WeaponSounds.GUN_SMALL.getSoundName();
-			if (g.getWeaponType() == WeaponType.SHOTGUN || g.getWeaponType() == WeaponType.SNIPER)
-				sound = WeaponSounds.GUN_BIG.getSoundName();
-			if (g.getWeaponType() == WeaponType.RPG)
-				sound = WeaponSounds.WARHEAD_LAUNCH.getSoundName();
-			if (g.getWeaponType() == WeaponType.LAZER)
-				sound = WeaponSounds.LAZERSHOOT.getSoundName();
-			sounds = new ArrayList<>();
-			sounds.add(sound);
-		}
-		g.setSounds(sounds);
-
-		if (f2.contains("weaponsounds_volume"))
-			g.setVolume(f2.getDouble("weaponsounds_volume"));
-
-		double partr = f2.getDouble("particles.bullet_particleR", 1.0D);
-		double partg = f2.getDouble("particles.bullet_particleG", 1.0D);
-		double partb = f2.getDouble("particles.bullet_particleB", 1.0D);
-		int partdata = f2.getInt("particles.bullet_particleData", 0);
-		Material partm = Material.matchMaterial(f2.getString("particles.bullet_particleMaterial", "COAL_BLOCK"));
-
-		if (partm == null) {
-			partm = Material.COAL_BLOCK;
-		}
-
-		if (f2.contains("addMuzzleSmoke")) {
-			boolean addMuzzleSmoke = f2.contains("addMuzzleSmoke") ? f2.getBoolean("addMuzzleSmoke") : false;
-			g.setUseMuzzleSmoke(addMuzzleSmoke);
-		}
-		if (f2.contains("delayForReload"))
-			g.setReloadingTimeInSeconds(f2.getDouble("delayForReload"));
-
-		if (f2.contains("drop-glow-color") && !f2.getString("drop-glow-color").equals("none")) {
-			ChatColor c = ChatColor.WHITE;
-			for (ChatColor cc : ChatColor.values())
-				if (cc.name().equals(f2.getString("drop-glow-color"))) {
-					c = cc;
-					break;
-				}
-			g.setGlow(c);
-		}
-
-		if (f2.contains("CustomProjectiles.projectileType")) {
-			g.setCustomProjectile(f2.getString("CustomProjectiles.projectileType"));
-			if (f2.contains("CustomProjectiles.explosionRadius"))
-				g.setExplosionRadius(f2.getDouble("CustomProjectiles.explosionRadius"));
-			if (f2.contains("CustomProjectiles.Velocity"))
-				g.setRealtimeVelocity(f2.getDouble("CustomProjectiles.Velocity"));
-			if (f2.contains("CustomProjectiles.explosionKnockback"))
-				g.setExplosionKnockback(f2.getDouble("CustomProjectiles.explosionKnockback"));
-		}
-
-		if (f2.contains("recoil"))
-			g.setRecoil(f2.getDouble("recoil"));
-		if (f2.contains("headshotMultiplier"))
-			g.setHeadshotMultiplier(f2.getDouble("headshotMultiplier"));
-		if (f2.contains("unlimitedAmmo"))
-			g.setUnlimitedAmmo(f2.getBoolean("unlimitedAmmo"));
-		if (f2.contains("LightLeveOnShoot"))
-			g.setLightOnShoot(f2.getInt("LightLeveOnShoot"));
-		if (f2.contains("firerate"))
-			g.setFireRate(f2.getInt("firerate"));
-		if (f2.contains("ReloadingHandler")) {
-			g.setReloadingHandler(ReloadingManager.getHandler(f2.getString("ReloadingHandler")));
-			if(g.getReloadingingHandler()!=null){
-				g.setReloadingSound(g.getReloadingingHandler().getDefaultReloadingSound());
-			}
-		}
-		if (f2.contains("ChargingHandler") && !f2.getString("ChargingHandler").equals("none")) {
-			g.setChargingHandler(ChargingManager.getHandler(f2.getString("ChargingHandler")));
-			if(g.getChargingHandler()!=null){
-				g.setChargingSound(g.getChargingHandler().getDefaultChargingSound());
-			}
-		}
-		if (f2.contains("delayForShoot"))
-			g.setDelayBetweenShots(f2.getDouble("delayForShoot"));
-		if (f2.contains("delayForSwitch")) {
-			if (f2.isDouble("delayForSwitch") || f2.isInt("delayForSwitch")) {
-				g.setSwitchDelay(f2.getDouble("delayForSwitch"));
-			} else {
-				QAMain.getInstance().getLogger().warning("Invalid delayForSwitch value for gun " + g.getName()
-						+ ": \"" + f2.get("delayForSwitch") + "\". Using the global weaponSwitchDelay instead.");
-			}
-		}
-		if (f2.contains("bullets-per-shot"))
-			g.setBulletsPerShot(f2.getInt("bullets-per-shot"));
-		if (f2.contains("maxBulletDistance"))
-			g.setMaxDistance(f2.getInt("maxBulletDistance"));
-		if (f2.contains("Version_18_Support"))
-			g.set18Supported(f2.getBoolean("Version_18_Support"));
-		if (f2.contains("hasNightVisionOnScope"))
-			g.setNightVision(f2.getBoolean("hasNightVisionOnScope"));
-		if (f2.contains("isPrimaryWeapon"))
-			g.setIsPrimary(f2.getBoolean("isPrimaryWeapon"));
-		if (f2.contains("setZoomLevel"))
-			g.setZoomLevel(f2.getInt("setZoomLevel"));
-		if(f2.contains("firing_knockback"))
-			g.setKnockbackPower(f2.getDouble("firing_knockback"));
-		if(f2.contains("slownessOnEquip"))
-			g.setSlownessPower(f2.getInt("slownessOnEquip"));
-		if(f2.contains("weaponsounds_reloadingSound"))
-			g.setReloadingSound(f2.getString("weaponsounds_reloadingSound"));
-		if(f2.contains("weaponsounds_chargingSound"))
-			g.setChargingSound(f2.getString("weaponsounds_chargingSound"));
-		if(f2.contains("maxItemStack"))
-			g.setMaxItemStack(f2.getInt("maxItemStack"));
-
-
-		if (f2.contains("particles.bullet_particle") || f2.contains("particles.bullet_particleR")) {
-			try {
-				Particle particle = (Particle) (f2.contains("particles.bullet_particle")
-						? Particle.valueOf(f2.getString("particles.bullet_particle"))
-						: QAMain.bulletTrail);
-				g.setParticles(particle, partr, partg, partb, partm, partdata);
-			} catch (Error | Exception er5) {
-			}
+	private static CustomBaseObject createMisc(WeaponType type, MiscDefinition def, MaterialStorage ms, String name, String displayname,
+											   List<String> lore, ItemStack[] ingredients, int price, int damage, double radius) {
+		if (type == null) return null;
+		switch (type) {
+			case MEDKIT:
+				return new MedKit(ms, name, displayname, ingredients, price);
+			case AMMO_BAG:
+				return new AmmoBag(ms, name, displayname, ingredients, def.max, price);
+			case MELEE:
+				MeleeItems melee = new MeleeItems(ms, name, displayname, ingredients, price, damage);
+				melee.setSoundOnEquip(def.soundEquip);
+				melee.setSoundOnEquipVolume((float) def.soundEquipVolume);
+				melee.setSoundOnHit(def.soundMeleeHit);
+				melee.setSoundOnHitVolume((float) def.soundMeleeHitVolume);
+				return melee;
+			case GRENADES:
+				return new Grenade(ingredients, price, damage, radius, name, displayname, lore, ms);
+			case SMOKE_GRENADES:
+				return new SmokeGrenades(ingredients, price, damage, radius, name, displayname, lore, ms);
+			case INCENDARY_GRENADES:
+				return new IncendaryGrenades(ingredients, price, damage, radius, name, displayname, lore, ms);
+			case PROXYMINES:
+				return new ProxyMines(ingredients, price, damage, radius, name, displayname, lore, ms);
+			case STICKYGRENADE:
+				return new StickyGrenades(ingredients, price, damage, radius, name, displayname, lore, ms);
+			case MOLOTOV:
+				return new Molotov(ingredients, price, damage, radius, name, displayname, lore, ms);
+			case FLASHBANGS:
+				return new Flashbang(ingredients, price, damage, radius, name, displayname, lore, ms);
+			default:
+				return null;
 		}
 	}
 
 	public static void loadGuns(QAMain main) {
-		if (new File(main.getDataFolder(), "newGuns").exists()) {
-			int items = 0;
-			for (File f : new File(main.getDataFolder(), "newGuns").listFiles()) {
-				FileConfiguration f2 = YamlConfiguration.loadConfiguration(f);
-				if (CrackshotLoader.isCrackshotGun(f2)) {
-					main.getLogger().info("-Converting Crackshot: " + f.getName());
-					List<Gun> guns = CrackshotLoader.loadCrackshotGuns(f2);
-					CrackshotLoader.createYMLForGuns(guns, main.getDataFolder());
-					continue;
-				}
-				loadGuns(main, f);
-				items++;
+		File folder = new File(main.getDataFolder(), GUNS);
+		if (!folder.exists()) return;
+		int items = 0;
+		File[] files = folder.listFiles();
+		if (files == null) return;
+		for (File f : files) {
+			YamlConfiguration raw = YamlConfiguration.loadConfiguration(f);
+			if (CrackshotLoader.isCrackshotGun(raw)) {
+				main.getLogger().info("-Converting Crackshot: " + f.getName());
+				List<Gun> guns = CrackshotLoader.loadCrackshotGuns(raw);
+				CrackshotLoader.createYMLForGuns(guns, main.getDataFolder());
+				continue;
 			}
-			if(!QAMain.verboseLoadingLogging)
-				main.getLogger().info("-Loaded "+items+" Gun types.");
+			loadGuns(main, f);
+			items++;
 		}
+		logLoaded(main, items, "Gun types.");
+	}
+
+	public static void loadGuns(QAMain main, File f) {
+		if (!f.getName().contains("yml")) return;
+		GunDefinition def = load(main, f, GunDefinition::new, "Gun");
+		if (def == null || def.invalid) return;
+		if (QAMain.getConfiguration().features.verboseItemLogging)
+			main.getLogger().info("-Loading Gun: " + def.name);
+
+		WeaponType type = parseWeaponType(main, def);
+		if (type == null || !type.isGun()) return;
+
+		MaterialStorage ms = MaterialStorage.getMS(material(def), def.id, def.variant);
+		Gun g = new Gun(def.name, ms);
+		g.setDisplayname(LocalUtils.colorize(def.displayNameOr(ChatColor.GOLD.toString())));
+		g.setCustomLore(colorizedLore(def));
+		g.setIngredients(Crafting.parseItemIngredients(def.craftingRequirements));
+		QAMain.getItemRegistry().getGuns().put(ms, g);
+		applyGunSettings(g, def);
 	}
 
 	public static void loadAttachments(QAMain main) {
-		if (new File(main.getDataFolder(), "attachments").exists()) {
-			int items = 0;
-			for (File f : new File(main.getDataFolder(), "attachments").listFiles()) {
+		File folder = new File(main.getDataFolder(), ATTACHMENTS);
+		if (!folder.exists()) return;
+		int items = 0;
+		for (File f : itemFiles(folder)) {
+			AttachmentDefinition def = load(main, f, AttachmentDefinition::new, "Attachment");
+			if (def == null || def.invalid) continue;
+			if (QAMain.getConfiguration().features.verboseItemLogging)
+				main.getLogger().info("-Loading Attachment: " + def.name);
+
+			MaterialStorage ms = MaterialStorage.getMS(material(def), def.id, def.variant);
+
+			MaterialStorage baseGun = null;
+			for (Gun gun : QAMain.getItemRegistry().getGuns().values()) {
+				if (gun.getName().equalsIgnoreCase(def.baseGun))
+					baseGun = gun.getItemData();
+			}
+			if (baseGun == null) {
+				main.getLogger().info("--Failed to load " + def.name + " attachment because the base \"" + def.baseGun + "\" does not exist.");
+				continue;
+			}
+
+			AttachmentBase attach = new AttachmentBase(baseGun, ms, def.name, LocalUtils.colorize(def.displayNameOr(ChatColor.GOLD.toString())));
+			QAMain.getItemRegistry().getGuns().put(ms, attach);
+			items++;
+
+			attach.setCustomLore(colorizedLore(def));
+			attach.setIngredientsRaw(Crafting.parseIngredients(def.craftingRequirements));
+			applyGunSettings(attach, def);
+		}
+		logLoaded(main, items, "Attachment types.");
+	}
+
+	@SuppressWarnings("unchecked")
+	private static void applyGunSettings(Gun g, GunDefinition def) {
+		if (def.ammoType != null)
+			g.setAmmo(AmmoType.getAmmo(def.ammoType));
+		if (def.sway.defaultValue != null)
+			g.setSway(def.sway.defaultValue);
+		if (def.sway.defaultMultiplier != null)
+			g.setSwayMultiplier(def.sway.defaultMultiplier);
+		if (def.enableIronSights != null)
+			g.setHasIronsights(def.enableIronSights);
+		if (def.maxBullets != null)
+			g.setMaxBullets(def.maxBullets);
+		if (def.damage != null)
+			g.setDurabilityDamage(def.damage.floatValue());
+		if (def.durability != null)
+			g.setDuribility(def.durability);
+		if (def.repairItem != null)
+			g.setRepairItem(def.repairItem);
+		if (def.repairAmount != null)
+			g.setRepairAmount(def.repairAmount);
+		if (def.price != null)
+			g.setPrice(def.price);
+		if (def.contains("allow-in-shop"))
+			g.setEnableShop(def.allowInShop);
+		if (def.allowCrafting != null)
+			g.setEnableCrafting(def.allowCrafting);
+		if (def.automatic != null)
+			g.setAutomatic(def.automatic);
+		if (def.enableBetterModelScopes != null)
+			g.enableBetterAimingAnimations(def.enableBetterModelScopes);
+
+		if (def.sway.sneakModifier != null)
+			g.setEnableSwaySneakModifier(def.sway.sneakModifier);
+		if (def.sway.moveModifier != null)
+			g.setEnableSwayMovementModifier(def.sway.moveModifier);
+		if (def.sway.runModifier != null)
+			g.setEnableSwayRunModifier(def.sway.runModifier);
+		if (def.destructableMaterials != null) {
+			g.getBreakableMaterials().clear();
+			g.getBreakableMaterials().addAll(getMaterials(def.destructableMaterials));
+		}
+
+		g.setSounds(weaponSounds(g, def));
+		if (def.weaponSoundsVolume != null)
+			g.setVolume(def.weaponSoundsVolume);
+
+		if (def.addMuzzleSmoke != null)
+			g.setUseMuzzleSmoke(def.addMuzzleSmoke);
+		if (def.delayForReload != null)
+			g.setReloadingTimeInSeconds(def.delayForReload);
+
+		if (def.dropGlowColor != null && !def.dropGlowColor.equals("none")) {
+			ChatColor color = ChatColor.WHITE;
+			for (ChatColor c : ChatColor.values())
+				if (c.name().equals(def.dropGlowColor)) {
+					color = c;
+					break;
+				}
+			g.setGlow(color);
+		}
+
+		if (def.customProjectiles.projectileType != null) {
+			g.setCustomProjectile(def.customProjectiles.projectileType);
+			if (def.customProjectiles.explosionRadius != null)
+				g.setExplosionRadius(def.customProjectiles.explosionRadius);
+			if (def.customProjectiles.velocity != null)
+				g.setRealtimeVelocity(def.customProjectiles.velocity);
+			if (def.customProjectiles.explosionKnockback != null)
+				g.setExplosionKnockback(def.customProjectiles.explosionKnockback);
+		}
+
+		if (def.recoil != null)
+			g.setRecoil(def.recoil);
+		if (def.headshotMultiplier != null)
+			g.setHeadshotMultiplier(def.headshotMultiplier);
+		if (def.unlimitedAmmo != null)
+			g.setUnlimitedAmmo(def.unlimitedAmmo);
+		if (def.lightLevelOnShoot != null)
+			g.setLightOnShoot(def.lightLevelOnShoot);
+		if (def.fireRate != null)
+			g.setFireRate(def.fireRate);
+		if (def.reloadingHandler != null) {
+			g.setReloadingHandler(ReloadingManager.getHandler(def.reloadingHandler));
+			if (g.getReloadingingHandler() != null)
+				g.setReloadingSound(g.getReloadingingHandler().getDefaultReloadingSound());
+		}
+		if (def.chargingHandler != null && !def.chargingHandler.equals("none")) {
+			g.setChargingHandler(ChargingManager.getHandler(def.chargingHandler));
+			if (g.getChargingHandler() != null)
+				g.setChargingSound(g.getChargingHandler().getDefaultChargingSound());
+		}
+		if (def.delayForShoot != null)
+			g.setDelayBetweenShots(def.delayForShoot);
+		if (def.delayForSwitch != null)
+			g.setSwitchDelay(def.delayForSwitch);
+		if (def.bulletsPerShot != null)
+			g.setBulletsPerShot(def.bulletsPerShot);
+		if (def.maxBulletDistance != null)
+			g.setMaxDistance(def.maxBulletDistance);
+		if (def.version18Support != null)
+			g.set18Supported(def.version18Support);
+		if (def.nightVisionOnScope != null)
+			g.setNightVision(def.nightVisionOnScope);
+		if (def.primaryWeapon != null)
+			g.setIsPrimary(def.primaryWeapon);
+		if (def.zoomLevel != null)
+			g.setZoomLevel(def.zoomLevel);
+		if (def.firingKnockback != null)
+			g.setKnockbackPower(def.firingKnockback);
+		if (def.slownessOnEquip != null)
+			g.setSlownessPower(def.slownessOnEquip);
+		if (def.reloadingSound != null)
+			g.setReloadingSound(def.reloadingSound);
+		if (def.chargingSound != null)
+			g.setChargingSound(def.chargingSound);
+		if (def.maxItemStack != null)
+			g.setMaxItemStack(def.maxItemStack);
+
+		GunDefinition.Particles particles = def.particles;
+		if (particles.bulletParticle != null || particles.bulletParticleR != null) {
+			Material particleMaterial = Material.matchMaterial(particles.bulletParticleMaterial);
+			if (particleMaterial == null)
+				particleMaterial = Material.COAL_BLOCK;
+			Particle particle = null;
+			if (particles.bulletParticle != null) {
 				try {
-					if (f.getName().contains("yml")) {
-						FileConfiguration f2 = YamlConfiguration.loadConfiguration(f);
-						if ((!f2.contains("invalid")) || !f2.getBoolean("invalid")) {
-							final String name = f2.getString("name");
-							main.getLogger().info("-Loading Attachment: " + name);
-							final String displayname = f2.contains("displayname")
-									? LocalUtils.colorize( f2.getString("displayname"))
-									: (ChatColor.GOLD + name);
-							final List<String> extraLore2 = f2.contains("lore") ? f2.getStringList("lore") : null;
-
-							Material m = f2.contains("material") ? Material.matchMaterial(f2.getString("material"))
-									: Material.DIAMOND_AXE;
-							int variant = f2.contains("variant") ? f2.getInt("variant") : 0;
-							final MaterialStorage ms = MaterialStorage.getMS(m, f2.getInt("id"), variant);
-
-							// Gun baseGun = null;
-							MaterialStorage baseGunM = null;
-							String base = f2.getString("baseGun");
-							for (Entry<MaterialStorage, Gun> g : QAMain.gunRegister.entrySet()) {
-								if (g.getValue().getName().equalsIgnoreCase(base)) {
-									// baseGun = g.getValue();
-									baseGunM = g.getKey();
-								}
-							}
-
-							final List<String> extraLore = new ArrayList<String>();
-							try {
-								for (String lore : extraLore2) {
-									extraLore.add(LocalUtils.colorize( lore));
-								}
-							} catch (Error | Exception re52) {
-							}
-							if(baseGunM==null){
-								main.getLogger().info("--Failed to load "+name+" attachment because the base \""+base+"\" does not exist.");
-								continue;
-							}
-
-							AttachmentBase attach = new AttachmentBase(baseGunM, ms, name, displayname);
-							QAMain.gunRegister.put(ms, attach);
-							items++;
-
-							attach.setCustomLore(extraLore);
-
-							final Object[] materials = main
-									.convertIngredientsRaw(f2.getStringList("craftingRequirements"));
-							attach.setIngredientsRaw(materials);
-
-							// QAMain.attachmentRegister.put(ms, attach);
-							loadGunSettings(attach, f2);
-						}
-
-					}
-				} catch (Exception e) {
-					e.printStackTrace();
+					particle = Particle.valueOf(particles.bulletParticle);
+				} catch (IllegalArgumentException e) {
+					// Same as before: an unknown particle disables the gun's particles
+					QAMain.getInstance().getLogger().warning("Unknown particle " + particles.bulletParticle + " in " + def.getFile().getName());
+					return;
 				}
 			}
-			if(!QAMain.verboseLoadingLogging)
-				main.getLogger().info("-Loaded "+items+" Attachment types.");
+			g.setParticles(particle, particles.bulletParticleR != null ? particles.bulletParticleR : 1.0,
+					particles.bulletParticleG, particles.bulletParticleB, particleMaterial, particles.bulletParticleData);
 		}
+	}
+
+	@SuppressWarnings("unchecked")
+	private static List<String> weaponSounds(Gun g, GunDefinition def) {
+		if (def.contains("weapon-sounds")) {
+			if (def.weaponSounds instanceof String)
+				return new ArrayList<>(Collections.singletonList((String) def.weaponSounds));
+			if (def.weaponSounds instanceof List)
+				return (List<String>) def.weaponSounds;
+			return null;
+		}
+		String sound = WeaponSounds.GUN_MEDIUM.getSoundName();
+		if (g.getWeaponType() == WeaponType.PISTOL || g.getWeaponType() == WeaponType.SMG)
+			sound = WeaponSounds.GUN_SMALL.getSoundName();
+		if (g.getWeaponType() == WeaponType.SHOTGUN || g.getWeaponType() == WeaponType.SNIPER)
+			sound = WeaponSounds.GUN_BIG.getSoundName();
+		if (g.getWeaponType() == WeaponType.RPG)
+			sound = WeaponSounds.WARHEAD_LAUNCH.getSoundName();
+		if (g.getWeaponType() == WeaponType.LAZER)
+			sound = WeaponSounds.LAZERSHOOT.getSoundName();
+		return new ArrayList<>(Collections.singletonList(sound));
+	}
+
+	private static WeaponType parseWeaponType(QAMain main, GunDefinition def) {
+		if (def.weaponType == null) {
+			main.getLogger().warning("Gun file " + def.getFile().getName() + " has no weapon-type");
+			return null;
+		}
+		try {
+			return WeaponType.valueOf(def.weaponType);
+		} catch (IllegalArgumentException e) {
+			main.getLogger().warning("Unknown weapon-type " + def.weaponType + " in " + def.getFile().getName());
+			return null;
+		}
+	}
+
+	/**
+	 * @return The item material: DIAMOND_AXE when the file has none, as before.
+	 */
+	private static Material material(ItemDefinition def) {
+		if (def.material == null)
+			return Material.DIAMOND_AXE;
+		Material material = Material.matchMaterial(def.material);
+		if (material == null)
+			QAMain.getInstance().getLogger().warning("Unknown material " + def.material + " in " + def.getFile().getName());
+		return material;
+	}
+
+	private static List<String> colorizedLore(ItemDefinition def) {
+		List<String> lore = new ArrayList<>();
+		if (def.lore != null)
+			for (String line : def.lore)
+				lore.add(LocalUtils.colorize(line));
+		return lore;
+	}
+
+	/**
+	 * Loads and migrates an item file, logging errors with the file they come from.
+	 */
+	private static <T extends ItemDefinition> T load(QAMain main, File file, Function<File, T> factory, String kind) {
+		try {
+			T def = factory.apply(file);
+			def.load();
+			return def;
+		} catch (RuntimeException e) {
+			main.getLogger().log(Level.SEVERE, "Could not load " + kind.toLowerCase(Locale.ROOT) + " file " + file.getPath(), e);
+			return null;
+		}
+	}
+
+	private static List<File> itemFiles(File folder) {
+		List<File> files = new ArrayList<>();
+		File[] list = folder.listFiles();
+		if (list == null) return files;
+		for (File f : list)
+			if (f.getName().contains("yml"))
+				files.add(f);
+		return files;
+	}
+
+	private static void logLoaded(QAMain main, int items, String what) {
+		if (!QAMain.getConfiguration().features.verboseItemLogging)
+			main.getLogger().info("-Loaded " + items + " " + what);
 	}
 
 	public static @NotNull List<Material> getMaterials(@NotNull List<String> list) {
 		List<Material> materials = new ArrayList<>();
-
 		for (String s : list) {
 			if (s.equals("MATERIAL_NAME_HERE")) continue;
-
-			try {
-				Material material = Material.getMaterial(s.toUpperCase());
-
-				if (material == null) {
-					QAMain.getInstance().getLogger().warning("Invalid material name: " + s + ".");
-					continue;
-				}
-
-				materials.add(material);
-			} catch (Error | Exception ignored) {
+			Material material = Material.getMaterial(s.toUpperCase(Locale.ROOT));
+			if (material == null) {
 				QAMain.getInstance().getLogger().warning("Invalid material name: " + s + ".");
+				continue;
 			}
+			materials.add(material);
 		}
-
 		return materials;
 	}
 }

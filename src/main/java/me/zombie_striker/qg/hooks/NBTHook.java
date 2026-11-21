@@ -52,4 +52,90 @@ public final class NBTHook {
         });
     }
 
+    /**
+     * @return The integer at the tag, or null if the item doesn't have it.
+     */
+    public static Integer getIntOrNull(ItemStack item, String tag) {
+        try {
+            if (external)
+                return de.tr7zw.nbtapi.NBT.get(item, nbt -> nbt.hasTag(tag) ? nbt.getInteger(tag) : null);
+        } catch (Exception | Error ignored) {
+            // Fall back to the bundled NBT-API, as getInt does
+        }
+        return NBT.get(item, nbt -> nbt.hasTag(tag) ? nbt.getInteger(tag) : null);
+    }
+
+    /**
+     * @return The boolean at the tag, or null if the item doesn't have it.
+     */
+    public static Boolean getBooleanOrNull(ItemStack item, String tag) {
+        try {
+            if (external)
+                return de.tr7zw.nbtapi.NBT.get(item, nbt -> nbt.hasTag(tag) ? nbt.getBoolean(tag) : null);
+        } catch (Exception | Error ignored) {
+            // Fall back to the bundled NBT-API, as getInt does
+        }
+        return NBT.get(item, nbt -> nbt.hasTag(tag) ? nbt.getBoolean(tag) : null);
+    }
+
+    /**
+     * @return The string at the tag, or null if the item doesn't have it.
+     */
+    public static String getStringOrNull(ItemStack item, String tag) {
+        try {
+            if (external)
+                return de.tr7zw.nbtapi.NBT.get(item, nbt -> nbt.hasTag(tag) ? nbt.getString(tag) : null);
+        } catch (Exception | Error ignored) {
+            // Fall back to the bundled NBT-API, as getInt does
+        }
+        return NBT.get(item, nbt -> nbt.hasTag(tag) ? nbt.getString(tag) : null);
+    }
+
+    public static void setBoolean(ItemStack item, String tag, boolean value) {
+        try {
+            if (external) {
+                de.tr7zw.nbtapi.NBT.modify(item, nbt -> {
+                    nbt.setBoolean(tag, value);
+                });
+                return;
+            }
+        } catch (Exception | Error ignored) {
+            // Fall back to the bundled NBT-API, as setInt does
+        }
+        NBT.modify(item, nbt -> {
+            nbt.setBoolean(tag, value);
+        });
+    }
+
+    public static void setString(ItemStack item, String tag, String value) {
+        try {
+            if (external) {
+                de.tr7zw.nbtapi.NBT.modify(item, nbt -> {
+                    nbt.setString(tag, value);
+                });
+                return;
+            }
+        } catch (Exception | Error ignored) {
+            // Fall back to the bundled NBT-API, as setInt does
+        }
+        NBT.modify(item, nbt -> {
+            nbt.setString(tag, value);
+        });
+    }
+
+    public static void remove(ItemStack item, String tag) {
+        try {
+            if (external) {
+                de.tr7zw.nbtapi.NBT.modify(item, nbt -> {
+                    nbt.removeKey(tag);
+                });
+                return;
+            }
+        } catch (Exception | Error ignored) {
+            // Fall back to the bundled NBT-API, as setInt does
+        }
+        NBT.modify(item, nbt -> {
+            nbt.removeKey(tag);
+        });
+    }
 }

@@ -1,5 +1,8 @@
 package me.zombie_striker.customitemmanager;
 
+import me.zombie_striker.qg.items.ItemState;
+import me.zombie_striker.qg.utils.CustomModelData;
+import me.zombie_striker.qg.utils.ErrorReporter;
 import com.cryptomorin.xseries.profiles.PlayerProfiles;
 import com.cryptomorin.xseries.profiles.builder.XSkull;
 import com.cryptomorin.xseries.profiles.gameprofile.MojangGameProfile;
@@ -100,36 +103,36 @@ public class MaterialStorage {
 			if (profile != null)
 				temp = PlayerProfiles.getTextureValue(profile);
 		}
-		try {
+		if (CustomModelData.SUPPORTED && itemMeta != null) {
 			return getMS(is.getType(), itemMeta.hasCustomModelData() ? itemMeta.getCustomModelData() : 0, variant,
 					is.getType() == MultiVersionLookup.getSkull() ? ((SkullMeta) itemMeta).getOwner() : null, temp);
-
-		} catch (Error | Exception e4) {
 		}
 		return getMS(is.getType(), is.getDurability(), variant,
 				is.getType() == MultiVersionLookup.getSkull() ? ((SkullMeta) itemMeta).getOwner() : null, temp);
 	}
 
 	public static int getVariant(ItemStack is) {
+		Integer tagged = ItemState.getVariant(is);
+		if (tagged != null) return tagged;
 		if (is != null && is.hasItemMeta()) {
 			ItemMeta im = is.getItemMeta();
 
 			if (im.hasLore()) {
 				for (String lore : im.getLore()) {
-					if (lore.startsWith(QAMain.S_ITEM_VARIANTS_NEW)) {
+					if (lore.startsWith(QAMain.getMessages().lore.variant)) {
 						try {
-							int id = Integer.parseInt(lore.split(QAMain.S_ITEM_VARIANTS_NEW)[1].trim());
+							int id = Integer.parseInt(lore.split(QAMain.getMessages().lore.variant)[1].trim());
 							return id;
-						} catch (Error | Exception e4) {
-							e4.printStackTrace();
+						} catch (RuntimeException e4) {
+							ErrorReporter.report("reading the variant from an item's lore", e4);
 							return 0;
 						}
-					} else if (lore.startsWith(QAMain.S_ITEM_VARIANTS_LEGACY)) {
+					} else if (lore.startsWith(QAMain.getMessages().lore.variantLegacy)) {
 						try {
-							int id = Integer.parseInt(lore.split(QAMain.S_ITEM_VARIANTS_LEGACY)[1].trim());
+							int id = Integer.parseInt(lore.split(QAMain.getMessages().lore.variantLegacy)[1].trim());
 							return id;
-						} catch (Error | Exception e4) {
-							e4.printStackTrace();
+						} catch (RuntimeException e4) {
+							ErrorReporter.report("reading the variant from an item's lore", e4);
 							return 0;
 						}
 					}

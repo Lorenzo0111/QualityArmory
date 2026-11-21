@@ -1,7 +1,16 @@
 package me.zombie_striker.qg.guns;
 
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.Map;
+import me.zombie_striker.qg.utils.FoliaRunnable;
+import me.zombie_striker.qg.hooks.NBTHook;
+import me.zombie_striker.qg.items.ItemState;
+import me.zombie_striker.qg.utils.Compat;
 import com.cryptomorin.xseries.XPotion;
-import me.zombie_striker.customitemmanager.*;
+import me.zombie_striker.customitemmanager.CustomBaseObject;
+import me.zombie_striker.customitemmanager.CustomItemManager;
+import me.zombie_striker.customitemmanager.MaterialStorage;
+import me.zombie_striker.customitemmanager.OLD_ItemFact;
 import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.ammo.Ammo;
 import me.zombie_striker.qg.api.QAWeaponPrepareShootEvent;
@@ -16,8 +25,6 @@ import me.zombie_striker.qg.guns.utils.WeaponSounds;
 import me.zombie_striker.qg.guns.utils.WeaponType;
 import me.zombie_striker.qg.handlers.IronsightsHandler;
 import me.zombie_striker.qg.handlers.Update19OffhandChecker;
-import me.zombie_striker.qg.hooks.NBTHook;
-import me.zombie_striker.qg.utils.FoliaRunnable;
 import me.zombie_striker.qg.utils.LocalUtils;
 import org.bukkit.*;
 import org.bukkit.block.Block;
@@ -27,10 +34,12 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.util.Vector;
 
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.UUID;
 
-public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparable<Gun> {
+public class Gun extends CustomBaseObject implements Comparable<Gun> {
 
     private static final String CALCTEXT = ChatColor.DARK_GRAY + "qadata:";
     public ChatColor glowEffect = null;
@@ -177,7 +186,7 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
     }
 
     public static void updateAmmoLore(Gun g, ItemStack current, int amount) {
-        if (QAMain.SHOW_BULLETS_LORE && g != null) {
+        if (QAMain.getConfiguration().features.enableLoreGunBullets && g != null) {
             ItemMeta meta = current.getItemMeta();
             if (meta == null || !meta.hasLore()) return;
 
@@ -186,8 +195,8 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
 
             for (int i = 0; i < lore.size(); i++) {
                 String loreLine = lore.get(i);
-                if (loreLine.startsWith(QAMain.S_ITEM_BULLETS)) {
-                    lore.set(i, QAMain.S_ITEM_BULLETS + ": " + (amount) + "/" + g.getMaxBullets());
+                if (loreLine.startsWith(QAMain.getMessages().lore.bullets)) {
+                    lore.set(i, QAMain.getMessages().lore.bullets + ": " + (amount) + "/" + g.getMaxBullets());
                     break;
                 }
             }
@@ -203,49 +212,49 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
         if (g == null) g = QualityArmory.getGun(current);
         updateAmmo(g, current, amount);
 
-        if (QAMain.showAmmoInXPBar)
+        if (QAMain.getConfiguration().ui.showAmmoInXpBar)
             GunUtil.updateXPBar(player, g, amount);
     }
 
     public static List<String> getGunLore(Gun g, ItemStack current, int amount) {
         List<String> lore = (current != null && current.hasItemMeta() && current.getItemMeta().hasLore()) ? current.getItemMeta().getLore() : new ArrayList<>();
         OLD_ItemFact.addVariantData(null, lore, g);
-        if (QAMain.ENABLE_LORE_INFO) {
-            if (QAMain.SHOW_BULLETS_LORE) lore.add(QAMain.S_ITEM_BULLETS + ": " + amount + "/" + g.getMaxBullets());
-            lore.add(QAMain.S_ITEM_DAMAGE + ": " + g.getDamage());
-            lore.add(QAMain.S_ITEM_DPS + ": "
+        if (QAMain.getConfiguration().features.enableLoreGunInfoMessages) {
+            if (QAMain.getConfiguration().features.enableLoreGunBullets) lore.add(QAMain.getMessages().lore.bullets + ": " + amount + "/" + g.getMaxBullets());
+            lore.add(QAMain.getMessages().lore.damage + ": " + g.getDamage());
+            lore.add(QAMain.getMessages().lore.dps + ": "
                     + (g.isAutomatic()
                     ? (2 * g.getFireRate() * g.getDamage()) + ""
                     + (g.getBulletsPerShot() > 1 ? "x" + g.getBulletsPerShot() : "")
                     : "" + ((int) (1.0 / g.getDelayBetweenShotsInSeconds()) * g.getDamage())
                     + (g.getBulletsPerShot() > 1 ? "x" + g.getBulletsPerShot() : "")));
             if (g.getAmmoType() != null)
-                lore.add(QAMain.S_ITEM_AMMO + ": " + g.getAmmoType().getDisplayName());
+                lore.add(QAMain.getMessages().lore.ammo + ": " + g.getAmmoType().getDisplayName());
         }
-        if (QAMain.AutoDetectResourcepackVersion && Bukkit.getPluginManager().isPluginEnabled("ViaRewind")) {
+        if (QAMain.getConfiguration().resourcepack.autoDetectVersion && Bukkit.getPluginManager().isPluginEnabled("ViaRewind")) {
             if (g.is18Support()) {
                 lore.add(ChatColor.GRAY + "1.8 Weapon");
             }
         }
 
-        if (QAMain.enableDurability)
+        if (QAMain.getConfiguration().weapons.durability)
             if (current == null) {
                 double k = ((double) g.getDamage()) / g.getDurability();
                 ChatColor c = k > 0.5 ? ChatColor.DARK_GREEN : k > 0.25 ? ChatColor.GOLD : ChatColor.DARK_RED;
-                lore.add(c + QAMain.S_ITEM_DURIB + ":" + g.getDurability() + "/" + g.getDurability());
+                lore.add(c + QAMain.getMessages().lore.durability + ":" + g.getDurability() + "/" + g.getDurability());
             } else {
                 lore = setDurabilityDamage(g, lore, getDamage(current));
             }
-        if (QAMain.ENABLE_LORE_HELP) {
+        if (QAMain.getConfiguration().features.enableLoreControlHelpMessages) {
             if (g.isAutomatic()) {
-                lore.add(QAMain.S_LMB_SINGLE);
-                lore.add(QAMain.S_LMB_FULLAUTO);
-                lore.add(QAMain.S_RMB_RELOAD);
+                lore.add(QAMain.getMessages().lore.controls.singleFire);
+                lore.add(QAMain.getMessages().lore.controls.fullAuto);
+                lore.add(QAMain.getMessages().lore.controls.reload);
             } else {
-                lore.add(QAMain.S_LMB_SINGLE);
-                lore.add(QAMain.enableIronSightsON_RIGHT_CLICK ? QAMain.S_RMB_R1 : QAMain.S_RMB_R2);
+                lore.add(QAMain.getMessages().lore.controls.singleFire);
+                lore.add(QAMain.getConfiguration().weapons.ironsights.rightClick ? QAMain.getMessages().lore.controls.reloadDrop : QAMain.getMessages().lore.controls.reloadRightClick);
                 if (g.hasIronSights())
-                    lore.add(QAMain.enableIronSightsON_RIGHT_CLICK ? QAMain.S_RMB_A1 : QAMain.S_RMB_A2);
+                    lore.add(QAMain.getConfiguration().weapons.ironsights.rightClick ? QAMain.getMessages().lore.controls.ironsightsRightClick : QAMain.getMessages().lore.controls.ironsightsSneak);
             }
         }
 
@@ -259,10 +268,26 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
         return lore;
     }
 
+    /**
+     * @return Whether the gun item is reloading. Items without the NBT flag fall back to the reloading suffix
+     * in their name.
+     */
+    public static boolean isReloading(ItemStack is) {
+        Boolean tagged = ItemState.isReloading(is);
+        if (tagged != null) return tagged;
+        return is != null && is.hasItemMeta() && is.getItemMeta().hasDisplayName()
+                && is.getItemMeta().getDisplayName().contains(QAMain.getMessages().weapon.reloading);
+    }
+
+    /**
+     * @return The remaining durability, from NBT or, for older items, the durability lore line. -1 if unknown.
+     */
     public static int getDamage(ItemStack is) {
+        Integer tagged = ItemState.getDurability(is);
+        if (tagged != null) return tagged;
         if (is != null && is.hasItemMeta() && is.getItemMeta().hasLore())
             for (String lore : is.getItemMeta().getLore()) {
-                if (ChatColor.stripColor(lore).startsWith(ChatColor.stripColor(QAMain.S_ITEM_DURIB))) {
+                if (ChatColor.stripColor(lore).startsWith(ChatColor.stripColor(QAMain.getMessages().lore.durability))) {
                     return Integer.parseInt(lore.split(":")[1].split("/")[0].trim());
                 }
             }
@@ -277,6 +302,7 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
         ItemMeta im = is.getItemMeta();
         im.setLore(setDurabilityDamage(g, im.getLore(), damage));
         is.setItemMeta(im);
+        ItemState.setDurability(is, damage);
         return is;
     }
 
@@ -285,14 +311,14 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
         double k = ((double) damage) / g.getDurability();
         ChatColor c = k > 0.5 ? ChatColor.DARK_GREEN : k > 0.25 ? ChatColor.GOLD : ChatColor.DARK_RED;
         for (int j = 0; j < lore.size(); j++) {
-            if (ChatColor.stripColor(lore.get(j)).contains(ChatColor.stripColor(QAMain.S_ITEM_DURIB))) {
-                lore.set(j, c + QAMain.S_ITEM_DURIB + ":" + damage + "/" + g.getDurability());
+            if (ChatColor.stripColor(lore.get(j)).contains(ChatColor.stripColor(QAMain.getMessages().lore.durability))) {
+                lore.set(j, c + QAMain.getMessages().lore.durability + ":" + damage + "/" + g.getDurability());
                 foundLine = true;
                 break;
             }
         }
         if (!foundLine) {
-            lore.add(c + QAMain.S_ITEM_DURIB + ":" + damage + "/" + g.getDurability());
+            lore.add(c + QAMain.getMessages().lore.durability + ":" + damage + "/" + g.getDurability());
         }
         return lore;
     }
@@ -816,15 +842,15 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
 
     @Override
     public int compareTo(Gun arg0) {
-        if (QAMain.orderShopByPrice) {
-            return (int) (this.getPrice() - arg0.getPrice());
+        if (QAMain.getConfiguration().menu.orderShopByPrice) {
+            return Double.compare(this.getPrice(), arg0.getPrice());
         }
         return this.getDisplayName().compareTo(arg0.getDisplayName());
     }
 
     @Override
     public boolean onRMB(Player e, ItemStack usedItem) {
-        return onClick(e, usedItem, (QAMain.reloadOnFOnly || !QAMain.SWAP_TO_LMB_SHOOT));
+        return onClick(e, usedItem, (QAMain.getConfiguration().weapons.controls.reloadOnlyOnOffhandSwap || QAMain.getConfiguration().features.swapReloadAndShootingControls));
     }
 
     @Override
@@ -834,7 +860,12 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
 
     @Override
     public boolean onLMB(Player e, ItemStack usedItem) {
-        return onClick(e, usedItem, QAMain.SWAP_TO_LMB_SHOOT);
+        return onClick(e, usedItem, !QAMain.getConfiguration().features.swapReloadAndShootingControls);
+    }
+
+    @Override
+    public boolean handlesEquipSound() {
+        return true;
     }
 
     @Override
@@ -873,12 +904,12 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
     @SuppressWarnings("deprecation")
     private boolean onClick(final Player player, ItemStack usedItem, boolean fire) {
         QAMain.DEBUG("CLICKED GUN " + getName());
-        if (QAMain.requirePermsToShoot && !player.getPlayer().hasPermission("qualityarmory.usegun")) {
-            player.getPlayer().sendMessage(QAMain.S_NOPERM);
+        if (QAMain.getConfiguration().permissions.requireShoot && !player.getPlayer().hasPermission("qualityarmory.usegun")) {
+            player.getPlayer().sendMessage(QAMain.getMessages().general.noPermission);
             return true;
         }
-        if (QAMain.perWeaponPermission && !player.getPlayer().hasPermission("qualityarmory.usegun." + getName())) {
-            player.getPlayer().sendMessage(QAMain.S_NOPERM);
+        if (QAMain.getConfiguration().permissions.perWeapon.shoot && !player.getPlayer().hasPermission("qualityarmory.usegun." + getName())) {
+            player.getPlayer().sendMessage(QAMain.getMessages().general.noPermission);
             return true;
         }
 
@@ -889,28 +920,25 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
         boolean offhand = offhandItem != null && offhandItem.equals(usedItem);
 
         QAMain.DEBUG("Made it to gun/attachment check : " + getName());
-        try {
-            if (QAMain.enableInteractChests) {
-                Block b = player.getTargetBlock(null, 6);
-                if (b != null
-                        && (b.getType() == Material.CHEST
-                        || b.getType() == Material.TRAPPED_CHEST)
-                        || b.getType() == Material.ENDER_CHEST) {
-                    QAMain.DEBUG("Chest interactable check has return true!");
-                    return true;
-                }
+        if (QAMain.getConfiguration().interactions.enableChestInteract) {
+            Block b = player.getTargetBlock(null, 6);
+            if (b != null && (b.getType() == Material.CHEST
+                    || b.getType() == Material.TRAPPED_CHEST
+                    || b.getType() == Material.ENDER_CHEST)) {
+                QAMain.DEBUG("Chest interactable check has return true!");
+                return true;
             }
-        } catch (Error | Exception e4) {
         }
 
         if (fire) {
             QAMain.DEBUG("Fire mode called");
-            if (player.getPlayer().getItemInHand().getItemMeta().getDisplayName().contains(QAMain.S_RELOADING_MESSAGE)) {
+            if (isReloading(player.getPlayer().getItemInHand())) {
                 if (!GunRefillerRunnable.hasItemReloaded(player, usedItem)) {
                     ItemStack tempused = usedItem;
                     ItemMeta im = tempused.getItemMeta();
                     im.setDisplayName(getDisplayName());
                     tempused.setItemMeta(im);
+                    ItemState.setReloading(tempused, false);
                     if (offhand) {
                         Update19OffhandChecker.setOffhand(player.getPlayer(), tempused);
                         QAMain.DEBUG("odd. Reloading broke. Removing reloading message from offhand - firing");
@@ -922,9 +950,9 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
                 QAMain.DEBUG("Reloading message 1!");
                 return true;
             }
-            if (!isAutomatic() && GunUtil.rapidfireshooters.containsKey(player.getPlayer().getUniqueId())) {
-                GunUtil.rapidfireshooters.remove(player.getPlayer().getUniqueId()).cancel();
-                if (QAMain.enableReloadWhenOutOfAmmo) {
+            if (!isAutomatic() && QAMain.getPlayerState().getRapidFireTasks().containsKey(player.getPlayer().getUniqueId())) {
+                QAMain.getPlayerState().getRapidFireTasks().remove(player.getPlayer().getUniqueId()).cancel();
+                if (QAMain.getConfiguration().weapons.autoReloadWhenOutOfAmmo) {
                     if (getAmount(player) <= 0) {
                         if (offhand) {
                             player.getPlayer().setItemInHand(player.getPlayer().getInventory().getItemInOffHand());
@@ -932,7 +960,7 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
                             usedItem = player.getPlayer().getItemInHand();
                             offhand = false;
                         }
-                        if (QAMain.allowGunReload) {
+                        if (QAMain.getConfiguration().weapons.allowGunReload) {
                             QualityArmory.sendHotbarGunAmmoCount(player.getPlayer(), this, usedItem, ((getMaxBullets() != getAmount(player))
                                     && GunUtil.hasAmmo(player.getPlayer(), this)));
                             if ((getMaxBullets() != getAmount(player))) {
@@ -941,9 +969,6 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
                                 QAMain.DEBUG("Trying to reload WITH AUTORELOAD. player has ammo");
                                 reload(player.getPlayer());
                             } else {
-                                if (QAMain.showOutOfAmmoOnItem) {
-                                    QAMain.DEBUG("UNSUPPORTED: Out of ammo displayed on item");
-                                }
                                 QAMain.DEBUG("Trying to reload WITH AUTORELOAD. player DOES NOT have ammo");
                             }
                         }
@@ -955,22 +980,21 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
                 if (getAmount(player) <= 0) {
                     QAMain.DEBUG("Out of ammo");
 
-                    if (GunUtil.rapidfireshooters.containsKey(player.getUniqueId()))
-                        GunUtil.rapidfireshooters.remove(player.getUniqueId()).cancel();
+                    if (QAMain.getPlayerState().getRapidFireTasks().containsKey(player.getUniqueId()))
+                        QAMain.getPlayerState().getRapidFireTasks().remove(player.getUniqueId()).cancel();
 
-                    try {
+                    if (Compat.WORLD_SOUND_BY_NAME)
                         player.getWorld().playSound(player.getLocation(), WeaponSounds.OUT_OF_AMMO_CLICK.getSoundName(), 1f, 1f);
-                    } catch (Exception | Error ignored) {
+                    else
                         player.playSound(player.getLocation(), WeaponSounds.OUT_OF_AMMO_CLICK.getSoundName(), 1f, 1f);
-                    }
 
-                    if (QAMain.enableReloadWhenOutOfAmmo) {
+                    if (QAMain.getConfiguration().weapons.autoReloadWhenOutOfAmmo) {
                         if (offhand) {
                             IronsightsHandler.unAim(player);
                             usedItem = player.getPlayer().getItemInHand();
                             offhand = false;
                         }
-                        if (QAMain.allowGunReload) {
+                        if (QAMain.getConfiguration().weapons.allowGunReload) {
                             QualityArmory.sendHotbarGunAmmoCount(player.getPlayer(), this, usedItem,
                                     ((getMaxBullets() != getAmount(player))
                                             && GunUtil.hasAmmo(player.getPlayer(), this)));
@@ -985,9 +1009,9 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
                     }
                     return true;
                 }
-                if (!QAMain.enableDurability || getDamage(usedItem) > 0) {
+                if (!QAMain.getConfiguration().weapons.durability || getDamage(usedItem) > 0) {
                     boolean automaticfiring = true;
-                    if (!QAMain.SWAP_TO_LMB_SHOOT) {
+                    if (QAMain.getConfiguration().features.swapReloadAndShootingControls) {
                         if (lastRMB.containsKey(player.getUniqueId())) {
                             if (System.currentTimeMillis() - lastRMB.get(player.getUniqueId()) <= 600) {
                                 automaticfiring = true;
@@ -1014,23 +1038,18 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
             QAMain.DEBUG("Non-Fire mode activated");
 
 
-            if (QAMain.enableIronSightsON_RIGHT_CLICK) {
-                if (!Update19OffhandChecker.supportOffhand(player.getPlayer())) {
-                    QAMain.enableIronSightsON_RIGHT_CLICK = false;
-                    QAMain.DEBUG("Offhand checker returned false for the player. Disabling ironsights");
-                    return true;
-                }
-                // Rest should be okay
+            if (QAMain.getConfiguration().weapons.ironsights.rightClick
+                    && Update19OffhandChecker.supportOffhand(player.getPlayer())) {
                 if (hasIronSights()) {
-                    try {
+                    if (Compat.OFFHAND) {
 
-                        if (player.getPlayer().getItemInHand().getItemMeta().getDisplayName()
-                                .contains(QAMain.S_RELOADING_MESSAGE)) {
+                        if (isReloading(player.getPlayer().getItemInHand())) {
                             if (!GunRefillerRunnable.hasItemReloaded(player, usedItem)) {
                                 ItemStack tempused = usedItem.clone();
                                 ItemMeta im = tempused.getItemMeta();
                                 im.setDisplayName(getDisplayName());
                                 tempused.setItemMeta(im);
+                                ItemState.setReloading(tempused, false);
                                 if (offhand) {
                                     Update19OffhandChecker.setOffhand(player.getPlayer(), tempused);
                                     QAMain.DEBUG(
@@ -1080,8 +1099,8 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
 
 
                         QualityArmory.sendHotbarGunAmmoCount(player.getPlayer(), this, usedItem, false);
-                    } catch (Error e2) {
-                        Bukkit.broadcastMessage(QAMain.prefix
+                    } else {
+                        Bukkit.broadcastMessage(QAMain.getMessages().general.prefix
                                 + "Ironsights not compatible for versions lower than 1.8. The server owner should set EnableIronSights to false in the plugin's config");
                     }
                 } else {
@@ -1090,11 +1109,11 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
             } else {
                 QAMain.DEBUG("Reload called");
                 Block targetblock = player.getTargetBlock(null, 5);
-                if (targetblock != null && QAMain.interactableBlocks.contains(targetblock.getType())) {
+                if (targetblock != null && QAMain.getBlockRules().isInteractable(targetblock.getType())) {
                     QAMain.DEBUG("Canceled interact because block is " + targetblock.getType().name());
                     return false;
                 } else {
-                    if (QAMain.allowGunReload) {
+                    if (QAMain.getConfiguration().weapons.allowGunReload) {
                         QualityArmory.sendHotbarGunAmmoCount(player.getPlayer(), this, usedItem,
                                 ((getMaxBullets() != getAmount(player))
                                         && GunUtil.hasAmmo(player.getPlayer(), this)));
@@ -1116,7 +1135,7 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
     }
 
     public void damageDurability(Player player) {
-        if (QAMain.enableDurability) {
+        if (QAMain.getConfiguration().weapons.durability) {
             if (QualityArmory.isIronSights(player.getItemInHand())) {
                 Update19OffhandChecker.setOffhand(player, durabilityDamage(this, Update19OffhandChecker.getItemStackOFfhand(player)));
             } else {

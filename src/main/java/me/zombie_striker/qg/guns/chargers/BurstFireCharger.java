@@ -1,22 +1,19 @@
 package me.zombie_striker.qg.guns.chargers;
 
+import org.bukkit.scheduler.BukkitTask;
+import me.zombie_striker.qg.utils.FoliaRunnable;
+import me.zombie_striker.qg.utils.Compat;
 import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.api.QualityArmory;
 import me.zombie_striker.qg.guns.Gun;
 import me.zombie_striker.qg.guns.utils.GunUtil;
 import me.zombie_striker.qg.guns.utils.WeaponSounds;
-import me.zombie_striker.qg.utils.FoliaRunnable;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.scheduler.BukkitTask;
 
-import java.util.Map;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class BurstFireCharger implements ChargingHandler {
 
-    public static Map<UUID, BukkitTask> shooters = new ConcurrentHashMap<>();
 
     public BurstFireCharger() {
         ChargingManager.add(this);
@@ -24,7 +21,7 @@ public class BurstFireCharger implements ChargingHandler {
 
     @Override
     public boolean isCharging(Player player) {
-        return shooters.containsKey(player.getUniqueId());
+        return QAMain.getPlayerState().getBurstFireTasks().containsKey(player.getUniqueId());
     }
 
     @Override
@@ -51,14 +48,14 @@ public class BurstFireCharger implements ChargingHandler {
                 int amount = Gun.getAmount(player);
                 if (shotCurrently >= g.getBulletsPerShot() || slotUsed != player.getInventory().getHeldItemSlot()
                         || amount <= 0) {
-                    if (shooters.containsKey(player.getUniqueId()))
-                        shooters.remove(player.getUniqueId()).cancel();
+                    if (QAMain.getPlayerState().getBurstFireTasks().containsKey(player.getUniqueId()))
+                        QAMain.getPlayerState().getBurstFireTasks().remove(player.getUniqueId()).cancel();
                     return;
                 }
 
                 GunUtil.shootHandler(g, player, 1);
                 GunUtil.playShoot(g, player);
-                if (QAMain.enableRecoil && g.getRecoil() > 0) {
+                if (QAMain.getConfiguration().weapons.enableRecoil && g.getRecoil() > 0) {
                     GunUtil.addRecoil(player, g);
                 }
                 shotCurrently++;
@@ -71,14 +68,11 @@ public class BurstFireCharger implements ChargingHandler {
                 Gun.updateAmmo(g, stack, amount);
 
                 if (slot == -1) {
-                    try {
-                        if (QualityArmory.isIronSights(player.getItemInHand())) {
-                            if (QualityArmory.isGun(player.getInventory().getItemInOffHand())) {
-                                player.getInventory().setItemInOffHand(stack);
-                                Gun.updateAmmo(g, player.getItemInHand(), amount);
-                            }
+                    if (Compat.OFFHAND && QualityArmory.isIronSights(player.getItemInHand())) {
+                        if (QualityArmory.isGun(player.getInventory().getItemInOffHand())) {
+                            player.getInventory().setItemInOffHand(stack);
+                            Gun.updateAmmo(g, player.getItemInHand(), amount);
                         }
-                    } catch (Error ignored) {
                     }
 
                 } else {
@@ -90,7 +84,7 @@ public class BurstFireCharger implements ChargingHandler {
         }.runTaskTimer(QAMain.getInstance(), player, 10 / g.getFireRate(), 10 / g.getFireRate());
         // Folia returns no task when the player is already gone: storing it would leave them charging forever.
         if (!task.isCancelled())
-            shooters.put(player.getUniqueId(), task);
+            QAMain.getPlayerState().getBurstFireTasks().put(player.getUniqueId(), task);
         return false;
     }
 

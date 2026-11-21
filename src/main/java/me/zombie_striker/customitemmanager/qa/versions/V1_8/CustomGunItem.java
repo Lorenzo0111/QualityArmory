@@ -1,5 +1,7 @@
 package me.zombie_striker.customitemmanager.qa.versions.V1_8;
 
+import me.zombie_striker.qg.items.ItemState;
+import me.zombie_striker.qg.utils.Compat;
 import me.zombie_striker.customitemmanager.*;
 import me.zombie_striker.customitemmanager.pack.StaticPackProvider;
 import me.zombie_striker.customitemmanager.qa.AbstractCustomGunItem;
@@ -65,35 +67,23 @@ public class CustomGunItem extends AbstractCustomGunItem {
 			OLD_ItemFact.addVariantData(im,lore,base);
 
 			im.setLore(lore);
-			if (QAMain.ITEM_enableUnbreakable) {
-				try {
-					im.setUnbreakable(true);
-				} catch (Error | Exception e34) {
-					/*try {
-						im.spigot().setUnbreakable(true);
-					} catch (Error | Exception e344) {
-					}*/
-					//TODO: Readd Unbreakable support for 1.9
-				}
-			}
-			try {
-				if (QAMain.ITEM_enableUnbreakable) {
-					im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_UNBREAKABLE);
-				}
-				im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_ATTRIBUTES);
-				im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_DESTROYS);
-			} catch (Error e) {
-
-			}
+			boolean enableUnbreakable = QAMain.getConfiguration().items.enableUnbreaking;
+			if (enableUnbreakable && Compat.UNBREAKABLE_META)
+				im.setUnbreakable(true);
+			if (enableUnbreakable)
+				im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_UNBREAKABLE);
+			im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_ATTRIBUTES);
+			im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_DESTROYS);
 
 			if (ms.getVariant() != 0) {
 				OLD_ItemFact.addVariantData(im, im.getLore(), ms.getVariant());
 			}
 			is.setItemMeta(im);
+			ItemState.setVariant(is, ms.getVariant());
 		} else {
 			// Item meta is still null. Catch and report.
 			QAMain.getInstance().getLogger()
-					.warning(QAMain.prefix + " ItemMeta is null for " + base.getName() + ". I have");
+					.warning(QAMain.getMessages().general.prefix + " ItemMeta is null for " + base.getName() + ". I have");
 		}
 		is.setAmount(1);
 		return is;
@@ -229,15 +219,15 @@ public class CustomGunItem extends AbstractCustomGunItem {
 		ArmoryYML skullammo = GunYMLCreator.createSkullAmmo(false, dataFolder, false, "default18_ammo556",
 				"556ammo", "&7 5.56x45mm NATO", null, MultiVersionLookup.getSkull(), 3, "cactus", null, 4, 1,
 				50);
-		skullammo.set(false, "skull_owner_custom_url_COMMENT",
+		skullammo.set(false, "skull-owner-custom-url-comment",
 				"Only specify the custom URL if the head does not use a player's skin, and instead sets the skin to a base64 value. If you need to get the head using a command, the URL should be set to the string of letters after \"Properties:{textures:[{Value:\"");
-		skullammo.set(false, "skull_owner_custom_url",
+		skullammo.set(false, "skull-owner-custom-url",
 				"eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYTg3ZmRmNDU4N2E2NDQ5YmZjOGJlMzNhYjJlOTM4ZTM2YmYwNWU0MGY2ZmFhMjc3ZDcxYjUwYmNiMGVhNjgzOCJ9fX0=");
 		ArmoryYML skullammo2 = GunYMLCreator.createSkullAmmo(false, dataFolder, false, "default18_ammoRPG",
 				"RPGammo", "&7 Rocket", null, MultiVersionLookup.getSkull(), 3, "cactus", null, 4, 1, 50);
-		skullammo2.set(false, "skull_owner_custom_url_COMMENT",
+		skullammo2.set(false, "skull-owner-custom-url-comment",
 				"Only specify the custom URL if the head does not use a player's skin, and instead sets the skin to a base64 value. If you need to get the head using a command, the URL should be set to the string of letters after \"Properties:{textures:[{Value:\"");
-		skullammo2.set(false, "skull_owner_custom_url",
+		skullammo2.set(false, "skull-owner-custom-url",
 				"eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYTg3ZmRmNDU4N2E2NDQ5YmZjOGJlMzNhYjJlOTM4ZTM2YmYwNWU0MGY2ZmFhMjc3ZDcxYjUwYmNiMGVhNjgzOCJ9fX0=");
 
 	}

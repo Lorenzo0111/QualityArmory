@@ -1,0 +1,171 @@
+package me.zombie_striker.qg.state;
+
+import me.zombie_striker.customitemmanager.CustomItemManager;
+import me.zombie_striker.customitemmanager.pack.MultiVersionPackProvider;
+import me.zombie_striker.customitemmanager.pack.StaticPackProvider;
+import me.zombie_striker.qg.QAMain;
+import me.zombie_striker.qg.config.CommentYamlConfiguration;
+import me.zombie_striker.qg.config.MainConfig;
+import org.bukkit.configuration.ConfigurationSection;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+/**
+ * Tracks which players received, are downloading or accepted the resourcepack, and the whitelist of
+ * players who never get the prompt ({@code resourcepackwhitelist.yml}).
+ */
+public final class ResourcepackManager {
+    private static final String WHITELIST_PATH = "Names_Of_players_to_bypass";
+
+    private final File whitelistFile;
+    private final Logger logger;
+    private final Map<UUID, Long> sentAt = new ConcurrentHashMap<>();
+    private final Set<UUID> accepted = ConcurrentHashMap.newKeySet();
+    private final Set<UUID> loading = ConcurrentHashMap.newKeySet();
+    private final List<String> bypassNames = new CopyOnWriteArrayList<>();
+    private CommentYamlConfiguration whitelist;
+
+    public ResourcepackManager(File dataFolder, Logger logger) {
+        this.whitelistFile = new File(dataFolder, "resourcepackwhitelist.yml");
+        this.logger = logger;
+    }
+
+    /**
+     * Loads the whitelist file. Keeps the players tracked in memory.
+     */
+    @SuppressWarnings("unchecked")
+    public void load() {
+        this.whitelist = CommentYamlConfiguration.loadConfiguration(this.whitelistFile);
+        Object names = this.whitelist.getOrSet(WHITELIST_PATH, new ArrayList<String>());
+        this.bypassNames.clear();
+        if (names instanceof List)
+            for (Object name : (List<Object>) names)
+                this.bypassNames.add(String.valueOf(name));
+    }
+
+    public void save() {
+        if (this.whitelist == null) return;
+        try {
+            this.whitelist.save(this.whitelistFile);
+        } catch (IOException e) {
+            this.logger.log(Level.SEVERE, "Could not save " + this.whitelistFile.getName(), e);
+        }
+    }
+
+    /**
+     * @return Whether the player is on the whitelist and never gets the resourcepack prompt.
+     */
+    public boolean isBypassing(String playerName) {
+        return this.bypassNames.contains(playerName);
+    }
+
+    public void setBypassing(String playerName, boolean bypassing) {
+        if (bypassing == this.isBypassing(playerName)) return;
+        if (bypassing)
+            this.bypassNames.add(playerName);
+        else
+            this.bypassNames.remove(playerName);
+        this.whitelist.set(WHITELIST_PATH, new ArrayList<>(this.bypassNames));
+    }
+
+    /**
+     * @return Whether the player accepted the resourcepack, bypassed it or doesn't need it.
+     * Guns only work for these players while the resourcepack is enabled.
+     */
+    public boolean hasAccepted(UUID player) {
+        return this.accepted.contains(player);
+    }
+
+    public void setAccepted(UUID player) {
+        this.accepted.add(player);
+    }
+
+    /**
+     * Records that the resourcepack was just sent to the player.
+     */
+    public void markSent(UUID player) {
+        this.sentAt.put(player, System.currentTimeMillis());
+    }
+
+    /**
+     * @return When the resourcepack was sent to the player (millis), or null if it wasn't.
+     */
+    public Long getSentAt(UUID player) {
+        return this.sentAt.get(player);
+    }
+
+    public void clearSent(UUID player) {
+        this.sentAt.remove(player);
+    }
+
+    public boolean isLoading(UUID player) {
+        return this.loading.contains(player);
+    }
+
+    public void setLoading(UUID player, boolean loading) {
+        if (loading)
+            this.loading.add(player);
+        else
+            this.loading.remove(player);
+    }
+
+    /**
+     * Applies the {@code resourcepack.default-pack} setting: uses the configured pack when
+     * {@code resourcepack.override-default} is on, otherwise writes the bundled pack's URL to the config.
+     */
+    public void applyDefaultPack(MainConfig config) {
+        boolean save = false;
+        Object defaultPack = config.getDefaultResourcepack();
+        if (config.resourcepack.overrideDefault && defaultPack != null) {
+            if (defaultPack instanceof ConfigurationSection) {
+                ConfigurationSection packSection = (ConfigurationSection) defaultPack;
+                // "21" was renamed to "21-4" when 1.21.4 got its own pack
+                if (packSection.contains("21")) {
+                    packSection.set("21-4", packSection.getString("21"));
+                    packSection.set("21", null);
+                    save = true;
+                }
+
+                // Keys now include the major version (1-21-4), since Minecraft moved to 26.x
+                for (String key : new HashSet<>(packSection.getKeys(false))) {
+                    try {
+                        int first = Integer.parseInt(key.split("-")[0]);
+                        if (first < 25 && first > 1) {
+                            packSection.set("1-" + key, packSection.getString(key));
+                            packSection.set(key, null);
+                            save = true;
+                        }
+                    } catch (NumberFormatException ignored) {
+                        // Not a version key
+                    }
+                }
+                CustomItemManager.setResourcepack(new MultiVersionPackProvider(packSection));
+            } else {
+                CustomItemManager.setResourcepack(new StaticPackProvider(String.valueOf(defaultPack)));
+            }
+        } else {
+            Object serialized = CustomItemManager.getResourcepackProvider().serialize();
+            if (!(defaultPack instanceof String) || !defaultPack.equals(serialized)) {
+                config.setDefaultResourcepack(serialized);
+                save = true;
+            }
+        }
+
+        if (save) {
+            QAMain.DEBUG(QAMain.getMessages().general.prefix + " Needed to save config: code=2");
+            config.save();
+        }
+    }
+
+    public void onQuit(UUID player) {
+        this.sentAt.remove(player);
+        this.loading.remove(player);
+        this.accepted.remove(player);
+    }
+}

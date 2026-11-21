@@ -1,6 +1,6 @@
 package me.zombie_striker.qg.miscitems;
 
-import me.zombie_striker.customitemmanager.ArmoryBaseObject;
+import me.zombie_striker.qg.items.ItemState;
 import me.zombie_striker.customitemmanager.CustomBaseObject;
 import me.zombie_striker.customitemmanager.CustomItemManager;
 import me.zombie_striker.customitemmanager.MaterialStorage;
@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class AmmoBag extends CustomBaseObject implements ArmoryBaseObject {
+public class AmmoBag extends CustomBaseObject {
     private final int maxAmmo;
 
     public AmmoBag(MaterialStorage ms, String name, String displayname, ItemStack[] ings, int max, int cost) {
@@ -126,19 +126,20 @@ public class AmmoBag extends CustomBaseObject implements ArmoryBaseObject {
         }
 
         for (int i = 0; i < lore.size(); i++) {
-            if (ChatColor.stripColor(lore.get(i)).contains(ChatColor.stripColor(QAMain.bagAmmo))) {
-                lore.set(i, QAMain.bagAmmo + newAmmo + "/" + maxAmmo);
+            if (ChatColor.stripColor(lore.get(i)).contains(ChatColor.stripColor(QAMain.getMessages().ammoBag.ammo))) {
+                lore.set(i, QAMain.getMessages().ammoBag.ammo + newAmmo + "/" + maxAmmo);
                 foundLine = true;
                 break;
             }
         }
 
         if (!foundLine) {
-            lore.add(QAMain.bagAmmo + newAmmo + "/" + maxAmmo);
+            lore.add(QAMain.getMessages().ammoBag.ammo + newAmmo + "/" + maxAmmo);
         }
 
         meta.setLore(lore);
         item.setItemMeta(meta);
+        ItemState.setBagAmmo(item, newAmmo);
     }
 
     public void updateTypeLore(@NotNull ItemStack item, Ammo type) {
@@ -154,22 +155,25 @@ public class AmmoBag extends CustomBaseObject implements ArmoryBaseObject {
         }
 
         for (int i = 0; i < lore.size(); i++) {
-            if (ChatColor.stripColor(lore.get(i)).contains(ChatColor.stripColor(QAMain.bagAmmoType))) {
-                lore.set(i, QAMain.bagAmmoType + type.getName());
+            if (ChatColor.stripColor(lore.get(i)).contains(ChatColor.stripColor(QAMain.getMessages().ammoBag.type))) {
+                lore.set(i, QAMain.getMessages().ammoBag.type + type.getName());
                 foundLine = true;
                 break;
             }
         }
 
         if (!foundLine) {
-            lore.add(QAMain.bagAmmoType + type.getName());
+            lore.add(QAMain.getMessages().ammoBag.type + type.getName());
         }
 
         meta.setLore(lore);
         item.setItemMeta(meta);
+        ItemState.setBagType(item, type.getName());
     }
 
     public int getAmmo(@NotNull ItemStack item) {
+        Integer tagged = ItemState.getBagAmmo(item);
+        if (tagged != null) return tagged;
         ItemMeta meta = item.getItemMeta();
         Objects.requireNonNull(meta);
         if (!meta.hasLore()) {
@@ -180,8 +184,8 @@ public class AmmoBag extends CustomBaseObject implements ArmoryBaseObject {
         Objects.requireNonNull(lore);
 
         for (String value : lore) {
-            if (ChatColor.stripColor(value).contains(ChatColor.stripColor(QAMain.bagAmmo))) {
-                String s = value.replace(QAMain.bagAmmo, "");
+            if (ChatColor.stripColor(value).contains(ChatColor.stripColor(QAMain.getMessages().ammoBag.ammo))) {
+                String s = value.replace(QAMain.getMessages().ammoBag.ammo, "");
                 String[] split = s.split("/");
                 return Integer.parseInt(split[0]);
             }
@@ -191,6 +195,8 @@ public class AmmoBag extends CustomBaseObject implements ArmoryBaseObject {
     }
 
     public @Nullable Ammo getAmmoType(@NotNull ItemStack item) {
+        String tagged = ItemState.getBagType(item);
+        if (tagged != null) return QualityArmory.getAmmoByName(tagged);
         ItemMeta meta = item.getItemMeta();
         Objects.requireNonNull(meta);
         if (!meta.hasLore()) {
@@ -201,8 +207,8 @@ public class AmmoBag extends CustomBaseObject implements ArmoryBaseObject {
         Objects.requireNonNull(lore);
 
         for (String value : lore) {
-            if (ChatColor.stripColor(value).contains(ChatColor.stripColor(QAMain.bagAmmoType))) {
-                String s = value.replace(QAMain.bagAmmoType, "");
+            if (ChatColor.stripColor(value).contains(ChatColor.stripColor(QAMain.getMessages().ammoBag.type))) {
+                String s = value.replace(QAMain.getMessages().ammoBag.type, "");
                 return QualityArmory.getAmmoByName(s);
             }
         }

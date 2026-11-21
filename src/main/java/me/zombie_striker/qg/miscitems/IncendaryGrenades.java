@@ -1,5 +1,7 @@
 package me.zombie_striker.qg.miscitems;
 
+import me.zombie_striker.qg.utils.ErrorReporter;
+import me.zombie_striker.qg.utils.Compat;
 import com.cryptomorin.xseries.particles.XParticle;
 import me.zombie_striker.customitemmanager.MaterialStorage;
 import me.zombie_striker.qg.QAMain;
@@ -27,9 +29,9 @@ public class IncendaryGrenades extends Grenade {
 	@Override
 	public boolean onPull(Player e, ItemStack usedItem) {
 		Player thrower = e.getPlayer();
-		if(!QAMain.autoarm)
-		if (throwItems.containsKey(thrower)) {
-			thrower.sendMessage(QAMain.prefix + QAMain.S_GRENADE_PALREADYPULLPIN);
+		if(!QAMain.getConfiguration().features.enableAutoArmGrenades)
+		if (ThrowableItemRegistry.containsKey(thrower)) {
+			thrower.sendMessage(QAMain.getMessages().general.prefix + QAMain.getMessages().grenade.alreadyPulled);
 			thrower.playSound(thrower.getLocation(), WeaponSounds.RELOAD_BULLET.getSoundName(), 1, 1);
 			return true;
 		}
@@ -46,19 +48,19 @@ public class IncendaryGrenades extends Grenade {
 				FoliaRunnable.runEntityTask(QAMain.getInstance(), holderEntity,
 						() -> handleThrowableTick(h),
 						() -> {
-							throwItems.remove(holderEntity);
+							ThrowableItemRegistry.remove(holderEntity);
 							BukkitTask t = h.getTask();
 							if (t != null) t.cancel();
 						});
 			}
 		}.runTaskTimer(QAMain.getInstance(), getFuseTicks(), 10));
-		throwItems.put(thrower, h);
+		ThrowableItemRegistry.put(thrower, h);
 
 		return true;
 	}
 
 	private void handleThrowableTick(ThrowableHolder h) {
-		try {
+		if (Compat.PARTICLES) {
 			h.getHolder().getWorld().spawnParticle(XParticle.EXPLOSION_EMITTER.get(),
 					h.getHolder().getLocation(), 0);
 			for(int i = 0; i < 4; i ++) {
@@ -68,7 +70,7 @@ public class IncendaryGrenades extends Grenade {
 			}
 			h.getHolder().getWorld().playSound(h.getHolder().getLocation(), WeaponSounds.HISS.getSoundName(), 2f,
 					1f);
-		} catch (Error e3) {
+		} else {
 			h.getHolder().getWorld().playEffect(h.getHolder().getLocation(), Effect.valueOf("CLOUD"), 0);
 			h.getHolder().getWorld().playSound(h.getHolder().getLocation(), Sound.valueOf("EXPLODE"), 3, 0.7f);
 		}
@@ -84,7 +86,7 @@ public class IncendaryGrenades extends Grenade {
 				Grenade.getGrenades().remove(h.getHolder());
 				h.getHolder().remove();
 			}
-			throwItems.remove(h.getHolder());
+			ThrowableItemRegistry.remove(h.getHolder());
 			if (h.getTask() != null) h.getTask().cancel();
 		} else {
 			for(Entity e : h.getHolder().getNearbyEntities(radius, radius, radius))
@@ -96,7 +98,8 @@ public class IncendaryGrenades extends Grenade {
 							if (ProtectionHandler.canPvp(target.getLocation())) {
 								target.setFireTicks(20);
 							}
-						}catch (Error error){
+						} catch (LinkageError error) {
+							ErrorReporter.report("checking PvP protection", error);
 							target.setFireTicks(20);
 						}
 					});

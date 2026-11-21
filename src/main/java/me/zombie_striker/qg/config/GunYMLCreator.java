@@ -4,7 +4,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 
 import me.zombie_striker.customitemmanager.MaterialStorage;
@@ -34,22 +33,22 @@ public class GunYMLCreator {
 
 		
 		h.set(false, "name", name);
-		h.set(false, "displayname", displayname.startsWith("&") ? displayname : "&6" + displayname);
+		h.set(false, "display-name", displayname.startsWith("&") ? displayname : "&6" + displayname);
 
 		h.set(false, "id", id);
 		h.set(false, "variant", 0);
-		h.set(false, "craftingRequirements", craftingRequirements);
-		h.set(false, "weapontype", weapontype.name());
-		h.set(false, "weaponsounds", ws != null ? ws.getSoundName() : WeaponSounds.getSoundByType(weapontype));
+		h.set(false, "crafting-requirements", craftingRequirements);
+		h.set(false, "weapon-type", weapontype.name());
+		h.set(false, "weapon-sounds", ws != null ? ws.getSoundName() : WeaponSounds.getSoundByType(weapontype));
 		StringBuilder validGuns = new StringBuilder();
 		for (WeaponType g : WeaponType.values()) {
 			validGuns.append(g.name() + ", ");
 		}
 		//h.set(false, "_VALID_WEAPON_TYPES", validGuns.toString());
-		h.set(false, "enableIronSights", enableIronSights);
-		h.set(false, "ammotype", ammotype);
+		h.set(false, "enable-iron-sights", enableIronSights);
+		h.set(false, "ammo-type", ammotype);
 		h.set(false, "damage", damage);
-		h.set(false, "maxbullets", maxBullets);
+		h.set(false, "max-bullets", maxBullets);
 
 		h.set(false, "price", cost);
 
@@ -100,21 +99,21 @@ public class GunYMLCreator {
 
 		h.set(invalid, "invalid", invalid);
 		h.set(invalid, "name", name);
-		h.set(invalid, "displayname", displayname);
+		h.set(invalid, "display-name", displayname);
 		h.set(invalid, "lore", (lore == null ? new ArrayList<String>() : lore));
 		h.set(invalid, "id", id);
-		h.set(invalid, "craftingRequirements", craftingRequirements);
-		h.set(invalid, "craftingReturnAmount", craftingReturn);
+		h.set(invalid, "crafting-requirements", craftingRequirements);
+		h.set(invalid, "crafting-return-amount", craftingReturn);
 		h.set(invalid, "price", cost);
-		h.set(invalid, "maxItemStack", maxAmount);
+		h.set(invalid, "max-item-stack", maxAmount);
 		h.set(invalid, "material", type.name());
 
 		if (SKULL_OWNER != null) {
-			h.set(invalid, "skull_owner", SKULL_OWNER);
-			h.set(invalid, "skull_owner_custom_url", Ammo.NO_SKIN_STRING);
+			h.set(invalid, "skull-owner", SKULL_OWNER);
+			h.set(invalid, "skull-owner-custom-url", Ammo.NO_SKIN_STRING);
 		}
 
-		h.set(invalid, "piercingSeverity", severity);
+		h.set(invalid, "piercing-severity", severity);
 		if (h.saveNow)
 			h.save();
 		return h;
@@ -135,19 +134,19 @@ public class GunYMLCreator {
 			new File(dataFolder, "attachments").mkdirs();
 		AttachmentYML h = new AttachmentYML(f2);
 		if (invalid)
-			h.set(false, "HOW_TO_USE",
+			h.set(false, "how-to-use",
 					"Below is just the required values to create a new attachment for the 'basegun'. If you want to modify more parts of the gun, copy the value you want to change from the 'base' gun and paste it here with the value you want.");
 
 		h.set(invalid, "invalid", invalid);
 		h.set(invalid, "name", name);
-		h.set(invalid, "displayname", displayname.startsWith("&")?displayname:"&6"+displayname);
+		h.set(invalid, "display-name", displayname.startsWith("&")?displayname:"&6"+displayname);
 		h.set(invalid, "lore", (lore == null ? new ArrayList<String>() : lore));
 		h.set(invalid, "id", ms.getData());
-		h.set(invalid, "craftingRequirements", craftingRequirements);
+		h.set(invalid, "crafting-requirements", craftingRequirements);
 		h.set(invalid, "price", cost);
 		h.set(invalid, "material", ms.getMat().name());
 
-		h.set(invalid, "baseGun", originalGun);
+		h.set(invalid, "base-gun", originalGun);
 		if (!invalid) {
 
 		}
@@ -174,18 +173,18 @@ public class GunYMLCreator {
 
 		h.set(invalid, "invalid", invalid);
 		h.set(invalid, "name", name);
-		h.set(invalid, "displayname", displayname);
+		h.set(invalid, "display-name", displayname);
 		h.set(invalid, "lore", (lore == null ? new ArrayList<String>() : lore));
 		h.set(invalid, "id", id);
-		h.set(invalid, "craftingRequirements", craftingRequirements);
+		h.set(invalid, "crafting-requirements", craftingRequirements);
 		h.set(invalid, "price", cost);
 		// h.setNoSave(false, "material", type.name());
 
-		h.set(invalid, "MiscType", misctype.name());
+		h.set(invalid, "misc-type", misctype.name());
 
-		h.set("minProtectionHeight", min);
-		h.set("maxProtectionHeight", max);
-		h.set("stopsHeadshots", stopHeadshots);
+		h.set("min-protection-height", min);
+		h.set("max-protection-height", max);
+		h.set("stops-headshots", stopHeadshots);
 		if (h.saveNow)
 			h.save();
 		return h;
@@ -207,10 +206,10 @@ public class GunYMLCreator {
 		MiscYML h = new MiscYML(f2);
 		h.set(invalid, "invalid", invalid);
 		h.set(invalid, "name", name);
-		h.set(invalid, "displayname", displayname);
+		h.set(invalid, "display-name", displayname);
 		h.set(invalid, "lore", (lore == null ? new ArrayList<String>() : lore));
 		h.set(invalid, "id", id);
-		h.set(invalid, "craftingRequirements", craftingRequirements);
+		h.set(invalid, "crafting-requirements", craftingRequirements);
 		h.set(invalid, "price", cost);
 		h.set(invalid, "material", type.name());
 

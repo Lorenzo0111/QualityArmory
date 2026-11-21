@@ -1,5 +1,6 @@
 package me.zombie_striker.qg.guns.projectiles;
 
+import me.zombie_striker.qg.utils.Compat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,35 +32,28 @@ public class ExplodingRoundProjectile implements RealtimeCalculationProjectile {
 
 			@Override
 			public void run() {
-				dir.setY(dir.getY() - QAMain.gravity);
+				dir.setY(dir.getY() - QAMain.getConfiguration().weapons.detection.gravity);
 				for (int tick = 0; tick < g.getVelocityForRealtimeCalculations(); tick++) {
 					distance--;
 					s.add(dir);
 					ParticleHandlers.spawnGunParticles(g, s);
 					boolean entityNear = false;
-					try {
-						List<Entity> e2 = new ArrayList<>(s.getWorld().getNearbyEntities(s, 1, 1, 1));
-								for(Entity e : e2) {
-									if (e != player && !GunUtil.shouldBulletPassThrough(e)
-									&& (!(e instanceof Player) || ((Player) e).getGameMode() != GameMode.SPECTATOR))
-								entityNear = true;
-								}
-					} catch (Error e) {
-					}
+					List<Entity> e2 = new ArrayList<>(s.getWorld().getNearbyEntities(s, 1, 1, 1));
+							for(Entity e : e2) {
+								if (e != player && !GunUtil.shouldBulletPassThrough(e)
+								&& (!(e instanceof Player) || ((Player)e).getGameMode()!=GameMode.SPECTATOR))
+							entityNear = true;
+							}
 
 					if (GunUtil.isSolid(s.getBlock(), s) || entityNear || distance < 0) {
 						ExplosionHandler.handleAOEExplosion(player, s, g.getDamage(), g.getExplosionRadius(), g.getExplosionKnockback());
 						ParticleHandlers.spawnExplosion(s);
-						try {
+						if (Compat.WORLD_SOUND_BY_NAME) {
 							player.getWorld().playSound(s, WeaponSounds.WARHEAD_EXPLODE.getSoundName(), 10, 1.5f);
 							player.getWorld().playSound(s, Sound.ENTITY_GENERIC_EXPLODE, 8, 0.7f);
-						} catch (Error e3) {
+						} else {
 							s.getWorld().playEffect(s, Effect.valueOf("CLOUD"), 0);
-							try {
 							player.getWorld().playSound(s, Sound.valueOf("EXPLODE"), 8, 0.7f);
-							} catch (Error e333) {
-								player.getWorld().playSound(s, Sound.valueOf("ENTITY_GENERIC_EXPLODE"), 8, 0.7f);
-							}
 						}
 						cancel();
 						return;

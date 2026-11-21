@@ -1,5 +1,6 @@
 package me.zombie_striker.qg.miscitems;
 
+import me.zombie_striker.qg.utils.Compat;
 import com.cryptomorin.xseries.particles.XParticle;
 import me.zombie_striker.customitemmanager.MaterialStorage;
 import me.zombie_striker.qg.QAMain;
@@ -29,9 +30,9 @@ public class Flashbang extends Grenade {
 	@Override
 	public boolean onPull(Player e, ItemStack usedItem) {
 		Player thrower = e.getPlayer();
-		if(!QAMain.autoarm)
-		if (throwItems.containsKey(thrower)) {
-			thrower.sendMessage(QAMain.prefix + QAMain.S_GRENADE_PALREADYPULLPIN);
+		if(!QAMain.getConfiguration().features.enableAutoArmGrenades)
+		if (ThrowableItemRegistry.containsKey(thrower)) {
+			thrower.sendMessage(QAMain.getMessages().general.prefix + QAMain.getMessages().grenade.alreadyPulled);
 			thrower.playSound(thrower.getLocation(), WeaponSounds.RELOAD_BULLET.getSoundName(), 1, 1);
 			return true;
 		}
@@ -48,36 +49,33 @@ public class Flashbang extends Grenade {
 				FoliaRunnable.runEntityTask(QAMain.getInstance(), holderEntity,
 						() -> handleThrowableTick(h),
 						() -> {
-							throwItems.remove(holderEntity);
+							ThrowableItemRegistry.remove(holderEntity);
 							BukkitTask t = h.getTask();
 							if (t != null) t.cancel();
 						});
 			}
 		}.runTaskLater(QAMain.getInstance(), getFuseTicks()));
-		throwItems.put(thrower, h);
+		ThrowableItemRegistry.put(thrower, h);
 		return true;
 	}
 
 	private void handleThrowableTick(ThrowableHolder h) {
-		try {
+		if (Compat.PARTICLES) {
 			h.getHolder().getWorld().spawnParticle(XParticle.EXPLOSION_EMITTER.get(),
 					h.getHolder().getLocation(), 0);
 			h.getHolder().getWorld().playSound(h.getHolder().getLocation(), WeaponSounds.FLASHBANG.getSoundName(),
 					3f, 1f);
-		} catch (Error e3) {
+		} else {
 			h.getHolder().getWorld().playEffect(h.getHolder().getLocation(), Effect.valueOf("CLOUD"), 0);
 			h.getHolder().getWorld().playSound(h.getHolder().getLocation(), Sound.valueOf("EXPLODE"), 8, 0.7f);
 		}
-		try {
-			for (Entity e : h.getHolder().getNearbyEntities(radius, radius, radius)) {
-				if (e instanceof LivingEntity) {
-					final LivingEntity target = (LivingEntity) e;
-					QAMain.DEBUG("Flashbaned "+target.getName());
-					FoliaRunnable.runEntityTask(QAMain.getInstance(), target, () ->
-							target.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 20 * 10, 2)));
-				}
+		for (Entity e : h.getHolder().getNearbyEntities(radius, radius, radius)) {
+			if (e instanceof LivingEntity) {
+				final LivingEntity target = (LivingEntity) e;
+				QAMain.DEBUG("Flashbaned "+target.getName());
+				FoliaRunnable.runEntityTask(QAMain.getInstance(), target, () ->
+						target.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 20 * 10, 2)));
 			}
-		} catch (Error e) {
 		}
 		if (h.getHolder() instanceof Player) {
 			QAMain.DEBUG("Blinded player");
@@ -90,7 +88,7 @@ public class Flashbang extends Grenade {
 			h.getHolder().remove();
 		}
 
-		throwItems.remove(h.getHolder());
+		ThrowableItemRegistry.remove(h.getHolder());
 	}
 
 }

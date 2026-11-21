@@ -1,7 +1,7 @@
 package me.zombie_striker.qg.armor;
 
+import me.zombie_striker.qg.utils.Compat;
 import com.cryptomorin.xseries.XAttribute;
-import me.zombie_striker.customitemmanager.ArmoryBaseObject;
 import me.zombie_striker.customitemmanager.CustomBaseObject;
 import me.zombie_striker.customitemmanager.CustomItemManager;
 import me.zombie_striker.customitemmanager.MaterialStorage;
@@ -14,7 +14,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.List;
 
-public class ArmorObject extends CustomBaseObject implements ArmoryBaseObject {
+public class ArmorObject extends CustomBaseObject {
 
 	private int protection = 0;
 	private double heightMin = 1;
@@ -82,10 +82,8 @@ public class ArmorObject extends CustomBaseObject implements ArmoryBaseObject {
 			ItemStack helm = e.getInventory().getHelmet();
 			e.setItemInHand(helm);
 			e.getInventory().setHelmet(usedItem);
-			try {
+			if (Compat.MODERN_SOUNDS)
 				e.getPlayer().playSound(e.getLocation(), Sound.ITEM_ARMOR_EQUIP_IRON, 2, 1);
-			} catch (Error | Exception e3) {
-			}
 			return true;
 		
 	}
@@ -97,10 +95,9 @@ public class ArmorObject extends CustomBaseObject implements ArmoryBaseObject {
 
 	@Override
 	public boolean onLMB(Player e, ItemStack usedItem) {
-		// TODO Auto-generated method stub
 		return false;
-		
 	}
+
 	@Override
 	public ItemStack getItemStack() {
 		ItemStack item = CustomItemManager.getItemType("gun").getItem(this.getItemData().getMat(),this.getItemData().getData(),this.getItemData().getVariant());

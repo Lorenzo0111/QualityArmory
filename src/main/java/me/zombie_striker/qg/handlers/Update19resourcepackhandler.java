@@ -1,7 +1,7 @@
 package me.zombie_striker.qg.handlers;
 
-import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.utils.FoliaRunnable;
+import me.zombie_striker.qg.QAMain;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -12,34 +12,34 @@ public class Update19resourcepackhandler implements Listener {
 
     @EventHandler
     public void onResourcePackStatus(PlayerResourcePackStatusEvent event) {
-        QAMain.sentResourcepack.remove(event.getPlayer().getUniqueId());
+        QAMain.getResourcepacks().clearSent(event.getPlayer().getUniqueId());
 
         if (event.getStatus() == PlayerResourcePackStatusEvent.Status.ACCEPTED
                 || event.getStatus() == PlayerResourcePackStatusEvent.Status.SUCCESSFULLY_LOADED) {
-            QAMain.resourcepackReq.add(event.getPlayer().getUniqueId());
+            QAMain.getResourcepacks().setAccepted(event.getPlayer().getUniqueId());
         }
 
         if (event.getStatus() == PlayerResourcePackStatusEvent.Status.SUCCESSFULLY_LOADED)
-            QAMain.resourcepackLoading.remove(event.getPlayer().getUniqueId());
+            QAMain.getResourcepacks().setLoading(event.getPlayer().getUniqueId(), false);
 
         if (event.getStatus() == PlayerResourcePackStatusEvent.Status.DECLINED) {
-            if (QAMain.kickIfDeniedRequest) {
+            if (QAMain.getConfiguration().resourcepack.kickIfDenied) {
                 final Player player = event.getPlayer();
-                FoliaRunnable.runEntityTask(QAMain.getInstance(), player, () -> player.kickPlayer(QAMain.S_KICKED_FOR_RESOURCEPACK));
+                FoliaRunnable.runEntityTask(QAMain.getInstance(), player, () -> player.kickPlayer(QAMain.getMessages().resourcepack.kickMessage));
             }
 
             // Add to the list, so it doesn't keep spamming the title
-            QAMain.resourcepackReq.add(event.getPlayer().getUniqueId());
+            QAMain.getResourcepacks().setAccepted(event.getPlayer().getUniqueId());
         }
     }
 
     @EventHandler(ignoreCancelled = true)
     public void onDamage(EntityDamageEvent event) {
-        if (!QAMain.resourcepackInvincibility) return;
+        if (!QAMain.getConfiguration().resourcepack.invincibility) return;
         if (!(event.getEntity() instanceof Player)) return;
 
         Player player = (Player) event.getEntity();
-        if (QAMain.resourcepackLoading.contains(player.getUniqueId()))
+        if (QAMain.getResourcepacks().isLoading(player.getUniqueId()))
             event.setCancelled(true);
     }
 

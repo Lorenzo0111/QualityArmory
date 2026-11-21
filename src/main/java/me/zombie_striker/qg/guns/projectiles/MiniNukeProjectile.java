@@ -1,5 +1,6 @@
 package me.zombie_striker.qg.guns.projectiles;
 
+import me.zombie_striker.qg.utils.Compat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,35 +30,32 @@ public MiniNukeProjectile() {
 
 			@Override
 			public void run() {
-				dir.setY(dir.getY() - QAMain.gravity);
+				dir.setY(dir.getY() - QAMain.getConfiguration().weapons.detection.gravity);
 				for (int tick = 0; tick < Math.round(0.99+g.getVelocityForRealtimeCalculations()); tick++) {
 				distance--;
 				s.add(dir);
 				ParticleHandlers.spawnGunParticles(g, s);
-				try {
+				if (Compat.MODERN_SOUNDS) {
 					player.getWorld().playSound(s, MultiVersionLookup.getDragonGrowl(), 1, 2f);
 
-				} catch (Error e2) {
+				} else {
 					player.getWorld().playSound(s, Sound.valueOf("ENDERDRAGON_GROWL"), 1, 2f);
 				}
 				boolean entityNear = false;
-				try {
-					List<Entity> e2 = new ArrayList<>(s.getWorld().getNearbyEntities(s, 1, 1, 1));
-					for(Entity e : e2) {
-						if (e != player && !GunUtil.shouldBulletPassThrough(e)
-									&& (!(e instanceof Player) || ((Player) e).getGameMode() != GameMode.SPECTATOR))
-							entityNear = true;
-					}
-				} catch (Error e) {
+				List<Entity> e2 = new ArrayList<>(s.getWorld().getNearbyEntities(s, 1, 1, 1));
+				for(Entity e : e2) {
+					if (e != player && !GunUtil.shouldBulletPassThrough(e)
+								&& (!(e instanceof Player) || ((Player)e).getGameMode()!=GameMode.SPECTATOR))
+						entityNear = true;
 				}
 
 				if (GunUtil.isSolid(s.getBlock(), s) || entityNear || distance < 0) {
-					if (QAMain.enableExplosionDamage) {
+					if (QAMain.getConfiguration().features.enableExplosionDamage) {
 						QAProjectileExplodeEvent event = new QAProjectileExplodeEvent(MiniNukeProjectile.this, s);
 						Bukkit.getPluginManager().callEvent(event);
 						if (!event.isCancelled()) ExplosionHandler.handleExplosion(s, Math.toIntExact(Math.round(g.getExplosionRadius())), 2);
 					}
-					try {
+					if (Compat.WORLD_SOUND_BY_NAME) {
 						player.getWorld().playSound(s, WeaponSounds.WARHEAD_EXPLODE.getSoundName(), 10, 0.9f);
 						player.getWorld().playSound(s, Sound.ENTITY_GENERIC_EXPLODE, 8, 0.7f);
 						ParticleHandlers.spawnMushroomCloud(s);
@@ -70,7 +68,7 @@ public MiniNukeProjectile() {
 							}
 						}.runTaskLater(QAMain.getInstance(), sClone, 10);
 
-					} catch (Error e3) {
+					} else {
 						s.getWorld().playEffect(s, Effect.valueOf("CLOUD"), 0);
 						player.getWorld().playSound(s, Sound.valueOf("EXPLODE"), 8, 0.7f);
 					}

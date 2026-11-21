@@ -1,14 +1,27 @@
 package me.zombie_striker.qg.api;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map.Entry;
-
-import me.zombie_striker.customitemmanager.*;
+import me.zombie_striker.qg.utils.FoliaRunnable;
+import me.zombie_striker.qg.items.ItemState;
+import me.zombie_striker.qg.utils.ErrorReporter;
+import me.zombie_striker.qg.utils.CustomModelData;
+import me.zombie_striker.qg.utils.Compat;
+import me.zombie_striker.customitemmanager.CustomBaseObject;
+import me.zombie_striker.customitemmanager.CustomItemManager;
+import me.zombie_striker.customitemmanager.MaterialStorage;
+import me.zombie_striker.customitemmanager.OLD_ItemFact;
+import me.zombie_striker.qg.QAMain;
+import me.zombie_striker.qg.ammo.Ammo;
+import me.zombie_striker.qg.armor.ArmorObject;
+import me.zombie_striker.qg.attachments.AttachmentBase;
+import me.zombie_striker.qg.config.GunYML;
+import me.zombie_striker.qg.config.GunYMLCreator;
+import me.zombie_striker.qg.config.GunYMLLoader;
+import me.zombie_striker.qg.guns.Gun;
+import me.zombie_striker.qg.guns.utils.WeaponSounds;
+import me.zombie_striker.qg.guns.utils.WeaponType;
 import me.zombie_striker.qg.handlers.HotbarMessager;
 import me.zombie_striker.qg.handlers.IronsightsHandler;
+import me.zombie_striker.qg.hooks.ViaVersionHook;
 import me.zombie_striker.qg.hooks.protection.ProtectionHandler;
 import me.zombie_striker.qg.miscitems.AmmoBag;
 import me.zombie_striker.qg.utils.LocalUtils;
@@ -20,20 +33,14 @@ import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import me.zombie_striker.qg.utils.FoliaRunnable;
-
-import me.zombie_striker.qg.*;
-import me.zombie_striker.qg.ammo.Ammo;
-import me.zombie_striker.qg.armor.ArmorObject;
-import me.zombie_striker.qg.attachments.AttachmentBase;
-import me.zombie_striker.qg.config.GunYML;
-import me.zombie_striker.qg.config.GunYMLCreator;
-import me.zombie_striker.qg.config.GunYMLLoader;
-import me.zombie_striker.qg.guns.Gun;
-import me.zombie_striker.qg.guns.utils.WeaponSounds;
-import me.zombie_striker.qg.guns.utils.WeaponType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map.Entry;
 
 public class QualityArmory {
 
@@ -62,23 +69,23 @@ public class QualityArmory {
 	}
 
 	public static void registerNewUsedExpansionItem(Material used, int id, int var) {
-		QAMain.expansionPacks.add(MaterialStorage.getMS(used, id, var));
+		QAMain.getItemRegistry().addExpansionPack(MaterialStorage.getMS(used, id, var));
 	}
 	public static void registerNewUsedExpansionItem(MaterialStorage ms) {
-		QAMain.expansionPacks.add(ms);
+		QAMain.getItemRegistry().addExpansionPack(ms);
 	}
 
 	public static Iterator<Gun> getGuns(){
-		return QAMain.gunRegister.values().iterator();
+		return QAMain.getItemRegistry().getGuns().values().iterator();
 	}
 	public static Iterator<Ammo> getAmmo(){
-		return QAMain.ammoRegister.values().iterator();
+		return QAMain.getItemRegistry().getAmmo().values().iterator();
 	}
 	public static Iterator<CustomBaseObject> getMisc(){
-		return QAMain.miscRegister.values().iterator();
+		return QAMain.getItemRegistry().getMisc().values().iterator();
 	}
 	public static Iterator<ArmorObject> getArmor(){
-		return QAMain.armorRegister.values().iterator();
+		return QAMain.getItemRegistry().getArmor().values().iterator();
 	}
 	public static Iterator<CustomBaseObject> getCustomItems(){
 		return getCustomItemsAsList().iterator();
@@ -86,10 +93,10 @@ public class QualityArmory {
 
 	public static List<CustomBaseObject> getCustomItemsAsList(){
 		List<CustomBaseObject> list = new ArrayList<>();
-		list.addAll(QAMain.gunRegister.values());
-		list.addAll(QAMain.ammoRegister.values());
-		list.addAll(QAMain.armorRegister.values());
-		list.addAll(QAMain.miscRegister.values());
+		list.addAll(QAMain.getItemRegistry().getGuns().values());
+		list.addAll(QAMain.getItemRegistry().getAmmo().values());
+		list.addAll(QAMain.getItemRegistry().getArmor().values());
+		list.addAll(QAMain.getItemRegistry().getMisc().values());
 		return list;
 	}
 
@@ -99,69 +106,78 @@ public class QualityArmory {
 		new FoliaRunnable() {
 			@Override
 			public void run() {
-				if (QAMain.namesToBypass.contains(player.getName())) {
-					QAMain.resourcepackReq.add(player.getUniqueId());
+				if (QAMain.getResourcepacks().isBypassing(player.getName())) {
+					QAMain.getResourcepacks().setAccepted(player.getUniqueId());
 					return;
 				}
 				if (warning) {
-					try {
-						player.sendTitle(LocalUtils.colorize(ChatColor.RED + QAMain.S_NORES1), LocalUtils.colorize(QAMain.S_NORES2));
-					} catch (Error e2) {
-						player.sendMessage(LocalUtils.colorize(ChatColor.RED + QAMain.S_NORES1));
-						player.sendMessage(LocalUtils.colorize(ChatColor.RED + QAMain.S_NORES2));
+					if (TITLES) {
+						player.sendTitle(LocalUtils.colorize(ChatColor.RED + QAMain.getMessages().resourcepack.downloading), LocalUtils.colorize(QAMain.getMessages().resourcepack.acceptPrompt));
+					} else {
+						player.sendMessage(LocalUtils.colorize(ChatColor.RED + QAMain.getMessages().resourcepack.downloading));
+						player.sendMessage(LocalUtils.colorize(ChatColor.RED + QAMain.getMessages().resourcepack.acceptPrompt));
 					}
 				}
-				if (QAMain.showCrashMessage)
-					player.sendMessage(LocalUtils.colorize(QAMain.prefix + QAMain.S_RESOURCEPACK_HELP));
+				if (QAMain.getConfiguration().ui.showPossibleCrashHelpMessage)
+					player.sendMessage(LocalUtils.colorize(QAMain.getMessages().general.prefix + QAMain.getMessages().resourcepack.crashHelp));
 
 				new FoliaRunnable() {
 					@Override
 					public void run() {
 						try {
-							try {
-								QAMain.DEBUG("Sending resourcepack : " + (QAMain.AutoDetectResourcepackVersion) + " || "
-										+ QAMain.MANUALLYSELECT18 + " || " + QAMain.isVersionHigherThan(1, 9) + " || ");
+							QAMain.DEBUG("Sending resourcepack : " + (QAMain.getConfiguration().resourcepack.autoDetectVersion) + " || "
+									+ QAMain.getConfiguration().general.versionOverride.equalsIgnoreCase("1.8") + " || " + QAMain.isVersionHigherThan(1, 9) + " || ");
+							if (QAMain.getIntegrations().hasViaVersion() && QAMain.getConfiguration().debug.enabled) {
 								try {
-									if (QAMain.hasViaVersion) {
-										QAMain.DEBUG(
-												"Has Viaversion: " + com.viaversion.viaversion.api.Via.getAPI()
-														.getPlayerVersion(player) + " 1.8=" + QAMain.ViaVersionIdfor_1_8);
-
-									}
-								} catch (Error | Exception re4) {
+									QAMain.DEBUG("Has Viaversion: " + com.viaversion.viaversion.api.Via.getAPI()
+											.getPlayerVersion(player) + " 1.8=" + ViaVersionHook.VIAVERSION_1_8);
+								} catch (RuntimeException | LinkageError re4) {
+									ErrorReporter.report("reading the client version from ViaVersion", re4);
 								}
-
-								if (QAMain.isVersionHigherThan(1, 19))
-									player.setResourcePack(CustomItemManager.getResourcepack(player), (byte[]) null, QAMain.kickIfDeniedRequest);
-                                else player.setResourcePack(CustomItemManager.getResourcepack(player));
-
-							} catch (Error | Exception e4) {
-
-								player.setResourcePack(CustomItemManager.getResourcepack(player));
 							}
 
+							String pack = CustomItemManager.getResourcepack(player);
+							boolean sent = false;
+							if (QAMain.isVersionHigherThan(1, 19) && FORCED_RESOURCEPACK) {
+								try {
+									player.setResourcePack(pack, (byte[]) null, QAMain.getConfiguration().resourcepack.kickIfDenied);
+									sent = true;
+								} catch (IllegalArgumentException e4) {
+									// Some versions require a hash with this method; fall back to the plain one
+								}
+							}
+							if (!sent)
+								player.setResourcePack(pack);
+
 							if (!QAMain.isVersionHigherThan(1, 9)) {
-								QAMain.resourcepackReq.add(player.getUniqueId());
-								QAMain.sentResourcepack.put(player.getUniqueId(), System.currentTimeMillis());
-								QAMain.resourcepackLoading.add(player.getUniqueId());
+								QAMain.getResourcepacks().setAccepted(player.getUniqueId());
+								QAMain.getResourcepacks().markSent(player.getUniqueId());
+								QAMain.getResourcepacks().setLoading(player.getUniqueId(), true);
 							}
 							// If the player is on 1.8, manually add them to the resource list.
 
-						} catch (Exception e) {
-
+						} catch (RuntimeException e) {
+							ErrorReporter.report("sending the resourcepack", e);
 						}
 					}
 				}.runTaskLater(QAMain.getInstance(), player, 20 * (warning ? 1 : 5));
 			}
-		}.runTaskLater(QAMain.getInstance(), player, (long) (20 * QAMain.secondsTilSend));
+		}.runTaskLater(QAMain.getInstance(), player, (long) (20 * QAMain.getConfiguration().resourcepack.sendOnJoin.delay));
 	}
+
+	/** {@code Player#sendTitle(String, String)}, missing on early 1.8 builds. */
+	private static final boolean TITLES = Compat.hasMethod("org.bukkit.entity.Player", "sendTitle", "java.lang.String", "java.lang.String");
+	/** {@code Player#setResourcePack(String, byte[], boolean)} (1.17+). */
+	private static final boolean FORCED_RESOURCEPACK = Compat.hasMethod("org.bukkit.entity.Player", "setResourcePack", "java.lang.String", "[B", "boolean");
 
 	public static boolean allowGunsInRegion(Location loc) {
 		try {
 			return ProtectionHandler.canPvp(loc);
-		} catch (Error e) {
+		} catch (LinkageError e) {
+			// A protection plugin changed its API; don't block guns because of it
+			ErrorReporter.report("checking PvP protection", e);
+			return true;
 		}
-		return true;
 	}
 
 	public static boolean isCustomItem(ItemStack is) {
@@ -172,16 +188,14 @@ public class QualityArmory {
 	public static boolean isCustomItemNextId(ItemStack is) {
 		if (is == null)
 			return false;
-		try{
-			if(CustomItemManager.isUsingCustomData())
-				return false;
-		}catch (Error|Exception e4){}
+		if (CustomItemManager.isUsingCustomData())
+			return false;
 		List<MaterialStorage> ms = new ArrayList<MaterialStorage>();
-		ms.addAll(QAMain.expansionPacks);
-		ms.addAll(QAMain.gunRegister.keySet());
-		ms.addAll(QAMain.armorRegister.keySet());
-		ms.addAll(QAMain.ammoRegister.keySet());
-		ms.addAll(QAMain.miscRegister.keySet());
+		ms.addAll(QAMain.getItemRegistry().getExpansionPacks());
+		ms.addAll(QAMain.getItemRegistry().getGuns().keySet());
+		ms.addAll(QAMain.getItemRegistry().getArmor().keySet());
+		ms.addAll(QAMain.getItemRegistry().getAmmo().keySet());
+		ms.addAll(QAMain.getItemRegistry().getMisc().keySet());
 		for (MaterialStorage mat : ms) {
 			if (mat.getMat() == is.getType())
 				if (mat.getData() == (is.getDurability() + 1))
@@ -192,14 +206,14 @@ public class QualityArmory {
 	}
 
 	public static CustomBaseObject getCustomItem(MaterialStorage material) {
-		if(QAMain.gunRegister.containsKey(material))
-			return QAMain.gunRegister.get(material);
-		if(QAMain.ammoRegister.containsKey(material))
-			return QAMain.ammoRegister.get(material);
-		if(QAMain.miscRegister.containsKey(material))
-			return QAMain.miscRegister.get(material);
-		if(QAMain.armorRegister.containsKey(material))
-			return QAMain.armorRegister.get(material);
+		if(QAMain.getItemRegistry().getGuns().containsKey(material))
+			return QAMain.getItemRegistry().getGuns().get(material);
+		if(QAMain.getItemRegistry().getAmmo().containsKey(material))
+			return QAMain.getItemRegistry().getAmmo().get(material);
+		if(QAMain.getItemRegistry().getMisc().containsKey(material))
+			return QAMain.getItemRegistry().getMisc().get(material);
+		if(QAMain.getItemRegistry().getArmor().containsKey(material))
+			return QAMain.getItemRegistry().getArmor().get(material);
 		return null;
 	}
 
@@ -212,13 +226,8 @@ public class QualityArmory {
 			im.setLore(lore);
 			is.setItemMeta(im);
 		}
-		try{
-			ItemMeta im = is.getItemMeta();
-			im.setCustomModelData(data);
-			is.setItemMeta(im);
-		}catch (Error|Exception e4){
-			is.setDurability((short) data);
-		}
+		CustomModelData.setOrDurability(is, data);
+		ItemState.setVariant(is, variant);
 		return getCustomItem(is);
 	}
 	public static CustomBaseObject getCustomItem(ItemStack is) {
@@ -239,8 +248,8 @@ public class QualityArmory {
 			return false;
 		ItemStack itemstack = is.clone();
 		if(dataOffset!=0) {
-			try {
-				ItemMeta im = itemstack.getItemMeta();
+			ItemMeta im = CustomModelData.SUPPORTED ? itemstack.getItemMeta() : null;
+			if (im != null) {
 				int modeldata = 0;
 				if(im.hasCustomModelData()) {
 					modeldata = im.getCustomModelData();
@@ -249,7 +258,7 @@ public class QualityArmory {
 				}
 				im.setCustomModelData(modeldata + dataOffset);
 				itemstack.setItemMeta(im);
-			} catch (Error | Exception ed4) {
+			} else {
 				itemstack.setDurability((short) (is.getDurability() + dataOffset));
 			}
 		}
@@ -263,7 +272,7 @@ public class QualityArmory {
 			return true;
 		if(isArmor(itemstack))
 			return true;
-		if(QAMain.expansionPacks.contains(MaterialStorage.getMS(is)))
+		if(QAMain.getItemRegistry().getExpansionPacks().contains(MaterialStorage.getMS(is)))
 			return true;
 		return false;
 	}
@@ -273,15 +282,15 @@ public class QualityArmory {
 		if (is == null)
 			return false;
 		return (is != null
-				&& (QAMain.armorRegister.containsKey(MaterialStorage.getMS(is))
-						|| QAMain.armorRegister.containsKey(MaterialStorage.getMS(is))));
+				&& (QAMain.getItemRegistry().getArmor().containsKey(MaterialStorage.getMS(is))
+						|| QAMain.getItemRegistry().getArmor().containsKey(MaterialStorage.getMS(is))));
 	}
 
 	@SuppressWarnings("deprecation")
 	public static ArmorObject getArmor(ItemStack is) {
-		if (QAMain.armorRegister.containsKey(MaterialStorage.getMS(is)))
-			return QAMain.armorRegister.get(MaterialStorage.getMS(is));
-		return QAMain.armorRegister.get(MaterialStorage.getMS(is));
+		if (QAMain.getItemRegistry().getArmor().containsKey(MaterialStorage.getMS(is)))
+			return QAMain.getItemRegistry().getArmor().get(MaterialStorage.getMS(is));
+		return QAMain.getItemRegistry().getArmor().get(MaterialStorage.getMS(is));
 	}
 
 	@SuppressWarnings("deprecation")
@@ -290,16 +299,16 @@ public class QualityArmory {
 			return false;
 		int var = MaterialStorage.getVariant(is);
 		return (is != null
-				&& (QAMain.miscRegister.containsKey(MaterialStorage.getMS(is,var))
-						|| QAMain.miscRegister.containsKey(MaterialStorage.getMS(is,var))));
+				&& (QAMain.getItemRegistry().getMisc().containsKey(MaterialStorage.getMS(is,var))
+						|| QAMain.getItemRegistry().getMisc().containsKey(MaterialStorage.getMS(is,var))));
 	}
 
 	public static CustomBaseObject getMisc(ItemStack is) {
-		return QAMain.miscRegister.get(MaterialStorage.getMS(is));
+		return QAMain.getItemRegistry().getMisc().get(MaterialStorage.getMS(is));
 	}
 
 	public static Gun getGun(ItemStack is) {
-		return QAMain.gunRegister.get(MaterialStorage.getMS(is));
+		return QAMain.getItemRegistry().getGuns().get(MaterialStorage.getMS(is));
 	}
 
 	@Nullable
@@ -309,33 +318,33 @@ public class QualityArmory {
 
 		if (isGun(stack)) return getGun(stack);
 		if (isIronSights(stack)) {
-			try {
+			if (Compat.OFFHAND) {
 				ItemStack offHand = entity.getInventory().getItemInOffHand();
 				if (isGun(offHand)) {
 					return getGun(offHand);
 				}
-			} catch (NoSuchMethodError ignored) {}
+			}
 		}
 
 		return null;
 	}
 
 	public static boolean isGun(ItemStack is) {
-		return (is != null && QAMain.gunRegister.containsKey(MaterialStorage.getMS(is)));
+		return (is != null && QAMain.getItemRegistry().getGuns().containsKey(MaterialStorage.getMS(is)));
 	}
 
 	@SuppressWarnings("deprecation")
 	public static Ammo getAmmo(ItemStack is) {
 		int var = MaterialStorage.getVariant(is);
-		if (QAMain.ammoRegister
+		if (QAMain.getItemRegistry().getAmmo()
 				.containsKey(MaterialStorage.getMS(is,var)))
-			return QAMain.ammoRegister
+			return QAMain.getItemRegistry().getAmmo()
 					.get(MaterialStorage.getMS(is,var));
-		return QAMain.ammoRegister.get(MaterialStorage.getMS(is,var));
+		return QAMain.getItemRegistry().getAmmo().get(MaterialStorage.getMS(is,var));
 	}
 
 	public static Ammo getAmmoByName(String name) {
-		for (Entry<MaterialStorage, Ammo> e : QAMain.ammoRegister.entrySet())
+		for (Entry<MaterialStorage, Ammo> e : QAMain.getItemRegistry().getAmmo().entrySet())
 			if (e.getValue().getName().equalsIgnoreCase(name)) {
 				return e.getValue();
 			}
@@ -382,7 +391,7 @@ public class QualityArmory {
 
 		MaterialStorage storage = MaterialStorage.getMS(is,var);
 
-		return QAMain.ammoRegister.containsKey(storage);
+		return QAMain.getItemRegistry().getAmmo().containsKey(storage);
 	}
 
 	public static boolean isAmmoBag(ItemStack is) {
@@ -392,29 +401,22 @@ public class QualityArmory {
 
 		MaterialStorage storage = MaterialStorage.getMS(is,var);
 
-		return QAMain.miscRegister.containsKey(storage) && QAMain.miscRegister.get(storage) instanceof AmmoBag;
+		return QAMain.getItemRegistry().getMisc().containsKey(storage) && QAMain.getItemRegistry().getMisc().get(storage) instanceof AmmoBag;
 	}
 
 	@SuppressWarnings("deprecation")
 	public static boolean isIronSights(ItemStack is) {
 		if (is == null)
 			return false;
-		if (is.getType() == IronsightsHandler.ironsightsMaterial)
-			try{
-				if(!is.hasItemMeta() || !is.getItemMeta().hasCustomModelData())
-					return false;
-				if(is.getItemMeta().getCustomModelData() == IronsightsHandler
-				.ironsightsData)
-					return true;
-			}catch (Error|Exception e4){
-				if(is.getDurability() == IronsightsHandler.ironsightsData)
-					return true;
-			}
-		return false;
+		if (is.getType() != IronsightsHandler.ironsightsMaterial)
+			return false;
+		if (CustomModelData.SUPPORTED)
+			return CustomModelData.has(is) && is.getItemMeta().getCustomModelData() == IronsightsHandler.ironsightsData;
+		return is.getDurability() == IronsightsHandler.ironsightsData;
 	}
 
 	public static ArmorObject getArmorByName(String name) {
-		for (ArmorObject g : QAMain.armorRegister.values()) {
+		for (ArmorObject g : QAMain.getItemRegistry().getArmor().values()) {
 			if (g.getName().equals(name))
 				return g;
 		}
@@ -422,7 +424,7 @@ public class QualityArmory {
 	}
 
 	public static CustomBaseObject getMiscByName(String name) {
-		for (CustomBaseObject g : QAMain.miscRegister.values()) {
+		for (CustomBaseObject g : QAMain.getItemRegistry().getMisc().values()) {
 			if (g.getName().equals(name))
 				return g;
 		}
@@ -430,7 +432,7 @@ public class QualityArmory {
 	}
 
 	public static Gun getGunByName(String name) {
-		for (Gun g : QAMain.gunRegister.values()) {
+		for (Gun g : QAMain.getItemRegistry().getGuns().values()) {
 			if (g.getName().equals(name))
 				return g;
 		}
@@ -464,9 +466,9 @@ public class QualityArmory {
 
 		int ammoamount = getAmmoInInventory(p, g.getAmmoType());
 
-		if (QAMain.showOutOfAmmoOnTitle && ammoamount <= 0 && Gun.getAmount(p) < 1) {
-			p.sendTitle(" ", QAMain.S_OUT_OF_AMMO, 0, 20, 1);
-		} else if (QAMain.showReloadOnTitle && reloading) {
+		if (QAMain.getConfiguration().ui.showOutOfAmmoTitle && ammoamount <= 0 && Gun.getAmount(p) < 1) {
+			p.sendTitle(" ", QAMain.getMessages().weapon.outOfAmmo, 0, 20, 1);
+		} else if (QAMain.getConfiguration().ui.showReloadTitle && reloading) {
 			for (int i = 1; i < g.getReloadTime() * 20; i += 2) {
 				final int id = i;
 				new FoliaRunnable() {
@@ -477,23 +479,23 @@ public class QualityArmory {
 						sb.append(repeat("#", (int) (20 * (1.0 * id / (20 * g.getReloadTime())))));
 						sb.append(ChatColor.DARK_GRAY);
 						sb.append(repeat("#", (int) (20 - ((int) (20.0 * id / (20 * g.getReloadTime()))))));
-						p.sendTitle(QAMain.S_RELOADING_MESSAGE, sb.toString(), 0, 4, 0);
+						p.sendTitle(QAMain.getMessages().weapon.reloading, sb.toString(), 0, 4, 0);
 					}
 				}.runTaskLater(QAMain.getInstance(), p, i);
 			}
 		} else {
 
 			try {
-				String message = QAMain.S_HOTBAR_FORMAT;
+				String message = QAMain.getMessages().weapon.hotbarFormat;
 
-				if (QAMain.disableHotBarMessageOnOutOfAmmo && QAMain.disableHotBarMessageOnReload
-						&& QAMain.disableHotBarMessageOnShoot)
+				if (QAMain.getConfiguration().ui.disableHotbarMessages.outOfAmmo && QAMain.getConfiguration().ui.disableHotbarMessages.reload
+						&& QAMain.getConfiguration().ui.disableHotbarMessages.shoot)
 					return;
-				if (reloading && QAMain.disableHotBarMessageOnReload)
+				if (reloading && QAMain.getConfiguration().ui.disableHotbarMessages.reload)
 					return;
-				if (ammoamount <= 0 && QAMain.disableHotBarMessageOnOutOfAmmo)
+				if (ammoamount <= 0 && QAMain.getConfiguration().ui.disableHotbarMessages.outOfAmmo)
 					return;
-				if (!reloading && ammoamount > 0 && QAMain.disableHotBarMessageOnShoot)
+				if (!reloading && ammoamount > 0 && QAMain.getConfiguration().ui.disableHotbarMessages.shoot)
 					return;
 
 				if (message.contains("%name%"))
@@ -505,18 +507,19 @@ public class QualityArmory {
 					message = message.replace("%max%", maxAmount + "");
 
 				if (message.contains("%state%"))
-					message = message.replace("%state%", reloading ? QAMain.S_RELOADING_MESSAGE
-							: ammoamount <= 0 ? QAMain.S_OUT_OF_AMMO : QAMain.S_MAX_FOUND);
+					message = message.replace("%state%", reloading ? QAMain.getMessages().weapon.reloading
+							: ammoamount <= 0 ? QAMain.getMessages().weapon.outOfAmmo : QAMain.getMessages().weapon.ammoCount);
 				if (message.contains("%total%"))
 					message = message.replace("%total%", "" + ammoamount);
 
-				if (QAMain.unknownTranslationKeyFixer) {
+				if (QAMain.getConfiguration().features.unknownTranslationKeyFixer) {
 					message = ChatColor.stripColor(message);
 				} else {
 					message = LocalUtils.colorize(message);
 				}
 				HotbarMessager.sendHotBarMessage(p, message);
-			} catch (Error | Exception e5) {
+			} catch (Exception | LinkageError e5) {
+				ErrorReporter.report("sending the hotbar ammo message", e5);
 			}
 		}
 	}
@@ -525,29 +528,26 @@ public class QualityArmory {
 	public static int findSafeSpot(ItemStack newItem, boolean findHighest, boolean allowPockets) {
 		if(CustomItemManager.isUsingCustomData())
 			return -1;
-		try{
-			return findSafeSpot(newItem.getType(), newItem.getItemMeta().getCustomModelData(), findHighest, allowPockets);
-		}catch (Error|Exception e534){}
-		return findSafeSpot(newItem.getType(), newItem.getDurability(), findHighest, allowPockets);
+		return findSafeSpot(newItem.getType(), CustomModelData.getOrDurability(newItem), findHighest, allowPockets);
 	}
 
 	public static int findSafeSpot(Material newItemtype, int startingData, boolean findHighest, boolean allowPockets) {
 		int safeDurib = startingData;
 		if (allowPockets) {
 			List<Integer> idsToWorryAbout = new ArrayList<>();
-			for (MaterialStorage j : QAMain.ammoRegister.keySet())
+			for (MaterialStorage j : QAMain.getItemRegistry().getAmmo().keySet())
 				if (j.getMat() == newItemtype && ((j.getData() > safeDurib) == findHighest))
 					idsToWorryAbout.add(j.getData());
-			for (MaterialStorage j : QAMain.gunRegister.keySet())
+			for (MaterialStorage j : QAMain.getItemRegistry().getGuns().keySet())
 				if (j.getMat() == newItemtype && ((j.getData() > safeDurib) == findHighest))
 					idsToWorryAbout.add(j.getData());
-			for (MaterialStorage j : QAMain.miscRegister.keySet())
+			for (MaterialStorage j : QAMain.getItemRegistry().getMisc().keySet())
 				if (j.getMat() == newItemtype && ((j.getData() > safeDurib) == findHighest))
 					idsToWorryAbout.add(j.getData());
-			for (MaterialStorage j : QAMain.armorRegister.keySet())
+			for (MaterialStorage j : QAMain.getItemRegistry().getArmor().keySet())
 				if (j.getMat() == newItemtype && ((j.getData() > safeDurib) == findHighest))
 					idsToWorryAbout.add(j.getData());
-			for (MaterialStorage j : QAMain.expansionPacks)
+			for (MaterialStorage j : QAMain.getItemRegistry().getExpansionPacks())
 				if (j.getMat() == newItemtype && ((j.getData() > safeDurib) == findHighest))
 					idsToWorryAbout.add(j.getData());
 			if (findHighest) {
@@ -564,19 +564,19 @@ public class QualityArmory {
 			return 0;
 		}
 
-		for (MaterialStorage j : QAMain.ammoRegister.keySet())
+		for (MaterialStorage j : QAMain.getItemRegistry().getAmmo().keySet())
 			if (j.getMat() == newItemtype && (j.getData() > safeDurib) == findHighest)
 				safeDurib = j.getData();
-		for (MaterialStorage j : QAMain.gunRegister.keySet())
+		for (MaterialStorage j : QAMain.getItemRegistry().getGuns().keySet())
 			if (j.getMat() == newItemtype && (j.getData() > safeDurib) == findHighest)
 				safeDurib = j.getData();
-		for (MaterialStorage j : QAMain.miscRegister.keySet())
+		for (MaterialStorage j : QAMain.getItemRegistry().getMisc().keySet())
 			if (j.getMat() == newItemtype && (j.getData() > safeDurib) == findHighest)
 				safeDurib = j.getData();
-		for (MaterialStorage j : QAMain.armorRegister.keySet())
+		for (MaterialStorage j : QAMain.getItemRegistry().getArmor().keySet())
 			if (j.getMat() == newItemtype && (j.getData() > safeDurib) == findHighest)
 				safeDurib = j.getData();
-		for (MaterialStorage j : QAMain.expansionPacks)
+		for (MaterialStorage j : QAMain.getItemRegistry().getExpansionPacks())
 			if (j.getMat() == newItemtype && (j.getData() > safeDurib) == findHighest)
 				safeDurib = j.getData();
 		return safeDurib;
@@ -584,33 +584,28 @@ public class QualityArmory {
 
 	@SuppressWarnings("deprecation")
 	public static int findSafeSpotVariant(ItemStack newItem, boolean findHighest) {
-		try{
-			return findSafeSpotVariant(newItem.getType(), newItem.getItemMeta().getCustomModelData(), findHighest);
-
-		}catch (Error|Exception e4){
-		}
-		return findSafeSpotVariant(newItem.getType(), newItem.getDurability(), findHighest);
+		return findSafeSpotVariant(newItem.getType(), CustomModelData.getOrDurability(newItem), findHighest);
 	}
 
 	public static int findSafeSpotVariant(Material newItemtype, int startingData, boolean findHighest) {
 		int safeDurib = 0;
-		for (MaterialStorage j : QAMain.ammoRegister.keySet())
+		for (MaterialStorage j : QAMain.getItemRegistry().getAmmo().keySet())
 			if (j.getMat() == newItemtype && (j.getData() == startingData)
 					&& ((j.getVariant()> safeDurib) == findHighest))
 				safeDurib = j.getVariant();
-		for (MaterialStorage j : QAMain.gunRegister.keySet())
+		for (MaterialStorage j : QAMain.getItemRegistry().getGuns().keySet())
 			if (j.getMat() == newItemtype && (j.getData() == startingData)
 					&& ((j.getVariant() > safeDurib) == findHighest))
 				safeDurib = j.getVariant();
-		for (MaterialStorage j : QAMain.miscRegister.keySet())
+		for (MaterialStorage j : QAMain.getItemRegistry().getMisc().keySet())
 			if (j.getMat() == newItemtype && (j.getData() == startingData)
 					&& ((j.getVariant() > safeDurib) == findHighest))
 				safeDurib = j.getVariant();
-		for (MaterialStorage j : QAMain.armorRegister.keySet())
+		for (MaterialStorage j : QAMain.getItemRegistry().getArmor().keySet())
 			if (j.getMat() == newItemtype && (j.getData() == startingData)
 					&& ((j.getVariant() > safeDurib) == findHighest))
 				safeDurib = j.getVariant();
-		for (MaterialStorage j : QAMain.expansionPacks)
+		for (MaterialStorage j : QAMain.getItemRegistry().getExpansionPacks())
 			if (j.getMat() == newItemtype && (j.getData() == startingData)
 					&& ((j.getVariant() > safeDurib) == findHighest))
 				safeDurib = j.getVariant();
@@ -618,8 +613,8 @@ public class QualityArmory {
 	}
 
 	public static int getMaxPagesForGUI() {
-		return (QAMain.armorRegister.size() + QAMain.ammoRegister.size() + QAMain.miscRegister.size()
-				+ QAMain.gunRegister.size()) / (9 * 5);
+		return (QAMain.getItemRegistry().getArmor().size() + QAMain.getItemRegistry().getAmmo().size() + QAMain.getItemRegistry().getMisc().size()
+				+ QAMain.getItemRegistry().getGuns().size()) / (9 * 5);
 	}
 
 	public static boolean isOverLimitForPrimaryWeapons(Gun g, Player p) {
@@ -631,7 +626,7 @@ public class QualityArmory {
 					count++;
 			}
 		}
-		return count >= (g.isPrimaryWeapon() ? QAMain.primaryWeaponLimit : QAMain.secondaryWeaponLimit);
+		return count >= (g.isPrimaryWeapon() ? QAMain.getConfiguration().limiter.primary.max : QAMain.getConfiguration().limiter.secondary.max);
 	}
 
 	public static ItemStack getCustomItemAsItemStack(String name) {

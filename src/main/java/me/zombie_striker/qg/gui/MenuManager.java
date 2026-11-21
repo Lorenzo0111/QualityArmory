@@ -96,10 +96,10 @@ public class MenuManager {
     private List<CustomBaseObject> getItemsForCategory(ItemCategory category, boolean isShop) {
         List<CustomBaseObject> allItems = new ArrayList<>();
 
-        allItems.addAll(QAMain.gunRegister.values());
-        allItems.addAll(QAMain.ammoRegister.values());
-        allItems.addAll(QAMain.miscRegister.values());
-        allItems.addAll(QAMain.armorRegister.values());
+        allItems.addAll(QAMain.getItemRegistry().getGuns().values());
+        allItems.addAll(QAMain.getItemRegistry().getAmmo().values());
+        allItems.addAll(QAMain.getItemRegistry().getMisc().values());
+        allItems.addAll(QAMain.getItemRegistry().getArmor().values());
 
         String filter = category.getFilter();
         List<CustomBaseObject> filtered = allItems.stream().filter(item -> {
@@ -126,7 +126,7 @@ public class MenuManager {
                         : item.getIngredientsRaw() != null && item.isEnableCrafting())
                 .collect(Collectors.toList());
 
-        if (isShop && QAMain.orderShopByPrice) {
+        if (isShop && QAMain.getConfiguration().menu.orderShopByPrice) {
             available.sort(
                     Comparator.comparingDouble(CustomBaseObject::getPrice)
                             .thenComparing(this::getComparableName, String.CASE_INSENSITIVE_ORDER)

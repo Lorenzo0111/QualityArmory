@@ -1,5 +1,6 @@
 package me.zombie_striker.qg;
 
+import me.zombie_striker.qg.utils.ErrorReporter;
 import java.io.*;
 import java.net.*;
 import com.google.gson.*;
@@ -28,7 +29,8 @@ public class GithubUpdater {
 			JsonObject json = null;
 			try {
 				json = new JsonParser().parse(new InputStreamReader(con.getInputStream())).getAsJsonObject();
-			} catch (Error | Exception e45) {
+			} catch (IOException | RuntimeException e45) {
+				// GitHub unreachable or rate limited
 				return false;
 			}
 			tagname = json.get("tag_name").getAsString();
@@ -90,14 +92,14 @@ public class GithubUpdater {
 							}
 
 						} catch (IOException e) {
-							e.printStackTrace();
+							ErrorReporter.report("installing the downloaded update", e);
 						}
 					}
 				}.runTaskLaterAsynchronously(main, 0);
 				return true;
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			ErrorReporter.report("checking for updates", e);
 		}
 		return false;
 	}

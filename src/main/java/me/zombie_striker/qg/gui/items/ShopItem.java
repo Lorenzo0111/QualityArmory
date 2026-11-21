@@ -1,5 +1,6 @@
 package me.zombie_striker.qg.gui.items;
 
+import me.zombie_striker.qg.utils.ErrorReporter;
 import com.cryptomorin.xseries.XSound;
 import de.themoep.inventorygui.StaticGuiElement;
 import me.zombie_striker.customitemmanager.CustomBaseObject;
@@ -52,26 +53,20 @@ public class ShopItem {
                 Player player = (Player) click.getRawEvent().getWhoClicked();
 
                 if (item instanceof Gun) {
-                    if (QAMain.requirePermsToBuy && !player.hasPermission("qualityarmory.shopgun")) {
-                        player.sendMessage(QAMain.prefix + ChatColor.RED + QAMain.S_NOPERM);
+                    if (QAMain.getConfiguration().permissions.requireBuy && !player.hasPermission("qualityarmory.shopgun")) {
+                        player.sendMessage(QAMain.getMessages().general.prefix + ChatColor.RED + QAMain.getMessages().general.noPermission);
                         return true;
                     }
-                    if (QAMain.perWeaponBuyPermission && !player.hasPermission("qualityarmory.shopgun." + item.getName())) {
-                        player.sendMessage(QAMain.prefix + ChatColor.RED + QAMain.S_NOPERM);
+                    if (QAMain.getConfiguration().permissions.perWeapon.buy && !player.hasPermission("qualityarmory.shopgun." + item.getName())) {
+                        player.sendMessage(QAMain.getMessages().general.prefix + ChatColor.RED + QAMain.getMessages().general.noPermission);
                         return true;
                     }
                 }
 
-                if (!QAMain.enableEconomy) {
-                    try {
-                        QAMain.enableEconomy = EconHandler.setupEconomy();
-                    } catch (Exception | Error ignored) {
-                    }
-                }
-
-                if (!QAMain.enableEconomy) {
+                // The economy plugin may have loaded after QualityArmory
+                if (!QAMain.getIntegrations().hasEconomy() && !QAMain.getIntegrations().setupEconomy()) {
                     player.closeInventory();
-                    player.sendMessage(QAMain.prefix + QAMain.S_noEcon);
+                    player.sendMessage(QAMain.getMessages().general.prefix + QAMain.getMessages().shop.noEconomy);
                     return true;
                 }
 
@@ -79,13 +74,13 @@ public class ShopItem {
 
                 if (!EconHandler.hasEnough(item, player)) {
                     player.closeInventory();
-                    player.sendMessage(QAMain.prefix + QAMain.S_noMoney);
+                    player.sendMessage(QAMain.getMessages().general.prefix + QAMain.getMessages().shop.noMoney);
                     XSound.BLOCK_ANVIL_BREAK.play(player, 1, 1);
                     return true;
                 }
 
                 EconHandler.pay(item, player);
-                player.sendMessage(QAMain.S_BUYCONFIRM
+                player.sendMessage(QAMain.getMessages().shop.purchaseConfirm
                         .replaceAll("%item%", ChatColor.stripColor(item.getDisplayName()))
                         .replaceAll("%cost%", "" + item.getPrice()));
 
@@ -112,7 +107,7 @@ public class ShopItem {
                 return true;
             });
         } catch (Exception e) {
-            e.printStackTrace();
+            ErrorReporter.report("building a shop menu item", e);
             ItemStack errorItem = new ItemStack(Material.BARRIER);
             ItemMeta meta = errorItem.getItemMeta();
             if (meta != null) {

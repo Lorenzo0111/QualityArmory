@@ -1,5 +1,6 @@
 package me.zombie_striker.qg.miscitems;
 
+import me.zombie_striker.qg.utils.Compat;
 import com.cryptomorin.xseries.particles.XParticle;
 import me.zombie_striker.customitemmanager.MaterialStorage;
 import me.zombie_striker.qg.QAMain;
@@ -23,10 +24,10 @@ public class StickyGrenades extends Grenade {
 
 	@Override
 	public boolean onRMB(Player thrower, ItemStack usedItem) {
-		if(QAMain.autoarm)
+		if(QAMain.getConfiguration().features.enableAutoArmGrenades)
 			onPull(thrower,usedItem);
-		if (throwItems.containsKey(thrower) && throwItems.get(thrower).getGrenade().equals(this)) {
-			ThrowableHolder holder = throwItems.get(thrower);
+		if (ThrowableItemRegistry.containsKey(thrower) && ThrowableItemRegistry.get(thrower).getGrenade().equals(this)) {
+			ThrowableHolder holder = ThrowableItemRegistry.get(thrower);
 			ItemStack grenadeStack = thrower.getItemInHand();
 			ItemStack temp = grenadeStack.clone();
 			temp.setAmount(1);
@@ -39,11 +40,11 @@ public class StickyGrenades extends Grenade {
 				thrower.setItemInHand(grenadeStack);
 			}
 
-			throwItems.remove(holder.getHolder());
+			ThrowableItemRegistry.remove(holder.getHolder());
 			Arrow arrow = ((Player)holder.getHolder()).launchProjectile(Arrow.class,holder.getHolder().getLocation().getDirection().normalize().multiply(getThrowSpeed()));
 			holder.setHolder(arrow);
 			arrow.setPickupStatus(AbstractArrow.PickupStatus.DISALLOWED);
-			throwItems.put(holder.getHolder(),holder);
+			ThrowableItemRegistry.put(holder.getHolder(),holder);
 			holder.setTimer(new FoliaRunnable(){
 				public void run(){
 					Entity holderEntity = holder.getHolder();
@@ -52,7 +53,7 @@ public class StickyGrenades extends Grenade {
 						return;
 					}
 					final Runnable retired = () -> {
-						throwItems.remove(holderEntity);
+						ThrowableItemRegistry.remove(holderEntity);
 						BukkitTask t = holder.getTask();
 						if (t != null) t.cancel();
 					};
@@ -68,7 +69,7 @@ public class StickyGrenades extends Grenade {
 
 			QAMain.DEBUG("Throw grenade");
 		} else {
-			thrower.sendMessage(QAMain.prefix + QAMain.S_GRENADE_PULLPIN);
+			thrower.sendMessage(QAMain.getMessages().general.prefix + QAMain.getMessages().grenade.pullPin);
 		}
 		return true;
 	}
@@ -78,54 +79,49 @@ public class StickyGrenades extends Grenade {
 			if (h.getHolder() instanceof Arrow) {
 				h.getHolder().remove();
 			}
-			if (QAMain.enableExplosionDamage) {
+			if (QAMain.getConfiguration().features.enableExplosionDamage) {
 				QAThrowableExplodeEvent event = new QAThrowableExplodeEvent(StickyGrenades.this, h.getHolder().getLocation());
 				Bukkit.getPluginManager().callEvent(event);
 				if (!event.isCancelled()) ExplosionHandler.handleExplosion(h.getHolder().getLocation(), 3, 1);
 				QAMain.DEBUG("Using default explosions");
 			}
-			try {
+			if (Compat.PARTICLES) {
 				h.getHolder().getWorld().spawnParticle(XParticle.EXPLOSION_EMITTER.get(),
 						h.getHolder().getLocation(), 0);
 				h.getHolder().getWorld().playSound(h.getHolder().getLocation(), Sound.ENTITY_GENERIC_EXPLODE, 8,
 						0.7f);
-			} catch (Error e3) {
+			} else {
 				h.getHolder().getWorld().playEffect(h.getHolder().getLocation(), Effect.valueOf("CLOUD"), 0);
 				h.getHolder().getWorld().playSound(h.getHolder().getLocation(), Sound.valueOf("EXPLODE"), 8, 0.7f);
 			}
 			Player thro = Bukkit.getPlayer(h.getOwner());
 			final Location holderLoc = h.getHolder().getLocation();
-			try {
-				for (Entity e : h.getHolder().getNearbyEntities(radius, radius, radius)) {
-					if (e instanceof LivingEntity) {
-						final LivingEntity target = (LivingEntity) e;
-						FoliaRunnable.runEntityTask(QAMain.getInstance(), target, () -> {
-							double dam = (dmageLevel / target.getLocation().distance(holderLoc));
-							QAMain.DEBUG("Grenade-Damaging " + target.getName() + " : " + dam + " DAM.");
-							GunDamageHandler.damage(target, dam, thro, false);
-						});
-					}
+			for (Entity e : h.getHolder().getNearbyEntities(radius, radius, radius)) {
+				if (e instanceof LivingEntity) {
+					final LivingEntity target = (LivingEntity) e;
+					FoliaRunnable.runEntityTask(QAMain.getInstance(), target, () -> {
+						double dam = (dmageLevel / target.getLocation().distance(holderLoc));
+						QAMain.DEBUG("Grenade-Damaging " + target.getName() + " : " + dam + " DAM.");
+						GunDamageHandler.damage(target, dam, thro, false);
+					});
 				}
-			} catch (Error e) {
-				h.getHolder().getWorld().createExplosion(h.getHolder().getLocation(), 1);
-				QAMain.DEBUG("Failed. Created default explosion");
 			}
-			throwItems.remove(h.getHolder());
+			ThrowableItemRegistry.remove(h.getHolder());
 			if (h.getTask() != null) h.getTask().cancel();
 		}
 	}
 
 	@Override
 	public boolean onPull(Player thrower, ItemStack usedItem) {
-		if(!QAMain.autoarm)
-		if (throwItems.containsKey(thrower)) {
-			thrower.sendMessage(QAMain.prefix + QAMain.S_GRENADE_PALREADYPULLPIN);
+		if(!QAMain.getConfiguration().features.enableAutoArmGrenades)
+		if (ThrowableItemRegistry.containsKey(thrower)) {
+			thrower.sendMessage(QAMain.getMessages().general.prefix + QAMain.getMessages().grenade.alreadyPulled);
 			thrower.playSound(thrower.getLocation(), Sound.ENTITY_ARROW_SHOOT, 1, 1);
 			return true;
 		}
 		thrower.getWorld().playSound(thrower.getLocation(), Sound.ENTITY_ARROW_SHOOT, 2, 1);
 		final ThrowableHolder h = new ThrowableHolder(thrower.getUniqueId(), thrower, this);
-		throwItems.put(thrower, h);
+		ThrowableItemRegistry.put(thrower, h);
 		return true;
 
 	}

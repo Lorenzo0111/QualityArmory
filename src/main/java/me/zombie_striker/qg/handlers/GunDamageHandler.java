@@ -60,7 +60,7 @@ public class GunDamageHandler implements Listener {
 				target.damage(damage);
 				return;
 			}
-			if (bullet && QAMain.projectileDamageType && projectileDamageSupported) {
+			if (bullet && QAMain.getConfiguration().combat.useProjectileDamageType && projectileDamageSupported) {
 				try {
 					ProjectileDamage.damage(target, damage, source);
 					return;
@@ -78,14 +78,14 @@ public class GunDamageHandler implements Listener {
 	@SuppressWarnings("deprecation")
 	@EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
 	public void onWeaponDamage(EntityDamageEvent e) {
-		if (!isWeaponDamage() || QAMain.armorEffectiveness == 1.0)
+		if (!isWeaponDamage() || QAMain.getConfiguration().combat.armorEffectiveness == 1.0)
 			return;
 		try {
 			if (!e.isApplicable(DamageModifier.ARMOR))
 				return;
 			// The armor modifier is negative: it is the amount of damage the armor absorbs
 			double armor = e.getDamage(DamageModifier.ARMOR);
-			e.setDamage(DamageModifier.ARMOR, armor * QAMain.armorEffectiveness);
+			e.setDamage(DamageModifier.ARMOR, armor * QAMain.getConfiguration().combat.armorEffectiveness);
 			if (e.getFinalDamage() < 0)
 				e.setDamage(DamageModifier.ARMOR, e.getDamage(DamageModifier.ARMOR) - e.getFinalDamage());
 		} catch (Error | Exception ignored) {
@@ -94,12 +94,12 @@ public class GunDamageHandler implements Listener {
 
 	@EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
 	public void onArmorDamage(PlayerItemDamageEvent e) {
-		if (!isWeaponDamage() || QAMain.armorDurabilityDamageMultiplier == 1.0)
+		if (!isWeaponDamage() || QAMain.getConfiguration().combat.armorDurabilityDamageMultiplier == 1.0)
 			return;
 		if (!isWearing(e.getPlayer(), e.getItem()))
 			return;
 
-		double damage = e.getDamage() * QAMain.armorDurabilityDamageMultiplier;
+		double damage = e.getDamage() * QAMain.getConfiguration().combat.armorDurabilityDamageMultiplier;
 		int rounded = (int) Math.floor(damage);
 		// Randomly round the remainder, so multipliers below 1 still work for small amounts
 		if (ThreadLocalRandom.current().nextDouble() < damage - rounded)

@@ -1,12 +1,16 @@
 package me.zombie_striker.qg.guns.utils;
 
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.UUID;
+import me.zombie_striker.qg.utils.FoliaRunnable;
+import me.zombie_striker.qg.items.ItemState;
+import me.zombie_striker.qg.utils.Compat;
 import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.ammo.Ammo;
 import me.zombie_striker.qg.api.QualityArmory;
 import me.zombie_striker.qg.api.WeaponInteractEvent;
 import me.zombie_striker.qg.guns.Gun;
 import me.zombie_striker.qg.handlers.IronsightsHandler;
-import me.zombie_striker.qg.utils.FoliaRunnable;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -14,10 +18,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scheduler.BukkitTask;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 public class GunRefillerRunnable {
 
@@ -47,7 +48,7 @@ public class GunRefillerRunnable {
     }
 
     public static void removeAllFor(UUID player) {
-        allGunRefillers.removeIf(r -> player.equals(r.reloader));
+        allGunRefillers.removeIf(r -> player.equals(r.reloader.getUniqueId()));
     }
 
     private BukkitTask r;
@@ -88,14 +89,15 @@ public class GunRefillerRunnable {
                 try {
                     finishReload();
                 } finally {
+                    // Always unregister, even if the reload failed, or the gun stays blocked
                     reloadedItem = null;
                     allGunRefillers.remove(gg);
 
-                    List<GunRefillerRunnable> rr = QAMain.reloadingTasks.get(player.getUniqueId());
+                    List<GunRefillerRunnable> rr = QAMain.getPlayerState().getReloadingTasks().get(player.getUniqueId());
                     if (rr != null) {
                         rr.remove(GunRefillerRunnable.this);
                         if (rr.isEmpty())
-                            QAMain.reloadingTasks.remove(player.getUniqueId());
+                            QAMain.getPlayerState().getReloadingTasks().remove(player.getUniqueId());
                     }
                 }
             }
@@ -113,26 +115,15 @@ public class GunRefillerRunnable {
                 }
 
                 if (shouldContinue) {
-                    try {
+                    if (Compat.WORLD_SOUND_BY_NAME)
                         player.getWorld().playSound(player.getLocation(), WeaponSounds.RELOAD_MAG_IN.getSoundName(), 1, 1f);
-                        if (!QAMain.isVersionHigherThan(1, 9)) {
-                            try {
-                                player.getWorld().playSound(player.getLocation(), Sound.valueOf("CLICK"), 5, 1);
-                            } catch (Error | Exception e3) {
-                                player.getWorld().playSound(player.getLocation(), Sound.valueOf("BLOCK_LEVER_CLICK"), 5, 1);
-                            }
-                        }
-                    } catch (Error e2) {
-                        try {
-                            player.getWorld().playSound(player.getLocation(), Sound.valueOf("CLICK"), 5, 1);
-                        } catch (Error | Exception e3) {
-                            player.getWorld().playSound(player.getLocation(), Sound.valueOf("BLOCK_LEVER_CLICK"), 5, 1);
-                        }
-                    }
+                    else
+                        player.getWorld().playSound(player.getLocation(), Sound.valueOf("CLICK"), 5, 1);
                 }
 
                 newim.setDisplayName(g.getDisplayName());
                 modifiedOriginalItem.setItemMeta(newim);
+                ItemState.setReloading(modifiedOriginalItem, false);
                 if (shouldContinue) Gun.updateAmmo(g, modifiedOriginalItem, reloadAmount);
 
                 ItemStack current = player.getInventory().getItem(slot);
@@ -146,7 +137,7 @@ public class GunRefillerRunnable {
                         if (check != null) {
                             Gun g2 = QualityArmory.getGun(check);
                             if (g2 != null && g2 == g) {
-                                if (check.getItemMeta().getDisplayName().contains(QAMain.S_RELOADING_MESSAGE)) {
+                                if (Gun.isReloading(check)) {
                                     newSlot = i;
                                     break;
                                 }
@@ -159,7 +150,7 @@ public class GunRefillerRunnable {
                     player.getInventory().setItem(newSlot, modifiedOriginalItem);
 
 
-                    if (!different && player.isSneaking() && g.hasIronSights() && !QAMain.enableIronSightsON_RIGHT_CLICK) {
+                    if (!different && player.isSneaking() && g.hasIronSights() && !QAMain.getConfiguration().weapons.ironsights.rightClick) {
                         IronsightsHandler.aim(player);
                         QAMain.toggleNightvision(player, g, true);
                     }
@@ -167,7 +158,7 @@ public class GunRefillerRunnable {
                     if (shouldContinue)
                         QualityArmory.sendHotbarGunAmmoCount(player, g, modifiedOriginalItem, false);
 
-                    if (QAMain.showAmmoInXPBar && shouldContinue) {
+                    if (QAMain.getConfiguration().ui.showAmmoInXpBar && shouldContinue) {
                         GunUtil.updateXPBar(player, g, reloadAmount);
                     }
                 }
@@ -179,12 +170,9 @@ public class GunRefillerRunnable {
 
         allGunRefillers.add(gg);
 
-        if (!QAMain.reloadingTasks.containsKey(player.getUniqueId())) {
-            QAMain.reloadingTasks.put(player.getUniqueId(), new ArrayList<GunRefillerRunnable>());
-        }
-        List<GunRefillerRunnable> rr = QAMain.reloadingTasks.get(player.getUniqueId());
-        rr.add(this);
-        QAMain.reloadingTasks.put(player.getUniqueId(), rr);
+        QAMain.getPlayerState().getReloadingTasks()
+                .computeIfAbsent(player.getUniqueId(), id -> new CopyOnWriteArrayList<>())
+                .add(this);
     }
 
 }

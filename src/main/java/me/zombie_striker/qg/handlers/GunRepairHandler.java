@@ -5,8 +5,10 @@ import com.cryptomorin.xseries.XMaterial;
 import com.cryptomorin.xseries.XSound;
 import me.zombie_striker.customitemmanager.CustomBaseObject;
 import me.zombie_striker.qg.QAMain;
+import me.zombie_striker.qg.config.MainConfig;
 import me.zombie_striker.qg.api.QualityArmory;
 import me.zombie_striker.qg.guns.Gun;
+import me.zombie_striker.qg.utils.Compat;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -30,7 +32,7 @@ public class GunRepairHandler {
 	 * @return the repair item name configured for this gun, or null if the gun can't be repaired with an item
 	 */
 	public static String getRepairItemName(Gun gun) {
-		String name = gun.getRepairItem() != null ? gun.getRepairItem() : QAMain.defaultRepairItem;
+		String name = gun.getRepairItem() != null ? gun.getRepairItem() : config().defaultItem;
 		if (name == null)
 			return null;
 		name = name.trim();
@@ -40,7 +42,7 @@ public class GunRepairHandler {
 	}
 
 	public static int getRepairAmount(Gun gun) {
-		return gun.getRepairAmount() >= 0 ? gun.getRepairAmount() : QAMain.defaultRepairAmount;
+		return gun.getRepairAmount() >= 0 ? gun.getRepairAmount() : config().defaultAmount;
 	}
 
 	/**
@@ -69,13 +71,16 @@ public class GunRepairHandler {
 		return material != null && item.getType() == material;
 	}
 
+	private static MainConfig.Weapons.Repair config() {
+		return QAMain.getConfiguration().weapons.repair;
+	}
+
 	/**
 	 * A reloading gun is restored from a snapshot when the reload finishes,
 	 * so any repair applied in the meantime would be lost.
 	 */
 	public static boolean isReloading(ItemStack item) {
-		return item != null && item.hasItemMeta() && item.getItemMeta().hasDisplayName()
-				&& item.getItemMeta().getDisplayName().contains(QAMain.S_RELOADING_MESSAGE);
+		return item != null && Gun.isReloading(item);
 	}
 
 	/**
@@ -85,7 +90,7 @@ public class GunRepairHandler {
 	 * @return true if the click was handled (and cancelled) as a repair
 	 */
 	public static boolean handleRepairClick(InventoryClickEvent e) {
-		if (!QAMain.enableDurability || !QAMain.enableWeaponRepair)
+		if (!QAMain.getConfiguration().weapons.durability || !config().enabled)
 			return false;
 		if (e.getClick() != ClickType.LEFT && e.getClick() != ClickType.RIGHT)
 			return false;
@@ -114,7 +119,7 @@ public class GunRepairHandler {
 			return false;
 
 		Player player = (Player) e.getWhoClicked();
-		if (QAMain.requirePermsToRepair && !player.hasPermission(REPAIR_PERMISSION))
+		if (config().requirePermission && !player.hasPermission(REPAIR_PERMISSION))
 			return false;
 
 		int max = gun.getDurability();
@@ -149,16 +154,13 @@ public class GunRepairHandler {
 	 * similarly to how vanilla Mending works.
 	 */
 	public static void handleMending(PlayerExpChangeEvent e) {
-		if (!QAMain.enableDurability || !QAMain.enableMendingRepair || e.getAmount() <= 0)
+		if (!QAMain.getConfiguration().weapons.durability || !config().mending.enabled || e.getAmount() <= 0)
+			return;
+		// Mending was added in 1.9
+		if (!Compat.supports(9))
 			return;
 
-		Enchantment mending;
-		try {
-			mending = XEnchantment.MENDING.get();
-		} catch (Error | Exception ex) {
-			return;
-		}
-		// Mending doesn't exist on this server version (1.8)
+		Enchantment mending = XEnchantment.MENDING.get();
 		if (mending == null)
 			return;
 
@@ -174,7 +176,7 @@ public class GunRepairHandler {
 		Gun gun = QualityArmory.getGun(item);
 		if (gun == null || item.getAmount() != 1 || isReloading(item) || !item.containsEnchantment(mending))
 			return;
-		if (QAMain.requirePermsToRepair && !player.hasPermission(REPAIR_PERMISSION))
+		if (config().requirePermission && !player.hasPermission(REPAIR_PERMISSION))
 			return;
 
 		int max = gun.getDurability();
@@ -182,7 +184,7 @@ public class GunRepairHandler {
 		if (durability < 0 || durability >= max)
 			return;
 
-		int perXP = Math.max(1, QAMain.mendingDurabilityPerXP);
+		int perXP = Math.max(1, config().mending.durabilityPerXp);
 		int repaired = (int) Math.min((long) e.getAmount() * perXP, max - durability);
 		int xpUsed = (int) Math.ceil((double) repaired / perXP);
 

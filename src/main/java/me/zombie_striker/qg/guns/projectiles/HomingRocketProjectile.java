@@ -1,5 +1,6 @@
 package me.zombie_striker.qg.guns.projectiles;
 
+import me.zombie_striker.qg.utils.Compat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,37 +52,34 @@ public class HomingRocketProjectile implements RealtimeCalculationProjectile {
 						}
 					}
 					ParticleHandlers.spawnGunParticles(g, RPGLOCATION);
-					try {
+					if (Compat.MODERN_SOUNDS) {
 						player.getWorld().playSound(RPGLOCATION, MultiVersionLookup.getDragonGrowl(), 1, 2f);
 
-					} catch (Error e2) {
+					} else {
 						RPGLOCATION.getWorld().playEffect(RPGLOCATION, Effect.valueOf("CLOUD"), 0);
 						player.getWorld().playSound(RPGLOCATION, Sound.valueOf("ENDERDRAGON_GROWL"), 1, 2f);
 					}
 					boolean entityNear = false;
-					try {
-						List<Entity> e2 = new ArrayList<>(
-								RPGLOCATION.getWorld().getNearbyEntities(RPGLOCATION, 1, 1, 1));
-						for(Entity e : e2) {
-							if (e != player && !GunUtil.shouldBulletPassThrough(e)
-									&& (!(e instanceof Player) || ((Player) e).getGameMode() != GameMode.SPECTATOR))
-								entityNear = true;
-						}
-					} catch (Error e) {
+					List<Entity> e2 = new ArrayList<>(
+							RPGLOCATION.getWorld().getNearbyEntities(RPGLOCATION, 1, 1, 1));
+					for(Entity e : e2) {
+						if (e != player && !GunUtil.shouldBulletPassThrough(e)
+								&& (!(e instanceof Player) || ((Player)e).getGameMode()!=GameMode.SPECTATOR))
+							entityNear = true;
 					}
 
 					if (GunUtil.isSolid(RPGLOCATION.getBlock(), RPGLOCATION) || entityNear || distance < 0) {
-						if (QAMain.enableExplosionDamage) {
+						if (QAMain.getConfiguration().features.enableExplosionDamage) {
 							QAProjectileExplodeEvent event = new QAProjectileExplodeEvent(HomingRocketProjectile.this, RPGLOCATION);
 							Bukkit.getPluginManager().callEvent(event);
 							if (!event.isCancelled()) ExplosionHandler.handleExplosion(RPGLOCATION, 4, 2);
 						}
-						try {
+						if (Compat.PARTICLES) {
 							player.getWorld().playSound(RPGLOCATION, WeaponSounds.WARHEAD_EXPLODE.getName(), 10, 0.9f);
 							player.getWorld().playSound(RPGLOCATION, Sound.ENTITY_GENERIC_EXPLODE, 8, 0.7f);
 							RPGLOCATION.getWorld().spawnParticle(XParticle.EXPLOSION_EMITTER.get(), RPGLOCATION, 0);
 
-						} catch (Error e3) {
+						} else {
 							RPGLOCATION.getWorld().playEffect(RPGLOCATION, Effect.valueOf("CLOUD"), 0);
 							player.getWorld().playSound(RPGLOCATION, Sound.valueOf("EXPLODE"), 8, 0.7f);
 						}

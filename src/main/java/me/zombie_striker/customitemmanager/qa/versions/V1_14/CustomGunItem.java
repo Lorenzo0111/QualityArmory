@@ -1,10 +1,16 @@
 package me.zombie_striker.customitemmanager.qa.versions.V1_14;
 
+import me.zombie_striker.qg.items.ItemState;
+import me.zombie_striker.qg.utils.ErrorReporter;
+import me.zombie_striker.qg.utils.Compat;
 import com.cryptomorin.xseries.XAttribute;
 import com.cryptomorin.xseries.profiles.builder.XSkull;
 import com.cryptomorin.xseries.profiles.objects.ProfileInputType;
 import com.cryptomorin.xseries.profiles.objects.Profileable;
-import me.zombie_striker.customitemmanager.*;
+import me.zombie_striker.customitemmanager.CustomBaseObject;
+import me.zombie_striker.customitemmanager.CustomItemManager;
+import me.zombie_striker.customitemmanager.MaterialStorage;
+import me.zombie_striker.customitemmanager.OLD_ItemFact;
 import me.zombie_striker.customitemmanager.pack.MultiVersionPackProvider;
 import me.zombie_striker.customitemmanager.qa.AbstractCustomGunItem;
 import me.zombie_striker.qg.QAMain;
@@ -13,13 +19,13 @@ import me.zombie_striker.qg.api.QualityArmory;
 import me.zombie_striker.qg.armor.ArmorObject;
 import me.zombie_striker.qg.config.GunYMLCreator;
 import me.zombie_striker.qg.guns.Gun;
+import me.zombie_striker.qg.guns.chargers.ChargingManager;
 import me.zombie_striker.qg.guns.projectiles.ProjectileManager;
+import me.zombie_striker.qg.guns.reloaders.ReloadingManager;
 import me.zombie_striker.qg.guns.utils.WeaponSounds;
 import me.zombie_striker.qg.guns.utils.WeaponType;
 import me.zombie_striker.qg.handlers.IronsightsHandler;
 import me.zombie_striker.qg.handlers.MultiVersionLookup;
-import me.zombie_striker.qg.guns.chargers.ChargingManager;
-import me.zombie_striker.qg.guns.reloaders.ReloadingManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -105,28 +111,21 @@ public class CustomGunItem extends AbstractCustomGunItem {
 				im.addAttributeModifier(XAttribute.ATTACK_SPEED.get(), modifier);
 			}
 
-			if (QAMain.ITEM_enableUnbreakable) {
-				try {
-					im.setUnbreakable(true);
-				} catch (Error | Exception e34) {
-				}
-			}
-			try {
-				if (QAMain.ITEM_enableUnbreakable) {
-					im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_UNBREAKABLE);
-				}
-				im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_ATTRIBUTES);
-				im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_DESTROYS);
-			} catch (Error e) {
-
-			}
+			boolean enableUnbreakable = QAMain.getConfiguration().items.enableUnbreaking;
+			if (enableUnbreakable && Compat.UNBREAKABLE_META)
+				im.setUnbreakable(true);
+			if (enableUnbreakable)
+				im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_UNBREAKABLE);
+			im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_ATTRIBUTES);
+			im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_DESTROYS);
 			if (ms.getData() >= 0)
 				im.setCustomModelData(ms.getData());
 
 			is.setItemMeta(im);
+			ItemState.setVariant(is, ms.getVariant());
 		} else {
 			QAMain.getInstance().getLogger()
-					.warning(QAMain.prefix + " ItemMeta is null for " + base.getName() + ". I have");
+					.warning(QAMain.getMessages().general.prefix + " ItemMeta is null for " + base.getName() + ". I have");
 		}
 		is.setAmount(1);
 		return is;
@@ -148,7 +147,7 @@ public class CustomGunItem extends AbstractCustomGunItem {
 			try {
 				ironconfig.save(ironsights);
 			} catch (IOException e) {
-				e.printStackTrace();
+				ErrorReporter.report("saving " + ironsights.getName(), e);
 			}
 		}
 		IronsightsHandler.ironsightsMaterial = Material.matchMaterial(ironconfig.getString("material"));

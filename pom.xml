@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>me.zombie_striker</groupId>
     <artifactId>QualityArmory</artifactId>
-    <version>2.2.1-SNAPSHOT</version>
+    <version>3.0.0-SNAPSHOT</version>
     <name>QualityArmory</name>
 
     <properties>
@@ -306,7 +306,7 @@
     <build>
         <finalName>${project.name}</finalName>
         <defaultGoal>install</defaultGoal>
-        <!-- Uses the properties in this file for plugin.yml and config.yml -->
+        <!-- Uses the properties in this file for plugin.yml -->
         <resources>
             <resource>
                 <directory>${basedir}/src/main/resources</directory>
@@ -314,7 +314,6 @@
                 <includes>
                     <include>changelog.txt</include>
                     <include>plugin.yml</include>
-                    <include>config.yml</include>
                     <include>menu.yml</include>
                     <include>META-INF/.mojang-mapped</include>
                 </includes>

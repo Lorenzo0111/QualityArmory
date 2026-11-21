@@ -61,7 +61,7 @@ public class EntityGunUtil {
 			normalizedDirection.add(new Vector(random.nextDouble(-sway, sway), random.nextDouble(-sway, sway),
 					random.nextDouble(-sway, sway))).normalize();
 		}
-		Vector step = normalizedDirection.clone().multiply(QAMain.bulletStep);
+		Vector step = normalizedDirection.clone().multiply(QAMain.getConfiguration().weapons.detection.bulletStep);
 
 		double maxDistance = GunUtil.getTargetedSolidMaxDistance(step, start, g.getMaxDistance());
 
@@ -74,7 +74,7 @@ public class EntityGunUtil {
 		for (Entity e : start.getWorld().getNearbyEntities(center, maxDistance / 2, maxDistance / 2, maxDistance / 2)) {
 			if (!(e instanceof Damageable) || e == shooter || e == shooter.getVehicle() || e.getVehicle() == shooter)
 				continue;
-			if (QAMain.avoidTypes.contains(e.getType()) || GunUtil.shouldBulletPassThrough(e))
+			if (QAMain.getConfiguration().weapons.impenetrableEntities.contains(e.getType()) || GunUtil.shouldBulletPassThrough(e))
 				continue;
 			if (e instanceof Player && ((Player) e).getGameMode() == GameMode.SPECTATOR)
 				continue;
@@ -116,10 +116,10 @@ public class EntityGunUtil {
 			GunDamageHandler.damage((Damageable) hitTarget, damage, shooter, true);
 		}
 
-		if (QAMain.enableBulletTrails) {
+		if (QAMain.getConfiguration().features.enableBulletTrails) {
 			Location trail = start.clone();
-			Vector stepSmoke = normalizedDirection.clone().multiply(QAMain.smokeSpacing);
-			for (double distance = 0; distance < hitDistance; distance += QAMain.smokeSpacing) {
+			Vector stepSmoke = normalizedDirection.clone().multiply(QAMain.getConfiguration().features.bulletTrailsSpacing);
+			for (double distance = 0; distance < hitDistance; distance += QAMain.getConfiguration().features.bulletTrailsSpacing) {
 				trail.add(stepSmoke);
 				if (trail.getBlock().getType() != Material.AIR && GunUtil.isSolid(trail.getBlock(), trail))
 					break;

@@ -1,0 +1,59 @@
+version: 1
+general:
+  prefix: '&8[&2质量军械库&8]&r'
+  no-permission: '&c你没有权限使用这个命令'
+shop:
+  purchase-confirm: '&a花费了 $%cost% 购买了 %item% ！'
+crafting:
+  missing-ingredients: 你没有足够的材料来制作它
+  no-anvil-permission: ' &a你没有权限使用这个军火库.右键单击进入铁砧.'
+resourcepack:
+  downloading: ' &c&l载入材质包中...'
+  accept-prompt: ' &f请接受下载材质包来看到枪械正确的外观'
+  kick-message: '&c 你被踢出服务器，因为你没有接受安装材质包'
+  crash-help: 如果自动下载材质包时造成客户端崩溃,请拒绝材质包下载请求,并输入指令/qa getResourcepack来下载材质包.
+  download: 下载材质包来查看枪械外观(下载可能需要一段时间)
+  now-bypassing: 通过使用这个指令,你已经将材质包添加到白名单中,你将不会收到材质包下载请求.
+  now-opted-in: 通过使用这个指令, 你已经将材质包从白名单中移除.你将会收到材质包下载请求.
+lore:
+  ammo: '&a弹药'
+  bullets: '&a子弹'
+  damage: '&a伤害'
+  durability: 耐久度
+  ingredients: 材料
+  variant: '&7变种:'
+  price: '&6价格: '
+  dps: '&2每秒伤害'
+  crafts: 制造数量
+  returns: 获得数量
+  controls:
+    single-fire: '&8[左键] 点射'
+    full-auto: '&8[Shift]+[左键] 连续射击'
+    reload: '&8[右键] 装填弹药'
+    ironsights-right-click: '&8[右键] 瞄准'
+    ironsights-sneak: '&8[Shift] 瞄准'
+    reload-drop: '&8[F] 换弹'
+    reload-right-click: '&8[右键] 换弹'
+    equip-helmet: '&8[右键] 装备头盔'
+weapon:
+  reloading: '[装填中...]'
+  ammo-count: '[%total%]'
+  out-of-ammo: '[弹药已耗尽]'
+  hotbar-format: '%name% = %amount%/%max% %state%'
+medkit:
+  fully-healed: '&f你很健康，不需要使用这个物品！'
+  healing: 治疗中
+  bleeding-rate: '失血速率:'
+bleeding:
+  start: '&c你正在流血！找一个医疗包来止血！'
+  protected-by-kevlar: '&a防弹衣可以减少子弹对你造成的伤害！'
+materials:
+  IRON_INGOT: 铁锭
+  GUNPOWDER: 火药
+  REDSTONE: 红石
+  OAK_PLANKS: 橡木木板
+  BLAZE_POWDER: 火焰弹
+  GOLD_INGOT: 金锭
+  NETHER_STAR: 下界之星
+  BLAZE_ROD: 烈焰棒
+  TNT: TNT

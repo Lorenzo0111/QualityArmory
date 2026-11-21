@@ -1,5 +1,7 @@
 package me.zombie_striker.qg.miscitems;
 
+import me.zombie_striker.qg.utils.ErrorReporter;
+import me.zombie_striker.qg.utils.Compat;
 import com.cryptomorin.xseries.particles.XParticle;
 import me.zombie_striker.customitemmanager.MaterialStorage;
 import me.zombie_striker.qg.QAMain;
@@ -30,9 +32,9 @@ public class SmokeGrenades extends Grenade {
 
 	@Override
 	public boolean onPull(Player thrower, ItemStack usedItem) {
-		if(!QAMain.autoarm)
-            if (throwItems.containsKey(thrower)) {
-                thrower.sendMessage(QAMain.prefix + QAMain.S_GRENADE_PALREADYPULLPIN);
+		if(!QAMain.getConfiguration().features.enableAutoArmGrenades)
+            if (ThrowableItemRegistry.containsKey(thrower)) {
+                thrower.sendMessage(QAMain.getMessages().general.prefix + QAMain.getMessages().grenade.alreadyPulled);
                 thrower.playSound(thrower.getLocation(), WeaponSounds.RELOAD_BULLET.getSoundName(), 1, 1);
                 return true;
             }
@@ -49,20 +51,22 @@ public class SmokeGrenades extends Grenade {
 				FoliaRunnable.runEntityTask(QAMain.getInstance(), holderEntity,
 						() -> handleThrowableTick(h),
 						() -> {
-							throwItems.remove(holderEntity);
+							ThrowableItemRegistry.remove(holderEntity);
 							BukkitTask t = h.getTask();
 							if (t != null) t.cancel();
 						});
 			}
 		}.runTaskTimer(QAMain.getInstance(), getFuseTicks(), 5));
-		throwItems.put(thrower, h);
+		ThrowableItemRegistry.put(thrower, h);
 		return true;
 
 	}
 
 	private void handleThrowableTick(ThrowableHolder h) {
 				if (isUseModernParticles()) {
-					try {
+					if (!Compat.PARTICLES) {
+						h.getHolder().getWorld().playEffect(h.getHolder().getLocation(), Effect.SMOKE, 0);
+					} else try {
 						// Main smoke cloud that gets larger over time
 						double radius = (h.getTicks() / 10.0) + 1.0;
 						int particleCount = Math.max(1, 50 - h.getTicks());
@@ -101,24 +105,24 @@ public class SmokeGrenades extends Grenade {
 							h.getHolder().getWorld().spawnParticle(XParticle.EXPLOSION.get(), h.getHolder().getLocation(), 2, 1, 1, 1, 0);
 							h.getHolder().getWorld().spawnParticle(XParticle.POOF.get(), h.getHolder().getLocation(), 10, 2, 2, 2, 0.1);
 						}
-					} catch (Exception | Error e) {
-						// Fallback for older versions or errors
+					} catch (IllegalArgumentException e) {
+						// A particle that XSeries can't map on this version
 						h.getHolder().getWorld().playEffect(h.getHolder().getLocation(), Effect.SMOKE, 0);
 					}
 				} else {
-                    try {
+                    if (Compat.PARTICLES) {
                         h.getHolder().getWorld().spawnParticle(XParticle.EXPLOSION_EMITTER.get(),
                                 h.getHolder().getLocation(), 0);
-                    } catch (Error e3) {
+                    } else {
                         h.getHolder().getWorld().playEffect(h.getHolder().getLocation(), Effect.valueOf("CLOUD"), 0);
                     }
 				}
 
                 if (h.getTicks() % 2 == 0)
-                    try {
+                    if (Compat.WORLD_SOUND_BY_NAME) {
                             h.getHolder().getWorld().playSound(h.getHolder().getLocation(),
                                     WeaponSounds.HISS.getSoundName(), 2f, 1f);
-                    } catch (Error e3) {
+                    } else {
                         h.getHolder().getWorld().playSound(h.getHolder().getLocation(), Sound.valueOf("EXPLODE"), 3, 0.7f);
                     }
 
@@ -135,7 +139,7 @@ public class SmokeGrenades extends Grenade {
 						Grenade.getGrenades().remove(h.getHolder());
 						h.getHolder().remove();
 					}
-					throwItems.remove(h.getHolder());
+					ThrowableItemRegistry.remove(h.getHolder());
 					if (h.getTask() != null) h.getTask().cancel();
 				} else {
 					for(Entity e : h.getHolder().getNearbyEntities(radius, radius, radius))
@@ -147,7 +151,8 @@ public class SmokeGrenades extends Grenade {
 									if (ProtectionHandler.canPvp(target.getLocation())) {
 										target.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 20 * 10, 2));
 									}
-								}catch (Error error){
+								} catch (LinkageError error) {
+									ErrorReporter.report("checking PvP protection", error);
 									target.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 20 * 10, 2));
 								}
 							});

@@ -1,5 +1,7 @@
 package me.zombie_striker.qg.gui.items;
 
+import me.zombie_striker.qg.crafting.Crafting;
+import me.zombie_striker.qg.utils.ErrorReporter;
 import com.cryptomorin.xseries.XSound;
 import de.themoep.inventorygui.StaticGuiElement;
 import me.zombie_striker.customitemmanager.CustomBaseObject;
@@ -50,27 +52,27 @@ public class CraftingItem {
                 Player player = (Player) click.getWhoClicked();
 
                 if (item instanceof Gun) {
-                    if (QAMain.requirePermsToCraft && !player.hasPermission("qualityarmory.craftgun")) {
-                        player.sendMessage(QAMain.S_NOPERM);
+                    if (QAMain.getConfiguration().permissions.requireCraft && !player.hasPermission("qualityarmory.craftgun")) {
+                        player.sendMessage(QAMain.getMessages().general.noPermission);
                         return true;
                     }
-                    if (QAMain.perWeaponCraftPermission && !player.hasPermission("qualityarmory.craftgun." + item.getName())) {
-                        player.sendMessage(QAMain.S_NOPERM);
+                    if (QAMain.getConfiguration().permissions.perWeapon.craft && !player.hasPermission("qualityarmory.craftgun." + item.getName())) {
+                        player.sendMessage(QAMain.getMessages().general.noPermission);
                         return true;
                     }
                 }
 
                 if (item.getIngredientsRaw() == null) return true;
 
-                if (!QAMain.lookForIngre(player, item) && player.getGameMode() != GameMode.CREATIVE) {
+                if (!Crafting.hasIngredients(player, item) && player.getGameMode() != GameMode.CREATIVE) {
                     player.closeInventory();
-                    player.sendMessage(QAMain.prefix + QAMain.S_missingIngredients);
+                    player.sendMessage(QAMain.getMessages().general.prefix + QAMain.getMessages().crafting.missingIngredients);
                     XSound.BLOCK_ANVIL_BREAK.play(player, 1, 1);
                     return true;
                 }
 
                 if (player.getGameMode() != GameMode.CREATIVE) {
-                    QAMain.removeForIngre(player, item);
+                    Crafting.removeIngredients(player, item);
                 }
 
                 if (item instanceof Ammo) {
@@ -96,7 +98,7 @@ public class CraftingItem {
                 return true;
             });
         } catch (Exception e) {
-            e.printStackTrace();
+            ErrorReporter.report("building a crafting menu item", e);
             ItemStack errorItem = new ItemStack(Material.BARRIER);
             ItemMeta meta = errorItem.getItemMeta();
             if (meta != null) {

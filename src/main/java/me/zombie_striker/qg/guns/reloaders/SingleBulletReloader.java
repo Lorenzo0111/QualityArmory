@@ -1,13 +1,14 @@
 package me.zombie_striker.qg.guns.reloaders;
 
-import java.util.Set;
-import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.Set;
+import me.zombie_striker.qg.utils.FoliaRunnable;
+import me.zombie_striker.qg.utils.Compat;
+import java.util.UUID;
 
 import me.zombie_striker.qg.api.QualityArmory;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
-import me.zombie_striker.qg.utils.FoliaRunnable;
 
 import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.guns.Gun;
@@ -40,14 +41,11 @@ public class SingleBulletReloader implements ReloadingHandler {
 					if(player.getInventory().getHeldItemSlot()!=temp)
 						return;
 					QualityArmory.sendHotbarGunAmmoCount(player, g, player.getInventory().getItemInMainHand(), true, g.getMaxBullets()-amountReloading+finalI, g.getMaxBullets());
-					try {
+					if (Compat.WORLD_SOUND_BY_NAME) {
 						player.getWorld().playSound(player.getLocation(),g.getReloadingSound(), 1, 1f);
-					} catch (Error e) {
-						try {
-							player.getWorld().playSound(player.getLocation(), Sound.valueOf("PISTON_EXTEND"), 5, 4f);
-							player.getWorld().playSound(player.getLocation(), Sound.valueOf("DIG_SAND"), 8, 1.4f);
-						} catch (Error | Exception e43) {
-						}
+					} else {
+						player.getWorld().playSound(player.getLocation(), Sound.valueOf("PISTON_EXTEND"), 5, 4f);
+						player.getWorld().playSound(player.getLocation(), Sound.valueOf("DIG_SAND"), 8, 1.4f);
 					}
 				}
 			}.runTaskLater(QAMain.getInstance(), player, (int) (time * i * 20));

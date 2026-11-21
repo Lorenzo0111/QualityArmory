@@ -1,18 +1,13 @@
 package me.zombie_striker.qg.miscitems;
 
-import me.zombie_striker.customitemmanager.ArmoryBaseObject;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
 import org.bukkit.scheduler.BukkitTask;
 
-import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
 
-public interface ThrowableItems extends ArmoryBaseObject {
+public interface ThrowableItems {
 
-	Map<Entity, ThrowableHolder> throwItems = new ConcurrentHashMap<>();
-	
 	class ThrowableHolder {
 		private volatile Entity holder;
 		private UUID owner;
@@ -74,7 +69,6 @@ public interface ThrowableItems extends ArmoryBaseObject {
 			this.grenade = grenade;
 		}
 	}
-
 
 	double getThrowSpeed();
 	void setThrowSpeed(double throwspeed);

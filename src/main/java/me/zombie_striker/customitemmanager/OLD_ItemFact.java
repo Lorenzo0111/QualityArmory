@@ -1,5 +1,9 @@
 package me.zombie_striker.customitemmanager;
 
+import me.zombie_striker.qg.items.ItemState;
+import me.zombie_striker.qg.crafting.Crafting;
+import me.zombie_striker.qg.utils.CustomModelData;
+import me.zombie_striker.qg.utils.Compat;
 import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.api.QualityArmory;
 import me.zombie_striker.qg.armor.ArmorObject;
@@ -18,14 +22,14 @@ public class OLD_ItemFact {
 
 	public static List<String> getArmorLore(ArmorObject a) {
 		List<String> lore = new ArrayList<>();
-		lore.add(QAMain.S_HELMET_RMB);
+		lore.add(QAMain.getMessages().lore.controls.equipHelmet);
 		return lore;
 	}
 
 	public static void addOutOfAmmoToDisplayname(final Gun g, final Player player, ItemStack is, final int slot) {
 		final ItemStack k = is;
 		ItemMeta im = k.getItemMeta();
-		im.setDisplayName(g.getDisplayName() + QAMain.S_OUT_OF_AMMO);
+		im.setDisplayName(g.getDisplayName() + QAMain.getMessages().weapon.outOfAmmo);
 		k.setItemMeta(im);
 		player.getInventory().setItem(slot, k);
 		new FoliaRunnable() {
@@ -41,6 +45,7 @@ public class OLD_ItemFact {
 			ItemMeta im = is.getItemMeta();
 			im.setDisplayName(g.getDisplayName());
 			is.setItemMeta(im);
+			ItemState.setReloading(is, false);
 			player.getInventory().setItem(slot, is);
 		}
 	}
@@ -49,22 +54,22 @@ public class OLD_ItemFact {
 	public static List<String> addShopLore(CustomBaseObject obj) {
 		List<String> lore = new ArrayList<>();
 		if ((obj).getCraftingReturn() > 1)
-			lore.add(ChatColor.DARK_RED + QAMain.S_ITEM_RETURNS + " " + (obj).getCraftingReturn());
-		lore.add(QAMain.S_ITEM_COST + (obj.getPrice()));
+			lore.add(ChatColor.DARK_RED + QAMain.getMessages().lore.returns + " " + (obj).getCraftingReturn());
+		lore.add(QAMain.getMessages().lore.price + (obj.getPrice()));
 		return lore;
 	}
 
 	@SuppressWarnings("deprecation")
 	public static List<String> getCraftingLore(CustomBaseObject a) {
 		List<String> lore = new ArrayList<String>();
-		lore.add(ChatColor.RED + QAMain.S_ITEM_ING + ": ");
+		lore.add(ChatColor.RED + QAMain.getMessages().lore.ingredients + ": ");
 		for (Object raw : (a).getIngredientsRaw()) {
 			if (raw instanceof ItemStack) {
 				ItemStack is = (ItemStack) raw;
 				StringBuilder sb = new StringBuilder();
 				// Chris: itemName from message.yml
 				String itemName = is.getType().name();
-				sb.append(ChatColor.RED + "- " + QAMain.findCraftEntityName(itemName, itemName) + " x " + is.getAmount());
+				sb.append(ChatColor.RED + "- " + Crafting.findIngredientName(itemName, itemName) + " x " + is.getAmount());
 				if (is.getDurability() != 0)
 					sb.append(":" + is.getDurability());
 				lore.add(sb.toString());
@@ -73,7 +78,7 @@ public class OLD_ItemFact {
 				lore.add(ChatColor.RED + "- " + QualityArmory.getCustomItemByName((String) raw).getDisplayName());
 			}
 			if ((a).getCraftingReturn() > 1) {
-				lore.add(ChatColor.DARK_RED + QAMain.S_ITEM_CRAFTS + " " + (a).getCraftingReturn());
+				lore.add(ChatColor.DARK_RED + QAMain.getMessages().lore.crafts + " " + (a).getCraftingReturn());
 			}
 		}
 		return lore;
@@ -84,28 +89,21 @@ public class OLD_ItemFact {
 
 		ItemStack ironsights = null;
 		ItemMeta im = null;
-		try {
+		if (CustomModelData.SUPPORTED) {
 			ironsights = new ItemStack(IronsightsHandler.ironsightsMaterial);
 			im = ironsights.getItemMeta();
 			im.setCustomModelData(IronsightsHandler.ironsightsData);
-		} catch (Error | Exception e4) {
+		} else {
 			ironsights = new ItemStack(IronsightsHandler.ironsightsMaterial, 1, (short) IronsightsHandler.ironsightsData);
 			im = ironsights.getItemMeta();
 		}
 		im.setDisplayName(IronsightsHandler.ironsightsDisplay);
-		if (QAMain.ITEM_enableUnbreakable) {
-			try {
-				im.setUnbreakable(true);
-			} catch (Error | Exception e3423) {			}
-		}
-		try {
-			if (QAMain.ITEM_enableUnbreakable) {
-				im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_UNBREAKABLE);
-			}
-			im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_ATTRIBUTES);
-			im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_DESTROYS);
-		} catch (Error | Exception e34) {
-		}
+		if (QAMain.getConfiguration().items.enableUnbreaking && Compat.UNBREAKABLE_META)
+			im.setUnbreakable(true);
+		if (QAMain.getConfiguration().items.enableUnbreaking)
+			im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_UNBREAKABLE);
+		im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_ATTRIBUTES);
+		im.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_DESTROYS);
 		ironsights.setItemMeta(im);
 		return ironsights;
 	}
@@ -129,7 +127,7 @@ public class OLD_ItemFact {
 				b=  true;
 				lore = new ArrayList<>();
 			}
-			lore.add(QAMain.S_ITEM_VARIANTS_NEW + " " + var);
+			lore.add(QAMain.getMessages().lore.variant + " " + var);
 			if(b)
 				if(im!=null)
 				im.setLore(lore);

@@ -96,7 +96,8 @@ public class CrackshotLoader {
 				} else {
 					data = highestData;
 				}
-			} catch (Error | Exception e45) {
+			} catch (RuntimeException e45) {
+				// Not a numeric id, or a modern server where materials have no ids: use the material name
 				Material configMaterial = Material.matchMaterial(type);
 				if (configMaterial != null) {
 					materialtype = configMaterial;
@@ -244,7 +245,7 @@ public class CrackshotLoader {
 
 			g.setReloadingTimeInSeconds(reloadDelayInTicks / 20);
 			guns4.add(g);
-			QAMain.gunRegister.put(ms, g);
+			QAMain.getItemRegistry().getGuns().put(ms, g);
 			QAMain.DEBUG("-Registering Crackshot Gun: " + internalname);
 		}
 		return guns4;

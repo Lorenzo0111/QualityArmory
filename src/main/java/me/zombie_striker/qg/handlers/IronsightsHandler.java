@@ -4,19 +4,17 @@ import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.api.QualityArmory;
 import me.zombie_striker.qg.api.WeaponInteractEvent;
 import me.zombie_striker.qg.guns.Gun;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.HashMap;
-import java.util.Map;
 
 public class IronsightsHandler {
 
 	public static Material ironsightsMaterial = Material.DIAMOND_AXE;
 	public static int ironsightsData = 21;
 	public static String ironsightsDisplay = "Iron Sights Enabled";
-	public static Map<Player, Integer> beforeSwitch = new HashMap<>();
 
 
 	public static void aim(Player player){
@@ -28,7 +26,7 @@ public class IronsightsHandler {
 						player.getWorld().dropItem(player.getLocation(),player.getInventory().getItemInOffHand());
 					} else {
 						player.getInventory().setItem(slot, player.getInventory().getItemInOffHand());
-						if (QAMain.restoreOffHand) beforeSwitch.put(player, slot);
+						if (QAMain.getConfiguration().features.restoreOffhand) QAMain.getPlayerState().getSlotBeforeIronsights().put(player.getUniqueId(), slot);
 					}
 				}
 				if (player.getItemInHand() != null && QualityArmory.isGun(player.getItemInHand())) {
@@ -55,8 +53,8 @@ public class IronsightsHandler {
 
 				player.getInventory().setItemInMainHand(player.getInventory().getItemInOffHand());
 				player.getInventory().setItemInOffHand(null);
-				if(beforeSwitch.containsKey(player)){
-					int slot = beforeSwitch.get(player);
+				if(QAMain.getPlayerState().getSlotBeforeIronsights().containsKey(player.getUniqueId())){
+					int slot = QAMain.getPlayerState().getSlotBeforeIronsights().get(player.getUniqueId());
 					if(slot != -1){
 						ItemStack item = player.getInventory().getItem(slot);
 						if(item != null && !item.getType().equals(Material.AIR)){
@@ -64,7 +62,7 @@ public class IronsightsHandler {
 							player.getInventory().setItemInOffHand(item);
 						}
 					}
-					beforeSwitch.remove(player);
+					QAMain.getPlayerState().getSlotBeforeIronsights().remove(player.getUniqueId());
 				}
 
 				Gun.updateAmmo(null, player, ammo);

@@ -1,5 +1,8 @@
 package me.zombie_striker.qg.config;
 
+import me.zombie_striker.qg.utils.ErrorReporter;
+import me.zombie_striker.qg.config.items.ItemKeys;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
@@ -26,28 +29,29 @@ public class ArmoryYML {
 			try {
 				file.createNewFile();
 			} catch (IOException e) {
-				e.printStackTrace();
+				ErrorReporter.report("creating " + file.getName(), e);
 			}
 		fileConfig = CommentYamlConfiguration.loadConfiguration(file);
 	}
 
 	public Object get(String path) {
-		return fileConfig.get(path);
+		return fileConfig.get(ItemKeys.translate(path));
 	}
 	public long getLong(String path) {
-		return fileConfig.getLong(path);
+		return fileConfig.getLong(ItemKeys.translate(path));
 	}
 
 	public boolean contains(String path) {
-		return fileConfig.contains(path);
+		return fileConfig.contains(ItemKeys.translate(path));
 	}
 
 	public ArmoryYML set(String name, Object v) {
 		return set(false, name,v);
 	}
 	public ArmoryYML set(boolean force, String name, Object v) {
+		name = ItemKeys.translate(name);
 		long lastmodifiedFile = file.lastModified();
-		long lastmodifiedInternal = contains("lastModifiedByQA") ? getLong("lastModifiedByQA") :  (  contains("AllowUserModifications") && fileConfig.getBoolean("AllowUserModifications") ? 0 : System.currentTimeMillis());
+		long lastmodifiedInternal = contains("last-modified-by-qa") ? getLong("last-modified-by-qa") :  (  contains("allow-user-modifications") && fileConfig.getBoolean("allow-user-modifications") ? 0 : System.currentTimeMillis());
 
 		if(!force && lastmodifiedFile-lastmodifiedInternal > 5000) {
 			return this; //The file has been changed sometime after QA made any changes.
@@ -59,6 +63,7 @@ public class ArmoryYML {
 		return this;
 	}
 	public ArmoryYML verify(String name, Object v) {
+		name = ItemKeys.translate(name);
 		if (!contains(name)) {
 			fileConfig.set(name, v);
 			saveNow = true;
@@ -79,7 +84,7 @@ public class ArmoryYML {
 			fileConfig.save(file);
 			saveNow = false;
 		} catch (IOException e) {
-			e.printStackTrace();
+			ErrorReporter.report("saving " + file.getName(), e);
 		}
 	}
 
@@ -87,8 +92,8 @@ public class ArmoryYML {
 	public ArmoryYML setSkullType(String skullowner) {
 		set("id", org.bukkit.SkullType.PLAYER.ordinal());
 		set( "material", MultiVersionLookup.getSkull().name());
-		set( "skull_owner", skullowner);
-		set( "skull_owner_custom_url", Ammo.NO_SKIN_STRING);
+		set( "skull-owner", skullowner);
+		set( "skull-owner-custom-url", Ammo.NO_SKIN_STRING);
 		return this;
 	}
 
@@ -121,11 +126,11 @@ public class ArmoryYML {
 		return this;
 	}
 	public ArmoryYML setSoundOnEquip(String sound) {
-		set( "sound_equip", sound);
+		set( "sound-equip", sound);
 		return this;
 	}
 	public ArmoryYML setSoundOnHit(String sound) {
-		set( "sound_meleehit", sound);
+		set( "sound-melee-hit", sound);
 		return this;
 	}
 
@@ -134,38 +139,38 @@ public class ArmoryYML {
 		return this;
 	}
 	public ArmoryYML setWeaponSound(WeaponSounds sound) {
-		set( "weaponsounds", sound.getSoundName());
+		set( "weapon-sounds", sound.getSoundName());
 		return this;
 	}
 	public ArmoryYML setMaxItemStack(int amount){
-		set("maxItemStack", amount);
+		set("max-item-stack", amount);
 		return this;
 	}
 
 	public void verifyAllTagsExist() {
-		if(contains("AllowUserModifications")){
-			boolean allowChanges = (boolean) get("AllowUserModifications");
-			set(true,"AllowUserModifications",null);
+		if(contains("allow-user-modifications")){
+			boolean allowChanges = (boolean) get("allow-user-modifications");
+			set(true,"allow-user-modifications",null);
 			if(!allowChanges)
 			putTimeStamp();
 		}
 		verify("invalid", false);
-		verify("weaponsounds", WeaponSounds.getSoundByType(WeaponType.RIFLE));
+		verify("weapon-sounds", WeaponSounds.getSoundByType(WeaponType.RIFLE));
 		verify("damage", 3);
 
 		verify("durability", 1000);
 
 		verify("price", 1000);
-		verify("maxItemStack", 1);
+		verify("max-item-stack", 1);
 	}
 
 	public ArmoryYML putTimeStamp(){
-			fileConfig.set("lastModifiedByQA", System.currentTimeMillis());
+			fileConfig.set("last-modified-by-qa", System.currentTimeMillis());
 			saveNow = true;
 		return this;
 	}
 	public long getTimestamp(){
-		return contains("lastModifiedByQA") ? (long) get("lastModifiedByQA"): 0;
+		return contains("last-modified-by-qa") ? (long) get("last-modified-by-qa"): 0;
 	}
 
 

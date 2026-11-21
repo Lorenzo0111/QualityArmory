@@ -1,7 +1,6 @@
 package me.zombie_striker.qg.ammo;
 
 import com.cryptomorin.xseries.XMaterial;
-import me.zombie_striker.customitemmanager.ArmoryBaseObject;
 import me.zombie_striker.customitemmanager.CustomBaseObject;
 import me.zombie_striker.customitemmanager.CustomItemManager;
 import me.zombie_striker.customitemmanager.MaterialStorage;
@@ -15,7 +14,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
 
-public class Ammo extends CustomBaseObject implements ArmoryBaseObject{
+public class Ammo extends CustomBaseObject {
 
 	boolean indiDrop;
 
