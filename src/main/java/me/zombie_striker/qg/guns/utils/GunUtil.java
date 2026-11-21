@@ -225,7 +225,8 @@ public class GunUtil {
 								p.playSound(p.getLocation(), Sound.valueOf("LAVA_POP"), 1, 1);
 							}
 						}
-					} else if (QAMain.enableHitSound) {
+					} else if (QAMain.enableHitSound
+							&& (!QAMain.requirePermsForHitSound || p.hasPermission("qualityarmory.hitsound"))) {
 						try {
 							p.playSound(p.getLocation(), QAMain.hit_sound, 2, 1);
 
@@ -901,8 +902,9 @@ public class GunUtil {
 	}
 
 	public static boolean isDelay(Gun g, Player player) {
-        if (QAMain.lastWeaponSwitch.containsKey(player.getUniqueId()) &&
-                System.currentTimeMillis() - QAMain.lastWeaponSwitch.get(player.getUniqueId()) < QAMain.weaponSwitchDelay * 1000)
+        double switchDelay = g.getSwitchDelay() >= 0 ? g.getSwitchDelay() : QAMain.weaponSwitchDelay;
+        Long lastSwitch = QAMain.lastWeaponSwitch.get(player.getUniqueId());
+        if (lastSwitch != null && System.currentTimeMillis() - lastSwitch < switchDelay * 1000)
             return true;
 
 		int showdelay = ((int) (g.getDelayBetweenShotsInSeconds() * 1000));
