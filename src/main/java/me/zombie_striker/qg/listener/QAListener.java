@@ -18,6 +18,7 @@ import me.zombie_striker.qg.guns.utils.GunUtil;
 import me.zombie_striker.qg.guns.utils.WeaponSounds;
 import me.zombie_striker.qg.handlers.BulletWoundHandler;
 import me.zombie_striker.qg.handlers.GunDamageHandler;
+import me.zombie_striker.qg.handlers.GunRepairHandler;
 import me.zombie_striker.qg.handlers.IronsightsHandler;
 import me.zombie_striker.qg.handlers.Update19OffhandChecker;
 import me.zombie_striker.qg.miscitems.Grenade;
@@ -754,6 +755,17 @@ public class QAListener implements Listener {
 			}
 		}
 
+	}
+
+	// Runs late so other plugins (e.g. GUI menus) can cancel the click before the items are modified
+	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+	public void onRepairClick(final InventoryClickEvent e) {
+		GunRepairHandler.handleRepairClick(e);
+	}
+
+	@EventHandler(priority = EventPriority.HIGH)
+	public void onExpChange(final PlayerExpChangeEvent e) {
+		GunRepairHandler.handleMending(e);
 	}
 
 	@EventHandler

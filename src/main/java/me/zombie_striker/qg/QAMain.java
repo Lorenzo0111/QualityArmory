@@ -115,6 +115,12 @@ public class QAMain extends JavaPlugin {
     public static boolean ignoreSkipping = false;
     public static boolean verboseLoadingLogging = false;
     public static boolean enableDurability = false;
+    public static boolean enableWeaponRepair = false;
+    public static boolean requirePermsToRepair = false;
+    public static String defaultRepairItem = "IRON_INGOT";
+    public static int defaultRepairAmount = 250;
+    public static boolean enableMendingRepair = false;
+    public static int mendingDurabilityPerXP = 2;
     public static boolean enableArmorIgnore = false;
     public static boolean showCrashMessage = true;
     public static boolean enableRecoil = true;
@@ -853,6 +859,12 @@ public class QAMain extends JavaPlugin {
         shouldSend = (boolean) a("useDefaultResourcepack", true);
 
         enableDurability = (boolean) a("EnableWeaponDurability", false);
+        enableWeaponRepair = (boolean) a("WeaponRepair.enable", enableWeaponRepair);
+        requirePermsToRepair = (boolean) a("WeaponRepair.requirePermission", requirePermsToRepair);
+        defaultRepairItem = String.valueOf(a("WeaponRepair.defaultRepairItem", defaultRepairItem));
+        defaultRepairAmount = Math.max(0, Integer.parseInt(a("WeaponRepair.defaultRepairAmount", defaultRepairAmount) + ""));
+        enableMendingRepair = (boolean) a("WeaponRepair.Mending.enable", enableMendingRepair);
+        mendingDurabilityPerXP = Math.max(1, Integer.parseInt(a("WeaponRepair.Mending.durabilityPerXP", mendingDurabilityPerXP) + ""));
 
         bulletStep = (double) a("BulletDetection.step", 0.10);
 
