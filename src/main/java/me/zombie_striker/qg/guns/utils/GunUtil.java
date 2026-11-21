@@ -225,7 +225,8 @@ public class GunUtil {
 								p.playSound(p.getLocation(), Sound.valueOf("LAVA_POP"), 1, 1);
 							}
 						}
-					} else if (QAMain.enableHitSound) {
+					} else if (QAMain.enableHitSound
+							&& (!QAMain.requirePermsForHitSound || p.hasPermission("qualityarmory.hitsound"))) {
 						try {
 							p.playSound(p.getLocation(), QAMain.hit_sound, 2, 1);
 

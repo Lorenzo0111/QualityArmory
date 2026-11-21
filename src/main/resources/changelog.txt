@@ -2,6 +2,7 @@
   - Remove broken ProtocolLib arm swing listener
   - Add option for bullets to pass through NPCs
   - Added delayForSwitch gun field to override weaponSwitchDelay per gun
+  - Added Hit_Sound_Require_Permission option (qualityarmory.hitsound)
 
 2.2.0
   - Added Folia support
