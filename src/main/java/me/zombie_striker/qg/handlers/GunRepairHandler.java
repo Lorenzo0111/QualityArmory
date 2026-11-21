@@ -1,6 +1,7 @@
 package me.zombie_striker.qg.handlers;
 
 import com.cryptomorin.xseries.XEnchantment;
+import com.cryptomorin.xseries.XMaterial;
 import com.cryptomorin.xseries.XSound;
 import me.zombie_striker.customitemmanager.CustomBaseObject;
 import me.zombie_striker.qg.QAMain;
@@ -60,8 +61,19 @@ public class GunRepairHandler {
 		if (itemCustom != null || QualityArmory.isIronSights(item))
 			return false;
 
-		Material material = Material.matchMaterial(name);
+		Material material = XMaterial.matchXMaterial(name).map(XMaterial::parseMaterial).orElse(null);
+		if (material == null)
+			material = Material.matchMaterial(name);
 		return material != null && item.getType() == material;
+	}
+
+	/**
+	 * A reloading gun is restored from a snapshot when the reload finishes,
+	 * so any repair applied in the meantime would be lost.
+	 */
+	public static boolean isReloading(ItemStack item) {
+		return item != null && item.hasItemMeta() && item.getItemMeta().hasDisplayName()
+				&& item.getItemMeta().getDisplayName().contains(QAMain.S_RELOADING_MESSAGE);
 	}
 
 	/**
@@ -84,6 +96,10 @@ public class GunRepairHandler {
 		ItemStack cursor = e.getCursor();
 		ItemStack current = e.getCurrentItem();
 		if (cursor == null || current == null || cursor.getType() == Material.AIR)
+			return false;
+
+		// Only repair a single gun, never a stack
+		if (current.getAmount() != 1 || isReloading(current))
 			return false;
 
 		Gun gun = QualityArmory.getGun(current);
@@ -149,7 +165,7 @@ public class GunRepairHandler {
 		}
 
 		Gun gun = QualityArmory.getGun(item);
-		if (gun == null || !item.containsEnchantment(mending))
+		if (gun == null || item.getAmount() != 1 || isReloading(item) || !item.containsEnchantment(mending))
 			return;
 
 		int max = gun.getDurability();

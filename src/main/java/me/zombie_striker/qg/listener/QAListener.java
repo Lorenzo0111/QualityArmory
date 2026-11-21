@@ -336,9 +336,6 @@ public class QAListener implements Listener {
 
 		}
 
-		if (!e.isCancelled() && GunRepairHandler.handleRepairClick(e))
-			return;
-
 		if (QualityArmory.isAmmo(e.getCurrentItem())) {
 			Ammo current = QualityArmory.getAmmo(e.getCurrentItem());
 			if (e.getCursor() == null) {
@@ -758,6 +755,12 @@ public class QAListener implements Listener {
 			}
 		}
 
+	}
+
+	// Runs late so other plugins (e.g. GUI menus) can cancel the click before the items are modified
+	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+	public void onRepairClick(final InventoryClickEvent e) {
+		GunRepairHandler.handleRepairClick(e);
 	}
 
 	@EventHandler(priority = EventPriority.HIGH)
