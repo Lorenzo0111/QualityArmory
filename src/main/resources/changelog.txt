@@ -1,6 +1,7 @@
 2.2.1
   - Remove broken ProtocolLib arm swing listener
   - Add option for bullets to pass through NPCs
+  - Added delayForSwitch gun field to override weaponSwitchDelay per gun
 
 2.2.0
   - Added Folia support
