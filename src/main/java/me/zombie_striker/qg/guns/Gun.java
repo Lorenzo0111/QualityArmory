@@ -63,6 +63,7 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
     private List<String> weaponSounds;
     private double volume = 4;
     private double delayBetweenShots = 0.25;
+    private double switchDelay = -1;
     private int shotsPerBullet = 1;
     private int firerate = 1;
     private double reloadTime = 1.5;
@@ -377,6 +378,7 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
         this.setPrice(g.getPrice());
         this.setEnableShop(g.isEnableShop());
         this.delayBetweenShots = g.delayBetweenShots;
+        this.switchDelay = g.switchDelay;
         this.shotsPerBullet = g.shotsPerBullet;
         this.firerate = g.firerate;
         this.ch = g.ch;
@@ -404,6 +406,18 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
 
     public void setDuribility(int durib) {
         this.durib = durib;
+    }
+
+    /**
+     * @return the delay in seconds before this gun can shoot after switching to it,
+     * or a negative value to use the global weaponSwitchDelay
+     */
+    public double getSwitchDelay() {
+        return switchDelay;
+    }
+
+    public void setSwitchDelay(double switchDelay) {
+        this.switchDelay = switchDelay;
     }
 
     public void setSwayMultiplier(double multiplier) {

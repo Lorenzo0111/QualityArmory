@@ -458,6 +458,14 @@ public class GunYMLLoader {
 		}
 		if (f2.contains("delayForShoot"))
 			g.setDelayBetweenShots(f2.getDouble("delayForShoot"));
+		if (f2.contains("delayForSwitch")) {
+			if (f2.isDouble("delayForSwitch") || f2.isInt("delayForSwitch")) {
+				g.setSwitchDelay(f2.getDouble("delayForSwitch"));
+			} else {
+				QAMain.getInstance().getLogger().warning("Invalid delayForSwitch value for gun " + g.getName()
+						+ ": \"" + f2.get("delayForSwitch") + "\". Using the global weaponSwitchDelay instead.");
+			}
+		}
 		if (f2.contains("bullets-per-shot"))
 			g.setBulletsPerShot(f2.getInt("bullets-per-shot"));
 		if (f2.contains("maxBulletDistance"))
