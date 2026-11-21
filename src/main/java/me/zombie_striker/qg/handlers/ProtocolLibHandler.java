@@ -42,13 +42,11 @@ public class ProtocolLibHandler {
                 new PacketAdapter(QAMain.getInstance(), ListenerPriority.NORMAL, PacketType.Play.Server.ENTITY_EQUIPMENT) {
                     @Override
                     public void onPacketSending(PacketEvent event) {
-                        QAMain.DEBUG("Processing ENTITY_EQUIPMENT packet");
                         final Player sender = event.getPlayer();
                         final int entityId = event.getPacket().getIntegers().read(0);
 
                         // Ignore own entity packet
                         if (entityId == sender.getEntityId()) {
-                            QAMain.DEBUG("Ignoring own entity packet");
                             return;
                         }
 
@@ -63,7 +61,6 @@ public class ProtocolLibHandler {
                         }
 
                         if (targetPlayer == null) {
-                            QAMain.DEBUG("Target player not found for entity ID: " + entityId);
                             return;
                         }
 
@@ -71,7 +68,6 @@ public class ProtocolLibHandler {
                         ItemStack mainHandItem = targetPlayer.getItemInHand();
                         if (mainHandItem == null || !mainHandItem.getType().name().equals("CROSSBOW") ||
                                 !QualityArmory.isIronSights(mainHandItem)) {
-                            QAMain.DEBUG("Player doesn't have crossbow with iron sights");
                             return;
                         }
 
