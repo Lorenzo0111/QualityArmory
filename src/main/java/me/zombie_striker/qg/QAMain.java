@@ -157,6 +157,7 @@ public class QAMain extends JavaPlugin {
     public static boolean HeadshotOneHit = true;
     public static boolean headshotPling = true;
     public static boolean enableHitSound = false;
+    public static boolean requirePermsForHitSound = false;
     public static boolean showOutOfAmmoOnItem = false;
     public static boolean showOutOfAmmoOnTitle = false;
     public static boolean showReloadOnTitle = false;
@@ -955,6 +956,7 @@ public class QAMain extends JavaPlugin {
 
         hit_sound = (String) a("Hit_Notification_Sound", hit_sound);
         enableHitSound = (boolean) a("Enable_Hit_Sound", enableHitSound);
+        requirePermsForHitSound = (boolean) a("Hit_Sound_Require_Permission", requirePermsForHitSound);
 
         shopPurchaseSound = (String) a("Shop_Purchase_Sound", shopPurchaseSound);
         craftingSound = (String) a("Crafting_Sound", craftingSound);
