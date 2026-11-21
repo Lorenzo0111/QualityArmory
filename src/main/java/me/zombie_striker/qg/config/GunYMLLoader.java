@@ -458,6 +458,8 @@ public class GunYMLLoader {
 		}
 		if (f2.contains("delayForShoot"))
 			g.setDelayBetweenShots(f2.getDouble("delayForShoot"));
+		if (f2.contains("delayForSwitch"))
+			g.setSwitchDelay(f2.getDouble("delayForSwitch"));
 		if (f2.contains("bullets-per-shot"))
 			g.setBulletsPerShot(f2.getInt("bullets-per-shot"));
 		if (f2.contains("maxBulletDistance"))
