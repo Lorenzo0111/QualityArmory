@@ -56,6 +56,8 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
     private int maxbull;
     private float damage;
     private int durib = 1000;
+    private String repairItem = null;
+    private int repairAmount = -1;
     private boolean isAutomatic;
     private double headshotMultiplier = 2;
     private boolean isPrimaryWeapon = true;
@@ -365,6 +367,8 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
         this.maxbull = g.maxbull;
         this.damage = g.damage;
         this.durib = g.durib;
+        this.repairItem = g.repairItem;
+        this.repairAmount = g.repairAmount;
         this.isAutomatic = g.isAutomatic;
         this.supports18 = g.supports18;
         this.nightVisionOnScope = g.nightVisionOnScope;
@@ -404,6 +408,29 @@ public class Gun extends CustomBaseObject implements ArmoryBaseObject, Comparabl
 
     public void setDuribility(int durib) {
         this.durib = durib;
+    }
+
+    /**
+     * @return the item name (vanilla material or QualityArmory custom item) used to repair this gun,
+     * or null to use the global default
+     */
+    public String getRepairItem() {
+        return repairItem;
+    }
+
+    public void setRepairItem(String repairItem) {
+        this.repairItem = repairItem;
+    }
+
+    /**
+     * @return the durability restored by each repair item, or -1 to use the global default
+     */
+    public int getRepairAmount() {
+        return repairAmount;
+    }
+
+    public void setRepairAmount(int repairAmount) {
+        this.repairAmount = repairAmount;
     }
 
     public void setSwayMultiplier(double multiplier) {

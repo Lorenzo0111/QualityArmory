@@ -346,6 +346,10 @@ public class GunYMLLoader {
 			g.setDurabilityDamage((float) f2.getDouble("damage"));
 		if (f2.contains("durability"))
 			g.setDuribility(f2.getInt("durability"));
+		if (f2.contains("repairItem"))
+			g.setRepairItem(f2.getString("repairItem"));
+		if (f2.contains("repairAmount"))
+			g.setRepairAmount(f2.getInt("repairAmount"));
 		if (f2.contains("price"))
 			g.setPrice(f2.getDouble("price"));
 		if (f2.contains("allowInShop"))

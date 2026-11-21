@@ -18,6 +18,7 @@ import me.zombie_striker.qg.guns.utils.GunUtil;
 import me.zombie_striker.qg.guns.utils.WeaponSounds;
 import me.zombie_striker.qg.handlers.BulletWoundHandler;
 import me.zombie_striker.qg.handlers.GunDamageHandler;
+import me.zombie_striker.qg.handlers.GunRepairHandler;
 import me.zombie_striker.qg.handlers.IronsightsHandler;
 import me.zombie_striker.qg.handlers.Update19OffhandChecker;
 import me.zombie_striker.qg.miscitems.Grenade;
@@ -334,6 +335,9 @@ public class QAListener implements Listener {
 			}
 
 		}
+
+		if (!e.isCancelled() && GunRepairHandler.handleRepairClick(e))
+			return;
 
 		if (QualityArmory.isAmmo(e.getCurrentItem())) {
 			Ammo current = QualityArmory.getAmmo(e.getCurrentItem());
@@ -754,6 +758,11 @@ public class QAListener implements Listener {
 			}
 		}
 
+	}
+
+	@EventHandler(priority = EventPriority.HIGH)
+	public void onExpChange(final PlayerExpChangeEvent e) {
+		GunRepairHandler.handleMending(e);
 	}
 
 	@EventHandler
