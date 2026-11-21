@@ -1,6 +1,7 @@
 2.2.1
   - Remove broken ProtocolLib arm swing listener
   - Add option for bullets to pass through NPCs
+  - Added weapon durability repairing with repair items and Mending (WeaponRepair options, repairItem/repairAmount gun fields)
 
 2.2.0
   - Added Folia support

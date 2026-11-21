@@ -115,11 +115,11 @@ public class QAMain extends JavaPlugin {
     public static boolean ignoreSkipping = false;
     public static boolean verboseLoadingLogging = false;
     public static boolean enableDurability = false;
-    public static boolean enableWeaponRepair = true;
+    public static boolean enableWeaponRepair = false;
     public static boolean requirePermsToRepair = false;
     public static String defaultRepairItem = "IRON_INGOT";
     public static int defaultRepairAmount = 250;
-    public static boolean enableMendingRepair = true;
+    public static boolean enableMendingRepair = false;
     public static int mendingDurabilityPerXP = 2;
     public static boolean enableArmorIgnore = false;
     public static boolean showCrashMessage = true;

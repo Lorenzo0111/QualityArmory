@@ -71,12 +71,12 @@ EnableWeaponDurability: false
 #left click uses as many items as needed, right click uses one. Guns can override the item with
 #'repairItem' (a vanilla material or a QualityArmory item name, 'none' to disable) and 'repairAmount'.
 WeaponRepair:
-  enable: true
+  enable: false
   requirePermission: false #If true, players need qualityarmory.repair
   defaultRepairItem: IRON_INGOT
   defaultRepairAmount: 250 #Durability restored by each repair item
   Mending:
-    enable: true #Guns enchanted with Mending are repaired using picked up experience
+    enable: false #Guns enchanted with Mending are repaired using picked up experience
     durabilityPerXP: 2
 overrideAnvil: false
 verboseItemLogging: false
