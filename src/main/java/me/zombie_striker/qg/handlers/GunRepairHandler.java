@@ -7,12 +7,14 @@ import me.zombie_striker.customitemmanager.CustomBaseObject;
 import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.api.QualityArmory;
 import me.zombie_striker.qg.guns.Gun;
+import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCreativeEvent;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerExpChangeEvent;
 import org.bukkit.inventory.ItemStack;
 
@@ -85,12 +87,17 @@ public class GunRepairHandler {
 	public static boolean handleRepairClick(InventoryClickEvent e) {
 		if (!QAMain.enableDurability || !QAMain.enableWeaponRepair)
 			return false;
-		// In creative mode the client controls the inventory, so we can't reliably edit it
-		if (e instanceof InventoryCreativeEvent)
-			return false;
 		if (e.getClick() != ClickType.LEFT && e.getClick() != ClickType.RIGHT)
 			return false;
 		if (!(e.getWhoClicked() instanceof Player))
+			return false;
+		// In creative mode the client controls the inventory, so we can't reliably edit it
+		if (e instanceof InventoryCreativeEvent || ((Player) e.getWhoClicked()).getGameMode() == GameMode.CREATIVE)
+			return false;
+		// Only repair guns stored in regular slots. Result slots (anvil, grindstone, crafting...)
+		// are recalculated from their inputs, so the repair would be lost.
+		InventoryType.SlotType slotType = e.getSlotType();
+		if (slotType != InventoryType.SlotType.CONTAINER && slotType != InventoryType.SlotType.QUICKBAR)
 			return false;
 
 		ItemStack cursor = e.getCursor();
@@ -166,6 +173,8 @@ public class GunRepairHandler {
 
 		Gun gun = QualityArmory.getGun(item);
 		if (gun == null || item.getAmount() != 1 || isReloading(item) || !item.containsEnchantment(mending))
+			return;
+		if (QAMain.requirePermsToRepair && !player.hasPermission(REPAIR_PERMISSION))
 			return;
 
 		int max = gun.getDurability();
