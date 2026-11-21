@@ -72,6 +72,14 @@ public class GunUtil {
 		}
 	}
 
+	/**
+	 * Whether bullets should ignore this entity because it is an NPC (e.g. Citizens),
+	 * and the "weapons.bullets-pass-through-npcs" option is enabled.
+	 */
+	public static boolean shouldBulletPassThrough(Entity e) {
+		return QAMain.getConfiguration().weapons.bulletsPassThroughNpcs && e.hasMetadata("NPC");
+	}
+
 	public static double getTargetedSolidMaxDistance(Vector v, Location start, double maxDistance) {
 		Location test = start.clone();
 		World world = test.getWorld();
@@ -130,7 +138,7 @@ public class GunUtil {
 			for (Entity e : centerTest.getWorld().getNearbyEntities(centerTest, maxDistance / 2, maxDistance / 2,
 					maxDistance / 2)) {
 				if (e instanceof Damageable) {
-					if (QAMain.getConfiguration().weapons.impenetrableEntities.contains(e.getType()))
+					if (QAMain.getConfiguration().weapons.impenetrableEntities.contains(e.getType()) || shouldBulletPassThrough(e))
 						continue;
 
 					if (e != p && e != p.getVehicle() && e != p.getPassenger()) {
@@ -205,7 +213,8 @@ public class GunUtil {
 						if (QAMain.getConfiguration().weapons.headshot.playNotificationSound) {
 							playNotificationSound(p, QAMain.getConfiguration().weapons.headshot.notificationSound);
 						}
-					} else if (QAMain.getConfiguration().weapons.hitSound.enabled) {
+					} else if (QAMain.getConfiguration().weapons.hitSound.enabled
+							&& (!QAMain.getConfiguration().weapons.hitSound.requirePermission || p.hasPermission("qualityarmory.hitsound"))) {
 						playNotificationSound(p, QAMain.getConfiguration().weapons.hitSound.sound);
 					}
 
@@ -836,8 +845,9 @@ public class GunUtil {
 	}
 
 	public static boolean isDelay(Gun g, Player player) {
-        if (QAMain.getPlayerState().getLastWeaponSwitch().containsKey(player.getUniqueId()) &&
-                System.currentTimeMillis() - QAMain.getPlayerState().getLastWeaponSwitch().get(player.getUniqueId()) < QAMain.getConfiguration().weapons.switchDelaySeconds * 1000)
+        double switchDelay = g.getSwitchDelay() >= 0 ? g.getSwitchDelay() : QAMain.getConfiguration().weapons.switchDelaySeconds;
+        Long lastSwitch = QAMain.getPlayerState().getLastWeaponSwitch().get(player.getUniqueId());
+        if (lastSwitch != null && System.currentTimeMillis() - lastSwitch < switchDelay * 1000)
             return true;
 
 		int showdelay = ((int) (g.getDelayBetweenShotsInSeconds() * 1000));

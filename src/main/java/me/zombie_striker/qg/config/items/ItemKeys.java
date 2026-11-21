@@ -61,6 +61,9 @@ public final class ItemKeys {
         m.put("firerate", "fire-rate");
         m.put("delayForReload", "delay-for-reload");
         m.put("delayForShoot", "delay-for-shoot");
+        m.put("delayForSwitch", "delay-for-switch");
+        m.put("repairItem", "repair-item");
+        m.put("repairAmount", "repair-amount");
         m.put("maxBulletDistance", "max-bullet-distance");
         m.put("unlimitedAmmo", "unlimited-ammo");
         m.put("LightLeveOnShoot", "light-level-on-shoot");

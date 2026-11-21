@@ -25,7 +25,6 @@ public final class Integrations {
 
         // Packet listeners stay registered across reloads, so they must only be added once
         if (this.protocolLib && !this.protocolLibListenersRegistered) {
-            ProtocolLibHandler.initRemoveArmswing();
             ProtocolLibHandler.initAimBow();
             this.protocolLibListenersRegistered = true;
         }

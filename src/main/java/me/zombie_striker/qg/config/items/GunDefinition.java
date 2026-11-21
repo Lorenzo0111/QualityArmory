@@ -1,6 +1,7 @@
 package me.zombie_striker.qg.config.items;
 
 import me.zombie_striker.qg.config.system.Config;
+import me.zombie_striker.qg.config.system.Range;
 import me.zombie_striker.qg.config.system.Section;
 
 import java.io.File;
@@ -28,6 +29,13 @@ public class GunDefinition extends ItemDefinition {
     public Double damage;
     @Config
     public Integer durability;
+    /** A vanilla material or QualityArmory item name. Null uses weapons.repair.default-item. */
+    @Config
+    public String repairItem;
+    /** Durability restored per repair item. Null uses weapons.repair.default-amount. */
+    @Range(min = 0)
+    @Config
+    public Integer repairAmount;
     @Config
     public Boolean allowCrafting;
     @Config
@@ -40,6 +48,10 @@ public class GunDefinition extends ItemDefinition {
     public Double delayForReload;
     @Config
     public Double delayForShoot;
+    /** Seconds before this gun can shoot after switching to it. Null uses weapons.switch-delay-seconds. */
+    @Range(min = 0)
+    @Config
+    public Double delayForSwitch;
     @Config
     public Integer bulletsPerShot;
     @Config

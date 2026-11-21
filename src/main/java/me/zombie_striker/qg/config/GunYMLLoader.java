@@ -291,6 +291,10 @@ public class GunYMLLoader {
 			g.setDurabilityDamage(def.damage.floatValue());
 		if (def.durability != null)
 			g.setDuribility(def.durability);
+		if (def.repairItem != null)
+			g.setRepairItem(def.repairItem);
+		if (def.repairAmount != null)
+			g.setRepairAmount(def.repairAmount);
 		if (def.price != null)
 			g.setPrice(def.price);
 		if (def.contains("allow-in-shop"))
@@ -364,6 +368,8 @@ public class GunYMLLoader {
 		}
 		if (def.delayForShoot != null)
 			g.setDelayBetweenShots(def.delayForShoot);
+		if (def.delayForSwitch != null)
+			g.setSwitchDelay(def.delayForSwitch);
 		if (def.bulletsPerShot != null)
 			g.setBulletsPerShot(def.bulletsPerShot);
 		if (def.maxBulletDistance != null)

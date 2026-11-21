@@ -14,7 +14,6 @@ import com.comphenix.protocol.wrappers.Pair;
 import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.api.QualityArmory;
 import me.zombie_striker.qg.guns.Gun;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -30,58 +29,12 @@ public class ProtocolLibHandler {
 
     private static ProtocolManager protocolManager;
 
-    public static void initRemoveArmswing() {
-        if (protocolManager == null)
-            protocolManager = ProtocolLibrary.getProtocolManager();
-        protocolManager.addPacketListener(
-                new PacketAdapter(QAMain.getInstance(), ListenerPriority.NORMAL, PacketType.Play.Client.ARM_ANIMATION) {
-
-                    @SuppressWarnings("deprecation")
-                    public void onPacketReceiving(PacketEvent event) {
-                        final Player player = event.getPlayer();
-
-                        boolean tempplayer = false;
-                        try {
-                            player.getVehicle();
-                        } catch (UnsupportedOperationException e) {
-                            tempplayer = true;
-                        }
-                        if (tempplayer)
-                            return;
-
-                        if (event.getPacketType() == PacketType.Play.Client.ARM_ANIMATION
-                                && player.getVehicle() != null) {
-                            try {
-
-                                byte state = event.getPacket().getBytes().readSafely(0);
-                                int entityID = event.getPacket().getIntegers().readSafely(0);
-                                Player targ = null;
-                                for (Player p : Bukkit.getOnlinePlayers()) {
-                                    if (p.getEntityId() == entityID) {
-                                        targ = p;
-                                        break;
-                                    }
-                                }
-                                if (targ == null) {
-                                    Bukkit.broadcastMessage("The ID for the entity is incorrect");
-                                    return;
-                                }
-                                if (state == 0) {
-                                    if (QualityArmory.isGun(targ.getItemInHand())
-                                            || QualityArmory.isIronSights(targ.getItemInHand())) {
-                                        event.setCancelled(true);
-                                    }
-                                }
-                            } catch (RuntimeException e) {
-                                ErrorReporter.report("hiding the arm swing of a gun", e);
-                            }
-                        }
-                    }
-                });
-    }
-
     @SuppressWarnings("deprecation")
     public static void initAimBow() {
+        if (!PacketType.Play.Server.ENTITY_EQUIPMENT.isSupported()) {
+            QAMain.DEBUG("ENTITY_EQUIPMENT packet is not supported by ProtocolLib on this server, skipping aim bow listener");
+            return;
+        }
         if (protocolManager == null)
             protocolManager = ProtocolLibrary.getProtocolManager();
 
@@ -89,13 +42,11 @@ public class ProtocolLibHandler {
                 new PacketAdapter(QAMain.getInstance(), ListenerPriority.NORMAL, PacketType.Play.Server.ENTITY_EQUIPMENT) {
                     @Override
                     public void onPacketSending(PacketEvent event) {
-                        QAMain.DEBUG("Processing ENTITY_EQUIPMENT packet");
                         final Player sender = event.getPlayer();
                         final int entityId = event.getPacket().getIntegers().read(0);
 
                         // Ignore own entity packet
                         if (entityId == sender.getEntityId()) {
-                            QAMain.DEBUG("Ignoring own entity packet");
                             return;
                         }
 
@@ -110,7 +61,6 @@ public class ProtocolLibHandler {
                         }
 
                         if (targetPlayer == null) {
-                            QAMain.DEBUG("Target player not found for entity ID: " + entityId);
                             return;
                         }
 
@@ -118,7 +68,6 @@ public class ProtocolLibHandler {
                         ItemStack mainHandItem = targetPlayer.getItemInHand();
                         if (mainHandItem == null || !mainHandItem.getType().name().equals("CROSSBOW") ||
                                 !QualityArmory.isIronSights(mainHandItem)) {
-                            QAMain.DEBUG("Player doesn't have crossbow with iron sights");
                             return;
                         }
 

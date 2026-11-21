@@ -153,6 +153,7 @@ public class MainConfig extends BaseConfiguration {
         @Config(oldPath = "EnableWeaponDurability")
         public boolean durability = false;
 
+        public Repair repair = new Repair();
         public Detection detection = new Detection();
         public BlockBullets blockBullets = new BlockBullets();
         public Sway sway = new Sway();
@@ -194,6 +195,46 @@ public class MainConfig extends BaseConfiguration {
         @Comment("Entity types that bullets pass through")
         @Config(oldPath = "impenetrableEntityTypes")
         public List<EntityType> impenetrableEntities = new ArrayList<>(Collections.singletonList(EntityType.ARROW));
+
+        @Comment("Bullets pass through NPCs, for example Citizens NPCs")
+        @Config(oldPath = "bulletsPassThroughNPCs")
+        public boolean bulletsPassThroughNpcs = false;
+
+        @Section
+        @Comment({"Repairing gun durability. Requires durability to be enabled.",
+                "Click a repair item onto a gun: left click fully repairs it, right click uses a single item.",
+                "Guns can override the repair item and amount with repair-item and repair-amount"})
+        public static class Repair {
+            @Config(oldPath = "WeaponRepair.enable")
+            public boolean enabled = false;
+
+            @Comment("Require qualityarmory.repair to repair guns")
+            @Config(oldPath = "WeaponRepair.requirePermission")
+            public boolean requirePermission = false;
+
+            @Comment("Vanilla material or QualityArmory item used to repair guns. \"none\" disables item repairs")
+            @Config(oldPath = "WeaponRepair.defaultRepairItem")
+            public String defaultItem = "IRON_INGOT";
+
+            @Comment("Durability restored by each repair item")
+            @Range(min = 0)
+            @Config(oldPath = "WeaponRepair.defaultRepairAmount")
+            public int defaultAmount = 250;
+
+            public Mending mending = new Mending();
+
+            @Section
+            @Comment("Repairs the held gun with picked up experience if it is enchanted with Mending (1.9+)")
+            public static class Mending {
+                @Config(oldPath = "WeaponRepair.Mending.enable")
+                public boolean enabled = false;
+
+                @Comment("Durability restored per experience point")
+                @Range(min = 1)
+                @Config(oldPath = "WeaponRepair.Mending.durabilityPerXP")
+                public int durabilityPerXp = 2;
+            }
+        }
 
         @Section
         public static class Detection {
@@ -300,6 +341,10 @@ public class MainConfig extends BaseConfiguration {
 
             @Config(oldPath = "Hit_Notification_Sound")
             public String sound = "ENTITY_EXPERIENCE_ORB_PICKUP";
+
+            @Comment("Only play the hit sound to players with qualityarmory.hitsound")
+            @Config(oldPath = "Hit_Sound_Require_Permission")
+            public boolean requirePermission = false;
         }
     }
 
